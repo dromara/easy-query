@@ -23,16 +23,16 @@ public interface SQLColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLLambd
         return getColumnSelector().getTable();
     }
 
-    default SQLColumnSelector<T1> columns(Collection<Property<T1, ?>> columns) {
+    default <TProperty> SQLColumnSelector<T1> columns(Collection<Property<T1, TProperty>> columns) {
         if(EasyCollectionUtil.isNotEmpty(columns)){
-            for (Property<T1, ?> column : columns) {
+            for (Property<T1, TProperty> column : columns) {
                 this.column(column);
             }
         }
         return this;
     }
 
-    default SQLColumnSelector<T1> column(Property<T1, ?> column) {
+    default <TProperty> SQLColumnSelector<T1> column(Property<T1, TProperty> column) {
         getColumnSelector().column(EasyLambdaUtil.getPropertyName(column));
         return this;
     }
@@ -52,7 +52,7 @@ public interface SQLColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLLambd
         return this;
     }
 
-    default SQLColumnSelector<T1> columnIgnore(Property<T1, ?> column) {
+    default <TProperty> SQLColumnSelector<T1> columnIgnore(Property<T1, TProperty> column) {
         getColumnSelector().columnIgnore(EasyLambdaUtil.getPropertyName(column));
         return this;
     }

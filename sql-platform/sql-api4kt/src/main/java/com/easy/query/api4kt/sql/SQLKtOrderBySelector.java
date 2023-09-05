@@ -21,7 +21,7 @@ public interface SQLKtOrderBySelector<T1> extends EntitySQLTableOwner<T1>, SQLLa
         return getOrderBySelector().getTable();
     }
 
-    default SQLKtOrderBySelector<T1> column(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtOrderBySelector<T1> column(KProperty1<? super T1, TProperty> column) {
         getOrderBySelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }

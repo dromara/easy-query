@@ -38,16 +38,16 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
     }
 
 
-    default SQLKtColumnAsSelector<T1, TR> columns(Collection<KProperty1<T1, ?>> columns) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columns(Collection<KProperty1<? super T1, TProperty>> columns) {
         if(EasyCollectionUtil.isNotEmpty(columns)){
-            for (KProperty1<T1, ?> column : columns) {
+            for (KProperty1<? super T1, TProperty> column : columns) {
                 this.column(column);
             }
         }
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> column(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> column(KProperty1<? super T1, TProperty> column) {
         getColumnAsSelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
@@ -62,16 +62,16 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
         return sqlNativeSegment(columnConst,c->{});
     }
 
-    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(KProperty1<T1, TIncludeSource> column, KProperty1<TR, TIncludeResult> aliasProperty){
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(KProperty1<? super T1, TIncludeSource> column, KProperty1<? super TR, TIncludeResult> aliasProperty){
         return columnInclude(true,column,aliasProperty, SQLKtColumnAsSelector::columnAll);
     }
-    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(boolean condition,KProperty1<T1, TIncludeSource> column, KProperty1<TR, TIncludeResult> aliasProperty){
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(boolean condition,KProperty1<? super T1, TIncludeSource> column, KProperty1<? super TR, TIncludeResult> aliasProperty){
         return columnInclude(condition,column,aliasProperty, SQLKtColumnAsSelector::columnAll);
     }
-    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(KProperty1<T1, TIncludeSource> column, KProperty1<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(KProperty1<? super T1, TIncludeSource> column, KProperty1<? super TR, TIncludeResult> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
         return columnInclude(true,column,aliasProperty,includeSelectorExpression);
     }
-    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(boolean condition,KProperty1<T1, TIncludeSource> column, KProperty1<TR, TIncludeResult> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(boolean condition,KProperty1<? super T1, TIncludeSource> column, KProperty1<? super TR, TIncludeResult> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
         if(condition){
             getColumnAsSelector().<TIncludeSource,TIncludeResult>columnInclude(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(aliasProperty),columnAsSelect->{
                 includeSelectorExpression.apply(new SQLKtColumnAsSelectorImpl<>(columnAsSelect));
@@ -79,16 +79,16 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
         }
         return this;
     }
-    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(KProperty1<T1, Collection<TIncludeSource>> column, KProperty1<TR, Collection<TIncludeResult>> aliasProperty){
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(KProperty1<? super T1, Collection<TIncludeSource>> column, KProperty1<? super TR, Collection<TIncludeResult>> aliasProperty){
         return columnIncludeMany(true,column,aliasProperty, SQLKtColumnAsSelector::columnAll);
     }
-    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(boolean condition,KProperty1<T1, Collection<TIncludeSource>> column, KProperty1<TR, Collection<TIncludeResult>> aliasProperty){
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(boolean condition,KProperty1<? super T1, Collection<TIncludeSource>> column, KProperty1<? super TR, Collection<TIncludeResult>> aliasProperty){
         return columnIncludeMany(condition,column,aliasProperty, SQLKtColumnAsSelector::columnAll);
     }
-    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(KProperty1<T1, Collection<TIncludeSource>> column, KProperty1<TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(KProperty1<? super T1, Collection<TIncludeSource>> column, KProperty1<? super TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
         return columnIncludeMany(true,column,aliasProperty,includeSelectorExpression);
     }
-    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(boolean condition,KProperty1<T1, Collection<TIncludeSource>> column, KProperty1<TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
+    default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnIncludeMany(boolean condition,KProperty1<? super T1, Collection<TIncludeSource>> column, KProperty1<? super TR, Collection<TIncludeResult>> aliasProperty, SQLExpression1<SQLKtColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
         if(condition){
             getColumnAsSelector().<TIncludeSource,TIncludeResult>columnInclude(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(aliasProperty),columnAsSelect->{
                 includeSelectorExpression.apply(new SQLKtColumnAsSelectorImpl<>(columnAsSelect));
@@ -97,7 +97,7 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnIgnore(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnIgnore(KProperty1<? super T1, TProperty> column) {
         getColumnAsSelector().columnIgnore(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
@@ -112,12 +112,12 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnAs(KProperty1<T1, ?> column, KProperty1<TR, ?> alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnAs(KProperty1<? super T1, TProperty> column, KProperty1<? super TR, TProperty> alias) {
         getColumnAsSelector().columnAs(EasyKtLambdaUtil.getPropertyName(column), EasyKtLambdaUtil.getPropertyName(alias));
         return this;
     }
 
-    default <TSubQuery> SQLKtColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression<KtQueryable<TSubQuery>> subQueryableFunc, KProperty1<TR, TSubQuery> alias) {
+    default <TSubQuery> SQLKtColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression<KtQueryable<TSubQuery>> subQueryableFunc, KProperty1<? super TR, TSubQuery> alias) {
         return columnSubQueryAs(subQueryableFunc, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
@@ -126,133 +126,133 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnCount(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCount(KProperty1<? super T1, TProperty> column) {
         getColumnAsSelector().columnCount(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnCountAs(KProperty1<T1, ?> column, KProperty1<TR, ?> alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCountAs(KProperty1<? super T1, TProperty> column, KProperty1<? super TR, TProperty> alias) {
         return columnCountAs(column, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnCountAs(KProperty1<T1, ?> column, String alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCountAs(KProperty1<? super T1, TProperty> column, String alias) {
         getColumnAsSelector().columnCountAs(EasyKtLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnCountDistinct(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCountDistinct(KProperty1<? super T1, TProperty> column) {
         getColumnAsSelector().columnCountDistinct(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnCountDistinctAs(KProperty1<T1, ?> column, KProperty1<TR, ?> alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCountDistinctAs(KProperty1<? super T1, TProperty> column, KProperty1<? super TR, TProperty> alias) {
         return columnCountDistinctAs(column, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnCountDistinctAs(KProperty1<T1, ?> column, String alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCountDistinctAs(KProperty1<? super T1, TProperty> column, String alias) {
         getColumnAsSelector().columnCountDistinctAs(EasyKtLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnSum(KProperty1<T1, Number> column) {
+    default SQLKtColumnAsSelector<T1, TR> columnSum(KProperty1<? super T1, Number> column) {
         getColumnAsSelector().columnSum(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnSumAs(KProperty1<T1, Number> column, KProperty1<TR, Number> alias) {
+    default SQLKtColumnAsSelector<T1, TR> columnSumAs(KProperty1<? super T1, Number> column, KProperty1<? super TR, Number> alias) {
         return columnSumAs(column, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnSumAs(KProperty1<T1, Number> column, String alias) {
+    default SQLKtColumnAsSelector<T1, TR> columnSumAs(KProperty1<? super T1, Number> column, String alias) {
         getColumnAsSelector().columnSumAs(EasyKtLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnSumDistinct(KProperty1<T1, Number> column) {
+    default SQLKtColumnAsSelector<T1, TR> columnSumDistinct(KProperty1<? super T1, Number> column) {
         getColumnAsSelector().columnSumDistinct(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnSumDistinctAs(KProperty1<T1, Number> column, KProperty1<TR, Number> alias) {
+    default SQLKtColumnAsSelector<T1, TR> columnSumDistinctAs(KProperty1<? super T1, Number> column, KProperty1<? super TR, Number> alias) {
         return columnSumDistinctAs(column, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnSumDistinctAs(KProperty1<T1, Number> column, String alias) {
+    default SQLKtColumnAsSelector<T1, TR> columnSumDistinctAs(KProperty1<? super T1, Number> column, String alias) {
         getColumnAsSelector().columnSumDistinctAs(EasyKtLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnMax(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnMax(KProperty1<? super T1, TProperty> column) {
         getColumnAsSelector().columnMax(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnMaxAs(KProperty1<T1, ?> column, KProperty1<TR, ?> alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnMaxAs(KProperty1<? super T1, TProperty> column, KProperty1<? super TR, TProperty> alias) {
         return columnMaxAs(column, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnMaxAs(KProperty1<T1, ?> column, String alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnMaxAs(KProperty1<? super T1, TProperty> column, String alias) {
         getColumnAsSelector().columnMaxAs(EasyKtLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnMin(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnMin(KProperty1<? super T1, TProperty> column) {
         getColumnAsSelector().columnMin(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnMinAs(KProperty1<T1, ?> column, KProperty1<TR, ?> alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnMinAs(KProperty1<? super T1, TProperty> column, KProperty1<? super TR, TProperty> alias) {
         return columnMinAs(column, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnMinAs(KProperty1<T1, ?> column, String alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnMinAs(KProperty1<? super T1, TProperty> column, String alias) {
         getColumnAsSelector().columnMinAs(EasyKtLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnAvg(KProperty1<T1, Number> column) {
+    default SQLKtColumnAsSelector<T1, TR> columnAvg(KProperty1<? super T1, Number> column) {
         getColumnAsSelector().columnAvg(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnAvgAs(KProperty1<T1, Number> column, KProperty1<TR, Number> alias) {
+    default SQLKtColumnAsSelector<T1, TR> columnAvgAs(KProperty1<? super T1, Number> column, KProperty1<? super TR, Number> alias) {
         return columnAvgAs(column, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnAvgAs(KProperty1<T1, Number> column, String alias) {
+    default SQLKtColumnAsSelector<T1, TR> columnAvgAs(KProperty1<? super T1, Number> column, String alias) {
         getColumnAsSelector().columnAvgAs(EasyKtLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnAvgDistinct(KProperty1<T1, Number> column) {
+    default SQLKtColumnAsSelector<T1, TR> columnAvgDistinct(KProperty1<? super T1, Number> column) {
         getColumnAsSelector().columnAvgDistinct(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnAvgDistinctAs(KProperty1<T1, Number> column, KProperty1<TR, Number> alias) {
+    default SQLKtColumnAsSelector<T1, TR> columnAvgDistinctAs(KProperty1<? super T1, Number> column, KProperty1<? super TR, Number> alias) {
         return columnAvgDistinctAs(column, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnAvgDistinctAs(KProperty1<T1, Number> column, String alias) {
+    default SQLKtColumnAsSelector<T1, TR> columnAvgDistinctAs(KProperty1<? super T1, Number> column, String alias) {
         getColumnAsSelector().columnAvgDistinctAs(EasyKtLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnLen(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnLen(KProperty1<? super T1, TProperty> column) {
         getColumnAsSelector().columnLen(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnLenAs(KProperty1<T1, ?> column, KProperty1<TR, ?> alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnLenAs(KProperty1<? super T1, TProperty> column, KProperty1<? super TR, TProperty> alias) {
         return columnLenAs(column, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnLenAs(KProperty1<T1, ?> column, String alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnLenAs(KProperty1<? super T1, TProperty> column, String alias) {
         getColumnAsSelector().columnLenAs(EasyKtLambdaUtil.getPropertyName(column), alias);
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, KProperty1<TR, ?> alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, KProperty1<? super TR, TProperty> alias) {
         return columnFuncAs(columnPropertyFunction, EasyKtLambdaUtil.getPropertyName(alias));
     }
 
@@ -261,7 +261,7 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1,TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, KProperty1<TR, ?> alias){
+    default <TProperty> SQLKtColumnAsSelector<T1,TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, KProperty1<? super TR, TProperty> alias){
         getColumnAsSelector().sqlSegmentAs(sqlColumnSegment,EasyKtLambdaUtil.getPropertyName(alias));
         return this;
     }

@@ -127,13 +127,13 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
     }
 
     @Override
-    public KtEntityInsertable<T> onConflictDoUpdate(KProperty1<T, ?> constraintProperty) {
+    public KtEntityInsertable<T> onConflictDoUpdate(KProperty1<? super T, ?> constraintProperty) {
         clientInsertable.onConflictDoUpdate(EasyKtLambdaUtil.getPropertyName(constraintProperty));
         return this;
     }
 
     @Override
-    public KtEntityInsertable<T> onConflictDoUpdate(KProperty1<T, ?> constraintProperty, SQLExpression1<SQLKtColumnSetSelector<T>> setColumnSelector) {
+    public KtEntityInsertable<T> onConflictDoUpdate(KProperty1<? super T, ?> constraintProperty, SQLExpression1<SQLKtColumnSetSelector<T>> setColumnSelector) {
         clientInsertable.onConflictDoUpdate(EasyKtLambdaUtil.getPropertyName(constraintProperty),setSelector->{
             setColumnSelector.apply(new SQLKtColumnSetSelectorImpl<>(setSelector));
         });

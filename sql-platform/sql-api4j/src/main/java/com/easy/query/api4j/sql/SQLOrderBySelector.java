@@ -1,12 +1,9 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.sql.core.SQLLambdaNative;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
@@ -24,7 +21,7 @@ public interface SQLOrderBySelector<T1> extends EntitySQLTableOwner<T1>, SQLLamb
         return getOrderBySelector().getTable();
     }
 
-    default SQLOrderBySelector<T1> column(Property<T1, ?> column) {
+    default <TProperty> SQLOrderBySelector<T1> column(Property<T1, TProperty> column) {
         getOrderBySelector().column(EasyLambdaUtil.getPropertyName(column));
         return this;
     }

@@ -13,8 +13,8 @@ import kotlin.reflect.KProperty1;
 public interface SQLKtOnDuplicateKeyUpdate<T, TChain> {
     TChain onConflictDoUpdate();
 
-    TChain onConflictDoUpdate(KProperty1<T,?> constraintProperty);
-    TChain onConflictDoUpdate(KProperty1<T,?> constraintProperty, SQLExpression1<SQLKtColumnSetSelector<T>> setColumnSelector);
+    TChain onConflictDoUpdate(KProperty1<? super T,?> constraintProperty);
+    TChain onConflictDoUpdate(KProperty1<? super T,?> constraintProperty, SQLExpression1<SQLKtColumnSetSelector<T>> setColumnSelector);
 
     TChain onDuplicateKeyUpdate();
 

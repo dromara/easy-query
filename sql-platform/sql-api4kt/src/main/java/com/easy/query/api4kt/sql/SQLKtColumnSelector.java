@@ -23,16 +23,16 @@ public interface SQLKtColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLLam
         return getColumnSelector().getTable();
     }
 
-    default SQLKtColumnSelector<T1> columns(Collection<KProperty1<T1, ?>> columns) {
+    default <TProperty> SQLKtColumnSelector<T1> columns(Collection<KProperty1<? super T1, TProperty>> columns) {
         if(EasyCollectionUtil.isNotEmpty(columns)){
-            for (KProperty1<T1, ?> column : columns) {
+            for (KProperty1<? super T1, ?> column : columns) {
                 this.column(column);
             }
         }
         return this;
     }
 
-    default SQLKtColumnSelector<T1> column(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtColumnSelector<T1> column(KProperty1<? super T1, TProperty> column) {
         getColumnSelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
@@ -52,7 +52,7 @@ public interface SQLKtColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLLam
         return this;
     }
 
-    default SQLKtColumnSelector<T1> columnIgnore(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtColumnSelector<T1> columnIgnore(KProperty1<? super T1, TProperty> column) {
         getColumnSelector().columnIgnore(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }

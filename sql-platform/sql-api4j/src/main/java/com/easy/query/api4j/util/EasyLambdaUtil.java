@@ -21,7 +21,6 @@ public class EasyLambdaUtil {
             return null;
         }
         try {
-            //添加缓存
             Method declaredMethod = property.getClass().getDeclaredMethod("writeReplace");
             declaredMethod.setAccessible(Boolean.TRUE);
             SerializedLambda serializedLambda = (SerializedLambda) declaredMethod.invoke(property);

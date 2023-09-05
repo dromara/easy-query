@@ -13,7 +13,7 @@ public class EasyKtLambdaUtil {
     private EasyKtLambdaUtil() {
     }
 
-    public static <T> String getPropertyName(KProperty1<T, ?> property) {
+    public static <T> String getPropertyName(KProperty1<? super T, ?> property) {
         if (property == null) {
             return null;
         }

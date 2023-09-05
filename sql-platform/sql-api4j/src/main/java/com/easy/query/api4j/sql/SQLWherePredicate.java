@@ -2,8 +2,6 @@ package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.sql.core.SQLLambdaNative;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
@@ -33,7 +31,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
     /**
      * 大于 column > val
      */
-    default SQLWherePredicate<T1> gt(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> gt(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().gt(true, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -46,7 +44,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val       值
      * @return children
      */
-    default SQLWherePredicate<T1> gt(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> gt(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().gt(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -54,7 +52,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
     /**
      * 等于 column >= val
      */
-    default SQLWherePredicate<T1> ge(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> ge(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().ge(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -67,7 +65,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val       值
      * @return children
      */
-    default SQLWherePredicate<T1> ge(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> ge(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().ge(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -75,7 +73,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
     /**
      * 等于 column = val
      */
-    default SQLWherePredicate<T1> eq(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> eq(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().eq(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -88,7 +86,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val       值
      * @return children
      */
-    default SQLWherePredicate<T1> eq(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> eq(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().eq(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -96,7 +94,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
     /**
      * 不等于 column <> val
      */
-    default SQLWherePredicate<T1> ne(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> ne(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().ne(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -109,7 +107,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val       值
      * @return children
      */
-    default SQLWherePredicate<T1> ne(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> ne(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().ne(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -117,7 +115,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
     /**
      * 小于等于 column <= val
      */
-    default SQLWherePredicate<T1> le(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> le(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().le(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -130,7 +128,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val       值
      * @return children
      */
-    default SQLWherePredicate<T1> le(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> le(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().le(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -138,7 +136,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
     /**
      * 小于 column < val
      */
-    default SQLWherePredicate<T1> lt(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> lt(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().lt(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -151,7 +149,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val       值
      * @return children
      */
-    default SQLWherePredicate<T1> lt(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> lt(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().lt(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -164,7 +162,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val
      * @return
      */
-    default SQLWherePredicate<T1> likeMatchLeft(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> likeMatchLeft(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().likeMatchLeft(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -178,7 +176,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val
      * @return
      */
-    default SQLWherePredicate<T1> likeMatchLeft(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> likeMatchLeft(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().likeMatchLeft(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -191,7 +189,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val
      * @return
      */
-    default SQLWherePredicate<T1> likeMatchRight(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> likeMatchRight(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().likeMatchRight(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -205,7 +203,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val
      * @return
      */
-    default SQLWherePredicate<T1> likeMatchRight(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> likeMatchRight(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().likeMatchRight(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -214,7 +212,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * column like %val%
      * 列全匹配
      */
-    default SQLWherePredicate<T1> like(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> like(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().like(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -228,7 +226,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val       值
      * @return children
      */
-    default SQLWherePredicate<T1> like(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> like(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().like(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -243,7 +241,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param sqlLike
      * @return
      */
-    default SQLWherePredicate<T1> like(boolean condition, Property<T1, ?> column, Object val, SQLLikeEnum sqlLike) {
+    default <TProperty> SQLWherePredicate<T1> like(boolean condition, Property<T1, TProperty> column, TProperty val, SQLLikeEnum sqlLike) {
         getWherePredicate().like(condition, EasyLambdaUtil.getPropertyName(column), val, sqlLike);
         return this;
     }
@@ -255,7 +253,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val
      * @return
      */
-    default SQLWherePredicate<T1> notLikeMatchLeft(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> notLikeMatchLeft(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().notLikeMatchLeft(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -268,7 +266,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val
      * @return
      */
-    default SQLWherePredicate<T1> notLikeMatchLeft(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> notLikeMatchLeft(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().notLikeMatchLeft(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -280,7 +278,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val
      * @return
      */
-    default SQLWherePredicate<T1> notLikeMatchRight(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> notLikeMatchRight(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().notLikeMatchRight(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -293,7 +291,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val
      * @return
      */
-    default SQLWherePredicate<T1> notLikeMatchRight(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> notLikeMatchRight(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().notLikeMatchRight(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -301,7 +299,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
     /**
      * column not like %val%
      */
-    default SQLWherePredicate<T1> notLike(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> notLike(Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().notLike(EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
@@ -314,12 +312,12 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param val       值
      * @return children
      */
-    default SQLWherePredicate<T1> notLike(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLWherePredicate<T1> notLike(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getWherePredicate().notLike(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default SQLWherePredicate<T1> notLike(boolean condition, Property<T1, ?> column, Object val, SQLLikeEnum sqlLike) {
+    default <TProperty> SQLWherePredicate<T1> notLike(boolean condition, Property<T1, TProperty> column, TProperty val, SQLLikeEnum sqlLike) {
         getWherePredicate().notLike(condition, EasyLambdaUtil.getPropertyName(column), val, sqlLike);
         return this;
     }
@@ -327,7 +325,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
     /**
      * column is null
      */
-    default SQLWherePredicate<T1> isNull(Property<T1, ?> column) {
+    default <TProperty> SQLWherePredicate<T1> isNull(Property<T1, TProperty> column) {
         getWherePredicate().isNull(EasyLambdaUtil.getPropertyName(column));
         return this;
     }
@@ -339,7 +337,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param column    字段
      * @return children
      */
-    default SQLWherePredicate<T1> isNull(boolean condition, Property<T1, ?> column) {
+    default <TProperty> SQLWherePredicate<T1> isNull(boolean condition, Property<T1, TProperty> column) {
         getWherePredicate().isNull(condition, EasyLambdaUtil.getPropertyName(column));
         return this;
     }
@@ -347,7 +345,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
     /**
      * column is not null
      */
-    default SQLWherePredicate<T1> isNotNull(Property<T1, ?> column) {
+    default <TProperty> SQLWherePredicate<T1> isNotNull(Property<T1, TProperty> column) {
         getWherePredicate().isNotNull(EasyLambdaUtil.getPropertyName(column));
         return this;
     }
@@ -359,7 +357,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param column    字段
      * @return children
      */
-    default SQLWherePredicate<T1> isNotNull(boolean condition, Property<T1, ?> column) {
+    default <TProperty> SQLWherePredicate<T1> isNotNull(boolean condition, Property<T1, TProperty> column) {
         getWherePredicate().isNotNull(condition, EasyLambdaUtil.getPropertyName(column));
         return this;
     }
@@ -368,7 +366,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * column in collection
      * 集合为空返回False
      */
-    default SQLWherePredicate<T1> in(Property<T1, ?> column, Collection<?> collection) {
+    default <TProperty> SQLWherePredicate<T1> in(Property<T1, TProperty> column, Collection<TProperty> collection) {
         getWherePredicate().in(EasyLambdaUtil.getPropertyName(column), collection);
         return this;
     }
@@ -377,16 +375,16 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * column in collection
      * 集合为空返回False
      */
-    default SQLWherePredicate<T1> in(boolean condition, Property<T1, ?> column, Collection<?> collection) {
+    default <TProperty> SQLWherePredicate<T1> in(boolean condition, Property<T1, TProperty> column, Collection<TProperty> collection) {
         getWherePredicate().in(condition, EasyLambdaUtil.getPropertyName(column), collection);
         return this;
     }
 
-    default <TProperty> SQLWherePredicate<T1> in(Property<T1, ?> column, TProperty[] collection) {
+    default <TProperty> SQLWherePredicate<T1> in(Property<T1, TProperty> column, TProperty[] collection) {
         getWherePredicate().in(EasyLambdaUtil.getPropertyName(column), collection);
         return this;
     }
-    default <TProperty> SQLWherePredicate<T1> in(boolean condition, Property<T1, ?> column, TProperty[] collection) {
+    default <TProperty> SQLWherePredicate<T1> in(boolean condition, Property<T1, TProperty> column, TProperty[] collection) {
         getWherePredicate().in(condition, EasyLambdaUtil.getPropertyName(column), collection);
         return this;
     }
@@ -405,7 +403,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * column not in collection
      * 集合为空返回True
      */
-    default SQLWherePredicate<T1> notIn(Property<T1, ?> column, Collection<?> collection) {
+    default <TProperty> SQLWherePredicate<T1> notIn(Property<T1, TProperty> column, Collection<TProperty> collection) {
         getWherePredicate().notIn(EasyLambdaUtil.getPropertyName(column), collection);
         return this;
     }
@@ -414,25 +412,25 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * column not in collection
      * 集合为空返回True
      */
-    default SQLWherePredicate<T1> notIn(boolean condition, Property<T1, ?> column, Collection<?> collection) {
+    default <TProperty> SQLWherePredicate<T1> notIn(boolean condition, Property<T1, TProperty> column, Collection<TProperty> collection) {
         getWherePredicate().notIn(condition, EasyLambdaUtil.getPropertyName(column), collection);
         return this;
     }
-    default <TProperty> SQLWherePredicate<T1> notIn(Property<T1, ?> column, TProperty[] collection) {
+    default <TProperty> SQLWherePredicate<T1> notIn(Property<T1, TProperty> column, TProperty[] collection) {
         getWherePredicate().notIn(EasyLambdaUtil.getPropertyName(column), collection);
         return this;
     }
-    default <TProperty> SQLWherePredicate<T1> notIn(boolean condition, Property<T1, ?> column, TProperty[] collection) {
+    default <TProperty> SQLWherePredicate<T1> notIn(boolean condition, Property<T1, TProperty> column, TProperty[] collection) {
         getWherePredicate().notIn(condition, EasyLambdaUtil.getPropertyName(column), collection);
         return this;
     }
 
-    default <TProperty> SQLWherePredicate<T1> notIn(Property<T1, ?> column, Queryable<TProperty> subQueryable) {
+    default <TProperty> SQLWherePredicate<T1> notIn(Property<T1, TProperty> column, Queryable<TProperty> subQueryable) {
         getWherePredicate().notIn(EasyLambdaUtil.getPropertyName(column), subQueryable);
         return this;
     }
 
-    default <TProperty> SQLWherePredicate<T1> notIn(boolean condition, Property<T1, ?> column, Queryable<TProperty> subQueryable) {
+    default <TProperty> SQLWherePredicate<T1> notIn(boolean condition, Property<T1, TProperty> column, Queryable<TProperty> subQueryable) {
         getWherePredicate().notIn(condition, EasyLambdaUtil.getPropertyName(column), subQueryable);
         return this;
     }
@@ -468,7 +466,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param valRight
      * @return
      */
-    default SQLWherePredicate<T1> rangeOpenClosed(Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> SQLWherePredicate<T1> rangeOpenClosed(Property<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeOpenClosed(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -484,7 +482,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param valRight
      * @return
      */
-    default SQLWherePredicate<T1> rangeOpenClosed(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> SQLWherePredicate<T1> rangeOpenClosed(boolean condition, Property<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN_CLOSED);
     }
 
@@ -497,7 +495,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param valRight 区间右侧的值
      * @return
      */
-    default SQLWherePredicate<T1> rangeOpen(Property<T1, ?> column, Object valLeft, Object valRight) {
+    default <TProperty> SQLWherePredicate<T1> rangeOpen(Property<T1, TProperty> column, TProperty valLeft, TProperty valRight) {
         return rangeOpen(true, column, true, valLeft, true, valRight);
     }
 
@@ -512,7 +510,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param valRight       区间右侧的值
      * @return
      */
-    default SQLWherePredicate<T1> rangeOpen(Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> SQLWherePredicate<T1> rangeOpen(Property<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeOpen(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -528,7 +526,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param valRight
      * @return
      */
-    default SQLWherePredicate<T1> rangeOpen(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> SQLWherePredicate<T1> rangeOpen(boolean condition, Property<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN);
     }
 
@@ -543,7 +541,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param valRight
      * @return
      */
-    default SQLWherePredicate<T1> rangeClosedOpen(Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> SQLWherePredicate<T1> rangeClosedOpen(Property<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeClosedOpen(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -559,7 +557,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param valRight
      * @return
      */
-    default SQLWherePredicate<T1> rangeClosedOpen(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> SQLWherePredicate<T1> rangeClosedOpen(boolean condition, Property<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED_OPEN);
     }
 
@@ -572,7 +570,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param valRight
      * @return
      */
-    default SQLWherePredicate<T1> rangeClosed(Property<T1, ?> column, Object valLeft, Object valRight) {
+    default <TProperty> SQLWherePredicate<T1> rangeClosed(Property<T1, TProperty> column, TProperty valLeft, TProperty valRight) {
         return rangeClosed(true, column, true, valLeft, true, valRight);
     }
 
@@ -587,7 +585,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param valRight
      * @return
      */
-    default SQLWherePredicate<T1> rangeClosed(Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> SQLWherePredicate<T1> rangeClosed(Property<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeClosed(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -603,7 +601,7 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param valRight
      * @return
      */
-    default SQLWherePredicate<T1> rangeClosed(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> SQLWherePredicate<T1> rangeClosed(boolean condition, Property<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED);
     }
 
@@ -620,67 +618,67 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
      * @param sqlRange
      * @return
      */
-    default SQLWherePredicate<T1> range(boolean condition, Property<T1, ?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
+    default <TProperty> SQLWherePredicate<T1> range(boolean condition, Property<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight, SQLRangeEnum sqlRange) {
         getWherePredicate().range(condition, EasyLambdaUtil.getPropertyName(column), conditionLeft, valLeft, conditionRight, valRight, sqlRange);
         return this;
     }
 
 
-    default SQLWherePredicate<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
+    default <TProperty> SQLWherePredicate<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, TProperty val) {
         return columnFunc(true, columnPropertyFunction, sqlPredicateCompare, val);
     }
 
-    default SQLWherePredicate<T1> columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
+    default <TProperty> SQLWherePredicate<T1> columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, TProperty val) {
         getWherePredicate().columnFunc(condition, columnPropertyFunction, sqlPredicateCompare, val);
         return this;
     }
 
-    default <T2> SQLWherePredicate<T1> gt(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> gt(EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         return gt(true, sub, column1, column2);
     }
 
-    default <T2> SQLWherePredicate<T1> gt(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> gt(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         getWherePredicate().gt(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }
-    default <T2> SQLWherePredicate<T1> ge(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> ge(EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         return ge(true, sub, column1, column2);
     }
 
-    default <T2> SQLWherePredicate<T1> ge(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> ge(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         getWherePredicate().ge(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }
-    default <T2> SQLWherePredicate<T1> eq(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> eq(EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         return eq(true, sub, column1, column2);
     }
 
-    default <T2> SQLWherePredicate<T1> eq(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> eq(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         getWherePredicate().eq(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }
 
-    default <T2> SQLWherePredicate<T1> ne(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> ne(EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         return ne(true, sub, column1, column2);
     }
 
-    default <T2> SQLWherePredicate<T1> ne(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> ne(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         getWherePredicate().ne(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }
-    default <T2> SQLWherePredicate<T1> le(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> le(EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         return le(true, sub, column1, column2);
     }
 
-    default <T2> SQLWherePredicate<T1> le(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> le(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         getWherePredicate().le(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }
-    default <T2> SQLWherePredicate<T1> lt(EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> lt(EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         return lt(true, sub, column1, column2);
     }
 
-    default <T2> SQLWherePredicate<T1> lt(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, ?> column1, Property<T2, ?> column2) {
+    default <T2,TProperty> SQLWherePredicate<T1> lt(boolean condition, EntitySQLTableOwner<T2> sub, Property<T1, TProperty> column1, Property<T2, TProperty> column2) {
         getWherePredicate().lt(condition, sub, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }

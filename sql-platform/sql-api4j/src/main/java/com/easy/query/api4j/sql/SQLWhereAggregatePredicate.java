@@ -1,8 +1,6 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.sql.core.SQLLambdaNative;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
-import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
@@ -31,79 +29,79 @@ public interface SQLWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>,
         return getWhereAggregatePredicate().getRuntimeContext();
     }
 
-    default SQLWhereAggregatePredicate<T1> avg(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> avg(Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return avg(true, column, compare, val);
     }
 
-    default SQLWhereAggregatePredicate<T1> avg(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> avg(boolean condition, Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().avg(condition, EasyLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLWhereAggregatePredicate<T1> avgDistinct(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> avgDistinct(Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return avgDistinct(true, column, compare, val);
     }
 
-    default SQLWhereAggregatePredicate<T1> avgDistinct(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> avgDistinct(boolean condition, Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().avgDistinct(condition, EasyLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLWhereAggregatePredicate<T1> min(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> min(Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return min(true, column, compare, val);
     }
 
-    default SQLWhereAggregatePredicate<T1> min(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> min(boolean condition, Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().min(condition, EasyLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLWhereAggregatePredicate<T1> max(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> max(Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return max(true, column, compare, val);
     }
 
-    default SQLWhereAggregatePredicate<T1> max(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> max(boolean condition, Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().max(condition, EasyLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLWhereAggregatePredicate<T1> sum(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> sum(Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return sum(true, column, compare, val);
     }
 
-    default SQLWhereAggregatePredicate<T1> sum(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> sum(boolean condition, Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().sum(condition, EasyLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLWhereAggregatePredicate<T1> sumDistinct(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> sumDistinct(Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return sum(true, column, compare, val);
     }
 
-    default SQLWhereAggregatePredicate<T1> sumDistinct(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> sumDistinct(boolean condition, Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().sumDistinct(condition, EasyLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLWhereAggregatePredicate<T1> countDistinct(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> countDistinct(Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return countDistinct(true, column, compare, val);
     }
 
-    default SQLWhereAggregatePredicate<T1> countDistinct(boolean condition, Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> countDistinct(boolean condition, Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().countDistinct(condition, EasyLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLWhereAggregatePredicate<T1> count(Property<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> count(Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return count(true, column, compare, val);
     }
 
-    default SQLWhereAggregatePredicate<T1> count(boolean condition, Property<T1, ?> column, SQLPredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> count(boolean condition, Property<T1, TProperty> column, SQLPredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().count(condition, EasyLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLWhereAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, Property<T1, ?> column, SQLPredicateCompare compare, Object val) {
+    default <TProperty> SQLWhereAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, Property<T1, TProperty> column, SQLPredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().func(condition, columnFunction, EasyLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
@@ -118,7 +116,7 @@ public interface SQLWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>,
     }
 
     default SQLWhereAggregatePredicate<T1> and(boolean condition) {
-        getWhereAggregatePredicate().and(true);
+        getWhereAggregatePredicate().and(condition);
         return this;
     }
 

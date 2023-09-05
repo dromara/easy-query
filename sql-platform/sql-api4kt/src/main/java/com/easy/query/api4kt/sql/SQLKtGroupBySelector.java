@@ -1,11 +1,8 @@
 package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.sql.core.SQLLambdaKtNative;
-import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContext;
-import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContextImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -24,7 +21,7 @@ public interface SQLKtGroupBySelector<T1> extends EntitySQLTableOwner<T1>, SQLLa
         return getGroupBySelector().getTable();
     }
 
-    default SQLKtGroupBySelector<T1> column(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtGroupBySelector<T1> column(KProperty1<? super T1, TProperty> column) {
         getGroupBySelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }

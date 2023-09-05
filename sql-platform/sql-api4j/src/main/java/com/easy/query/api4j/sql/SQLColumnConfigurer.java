@@ -17,7 +17,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 public interface SQLColumnConfigurer<T> {
     ColumnConfigurer<T> getColumnConfigurer();
 
-    default SQLColumnConfigurer<T> column(Property<T,?> property, String sqlSegment, SQLExpression2<SQLNativeLambdaExpressionContext<T>, SQLParameter> contextConsume){
+    default <TProperty> SQLColumnConfigurer<T> column(Property<T,TProperty> property, String sqlSegment, SQLExpression2<SQLNativeLambdaExpressionContext<T>, SQLParameter> contextConsume){
         getColumnConfigurer().column(EasyLambdaUtil.getPropertyName(property),sqlSegment,(context, sqlParameter)->{
             contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context),sqlParameter);
         });

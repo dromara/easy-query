@@ -25,7 +25,7 @@
 //       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(navigate.value());
 //       return new EasyProxyQueryable<>(,clientQueryable);
 //   }
-//   default  <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> many(KProperty1<T1, Collection<TProperty>> navigate){
+//   default  <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> many(KProperty1<? super T1, Collection<TProperty>> navigate){
 //       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(EasyKtLambdaUtil.getPropertyName(navigate));
 //       return new EasyKtQueryable<>(clientQueryable);
 //   }

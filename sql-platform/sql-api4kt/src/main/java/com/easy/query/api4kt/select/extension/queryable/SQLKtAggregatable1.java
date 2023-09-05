@@ -19,63 +19,63 @@ public interface SQLKtAggregatable1<T1> extends ClientKtQueryableAvailable<T1> {
      * @param <TMember>
      * @return
      */
-    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(KProperty1<T1, TMember> column) {
+    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(KProperty1<? super T1, TMember> column) {
         return getClientQueryable().sumBigDecimalOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(KProperty1<T1, TMember> column, BigDecimal def) {
+    default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(KProperty1<? super T1, TMember> column, BigDecimal def) {
         return getClientQueryable().sumBigDecimalOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
-    default <TMember extends Number> TMember sumOrNull(KProperty1<T1, TMember> column) {
+    default <TMember extends Number> TMember sumOrNull(KProperty1<? super T1, TMember> column) {
         return getClientQueryable().sumOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    default <TMember extends Number> TMember sumOrDefault(KProperty1<T1, TMember> column, TMember def) {
+    default <TMember extends Number> TMember sumOrDefault(KProperty1<? super T1, TMember> column, TMember def) {
         return getClientQueryable().sumOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
-    default <TMember extends Comparable<?>> TMember maxOrNull(KProperty1<T1, TMember> column) {
+    default <TMember extends Comparable<?>> TMember maxOrNull(KProperty1<? super T1, TMember> column) {
         return getClientQueryable().maxOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    default <TMember extends Comparable<?>> TMember maxOrDefault(KProperty1<T1, TMember> column, TMember def) {
+    default <TMember extends Comparable<?>> TMember maxOrDefault(KProperty1<? super T1, TMember> column, TMember def) {
         return getClientQueryable().maxOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
-    default <TMember> TMember minOrNull(KProperty1<T1, TMember> column) {
+    default <TMember> TMember minOrNull(KProperty1<? super T1, TMember> column) {
         return getClientQueryable().minOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    default <TMember> TMember minOrDefault(KProperty1<T1, TMember> column, TMember def) {
+    default <TMember> TMember minOrDefault(KProperty1<? super T1, TMember> column, TMember def) {
         return getClientQueryable().minOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
-    default <TMember extends Number> Double avgOrNull(KProperty1<T1, TMember> column) {
+    default <TMember extends Number> Double avgOrNull(KProperty1<? super T1, TMember> column) {
         return getClientQueryable().avgOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(KProperty1<T1, TMember> column) {
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(KProperty1<? super T1, TMember> column) {
         return getClientQueryable().avgBigDecimalOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    default <TMember extends Number> Float avgFloatOrNull(KProperty1<T1, TMember> column) {
+    default <TMember extends Number> Float avgFloatOrNull(KProperty1<? super T1, TMember> column) {
         return getClientQueryable().avgFloatOrNull(EasyKtLambdaUtil.getPropertyName(column));
     }
 
-    default <TMember extends Number> Double avgOrDefault(KProperty1<T1, TMember> column, Double def) {
+    default <TMember extends Number> Double avgOrDefault(KProperty1<? super T1, TMember> column, Double def) {
         return getClientQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
-    default BigDecimal avgOrDefault(KProperty1<T1, BigDecimal> column, BigDecimal def) {
+    default BigDecimal avgOrDefault(KProperty1<? super T1, BigDecimal> column, BigDecimal def) {
         return getClientQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
-    default Float avgOrDefault(KProperty1<T1, Float> column, Float def) {
+    default Float avgOrDefault(KProperty1<? super T1, Float> column, Float def) {
         return getClientQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def);
     }
 
-    default <TMember extends Number, TResult extends Number> TResult avgOrDefault(KProperty1<T1, TMember> column, TResult def, Class<TResult> resultClass) {
+    default <TMember extends Number, TResult extends Number> TResult avgOrDefault(KProperty1<? super T1, TMember> column, TResult def, Class<TResult> resultClass) {
         return getClientQueryable().avgOrDefault(EasyKtLambdaUtil.getPropertyName(column), def, resultClass);
     }
 }

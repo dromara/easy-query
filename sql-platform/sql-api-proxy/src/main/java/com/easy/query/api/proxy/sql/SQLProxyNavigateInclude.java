@@ -15,17 +15,17 @@
 // */
 //public interface SQLProxyNavigateInclude<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 //    NavigateInclude<T1> getNavigateInclude();
-//    default  <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> one(KProperty1<T1,TProperty> navigate){
+//    default  <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> one(KProperty1<? super T1,TProperty> navigate){
 //        return one(navigate,null);
 //    }
-//    default  <TProperty> ProxyQueryable<TProperty> one(KProperty1<T1,TProperty> navigate,Integer groupSize){
+//    default  <TProperty> ProxyQueryable<TProperty> one(KProperty1<? super T1,TProperty> navigate,Integer groupSize){
 //        ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(EasyKtLambdaUtil.getPropertyName(navigate),groupSize);
 //        return new ProxyQueryable<>(clientQueryable);
 //    }
-//    default  <TProperty> ProxyQueryable<TProperty> many(KProperty1<T1, Collection<TProperty>> navigate){
+//    default  <TProperty> ProxyQueryable<TProperty> many(KProperty1<? super T1, Collection<TProperty>> navigate){
 //        return many(navigate,null);
 //    }
-//    default  <TProperty> ProxyQueryable<TProperty> many(KProperty1<T1, Collection<TProperty>> navigate,Integer groupSize){
+//    default  <TProperty> ProxyQueryable<TProperty> many(KProperty1<? super T1, Collection<TProperty>> navigate,Integer groupSize){
 //        ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(EasyKtLambdaUtil.getPropertyName(navigate),groupSize);
 //        return new EasyKtQueryable<>(clientQueryable);
 //    }

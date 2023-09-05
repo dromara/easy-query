@@ -24,12 +24,12 @@ public interface SQLKtColumnSetSelector<T1> extends EntitySQLTableOwner<T1> {
     }
 
 
-    default SQLKtColumnSetSelector<T1> column(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtColumnSetSelector<T1> column(KProperty1<? super T1, TProperty> column) {
         getColumnSetSelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default SQLKtColumnSetSelector<T1> columnIgnore(KProperty1<T1, ?> column) {
+    default <TProperty> SQLKtColumnSetSelector<T1> columnIgnore(KProperty1<? super T1, TProperty> column) {
         getColumnSetSelector().columnIgnore(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }

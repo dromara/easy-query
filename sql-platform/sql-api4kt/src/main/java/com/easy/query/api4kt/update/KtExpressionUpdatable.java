@@ -25,115 +25,115 @@ import java.util.Collection;
 public interface KtExpressionUpdatable<T> extends Updatable<T, KtExpressionUpdatable<T>>, WithVersionable<KtExpressionUpdatable<T>>, ConfigureVersionable<KtExpressionUpdatable<T>> {
     ClientExpressionUpdatable<T> getClientUpdate();
 
-    default KtExpressionUpdatable<T> set(KProperty1<T, ?> column, Object val) {
+    default KtExpressionUpdatable<T> set(KProperty1<? super T, ?> column, Object val) {
         getClientUpdate().set(EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> set(boolean condition, KProperty1<T, ?> column, Object val) {
+    default KtExpressionUpdatable<T> set(boolean condition, KProperty1<? super T, ?> column, Object val) {
         getClientUpdate().set(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> setWithColumn(KProperty1<T, ?> column1, KProperty1<T, ?> column2) {
+    default KtExpressionUpdatable<T> setWithColumn(KProperty1<? super T, ?> column1, KProperty1<? super T, ?> column2) {
         getClientUpdate().setWithColumn(EasyKtLambdaUtil.getPropertyName(column1), EasyKtLambdaUtil.getPropertyName(column2));
         return this;
     }
 
-    default KtExpressionUpdatable<T> setWithColumn(boolean condition, KProperty1<T, ?> column1, KProperty1<T, ?> column2) {
+    default KtExpressionUpdatable<T> setWithColumn(boolean condition, KProperty1<? super T, ?> column1, KProperty1<? super T, ?> column2) {
         getClientUpdate().setWithColumn(condition, EasyKtLambdaUtil.getPropertyName(column1), EasyKtLambdaUtil.getPropertyName(column2));
         return this;
     }
     // region 列++ --
 
 
-    default KtExpressionUpdatable<T> setIncrement(KProperty1<T, Integer> column) {
+    default KtExpressionUpdatable<T> setIncrement(KProperty1<? super T, Integer> column) {
         getClientUpdate().setIncrement(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default KtExpressionUpdatable<T> setIncrement(boolean condition, KProperty1<T, Integer> column) {
+    default KtExpressionUpdatable<T> setIncrement(boolean condition, KProperty1<? super T, Integer> column) {
         getClientUpdate().setIncrement(condition, EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default KtExpressionUpdatable<T> setIncrement(KProperty1<T, Integer> column, int val) {
+    default KtExpressionUpdatable<T> setIncrement(KProperty1<? super T, Integer> column, int val) {
         getClientUpdate().setIncrement(EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> setIncrement(boolean condition, KProperty1<T, Integer> column, int val) {
+    default KtExpressionUpdatable<T> setIncrement(boolean condition, KProperty1<? super T, Integer> column, int val) {
         getClientUpdate().setIncrement(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> setIncrement(KProperty1<T, Long> column, long val) {
+    default KtExpressionUpdatable<T> setIncrement(KProperty1<? super T, Long> column, long val) {
         getClientUpdate().setIncrement(EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> setIncrement(boolean condition, KProperty1<T, Long> column, long val) {
+    default KtExpressionUpdatable<T> setIncrement(boolean condition, KProperty1<? super T, Long> column, long val) {
         getClientUpdate().setIncrement(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
 
-    default KtExpressionUpdatable<T> setIncrement(KProperty1<T, ? extends Number> column, Number val) {
+    default KtExpressionUpdatable<T> setIncrement(KProperty1<? super T, ? extends Number> column, Number val) {
         getClientUpdate().setIncrement(EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> setIncrementNumber(boolean condition, KProperty1<T, ? extends Number> column, Number val) {
+    default KtExpressionUpdatable<T> setIncrementNumber(boolean condition, KProperty1<? super T, ? extends Number> column, Number val) {
         getClientUpdate().setDecrementNumber(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> setDecrement(KProperty1<T, Integer> column) {
+    default KtExpressionUpdatable<T> setDecrement(KProperty1<? super T, Integer> column) {
         getClientUpdate().setDecrement(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default KtExpressionUpdatable<T> setDecrement(boolean condition, KProperty1<T, Integer> column) {
+    default KtExpressionUpdatable<T> setDecrement(boolean condition, KProperty1<? super T, Integer> column) {
         getClientUpdate().setDecrement(condition, EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
-    default KtExpressionUpdatable<T> setDecrement(KProperty1<T, Integer> column, int val) {
+    default KtExpressionUpdatable<T> setDecrement(KProperty1<? super T, Integer> column, int val) {
         getClientUpdate().setDecrement(EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> setDecrement(boolean condition, KProperty1<T, Integer> column, int val) {
+    default KtExpressionUpdatable<T> setDecrement(boolean condition, KProperty1<? super T, Integer> column, int val) {
         getClientUpdate().setDecrement(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> setDecrement(KProperty1<T, Long> column, long val) {
+    default KtExpressionUpdatable<T> setDecrement(KProperty1<? super T, Long> column, long val) {
         getClientUpdate().setDecrement(EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> setDecrement(boolean condition, KProperty1<T, Long> column, long val) {
+    default KtExpressionUpdatable<T> setDecrement(boolean condition, KProperty1<? super T, Long> column, long val) {
         getClientUpdate().setDecrement(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
 
-    default KtExpressionUpdatable<T> setDecrement(KProperty1<T, ? extends Number> column, Number val) {
+    default KtExpressionUpdatable<T> setDecrement(KProperty1<? super T, ? extends Number> column, Number val) {
         getClientUpdate().setDecrement(EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> setDecrementNumber(boolean condition, KProperty1<T, ? extends Number> column, Number val) {
+    default KtExpressionUpdatable<T> setDecrementNumber(boolean condition, KProperty1<? super T, ? extends Number> column, Number val) {
         getClientUpdate().setDecrementNumber(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default KtExpressionUpdatable<T> setSQLSegment(KProperty1<T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaKtExpressionContext<T>> contextConsume) {
+    default KtExpressionUpdatable<T> setSQLSegment(KProperty1<? super T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaKtExpressionContext<T>> contextConsume) {
         return setSQLSegment(true, property, sqlSegment, contextConsume);
     }
 
-    default KtExpressionUpdatable<T> setSQLSegment(boolean condition, KProperty1<T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaKtExpressionContext<T>> contextConsume) {
+    default KtExpressionUpdatable<T> setSQLSegment(boolean condition, KProperty1<? super T, ?> property, String sqlSegment, SQLExpression1<SQLNativeLambdaKtExpressionContext<T>> contextConsume) {
         if (condition) {
             getClientUpdate().setSQLSegment(EasyKtLambdaUtil.getPropertyName(property), sqlSegment, (context) -> {
                 contextConsume.apply(new SQLNativeLambdaKtExpressionContextImpl<>(context));

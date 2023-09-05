@@ -15,27 +15,25 @@ public class InterceptorTest extends BaseTest {
 
     @Test
     public void test1(){
-        boolean any = easyQuery.queryable(TopicInterceptor.class).whereById("123").any();
-        if(any){
-            easyQuery.deletable(TopicInterceptor.class).whereById("123").executeRows();
-        }
+
+        easyQuery.deletable(TopicInterceptor.class).whereById("123xx").executeRows();
         CurrentUserHelper.setUserId("xiaoming");
         CurrentUserHelper.setTenantId("abc");
         TopicInterceptor topicInterceptor = new TopicInterceptor();
-        topicInterceptor.setId("123");
+        topicInterceptor.setId("123xx");
         topicInterceptor.setTitle("123");
         topicInterceptor.setStars(123);
         long l = easyQuery.insertable(topicInterceptor).executeRows();
         Assert.assertEquals(1,l);
-        String s = easyQuery.queryable(TopicInterceptor.class).whereById("123").noInterceptor("MyTenantInterceptor").toSQL();
+        String s = easyQuery.queryable(TopicInterceptor.class).whereById("123xx").noInterceptor("MyTenantInterceptor").toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time`,`create_by`,`update_time`,`update_by`,`tenant_id` FROM `t_topic_interceptor` WHERE `id` = ?",s);
-        TopicInterceptor topicInterceptor1 = easyQuery.queryable(TopicInterceptor.class).whereById("123").firstOrNull();
+        TopicInterceptor topicInterceptor1 = easyQuery.queryable(TopicInterceptor.class).whereById("123xx").firstOrNull();
         Assert.assertNotNull(topicInterceptor1);
         Assert.assertEquals(CurrentUserHelper.getUserId(),topicInterceptor1.getCreateBy());
         CurrentUserHelper.setUserId("xiaoming1");
         long l1 = easyQuery.updatable(topicInterceptor1).executeRows();
         Assert.assertEquals(1,l1);
-        TopicInterceptor topicInterceptor2 = easyQuery.queryable(TopicInterceptor.class).whereById("123").firstOrNull();
+        TopicInterceptor topicInterceptor2 = easyQuery.queryable(TopicInterceptor.class).whereById("123xx").firstOrNull();
         Assert.assertNotNull(topicInterceptor2);
         Assert.assertNotEquals(topicInterceptor1.getUpdateBy(),topicInterceptor1.getCreateBy());
         Assert.assertNotEquals(CurrentUserHelper.getUserId(),topicInterceptor1.getCreateBy());

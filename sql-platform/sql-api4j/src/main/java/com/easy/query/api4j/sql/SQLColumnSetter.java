@@ -23,7 +23,7 @@ public interface SQLColumnSetter<T1> extends EntitySQLTableOwner<T1>, SQLSetLamb
     /**
      * set column=val
      */
-    default SQLColumnSetter<T1> set(Property<T1, ?> column, Object val) {
+    default <TProperty> SQLColumnSetter<T1> set(Property<T1, TProperty> column, TProperty val) {
         return set(true, column, val);
     }
 
@@ -35,16 +35,16 @@ public interface SQLColumnSetter<T1> extends EntitySQLTableOwner<T1>, SQLSetLamb
      * @param val       值
      * @return children
      */
-    default SQLColumnSetter<T1> set(boolean condition, Property<T1, ?> column, Object val) {
+    default <TProperty> SQLColumnSetter<T1> set(boolean condition, Property<T1, TProperty> column, TProperty val) {
         getColumnSetter().set(condition, EasyLambdaUtil.getPropertyName(column), val);
         return this;
     }
 
-    default SQLColumnSetter<T1> setWithColumn(Property<T1, ?> column1, Property<T1, ?> column2) {
+    default <TProperty> SQLColumnSetter<T1> setWithColumn(Property<T1, TProperty> column1, Property<T1, TProperty> column2) {
         return setWithColumn(true, column1, column2);
     }
 
-    default SQLColumnSetter<T1> setWithColumn(boolean condition, Property<T1, ?> column1, Property<T1, ?> column2) {
+    default <TProperty> SQLColumnSetter<T1> setWithColumn(boolean condition, Property<T1, TProperty> column1, Property<T1, TProperty> column2) {
         getColumnSetter().setWithColumn(condition, EasyLambdaUtil.getPropertyName(column1), EasyLambdaUtil.getPropertyName(column2));
         return this;
     }

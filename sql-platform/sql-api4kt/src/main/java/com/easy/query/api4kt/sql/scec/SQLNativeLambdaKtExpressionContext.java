@@ -11,11 +11,11 @@ import kotlin.reflect.KProperty1;
  * @author xuejiaming
  */
 public interface SQLNativeLambdaKtExpressionContext<T1> {
-    SQLNativeLambdaKtExpressionContext<T1> expression(KProperty1<T1, ?> property);
+    SQLNativeLambdaKtExpressionContext<T1> expression(KProperty1<? super T1, ?> property);
 
     <TEntity> SQLNativeLambdaKtExpressionContext<T1> expression(KtQueryable<TEntity> subQuery);
 
-    <T2> SQLNativeLambdaKtExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, KProperty1<T2, ?> property);
+    <T2> SQLNativeLambdaKtExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, KProperty1<? super T2, ?> property);
 
     SQLNativeLambdaKtExpressionContext<T1> value(Object val);
 

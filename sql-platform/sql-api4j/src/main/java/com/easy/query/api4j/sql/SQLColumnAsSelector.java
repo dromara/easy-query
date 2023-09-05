@@ -38,16 +38,16 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQ
         return getColumnAsSelector().getTable();
     }
 
-    default SQLColumnAsSelector<T1, TR> columns(Collection<Property<T1, ?>> columns) {
+    default <TProperty> SQLColumnAsSelector<T1, TR> columns(Collection<Property<T1, TProperty>> columns) {
         if(EasyCollectionUtil.isNotEmpty(columns)){
-            for (Property<T1, ?> column : columns) {
+            for (Property<T1, TProperty> column : columns) {
                 this.column(column);
             }
         }
         return this;
     }
 
-    default SQLColumnAsSelector<T1, TR> column(Property<T1, ?> column) {
+    default <TProperty> SQLColumnAsSelector<T1, TR> column(Property<T1, TProperty> column) {
         getColumnAsSelector().column(EasyLambdaUtil.getPropertyName(column));
         return this;
     }

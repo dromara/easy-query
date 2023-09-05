@@ -29,79 +29,79 @@ public interface SQLKtWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1
         return getWhereAggregatePredicate().getRuntimeContext();
     }
 
-    default SQLKtWhereAggregatePredicate<T1> avg(KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> avg(KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return avg(true, column, compare, val);
     }
 
-    default SQLKtWhereAggregatePredicate<T1> avg(boolean condition, KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> avg(boolean condition, KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().avg(condition, EasyKtLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLKtWhereAggregatePredicate<T1> avgDistinct(KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> avgDistinct(KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return avgDistinct(true, column, compare, val);
     }
 
-    default SQLKtWhereAggregatePredicate<T1> avgDistinct(boolean condition, KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> avgDistinct(boolean condition, KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().avgDistinct(condition, EasyKtLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLKtWhereAggregatePredicate<T1> min(KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> min(KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return min(true, column, compare, val);
     }
 
-    default SQLKtWhereAggregatePredicate<T1> min(boolean condition, KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> min(boolean condition, KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().min(condition, EasyKtLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLKtWhereAggregatePredicate<T1> max(KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> max(KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return max(true, column, compare, val);
     }
 
-    default SQLKtWhereAggregatePredicate<T1> max(boolean condition, KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> max(boolean condition, KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().max(condition, EasyKtLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLKtWhereAggregatePredicate<T1> sum(KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> sum(KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return sum(true, column, compare, val);
     }
 
-    default SQLKtWhereAggregatePredicate<T1> sum(boolean condition, KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> sum(boolean condition, KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().sum(condition, EasyKtLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLKtWhereAggregatePredicate<T1> sumDistinct(KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> sumDistinct(KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return sum(true, column, compare, val);
     }
 
-    default SQLKtWhereAggregatePredicate<T1> sumDistinct(boolean condition, KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> sumDistinct(boolean condition, KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().sumDistinct(condition, EasyKtLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLKtWhereAggregatePredicate<T1> countDistinct(KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> countDistinct(KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return countDistinct(true, column, compare, val);
     }
 
-    default SQLKtWhereAggregatePredicate<T1> countDistinct(boolean condition, KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> countDistinct(boolean condition, KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().countDistinct(condition, EasyKtLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLKtWhereAggregatePredicate<T1> count(KProperty1<T1, ?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> count(KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return count(true, column, compare, val);
     }
 
-    default SQLKtWhereAggregatePredicate<T1> count(boolean condition, KProperty1<T1, ?> column, SQLPredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> count(boolean condition, KProperty1<? super T1, TProperty> column, SQLPredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().count(condition, EasyKtLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
 
-    default SQLKtWhereAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, KProperty1<T1, ?> column, SQLPredicateCompare compare, Object val) {
+    default <TProperty> SQLKtWhereAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, KProperty1<? super T1, TProperty> column, SQLPredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().func(condition, columnFunction, EasyKtLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }
@@ -116,7 +116,7 @@ public interface SQLKtWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1
     }
 
     default SQLKtWhereAggregatePredicate<T1> and(boolean condition) {
-        getWhereAggregatePredicate().and(true);
+        getWhereAggregatePredicate().and(condition);
         return this;
     }
 

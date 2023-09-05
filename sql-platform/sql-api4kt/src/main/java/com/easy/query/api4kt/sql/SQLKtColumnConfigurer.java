@@ -17,7 +17,7 @@ import kotlin.reflect.KProperty1;
 public interface SQLKtColumnConfigurer<T> {
     ColumnConfigurer<T> getColumnConfigurer();
 
-    default SQLKtColumnConfigurer<T> column(KProperty1<T,?> property, String sqlSegment, SQLExpression2<SQLNativeLambdaKtExpressionContext<T>, SQLParameter> contextConsume){
+    default <TProperty> SQLKtColumnConfigurer<T> column(KProperty1<? super T,TProperty> property, String sqlSegment, SQLExpression2<SQLNativeLambdaKtExpressionContext<T>, SQLParameter> contextConsume){
         getColumnConfigurer().column(EasyKtLambdaUtil.getPropertyName(property),sqlSegment,(context, sqlParameter)->{
             contextConsume.apply(new SQLNativeLambdaKtExpressionContextImpl<>(context),sqlParameter);
         });

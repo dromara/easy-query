@@ -18,7 +18,7 @@ public interface SQLKtColumnResultSelector<T1, TMember> extends EntitySQLTableOw
         return getColumnResultSelector().getTable();
     }
 
-    default void column(KProperty1<T1, TMember> column) {
+    default void column(KProperty1<? super T1, TMember> column) {
         getColumnResultSelector().column(EasyKtLambdaUtil.getPropertyName(column));
     }
 }
