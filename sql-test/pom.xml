@@ -140,6 +140,12 @@
             <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>1.8.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit5</artifactId>
+            <version>1.8.0</version>
+            <scope>test</scope>
+        </dependency>
 
 
         <dependency>
