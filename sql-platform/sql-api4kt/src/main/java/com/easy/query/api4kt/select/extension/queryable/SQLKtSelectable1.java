@@ -1,4 +1,4 @@
-package com.easy.query.api4kt.select.extension.KtQueryable;
+package com.easy.query.api4kt.select.extension.queryable;
 
 import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.sql.SQLKtColumnAsSelector;

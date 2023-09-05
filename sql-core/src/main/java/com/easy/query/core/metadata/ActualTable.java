@@ -4,7 +4,7 @@ import java.util.Objects;
 
 /**
  * create time 2023/5/16 08:32
- * 文件说明
+ * 分片后实际的表和所在的数据源关系
  *
  * @author xuejiaming
  */
@@ -18,10 +18,20 @@ public class ActualTable {
         this.actualTableName = actualTableName;
     }
 
+    /**
+     * 所属数据源名称
+     * eg. ds0 ds1 ds2 ...
+     * @return 数据源名称
+     */
     public String getDataSourceName() {
         return dataSourceName;
     }
 
+    /**
+     * 实际的表名
+     * eg. order_00 order_01 ...
+     * @return 表名
+     */
     public String getActualTableName() {
         return actualTableName;
     }

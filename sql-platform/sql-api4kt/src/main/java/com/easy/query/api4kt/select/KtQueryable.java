@@ -1,6 +1,5 @@
 package com.easy.query.api4kt.select;
 
-import com.easy.query.api4kt.select.extension.KtQueryable.SQLKtSelectable1;
 import com.easy.query.api4kt.select.extension.queryable.ClientKtQueryableAvailable;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtAggregatable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtFillable1;
@@ -10,6 +9,7 @@ import com.easy.query.api4kt.select.extension.queryable.SQLKtHavingable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtIncludeable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtJoinable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtOrderable1;
+import com.easy.query.api4kt.select.extension.queryable.SQLKtSelectable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtUnionable1;
 import com.easy.query.api4kt.sql.SQLKtColumnSelector;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;

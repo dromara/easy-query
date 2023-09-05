@@ -2,8 +2,8 @@ package com.easy.query.test;
 
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQueryInjectCurrentlyInCreationException;
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
+import com.easy.query.core.exception.EasyQueryInjectCurrentlyInCreationException;
 import com.easy.query.core.exception.EasyQueryRouteNotMatchException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
@@ -101,4 +101,12 @@ public class SkipTest {
             System.out.println((end-start)+"(ms)");
         }
     }
+
+//    public  void test1(){
+//        TopicTypeJsonValue topicTypeJsonValue = new TopicTypeJsonValue();
+//        where(Topic::getId,topicTypeJsonValue);
+//    }
+//    public <T,TProperty> void where(Property<T,TProperty> property, TProperty val){
+//
+//    }
 }

@@ -13,12 +13,15 @@ import com.easy.query.core.util.EasyClassUtil;
 import java.beans.PropertyDescriptor;
 
 /**
- * @FileName: ColumnMetadata.java
- * @Description: 文件说明
- * @Date: 2023/2/11 15:13
+ * create time 2023/2/11 18:13
+ * 解析对象后获得的列元信息
+ *
  * @author xuejiaming
  */
 public class ColumnMetadata {
+    /**
+     * 所属对象元信息
+     */
 
     private final EntityMetadata entityMetadata;
     /**
@@ -27,34 +30,91 @@ public class ColumnMetadata {
     private final String name;
 
 
+    /**
+     * 属性信息
+     */
     private final PropertyDescriptor property;
     /**
      * property.getPropertyType()默认会加锁synchronized所以这边增加一个冗余字段
      */
     private final Class<?> propertyType;
+    /**
+     * 属性名
+     */
     private final String propertyName;
 
+    /**
+     * 是否是主键
+     */
     private final  boolean primary;
+    /**
+     * 是否是数据库生成列 比如自增键
+     */
     private final  boolean generatedKey;
 
 
 //    private  boolean nullable=true;
+    /**
+     * 是否是乐观锁版本号
+     */
     private final  boolean version;
+    /**
+     * 是否插入时忽略
+     */
     private final  boolean insertIgnore;
+    /**
+     * 是否更新时忽略
+     */
     private final  boolean updateIgnore ;
+    /**
+     * 如果更新时忽略当前列存在track的diff中是否也要更新
+     */
     private final  boolean updateSetInTrackDiff ;
 
+    /**
+     * 加密策略
+     */
     private final EncryptionStrategy encryptionStrategy;
+    /**
+     * 加密后查询是否支持like
+     */
     private final  boolean supportQueryLike;
+    /**
+     * 是否是大列
+     */
     private final  boolean large;
+    /**
+     * 是否是基本类型 int long double 而不是Integer Long...
+     */
     private final  boolean primitive;
 
+    /**
+     * 数据库和对象值转换器
+     */
     private final ValueConverter<?, ?> valueConverter;
+    /**
+     * 对象数据库列转换器
+     */
     private final ColumnValueSQLConverter columnValueSQLConverter;
+    /**
+     * 原子更新
+     */
     private final ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
+    /**
+     * 数据库生成键生成器
+     */
     private final GeneratedKeySQLColumnGenerator generatedSQLColumnGenerator;
+    /**
+     * 当前对象属性setter调用方法
+     */
     private final PropertySetterCaller<Object> setterCaller;
+    /**
+     * 当前对象属性getter调用方法
+     */
     private final Property<Object,?> getterCaller;
+    /**
+     * 当前属性对应的jdbc处理器
+     */
     private final JdbcTypeHandler jdbcTypeHandler;
 
     public ColumnMetadata(ColumnOption columnOption) {
