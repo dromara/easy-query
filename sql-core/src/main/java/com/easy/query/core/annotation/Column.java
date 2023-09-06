@@ -16,10 +16,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
- * @FileName: Column.java
- * @Description: 文件说明
- * @Date: 2023/2/10 23:07
+ * create time 2023/6/24 14:16
+ * 映射字段到数据库列
+ *
  * @author xuejiaming
  */
 @Documented
@@ -64,26 +65,37 @@ public @interface Column {
 //    int scale() default 0;
 
     /**
-     * 是否是大字段
-     * @return
+     * 是否是大字段 true:是 false:否
      */
     boolean large() default false;
 
+    /**
+     * 值转换器 在内存中通过java代码进行转换
+     */
     Class<? extends ValueConverter<?, ?>> conversion() default DefaultValueConverter.class;
+
+    /**
+     * 数据库函数列增强器 比如ase(column) des(column)等加密函数或者geo函数在数据库中进行转换
+     */
     Class<? extends ColumnValueSQLConverter> sqlConversion() default DefaultColumnValueSQLConverter.class;
 
     /**
-     *
-     * @return
+     * 对象原子追踪更新 生成 UPDATE TABLE SET COLUMN=COLUMN-[1] WHERE ID=XX AND COLUMN >= [1]
+     * 对象更新通过差值进行动态生成原则增减值比如原始对象user.money=100，更新user.name=90那么动态生成差值10并且是递减所以生成
+     * eg. UPDATE user SET money=money-10 WHERE ID=XX AND money >= 10
      */
     Class<? extends ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrack() default DefaultValueUpdateAtomicTrack.class;
 
     /**
      * 请使用 {@param generatedSQLColumnGenerator}
-     * @return
      */
     @Deprecated
     Class<? extends GeneratedKeySQLColumnGenerator> incrementSQLColumnGenerator() default DefaultGeneratedKeySQLColumnGenerator.class;
+
+    /**
+     * 数据库生成键插入时生效比如 NEWID()  RAND()
+     */
+
     Class<? extends GeneratedKeySQLColumnGenerator> generatedSQLColumnGenerator() default DefaultGeneratedKeySQLColumnGenerator.class;
 
 //    /**

@@ -8,7 +8,9 @@ import java.lang.annotation.Target;
 
 /**
  * create time 2023/4/8 22:36
- * 文件说明
+ * 用于表示对应字段是额外分表字段,默认参与update set列如果不需要可以添加 {@link UpdateIgnore}
+ * 比如用户按创建时间分表 order_2020,order_2021那么如果你是雪花id,雪花id也可以解析出对应的时间
+ * 所以也可以配置雪花id的精确定为到某张表这个时候可以添加该注解来实现多字段分片
  *
  * @author xuejiaming
  */

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * create time 2023/6/24 14:16
- * 文件说明
+ * 添加到数据库对象或者VO、BO等对象上,通过apt技术生成代理对象实现代理模式的增删改查
  *
  * @author xuejiaming
  */
@@ -21,5 +21,10 @@ public @interface EntityProxy {
      * @return
      */
     String value() default "";
+
+    /**
+     * 需要忽略生成的属性
+     * @return
+     */
     String[] ignoreProperties() default {};
 }

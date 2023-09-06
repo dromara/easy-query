@@ -20,13 +20,16 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface EasyWhereCondition {
     /**
-     * 查询条件表索引
-     * @return
+     * 查询条件表索引 from表index为0，join一次加1
+     * SELECT * FROM table t [LEFT | RIGHT | INNER] JOIN table1 t1 ON .....
+     * 如果当前字段作用到 table表 {@param tableIndex}=0 如果作用到 table1表 {@param tableIndex}=1
+     * @return 表索引
      */
     int tableIndex() default 0;
     /**
      * 默认不允许空字符串就是表示空字符串也不会进入条件
-     * @return
+     * 默认 false
+     * @return 是否允许
      */
     boolean allowEmptyStrings() default false;
 
@@ -34,13 +37,13 @@ public @interface EasyWhereCondition {
      * 严格模式
      * 如果属性没有映射到对象上报错
      * 如果表 {@param tableIndex} 不在当前上下文中也报错
-     * @return
+     * @return 是否严格
      * @throws EasyQueryWhereInvalidOperationException
      */
     boolean strict() default true;
     /**
      * 映射的属性名称,空表示原属性名称
-     * @return
+     * @return 属性名
      */
     String propName() default "";
 

@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * @FileName: EasyQueryTrack.java
- * @Description: 文件说明
- * @Date: 2023/3/20 21:00
+ * create time 2023/3/20 21:00
+ * 追踪注解默认可以自行实现主要用来处理追踪更新差异生成set
+ *
  * @author xuejiaming
  */
 @Target(ElementType.METHOD)
@@ -20,14 +20,12 @@ import java.lang.annotation.RetentionPolicy;
 @Inherited
 public @interface EasyQueryTrack {
     /**
-     * 是否开启
-     * @return
+     * 是否开启 默认开启
      */
     boolean enable() default true;
 
     /**
      * 空时表示全部的easy-query都需要追踪，需要指定就用逗号分割多个bean的name比如easyQuery,myEasyQuery或者db1,db2具体看配置
-     * @return
      */
     String tag() default "";
 }

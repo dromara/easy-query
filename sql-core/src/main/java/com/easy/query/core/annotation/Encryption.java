@@ -10,6 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 
 
 /**
+ * create time 2023/3/22 21:27
  * 表示数据库列是加密列
  * 如果直接返回VO对象那么该对象也必须添加对应的注解
  * @author xuejiaming
@@ -18,6 +19,10 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface Encryption {
+    /**
+     * 加密策略自定义
+     * @return
+     */
     Class<? extends EncryptionStrategy> strategy();
 
     /**
