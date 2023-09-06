@@ -16,9 +16,9 @@ public class InterceptorTest extends BaseTest {
     @Test
     public void test1(){
 
-        easyQuery.deletable(TopicInterceptor.class).whereById("123xx").executeRows();
         CurrentUserHelper.setUserId("xiaoming");
         CurrentUserHelper.setTenantId("abc");
+        easyQuery.deletable(TopicInterceptor.class).whereById("123xx").disableLogicDelete().allowDeleteStatement(true).executeRows();
         TopicInterceptor topicInterceptor = new TopicInterceptor();
         topicInterceptor.setId("123xx");
         topicInterceptor.setTitle("123");
@@ -41,6 +41,7 @@ public class InterceptorTest extends BaseTest {
         long l2 = easyQuery.updatable(TopicInterceptor.class).set(TopicInterceptor::getTitle, topicInterceptor2.getTitle())
                 .whereById(topicInterceptor2.getId()).executeRows();
         Assert.assertEquals(1,l2);
+        easyQuery.deletable(TopicInterceptor.class).whereById("123xx").disableLogicDelete().allowDeleteStatement(true).executeRows();
     }
     @Test
     public void test2(){

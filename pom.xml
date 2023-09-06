@@ -48,15 +48,6 @@
         <spring.version>4.2.3.RELEASE</spring.version>
         <mysql.version>8.0.17</mysql.version>
     </properties>
-    <dependencies>
-        <!-- mysql驱动 -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
     <distributionManagement>
         <repository>
             <!--这两个id需要和setting.xml文件中的server字段的id进行对应-->
