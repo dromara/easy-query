@@ -46,7 +46,7 @@ public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
     @Override
     protected T next0() throws SQLException {
         T bean = mapToBean();
-        if (bean!=null&&trackBean) {
+        if (trackBean && bean != null) {
             EntityState entityState = trackManager.getCurrentTrackContext().addQueryTracking(bean);
             Object entityStateCurrentValue = entityState.getCurrentValue();
             if (entityStateCurrentValue != bean) {//没有附加成功应该返回之前被追加的数据而不是最新查询的数据
