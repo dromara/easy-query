@@ -24,6 +24,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamRes
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -68,6 +69,10 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
         return entityQueryable;
     }
 
+    @Override
+    public ProxyQueryable<T1Proxy, T1> getQueryable() {
+        return this;
+    }
 
     @Override
     public Class<T1> queryClass() {
@@ -453,4 +458,9 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
         return this;
     }
 
+    @Override
+    public ProxyQueryable<T1Proxy, T1> conditionConfigure(ConditionAccepter conditionAccepter) {
+        entityQueryable.conditionConfigure(conditionAccepter);
+        return this;
+    }
 }

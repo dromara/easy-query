@@ -16,7 +16,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.JavaFileObject;
@@ -364,13 +363,14 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
 
 
-                TypeMirror typeMirror = fieldElement.asType();
-                Element element = typeUtils.asElement(typeMirror);
-                if (element != null) {
-                    typeMirror = element.asType();
-                }
+//                TypeMirror typeMirror = fieldElement.asType();
+//                Element element = typeUtils.asElement(typeMirror);
+//                if (element != null) {
+//                    typeMirror = element.asType();
+//                }
 
-                String typeString =typeMirror.toString().trim();
+//                String typeString =typeMirror.toString().trim();
+                String typeString =fieldElement.asType().toString();
                 String fieldGenericType = TYPE_MAPPING.getOrDefault(typeString, typeString);
 
                 String docComment = elementUtils.getDocComment(fieldElement);

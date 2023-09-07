@@ -14,6 +14,8 @@ import com.easy.query.test.entity.school.SchoolTeacher;
 import com.easy.query.test.entity.school.dto.SchoolClassVO;
 import com.easy.query.test.entity.school.dto.SchoolStudentVO;
 import com.easy.query.test.entity.school.dto.SchoolTeacherVO;
+import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
+import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -152,9 +154,26 @@ public class RelationTest extends BaseTest {
                 Assert.assertNull(schoolStudent.getSchoolStudentAddress());
             }
 
+
+            List<SchoolStudent> listp = easyProxyQuery.queryable(SchoolStudentProxy.DEFAULT).toList();
+            Assert.assertEquals(3, listp.size());
+            for (SchoolStudent schoolStudent : listp) {
+                Assert.assertNull(schoolStudent.getSchoolStudentAddress());
+            }
+
             {
                 List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
                         .include(o -> o.one(SchoolStudent::getSchoolClass, 1))
+                        .toList();
+                for (SchoolStudent schoolStudent : list1) {
+                    Assert.assertNotNull(schoolStudent.getSchoolClass());
+                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
+                }
+            }
+
+            {
+                List<SchoolStudent> list1 = easyProxyQuery.queryable(SchoolStudentProxy.DEFAULT)
+                        .include((i,t) -> i.one(t.schoolClass(), SchoolClassProxy.DEFAULT, 1))
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());

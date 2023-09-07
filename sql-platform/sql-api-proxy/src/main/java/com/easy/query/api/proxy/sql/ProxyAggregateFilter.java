@@ -2,8 +2,6 @@ package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.sql.core.SQLProxyNative;
 import com.easy.query.api.proxy.sql.impl.ProxyAggregateFilterImpl;
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompare;
@@ -25,71 +23,71 @@ public interface ProxyAggregateFilter extends SQLProxyNative<ProxyAggregateFilte
         return getAggregateFilter().getRuntimeContext();
     }
 
-    default ProxyAggregateFilter avg(SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter avg(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return avg(true, column, compare, val);
     }
 
-    default ProxyAggregateFilter avg(boolean condition, SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter avg(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createAvgFunction(false), column, compare, val);
     }
 
-    default ProxyAggregateFilter avgDistinct(SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default  <TProperty>ProxyAggregateFilter avgDistinct(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return avgDistinct(true, column, compare, val);
     }
 
-    default ProxyAggregateFilter avgDistinct(boolean condition, SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default  <TProperty>ProxyAggregateFilter avgDistinct(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createAvgFunction(true), column, compare, val);
     }
 
-    default ProxyAggregateFilter min(SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default  <TProperty>ProxyAggregateFilter min(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return min(true, column, compare, val);
     }
 
-    default ProxyAggregateFilter min(boolean condition, SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter min(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createMinFunction(), column, compare, val);
     }
 
-    default ProxyAggregateFilter max(SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter max(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return max(true, column, compare, val);
     }
 
-    default ProxyAggregateFilter max(boolean condition, SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter max(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createMaxFunction(), column, compare, val);
     }
 
-    default ProxyAggregateFilter sum(SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter sum(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return sum(true, column, compare, val);
     }
 
-    default ProxyAggregateFilter sum(boolean condition, SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter sum(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createSumFunction(false), column, compare, val);
     }
 
-    default ProxyAggregateFilter sumDistinct(SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter sumDistinct(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return sum(true, column, compare, val);
     }
 
-    default ProxyAggregateFilter sumDistinct(boolean condition, SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter sumDistinct(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createSumFunction(true), column, compare, val);
     }
 
-    default ProxyAggregateFilter countDistinct(SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter countDistinct(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return countDistinct(true, column, compare, val);
     }
 
-    default ProxyAggregateFilter countDistinct(boolean condition, SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter countDistinct(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createCountFunction(true), column, compare, val);
     }
 
-    default ProxyAggregateFilter count(SQLColumn<?> column, AggregatePredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter count(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return count(true, column, compare, val);
     }
 
-    default ProxyAggregateFilter count(boolean condition, SQLColumn<?> column, SQLPredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter count(boolean condition, SQLColumn<TProperty> column, SQLPredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createCountFunction(false), column, compare, val);
     }
 
-    default ProxyAggregateFilter func(boolean condition, ColumnFunction columnFunction, SQLColumn<?> column, SQLPredicateCompare compare, Object val) {
+    default <TProperty> ProxyAggregateFilter func(boolean condition, ColumnFunction columnFunction, SQLColumn<TProperty> column, SQLPredicateCompare compare, TProperty val) {
         if (condition) {
             getAggregateFilter().func(column.getTable(), columnFunction, column.value(), compare, val);
         }

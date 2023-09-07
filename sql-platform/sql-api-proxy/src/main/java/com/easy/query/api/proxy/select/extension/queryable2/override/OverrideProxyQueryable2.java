@@ -1,59 +1,66 @@
-package com.easy.query.api.proxy.select;
+package com.easy.query.api.proxy.select.extension.queryable2.override;
 
+import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.api.proxy.select.ProxyQueryable2;
+import com.easy.query.api.proxy.select.extension.queryable2.ProxyQueryable2Available;
 import com.easy.query.api.proxy.sql.ProxyAggregateFilter;
-import com.easy.query.api.proxy.sql.ProxyAsSelector;
 import com.easy.query.api.proxy.sql.ProxyFilter;
 import com.easy.query.api.proxy.sql.ProxyGroupSelector;
+import com.easy.query.api.proxy.sql.ProxyNavigateInclude;
 import com.easy.query.api.proxy.sql.ProxyOrderSelector;
-import com.easy.query.api.proxy.sql.impl.ProxyAggregateFilterImpl;
-import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
-import com.easy.query.api.proxy.sql.impl.ProxyGroupSelectorImpl;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.lambda.SQLExpression3;
-import com.easy.query.core.expression.lambda.SQLExpression4;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 
+import java.util.Collection;
 import java.util.function.Function;
 
 /**
- * create time 2023/6/23 15:26
+ * create time 2023/8/16 08:12
  * 文件说明
  *
  * @author xuejiaming
  */
-public interface ProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> extends ProxyQueryable<T1Proxy, T1> {
+public interface OverrideProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> extends ProxyQueryable<T1Proxy, T1>, ProxyQueryable2Available<T1Proxy, T1, T2Proxy, T2> {
 
-    T2Proxy get2Proxy();
+    @Override
+    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> cloneQueryable();
 
-    ClientQueryable2<T1, T2> getClientQueryable2();
-
-    <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(T3Proxy joinProxy, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
-
-    <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(ProxyQueryable<T3Proxy, T3> joinQueryable, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
-
-    <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(T3Proxy joinProxy, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
-
-    <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(ProxyQueryable<T3Proxy, T3> joinQueryable, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
-
-    <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(T3Proxy joinProxy, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
-
-    <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(ProxyQueryable<T3Proxy, T3> joinQueryable, SQLExpression4<ProxyFilter, T1Proxy, T2Proxy, T3Proxy> on);
-
-    //region where
+    @Override
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> whereById(Object id) {
         return whereById(true, id);
     }
 
+    @Override
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> whereById(boolean condition, Object id);
 
+    @Override
+    <TProperty> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> whereByIds(boolean condition, Collection<TProperty> ids);
+
+    /**
+     * 仅支持主表的动态对象查询
+     *
+     * @param object 对象查询的对象
+     * @return
+     */
+    @Override
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> whereObject(Object object) {
         return whereObject(true, object);
     }
 
+    /**
+     * 仅支持主表的动态对象查询
+     *
+     * @param condition 是否使用对象查询
+     * @param object    对象查询的对象
+     * @return
+     */
+    @Override
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> whereObject(boolean condition, Object object);
+
 
     @Override
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
@@ -63,29 +70,6 @@ public interface ProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T
     @Override
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression);
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> whereExpression) {
-        return where(true, whereExpression);
-    }
-
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> whereExpression) {
-        if (condition) {
-            getClientQueryable2().where((wherePredicate1, wherePredicate2) -> {
-                whereExpression.apply(new ProxyFilterImpl(wherePredicate2.getFilter()), get1Proxy(), get2Proxy());
-            });
-        }
-        return this;
-    }
-
-    //endregion
-
-    //region select
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression3<ProxyAsSelector<TRProxy, TR>, T1Proxy, T2Proxy> selectExpression);
-    //endregion
-    //region aggregate
-
-    //endregion
-
-    //region
     @Override
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression) {
         return groupBy(true, selectExpression);
@@ -94,42 +78,14 @@ public interface ProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T
     @Override
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(boolean condition, SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression);
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(SQLExpression3<ProxyGroupSelector, T1Proxy, T2Proxy> selectExpression) {
-        return groupBy(true, selectExpression);
-    }
-
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(boolean condition, SQLExpression3<ProxyGroupSelector, T1Proxy, T2Proxy> selectExpression) {
-        if (condition) {
-            getClientQueryable2().groupBy((selector1, selector2) -> {
-                selectExpression.apply(new ProxyGroupSelectorImpl(selector2.getGroupSelector()), get1Proxy(), get2Proxy());
-            });
-        }
-        return this;
+    @Override
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(SQLExpression2<ProxyAggregateFilter, T1Proxy> predicateExpression) {
+        return having(true, predicateExpression);
     }
 
     @Override
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(SQLExpression2<ProxyAggregateFilter, T1Proxy> aggregateFilterExpression) {
-        return having(true, aggregateFilterExpression);
-    }
+    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLExpression2<ProxyAggregateFilter, T1Proxy> predicateExpression);
 
-    @Override
-    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLExpression2<ProxyAggregateFilter, T1Proxy> aggregateFilterExpression);
-
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(SQLExpression3<ProxyAggregateFilter, T1Proxy, T2Proxy> aggregateFilterExpression) {
-        return having(true, aggregateFilterExpression);
-    }
-
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLExpression3<ProxyAggregateFilter, T1Proxy, T2Proxy> aggregateFilterExpression) {
-        if (condition) {
-            getClientQueryable2().having((predicate1, predicate2) -> {
-                aggregateFilterExpression.apply(new ProxyAggregateFilterImpl(predicate2.getAggregateFilter()), get1Proxy(), get2Proxy());
-            });
-        }
-        return this;
-    }
-
-    //endregion
-    //region order
     @Override
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         return orderByAsc(true, selectExpression);
@@ -137,7 +93,6 @@ public interface ProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T
 
     @Override
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression);
-
 
     @Override
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByDesc(SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
@@ -147,8 +102,13 @@ public interface ProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T
     @Override
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByDesc(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression);
 
-    //endregion
-    //region limit
+    @Override
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> include(SQLFuncExpression2<ProxyNavigateInclude<T1>,T1Proxy, ProxyQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
+        return include(true, navigateIncludeSQLExpression);
+    }
+
+    @Override
+    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> include(boolean condition, SQLFuncExpression2<ProxyNavigateInclude<T1>,T1Proxy, ProxyQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression);
 
     @Override
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> limit(long rows) {
@@ -172,9 +132,9 @@ public interface ProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T
         return distinct(true);
     }
 
+    @Override
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> distinct(boolean condition);
 
-    //endregion
     @Override
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> disableLogicDelete();
 
@@ -245,8 +205,8 @@ public interface ProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> asTable(Function<String, String> tableNameAs);
 
     @Override
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> asSchema(String tableName) {
-        return asSchema(old -> tableName);
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> asSchema(String schema) {
+        return asSchema(old -> schema);
     }
 
     @Override
@@ -254,11 +214,20 @@ public interface ProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T
 
     @Override
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> asAlias(String alias);
+
+    /**
+     * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
+     * @return
+     */
     @Override
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> asTableLink(String linkAs) {
-        return asTableLink(o->linkAs);
+        return asTableLink(o -> linkAs);
     }
+
 
     @Override
     ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> asTableLink(Function<String, String> linkAs);
+
+    @Override
+    ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> conditionConfigure(ConditionAccepter conditionAccepter);
 }

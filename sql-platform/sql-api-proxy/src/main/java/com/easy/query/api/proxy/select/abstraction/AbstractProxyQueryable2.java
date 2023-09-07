@@ -16,18 +16,12 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLColumn;
-import com.easy.query.core.util.EasyCollectionUtil;
 
-import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -140,51 +134,6 @@ public abstract class AbstractProxyQueryable2<T1Proxy extends ProxyEntity<T1Prox
         });
         return new EasyProxyQueryable<>(trProxy, select);
     }
-
-    @Override
-    public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLFuncExpression2<T1Proxy, T2Proxy, SQLColumn<TMember>> columnSelectorExpression, BigDecimal def) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy());
-        ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = entityQueryable2.selectAggregateList(memberSQLColumn.getTable(), sumFunction, memberSQLColumn.value(), null);
-        TMember resultMember = EasyCollectionUtil.firstOrNull(result);
-        if (resultMember == null) {
-            return def;
-        }
-        return new BigDecimal(resultMember.toString());
-    }
-
-    @Override
-    public <TMember extends Number> TMember sumOrDefault(SQLFuncExpression2<T1Proxy, T2Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy());
-        ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = entityQueryable2.selectAggregateList(memberSQLColumn.getTable(), sumFunction, memberSQLColumn.value(), null);
-        return EasyCollectionUtil.firstOrDefault(result, def);
-    }
-
-    @Override
-    public <TMember> TMember maxOrDefault(SQLFuncExpression2<T1Proxy, T2Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy());
-        ColumnFunction maxFunction = runtimeContext.getColumnFunctionFactory().createMaxFunction();
-        List<TMember> result = entityQueryable2.selectAggregateList(memberSQLColumn.getTable(), maxFunction, memberSQLColumn.value(), null);
-        return EasyCollectionUtil.firstOrDefault(result, def);
-    }
-
-    @Override
-    public <TMember> TMember minOrDefault(SQLFuncExpression2<T1Proxy, T2Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy());
-        ColumnFunction minFunction = runtimeContext.getColumnFunctionFactory().createMinFunction();
-        List<TMember> result = entityQueryable2.selectAggregateList(memberSQLColumn.getTable(), minFunction, memberSQLColumn.value(), null);
-        return EasyCollectionUtil.firstOrDefault(result, def);
-    }
-
-    @Override
-    public <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLFuncExpression2<T1Proxy, T2Proxy, SQLColumn<TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy());
-        ColumnFunction avgFunction = runtimeContext.getColumnFunctionFactory().createAvgFunction(false);
-        List<TResult> result = entityQueryable2.selectAggregateList(memberSQLColumn.getTable(), avgFunction, memberSQLColumn.value(), resultClass);
-        return EasyCollectionUtil.firstOrDefault(result, def);
-    }
-
     @Override
     public ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(boolean condition, SQLExpression2<ProxyOrderSelector, T1Proxy> selectExpression) {
         super.orderByAsc(condition, selectExpression);

@@ -3,8 +3,6 @@ package com.easy.query.api.proxy.sql;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.sql.core.SQLProxyNative;
 import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLRangeEnum;
@@ -27,7 +25,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
     /**
      * 大于 column > val
      */
-    default ProxyFilter gt(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter gt(SQLColumn<TProperty> column, TProperty val) {
         return gt(true, column, val);
     }
 
@@ -39,7 +37,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val       值
      * @return children
      */
-    default ProxyFilter gt(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter gt(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         if (condition) {
             getFilter().gt(column.getTable(), column.value(), val);
         }
@@ -49,7 +47,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
     /**
      * 等于 column >= val
      */
-    default ProxyFilter ge(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter ge(SQLColumn<TProperty> column, TProperty val) {
         return ge(true, column, val);
     }
 
@@ -61,7 +59,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val       值
      * @return children
      */
-    default ProxyFilter ge(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter ge(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         if (condition) {
             getFilter().ge(column.getTable(), column.value(), val);
         }
@@ -71,7 +69,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
     /**
      * 等于 column = val
      */
-    default ProxyFilter eq(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter eq(SQLColumn<TProperty> column, TProperty val) {
         return eq(true, column, val);
     }
 
@@ -83,7 +81,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val       值
      * @return children
      */
-    default ProxyFilter eq(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter eq(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         if (condition) {
             getFilter().eq(column.getTable(), column.value(), val);
         }
@@ -93,7 +91,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
     /**
      * 不等于 column <> val
      */
-    default ProxyFilter ne(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter ne(SQLColumn<TProperty> column, TProperty val) {
         return ne(true, column, val);
     }
 
@@ -105,7 +103,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val       值
      * @return children
      */
-    default ProxyFilter ne(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter ne(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         if (condition) {
             getFilter().ne(column.getTable(), column.value(), val);
         }
@@ -115,7 +113,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
     /**
      * 小于等于 column <= val
      */
-    default ProxyFilter le(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter le(SQLColumn<TProperty> column, TProperty val) {
         return le(true, column, val);
     }
 
@@ -127,7 +125,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val       值
      * @return children
      */
-    default ProxyFilter le(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter le(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         if (condition) {
             getFilter().le(column.getTable(), column.value(), val);
         }
@@ -137,7 +135,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
     /**
      * 小于 column < val
      */
-    default ProxyFilter lt(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter lt(SQLColumn<TProperty> column, TProperty val) {
         return lt(column, val);
     }
 
@@ -149,7 +147,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val       值
      * @return children
      */
-    default ProxyFilter lt(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter lt(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         if (condition) {
             getFilter().lt(column.getTable(), column.value(), val);
         }
@@ -164,7 +162,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val
      * @return
      */
-    default ProxyFilter likeMatchLeft(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter likeMatchLeft(SQLColumn<TProperty> column, TProperty val) {
         return likeMatchLeft(true, column, val);
     }
 
@@ -177,7 +175,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val
      * @return
      */
-    default ProxyFilter likeMatchLeft(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter likeMatchLeft(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         return like(condition, column, val, SQLLikeEnum.LIKE_PERCENT_RIGHT);
     }
 
@@ -189,7 +187,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val
      * @return
      */
-    default ProxyFilter likeMatchRight(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter likeMatchRight(SQLColumn<TProperty> column, TProperty val) {
         return likeMatchRight(true, column, val);
     }
 
@@ -202,7 +200,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val
      * @return
      */
-    default ProxyFilter likeMatchRight(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter likeMatchRight(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         return like(condition, column, val, SQLLikeEnum.LIKE_PERCENT_LEFT);
     }
 
@@ -210,7 +208,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * column like %val%
      * 列全匹配
      */
-    default ProxyFilter like(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter like(SQLColumn<TProperty> column, TProperty val) {
         return like(true, column, val);
     }
 
@@ -223,7 +221,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val       值
      * @return children
      */
-    default ProxyFilter like(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter like(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         return like(condition, column, val, SQLLikeEnum.LIKE_PERCENT_ALL);
     }
 
@@ -237,7 +235,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param sqlLike
      * @return
      */
-    default ProxyFilter like(boolean condition, SQLColumn<?> column, Object val, SQLLikeEnum sqlLike) {
+    default <TProperty> ProxyFilter like(boolean condition, SQLColumn<TProperty> column, TProperty val, SQLLikeEnum sqlLike) {
         if (condition) {
             getFilter().like(column.getTable(), column.value(), val, sqlLike);
         }
@@ -251,7 +249,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val
      * @return
      */
-    default ProxyFilter notLikeMatchLeft(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter notLikeMatchLeft(SQLColumn<TProperty> column, TProperty val) {
         return notLikeMatchLeft(true, column, val);
     }
 
@@ -263,7 +261,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val
      * @return
      */
-    default ProxyFilter notLikeMatchLeft(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter notLikeMatchLeft(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         return notLike(condition, column, val, SQLLikeEnum.LIKE_PERCENT_RIGHT);
     }
 
@@ -274,7 +272,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val
      * @return
      */
-    default ProxyFilter notLikeMatchRight(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter notLikeMatchRight(SQLColumn<TProperty> column, TProperty val) {
         return notLikeMatchRight(true, column, val);
     }
 
@@ -286,14 +284,14 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val
      * @return
      */
-    default ProxyFilter notLikeMatchRight(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter notLikeMatchRight(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         return notLike(condition, column, val, SQLLikeEnum.LIKE_PERCENT_LEFT);
     }
 
     /**
      * column not like %val%
      */
-    default ProxyFilter notLike(SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter notLike(SQLColumn<TProperty> column, TProperty val) {
         return notLike(true, column, val);
     }
 
@@ -305,11 +303,11 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param val       值
      * @return children
      */
-    default ProxyFilter notLike(boolean condition, SQLColumn<?> column, Object val) {
+    default <TProperty> ProxyFilter notLike(boolean condition, SQLColumn<TProperty> column, TProperty val) {
         return notLike(condition, column, val, SQLLikeEnum.LIKE_PERCENT_ALL);
     }
 
-    default ProxyFilter notLike(boolean condition, SQLColumn<?> column, Object val, SQLLikeEnum sqlLike) {
+    default <TProperty> ProxyFilter notLike(boolean condition, SQLColumn<TProperty> column, TProperty val, SQLLikeEnum sqlLike) {
         if (condition) {
             getFilter().notLike(column.getTable(), column.value(), val, sqlLike);
         }
@@ -319,7 +317,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
     /**
      * column is null
      */
-    default ProxyFilter isNull(SQLColumn<?> column) {
+    default <TProperty> ProxyFilter isNull(SQLColumn<TProperty> column) {
         return isNull(true, column);
     }
 
@@ -330,7 +328,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column    字段
      * @return children
      */
-    default ProxyFilter isNull(boolean condition, SQLColumn<?> column) {
+    default <TProperty> ProxyFilter isNull(boolean condition, SQLColumn<TProperty> column) {
         if (condition) {
             getFilter().isNull(column.getTable(), column.value());
         }
@@ -340,7 +338,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
     /**
      * column is not null
      */
-    default ProxyFilter isNotNull(SQLColumn<?> column) {
+    default <TProperty> ProxyFilter isNotNull(SQLColumn<TProperty> column) {
         return isNotNull(true, column);
     }
 
@@ -351,7 +349,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column    字段
      * @return children
      */
-    default ProxyFilter isNotNull(boolean condition, SQLColumn<?> column) {
+    default <TProperty> ProxyFilter isNotNull(boolean condition, SQLColumn<TProperty> column) {
         if (condition) {
             getFilter().isNotNull(column.getTable(), column.value());
         }
@@ -362,7 +360,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * column in collection
      * 集合为空返回False
      */
-    default ProxyFilter in(SQLColumn<?> column, Collection<?> collection) {
+    default <TProperty> ProxyFilter in(SQLColumn<TProperty> column, Collection<TProperty> collection) {
         return in(true, column, collection);
     }
 
@@ -370,7 +368,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * column in collection
      * 集合为空返回False
      */
-    default ProxyFilter in(boolean condition, SQLColumn<?> column, Collection<?> collection) {
+    default <TProperty> ProxyFilter in(boolean condition, SQLColumn<TProperty> column, Collection<TProperty> collection) {
         if (condition) {
             getFilter().in(column.getTable(), column.value(), collection);
         }
@@ -386,7 +384,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @return
      * @param <TProperty>
      */
-    default <TProperty> ProxyFilter in(SQLColumn<?> column, TProperty[] collection) {
+    default <TProperty> ProxyFilter in(SQLColumn<TProperty> column, TProperty[] collection) {
         return in(true, column, collection);
     }
 
@@ -400,7 +398,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @return
      * @param <TProperty>
      */
-    default <TProperty> ProxyFilter in(boolean condition, SQLColumn<?> column, TProperty[] collection) {
+    default <TProperty> ProxyFilter in(boolean condition, SQLColumn<TProperty> column, TProperty[] collection) {
         if (condition) {
             getFilter().in(column.getTable(), column.value(), collection);
         }
@@ -447,7 +445,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param collection
      * @return
      */
-    default ProxyFilter notIn(SQLColumn<?> column, Collection<?> collection) {
+    default <TProperty> ProxyFilter notIn(SQLColumn<TProperty> column, Collection<TProperty> collection) {
         return notIn(true, column, collection);
     }
 
@@ -461,29 +459,29 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param collection
      * @return
      */
-    default ProxyFilter notIn(boolean condition, SQLColumn<?> column, Collection<?> collection) {
+    default <TProperty> ProxyFilter notIn(boolean condition, SQLColumn<TProperty> column, Collection<TProperty> collection) {
         if (condition) {
             getFilter().notIn(column.getTable(), column.value(), collection);
         }
         return this;
     }
 
-    default <TProperty> ProxyFilter notIn(SQLColumn<?> column, TProperty[] collection) {
+    default <TProperty> ProxyFilter notIn(SQLColumn<TProperty> column, TProperty[] collection) {
         return notIn(true, column, collection);
     }
 
-    default <TProperty> ProxyFilter notIn(boolean condition, SQLColumn<?> column, TProperty[] collection) {
+    default <TProperty> ProxyFilter notIn(boolean condition, SQLColumn<TProperty> column, TProperty[] collection) {
         if(condition){
             getFilter().notIn(column.getTable(),column.value(),collection);
         }
         return this;
     }
 
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>,TProperty> ProxyFilter notIn(SQLColumn<?> column, ProxyQueryable<TPropertyProxy,TProperty> subQueryable) {
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>,TProperty> ProxyFilter notIn(SQLColumn<TProperty> column, ProxyQueryable<TPropertyProxy,TProperty> subQueryable) {
         return notIn(true,column,subQueryable);
     }
 
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>,TProperty> ProxyFilter notIn(boolean condition, SQLColumn<?> column, ProxyQueryable<TPropertyProxy,TProperty> subQueryable) {
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>,TProperty> ProxyFilter notIn(boolean condition, SQLColumn<TProperty> column, ProxyQueryable<TPropertyProxy,TProperty> subQueryable) {
         if(condition){
             getFilter().notIn(column.getTable(),column.value(),subQueryable);
         }
@@ -523,7 +521,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param valRight
      * @return
      */
-    default ProxyFilter rangeOpenClosed(SQLColumn<?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> ProxyFilter rangeOpenClosed(SQLColumn<TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeOpenClosed(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -539,7 +537,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param valRight
      * @return
      */
-    default ProxyFilter rangeOpenClosed(boolean condition, SQLColumn<?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> ProxyFilter rangeOpenClosed(boolean condition, SQLColumn<TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN_CLOSED);
     }
 
@@ -552,7 +550,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param valRight 区间右侧的值
      * @return
      */
-    default ProxyFilter rangeOpen(SQLColumn<?> column, Object valLeft, Object valRight) {
+    default <TProperty> ProxyFilter rangeOpen(SQLColumn<TProperty> column, TProperty valLeft, TProperty valRight) {
         return rangeOpen(true, column, true, valLeft, true, valRight);
     }
 
@@ -567,7 +565,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param valRight       区间右侧的值
      * @return
      */
-    default ProxyFilter rangeOpen(SQLColumn<?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> ProxyFilter rangeOpen(SQLColumn<TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeOpen(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -583,7 +581,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param valRight
      * @return
      */
-    default ProxyFilter rangeOpen(boolean condition, SQLColumn<?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> ProxyFilter rangeOpen(boolean condition, SQLColumn<TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN);
     }
 
@@ -598,7 +596,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param valRight
      * @return
      */
-    default ProxyFilter rangeClosedOpen(SQLColumn<?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> ProxyFilter rangeClosedOpen(SQLColumn<TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeClosedOpen(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -614,7 +612,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param valRight
      * @return
      */
-    default ProxyFilter rangeClosedOpen(boolean condition, SQLColumn<?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> ProxyFilter rangeClosedOpen(boolean condition, SQLColumn<TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED_OPEN);
     }
 
@@ -627,7 +625,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param valRight
      * @return
      */
-    default ProxyFilter rangeClosed(SQLColumn<?> column, Object valLeft, Object valRight) {
+    default <TProperty> ProxyFilter rangeClosed(SQLColumn<TProperty> column, TProperty valLeft, TProperty valRight) {
         return rangeClosed(true, column, true, valLeft, true, valRight);
     }
 
@@ -642,7 +640,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param valRight
      * @return
      */
-    default ProxyFilter rangeClosed(SQLColumn<?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> ProxyFilter rangeClosed(SQLColumn<TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeClosed(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -658,7 +656,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param valRight
      * @return
      */
-    default ProxyFilter rangeClosed(boolean condition, SQLColumn<?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight) {
+    default <TProperty> ProxyFilter rangeClosed(boolean condition, SQLColumn<TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED);
     }
 
@@ -675,7 +673,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param sqlRange
      * @return
      */
-    default ProxyFilter range(boolean condition, SQLColumn<?> column, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
+    default <TProperty> ProxyFilter range(boolean condition, SQLColumn<TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight, SQLRangeEnum sqlRange) {
         if (condition) {
             getFilter().range(column.getTable(), column.value(), conditionLeft, valLeft, conditionRight, valRight, sqlRange);
         }
@@ -683,11 +681,11 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
     }
 
 
-    default ProxyFilter columnFunc(ProxyColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
+    default <TProperty> ProxyFilter columnFunc(ProxyColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, TProperty val) {
         return columnFunc(true, columnPropertyFunction, sqlPredicateCompare, val);
     }
 
-    default ProxyFilter columnFunc(boolean condition, ProxyColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
+    default <TProperty> ProxyFilter columnFunc(boolean condition, ProxyColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, TProperty val) {
         if (condition) {
             getFilter().columnFunc(columnPropertyFunction.getColumn().getTable(), columnPropertyFunction.getColumnPropertyFunction(), sqlPredicateCompare, val);
         }
@@ -699,10 +697,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2Proxy>
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter gt(SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter gt(SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         return gt(true, column1, column2);
     }
 
@@ -712,9 +709,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2> ProxyFilter gt(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter gt(boolean condition, SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         if (condition) {
             getFilter().gt(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }
@@ -726,10 +723,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2Proxy>
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter ge(SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter ge(SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         return ge(true, column1, column2);
     }
 
@@ -739,9 +735,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2> ProxyFilter ge(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter ge(boolean condition, SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         if (condition) {
             getFilter().ge(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }
@@ -753,10 +749,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2Proxy>
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter eq(SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter eq(SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         return eq(true, column1, column2);
     }
 
@@ -766,9 +761,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2> ProxyFilter eq(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter eq(boolean condition, SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         if (condition) {
             getFilter().eq(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }
@@ -780,10 +775,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2Proxy>
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter ne(SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter ne(SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         return ne(true, column1, column2);
     }
 
@@ -793,9 +787,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2> ProxyFilter ne(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter ne(boolean condition, SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         if (condition) {
             getFilter().ne(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }
@@ -807,10 +801,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2Proxy>
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter le(SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter le(SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         return le(true, column1, column2);
     }
 
@@ -820,9 +813,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2> ProxyFilter le(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter le(boolean condition, SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         if (condition) {
             getFilter().le(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }
@@ -834,10 +827,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2Proxy>
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyFilter lt(SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter lt(SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         return lt(true, column1, column2);
     }
 
@@ -847,9 +839,9 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter> {
      * @param column1
      * @param column2
      * @return
-     * @param <T2>
+     * @param <TProperty>
      */
-    default <T2> ProxyFilter lt(boolean condition, SQLColumn<?> column1, SQLColumn<?> column2) {
+    default <TProperty> ProxyFilter lt(boolean condition, SQLColumn<TProperty> column1, SQLColumn<TProperty> column2) {
         if (condition) {
             getFilter().lt(column1.getTable(), column1.value(), column2.getTable(), column2.value());
         }

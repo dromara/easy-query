@@ -1,6 +1,7 @@
 package com.easy.query.test.entity.school;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import lombok.Data;
 import lombok.ToString;
@@ -14,6 +15,7 @@ import lombok.ToString;
 @Table("school_class_teacher")
 @Data
 @ToString
+@EntityProxy
 public class SchoolClassTeacher {
     @Column(primaryKey = true)
     private String classId;

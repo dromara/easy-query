@@ -1,6 +1,7 @@
 package com.easy.query.test.entity.school;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
@@ -18,6 +19,7 @@ import java.util.List;
 @Table("school_class")
 @Data
 @ToString
+@EntityProxy
 public class SchoolClass {
     @Column(primaryKey = true)//主键
     private String id;

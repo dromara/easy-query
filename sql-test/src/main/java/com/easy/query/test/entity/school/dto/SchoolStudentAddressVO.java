@@ -1,5 +1,6 @@
 package com.easy.query.test.entity.school.dto;
 
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.enums.RelationTypeEnum;
 import lombok.Data;
@@ -13,6 +14,7 @@ import lombok.ToString;
  */
 @Data
 @ToString
+@EntityProxy
 public class SchoolStudentAddressVO {
     private String id;
     private String studentId;

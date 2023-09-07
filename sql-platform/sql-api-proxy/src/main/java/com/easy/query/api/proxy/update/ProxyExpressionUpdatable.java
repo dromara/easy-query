@@ -23,28 +23,28 @@ import java.util.Collection;
 public interface ProxyExpressionUpdatable<TProxy extends ProxyEntity<TProxy, T>, T>  extends ProxyUpdatable<TProxy,T, ProxyExpressionUpdatable<TProxy,T>>, WithVersionable<ProxyExpressionUpdatable<TProxy,T>>, ConfigureVersionable<ProxyExpressionUpdatable<TProxy,T>> {
     ClientExpressionUpdatable<T> getClientUpdate();
 
-    default ProxyExpressionUpdatable<TProxy,T> set(SQLFuncExpression1<TProxy, SQLColumn<?>> columnFunction, Object val) {
-        SQLColumn<?> sqlColumn = columnFunction.apply(getProxy());
+    default <TProperty> ProxyExpressionUpdatable<TProxy,T> set(SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction, TProperty val) {
+        SQLColumn<TProperty> sqlColumn = columnFunction.apply(getProxy());
         getClientUpdate().set(sqlColumn.value(), val);
         return this;
     }
 
-    default ProxyExpressionUpdatable<TProxy,T> set(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<?>> columnFunction, Object val) {
+    default <TProperty> ProxyExpressionUpdatable<TProxy,T> set(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction, TProperty val) {
         if(condition){
-            SQLColumn<?> sqlColumn = columnFunction.apply(getProxy());
+            SQLColumn<TProperty> sqlColumn = columnFunction.apply(getProxy());
             getClientUpdate().set(sqlColumn.value(), val); 
         }
         return this;
     }
 
-    default ProxyExpressionUpdatable<TProxy,T> setWithColumn(SQLFuncExpression1<TProxy, SQLColumn<?>> columnFunction1, SQLFuncExpression1<TProxy, SQLColumn<?>> columnFunction2) {
+    default <TProperty> ProxyExpressionUpdatable<TProxy,T> setWithColumn(SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction1, SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction2) {
         return setWithColumn(true,columnFunction1,columnFunction2);
     }
 
-    default ProxyExpressionUpdatable<TProxy,T> setWithColumn(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<?>> columnFunction1, SQLFuncExpression1<TProxy, SQLColumn<?>> columnFunction2) {
+    default <TProperty> ProxyExpressionUpdatable<TProxy,T> setWithColumn(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction1, SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction2) {
         if(condition){
-            SQLColumn<?> sqlColumn1 = columnFunction1.apply(getProxy());
-            SQLColumn<?> sqlColumn2 = columnFunction2.apply(getProxy());
+            SQLColumn<TProperty> sqlColumn1 = columnFunction1.apply(getProxy());
+            SQLColumn<TProperty> sqlColumn2 = columnFunction2.apply(getProxy());
             getClientUpdate().setWithColumn(sqlColumn1.value(), sqlColumn2.value());
         }
         return this;
