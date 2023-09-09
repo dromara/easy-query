@@ -26,7 +26,7 @@ public interface ProxySelectable7<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression8<ProxyAsSelector<TRProxy, TR>, T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy> selectExpression) {
         ClientQueryable<TR> select = getClientQueryable7().select(trProxy.getEntityClass(), (t, t1, t2, t3, t4, t5, t6) -> {
-            selectExpression.apply(new ProxyAsSelectorImpl<>(trProxy, t.getAsSelector()), getProxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy());
+            selectExpression.apply(new ProxyAsSelectorImpl<>(trProxy, t.getAsSelector()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy());
         });
         return new EasyProxyQueryable<>(trProxy, select);
     }

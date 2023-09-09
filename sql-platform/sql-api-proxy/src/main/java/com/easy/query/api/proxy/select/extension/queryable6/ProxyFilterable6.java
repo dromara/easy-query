@@ -28,7 +28,7 @@ public interface ProxyFilterable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default ProxyQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> where(boolean condition, SQLExpression7<ProxyFilter, T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy> whereExpression) {
         if (condition) {
             getClientQueryable6().where((t, t1, t2, t3, t4, t5) -> {
-                whereExpression.apply(new ProxyFilterImpl(t.getFilter()), getProxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy());
+                whereExpression.apply(new ProxyFilterImpl(t.getFilter()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy());
             });
         }
         return getQueryable6();

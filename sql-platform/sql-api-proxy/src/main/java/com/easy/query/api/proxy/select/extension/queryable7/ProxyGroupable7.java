@@ -30,7 +30,7 @@ public interface ProxyGroupable7<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default ProxyQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> groupBy(boolean condition, SQLExpression8<ProxyGroupSelector, T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy> selectExpression) {
         if (condition) {
             getClientQueryable7().groupBy((t, t1, t2, t3, t4, t5, t6) -> {
-                selectExpression.apply(new ProxyGroupSelectorImpl(t.getGroupSelector()), getProxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy());
+                selectExpression.apply(new ProxyGroupSelectorImpl(t.getGroupSelector()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy());
             });
         }
         return getQueryable7();

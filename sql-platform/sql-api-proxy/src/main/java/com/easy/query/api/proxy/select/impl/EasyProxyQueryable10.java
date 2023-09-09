@@ -28,6 +28,6 @@ public class EasyProxyQueryable10<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     @Override
     public ProxyQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> cloneQueryable() {
-        return new EasyProxyQueryable10<>(getProxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(),get9Proxy(),get10Proxy(), getClientQueryable10());
+        return new EasyProxyQueryable10<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(),get9Proxy(),get10Proxy(), getClientQueryable10());
     }
 }

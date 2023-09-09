@@ -26,7 +26,7 @@ public interface ProxyOrderable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByAsc(boolean condition, SQLExpression5<ProxyOrderSelector, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression) {
         if (condition) {
             getClientQueryable4().orderByAsc((t, t1, t2, t3) -> {
-                selectExpression.apply(new ProxyOrderSelectorImpl(t.getOrderSelector()), getProxy(), get2Proxy(), get3Proxy(), get4Proxy());
+                selectExpression.apply(new ProxyOrderSelectorImpl(t.getOrderSelector()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
             });
         }
         return getQueryable4();
@@ -49,7 +49,7 @@ public interface ProxyOrderable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByDesc(boolean condition, SQLExpression5<ProxyOrderSelector, T1Proxy, T2Proxy, T3Proxy, T4Proxy> selectExpression) {
         if (condition) {
             getClientQueryable4().orderByDesc((t, t1, t2, t3) -> {
-                selectExpression.apply(new ProxyOrderSelectorImpl(t.getOrderSelector()), getProxy(), get2Proxy(), get3Proxy(), get4Proxy());
+                selectExpression.apply(new ProxyOrderSelectorImpl(t.getOrderSelector()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
             });
         }
         return getQueryable4();

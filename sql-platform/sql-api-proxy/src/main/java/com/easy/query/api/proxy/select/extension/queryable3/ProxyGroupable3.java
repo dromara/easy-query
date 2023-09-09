@@ -26,7 +26,7 @@ public interface ProxyGroupable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> groupBy(boolean condition, SQLExpression4<ProxyGroupSelector, T1Proxy, T2Proxy, T3Proxy> selectExpression) {
         if (condition) {
             getClientQueryable3().groupBy((selector1, selector2, selector3) -> {
-                selectExpression.apply(new ProxyGroupSelectorImpl(selector2.getGroupSelector()), getProxy(), get2Proxy(), get3Proxy());
+                selectExpression.apply(new ProxyGroupSelectorImpl(selector2.getGroupSelector()), get1Proxy(), get2Proxy(), get3Proxy());
             });
         }
         return getQueryable3();

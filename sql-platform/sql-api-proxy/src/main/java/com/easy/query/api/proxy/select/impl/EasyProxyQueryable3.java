@@ -19,6 +19,6 @@ public class EasyProxyQueryable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T
 
     @Override
     public ProxyQueryable3<T1Proxy, T1,T2Proxy, T2,T3Proxy, T3> cloneQueryable() {
-        return new EasyProxyQueryable3<>(getProxy(),get2Proxy(),get3Proxy(),getClientQueryable3());
+        return new EasyProxyQueryable3<>(get1Proxy(),get2Proxy(),get3Proxy(),getClientQueryable3());
     }
 }

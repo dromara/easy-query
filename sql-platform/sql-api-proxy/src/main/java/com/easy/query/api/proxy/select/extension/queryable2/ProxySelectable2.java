@@ -21,7 +21,7 @@ public interface ProxySelectable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression3<ProxyAsSelector<TRProxy, TR>, T1Proxy, T2Proxy> selectExpression) {
         ClientQueryable<TR> select = getClientQueryable2().select(trProxy.getEntityClass(), (selector1, selector2) -> {
-            selectExpression.apply(new ProxyAsSelectorImpl<>(trProxy, selector2.getAsSelector()), getProxy(), get2Proxy());
+            selectExpression.apply(new ProxyAsSelectorImpl<>(trProxy, selector2.getAsSelector()), get1Proxy(), get2Proxy());
         });
         return new EasyProxyQueryable<>(trProxy, select);
     }

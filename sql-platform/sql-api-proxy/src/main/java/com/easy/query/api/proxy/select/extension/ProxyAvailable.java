@@ -11,6 +11,6 @@ import com.easy.query.core.proxy.ProxyEntity;
  */
 public interface ProxyAvailable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 
-    T1Proxy getProxy();
+    T1Proxy get1Proxy();
     QueryRuntimeContext getRuntimeContext();
 }

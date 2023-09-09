@@ -25,7 +25,7 @@ public interface ProxyOrderable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> orderByAsc(boolean condition, SQLExpression4<ProxyOrderSelector, T1Proxy, T2Proxy, T3Proxy> selectExpression) {
         if (condition) {
             getClientQueryable3().orderByAsc((selector1, selector2, selector3) -> {
-                selectExpression.apply(new ProxyOrderSelectorImpl(selector1.getOrderSelector()), getProxy(), get2Proxy(), get3Proxy());
+                selectExpression.apply(new ProxyOrderSelectorImpl(selector1.getOrderSelector()), get1Proxy(), get2Proxy(), get3Proxy());
             });
         }
         return getQueryable3();
@@ -48,7 +48,7 @@ public interface ProxyOrderable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> orderByDesc(boolean condition, SQLExpression4<ProxyOrderSelector, T1Proxy, T2Proxy, T3Proxy> selectExpression) {
         if (condition) {
             getClientQueryable3().orderByDesc((selector1, selector2, selector3) -> {
-                selectExpression.apply(new ProxyOrderSelectorImpl(selector1.getOrderSelector()), getProxy(), get2Proxy(), get3Proxy());
+                selectExpression.apply(new ProxyOrderSelectorImpl(selector1.getOrderSelector()), get1Proxy(), get2Proxy(), get3Proxy());
             });
         }
         return getQueryable3();

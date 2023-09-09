@@ -24,7 +24,7 @@ public interface ProxyHavingable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default ProxyQueryable2<T1Proxy,T1,T2Proxy, T2> having(boolean condition, SQLExpression3<ProxyAggregateFilter, T1Proxy, T2Proxy> predicateExpression) {
         if (condition) {
             getClientQueryable2().having((predicate1, predicate2) -> {
-                predicateExpression.apply(new ProxyAggregateFilterImpl(predicate1.getAggregateFilter()), getProxy(), get2Proxy());
+                predicateExpression.apply(new ProxyAggregateFilterImpl(predicate1.getAggregateFilter()), get1Proxy(), get2Proxy());
             });
         }
         return getQueryable2();

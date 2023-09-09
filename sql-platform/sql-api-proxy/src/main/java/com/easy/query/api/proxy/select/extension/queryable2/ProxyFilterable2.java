@@ -23,7 +23,7 @@ public interface ProxyFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, 
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> whereExpression) {
         if (condition) {
             getClientQueryable2().where((wherePredicate1, wherePredicate2) -> {
-                whereExpression.apply(new ProxyFilterImpl(wherePredicate2.getFilter()), getProxy(), get2Proxy());
+                whereExpression.apply(new ProxyFilterImpl(wherePredicate2.getFilter()), get1Proxy(), get2Proxy());
             });
         }
         return getQueryable2();
