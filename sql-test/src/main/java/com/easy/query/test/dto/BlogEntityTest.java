@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
  *
  * @author xuejiaming
  */
-@Ignore
 @Data
 @EntityProxy
 public class BlogEntityTest {

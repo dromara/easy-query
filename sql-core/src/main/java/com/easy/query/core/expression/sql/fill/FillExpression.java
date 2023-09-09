@@ -15,7 +15,6 @@ import java.util.function.BiConsumer;
  * @author xuejiaming
  */
 public class FillExpression {
-    private final boolean consumeNull;
     private final SQLFuncExpression1<FillParams, ClientQueryable<?>> fillSQLFuncExpression;
     private final Class<?> fillFromEntityClass;
     private final boolean many;
@@ -25,18 +24,13 @@ public class FillExpression {
     private  BiConsumer<Object, ?> produceOne;
 
 
-    public FillExpression(Class<?> fillFromEntityClass,boolean many,String targetProperty, Property<Object,?> selfProperty, boolean consumeNull,SQLFuncExpression1<FillParams, ClientQueryable<?>> fillSQLFuncExpression){
+    public FillExpression(Class<?> fillFromEntityClass,boolean many,String targetProperty, Property<Object,?> selfProperty, SQLFuncExpression1<FillParams, ClientQueryable<?>> fillSQLFuncExpression){
         this.fillFromEntityClass = fillFromEntityClass;
         this.many = many;
         this.targetProperty = targetProperty;
         this.selfProperty = selfProperty;
-        this.consumeNull = consumeNull;
 
         this.fillSQLFuncExpression = fillSQLFuncExpression;
-    }
-
-    public boolean isConsumeNull() {
-        return consumeNull;
     }
 
     public SQLFuncExpression1<FillParams, ClientQueryable<?>> getFillSQLFuncExpression() {

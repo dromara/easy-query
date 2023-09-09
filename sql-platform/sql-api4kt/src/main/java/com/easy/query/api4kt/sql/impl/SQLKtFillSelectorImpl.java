@@ -22,4 +22,10 @@ public class SQLKtFillSelectorImpl implements SQLKtFillSelector {
     public <TREntity> KtQueryable<TREntity> with(Class<TREntity> entityClass) {
         return new EasyKtQueryable<>(fillSelector.with(entityClass));
     }
+
+    @Override
+    public SQLKtFillSelector consumeNull(boolean consumeNull) {
+        fillSelector.consumeNull(consumeNull);
+        return this;
+    }
 }

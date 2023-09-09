@@ -7,5 +7,9 @@ package com.easy.query.core.proxy;
  * @author xuejiaming
  */
 public interface PropColumn<TProperty> extends TableColumn{
+    /**
+     * 属性名
+     * @return
+     */
     String value();
 }

@@ -423,7 +423,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     for (TR tr : result) {
                         Object relationId = fill.getSelfProperty().apply(tr);
                         List<Object> objects = map.get(relationId);
-                        if (fill.isConsumeNull() || objects != null) {
+                        if (fillParams.isConsumeNull() || objects != null) {
                             produceMany.accept(tr, objects);
                         }
                     }
@@ -438,7 +438,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     for (TR tr : result) {
                         Object relationId = fill.getSelfProperty().apply(tr);
                         Object object = map.get(relationId);
-                        if (fill.isConsumeNull() || object != null) {
+                        if (fillParams.isConsumeNull() || object != null) {
                             produceOne.accept(tr, EasyObjectUtil.typeCastNullable(object));
                         }
                     }
@@ -937,24 +937,24 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public <TREntity> ClientQueryable<T1> fillMany(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
+    public <TREntity> ClientQueryable<T1> fillMany(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
         SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
             FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
             return fillSetterExpression.apply(fillSelector);
         };
-        FillExpression fillExpression = new FillExpression(queryClass(), true, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), consumeNull, fillQueryableExpression);
+        FillExpression fillExpression = new FillExpression(queryClass(), true, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), fillQueryableExpression);
         fillExpression.setProduceMany(EasyObjectUtil.typeCastNullable(produce));
         entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
         return this;
     }
 
     @Override
-    public <TREntity> ClientQueryable<T1> fillOne(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull) {
+    public <TREntity> ClientQueryable<T1> fillOne(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce) {
         SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
             FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
             return fillSetterExpression.apply(fillSelector);
         };
-        FillExpression fillExpression = new FillExpression(queryClass(), false, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), consumeNull, fillQueryableExpression);
+        FillExpression fillExpression = new FillExpression(queryClass(), false, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), fillQueryableExpression);
         fillExpression.setProduceOne(EasyObjectUtil.typeCastNullable(produce));
         entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
         return this;

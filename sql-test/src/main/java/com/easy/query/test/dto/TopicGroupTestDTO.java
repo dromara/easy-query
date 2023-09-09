@@ -11,7 +11,6 @@ import org.junit.Ignore;
  *
  * @author xuejiaming
  */
-@Ignore
 @ToString
 public class TopicGroupTestDTO {
 

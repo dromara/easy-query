@@ -22,4 +22,10 @@ public class SQLFillSelectorImpl implements SQLFillSelector {
     public <TREntity> Queryable<TREntity> with(Class<TREntity> entityClass) {
         return new EasyQueryable<>(fillSelector.with(entityClass));
     }
+
+    @Override
+    public SQLFillSelector consumeNull(boolean consumeNull) {
+         fillSelector.consumeNull(consumeNull);
+         return this;
+    }
 }

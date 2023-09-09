@@ -9,7 +9,6 @@ import org.junit.Ignore;
  *
  * @author xuejiaming
  */
-@Ignore
 @Data
 public class TopicShardingGroup {
     private Integer idCount;

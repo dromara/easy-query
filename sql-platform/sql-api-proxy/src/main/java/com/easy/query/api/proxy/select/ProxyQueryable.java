@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.select;
 
+import com.easy.query.api.proxy.select.extension.ProxyAvailable;
 import com.easy.query.api.proxy.select.extension.queryable.ClientProxyQueryableAvailable;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyAggregatable1;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyFilterable1;
@@ -46,8 +47,8 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
         ProxyOrderable1<T1Proxy, T1>,
         ProxyUnionable1<T1Proxy, T1>,
         ProxySelectable1<T1Proxy, T1>,
-        ProxyJoinable1<T1Proxy, T1> {
-    T1Proxy get1Proxy();
+        ProxyJoinable1<T1Proxy, T1>,
+        ProxyAvailable<T1Proxy,T1> {
 
     ClientQueryable<T1> getClientQueryable();
 

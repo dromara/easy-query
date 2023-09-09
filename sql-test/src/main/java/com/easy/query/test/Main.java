@@ -51,7 +51,6 @@ import java.util.UUID;
 import static com.easy.query.test.entity.base.SysUserProxy.SYS_USER_PROXY;
 import static com.easy.query.test.entity.base.TopicProxy.TOPIC_PROXY;
 
-@Ignore
 public class Main {
 
     public static <TR> void action(TR a, TR b) {

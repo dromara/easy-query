@@ -1,6 +1,5 @@
 package com.easy.query.api.proxy.select.impl;
 
-import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.abstraction.AbstractProxyQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -17,7 +16,7 @@ public class EasyProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T
     }
 
     @Override
-    public ProxyQueryable<T1Proxy, T1> cloneQueryable() {
-        return new EasyProxyQueryable2<>(get1Proxy(),get2Proxy(),getClientQueryable2());
+    public EasyProxyQueryable2<T1Proxy, T1,T2Proxy,T2> cloneQueryable() {
+        return new EasyProxyQueryable2<>(getProxy(),get2Proxy(),getClientQueryable2());
     }
 }

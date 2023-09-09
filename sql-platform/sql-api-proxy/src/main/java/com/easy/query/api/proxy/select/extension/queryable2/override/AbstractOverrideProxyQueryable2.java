@@ -28,12 +28,10 @@ import java.util.function.Function;
  */
 public abstract class AbstractOverrideProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> extends AbstractProxyQueryable<T1Proxy, T1> implements ProxyQueryable2Available<T1Proxy, T1, T2Proxy, T2> {
 
-    protected final T2Proxy t2Proxy;
     protected final ClientQueryable2<T1, T2> entityQueryable2;
 
-    public AbstractOverrideProxyQueryable2(T1Proxy t1Proxy,T2Proxy t2Proxy,ClientQueryable2<T1, T2> entityQueryable2) {
+    public AbstractOverrideProxyQueryable2(T1Proxy t1Proxy,ClientQueryable2<T1, T2> entityQueryable2) {
         super(t1Proxy,entityQueryable2);
-        this.t2Proxy = t2Proxy;
         this.entityQueryable2 = entityQueryable2;
     }
 

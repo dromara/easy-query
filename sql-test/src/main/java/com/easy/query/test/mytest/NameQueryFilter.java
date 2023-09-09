@@ -11,7 +11,6 @@ import org.junit.Ignore;
  * @Date: 2023/3/8 10:24
  * @author xuejiaming
  */
-@Ignore
 public class NameQueryFilter implements PredicateFilterInterceptor {
     @Override
     public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, WherePredicate<Object> wherePredicate) {

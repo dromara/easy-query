@@ -10,5 +10,5 @@ import com.easy.query.api4j.select.Queryable;
  */
 public interface SQLFillSelector {
     <TREntity> Queryable<TREntity> with(Class<TREntity> entityClass);
-
+    SQLFillSelector consumeNull(boolean consumeNull);
 }

@@ -19,25 +19,16 @@ import java.util.function.BiConsumer;
 public interface SQLFillable1<T1> extends ClientQueryableAvailable<T1>, QueryableAvailable<T1> {
 
 
-    default <TREntity> Queryable<T1> fillMany(SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
-        return fillMany(fillSetterExpression, targetProperty, selfProperty, produce, false);
-    }
-
-    default <TREntity> Queryable<T1> fillMany(SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
+    default <TREntity> Queryable<T1> fillMany(SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty,Property<T1, ?> selfProperty,  BiConsumer<T1, Collection<TREntity>> produce) {
         getClientQueryable().fillMany(fillSelector -> {
             return fillSetterExpression.apply(new SQLFillSelectorImpl(fillSelector)).getClientQueryable();
-        }, EasyLambdaUtil.getPropertyName(targetProperty), selfProperty, produce, consumeNull);
+        }, EasyLambdaUtil.getPropertyName(targetProperty), selfProperty, produce);
         return getQueryable();
     }
-
     default <TREntity> Queryable<T1> fillOne(SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce) {
-        return fillOne(fillSetterExpression, targetProperty, selfProperty, produce, false);
-    }
-
-    default <TREntity> Queryable<T1> fillOne(SQLFuncExpression1<SQLFillSelector, Queryable<TREntity>> fillSetterExpression, Property<TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull) {
         getClientQueryable().fillOne(fillSelector -> {
             return fillSetterExpression.apply(new SQLFillSelectorImpl(fillSelector)).getClientQueryable();
-        }, EasyLambdaUtil.getPropertyName(targetProperty), selfProperty, produce, consumeNull);
+        }, EasyLambdaUtil.getPropertyName(targetProperty), selfProperty, produce);
         return getQueryable();
     }
 }

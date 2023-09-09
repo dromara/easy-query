@@ -482,7 +482,7 @@ public class RelationTest extends BaseTest {
         List<City> list1 = easyQuery.queryable(City.class)
                 .fillOne(x -> x.with(Province.class), Province::getCode, City::getProvinceCode, (x, y) -> {
                     x.setProvince(y);
-                }, false)
+                })
                 .toList();
 
         Assert.assertEquals(2, list.size());
@@ -503,9 +503,9 @@ public class RelationTest extends BaseTest {
     public void provinceTest3() {
 
         EasyPageResult<City> pageResult = easyQuery.queryable(City.class)
-                .fillOne(x -> x.with(Province.class), Province::getCode, City::getProvinceCode, (x, y) -> {
+                .fillOne(x -> x.consumeNull(false).with(Province.class), Province::getCode, City::getProvinceCode, (x, y) -> {
                     x.setProvince(y);
-                }, false)
+                })
                 .toPageResult(1, 2);
 
         Assert.assertEquals(24L, pageResult.getTotal());
@@ -537,12 +537,12 @@ public class RelationTest extends BaseTest {
         {
 
             EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
-                    .fillMany(x -> x.with(City.class).where(y -> y.eq(City::getCode, "3306"))
+                    .fillMany(x -> x.consumeNull(true).with(City.class).where(y -> y.eq(City::getCode, "3306"))
                             , City::getProvinceCode
                             , Province::getCode
                             , (x, y) -> {
                                 x.setCities(y == null ? new ArrayList<>() : new ArrayList<>(y));
-                            }, true)
+                            })
                     .toPageResult(1, 1);
             Assert.assertEquals(2L, pageResult1.getTotal());
             Assert.assertEquals(1, pageResult1.getData().size());
@@ -558,7 +558,7 @@ public class RelationTest extends BaseTest {
         {
 
             EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
-                    .fillMany(x -> x.with(City.class).where(y -> y.eq(City::getCode, "3306")).select(CityVO.class)
+                    .fillMany(x -> x.consumeNull(true).with(City.class).where(y -> y.eq(City::getCode, "3306")).select(CityVO.class)
                             , CityVO::getProvinceCode
                             , Province::getCode
                             , (x, y) -> {
@@ -566,7 +566,7 @@ public class RelationTest extends BaseTest {
                                     CityVO first = EasyCollectionUtil.first(y);
                                     x.setFirstCityName(first.getName());
                                 }
-                            }, true)
+                            })
                     .toPageResult(1, 10);
             Assert.assertEquals(2L, pageResult1.getTotal());
             Assert.assertEquals(2, pageResult1.getData().size());

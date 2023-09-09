@@ -10,4 +10,5 @@ import com.easy.query.api4kt.select.KtQueryable;
  */
 public interface SQLKtFillSelector {
     <TREntity> KtQueryable<TREntity> with(Class<TREntity> entityClass);
+    SQLKtFillSelector consumeNull(boolean consumeNull);
 }

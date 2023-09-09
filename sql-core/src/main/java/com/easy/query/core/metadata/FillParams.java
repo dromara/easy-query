@@ -14,11 +14,13 @@ public class FillParams {
     private final List<Object> relationIds;
 
     private Class<?> originalEntityClass;
+    private boolean consumeNull;
 
     public FillParams(String targetProperty){
 
         this.targetProperty = targetProperty;
         this.relationIds=new ArrayList<>();
+        this.consumeNull=false;
     }
 
     public String getTargetProperty() {
@@ -35,5 +37,13 @@ public class FillParams {
 
     public void setOriginalEntityClass(Class<?> originalEntityClass) {
         this.originalEntityClass = originalEntityClass;
+    }
+
+    public boolean isConsumeNull() {
+        return consumeNull;
+    }
+
+    public void setConsumeNull(boolean consumeNull) {
+        this.consumeNull = consumeNull;
     }
 }

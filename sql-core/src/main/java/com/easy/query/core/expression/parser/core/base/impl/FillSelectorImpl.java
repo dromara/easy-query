@@ -28,4 +28,10 @@ public class FillSelectorImpl implements FillSelector {
         return queryable.where(o->o.in(fillParams.getTargetProperty(),fillParams.getRelationIds()));
 
     }
+
+    @Override
+    public FillSelector consumeNull(boolean consumeNull) {
+        fillParams.setConsumeNull(consumeNull);
+        return this;
+    }
 }

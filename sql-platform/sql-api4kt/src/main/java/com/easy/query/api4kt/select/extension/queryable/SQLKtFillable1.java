@@ -21,25 +21,15 @@ public interface SQLKtFillable1<T1> extends ClientKtQueryableAvailable<T1>, KtQu
 
 
     default <TREntity> KtQueryable<T1> fillMany(SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<? super TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
-        return fillMany(fillSetterExpression, targetProperty, selfProperty, produce, false);
-    }
-
-
-    default <TREntity> KtQueryable<T1> fillMany(SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<? super TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce, boolean consumeNull) {
         getClientQueryable().fillMany(fillSelector -> {
             return fillSetterExpression.apply(new SQLKtFillSelectorImpl(fillSelector)).getClientQueryable();
-        }, EasyKtLambdaUtil.getPropertyName(targetProperty), selfProperty, produce, consumeNull);
+        }, EasyKtLambdaUtil.getPropertyName(targetProperty), selfProperty, produce);
         return getQueryable();
     }
-
     default <TREntity> KtQueryable<T1> fillOne(SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<? super TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce) {
-        return fillOne(fillSetterExpression, targetProperty, selfProperty, produce, false);
-    }
-
-    default <TREntity> KtQueryable<T1> fillOne(SQLFuncExpression1<SQLKtFillSelector, KtQueryable<TREntity>> fillSetterExpression, KProperty1<? super TREntity, ?> targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce, boolean consumeNull) {
         getClientQueryable().fillOne(fillSelector -> {
             return fillSetterExpression.apply(new SQLKtFillSelectorImpl(fillSelector)).getClientQueryable();
-        }, EasyKtLambdaUtil.getPropertyName(targetProperty), selfProperty, produce, consumeNull);
+        }, EasyKtLambdaUtil.getPropertyName(targetProperty), selfProperty, produce);
         return getQueryable();
     }
 }
