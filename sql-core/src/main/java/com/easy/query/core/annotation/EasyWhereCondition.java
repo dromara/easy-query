@@ -83,5 +83,7 @@ public @interface EasyWhereCondition {
         ,RANGE_RIGHT_OPEN
         //小于等于
         ,RANGE_RIGHT_CLOSED
+        //equal or (a=? or a=? or a=?)
+        ,COLLECTION_EQUAL_OR
     }
 }

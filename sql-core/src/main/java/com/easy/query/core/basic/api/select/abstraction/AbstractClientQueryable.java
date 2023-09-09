@@ -651,6 +651,29 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             case NOT_EQUAL:
                                 filter.ne(entityTable, queryPropertyName, val);
                                 break;
+                            case COLLECTION_EQUAL_OR:
+                            {
+                                if (val.getClass().isArray()) {
+                                    if (EasyCollectionUtil.isNotEmptyArray((Object[]) val)) {
+
+                                        filter.and(f->{
+                                            for (Object o : (Object[]) val) {
+                                                f.eq(entityTable,queryPropertyName,o).or();
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
+                                        filter.and(f->{
+                                            for (Object o : (Collection<?>) val) {
+                                                f.eq(entityTable,queryPropertyName,o).or();
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                                filter.ne(entityTable, queryPropertyName, val);
+                                break;
                             default:
                                 break;
                         }
