@@ -38,7 +38,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public abstract class AbstractProxyQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
+public abstract class AbstractProxyQueryablex<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> implements ProxyQueryable2<T1Proxy, T1,T2Proxy,T2> {
 
     protected final T1Proxy t1Proxy;
@@ -46,7 +46,7 @@ public abstract class AbstractProxyQueryable2<T1Proxy extends ProxyEntity<T1Prox
     protected final ClientQueryable2<T1,T2> entityQueryable;
     private final T2Proxy t2Proxy;
 
-    public AbstractProxyQueryable2(T1Proxy t1Proxy,T2Proxy t2Proxy, ClientQueryable2<T1,T2> entityQueryable) {
+    public AbstractProxyQueryablex(T1Proxy t1Proxy,T2Proxy t2Proxy, ClientQueryable2<T1,T2> entityQueryable) {
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
         this.runtimeContext = sqlEntityExpressionBuilder.getRuntimeContext();
         this.t1Proxy = t1Proxy.create(sqlEntityExpressionBuilder.getTable(0).getEntityTable());

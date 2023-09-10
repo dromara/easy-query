@@ -1,8 +1,8 @@
 package com.easy.query.api.proxy.select;
 
-import com.easy.query.api.proxy.select.extension.queryable.ProxyAvailable;
 import com.easy.query.api.proxy.select.extension.queryable.ClientProxyQueryableAvailable;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyAggregatable1;
+import com.easy.query.api.proxy.select.extension.queryable.ProxyAvailable;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyFillable1;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyFilterable1;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyGroupable1;
@@ -19,7 +19,6 @@ import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.internal.TableReNameable;
-import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ConditionAccepter;
@@ -51,7 +50,6 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
         ProxyJoinable1<T1Proxy, T1>,
         ProxyFillable1<T1Proxy, T1>,
         ProxyAvailable<T1Proxy,T1> {
-    ClientQueryable<T1> getClientQueryable();
 
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy);
 
