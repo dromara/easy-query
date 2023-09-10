@@ -2,6 +2,7 @@ package com.easy.query.solon.integration;
 
 import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.EasyQuery;
+import com.easy.query.api4kt.client.EasyKtQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -18,12 +19,14 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
     private final EasyQueryClient easyQueryClient;
     private final EasyQuery easyQuery;
     private final EasyProxyQuery easyProxyQuery;
+    private final EasyKtQuery easyKtQuery;
 
-    public DefaultEasyQueryHolder(EasyQueryClient easyQueryClient, EasyQuery easyQuery, EasyProxyQuery easyProxyQuery){
+    public DefaultEasyQueryHolder(EasyQueryClient easyQueryClient, EasyQuery easyQuery, EasyProxyQuery easyProxyQuery,EasyKtQuery easyKtQuery){
         this.easyQueryClient = easyQueryClient;
         this.easyQuery = easyQuery;
 
         this.easyProxyQuery = easyProxyQuery;
+        this.easyKtQuery = easyKtQuery;
     }
 
     @Override
@@ -42,6 +45,11 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
     }
 
     @Override
+    public EasyKtQuery getEasyKtQuery() {
+        return easyKtQuery;
+    }
+
+    @Override
     public void injectTo(VarHolder varH) {
 
         if (EasyQuery.class.isAssignableFrom(varH.getType())) {
@@ -56,6 +64,11 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
 
         if (EasyProxyQuery.class.isAssignableFrom(varH.getType())) {
             varH.setValue(this.easyProxyQuery);
+            return;
+        }
+
+        if (EasyKtQuery.class.isAssignableFrom(varH.getType())) {
+            varH.setValue(this.easyKtQuery);
             return;
         }
         if(QueryConfiguration.class.isAssignableFrom(varH.getType())){

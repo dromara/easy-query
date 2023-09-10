@@ -2,6 +2,8 @@ package com.easy.query.solon.integration;
 
 import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
+import com.easy.query.api4kt.client.DefaultEasyKtQuery;
+import com.easy.query.api4kt.client.EasyKtQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.InvokeTryFinally;
 import com.easy.query.core.basic.extension.track.TrackManager;
@@ -142,8 +144,9 @@ public class DbManager {
         EasyQueryClient easyQueryClient =easyQueryBuilderConfiguration.build();
         DefaultEasyQuery easyQuery = new DefaultEasyQuery(easyQueryClient);
         DefaultEasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
+        EasyKtQuery easyKtQuery = new DefaultEasyKtQuery(easyQueryClient);
 
-        return new DefaultEasyQueryHolder(easyQueryClient,easyQuery,easyProxyQuery);
+        return new DefaultEasyQueryHolder(easyQueryClient,easyQuery,easyProxyQuery,easyKtQuery);
     }
 
     private static void useNameConversion(SolonEasyQueryProperties solonEasyQueryProperties,EasyQueryBuilderConfiguration easyQueryBuilderConfiguration){
