@@ -60,8 +60,11 @@ import static com.easy.query.test.entity.base.TopicTestProxy.TOPIC_TEST_PROXY;
  * @author xuejiaming
  */
 public class QueryTest3 extends BaseTest {
-
-
+public static class AA{
+    public String id(){
+        return "";
+    }
+}
     @Test
     public void query124() {
         String toSql = easyQuery
@@ -618,7 +621,8 @@ public class QueryTest3 extends BaseTest {
                 .firstOrNull();
         List<BlogEntityTest> list = easyProxyQuery.queryable(BlogEntityProxy.DEFAULT)
                 .leftJoin(TopicAutoProxy.DEFAULT, (filter, t, t1) -> filter.eq(t.id(), t1.title()))
-                .where((filter, t, t1) -> filter.eq(t1.title(), "123").like(t.id(), "22"))
+                .where(o->o.eq(o.t().title(),"123").like(o.t().id(),"22"))
+                .where(sql->sql.eq(sql.t().id(),"123"))
                 .select(BlogEntityTestProxy.DEFAULT, (selector, t, t1) ->
                         selector.columns(t.id(), t1.title())
                                 .columnAs(t.content(), r -> r.content())
@@ -627,7 +631,7 @@ public class QueryTest3 extends BaseTest {
 
         String sql = easyProxyQuery.queryable(BlogEntityProxy.DEFAULT)
                 .leftJoin(TopicAutoProxy.DEFAULT, (filter, t, t1) -> filter.eq(t.id(), t1.title()))
-                .where((filter, t, t1) -> filter.eq(t1.title(), "123").like(t.id(), "22"))
+                .where(filter -> filter.eq(filter.t1().title(), "123").like(filter.t().id(), "22"))
                 .select(BlogEntityTestProxy.DEFAULT, (selector, t, t1) -> selector.columns(t.id(), t1.title()).columnAs(t.content(), r -> r.content())
                         .columnAs(t.isTop(), r -> r.isTop())).toSQL();
         Assert.assertEquals("SELECT t.`id`,t1.`title`,t.`content` AS `content`,t.`is_top` AS `is_top` FROM `t_blog` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`deleted` = ? AND t1.`title` = ? AND t.`id` LIKE ?", sql);

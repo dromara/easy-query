@@ -76,6 +76,8 @@ public class QueryTest extends BaseTest {
 //    }
     @Test
     public void query0() {
+
+
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .where(o -> o.eq(SysUser::getId, "123xxx"));
         String sql = queryable.toSQL();

@@ -13,6 +13,7 @@ import com.easy.query.core.basic.api.select.extension.queryable.Groupable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Havingable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Includeable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Joinable1;
+import com.easy.query.core.basic.api.select.extension.queryable.Multiable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Orderable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Selectable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Unionable1;
@@ -36,6 +37,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
         ConditionConfigurable<ClientQueryable<T1>>,
         Aggregatable1<T1>,
         Joinable1<T1>,
+        Multiable1<T1>,
         Filterable1<T1>,
         Selectable1<T1>,
         Groupable1<T1>,

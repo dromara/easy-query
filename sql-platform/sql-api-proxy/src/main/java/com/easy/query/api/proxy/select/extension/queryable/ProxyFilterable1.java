@@ -24,7 +24,7 @@ public interface ProxyFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
      * @param whereExpression where表达式
      * @return 返回当前查询queryable
      */
-    default ProxyQueryable<T1Proxy, T1> where(SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
+    default ProxyQueryable<T1Proxy, T1> where(SQLExpression2<ProxyFilter,T1Proxy> whereExpression) {
         return where(true, whereExpression);
     }
 
@@ -35,7 +35,7 @@ public interface ProxyFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
      * @param whereExpression where表达式
      * @return 返回当前查询queryable
      */
-    ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression);
+    ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLExpression2<ProxyFilter,T1Proxy> whereExpression);
 
     /**
      * 根据主键查询

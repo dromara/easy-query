@@ -27,11 +27,11 @@ import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.base.TopicProxy;
 import com.easy.query.test.mytest.SysUserLogbyMonth;
 import com.easy.query.test.mytest.TestUserMysql;
 import com.easy.query.test.mytest.TestUserMysqlGroup;
 import com.easy.query.test.mytest.TestUserMysqlx;
-import org.junit.Ignore;
 
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
@@ -225,7 +225,7 @@ public class Main {
             List<SysUser> sysUsers2 = easyProxyQuery.queryable(TOPIC_PROXY)
                     .leftJoin(SYS_USER_PROXY, (filter, t, t1) -> filter.eq(t.title, t1.phone))
                     .innerJoin(SYS_USER_PROXY, (filter, t, t1, t2) -> filter.eq(t1.phone, t2.phone).like(t2.idCard, "123"))
-                    .where((filter, t, t1, t2) -> filter.like(t1.username, "111").eq(t2.idCard, "111"))
+                    .where(filter -> filter.like(filter.t1().username, "111").eq(filter.t2().idCard, "111"))
                     .select(SYS_USER_PROXY, (selector, t, t1, t2) -> selector.columns(t1.idCard, t2.username, t.id).columnAs(t2.phone, r -> r.phone))
                     .toList();
 //            List<Topic> list2 = easyProxyQuery

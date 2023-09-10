@@ -6,7 +6,15 @@ import com.easy.query.core.api.dynamic.sort.internal.ObjectSortBuilderImpl;
 import com.easy.query.core.api.dynamic.sort.internal.ObjectSortEntry;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable10;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
+import com.easy.query.core.basic.api.select.ClientQueryable3;
+import com.easy.query.core.basic.api.select.ClientQueryable4;
+import com.easy.query.core.basic.api.select.ClientQueryable5;
+import com.easy.query.core.basic.api.select.ClientQueryable6;
+import com.easy.query.core.basic.api.select.ClientQueryable7;
+import com.easy.query.core.basic.api.select.ClientQueryable8;
+import com.easy.query.core.basic.api.select.ClientQueryable9;
 import com.easy.query.core.basic.api.select.JdbcResultWrap;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -651,29 +659,28 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             case NOT_EQUAL:
                                 filter.ne(entityTable, queryPropertyName, val);
                                 break;
-                            case COLLECTION_EQUAL_OR:
-                            {
+                            case COLLECTION_EQUAL_OR: {
                                 if (val.getClass().isArray()) {
                                     if (EasyCollectionUtil.isNotEmptyArray((Object[]) val)) {
 
-                                        filter.and(f->{
+                                        filter.and(f -> {
                                             for (Object o : (Object[]) val) {
-                                                f.eq(entityTable,queryPropertyName,o).or();
+                                                f.eq(entityTable, queryPropertyName, o).or();
                                             }
                                         });
                                     }
                                 } else {
                                     if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                                        filter.and(f->{
+                                        filter.and(f -> {
                                             for (Object o : (Collection<?>) val) {
-                                                f.eq(entityTable,queryPropertyName,o).or();
+                                                f.eq(entityTable, queryPropertyName, o).or();
                                             }
                                         });
                                     }
                                 }
                             }
-                                filter.ne(entityTable, queryPropertyName, val);
-                                break;
+                            filter.ne(entityTable, queryPropertyName, val);
+                            break;
                             default:
                                 break;
                         }
@@ -870,6 +877,51 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public EntityQueryExpressionBuilder getSQLEntityExpressionBuilder() {
         return entityQueryExpressionBuilder;
+    }
+
+    @Override
+    public <T2> ClientQueryable2<T1, T2> from(Class<T2> from2Class) {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(t1Class, from2Class, MultiTableTypeEnum.DTO, entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T2, T3> ClientQueryable3<T1, T2, T3> from(Class<T2> from2Class, Class<T3> from3Class) {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable3(t1Class, from2Class, from3Class, MultiTableTypeEnum.DTO, entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T2, T3, T4> ClientQueryable4<T1, T2, T3, T4> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class) {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable4(t1Class, from2Class, from3Class, from4Class, MultiTableTypeEnum.DTO, entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T2, T3, T4, T5> ClientQueryable5<T1, T2, T3, T4, T5> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class) {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable5(t1Class, from2Class, from3Class, from4Class, from5Class, MultiTableTypeEnum.DTO, entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T2, T3, T4, T5, T6> ClientQueryable6<T1, T2, T3, T4, T5, T6> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class, Class<T6> from6Class) {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable6(t1Class, from2Class, from3Class, from4Class, from5Class, from6Class, MultiTableTypeEnum.DTO, entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T2, T3, T4, T5, T6, T7> ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class, Class<T6> from6Class, Class<T7> from7Class) {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable7(t1Class, from2Class, from3Class, from4Class, from5Class, from6Class, from7Class, MultiTableTypeEnum.DTO, entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T2, T3, T4, T5, T6, T7, T8> ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class, Class<T6> from6Class, Class<T7> from7Class, Class<T8> from8Class) {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable8(t1Class, from2Class, from3Class, from4Class, from5Class, from6Class, from7Class, from8Class, MultiTableTypeEnum.DTO, entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T2, T3, T4, T5, T6, T7, T8, T9> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class, Class<T6> from6Class, Class<T7> from7Class, Class<T8> from8Class, Class<T9> from9Class) {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable9(t1Class, from2Class, from3Class, from4Class, from5Class, from6Class, from7Class, from8Class, from9Class, MultiTableTypeEnum.DTO, entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public <T2, T3, T4, T5, T6, T7, T8, T9, T10> ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class, Class<T6> from6Class, Class<T7> from7Class, Class<T8> from8Class, Class<T9> from9Class, Class<T10> from10Class) {
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable10(t1Class, from2Class, from3Class, from4Class, from5Class, from6Class, from7Class, from8Class, from9Class, from10Class, MultiTableTypeEnum.DTO, entityQueryExpressionBuilder);
     }
 
     @Override

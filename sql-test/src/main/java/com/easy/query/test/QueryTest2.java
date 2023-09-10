@@ -1454,4 +1454,16 @@ public class QueryTest2 extends BaseTest {
                 toSql1);
     }
 
+
+    @Test
+    public void queryMultiFrom1(){
+        String sql = easyQueryClient
+                .queryable(Topic.class)
+                .from(Topic.class)
+                .whereById(true, "1")
+                .where((a, b) -> a.eq("id", "id"))
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t , `t_topic` t1 WHERE t.`id` = ? AND t.`id` = ?",sql);
+    }
+
 }

@@ -29,6 +29,9 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
 
     @Override
     public <TREntity> ClientQueryable<TREntity> with(String property,Integer groupSize) {
+        if(groupSize!=null&&groupSize<1){
+            throw new IllegalArgumentException("include group size < 1");
+        }
         NavigateMetadata navigateMetadata = entityTable.getEntityMetadata().getNavigateNotNull(property);
         includeNavigateParams.setNavigateMetadata(navigateMetadata);
         includeNavigateParams.setTable(this.entityTable);

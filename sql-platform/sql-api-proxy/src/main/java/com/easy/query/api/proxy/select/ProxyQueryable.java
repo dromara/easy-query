@@ -19,14 +19,11 @@ import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.internal.TableReNameable;
-import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
-
-import java.util.List;
 
 /**
  * create time 2023/6/21 17:11
@@ -50,16 +47,12 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
         ProxySelectable1<T1Proxy, T1>,
         ProxyJoinable1<T1Proxy, T1>,
         ProxyFillable1<T1Proxy, T1>,
-        ProxyAvailable<T1Proxy,T1> {
-
-    ClientQueryable<T1> getClientQueryable();
-
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy);
+        ProxyAvailable<T1Proxy,T1>,ProxyBaseQueryable<T1Proxy,T1> {
+    long countDistinct(SQLExpression2<ProxySelector, T1Proxy> selectExpression);
 
     @Override
     ProxyQueryable<T1Proxy, T1> cloneQueryable();
 
-    long countDistinct(SQLExpression2<ProxySelector, T1Proxy> selectExpression);
 
     /**
      * SELECT NOT EXISTS (
@@ -70,7 +63,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
      * @param whereExpression 表达式最后一个是取反
      * @return
      */
-    boolean all(SQLExpression2<ProxyFilter, T1Proxy> whereExpression);
+    boolean all(SQLExpression2<ProxyFilter,T1Proxy> whereExpression);
 
     /**
      * 设置column所有join表都会生效

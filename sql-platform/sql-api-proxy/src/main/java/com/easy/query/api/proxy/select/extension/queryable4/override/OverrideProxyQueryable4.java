@@ -67,12 +67,12 @@ public interface OverrideProxyQueryable4<T1Proxy extends ProxyEntity<T1Proxy, T1
 
 
     @Override
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
+    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(SQLExpression2<ProxyFilter,T1Proxy> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression);
+    ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(boolean condition, SQLExpression2<ProxyFilter,T1Proxy> whereExpression);
 
     @Override
     default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> groupBy(SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression) {

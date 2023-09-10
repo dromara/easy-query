@@ -41,6 +41,7 @@ public abstract class AbstractOverrideClientQueryable2<T1,T2> extends AbstractCl
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(getClientQueryable2());
     }
 
+
     @Override
     public ClientQueryable2<T1, T2> whereById(boolean condition, Object id) {
         super.whereById(condition, id);

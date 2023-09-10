@@ -66,7 +66,7 @@ public abstract class AbstractOverrideProxyQueryable3<T1Proxy extends ProxyEntit
     }
 
     @Override
-    public ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
+    public ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> where(boolean condition, SQLExpression2<ProxyFilter,T1Proxy> whereExpression) {
         super.where(condition, whereExpression);
         return getQueryable3();
     }

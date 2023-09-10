@@ -72,12 +72,12 @@ public interface OverrideProxyQueryable9<T1Proxy extends ProxyEntity<T1Proxy, T1
 
 
     @Override
-    default ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> where(SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
+    default ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> where(SQLExpression2<ProxyFilter,T1Proxy> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression);
+    ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> where(boolean condition, SQLExpression2<ProxyFilter,T1Proxy> whereExpression);
 
     @Override
     default ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> groupBy(SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression) {

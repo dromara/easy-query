@@ -102,7 +102,7 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
     }
 
     @Override
-    public boolean all(SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
+    public boolean all(SQLExpression2<ProxyFilter,T1Proxy> whereExpression) {
         return entityQueryable.all(where -> {
             whereExpression.apply(new ProxyFilterImpl(where.getFilter()), get1Proxy());
         });
@@ -180,7 +180,7 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
 
 
     @Override
-    public ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
+    public ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLExpression2<ProxyFilter,T1Proxy> whereExpression) {
         if (condition) {
             entityQueryable.where(wherePredicate -> {
                 whereExpression.apply(new ProxyFilterImpl(wherePredicate.getFilter()), get1Proxy());

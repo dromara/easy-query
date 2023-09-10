@@ -12,7 +12,8 @@ public enum MultiTableTypeEnum {
     FROM("FROM"),
     LEFT_JOIN("LEFT JOIN"),
     INNER_JOIN("INNER JOIN"),
-    RIGHT_JOIN("RIGHT JOIN");
+    RIGHT_JOIN("RIGHT JOIN"),
+    DTO(",");
 
     private final String appendSQL;
 
