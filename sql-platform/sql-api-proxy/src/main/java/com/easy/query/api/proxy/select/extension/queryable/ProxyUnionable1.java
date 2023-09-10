@@ -1,7 +1,10 @@
 package com.easy.query.api.proxy.select.extension.queryable;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.api.proxy.select.impl.EasyProxyQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,7 +16,7 @@ import java.util.Collections;
  *
  * @author xuejiaming
  */
-public interface ProxyUnionable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
+public interface ProxyUnionable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientProxyQueryableAvailable< T1>,ProxyAvailable<T1Proxy,T1>{
     default ProxyQueryable<T1Proxy, T1> union(ProxyQueryable<T1Proxy, T1> unionQueryable) {
         return union(Collections.singletonList(unionQueryable));
     }
@@ -26,7 +29,14 @@ public interface ProxyUnionable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
         return union(Arrays.asList(unionQueryable1, unionQueryable2, unionQueryable3));
     }
 
-    ProxyQueryable<T1Proxy, T1> union(Collection<ProxyQueryable<T1Proxy, T1>> unionQueries);
+   default ProxyQueryable<T1Proxy, T1> union(Collection<ProxyQueryable<T1Proxy, T1>> unionQueries){
+
+       if (EasyCollectionUtil.isEmpty(unionQueries)) {
+           throw new IllegalArgumentException("unionQueries is empty");
+       }
+       ClientQueryable<T1> unionQueryable = getClientQueryable().union(EasyCollectionUtil.select(unionQueries, (queryable, i) -> queryable.getClientQueryable()));
+       return new EasyProxyQueryable<>(get1Proxy(), unionQueryable);
+   }
 
     default ProxyQueryable<T1Proxy, T1> unionAll(ProxyQueryable<T1Proxy, T1> unionQueryable) {
         return unionAll(Collections.singletonList(unionQueryable));
@@ -40,5 +50,13 @@ public interface ProxyUnionable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
         return unionAll(Arrays.asList(unionQueryable1, unionQueryable2, unionQueryable3));
     }
 
-    ProxyQueryable<T1Proxy, T1> unionAll(Collection<ProxyQueryable<T1Proxy, T1>> unionQueries);
+   default ProxyQueryable<T1Proxy, T1> unionAll(Collection<ProxyQueryable<T1Proxy, T1>> unionQueries){
+
+       if (EasyCollectionUtil.isEmpty(unionQueries)) {
+           throw new IllegalArgumentException("unionQueries is empty");
+       }
+       ClientQueryable<T1> unionQueryable = getClientQueryable().unionAll(EasyCollectionUtil.select(unionQueries, (queryable, i) -> queryable.getClientQueryable()));
+       return new EasyProxyQueryable<>(get1Proxy(), unionQueryable);
+   }
+
 }

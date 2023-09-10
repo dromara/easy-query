@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.select.extension.queryable;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
@@ -9,6 +10,7 @@ import com.easy.query.core.proxy.ProxyEntity;
  *
  * @author xuejiaming
  */
-public interface ProxyQueryableAvailable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
+public interface ProxyQueryableAvailable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ProxyAvailable<T1Proxy,T1>{
     ProxyQueryable<T1Proxy, T1> getQueryable();
+    QueryRuntimeContext getRuntimeContext();
 }

@@ -1,5 +1,6 @@
-package com.easy.query.api.proxy.select.extension.queryable.sql;
+package com.easy.query.api.proxy.select.extension.queryable.sql.impl;
 
+import com.easy.query.api.proxy.select.extension.queryable.sql.MultiProxyFilter1;
 import com.easy.query.api.proxy.sql.ProxyFilter;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.SQLNative;

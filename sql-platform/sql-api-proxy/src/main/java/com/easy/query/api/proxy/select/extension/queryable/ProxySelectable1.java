@@ -1,14 +1,15 @@
 package com.easy.query.api.proxy.select.extension.queryable;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
-import com.easy.query.api.proxy.sql.ProxyAsSelector;
-import com.easy.query.api.proxy.sql.ProxySelector;
-import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.api.proxy.select.extension.ProxySelectable;
+import com.easy.query.api.proxy.select.extension.queryable.sql.MultiProxyAsSelector1;
+import com.easy.query.api.proxy.select.extension.queryable.sql.MultiProxySelector1;
+import com.easy.query.api.proxy.select.extension.queryable.sql.impl.MultiProxyAsSelector1Impl;
+import com.easy.query.api.proxy.select.extension.queryable.sql.impl.MultiProxySelector1Impl;
+import com.easy.query.api.proxy.select.impl.EasyProxyQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * create time 2023/8/16 08:47
@@ -16,9 +17,7 @@ import java.util.Collections;
  *
  * @author xuejiaming
  */
-public interface ProxySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
-
-
+public interface ProxySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ProxySelectable<T1Proxy,T1>,ClientProxyQueryableAvailable<T1>, ProxyQueryableAvailable<T1Proxy, T1> {
 
 
     /**
@@ -27,20 +26,14 @@ public interface ProxySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
      * @param selectExpression
      * @return
      */
-    ProxyQueryable<T1Proxy, T1> select(SQLExpression2<ProxySelector, T1Proxy> selectExpression);
+   default ProxyQueryable<T1Proxy, T1> select(SQLExpression1<MultiProxySelector1<T1Proxy>> selectExpression){
 
-    /**
-     * 将当前T1对象转成TR对象，select会将T1属性所对应的列名映射到TR对象的列名上(忽略大小写)
-     * T1.property1列名叫做column1,T1.property2列名叫做column2，TR.property3的列名也叫column1
-     * 那么生成的sql为:select column1 from t1
-     * 如果当前存在join，那么join的子表一律不会映射到resultClass上,如果需要那么请手动调用双参数select
-     *
-     * @param trProxy
-     * @param <TRProxy>
-     * @param <TR>
-     * @return
-     */
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(ProxyEntity<TRProxy, TR> trProxy);
+       ClientQueryable<T1> select = getClientQueryable().select(columnSelector -> {
+           selectExpression.apply(new MultiProxySelector1Impl<>(columnSelector.getSelector(), get1Proxy()));
+       });
+       return new EasyProxyQueryable<>(get1Proxy(), select);
+   }
+
 
     /**
      * 设置返回对象，返回对象会根据selectExpression映射相同列名
@@ -51,12 +44,12 @@ public interface ProxySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
      * @param <TR>
      * @return
      */
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression2<ProxyAsSelector<TRProxy, TR>, T1Proxy> selectExpression);
+   default  <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression1<MultiProxyAsSelector1<T1Proxy,TRProxy, TR>> selectExpression){
 
-    default ProxyQueryable<T1Proxy, T1> select(ColumnSegment columnSegment, boolean clearAll) {
-        return select(Collections.singletonList(columnSegment), clearAll);
-    }
-
-    ProxyQueryable<T1Proxy, T1> select(Collection<ColumnSegment> columnSegments, boolean clearAll);
+       ClientQueryable<TR> select = getClientQueryable().select(trProxy.getEntityClass(), columnAsSelector -> {
+           selectExpression.apply(new MultiProxyAsSelector1Impl<>(columnAsSelector.getAsSelector(), get1Proxy(),trProxy));
+       });
+       return new EasyProxyQueryable<>(trProxy, select);
+   }
 
 }

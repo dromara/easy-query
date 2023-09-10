@@ -2,7 +2,7 @@ package com.easy.query.api.proxy.select.extension.queryable2;
 
 import com.easy.query.api.proxy.select.ProxyQueryable2;
 import com.easy.query.api.proxy.select.extension.queryable2.sql.MultiProxyFilter2;
-import com.easy.query.api.proxy.select.extension.queryable2.sql.MultiProxyFilter2Impl;
+import com.easy.query.api.proxy.select.extension.queryable2.sql.impl.MultiProxyFilter2Impl;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
