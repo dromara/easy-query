@@ -199,19 +199,19 @@ public class Main {
                     .queryable(TOPIC_PROXY)
                     .where(o -> o.eq(o.t().id, "123").like(o.t().title, "xxx"))
                     .where(o -> o.eq(o.t().id, "123").like(o.t().title, "xxx"))
-                    .select((selector, t) -> selector.columns(t.id, t.title))
+                    .select(o -> o.columns(o.t().id, o.t().title))
                     .toList();
             List<SysUser> sysUsers = easyProxyQuery
                     .queryable(TOPIC_PROXY)
                     .where(o -> o.eq(o.t().id, "123").like(o.t().title, "xxx"))
-                    .select(SYS_USER_PROXY, (selector, t) -> selector.columns(t.id, t.title).columnAs(t.title, tr -> tr.username))
+                    .select(SYS_USER_PROXY, o -> o.columns(o.t().id, o.t().title).columnAs(o.t().title, tr -> tr.username))
                     .toList();
             List<SysUser> sysUsers1 = easyProxyQuery
                     .queryable(TOPIC_PROXY)
                     .where(o -> o.eq(o.t().id, "123").like(o.t().title, "xxx"))
                     .select(SYS_USER_PROXY)
-                    .groupBy((g, t) -> g.sqlNativeSegment("").column(t.idCard))
-                    .orderByAsc((order, t) -> order.columns(t.idCard, t.phone))
+                    .groupBy(g -> g.sqlNativeSegment("").column(g.t().idCard))
+                    .orderByAsc(o -> o.columns(o.t().idCard, o.t().phone))
                     .toList();
             String bigDecimal = easyProxyQuery
                     .queryable(TOPIC_PROXY)
@@ -219,13 +219,13 @@ public class Main {
                     .maxOrNull(o -> o.id);
 
             List<Topic> list2 = easyProxyQuery.queryable(TOPIC_PROXY)
-                    .leftJoin(SYS_USER_PROXY, (filter, t, t1) -> filter.eq(t.title, t1.idCard))
+                    .leftJoin(SYS_USER_PROXY, o -> o.eq(o.t().title, o.t1().idCard))
                     .toList();
             List<SysUser> sysUsers2 = easyProxyQuery.queryable(TOPIC_PROXY)
-                    .leftJoin(SYS_USER_PROXY, (filter, t, t1) -> filter.eq(t.title, t1.phone))
-                    .innerJoin(SYS_USER_PROXY, (filter, t, t1, t2) -> filter.eq(t1.phone, t2.phone).like(t2.idCard, "123"))
-                    .where3(filter -> filter.like(filter.t1().username, "111").eq(filter.t2().idCard, "111"))
-                    .select(SYS_USER_PROXY, (selector, t, t1, t2) -> selector.columns(t1.idCard, t2.username, t.id).columnAs(t2.phone, r -> r.phone))
+                    .leftJoin(SYS_USER_PROXY, o -> o.eq(o.t().title, o.t1().phone))
+                    .innerJoin(SYS_USER_PROXY, o -> o.eq(o.t1().phone, o.t2().phone).like(o.t2().idCard, "123"))
+                    .where(filter -> filter.like(filter.t1().username, "111").eq(filter.t2().idCard, "111"))
+                    .select(SYS_USER_PROXY, o -> o.columns(o.t1().idCard, o.t2().username, o.t().id).columnAs(o.t2().phone, r -> r.phone))
                     .toList();
 //            List<Topic> list2 = easyProxyQuery
 //                    .queryable(TopicSQL.DEFAULT)

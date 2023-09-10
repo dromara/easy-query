@@ -70,8 +70,8 @@ public class OrderController {
         List<String> userIds = Arrays.asList("小明", "小绿");
         List<OrderGroupWithSumOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
                 .where(o -> o.in(o.t().userId(), userIds))
-                .groupBy((group, t) -> group.column(t.userId()))
-                .select(OrderGroupWithSumOrderNoVOProxy.DEFAULT, (selector, t) -> selector.columnAs(t.userId(), r -> r.userId()).columnSumAs(t.orderNo(), r -> r.orderNoSum()))
+                .groupBy(g -> g.column(g.t().userId()))
+                .select(OrderGroupWithSumOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnSumAs(s.t().orderNo(), r -> r.orderNoSum()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -83,9 +83,9 @@ public class OrderController {
         List<String> userIds = Arrays.asList("小明", "小绿");
         List<OrderGroupWithSumOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
                 .where(o -> o.in(o.t().userId(), userIds))
-                .groupBy((group, t) -> group.column(t.userId()))
-                .orderByAsc((order, t) -> order.column(t.userId()))
-                .select(OrderGroupWithSumOrderNoVOProxy.DEFAULT, (selector, t) -> selector.columnAs(t.userId(), r -> r.userId()).columnSumAs(t.orderNo(), r -> r.orderNoSum()))
+                .groupBy(g -> g.column(g.t().userId()))
+                .orderByAsc(o -> o.column(o.t().userId()))
+                .select(OrderGroupWithSumOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnSumAs(s.t().orderNo(), r -> r.orderNoSum()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -97,9 +97,9 @@ public class OrderController {
         List<String> userIds = Arrays.asList("小明", "小绿");
         List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
                 .where(o -> o.in(o.t().userId(), userIds))
-                .groupBy((group, t) -> group.column(t.userId()))
-                .orderByAsc((order, t) -> order.column(t.userId()))
-                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, (selector, t) -> selector.columnAs(t.userId(), r -> r.userId()).columnAvgAs(t.orderNo(), r -> r.orderNoAvg()))
+                .groupBy(g -> g.column(g.t().userId()))
+                .orderByAsc(o -> o.column(o.t().userId()))
+                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnAvgAs(s.t().orderNo(), r -> r.orderNoAvg()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -111,9 +111,9 @@ public class OrderController {
         List<String> userIds = Arrays.asList("小明");
         List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
                 .where(o -> o.in(o.t().userId(), userIds))
-                .groupBy((group, t) -> group.column(t.userId()))
-                .orderByAsc((order, t) -> order.column(t.userId()))
-                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, (selector, t) -> selector.columnAs(t.userId(), r -> r.userId()).columnSumAs(t.orderNo(), r -> r.orderNoAvg()))
+                .groupBy(g -> g.column(g.t().userId()))
+                .orderByAsc(o -> o.column(o.t().userId()))
+                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnSumAs(s.t().orderNo(), r -> r.orderNoAvg()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -125,9 +125,9 @@ public class OrderController {
         List<String> userIds = Arrays.asList("小明");
         List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
                 .where(o -> o.in(o.t().userId(), userIds))
-                .groupBy((group, t) -> group.column(t.userId()))
-                .orderByAsc((order, t) -> order.column(t.userId()))
-                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, (selector, t) -> selector.columnAs(t.userId(), r -> r.userId()).columnCountAs(t.orderNo(), r -> r.orderNoAvg()))
+                .groupBy(g -> g.column(g.t().userId()))
+                .orderByAsc(o -> o.column(o.t().userId()))
+                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnCountAs(s.t().orderNo(), r -> r.orderNoAvg()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -139,9 +139,9 @@ public class OrderController {
         List<String> userIds = Arrays.asList("小明", "小绿");
         List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
                 .where(o -> o.in(o.t().userId(), userIds).in(o.t().id(), Arrays.asList("20200101000500","20200101000400","20200101001000","20200601000500","20200601000900")))
-                .groupBy((group, t) -> group.column(t.userId()))
-                .orderByAsc((order, t) -> order.column(t.userId()))
-                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, (selector, t) -> selector.columnAs(t.userId(), r -> r.userId()).columnAvgAs(t.orderNo(), r -> r.orderNoAvg()))
+                .groupBy(g -> g.column(g.t().userId()))
+                .orderByAsc(o -> o.column(o.t().userId()))
+                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnAvgAs(s.t().orderNo(), r -> r.orderNoAvg()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -152,7 +152,7 @@ public class OrderController {
         List<String> userIds = Arrays.asList("小明", "小绿");
         EasyPageResult<OrderEntity> pageResult = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
                 .where(o -> o.in(o.t().userId(), userIds))
-                .orderByAsc((order, t) -> order.column(t.userId()))
+                .orderByAsc(o -> o.column(o.t().userId()))
                 .toPageResult(pageIndex, pageSize);
         long end = System.currentTimeMillis();
         return Arrays.asList(pageResult, (end - start) + "(ms)");

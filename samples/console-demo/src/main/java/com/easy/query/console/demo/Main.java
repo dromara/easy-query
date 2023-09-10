@@ -39,8 +39,8 @@ public class Main {
         EasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
         List<Topic> topics = easyProxyQuery.queryable(TopicProxy.DEFAULT)
                 .where(o -> o.eq(o.t().id(), "123").like(o.t().name(), "您好"))
-                .orderByAsc((order, o) -> order.columns(o.createTime(), o.id()))
-                .select((selector, o) -> selector.columns(o.no(), o.id(), o.name()))
+                .orderByAsc(o -> o.columns(o.t().createTime(), o.t().id()))
+                .select(s -> s.columns(s.t().no(), s.t().id(), s.t().name()))
                 .toList();
     }
 }
