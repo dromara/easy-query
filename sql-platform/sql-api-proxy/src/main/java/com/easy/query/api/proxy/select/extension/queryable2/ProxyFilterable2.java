@@ -55,7 +55,13 @@ public interface ProxyFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException @description 无主键或者多主键报错
      */
 
-    ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> whereById(boolean condition, Object id);
+   default ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> whereById(boolean condition, Object id){
+
+       if (condition) {
+           getClientQueryable2().whereById(id);
+       }
+       return getQueryable2();
+   }
 
     /**
      * 根据主键集合进行查询
@@ -79,7 +85,13 @@ public interface ProxyFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @return 当前链式表达式
      * @throws EasyQueryNoPrimaryKeyException,EasyQueryMultiPrimaryKeyException
      */
-    <TProperty> ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> whereByIds(boolean condition, Collection<TProperty> ids);
+    default <TProperty> ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> whereByIds(boolean condition, Collection<TProperty> ids){
+
+        if (condition) {
+            getClientQueryable2().whereByIds(ids);
+        }
+        return getQueryable2();
+    }
 
     /**
      * 使用对象进行查询 配合{@link com.easy.query.core.annotation.EasyWhereCondition} 设置条件对应的表和条件值
@@ -100,5 +112,11 @@ public interface ProxyFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @return
      * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取
      */
-    ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> whereObject(boolean condition, Object object);
+   default ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> whereObject(boolean condition, Object object){
+
+       if (condition) {
+           getClientQueryable2().whereObject(object);
+       }
+       return getQueryable2();
+   }
 }

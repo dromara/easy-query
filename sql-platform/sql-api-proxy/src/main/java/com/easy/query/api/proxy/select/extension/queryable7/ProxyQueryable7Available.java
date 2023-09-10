@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.select.extension.queryable7;
 
 import com.easy.query.api.proxy.select.ProxyQueryable7;
-import com.easy.query.api.proxy.select.extension.queryable.ProxyAvailable;
+import com.easy.query.api.proxy.select.extension.queryable.Proxy1Available;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
@@ -16,7 +16,7 @@ public interface ProxyQueryable7Available<T1Proxy extends ProxyEntity<T1Proxy, T
         T4Proxy extends ProxyEntity<T4Proxy, T4>, T4,
         T5Proxy extends ProxyEntity<T5Proxy, T5>, T5,
         T6Proxy extends ProxyEntity<T6Proxy, T6>, T6,
-        T7Proxy extends ProxyEntity<T7Proxy, T7>, T7> extends ProxyAvailable<T1Proxy, T1> {
+        T7Proxy extends ProxyEntity<T7Proxy, T7>, T7> extends Proxy1Available<T1Proxy, T1> {
     ProxyQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> getQueryable7();
     T2Proxy get2Proxy();
     T3Proxy get3Proxy();

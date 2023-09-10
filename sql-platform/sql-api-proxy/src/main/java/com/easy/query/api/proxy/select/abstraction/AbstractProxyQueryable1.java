@@ -1,7 +1,9 @@
 package com.easy.query.api.proxy.select.abstraction;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.api.proxy.select.extension.queryable.AbstractOverrideProxyQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
@@ -10,11 +12,19 @@ import com.easy.query.core.proxy.ProxyEntity;
  *
  * @author xuejiaming
  */
-public abstract class AbstractProxyQueryable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends AbstractProxyQueryable<T1Proxy,T1> implements ProxyQueryable<T1Proxy, T1> {
 
+public abstract class AbstractProxyQueryable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends AbstractOverrideProxyQueryable<T1Proxy, T1> {
+
+    protected final T1Proxy t1Proxy;
 
     public AbstractProxyQueryable1(T1Proxy t1Proxy, ClientQueryable<T1> entityQueryable) {
-        super(t1Proxy, entityQueryable);
+        super(entityQueryable);
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
+        this.t1Proxy = t1Proxy.create(sqlEntityExpressionBuilder.getTable(0).getEntityTable());
     }
 
+    @Override
+    public T1Proxy get1Proxy() {
+        return t1Proxy;
+    }
 }

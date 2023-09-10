@@ -16,7 +16,7 @@ import java.util.Collections;
  *
  * @author xuejiaming
  */
-public interface ProxyUnionable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientProxyQueryableAvailable< T1>,ProxyAvailable<T1Proxy,T1>{
+public interface ProxyUnionable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientProxyQueryableAvailable< T1>, Proxy1Available<T1Proxy,T1> {
     default ProxyQueryable<T1Proxy, T1> union(ProxyQueryable<T1Proxy, T1> unionQueryable) {
         return union(Collections.singletonList(unionQueryable));
     }

@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.select.extension.queryable3;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.api.proxy.select.extension.ProxySelectable;
 import com.easy.query.api.proxy.select.impl.EasyProxyQueryable;
 import com.easy.query.api.proxy.sql.ProxyAsSelector;
 import com.easy.query.api.proxy.sql.impl.ProxyAsSelectorImpl;
@@ -18,7 +19,7 @@ import com.easy.query.core.proxy.ProxyEntity;
  */
 public interface ProxySelectable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T2Proxy extends ProxyEntity<T2Proxy, T2>, T2,
-        T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> extends ClientProxyQueryable3Available<T1, T2, T3>, ProxyQueryable3Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> {
+        T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> extends ProxySelectable<T1Proxy,T1>,ClientProxyQueryable3Available<T1, T2, T3>, ProxyQueryable3Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> {
 
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression4<ProxyAsSelector<TRProxy, TR>, T1Proxy, T2Proxy, T3Proxy> selectExpression) {
         ClientQueryable<TR> select = getClientQueryable3().select(trProxy.getEntityClass(), (selector1, selector2, selector3) -> {

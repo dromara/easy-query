@@ -149,31 +149,6 @@ public abstract class AbstractOverrideProxyQueryable2<T1Proxy extends ProxyEntit
     }
 
     @Override
-    public ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> whereById(boolean condition, Object id) {
-        if (condition) {
-            entityQueryable.whereById(id);
-        }
-        return this;
-    }
-
-    @Override
-    public <TProperty> ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> whereByIds(boolean condition, Collection<TProperty> ids) {
-
-        if (condition) {
-            entityQueryable.whereByIds(ids);
-        }
-        return this;
-    }
-
-    @Override
-    public ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> whereObject(boolean condition, Object object) {
-        if (condition) {
-            entityQueryable.whereObject(object);
-        }
-        return this;
-    }
-
-    @Override
     public ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> distinct(boolean condition) {
         if (condition) {
             entityQueryable.distinct();

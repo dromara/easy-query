@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.select.abstraction;
 
 import com.easy.query.api.proxy.select.ProxyQueryable4;
-import com.easy.query.api.proxy.select.extension.queryable4.override.AbstractOverrideProxyQueryable4;
+import com.easy.query.api.proxy.select.extension.queryable4.AbstractOverrideProxyQueryable4;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -12,19 +12,25 @@ import com.easy.query.core.proxy.ProxyEntity;
  * @author xuejiaming
  */
 public abstract class AbstractProxyQueryable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2, T3Proxy extends ProxyEntity<T3Proxy, T3>, T3, T4Proxy extends ProxyEntity<T4Proxy, T4>, T4>
-        extends AbstractOverrideProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4>
-        implements ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> {
+        extends AbstractOverrideProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> {
 
 
+    protected final T1Proxy t1Proxy;
     protected final T2Proxy t2Proxy;
     protected final T3Proxy t3Proxy;
     protected final T4Proxy t4Proxy;
 
     public AbstractProxyQueryable4(T1Proxy t1Proxy, T2Proxy t2Proxy, T3Proxy t3Proxy, T4Proxy t4Proxy, ClientQueryable4<T1, T2, T3, T4> entityQueryable) {
-        super(t1Proxy, entityQueryable);
+        super(entityQueryable);
+        this.t1Proxy = t1Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(0).getEntityTable());
         this.t2Proxy = t2Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(1).getEntityTable());
         this.t3Proxy = t3Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(2).getEntityTable());
         this.t4Proxy = t4Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(3).getEntityTable());
+    }
+
+    @Override
+    public T1Proxy get1Proxy() {
+        return t1Proxy;
     }
 
     @Override
@@ -42,15 +48,5 @@ public abstract class AbstractProxyQueryable4<T1Proxy extends ProxyEntity<T1Prox
         return t4Proxy;
     }
 
-    @Override
-    public ClientQueryable4<T1, T2, T3, T4> getClientQueryable4() {
-        return entityQueryable4;
-    }
-
-
-    @Override
-    public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> getQueryable4() {
-        return this;
-    }
 }
 

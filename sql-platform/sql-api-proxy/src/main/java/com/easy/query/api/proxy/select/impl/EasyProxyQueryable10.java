@@ -3,6 +3,7 @@ package com.easy.query.api.proxy.select.impl;
 import com.easy.query.api.proxy.select.ProxyQueryable10;
 import com.easy.query.api.proxy.select.abstraction.AbstractProxyQueryable10;
 import com.easy.query.core.basic.api.select.ClientQueryable10;
+import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
