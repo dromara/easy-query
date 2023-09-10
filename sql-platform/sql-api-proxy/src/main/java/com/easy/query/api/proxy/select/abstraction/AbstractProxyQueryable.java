@@ -2,6 +2,8 @@ package com.easy.query.api.proxy.select.abstraction;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.ProxyQueryable2;
+import com.easy.query.api.proxy.select.extension.queryable.sql.MultiProxyFilter1;
+import com.easy.query.api.proxy.select.extension.queryable.sql.MultiProxyFilter1Impl;
 import com.easy.query.api.proxy.select.impl.EasyProxyQueryable;
 import com.easy.query.api.proxy.select.impl.EasyProxyQueryable2;
 import com.easy.query.api.proxy.sql.ProxyAggregateFilter;
@@ -25,6 +27,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -180,10 +183,10 @@ public abstract class AbstractProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy
 
 
     @Override
-    public ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLExpression2<ProxyFilter,T1Proxy> whereExpression) {
+    public ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLExpression1<MultiProxyFilter1<T1Proxy>> whereExpression) {
         if (condition) {
             entityQueryable.where(wherePredicate -> {
-                whereExpression.apply(new ProxyFilterImpl(wherePredicate.getFilter()), get1Proxy());
+                whereExpression.apply(new MultiProxyFilter1Impl<>(wherePredicate.getFilter(), get1Proxy()));
             });
         }
         return this;

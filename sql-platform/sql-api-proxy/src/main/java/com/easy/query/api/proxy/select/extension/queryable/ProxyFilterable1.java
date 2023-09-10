@@ -1,11 +1,11 @@
 package com.easy.query.api.proxy.select.extension.queryable;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
-import com.easy.query.api.proxy.sql.ProxyFilter;
+import com.easy.query.api.proxy.select.extension.queryable.sql.MultiProxyFilter1;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
@@ -24,7 +24,7 @@ public interface ProxyFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
      * @param whereExpression where表达式
      * @return 返回当前查询queryable
      */
-    default ProxyQueryable<T1Proxy, T1> where(SQLExpression2<ProxyFilter,T1Proxy> whereExpression) {
+    default ProxyQueryable<T1Proxy, T1> where(SQLExpression1<MultiProxyFilter1<T1Proxy>> whereExpression) {
         return where(true, whereExpression);
     }
 
@@ -35,7 +35,7 @@ public interface ProxyFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
      * @param whereExpression where表达式
      * @return 返回当前查询queryable
      */
-    ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLExpression2<ProxyFilter,T1Proxy> whereExpression);
+    ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLExpression1<MultiProxyFilter1<T1Proxy>> whereExpression);
 
     /**
      * 根据主键查询

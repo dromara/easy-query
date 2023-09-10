@@ -1,6 +1,6 @@
 package com.easy.query.api.proxy.select;
 
-import com.easy.query.api.proxy.select.extension.ProxyAvailable;
+import com.easy.query.api.proxy.select.extension.queryable.ProxyAvailable;
 import com.easy.query.api.proxy.select.extension.queryable.ClientProxyQueryableAvailable;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyAggregatable1;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyFillable1;
@@ -19,11 +19,14 @@ import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.internal.TableReNameable;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
+
+import java.util.List;
 
 /**
  * create time 2023/6/21 17:11
@@ -47,8 +50,10 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
         ProxySelectable1<T1Proxy, T1>,
         ProxyJoinable1<T1Proxy, T1>,
         ProxyFillable1<T1Proxy, T1>,
-        ProxyAvailable<T1Proxy,T1>,ProxyBaseQueryable<T1Proxy,T1> {
-    long countDistinct(SQLExpression2<ProxySelector, T1Proxy> selectExpression);
+        ProxyAvailable<T1Proxy,T1> {
+    ClientQueryable<T1> getClientQueryable();
+
+    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy);
 
     @Override
     ProxyQueryable<T1Proxy, T1> cloneQueryable();
@@ -64,6 +69,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
      * @return
      */
     boolean all(SQLExpression2<ProxyFilter,T1Proxy> whereExpression);
+    long countDistinct(SQLExpression2<ProxySelector, T1Proxy> selectExpression);
 
     /**
      * 设置column所有join表都会生效

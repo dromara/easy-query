@@ -1,4 +1,4 @@
-package com.easy.query.api.proxy.select.extension;
+package com.easy.query.api.proxy.select.extension.queryable;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.proxy.ProxyEntity;

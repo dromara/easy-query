@@ -2,15 +2,16 @@ package com.easy.query.api.proxy.select.extension.queryable6.override;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.ProxyQueryable6;
+import com.easy.query.api.proxy.select.extension.queryable.sql.MultiProxyFilter1;
 import com.easy.query.api.proxy.select.extension.queryable6.ProxyQueryable6Available;
 import com.easy.query.api.proxy.sql.ProxyAggregateFilter;
-import com.easy.query.api.proxy.sql.ProxyFilter;
 import com.easy.query.api.proxy.sql.ProxyGroupSelector;
 import com.easy.query.api.proxy.sql.ProxyNavigateInclude;
 import com.easy.query.api.proxy.sql.ProxyOrderSelector;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -69,12 +70,12 @@ public interface OverrideProxyQueryable6<T1Proxy extends ProxyEntity<T1Proxy, T1
 
 
     @Override
-    default ProxyQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> where(SQLExpression2<ProxyFilter,T1Proxy> whereExpression) {
+    default ProxyQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> where(SQLExpression1<MultiProxyFilter1<T1Proxy>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    ProxyQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> where(boolean condition, SQLExpression2<ProxyFilter,T1Proxy> whereExpression);
+    ProxyQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> where(boolean condition, SQLExpression1<MultiProxyFilter1<T1Proxy>> whereExpression);
 
     @Override
     default ProxyQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupBy(SQLExpression2<ProxyGroupSelector, T1Proxy> selectExpression) {

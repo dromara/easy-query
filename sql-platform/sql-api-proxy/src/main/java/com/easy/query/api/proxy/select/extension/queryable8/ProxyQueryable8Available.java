@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.select.extension.queryable8;
 
 import com.easy.query.api.proxy.select.ProxyQueryable8;
-import com.easy.query.api.proxy.select.extension.ProxyAvailable;
+import com.easy.query.api.proxy.select.extension.queryable.ProxyAvailable;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**

@@ -3,9 +3,9 @@ package com.easy.query.api.proxy.select.extension.queryable9.override;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.ProxyQueryable9;
 import com.easy.query.api.proxy.select.abstraction.AbstractProxyQueryable;
+import com.easy.query.api.proxy.select.extension.queryable.sql.MultiProxyFilter1;
 import com.easy.query.api.proxy.select.extension.queryable9.ProxyQueryable9Available;
 import com.easy.query.api.proxy.sql.ProxyAggregateFilter;
-import com.easy.query.api.proxy.sql.ProxyFilter;
 import com.easy.query.api.proxy.sql.ProxyGroupSelector;
 import com.easy.query.api.proxy.sql.ProxyNavigateInclude;
 import com.easy.query.api.proxy.sql.ProxyOrderSelector;
@@ -13,6 +13,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -75,7 +76,7 @@ public abstract class AbstractOverrideProxyQueryable9<T1Proxy extends ProxyEntit
     }
 
     @Override
-    public ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> where(boolean condition, SQLExpression2<ProxyFilter,T1Proxy> whereExpression) {
+    public ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> where(boolean condition, SQLExpression1<MultiProxyFilter1<T1Proxy>> whereExpression) {
         super.where(condition, whereExpression);
         return getQueryable9();
     }

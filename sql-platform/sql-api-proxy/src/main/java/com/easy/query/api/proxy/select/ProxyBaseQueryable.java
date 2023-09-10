@@ -13,7 +13,4 @@ import java.util.List;
  */
 public interface ProxyBaseQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 
-    ClientQueryable<T1> getClientQueryable();
-
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy);
 }

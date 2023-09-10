@@ -12,13 +12,14 @@ import com.easy.query.core.proxy.ProxyEntity;
  *
  * @author xuejiaming
  */
-public interface ProxyFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> extends ClientProxyQueryable2Available<T1, T2>, ProxyQueryable2Available<T1Proxy, T1, T2Proxy, T2> {
+public interface ProxyFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
+        T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> extends ClientProxyQueryable2Available<T1, T2>, ProxyQueryable2Available<T1Proxy, T1, T2Proxy, T2> {
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> whereExpression) {
-        return where(true,whereExpression);
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where2(SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> whereExpression) {
+        return where2(true,whereExpression);
     }
 
-    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> whereExpression) {
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where2(boolean condition, SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> whereExpression) {
         if (condition) {
             getClientQueryable2().where((wherePredicate1, wherePredicate2) -> {
                 whereExpression.apply(new MultiProxyFilter2Impl<>(wherePredicate2.getFilter(), get1Proxy(), get2Proxy()));
