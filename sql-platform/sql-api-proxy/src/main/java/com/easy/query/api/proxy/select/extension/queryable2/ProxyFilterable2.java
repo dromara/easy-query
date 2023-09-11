@@ -20,6 +20,16 @@ import java.util.Collection;
 public interface ProxyFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> extends ClientProxyQueryable2Available<T1, T2>, ProxyQueryable2Available<T1Proxy, T1, T2Proxy, T2> {
 
+//    @Deprecated
+//    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where1(SQLFuncExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>,SQLPredicate> whereExpression) {
+//
+//        getClientQueryable2().where((t,t1) -> {
+//            MultiProxyFilter2Impl<T1Proxy, T1,T2Proxy,T2> t1ProxyT1MultiProxyFilter1 = new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(),get2Proxy());
+//            SQLPredicate apply = whereExpression.apply(t1ProxyT1MultiProxyFilter1);
+//            apply.accept(t.getFilter());
+//        });
+//        return getQueryable2();
+//    }
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> whereExpression) {
         return where(true,whereExpression);
     }

@@ -12,4 +12,13 @@ public interface SQLPredicate {
     SQLPredicate and(SQLPredicate predicate);
     SQLPredicate or(SQLPredicate predicate);
     void accept(Filter f);
+
+//    static SQLPredicate and() {
+//
+//        Consumer<Filter> f= f1->f1.and();
+//        return new SQLPredicateImpl(x->{
+//            filter.accept(x);
+//            f.accept(x);
+//        });
+//    }
 }

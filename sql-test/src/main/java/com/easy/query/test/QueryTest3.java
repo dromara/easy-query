@@ -1551,4 +1551,166 @@ public static class AA{
 
     }
 
+//    @Test
+//    public  void newPredicateTest(){
+//                String sqlz1= easyProxyQuery
+//                .queryable(TOPIC_TEST_PROXY)
+//                .where1(t->{
+//                    TopicTestProxy testProxy = t.t();
+//                    //`id` = ? AND (`title` >= ? OR `id` >= ? OR (`id` = `title` AND `id` = ?)) AND `title` = `id`
+//                    SQLPredicate and = testProxy.id().eq("123").and(testProxy.title().ge("432").or(testProxy.id().ge("432")).or(testProxy.id().eq(testProxy.title()).and(testProxy.id().eq("666"))));
+//                    return and.and(testProxy.title().eq(testProxy.id()));
+//                })
+//                .orderByAsc(o->o.column(o.t().id()))
+//                .select(s -> s.columns(s.t().id(), s.t().title()))
+//                .toSQL();
+//                Assert.assertEquals("SELECT `id`,`title` FROM `t_topic` WHERE `id` = ? AND (`title` >= ? OR `id` >= ? OR (`id` = `title` AND `id` = ?)) AND `title` = `id` ORDER BY `id` ASC",sqlz1);
+//    }
+//    @Test
+//    public  void newPredicateTest1(){
+//                String sqlz1= easyProxyQuery
+//                .queryable(TOPIC_TEST_PROXY)
+//                        .leftJoin(TopicAutoProxy.DEFAULT,o->o.eq(o.t().id(),o.t1().title()))
+//                .where1(t->{
+//                    TopicTestProxy testProxy = t.t();
+//                    TopicAutoProxy topicAutoProxy = t.t1();
+//                    //t.`id` = ? AND (t1.`title` >= ? OR t.`id` >= ? OR (t.`id` = t.`title` AND t.`id` = ?)) AND t.`title` = t1.`title`
+//                    SQLPredicate and = testProxy.id().eq("123")
+//                            .and(
+//                                    topicAutoProxy.title().ge("432").or(
+//                                            testProxy.id().ge("432")
+//                                            )
+//                                    .or(testProxy.id().eq(testProxy.title()).or(testProxy.title().ge("xxx")).and(testProxy.id().eq("666"))
+//                                    )
+//                            );
+//                    return and.and(testProxy.title().eq(topicAutoProxy.title()));
+//                })
+//                .orderByAsc(o->o.column(o.t().id()))
+//                .select(s -> s.columns(s.t().id(), s.t().title()))
+//                .toSQL();
+//                Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND (t1.`title` >= ? OR t.`id` >= ? OR (t.`id` = t.`title` OR t.`title` >= ? AND t.`id` = ?)) AND t.`title` = t1.`title` ORDER BY t.`id` ASC",sqlz1);
+//    }
+//
+//    @Test
+//    public  void newPredicateTest2(){
+//                String sqlz1= easyProxyQuery
+//                .queryable(TOPIC_TEST_PROXY)
+//                        .leftJoin(TopicAutoProxy.DEFAULT,o->o.eq(o.t().id(),o.t1().title()))
+//                .where1(t->{
+//                    TopicTestProxy testProxy = t.t();
+//                    TopicAutoProxy topicAutoProxy = t.t1();
+//
+//                    return testProxy.id().eq("123").and(false,topicAutoProxy.stars().eq(1)).or(topicAutoProxy.title().eq(topicAutoProxy.title()));
+//
+//                })
+//                .orderByAsc(o->o.column(o.t().id()))
+//                .select(s -> s.columns(s.t().id(), s.t().title()))
+//                .toSQL();
+//                Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE (t.`id` = ? OR t1.`title` = t1.`title`) ORDER BY t.`id` ASC",sqlz1);
+//    }
+
+    @Test
+    public  void newPredicateTest3(){
+                String sqlz1= easyProxyQuery
+                .queryable(TOPIC_TEST_PROXY)
+                        .leftJoin(TopicAutoProxy.DEFAULT,o->o.eq(o.t().id(),o.t1().title()))
+                .where(t->{
+                    TopicTestProxy testProxy = t.t();
+                    TopicAutoProxy topicAutoProxy = t.t1();
+// t.`id` = ? AND t1.`stars` = ? AND (t1.`title` = t1.`title` AND (t1.`title` = t1.`title` OR t1.`stars` = ? AND t1.`title` = t1.`title`))
+
+
+                    t.eq(testProxy.id(),"123")
+                            .and(x->{
+                                x.and(y->{
+                                    y.eq(testProxy.title(), "111")
+                                            .eq(topicAutoProxy.title(), "111")
+                                            .eq(testProxy.id(), "111");
+                                })
+                                        .or(z->{
+                                            z.eq(testProxy.title(), "111")
+                                                    .eq(topicAutoProxy.title(), "111");
+                                        });
+                            });
+//                    return testProxy.id().eq("123").and(
+//                            topicAutoProxy.stars().eq(1).and(topicAutoProxy.title().eq(topicAutoProxy.title())).and(topicAutoProxy.title().eq(topicAutoProxy.title()))
+//                                    .or(
+//                                            topicAutoProxy.stars().eq(1)).and(topicAutoProxy.title().eq(topicAutoProxy.title())
+//                                    )
+//
+//                    );
+
+
+                })
+                .orderByAsc(o->o.column(o.t().id()))
+                .select(s -> s.columns(s.t().id(), s.t().title()))
+                .toSQL();
+                //SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND t1.`stars` = ? AND (t1.`title` = t1.`title` AND (t1.`title` = t1.`title` OR t1.`stars` = ? AND t1.`title` = t1.`title`)) ORDER BY t.`id` ASC
+                Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND ((t.`title` = ? AND t1.`title` = ? AND t.`id` = ?) OR (t.`title` = ? AND t1.`title` = ?)) ORDER BY t.`id` ASC",sqlz1);
+    }
+
+
+    @Test
+    public  void newPredicateTest4(){
+        String sqlz1= easyQuery
+                .queryable(Topic.class)
+                .leftJoin(TopicAuto.class,(t,t1)->t.eq(t1,Topic::getId,TopicAuto::getTitle))
+                .where((t,t1)->{
+
+// t.`id` = ? AND t1.`stars` = ? AND (t1.`title` = t1.`title` AND (t1.`title` = t1.`title` OR t1.`stars` = ? AND t1.`title` = t1.`title`))
+
+
+                    t.eq(Topic::getId,"123")
+                            .and(x->{
+                                x.and(y->{
+                                            y.eq(Topic::getTitle, "111")
+                                                    .eq(Topic::getId, "111");
+                                        })
+                                        .or(z->{
+                                            z.eq(Topic::getTitle, "111")
+                                                    .eq(Topic::getId, "111");
+                                        });
+                            });
+//                    return testProxy.id().eq("123").and(
+//                            topicAutoProxy.stars().eq(1).and(topicAutoProxy.title().eq(topicAutoProxy.title())).and(topicAutoProxy.title().eq(topicAutoProxy.title()))
+//                                    .or(
+//                                            topicAutoProxy.stars().eq(1)).and(topicAutoProxy.title().eq(topicAutoProxy.title())
+//                                    )
+//
+//                    );
+
+
+                })
+                .toSQL();
+        //SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND t1.`stars` = ? AND (t1.`title` = t1.`title` AND (t1.`title` = t1.`title` OR t1.`stars` = ? AND t1.`title` = t1.`title`)) ORDER BY t.`id` ASC
+        Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND ((t.`title` = ? AND t1.`title` = ? AND t.`id` = ?) OR (t.`title` = ? AND t1.`title` = ?)) ORDER BY t.`id` ASC",sqlz1);
+    }
+
+//    @Test
+//     public void test11(){
+//        Queryable<Topic> now = easyQuery.queryable(Topic.class)
+//                .select(Topic.class, o -> o.columnAll());
+//        Queryable<BlogEntity> last = easyQuery.queryable(BlogEntity.class)
+//                .select(o -> o.column(BlogEntity::getId).column(BlogEntity::getTitle));
+//
+//
+//        List<Topic> list = now.leftJoin(last, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+//                .where(t -> t.eq(Topic::getId, "123")).toList();
+//
+//        List<Topic> list1 = easyQuery.queryable(Topic.class)
+//                .select(TopicTypeVO.class, o -> o.column(Topic::getId).column(Topic::getTitle))
+//                .where(o -> o.eq(TopicTypeVO::getId, "12"))
+//                .select(Topic.class, o -> o.column(TopicTypeVO::getId))
+//                .where(o->o.eq(Topic::getId,"123"))
+//                .toList();
+//
+//
+//        List<Topic> list2 = easyQuery.queryable(Topic.class)
+//                .select(TopicTypeVO.class, o -> o.column(Topic::getId).column(Topic::getTitle))
+//                .where(o -> o.eq(TopicTypeVO::getId, "12"))
+//                .select(Topic.class, o -> o.column(TopicTypeVO::getId))
+//                .toList();
+//
+//    }
+
 }

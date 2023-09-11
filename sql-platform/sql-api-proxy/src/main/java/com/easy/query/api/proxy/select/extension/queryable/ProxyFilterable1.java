@@ -28,6 +28,16 @@ public interface ProxyFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     default ProxyQueryable<T1Proxy, T1> where(SQLExpression1<MultiProxyFilter1<T1Proxy>> whereExpression) {
         return where(true, whereExpression);
     }
+//    @Deprecated
+//    default ProxyQueryable<T1Proxy, T1> where1(SQLFuncExpression1<MultiProxyFilter1<T1Proxy>, SQLPredicate> whereExpression) {
+//
+//            getClientQueryable().where(wherePredicate -> {
+//                MultiProxyFilter1Impl<T1Proxy, T1> t1ProxyT1MultiProxyFilter1 = new MultiProxyFilter1Impl<>(wherePredicate.getFilter(), get1Proxy());
+//                SQLPredicate apply = whereExpression.apply(t1ProxyT1MultiProxyFilter1);
+//                apply.accept(wherePredicate.getFilter());
+//            });
+//        return getQueryable();
+//    }
 
     /**
      * 构建where条件
