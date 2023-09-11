@@ -13,11 +13,14 @@ import com.easy.query.test.entity.Topic;
 public class TopicTestProxy extends AbstractProxyEntity<TopicTestProxy, Topic> {
 
     public static final TopicTestProxy TOPIC_TEST_PROXY = new TopicTestProxy();
+    public static TopicTestProxy createTable() {
+        return new TopicTestProxy();
+    }
     private static final Class<Topic> entityClass = Topic.class;
-    private final TableAvailable table;
+    private  TableAvailable table;
 
     private TopicTestProxy() {
-        this.table = null;
+
     }
 
     public TopicTestProxy(TableAvailable table) {
@@ -43,6 +46,14 @@ public class TopicTestProxy extends AbstractProxyEntity<TopicTestProxy, Topic> {
 
     @Override
     public TopicTestProxy create(TableAvailable table) {
-        return new TopicTestProxy(table);
+        if(this.table==null){
+            this.table=table;
+        }else{
+            if(this.table!=table){
+                throw new IllegalArgumentException("proxy repeat create table");
+            }
+        }
+        return this;
     }
+
 }

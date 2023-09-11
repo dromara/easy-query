@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.base;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.AbstractProxyEntity;
 
 import java.sql.Time;
 
@@ -11,24 +11,13 @@ import java.sql.Time;
  *
  * @author xuejiaming
  */
-public class TimeProxy implements ProxyEntity<TimeProxy, Time> {
-
-    public static final TimeProxy DEFAULT = new TimeProxy();
+public class TimeProxy extends AbstractProxyEntity<TimeProxy, Time> {
+    public static TimeProxy createTable() {
+        return new TimeProxy();
+    }
     private static final Class<Time> entityClass = Time.class;
 
-    private final TableAvailable table;
-
     private TimeProxy() {
-        this.table = null;
-    }
-
-    public TimeProxy(TableAvailable table) {
-        this.table = table;
-    }
-
-    @Override
-    public TableAvailable getTable() {
-        return table;
     }
 
     @Override
@@ -36,8 +25,4 @@ public class TimeProxy implements ProxyEntity<TimeProxy, Time> {
         return entityClass;
     }
 
-    @Override
-    public TimeProxy create(TableAvailable table) {
-        return new TimeProxy(table);
-    }
 }

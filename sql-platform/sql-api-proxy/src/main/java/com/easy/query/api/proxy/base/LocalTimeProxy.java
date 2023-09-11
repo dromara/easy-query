@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.base;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.AbstractProxyEntity;
 
 import java.time.LocalTime;
 
@@ -11,33 +10,16 @@ import java.time.LocalTime;
  *
  * @author xuejiaming
  */
-public class LocalTimeProxy implements ProxyEntity<LocalTimeProxy, LocalTime> {
-
-    public static final LocalTimeProxy DEFAULT = new LocalTimeProxy();
+public class LocalTimeProxy extends AbstractProxyEntity<LocalTimeProxy, LocalTime> {
+    public static LocalTimeProxy createTable() {
+        return new LocalTimeProxy();
+    }
     private static final Class<LocalTime> entityClass = LocalTime.class;
 
-    private final TableAvailable table;
-
     private LocalTimeProxy() {
-        this.table = null;
     }
-
-    public LocalTimeProxy(TableAvailable table) {
-        this.table = table;
-    }
-
-    @Override
-    public TableAvailable getTable() {
-        return table;
-    }
-
     @Override
     public Class<LocalTime> getEntityClass() {
         return entityClass;
-    }
-
-    @Override
-    public LocalTimeProxy create(TableAvailable table) {
-        return new LocalTimeProxy(table);
     }
 }

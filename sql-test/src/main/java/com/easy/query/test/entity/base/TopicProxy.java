@@ -14,6 +14,8 @@ import com.easy.query.test.entity.Topic;
 public class TopicProxy implements ProxyEntity<TopicProxy, Topic> {
 
     public static final TopicProxy TOPIC_PROXY = new TopicProxy();
+
+
     private static final Class<Topic> entityClass = Topic.class;
 
     public final SQLColumn<String> id;

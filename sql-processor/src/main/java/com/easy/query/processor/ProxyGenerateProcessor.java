@@ -65,34 +65,22 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             " */\n" +
             "public class @entityClassProxy extends AbstractProxyEntity<@entityClassProxy, @entityClass> {\n" +
             "\n" +
-            "    public static final @entityClassProxy @proxyInstanceName = new @entityClassProxy();\n" +
             "    private static final Class<@entityClass> entityClass = @entityClass.class;\n" +
-            "    private final TableAvailable table;\n" +
+            "    public static @entityClassProxy createTable() {\n" +
+            "        return new @entityClassProxy();\n" +
+            "    }\n" +
             "\n" +
             "    private @entityClassProxy() {\n" +
-            "        this.table = null;\n" +
             "    }\n" +
             "\n" +
-            "    public @entityClassProxy(TableAvailable table) {\n" +
-            "        this.table = table;\n" +
-            "    }\n" +
             "\n" +
             "    @fieldContent" +
-            "\n" +
-            "    @Override\n" +
-            "    public TableAvailable getTable() {\n" +
-            "        return table;\n" +
-            "    }\n" +
             "\n" +
             "    @Override\n" +
             "    public Class<@entityClass> getEntityClass() {\n" +
             "        return entityClass;\n" +
             "    }\n" +
             "\n" +
-            "    @Override\n" +
-            "    public @entityClassProxy create(TableAvailable table) {\n" +
-            "        return new @entityClassProxy(table);\n" +
-            "    }\n" +
             "}";
 
     private static final String FIELD_TEMPLATE="\n" +

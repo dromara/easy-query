@@ -1,7 +1,8 @@
 package com.easy.query.api.proxy.base;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.AbstractProxyEntity;
+
+import java.util.Date;
 
 /**
  * create time 2023/6/29 09:22
@@ -9,33 +10,19 @@ import com.easy.query.core.proxy.ProxyEntity;
  *
  * @author xuejiaming
  */
-public class UtilDateProxy implements ProxyEntity<UtilDateProxy, java.util.Date> {
+public class UtilDateProxy extends AbstractProxyEntity<UtilDateProxy, Date> {
+    public static UtilDateProxy createTable() {
+        return new UtilDateProxy();
+    }
 
-    public static final UtilDateProxy DEFAULT = new UtilDateProxy();
     private static final Class<java.util.Date> entityClass = java.util.Date.class;
 
-    private final TableAvailable table;
 
     private UtilDateProxy() {
-        this.table = null;
-    }
-
-    public UtilDateProxy(TableAvailable table) {
-        this.table = table;
-    }
-
-    @Override
-    public TableAvailable getTable() {
-        return table;
     }
 
     @Override
     public Class<java.util.Date> getEntityClass() {
         return entityClass;
-    }
-
-    @Override
-    public UtilDateProxy create(TableAvailable table) {
-        return new UtilDateProxy(table);
     }
 }

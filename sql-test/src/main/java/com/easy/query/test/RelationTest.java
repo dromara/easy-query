@@ -154,8 +154,8 @@ public class RelationTest extends BaseTest {
                 Assert.assertNull(schoolStudent.getSchoolStudentAddress());
             }
 
-
-            List<SchoolStudent> listp = easyProxyQuery.queryable(SchoolStudentProxy.DEFAULT).toList();
+            SchoolStudentProxy table = SchoolStudentProxy.createTable();
+            List<SchoolStudent> listp = easyProxyQuery.queryable(table).toList();
             Assert.assertEquals(3, listp.size());
             for (SchoolStudent schoolStudent : listp) {
                 Assert.assertNull(schoolStudent.getSchoolStudentAddress());
@@ -172,8 +172,10 @@ public class RelationTest extends BaseTest {
             }
 
             {
-                List<SchoolStudent> list1 = easyProxyQuery.queryable(SchoolStudentProxy.DEFAULT)
-                        .include((i,t) -> i.one(t.schoolClass(), SchoolClassProxy.DEFAULT, 1))
+                SchoolStudentProxy table1 = SchoolStudentProxy.createTable();
+                SchoolClassProxy table2 = SchoolClassProxy.createTable();
+                List<SchoolStudent> list1 = easyProxyQuery.queryable(table1)
+                        .include((i,t) -> i.one(t.schoolClass(), table2, 1))
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());

@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.base;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.AbstractProxyEntity;
 
 import java.sql.Timestamp;
 
@@ -11,24 +10,13 @@ import java.sql.Timestamp;
  *
  * @author xuejiaming
  */
-public class TimestampProxy implements ProxyEntity<TimestampProxy, Timestamp> {
-
-    public static final TimestampProxy DEFAULT = new TimestampProxy();
+public class TimestampProxy extends AbstractProxyEntity<TimestampProxy, Timestamp> {
+    public static TimestampProxy createTable() {
+        return new TimestampProxy();
+    }
     private static final Class<Timestamp> entityClass = Timestamp.class;
 
-    private final TableAvailable table;
-
     private TimestampProxy() {
-        this.table = null;
-    }
-
-    public TimestampProxy(TableAvailable table) {
-        this.table = table;
-    }
-
-    @Override
-    public TableAvailable getTable() {
-        return table;
     }
 
     @Override
@@ -36,8 +24,4 @@ public class TimestampProxy implements ProxyEntity<TimestampProxy, Timestamp> {
         return entityClass;
     }
 
-    @Override
-    public TimestampProxy create(TableAvailable table) {
-        return new TimestampProxy(table);
-    }
 }

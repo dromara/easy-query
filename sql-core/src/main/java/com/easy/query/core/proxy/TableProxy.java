@@ -21,6 +21,7 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
     Class<TEntity> getEntityClass();
 
     TProxy create(TableAvailable table);
+//    void setTable(TableAvailable table);
 
 //    default TEntity createEntity() {
 //        return null;

@@ -68,10 +68,10 @@ public class OrderController {
     public Object groupByWithSumOrderNo() {
         long start = System.currentTimeMillis();
         List<String> userIds = Arrays.asList("小明", "小绿");
-        List<OrderGroupWithSumOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
+        List<OrderGroupWithSumOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.createTable())
                 .where(o -> o.in(o.t().userId(), userIds))
                 .groupBy(g -> g.column(g.t().userId()))
-                .select(OrderGroupWithSumOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnSumAs(s.t().orderNo(), r -> r.orderNoSum()))
+                .select(OrderGroupWithSumOrderNoVOProxy.createTable(), s -> s.columnAs(s.t().userId(), r -> r.userId()).columnSumAs(s.t().orderNo(), r -> r.orderNoSum()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -81,11 +81,11 @@ public class OrderController {
     public Object groupByWithSumOrderNoOrderByUserId() {
         long start = System.currentTimeMillis();
         List<String> userIds = Arrays.asList("小明", "小绿");
-        List<OrderGroupWithSumOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
+        List<OrderGroupWithSumOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.createTable())
                 .where(o -> o.in(o.t().userId(), userIds))
                 .groupBy(g -> g.column(g.t().userId()))
                 .orderByAsc(o -> o.column(o.t().userId()))
-                .select(OrderGroupWithSumOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnSumAs(s.t().orderNo(), r -> r.orderNoSum()))
+                .select(OrderGroupWithSumOrderNoVOProxy.createTable(), s -> s.columnAs(s.t().userId(), r -> r.userId()).columnSumAs(s.t().orderNo(), r -> r.orderNoSum()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -95,11 +95,11 @@ public class OrderController {
     public Object groupByWithAvgOrderNo() {
         long start = System.currentTimeMillis();
         List<String> userIds = Arrays.asList("小明", "小绿");
-        List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
+        List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.createTable())
                 .where(o -> o.in(o.t().userId(), userIds))
                 .groupBy(g -> g.column(g.t().userId()))
                 .orderByAsc(o -> o.column(o.t().userId()))
-                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnAvgAs(s.t().orderNo(), r -> r.orderNoAvg()))
+                .select(OrderGroupWithAvgOrderNoVOProxy.createTable(), s -> s.columnAs(s.t().userId(), r -> r.userId()).columnAvgAs(s.t().orderNo(), r -> r.orderNoAvg()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -109,11 +109,11 @@ public class OrderController {
     public Object groupByWithAvgOrderNo1() {
         long start = System.currentTimeMillis();
         List<String> userIds = Arrays.asList("小明");
-        List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
+        List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.createTable())
                 .where(o -> o.in(o.t().userId(), userIds))
                 .groupBy(g -> g.column(g.t().userId()))
                 .orderByAsc(o -> o.column(o.t().userId()))
-                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnSumAs(s.t().orderNo(), r -> r.orderNoAvg()))
+                .select(OrderGroupWithAvgOrderNoVOProxy.createTable(), s -> s.columnAs(s.t().userId(), r -> r.userId()).columnSumAs(s.t().orderNo(), r -> r.orderNoAvg()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -123,11 +123,11 @@ public class OrderController {
     public Object groupByWithAvgOrderNo2() {
         long start = System.currentTimeMillis();
         List<String> userIds = Arrays.asList("小明");
-        List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
+        List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.createTable())
                 .where(o -> o.in(o.t().userId(), userIds))
                 .groupBy(g -> g.column(g.t().userId()))
                 .orderByAsc(o -> o.column(o.t().userId()))
-                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnCountAs(s.t().orderNo(), r -> r.orderNoAvg()))
+                .select(OrderGroupWithAvgOrderNoVOProxy.createTable(), s -> s.columnAs(s.t().userId(), r -> r.userId()).columnCountAs(s.t().orderNo(), r -> r.orderNoAvg()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -137,11 +137,11 @@ public class OrderController {
     public Object groupByWithAvgOrderNo3() {
         long start = System.currentTimeMillis();
         List<String> userIds = Arrays.asList("小明", "小绿");
-        List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
+        List<OrderGroupWithAvgOrderNoVO> list = easyProxyQuery.queryable(OrderEntityProxy.createTable())
                 .where(o -> o.in(o.t().userId(), userIds).in(o.t().id(), Arrays.asList("20200101000500","20200101000400","20200101001000","20200601000500","20200601000900")))
                 .groupBy(g -> g.column(g.t().userId()))
                 .orderByAsc(o -> o.column(o.t().userId()))
-                .select(OrderGroupWithAvgOrderNoVOProxy.DEFAULT, s -> s.columnAs(s.t().userId(), r -> r.userId()).columnAvgAs(s.t().orderNo(), r -> r.orderNoAvg()))
+                .select(OrderGroupWithAvgOrderNoVOProxy.createTable(), s -> s.columnAs(s.t().userId(), r -> r.userId()).columnAvgAs(s.t().orderNo(), r -> r.orderNoAvg()))
                 .toList();
         long end = System.currentTimeMillis();
         return Arrays.asList(list, (end - start) + "(ms)");
@@ -150,7 +150,7 @@ public class OrderController {
     public Object page(@RequestParam("pageIndex") Integer pageIndex,@RequestParam("pageSize") Integer pageSize) {
         long start = System.currentTimeMillis();
         List<String> userIds = Arrays.asList("小明", "小绿");
-        EasyPageResult<OrderEntity> pageResult = easyProxyQuery.queryable(OrderEntityProxy.DEFAULT)
+        EasyPageResult<OrderEntity> pageResult = easyProxyQuery.queryable(OrderEntityProxy.createTable())
                 .where(o -> o.in(o.t().userId(), userIds))
                 .orderByAsc(o -> o.column(o.t().userId()))
                 .toPageResult(pageIndex, pageSize);

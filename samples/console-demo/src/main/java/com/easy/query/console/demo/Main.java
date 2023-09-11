@@ -37,7 +37,7 @@ public class Main {
                 .build();
         //创建代理模式api查询
         EasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
-        List<Topic> topics = easyProxyQuery.queryable(TopicProxy.DEFAULT)
+        List<Topic> topics = easyProxyQuery.queryable(TopicProxy.createTable())
                 .where(o -> o.eq(o.t().id(), "123").like(o.t().name(), "您好"))
                 .orderByAsc(o -> o.columns(o.t().createTime(), o.t().id()))
                 .select(s -> s.columns(s.t().no(), s.t().id(), s.t().name()))
