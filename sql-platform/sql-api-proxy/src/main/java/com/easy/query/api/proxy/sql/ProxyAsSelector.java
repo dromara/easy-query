@@ -71,7 +71,7 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> e
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAs(SQLColumn<?> column, Function<TRProxy, SQLColumn<?>> mapAlias) {
+    default <TProperty> ProxyAsSelector<TRProxy, TR> columnAs(SQLColumn<TProperty> column, Function<TRProxy, SQLColumn<TProperty>> mapAlias) {
         SQLColumn<?> aliasColumn = mapAlias.apply(getTRProxy());
         return columnAs(column, aliasColumn.value());
     }

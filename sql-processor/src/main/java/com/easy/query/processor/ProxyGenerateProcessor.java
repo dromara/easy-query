@@ -73,7 +73,6 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             "    private @entityClassProxy() {\n" +
             "    }\n" +
             "\n" +
-            "\n" +
             "    @fieldContent" +
             "\n" +
             "    @Override\n" +
