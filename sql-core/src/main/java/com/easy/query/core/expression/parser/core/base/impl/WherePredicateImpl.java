@@ -9,6 +9,7 @@ import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -260,6 +261,16 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     }
 
     @Override
+    public <T2> WherePredicate<T1> and(boolean condition, WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
+        if (condition) {
+            filter.and(f -> {
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, f),new WherePredicateImpl<>(t2WherePredicate.getTable(), f));
+            });
+        }
+        return this;
+    }
+
+    @Override
     public WherePredicate<T1> or(boolean condition) {
         if (condition) {
             filter.or();
@@ -276,6 +287,17 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
         }
         return this;
     }
+
+    @Override
+    public <T2> WherePredicate<T1> or(boolean condition, WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
+        if (condition) {
+            filter.or(f -> {
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, f),new WherePredicateImpl<>(t2WherePredicate.getTable(), f));
+            });
+        }
+        return this;
+    }
+
 
 
     @Override

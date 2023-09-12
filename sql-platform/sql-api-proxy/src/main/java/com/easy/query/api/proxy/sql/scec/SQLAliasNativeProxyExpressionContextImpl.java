@@ -11,7 +11,7 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public class SQLAliasNativeProxyExpressionContextImpl implements  SQLAliasNativeProxyExpressionContext{
+public class SQLAliasNativeProxyExpressionContextImpl<TRProxy extends ProxyEntity<TRProxy, TR>, TR>  implements  SQLAliasNativeProxyExpressionContext<TRProxy,TR>{
     private final SQLAliasNativeExpressionContext sqlAliasNativeExpressionContext;
 
     public SQLAliasNativeProxyExpressionContextImpl(SQLAliasNativeExpressionContext sqlAliasNativeExpressionContext){
@@ -20,37 +20,37 @@ public class SQLAliasNativeProxyExpressionContextImpl implements  SQLAliasNative
     }
 
     @Override
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR, TProperty> SQLAliasNativeProxyExpressionContext expressionAlias(SQLColumn<TRProxy, TProperty> sqlColumn) {
+    public <TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expressionAlias(SQLColumn<TRProxy, TProperty> sqlColumn) {
         sqlAliasNativeExpressionContext.expressionAlias(sqlColumn.value());
         return this;
     }
 
     @Override
-    public <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLAliasNativeProxyExpressionContext expression(SQLColumn<TEntityProxy, TProperty> sqlColumn) {
+    public <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expression(SQLColumn<TEntityProxy, TProperty> sqlColumn) {
         sqlAliasNativeExpressionContext.expression(sqlColumn.getTable(),sqlColumn.value());
         return this;
     }
 
     @Override
-    public <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> SQLAliasNativeProxyExpressionContext expression(ProxyQueryable<TEntityProxy, TEntity> subQuery) {
+    public <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expression(ProxyQueryable<TEntityProxy, TEntity> subQuery) {
         sqlAliasNativeExpressionContext.expression(subQuery.getClientQueryable());
         return this;
     }
 
     @Override
-    public SQLAliasNativeProxyExpressionContext value(Object val) {
+    public SQLAliasNativeProxyExpressionContext<TRProxy, TR> value(Object val) {
         sqlAliasNativeExpressionContext.value(val);
         return this;
     }
 
     @Override
-    public SQLAliasNativeProxyExpressionContext format(Object formatVal) {
+    public SQLAliasNativeProxyExpressionContext<TRProxy, TR> format(Object formatVal) {
         sqlAliasNativeExpressionContext.format(formatVal);
         return this;
     }
 
     @Override
-    public SQLAliasNativeProxyExpressionContext setAlias(String alias) {
+    public SQLAliasNativeProxyExpressionContext<TRProxy, TR> setAlias(String alias) {
         sqlAliasNativeExpressionContext.setAlias(alias);
         return this;
     }

@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativeProper
  *
  * @author xuejiaming
  */
-public class SQLAliasNativeLambdaExpressionContextImpl<T1> implements SQLAliasNativeLambdaExpressionContext<T1>{
+public class SQLAliasNativeLambdaExpressionContextImpl<T1,TR> implements SQLAliasNativeLambdaExpressionContext<T1,TR>{
     private final SQLAliasNativePropertyExpressionContext sqlAliasNativePropertyExpressionContext;
 
     public SQLAliasNativeLambdaExpressionContextImpl(SQLAliasNativePropertyExpressionContext sqlAliasNativePropertyExpressionContext){
@@ -20,43 +20,43 @@ public class SQLAliasNativeLambdaExpressionContextImpl<T1> implements SQLAliasNa
         this.sqlAliasNativePropertyExpressionContext = sqlAliasNativePropertyExpressionContext;
     }
     @Override
-    public <TR> SQLAliasNativeLambdaExpressionContext<T1> expressionAlias(Property<TR, ?> property) {
+    public SQLAliasNativeLambdaExpressionContext<T1,TR> expressionAlias(Property<TR, ?> property) {
         sqlAliasNativePropertyExpressionContext.expressionAlias(EasyLambdaUtil.getPropertyName(property));
         return this;
     }
 
     @Override
-    public SQLAliasNativeLambdaExpressionContext<T1> expression(Property<T1, ?> property) {
+    public SQLAliasNativeLambdaExpressionContext<T1,TR> expression(Property<T1, ?> property) {
         sqlAliasNativePropertyExpressionContext.expression(EasyLambdaUtil.getPropertyName(property));
         return this;
     }
 
     @Override
-    public <T2> SQLAliasNativeLambdaExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, Property<T2, ?> property) {
+    public <T2> SQLAliasNativeLambdaExpressionContext<T1,TR> expression(EntitySQLTableOwner<T2> table, Property<T2, ?> property) {
         sqlAliasNativePropertyExpressionContext.expression(table.getTable(),EasyLambdaUtil.getPropertyName(property));
         return this;
     }
 
     @Override
-    public <TEntity> SQLAliasNativeLambdaExpressionContext<T1> expression(Queryable<TEntity> subQuery) {
+    public <TEntity> SQLAliasNativeLambdaExpressionContext<T1,TR> expression(Queryable<TEntity> subQuery) {
         sqlAliasNativePropertyExpressionContext.expression(subQuery.getClientQueryable());
         return this;
     }
 
     @Override
-    public SQLAliasNativeLambdaExpressionContext<T1> value(Object val) {
+    public SQLAliasNativeLambdaExpressionContext<T1,TR> value(Object val) {
         sqlAliasNativePropertyExpressionContext.value(val);
         return this;
     }
 
     @Override
-    public SQLAliasNativeLambdaExpressionContext<T1> format(Object formatVal) {
+    public SQLAliasNativeLambdaExpressionContext<T1,TR> format(Object formatVal) {
         sqlAliasNativePropertyExpressionContext.format(formatVal);
         return this;
     }
 
     @Override
-    public SQLAliasNativeLambdaExpressionContext<T1> setAlias(String alias) {
+    public SQLAliasNativeLambdaExpressionContext<T1,TR> setAlias(String alias) {
         sqlAliasNativePropertyExpressionContext.setAlias(alias);
         return this;
     }

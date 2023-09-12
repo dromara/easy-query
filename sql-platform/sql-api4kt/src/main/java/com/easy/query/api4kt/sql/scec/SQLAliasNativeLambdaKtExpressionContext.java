@@ -10,25 +10,25 @@ import kotlin.reflect.KProperty1;
  *
  * @author xuejiaming
  */
-public interface SQLAliasNativeLambdaKtExpressionContext<T1> extends SQLNativeLambdaKtExpressionContext<T1> {
+public interface SQLAliasNativeLambdaKtExpressionContext<T1,TR> extends SQLNativeLambdaKtExpressionContext<T1> {
 
-    SQLAliasNativeLambdaKtExpressionContext<T1> expressionAlias(KProperty1<? super T1, ?> property);
-
-    @Override
-    SQLAliasNativeLambdaKtExpressionContext<T1> expression(KProperty1<? super T1, ?> property);
-
+    SQLAliasNativeLambdaKtExpressionContext<T1,TR> expressionAlias(KProperty1<? super TR, ?> property);
 
     @Override
-    <TEntity> SQLAliasNativeLambdaKtExpressionContext<T1> expression(KtQueryable<TEntity> subQuery);
+    SQLAliasNativeLambdaKtExpressionContext<T1,TR> expression(KProperty1<? super T1, ?> property);
 
 
     @Override
-    <T2> SQLAliasNativeLambdaKtExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, KProperty1<? super T2, ?> property);
+    <TEntity> SQLAliasNativeLambdaKtExpressionContext<T1,TR> expression(KtQueryable<TEntity> subQuery);
+
+
+    @Override
+    <T2> SQLAliasNativeLambdaKtExpressionContext<T1,TR> expression(EntitySQLTableOwner<T2> table, KProperty1<? super T2, ?> property);
 
 
 
     @Override
-    SQLAliasNativeLambdaKtExpressionContext<T1> value(Object val);
+    SQLAliasNativeLambdaKtExpressionContext<T1,TR> value(Object val);
 
     /**
      * 请使用 format
@@ -39,15 +39,15 @@ public interface SQLAliasNativeLambdaKtExpressionContext<T1> extends SQLNativeLa
     @Deprecated
 
     @Override
-    default SQLAliasNativeLambdaKtExpressionContext<T1> constValue(Object constVal) {
+    default SQLAliasNativeLambdaKtExpressionContext<T1,TR> constValue(Object constVal) {
         return format(constVal);
     }
 
 
     @Override
-    SQLAliasNativeLambdaKtExpressionContext<T1> format(Object formatVal);
+    SQLAliasNativeLambdaKtExpressionContext<T1,TR> format(Object formatVal);
 
 
     @Override
-    SQLAliasNativeLambdaKtExpressionContext<T1> setAlias(String alias);
+    SQLAliasNativeLambdaKtExpressionContext<T1,TR> setAlias(String alias);
 }

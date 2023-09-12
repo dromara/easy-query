@@ -1000,7 +1000,7 @@ public class QueryTest2 extends BaseTest {
                 .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
                 .orderByAsc(o -> o.columnConst("RAND()"));
         String sql = topicGroupTestDTOQueryable.toSQL();
-        Assert.assertEquals("SELECT t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id`) t1 ORDER BY RAND() ASC", sql);
+        Assert.assertEquals("SELECT t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id`) t1 ORDER BY RAND()", sql);
         List<TopicGroupTestDTO> list = topicGroupTestDTOQueryable.toList();
         Assert.assertEquals(1, list.size());
     }
@@ -1013,7 +1013,7 @@ public class QueryTest2 extends BaseTest {
                 .select(TopicGroupTestDTO.class, o -> o.columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
                 .orderByAsc(o -> o.columnConst("RAND()"));
         String sql = topicGroupTestDTOQueryable.toSQL();
-        Assert.assertEquals("SELECT t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY RAND()) t1 ORDER BY RAND() ASC", sql);
+        Assert.assertEquals("SELECT t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY RAND()) t1 ORDER BY RAND()", sql);
         List<TopicGroupTestDTO> list = topicGroupTestDTOQueryable.toList();
         Assert.assertEquals(1, list.size());
     }
@@ -1024,7 +1024,7 @@ public class QueryTest2 extends BaseTest {
                 .where(o -> o.eq(BlogEntity::getId, "1"))
                 .groupBy(o -> o.sqlNativeSegment("RAND()"))
                 .select(TopicGroupTestDTO.class, o -> o.sqlNativeSegment("RAND()", it->it.setAlias("rad")).columnAs(BlogEntity::getId, TopicGroupTestDTO::getId).columnCountAs(BlogEntity::getId, TopicGroupTestDTO::getIdCount))
-                .orderByAsc(o -> o.sqlNativeSegment("RAND()"));
+                .orderByAsc(o -> o.sqlNativeSegment("RAND() ASC"));
         String sql = topicGroupTestDTOQueryable.toSQL();
         Assert.assertEquals("SELECT t1.`rad` AS `rad`,t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT RAND() AS `rad`,t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY RAND()) t1 ORDER BY RAND() ASC", sql);
         List<TopicGroupTestDTO> list = topicGroupTestDTOQueryable.toList();

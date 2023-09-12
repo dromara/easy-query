@@ -2,6 +2,7 @@ package com.easy.query.api4kt.sql.impl;
 
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -37,6 +38,26 @@ public class SQLKtWherePredicateImpl<T1> implements SQLKtWherePredicate<T1> {
         getWherePredicate().or(condition, predicate -> {
             SQLKtWherePredicate<T1> sqlPredicate = new SQLKtWherePredicateImpl<T1>(predicate);
             sqlWherePredicateSQLExpression.apply(sqlPredicate);
+        });
+        return this;
+    }
+
+    @Override
+    public <T2> SQLKtWherePredicate<T1> and(boolean condition, SQLKtWherePredicate<T2> t2SQLKtWherePredicate, SQLExpression2<SQLKtWherePredicate<T1>, SQLKtWherePredicate<T2>> sqlWherePredicateSQLExpression) {
+        getWherePredicate().and(condition,t2SQLKtWherePredicate.getWherePredicate() ,(predicate1,predicate2) -> {
+            SQLKtWherePredicate<T1> sqlPredicate1 = new SQLKtWherePredicateImpl<T1>(predicate1);
+            SQLKtWherePredicate<T2> sqlPredicate2 = new SQLKtWherePredicateImpl<T2>(predicate2);
+            sqlWherePredicateSQLExpression.apply(sqlPredicate1,sqlPredicate2);
+        });
+        return this;
+    }
+
+    @Override
+    public <T2> SQLKtWherePredicate<T1> or(boolean condition, SQLKtWherePredicate<T2> t2SQLKtWherePredicate, SQLExpression2<SQLKtWherePredicate<T1>, SQLKtWherePredicate<T2>> sqlWherePredicateSQLExpression) {
+        getWherePredicate().or(condition,t2SQLKtWherePredicate.getWherePredicate() ,(predicate1,predicate2) -> {
+            SQLKtWherePredicate<T1> sqlPredicate1 = new SQLKtWherePredicateImpl<T1>(predicate1);
+            SQLKtWherePredicate<T2> sqlPredicate2 = new SQLKtWherePredicateImpl<T2>(predicate2);
+            sqlWherePredicateSQLExpression.apply(sqlPredicate1,sqlPredicate2);
         });
         return this;
     }

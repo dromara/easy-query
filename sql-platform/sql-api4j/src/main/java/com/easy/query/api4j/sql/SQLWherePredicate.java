@@ -9,6 +9,7 @@ import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -703,6 +704,12 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
 
     SQLWherePredicate<T1> and(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression);
 
+    default <T2> SQLWherePredicate<T1> and(SQLWherePredicate<T2> t2SQLWherePredicate, SQLExpression2<SQLWherePredicate<T1>,SQLWherePredicate<T2>> sqlWherePredicateSQLExpression) {
+        return and(true,t2SQLWherePredicate, sqlWherePredicateSQLExpression);
+    }
+
+    <T2> SQLWherePredicate<T1> and(boolean condition, SQLWherePredicate<T2> t2SQLWherePredicate,SQLExpression2<SQLWherePredicate<T1>,SQLWherePredicate<T2>> sqlWherePredicateSQLExpression);
+
     default SQLWherePredicate<T1> or() {
         return or(true);
     }
@@ -717,5 +724,10 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
     }
 
     SQLWherePredicate<T1> or(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression);
+    default <T2> SQLWherePredicate<T1> or(SQLWherePredicate<T2> t2SQLWherePredicate,SQLExpression2<SQLWherePredicate<T1>,SQLWherePredicate<T2>> sqlWherePredicateSQLExpression) {
+        return or(true,t2SQLWherePredicate, sqlWherePredicateSQLExpression);
+    }
+
+    <T2> SQLWherePredicate<T1> or(boolean condition, SQLWherePredicate<T2> t2SQLWherePredicate,SQLExpression2<SQLWherePredicate<T1>,SQLWherePredicate<T2>> sqlWherePredicateSQLExpression);
 
 }

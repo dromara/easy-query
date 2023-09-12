@@ -12,7 +12,7 @@ import kotlin.reflect.KProperty1;
  *
  * @author xuejiaming
  */
-public class SQLAliasNativeLambdaKtExpressionContextImpl<T1> implements SQLAliasNativeLambdaKtExpressionContext<T1> {
+public class SQLAliasNativeLambdaKtExpressionContextImpl<T1,TR> implements SQLAliasNativeLambdaKtExpressionContext<T1,TR> {
     private final SQLAliasNativePropertyExpressionContext sqlAliasNativePropertyExpressionContext;
 
     public SQLAliasNativeLambdaKtExpressionContextImpl(SQLAliasNativePropertyExpressionContext sqlAliasNativePropertyExpressionContext){
@@ -20,43 +20,43 @@ public class SQLAliasNativeLambdaKtExpressionContextImpl<T1> implements SQLAlias
         this.sqlAliasNativePropertyExpressionContext = sqlAliasNativePropertyExpressionContext;
     }
     @Override
-    public SQLAliasNativeLambdaKtExpressionContext<T1> expressionAlias(KProperty1<? super T1, ?> property) {
+    public SQLAliasNativeLambdaKtExpressionContext<T1,TR> expressionAlias(KProperty1<? super TR, ?> property) {
         sqlAliasNativePropertyExpressionContext.expressionAlias(EasyKtLambdaUtil.getPropertyName(property));
         return this;
     }
 
     @Override
-    public SQLAliasNativeLambdaKtExpressionContext<T1> expression(KProperty1<? super T1, ?> property) {
+    public SQLAliasNativeLambdaKtExpressionContext<T1,TR> expression(KProperty1<? super T1, ?> property) {
         sqlAliasNativePropertyExpressionContext.expression(EasyKtLambdaUtil.getPropertyName(property));
         return this;
     }
 
     @Override
-    public <TEntity> SQLAliasNativeLambdaKtExpressionContext<T1> expression(KtQueryable<TEntity> subQuery) {
+    public <TEntity> SQLAliasNativeLambdaKtExpressionContext<T1,TR> expression(KtQueryable<TEntity> subQuery) {
         sqlAliasNativePropertyExpressionContext.expression(subQuery.getClientQueryable());
         return this;
     }
 
     @Override
-    public <T2> SQLAliasNativeLambdaKtExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, KProperty1<? super T2, ?> property) {
+    public <T2> SQLAliasNativeLambdaKtExpressionContext<T1,TR> expression(EntitySQLTableOwner<T2> table, KProperty1<? super T2, ?> property) {
         sqlAliasNativePropertyExpressionContext.expression(table.getTable(),EasyKtLambdaUtil.getPropertyName(property));
         return this;
     }
 
     @Override
-    public SQLAliasNativeLambdaKtExpressionContext<T1> value(Object val) {
+    public SQLAliasNativeLambdaKtExpressionContext<T1,TR> value(Object val) {
         sqlAliasNativePropertyExpressionContext.value(val);
         return this;
     }
 
     @Override
-    public SQLAliasNativeLambdaKtExpressionContext<T1> format(Object formatVal) {
+    public SQLAliasNativeLambdaKtExpressionContext<T1,TR> format(Object formatVal) {
         sqlAliasNativePropertyExpressionContext.format(formatVal);
         return this;
     }
 
     @Override
-    public SQLAliasNativeLambdaKtExpressionContext<T1> setAlias(String alias) {
+    public SQLAliasNativeLambdaKtExpressionContext<T1,TR> setAlias(String alias) {
         sqlAliasNativePropertyExpressionContext.setAlias(alias);
         return this;
     }

@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.sql.scec.SQLAliasNativeProxyExpressionContext;
 import com.easy.query.api.proxy.sql.scec.SQLAliasNativeProxyExpressionContextImpl;
 import com.easy.query.core.expression.builder.core.SQLAsNative;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.proxy.ProxyEntity;
 
 /**
  * create time 2023/7/31 14:35
@@ -11,7 +12,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
  *
  * @author xuejiaming
  */
-public interface SQLAsProxyNative<TChain> {
+public interface SQLAsProxyNative<TRProxy extends ProxyEntity<TRProxy, TR>, TR,TChain> {
     <T> SQLAsNative<T> getSQLAsNative();
     TChain castTChain();
 
@@ -38,7 +39,7 @@ public interface SQLAsProxyNative<TChain> {
      * @param contextConsume
      * @return
      */
-    default TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLAliasNativeProxyExpressionContext> contextConsume){
+    default TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLAliasNativeProxyExpressionContext<TRProxy,TR>> contextConsume){
         return sqlNativeSegment(true,sqlSegment,contextConsume);
     }
     /**
@@ -47,10 +48,10 @@ public interface SQLAsProxyNative<TChain> {
      * @param contextConsume
      * @return
      */
-    default TChain sqlNativeSegment(boolean condition,String sqlSegment, SQLExpression1<SQLAliasNativeProxyExpressionContext> contextConsume){
+    default TChain sqlNativeSegment(boolean condition,String sqlSegment, SQLExpression1<SQLAliasNativeProxyExpressionContext<TRProxy,TR>> contextConsume){
         if(condition){
             getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
-                contextConsume.apply(new SQLAliasNativeProxyExpressionContextImpl(context));
+                contextConsume.apply(new SQLAliasNativeProxyExpressionContextImpl<>(context));
             });
         }
         return castTChain();

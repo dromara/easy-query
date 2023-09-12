@@ -10,21 +10,21 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface SQLAliasNativeProxyExpressionContext extends SQLNativeProxyExpressionContext{
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR, TProperty> SQLAliasNativeProxyExpressionContext expressionAlias(SQLColumn<TRProxy, TProperty> sqlColumn);
+public interface SQLAliasNativeProxyExpressionContext<TRProxy extends ProxyEntity<TRProxy, TR>, TR> extends SQLNativeProxyExpressionContext{
+    <TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expressionAlias(SQLColumn<TRProxy, TProperty> sqlColumn);
 
     @Override
-    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLAliasNativeProxyExpressionContext expression(SQLColumn<TEntityProxy, TProperty> sqlColumn);
+    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expression(SQLColumn<TEntityProxy, TProperty> sqlColumn);
 
     @Override
-    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> SQLAliasNativeProxyExpressionContext expression(ProxyQueryable<TEntityProxy, TEntity> subQuery);
+    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expression(ProxyQueryable<TEntityProxy, TEntity> subQuery);
 
     @Override
-    SQLAliasNativeProxyExpressionContext value(Object val);
+    SQLAliasNativeProxyExpressionContext<TRProxy, TR> value(Object val);
 
     @Override
-    SQLAliasNativeProxyExpressionContext format(Object formatVal);
+    SQLAliasNativeProxyExpressionContext<TRProxy, TR> format(Object formatVal);
 
     @Override
-    SQLAliasNativeProxyExpressionContext setAlias(String alias);
+    SQLAliasNativeProxyExpressionContext<TRProxy, TR> setAlias(String alias);
 }

@@ -1711,7 +1711,35 @@ public static class AA{
                 })
                 .toSQL();
         //SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND t1.`stars` = ? AND (t1.`title` = t1.`title` AND (t1.`title` = t1.`title` OR t1.`stars` = ? AND t1.`title` = t1.`title`)) ORDER BY t.`id` ASC
-        Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND ((t.`title` = ? AND t1.`title` = ? AND t.`id` = ?) OR (t.`title` = ? AND t1.`title` = ?)) ORDER BY t.`id` ASC",sqlz1);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND ((t.`title` = ? AND t.`id` = ?) OR (t.`title` = ? AND t.`id` = ?))",sqlz1);
+    }
+    @Test
+    public  void newPredicateTest5(){
+        String sqlz1= easyQuery
+                .queryable(Topic.class)
+                .leftJoin(TopicAuto.class,(t,t1)->t.eq(t1,Topic::getId,TopicAuto::getTitle))
+                .where((t,t1)->{
+
+// t.`id` = ? AND t1.`stars` = ? AND (t1.`title` = t1.`title` AND (t1.`title` = t1.`title` OR t1.`stars` = ? AND t1.`title` = t1.`title`))
+
+
+                    t.eq(Topic::getId,"123")
+                            .and(t1,(x1,x2)->{
+                                x1.and(x2,(y1,y2)->{
+                                            y1.eq(Topic::getTitle, "111")
+                                                    .then(y2).eq(TopicAuto::getId, "111");
+                                        })
+                                        .or(x2,(z1,z2)->{
+                                            z1.eq(Topic::getTitle, "111")
+                                                    .then(z2).eq(TopicAuto::getId, "111");
+                                        });
+                            });
+
+
+                })
+                .toSQL();
+        //SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND t1.`stars` = ? AND (t1.`title` = t1.`title` AND (t1.`title` = t1.`title` OR t1.`stars` = ? AND t1.`title` = t1.`title`)) ORDER BY t.`id` ASC
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND ((t.`title` = ? AND t1.`id` = ?) OR (t.`title` = ? AND t1.`id` = ?))",sqlz1);
     }
 
 //    @Test

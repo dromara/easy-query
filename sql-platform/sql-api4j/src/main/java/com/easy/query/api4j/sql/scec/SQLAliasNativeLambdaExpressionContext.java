@@ -10,25 +10,25 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
  *
  * @author xuejiaming
  */
-public interface SQLAliasNativeLambdaExpressionContext<T1> extends SQLNativeLambdaExpressionContext<T1>{
+public interface SQLAliasNativeLambdaExpressionContext<T1,TR> extends SQLNativeLambdaExpressionContext<T1>{
 
-    <TR> SQLAliasNativeLambdaExpressionContext<T1> expressionAlias(Property<TR, ?> property);
+    SQLAliasNativeLambdaExpressionContext<T1,TR> expressionAlias(Property<TR, ?> property);
 
-
-
-    @Override
-    SQLAliasNativeLambdaExpressionContext<T1> expression(Property<T1, ?> property);
-
-    @Override
-    <T2> SQLAliasNativeLambdaExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, Property<T2, ?> property);
 
 
     @Override
-    <TEntity> SQLAliasNativeLambdaExpressionContext<T1> expression(Queryable<TEntity> subQuery);
+    SQLAliasNativeLambdaExpressionContext<T1,TR> expression(Property<T1, ?> property);
+
+    @Override
+    <T2> SQLAliasNativeLambdaExpressionContext<T1,TR> expression(EntitySQLTableOwner<T2> table, Property<T2, ?> property);
 
 
     @Override
-    SQLAliasNativeLambdaExpressionContext<T1> value(Object val);
+    <TEntity> SQLAliasNativeLambdaExpressionContext<T1,TR> expression(Queryable<TEntity> subQuery);
+
+
+    @Override
+    SQLAliasNativeLambdaExpressionContext<T1,TR> value(Object val);
 
     /**
      * 请使用format
@@ -39,14 +39,14 @@ public interface SQLAliasNativeLambdaExpressionContext<T1> extends SQLNativeLamb
     @Deprecated
 
     @Override
-    default SQLAliasNativeLambdaExpressionContext<T1> constValue(Object constVal) {
+    default SQLAliasNativeLambdaExpressionContext<T1,TR> constValue(Object constVal) {
         return format(constVal);
     }
 
 
     @Override
-    SQLAliasNativeLambdaExpressionContext<T1> format(Object formatVal);
+    SQLAliasNativeLambdaExpressionContext<T1,TR> format(Object formatVal);
 
     @Override
-    SQLAliasNativeLambdaExpressionContext<T1> setAlias(String alias);
+    SQLAliasNativeLambdaExpressionContext<T1,TR> setAlias(String alias);
 }

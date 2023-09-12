@@ -23,7 +23,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  */
-public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAsLambdaKtNative<T1,SQLKtColumnAsSelector<T1, TR>> {
+public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAsLambdaKtNative<T1,TR,SQLKtColumnAsSelector<T1, TR>> {
     ColumnAsSelector<T1, TR> getColumnAsSelector();
 
     default QueryRuntimeContext getRuntimeContext() {

@@ -11,7 +11,7 @@ import com.easy.query.core.expression.parser.core.base.core.SQLAsPropertyNative;
  *
  * @author xuejiaming
  */
-public interface SQLAsLambdaKtNative<T1,TChain> {
+public interface SQLAsLambdaKtNative<T1,TR,TChain> {
     <T> SQLAsPropertyNative<T> getSQLAsPropertyNative();
     TChain castTChain();
 
@@ -39,7 +39,7 @@ public interface SQLAsLambdaKtNative<T1,TChain> {
      * @param contextConsume
      * @return
      */
-    default TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLAliasNativeLambdaKtExpressionContext<T1>> contextConsume){
+    default TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLAliasNativeLambdaKtExpressionContext<T1,TR>> contextConsume){
         return sqlNativeSegment(true,sqlSegment,contextConsume);
     }
     /**
@@ -48,7 +48,7 @@ public interface SQLAsLambdaKtNative<T1,TChain> {
      * @param contextConsume
      * @return
      */
-    default TChain sqlNativeSegment(boolean condition,String sqlSegment, SQLExpression1<SQLAliasNativeLambdaKtExpressionContext<T1>> contextConsume){
+    default TChain sqlNativeSegment(boolean condition,String sqlSegment, SQLExpression1<SQLAliasNativeLambdaKtExpressionContext<T1,TR>> contextConsume){
         if(condition){
             getSQLAsPropertyNative().sqlNativeSegment(sqlSegment,context->{
                 contextConsume.apply(new SQLAliasNativeLambdaKtExpressionContextImpl<>(context));

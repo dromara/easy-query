@@ -2,11 +2,8 @@ package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.sql.core.SQLAsProxyNative;
-import com.easy.query.api.proxy.sql.scec.SQLAliasNativeProxyExpressionContext;
-import com.easy.query.api.proxy.sql.scec.SQLAliasNativeProxyExpressionContextImpl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AsSelector;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -22,7 +19,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> extends SQLAsProxyNative<ProxyAsSelector<TRProxy, TR>> {
+public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> extends SQLAsProxyNative<TRProxy,TR,ProxyAsSelector<TRProxy, TR>> {
 
     TRProxy tr();
 
