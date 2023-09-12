@@ -4,7 +4,6 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstSQLParameterExpressionImpl;
-import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyAsAliasParamExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnSQLParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.FormatValueParamExpressionImpl;
@@ -12,7 +11,6 @@ import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.SubQueryParamExpressionImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +23,10 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContext {
-    private final List<ParamExpression> expressions=new ArrayList<>();
-    private final ExpressionContext expressionContext;
+    protected final List<ParamExpression> expressions=new ArrayList<>();
+    protected final ExpressionContext expressionContext;
     private String alias;
 
-    public void setResultEntityMetadata(EntityMetadata resultEntityMetadata) {
-        this.resultEntityMetadata = resultEntityMetadata;
-    }
-
-    private EntityMetadata resultEntityMetadata;
     public SQLNativeExpressionContextImpl(ExpressionContext expressionContext){
 
         this.expressionContext = expressionContext;
@@ -52,15 +45,6 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
         extract(subQuery);
         SubQueryParamExpressionImpl subQueryParamExpression = new SubQueryParamExpressionImpl(subQuery);
         expressions.add(subQueryParamExpression);
-        return this;
-    }
-
-    @Override
-    public SQLNativeExpressionContext expressionAlias(String property) {
-        Objects.requireNonNull(resultEntityMetadata, "result entity metadata cannot be null, plz use in select as sql context");
-        Objects.requireNonNull(property, "property cannot be null");
-        ColumnPropertyAsAliasParamExpressionImpl columnPropertyAsAliasParamExpression = new ColumnPropertyAsAliasParamExpressionImpl(resultEntityMetadata.getColumnName(property));
-        expressions.add(columnPropertyAsAliasParamExpression);
         return this;
     }
 

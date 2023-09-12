@@ -1,9 +1,9 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
-import com.easy.query.api.proxy.sql.core.SQLProxyNative;
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
+import com.easy.query.api.proxy.sql.core.SQLAsProxyNative;
+import com.easy.query.api.proxy.sql.scec.SQLAliasNativeProxyExpressionContext;
+import com.easy.query.api.proxy.sql.scec.SQLAliasNativeProxyExpressionContextImpl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -22,7 +22,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> extends SQLProxyNative<ProxyAsSelector<TRProxy, TR>> {
+public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> extends SQLAsProxyNative<ProxyAsSelector<TRProxy, TR>> {
 
     TRProxy tr();
 
@@ -45,15 +45,6 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> e
     }
     default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> ProxyAsSelector<TRProxy, TR> column(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().column(column.getTable(), column.value());
-        return this;
-    }
-    default ProxyAsSelector<TRProxy, TR> sqlNativeSegment(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-    default ProxyAsSelector<TRProxy, TR> sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
-        getAsSelector().sqlNativeSegment(sqlSegment,context->{
-            contextConsume.apply(new SQLNativeProxyExpressionContextImpl(context));
-        });
         return this;
     }
 

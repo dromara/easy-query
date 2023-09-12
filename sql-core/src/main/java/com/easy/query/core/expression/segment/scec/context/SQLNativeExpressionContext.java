@@ -15,7 +15,6 @@ import java.util.List;
 public interface SQLNativeExpressionContext {
     SQLNativeExpressionContext expression(TableAvailable table, String property);
    <TEntity> SQLNativeExpressionContext expression(Query<TEntity> subQuery);
-    SQLNativeExpressionContext expressionAlias(String property);
     SQLNativeExpressionContext value(Object val);
 
     SQLNativeExpressionContext format(Object formatVal);

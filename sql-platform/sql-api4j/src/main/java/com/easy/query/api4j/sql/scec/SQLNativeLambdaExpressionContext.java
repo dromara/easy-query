@@ -16,8 +16,6 @@ public interface SQLNativeLambdaExpressionContext<T1> {
 
     <TEntity> SQLNativeLambdaExpressionContext<T1> expression(Queryable<TEntity> subQuery);
 
-    <TR> SQLNativeLambdaExpressionContext<T1> expressionAlias(Property<TR, ?> property);
-
     SQLNativeLambdaExpressionContext<T1> value(Object val);
 
     /**

@@ -11,7 +11,7 @@ import com.easy.query.core.proxy.SQLColumn;
  * @author xuejiaming
  */
 public interface SQLNativeProxyExpressionContext {
-    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLNativeProxyExpressionContext expression(SQLColumn<TEntityProxy, TProperty> property);
+    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLNativeProxyExpressionContext expression(SQLColumn<TEntityProxy, TProperty> sqlColumn);
 
     <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> SQLNativeProxyExpressionContext expression(ProxyQueryable<TEntityProxy, TEntity> subQuery);
 

@@ -11,8 +11,8 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
  * @author xuejiaming
  */
 public class SQLNativePropertyExpressionContextImpl implements SQLNativePropertyExpressionContext {
-    private final TableAvailable table;
-    private final SQLNativeExpressionContext sqlNativeExpressionContext;
+    protected final TableAvailable table;
+    protected final SQLNativeExpressionContext sqlNativeExpressionContext;
 
     public SQLNativePropertyExpressionContextImpl(TableAvailable table, SQLNativeExpressionContext sqlNativeExpressionContext) {
         this.table = table;
@@ -35,12 +35,6 @@ public class SQLNativePropertyExpressionContextImpl implements SQLNativeProperty
     @Override
     public SQLNativePropertyExpressionContext expression(TableAvailable table, String property) {
         sqlNativeExpressionContext.expression(table, property);
-        return this;
-    }
-
-    @Override
-    public SQLNativePropertyExpressionContext expressionAlias(String property) {
-        sqlNativeExpressionContext.expressionAlias(property);
         return this;
     }
 

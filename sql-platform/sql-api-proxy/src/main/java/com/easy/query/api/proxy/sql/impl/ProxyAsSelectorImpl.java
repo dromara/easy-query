@@ -2,7 +2,7 @@ package com.easy.query.api.proxy.sql.impl;
 
 import com.easy.query.api.proxy.sql.ProxyAsSelector;
 import com.easy.query.core.expression.builder.AsSelector;
-import com.easy.query.core.expression.builder.core.SQLNative;
+import com.easy.query.core.expression.builder.core.SQLAsNative;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -33,7 +33,7 @@ public class ProxyAsSelectorImpl<TRProxy extends ProxyEntity<TRProxy, TR>, TR> i
     }
 
     @Override
-    public <T> SQLNative<T> getSQLNative() {
+    public <T> SQLAsNative<T> getSQLAsNative() {
         return EasyObjectUtil.typeCastNullable(asSelector);
     }
 

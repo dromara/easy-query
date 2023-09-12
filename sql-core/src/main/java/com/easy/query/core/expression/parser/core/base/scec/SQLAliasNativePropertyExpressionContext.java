@@ -4,33 +4,38 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
- * create time 2023/7/29 22:57
- * 原生sql属性表达式
+ * create time 2023/9/12 22:02
+ * 文件说明
  *
  * @author xuejiaming
  */
-public interface SQLNativePropertyExpressionContext {
+public interface SQLAliasNativePropertyExpressionContext extends SQLNativePropertyExpressionContext{
+    SQLAliasNativePropertyExpressionContext expressionAlias(String property);
     /**
      * 当前表的使用的列,自动识别所属表别名
      * @param property 使用哪个列
      * @return
      */
-    SQLNativePropertyExpressionContext expression(String property);
+    @Override
+    SQLAliasNativePropertyExpressionContext expression(String property);
     /**
      * 当前表的使用的列,自动识别所属表别名
      * @param table 哪张表
      * @param property 哪个列
      * @return
      */
-    SQLNativePropertyExpressionContext expression(TableAvailable table, String property);
-   <TEntity> SQLNativePropertyExpressionContext expression(ClientQueryable<TEntity> subQuery);
+    @Override
+    SQLAliasNativePropertyExpressionContext expression(TableAvailable table, String property);
+    @Override
+    <TEntity> SQLAliasNativePropertyExpressionContext expression(ClientQueryable<TEntity> subQuery);
 
     /**
      * 参数,将以[?]参数化形式拼接到sql中
      * @param val
      * @return
      */
-    SQLNativePropertyExpressionContext value(Object val);
+    @Override
+    SQLAliasNativePropertyExpressionContext value(Object val);
 
     /**
      * 将以字符串常量形式直接拼接到sql中,并不是参数化
@@ -38,22 +43,25 @@ public interface SQLNativePropertyExpressionContext {
      * @param formatVal
      * @return
      */
+    @Override
     @Deprecated
-   default SQLNativePropertyExpressionContext constValue(Object formatVal){
+    default SQLAliasNativePropertyExpressionContext constValue(Object formatVal){
         return format(formatVal);
     }
 
     /**
      * 将以字符串常量形式直接拼接到sql中,并不是参数化
-     * @param constVal
+     * @param formatVal
      * @return
      */
-    SQLNativePropertyExpressionContext format(Object constVal);
+    @Override
+    SQLAliasNativePropertyExpressionContext format(Object formatVal);
 
     /**
      * 如果当前是一个select的片段那么可以独立设置别名,当然也可以通过sqlSegment的片段来拼接
      * @param alias
      * @return
      */
-    SQLNativePropertyExpressionContext setAlias(String alias);
+    @Override
+    SQLAliasNativePropertyExpressionContext setAlias(String alias);
 }

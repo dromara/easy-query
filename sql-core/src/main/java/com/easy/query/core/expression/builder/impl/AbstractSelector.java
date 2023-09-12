@@ -7,15 +7,12 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
-import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
-import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -75,15 +72,6 @@ public abstract class AbstractSelector<TChain> {
         NavigateMetadata navigateMetadata = table.getEntityMetadata().getNavigateNotNull(selfProperty);
         Map<String, ColumnIncludeExpression> propertyColumnIncludeExpressionMap = expressionContext.getColumnIncludeMaps().computeIfAbsent(table, k -> new HashMap<>());
         propertyColumnIncludeExpressionMap.put(navigateMetadata.getSelfPropertyOrPrimary(),new ColumnIncludeExpression(table,selfProperty,aliasProperty,includeSelectorExpression));
-        return castTChain();
-    }
-    
-    public TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume){
-        Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext=new SQLNativeExpressionContextImpl(expressionContext);
-        contextConsume.apply(sqlNativeExpressionContext);
-        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
-        sqlBuilderSegment.append(columnSegment);
         return castTChain();
     }
 

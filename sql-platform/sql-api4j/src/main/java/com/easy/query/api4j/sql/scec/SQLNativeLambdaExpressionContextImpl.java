@@ -13,7 +13,7 @@ import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExp
  * @author xuejiaming
  */
 public class SQLNativeLambdaExpressionContextImpl<T1> implements SQLNativeLambdaExpressionContext<T1> {
-    private final SQLNativePropertyExpressionContext columnConstExpressionContext;
+    protected final SQLNativePropertyExpressionContext columnConstExpressionContext;
 
     public SQLNativeLambdaExpressionContextImpl(SQLNativePropertyExpressionContext columnConstExpressionContext){
 
@@ -34,12 +34,6 @@ public class SQLNativeLambdaExpressionContextImpl<T1> implements SQLNativeLambda
     @Override
     public <T2> SQLNativeLambdaExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, Property<T2, ?> property) {
         columnConstExpressionContext.expression(table.getTable(),EasyLambdaUtil.getPropertyName(property));
-        return this;
-    }
-
-    @Override
-    public <TR> SQLNativeLambdaExpressionContext<T1> expressionAlias(Property<TR, ?> property) {
-        columnConstExpressionContext.expressionAlias(EasyLambdaUtil.getPropertyName(property));
         return this;
     }
 

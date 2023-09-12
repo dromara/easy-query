@@ -3,7 +3,7 @@ package com.easy.query.core.expression.parser.core.base.impl;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AsSelector;
-import com.easy.query.core.expression.builder.core.SQLNative;
+import com.easy.query.core.expression.builder.core.SQLAsNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
@@ -71,8 +71,8 @@ public class ColumnAutoAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR
     }
 
     @Override
-    public <T> SQLNative<T> getSQLNative() {
-        return null;
+    public <T> SQLAsNative<T> getSQLAsNative() {
+        return EasyObjectUtil.typeCastNullable(asSelector);
     }
 
     @Override
