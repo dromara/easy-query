@@ -1,10 +1,8 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.sql.core.SQLProxyNative;
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.expression.builder.GroupSelector;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 /**
@@ -16,16 +14,16 @@ import com.easy.query.core.proxy.SQLColumn;
 public interface ProxyGroupSelector extends SQLProxyNative<ProxyGroupSelector> {
     GroupSelector getGroupSelector();
 
-    default ProxyGroupSelector columns(SQLColumn<?>... columns) {
+    default <TProxy extends ProxyEntity<TProxy,T>,T> ProxyGroupSelector columns(SQLColumn<TProxy,?>... columns) {
         if (columns != null) {
-            for (SQLColumn<?> sqlColumn : columns) {
+            for (SQLColumn<TProxy,?> sqlColumn : columns) {
                 column(sqlColumn);
             }
         }
         return this;
     }
 
-    default ProxyGroupSelector column(SQLColumn<?> column) {
+    default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> ProxyGroupSelector column(SQLColumn<TProxy,TProperty> column) {
         getGroupSelector().column(column.getTable(), column.value());
         return this;
     }

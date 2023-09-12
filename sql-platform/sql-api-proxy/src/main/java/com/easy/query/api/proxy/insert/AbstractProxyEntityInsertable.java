@@ -7,6 +7,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 import java.util.Collection;
@@ -18,7 +19,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public abstract class AbstractProxyEntityInsertable<T> implements ProxyEntityInsertable<T> {
+public abstract class AbstractProxyEntityInsertable<T> implements ProxyOnyEntityInsertable<T> {
     private final ClientInsertable<T> clientInsertable;
 
     public AbstractProxyEntityInsertable(ClientInsertable<T> clientInsertable) {
@@ -27,13 +28,13 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyEntityIns
     }
 
     @Override
-    public ProxyEntityInsertable<T> insert(T entity) {
+    public ProxyOnyEntityInsertable<T> insert(T entity) {
         clientInsertable.insert(entity);
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> insert(Collection<T> entities) {
+    public ProxyOnyEntityInsertable<T> insert(Collection<T> entities) {
         clientInsertable.insert(entities);
         return this;
     }
@@ -49,60 +50,60 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyEntityIns
     }
 
     @Override
-    public ProxyEntityInsertable<T> noInterceptor() {
+    public ProxyOnyEntityInsertable<T> noInterceptor() {
         clientInsertable.noInterceptor();
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> useInterceptor(String name) {
+    public ProxyOnyEntityInsertable<T> useInterceptor(String name) {
         clientInsertable.useInterceptor(name);
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> noInterceptor(String name) {
+    public ProxyOnyEntityInsertable<T> noInterceptor(String name) {
         clientInsertable.noInterceptor(name);
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> useInterceptor() {
+    public ProxyOnyEntityInsertable<T> useInterceptor() {
         clientInsertable.useInterceptor();
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> setSQLStrategy(boolean condition, SQLExecuteStrategyEnum sqlStrategy) {
+    public ProxyOnyEntityInsertable<T> setSQLStrategy(boolean condition, SQLExecuteStrategyEnum sqlStrategy) {
         clientInsertable.setSQLStrategy(condition, sqlStrategy);
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> asTable(Function<String, String> tableNameAs) {
+    public ProxyOnyEntityInsertable<T> asTable(Function<String, String> tableNameAs) {
         clientInsertable.asTable(tableNameAs);
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> asSchema(Function<String, String> schemaAs) {
+    public ProxyOnyEntityInsertable<T> asSchema(Function<String, String> schemaAs) {
         clientInsertable.asSchema(schemaAs);
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> asAlias(String alias) {
+    public ProxyOnyEntityInsertable<T> asAlias(String alias) {
         clientInsertable.asAlias(alias);
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> onDuplicateKeyIgnore() {
+    public ProxyOnyEntityInsertable<T> onDuplicateKeyIgnore() {
         clientInsertable.onDuplicateKeyIgnore();
         return this;
     }
     @Override
-    public ProxyEntityInsertable<T> onDuplicateKeyUpdate() {
+    public ProxyOnyEntityInsertable<T> onDuplicateKeyUpdate() {
         clientInsertable.onDuplicateKeyUpdate();
         return this;
     }
@@ -118,19 +119,19 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyEntityIns
     }
 
     @Override
-    public ProxyEntityInsertable<T> onConflictDoUpdate() {
+    public ProxyOnyEntityInsertable<T> onConflictDoUpdate() {
         clientInsertable.onConflictDoUpdate();
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> onConflictDoUpdate(SQLColumn<?> constraintProperty) {
+    public <TProxy extends ProxyEntity<TProxy,T>> ProxyOnyEntityInsertable<T> onConflictDoUpdate(TProxy tProxy,SQLColumn<TProxy,?> constraintProperty) {
         clientInsertable.onConflictDoUpdate(constraintProperty.value());
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> onConflictDoUpdate(SQLColumn<?> constraintProperty, SQLExpression1<ProxyUpdateSetSelector> setColumnSelector) {
+    public <TProxy extends ProxyEntity<TProxy,T>> ProxyOnyEntityInsertable<T> onConflictDoUpdate(TProxy tProxy,SQLColumn<TProxy,?> constraintProperty, SQLExpression1<ProxyUpdateSetSelector> setColumnSelector) {
         clientInsertable.onConflictDoUpdate(constraintProperty.value(),setSelector->{
             setColumnSelector.apply(new ProxyUpdateSetSelectorImpl(setSelector.getUpdateSetSelector()));
         });
@@ -138,7 +139,7 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyEntityIns
     }
 
     @Override
-    public ProxyEntityInsertable<T> onConflictDoUpdate(SQLExpression1<ProxyUpdateSetSelector> setColumnSelector) {
+    public ProxyOnyEntityInsertable<T> onConflictDoUpdate(SQLExpression1<ProxyUpdateSetSelector> setColumnSelector) {
         clientInsertable.onConflictDoUpdate(setSelector->{
             setColumnSelector.apply(new ProxyUpdateSetSelectorImpl(setSelector.getUpdateSetSelector()));
         });
@@ -146,7 +147,7 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyEntityIns
     }
 
     @Override
-    public ProxyEntityInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ProxyUpdateSetSelector> setColumnSelector) {
+    public ProxyOnyEntityInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ProxyUpdateSetSelector> setColumnSelector) {
         clientInsertable.onDuplicateKeyUpdate(setSelector->{
             setColumnSelector.apply(new ProxyUpdateSetSelectorImpl(setSelector.getUpdateSetSelector()));
         });
@@ -154,13 +155,13 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyEntityIns
     }
 
     @Override
-    public ProxyEntityInsertable<T> batch(boolean use) {
+    public ProxyOnyEntityInsertable<T> batch(boolean use) {
         clientInsertable.batch(use);
         return this;
     }
 
     @Override
-    public ProxyEntityInsertable<T> asTableLink(Function<String, String> linkAs) {
+    public ProxyOnyEntityInsertable<T> asTableLink(Function<String, String> linkAs) {
         clientInsertable.asTableLink(linkAs);
         return this;
     }

@@ -84,7 +84,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
     private static final String FIELD_TEMPLATE="\n" +
             "    @comment\n" +
-            "    public SQLColumn<@propertyType> @property(){\n" +
+            "    public SQLColumn<@entityClassProxy,@propertyType> @property(){\n" +
             "        return get(\"@property\");\n" +
             "    }";
 
@@ -152,19 +152,19 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 HashSet<String> ignoreProperties = new HashSet<>(Arrays.asList(entityProxy.ignoreProperties()));
 
 
-                StringBuilder fieldContent = new StringBuilder();
-                TypeElement classElement = (TypeElement) entityClassElement;
-                do {
-                    fillPropertyAndColumns(fieldContent, classElement,ignoreProperties);
-                    classElement = (TypeElement) typeUtils.asElement(classElement.getSuperclass());
-                } while (classElement != null);
-
 
                 //每一个 entity 生成一个独立的文件
 
                 String entityFullName = entityClassNameReference.get();
                 String realGenPackage = guessTablesPackage(entityFullName);
                 String entityClassName = entityClassElement.getSimpleName().toString();
+                StringBuilder fieldContent = new StringBuilder();
+                TypeElement classElement = (TypeElement) entityClassElement;
+                do {
+                    fillPropertyAndColumns(fieldContent,entityClassName, classElement,ignoreProperties);
+                    classElement = (TypeElement) typeUtils.asElement(classElement.getSuperclass());
+                } while (classElement != null);
+
                 String content = buildTablesClass(entityClassName, proxyInstanceName, realGenPackage, entityFullName,fieldContent.toString());
                 genClass(basePath, realGenPackage, proxyEntityName + proxyClassSuffix, content);
 
@@ -327,7 +327,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         }
         return guessPackage.toString();
     }
-    private void fillPropertyAndColumns(StringBuilder filedContent, TypeElement classElement,Set<String> ignoreProperties) {
+    private void fillPropertyAndColumns(StringBuilder filedContent,String entityClass, TypeElement classElement,Set<String> ignoreProperties) {
         for (Element fieldElement : classElement.getEnclosedElements()) {
 
             //all fields
@@ -363,6 +363,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 String docComment = elementUtils.getDocComment(fieldElement);
                 String fieldComment = getFiledComment(docComment);
                 String fieldString = FIELD_TEMPLATE
+                        .replace("@entityClass", entityClass)
                         .replace("@comment", fieldComment)
                         .replace("@propertyType", fieldGenericType)
                         .replace("@property", propertyName);

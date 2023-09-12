@@ -12,10 +12,11 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
  */
 public interface SQLNativeLambdaExpressionContext<T1> {
     SQLNativeLambdaExpressionContext<T1> expression(Property<T1, ?> property);
+    <T2> SQLNativeLambdaExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, Property<T2, ?> property);
 
     <TEntity> SQLNativeLambdaExpressionContext<T1> expression(Queryable<TEntity> subQuery);
 
-    <T2> SQLNativeLambdaExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, Property<T2, ?> property);
+    <TR> SQLNativeLambdaExpressionContext<T1> expressionAlias(Property<TR, ?> property);
 
     SQLNativeLambdaExpressionContext<T1> value(Object val);
 

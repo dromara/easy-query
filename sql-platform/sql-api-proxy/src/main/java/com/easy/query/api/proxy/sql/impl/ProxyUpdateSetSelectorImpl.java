@@ -3,6 +3,7 @@ package com.easy.query.api.proxy.sql.impl;
 import com.easy.query.api.proxy.sql.ProxyUpdateSetSelector;
 import com.easy.query.core.expression.builder.UpdateSetSelector;
 import com.easy.query.core.expression.builder.core.SQLNative;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasyObjectUtil;
 
 /**
@@ -11,7 +12,7 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public class ProxyUpdateSetSelectorImpl implements ProxyUpdateSetSelector {
+public class ProxyUpdateSetSelectorImpl<TProxy extends ProxyEntity<TProxy,T>,T> implements ProxyUpdateSetSelector<TProxy,T> {
     private final UpdateSetSelector updateSetSelector;
 
     public ProxyUpdateSetSelectorImpl(UpdateSetSelector updateSetSelector){
@@ -24,12 +25,12 @@ public class ProxyUpdateSetSelectorImpl implements ProxyUpdateSetSelector {
     }
 
     @Override
-    public <T> SQLNative<T> getSQLNative() {
+    public <TEntity> SQLNative<TEntity> getSQLNative() {
         return EasyObjectUtil.typeCastNullable(updateSetSelector);
     }
 
     @Override
-    public ProxyUpdateSetSelector castTChain() {
+    public ProxyUpdateSetSelector<TProxy,T> castTChain() {
         return this;
     }
 }

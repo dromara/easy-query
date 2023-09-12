@@ -17,17 +17,17 @@ import java.util.Collection;
  */
 public interface ProxyNavigateInclude<T1> {
     NavigateInclude<T1> getNavigateInclude();
-   default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> one(SQLColumn<TProperty> navigate,TPropertyProxy tPropertyProxy){
+   default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty,T1Proxy extends ProxyEntity<T1Proxy,T1>> ProxyQueryable<TPropertyProxy,TProperty> one(SQLColumn<T1Proxy,TProperty> navigate,TPropertyProxy tPropertyProxy){
        return  one(navigate,tPropertyProxy,null);
    }
-   default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> one(SQLColumn<TProperty> navigate,TPropertyProxy tPropertyProxy,Integer groupSize){
+   default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty,T1Proxy extends ProxyEntity<T1Proxy,T1>> ProxyQueryable<TPropertyProxy,TProperty> one(SQLColumn<T1Proxy,TProperty> navigate,TPropertyProxy tPropertyProxy,Integer groupSize){
        ClientQueryable<TProperty> clientQueryable = getNavigateInclude().with(navigate.value(),groupSize);
        return new EasyProxyQueryable<>(tPropertyProxy,clientQueryable);
    }
-   default  <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> many(SQLColumn<Collection<TProperty>> navigate,TPropertyProxy tPropertyProxy){
+   default  <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> many(SQLColumn<TPropertyProxy,Collection<TProperty>> navigate,TPropertyProxy tPropertyProxy){
        return many(navigate,tPropertyProxy,null);
    }
-   default  <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> many(SQLColumn<Collection<TProperty>> navigate,TPropertyProxy tPropertyProxy,Integer groupSize){
+   default  <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> many(SQLColumn<TPropertyProxy,Collection<TProperty>> navigate,TPropertyProxy tPropertyProxy,Integer groupSize){
        ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(navigate.value(), groupSize);
        return new EasyProxyQueryable<>(tPropertyProxy,clientQueryable);
    }

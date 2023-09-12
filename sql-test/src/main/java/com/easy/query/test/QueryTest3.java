@@ -20,6 +20,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.extension.client.SQLClientFunc;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -606,8 +607,9 @@ public static class AA{
 //                .orderByAsc((c,t)->c.column(t.id()))
 //                .select((selector, t) -> selector.columns(t.id(), t.title()))
 //                .toSQL();
+        TopicTestProxy table = TopicTestProxy.createTable();
         String sqlx = easyProxyQuery
-                .queryable(TOPIC_TEST_PROXY)
+                .queryable(table)
                 .where(o -> {
                     TopicTestProxy topic = o.t();
 //                    topic.id().eq("123").and()
@@ -634,28 +636,29 @@ public static class AA{
         TopicAuto topicAuto = easyProxyQuery.queryable(TopicAutoProxy.createTable())
                 .where(o -> o.eq(o.t().title(), "123"))
                 .firstOrNull();
+        BlogEntityTestProxy r1 = BlogEntityTestProxy.createTable();
         List<BlogEntityTest> list = easyProxyQuery.queryable(BlogEntityProxy.createTable())
                 .leftJoin(TopicAutoProxy.createTable(), o -> o.eq(o.t().id(), o.t1().title()))
                 .where(o->o.eq(o.t().title(),"123").like(o.t().id(),"22"))
                 .where(sql->sql.eq(sql.t().id(),"123"))
-                .select(BlogEntityTestProxy.createTable(), o ->
+                .select(r1, o ->
                         o.columns(o.t().id(), o.t1().title())
-                                .columnAs(o.t().content(), r -> r.content())
-                                .columnAs(o.t().isTop(), r -> r.isTop())
+                                .columnAs(o.t().content(), r1.content())
+                                .columnAs(o.t().isTop(),r1.isTop())
                 ).toList();
 
         String sql = easyProxyQuery.queryable(BlogEntityProxy.createTable())
                 .leftJoin(TopicAutoProxy.createTable(), o -> o.eq(o.t().id(), o.t1().title()))
                 .where(filter -> filter.eq(filter.t1().title(), "123").like(filter.t().id(), "22"))
-                .select(BlogEntityTestProxy.createTable(), o -> o.columns(o.t().id(), o.t1().title()).columnAs(o.t().content(), r -> r.content())
-                        .columnAs(o.t().isTop(), r -> r.isTop())).toSQL();
+                .select(BlogEntityTestProxy.createTable(), o -> o.columns(o.t().id(), o.t1().title()).columnAs(o.t().content(), o.tr().content())
+                        .columnAs(o.t().isTop(), o.tr().isTop())).toSQL();
         Assert.assertEquals("SELECT t.`id`,t1.`title`,t.`content` AS `content`,t.`is_top` AS `is_top` FROM `t_blog` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`deleted` = ? AND t1.`title` = ? AND t.`id` LIKE ?", sql);
 
         String sql1 = easyProxyQuery.queryable(BlogEntityProxy.createTable())
                 .leftJoin(TopicAutoProxy.createTable(), o -> o.eq(o.t().id(), o.t1().title()))
                 .where(o->o.eq(o.t1().title(),"123").like(o.t().id(),"22"))
-                .select(BlogEntityTestProxy.createTable(), o -> o.columnAll(o.t()).columns(o.t().id(), o.t1().title()).columnAs(o.t().content(), r -> r.content())
-                        .columnAs(o.t().isTop(), r -> r.isTop())).toSQL();
+                .select(BlogEntityTestProxy.createTable(), o -> o.columnAll(o.t()).columns(o.t().id(), o.t1().title()).columnAs(o.t().content(), o.tr().content())
+                        .columnAs(o.t().isTop(), o.tr().isTop())).toSQL();
         Assert.assertEquals("SELECT t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`id`,t1.`title`,t.`content` AS `content`,t.`is_top` AS `is_top` FROM `t_blog` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`deleted` = ? AND t1.`title` = ? AND t.`id` LIKE ?", sql1);
 //        List<TopicAuto> topicAutos = easyQuery.queryable(TopicAuto.class).where(o->o.lt(TopicAuto::getStars,999)).toList();
 //
@@ -879,14 +882,21 @@ public static class AA{
         TopicProxy table = TopicProxy.createTable();
         String sql = easyProxyQuery.queryable(table)
                 .where(o -> o.like(o.t().title(), "someTitle"))
-                .select(TopicProxy.createTable(), o -> o
-                        .sqlSegmentAs(
-                                SQLProxyFunc.caseWhenBuilder(o)
-                                        .caseWhen(f -> f.eq(table.title(), "123"), "111")
-                                        .caseWhen(f -> f.eq(table.title(), "456"), "222")
-                                        .elseEnd("222")
-                                , TopicProxy::title)
-                        .column(o.t().id())
+                .select(TopicProxy.createTable(), o -> {
+
+                    SQLColumn<TopicProxy, String> title = o.tr().title();
+                    o.sqlSegmentAs(
+                            SQLProxyFunc.caseWhenBuilder(o)
+                                    .caseWhen(f -> {
+                                        System.out.println(table.title());
+                                        f.eq(table.title(), "123");
+                                        System.out.println(table.title()+"11");
+                                    }, "111")
+                                    .caseWhen(f -> f.eq(table.title(), "456"), "222")
+                                    .elseEnd("222")
+                            , title)
+                            .column(o.t().id());
+                        }
                 )
                 .toSQL();
         Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?", sql);
@@ -899,7 +909,7 @@ public static class AA{
                                         .caseWhen(f -> f.eq(o.t().title(), "123"), "111")
                                         .caseWhen(f -> f.eq(o.t().title(), "456"), "222")
                                         .elseEnd("222")
-                                , TopicProxy::title)
+                                , o.tr().title())
                         .column(o.t().id())
                 ).toList();
         Assert.assertEquals(0, list.size());
@@ -1730,5 +1740,35 @@ public static class AA{
 //                .toList();
 //
 //    }
+
+    @Test
+    public void testOrder(){
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"))
+                .orderByDesc(o -> o.sqlNativeSegment(
+                        "CASE \n" +
+                                "    WHEN {0} > NOW() THEN TIMESTAMPDIFF(SECOND, NOW(), {0})\n" +
+                                "    ELSE TIMESTAMPDIFF(SECOND, deadline, NOW())\n" +
+                                "  END ASC", c -> {
+                            c.expression(BlogEntity::getPublishTime);
+                        }).column(BlogEntity::getCreateTime))
+                .toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` = ? ORDER BY CASE \n" +
+                "    WHEN `publish_time` > NOW() THEN TIMESTAMPDIFF(SECOND, NOW(), `publish_time`)\n" +
+                "    ELSE TIMESTAMPDIFF(SECOND, deadline, NOW())\n" +
+                "  END ASC,`create_time` DESC",sql);
+    }
+    @Test
+    public void testSelectAs(){
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"))
+                .select(Topic.class,o->o.sqlNativeSegment("{0} AS {1}",c->{
+                    c.expression(BlogEntity::getId)
+                            .expressionAlias(Topic::getCreateTime);
+                }))
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id` AS `create_time` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?",sql);
+    }
+
 
 }

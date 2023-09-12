@@ -11,32 +11,32 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface ProxyUpdateSetSelector extends SQLProxyNative<ProxyUpdateSetSelector> {
+public interface ProxyUpdateSetSelector<TProxy extends ProxyEntity<TProxy,T>,T> extends SQLProxyNative<ProxyUpdateSetSelector<TProxy,T>> {
     UpdateSetSelector getUpdateSetSelector();
 
-    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity> ProxyUpdateSetSelector columnKeys(TProxy tableProxy) {
+    default  ProxyUpdateSetSelector<TProxy,T> columnKeys(TProxy tableProxy) {
         getUpdateSetSelector().columnKeys(tableProxy.getTable());
         return this;
     }
-    default ProxyUpdateSetSelector columns(SQLColumn<?>... columns){
+    default ProxyUpdateSetSelector<TProxy,T> columns(SQLColumn<TProxy,?>... columns){
         if(columns != null){
-            for (SQLColumn<?> sqlColumn : columns) {
+            for (SQLColumn<TProxy,?> sqlColumn : columns) {
                 column(sqlColumn);
             }
         }
         return this;
     }
-    default ProxyUpdateSetSelector column(SQLColumn<?> column){
+    default ProxyUpdateSetSelector<TProxy,T> column(SQLColumn<TProxy,?> column){
         getUpdateSetSelector().column(column.getTable(),column.value());
         return this;
     }
 
-    default ProxyUpdateSetSelector columnIgnore(SQLColumn<?> column){
+    default ProxyUpdateSetSelector<TProxy,T> columnIgnore(SQLColumn<TProxy,?> column){
         getUpdateSetSelector().columnIgnore(column.getTable(),column.value());
         return this;
     }
 
-    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity> ProxyUpdateSetSelector columnAll(TProxy tableProxy){
+    default ProxyUpdateSetSelector<TProxy,T> columnAll(TProxy tableProxy){
         getUpdateSetSelector().columnAll(tableProxy.getTable());
         return this;
     }

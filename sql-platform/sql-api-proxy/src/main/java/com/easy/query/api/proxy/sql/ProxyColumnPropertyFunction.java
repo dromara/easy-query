@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 /**
@@ -11,5 +12,5 @@ import com.easy.query.core.proxy.SQLColumn;
  */
 public interface ProxyColumnPropertyFunction {
     ColumnPropertyFunction getColumnPropertyFunction();
-    <TProperty> SQLColumn<TProperty> getColumn();
+    <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> SQLColumn<TProxy,TProperty> getColumn();
 }

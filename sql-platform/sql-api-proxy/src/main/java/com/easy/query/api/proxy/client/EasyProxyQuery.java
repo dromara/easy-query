@@ -2,7 +2,7 @@ package com.easy.query.api.proxy.client;
 
 import com.easy.query.api.proxy.delete.ProxyEntityDeletable;
 import com.easy.query.api.proxy.delete.ProxyExpressionDeletable;
-import com.easy.query.api.proxy.insert.ProxyEntityInsertable;
+import com.easy.query.api.proxy.insert.ProxyOnyEntityInsertable;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.update.ProxyEntityUpdatable;
 import com.easy.query.api.proxy.update.ProxyExpressionUpdatable;
@@ -75,9 +75,9 @@ public interface EasyProxyQuery {
      */
     Transaction beginTransaction(Integer isolationLevel);
 
-    <T> ProxyEntityInsertable<T> insertable(T entity);
+    <T> ProxyOnyEntityInsertable<T> insertable(T entity);
 
-    <T> ProxyEntityInsertable<T> insertable(Collection<T> entities);
+    <T> ProxyOnyEntityInsertable<T> insertable(Collection<T> entities);
 
     <TProxy extends ProxyEntity<TProxy, T>, T> ProxyExpressionUpdatable<TProxy,T> updatable(TProxy proxy);
 

@@ -11,10 +11,10 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public interface ProxyEntityInsertable<T> extends Insertable<T, ProxyEntityInsertable<T>>, ProxyOnDuplicateKeyUpdate<T, ProxyEntityInsertable<T>> {
+public interface ProxyOnyEntityInsertable<T> extends Insertable<T, ProxyOnyEntityInsertable<T>>, ProxyOnDuplicateKeyUpdate<T, ProxyOnyEntityInsertable<T>> {
     @Override
-    ProxyEntityInsertable<T> insert(T entity);
+    ProxyOnyEntityInsertable<T> insert(T entity);
 
     @Override
-    ProxyEntityInsertable<T> insert(Collection<T> entities);
+    ProxyOnyEntityInsertable<T> insert(Collection<T> entities);
 }

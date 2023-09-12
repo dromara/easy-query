@@ -1,10 +1,8 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.sql.core.SQLProxyNative;
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
-import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.expression.builder.OrderSelector;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 /**
@@ -17,9 +15,9 @@ public interface ProxyOrderSelector extends SQLProxyNative<ProxyOrderSelector> {
     OrderSelector getOrderSelector();
 
 
-    default ProxyOrderSelector columns(SQLColumn<?>... columns) {
+    default <TProxy extends ProxyEntity<TProxy,T>,T> ProxyOrderSelector columns(SQLColumn<TProxy,?>... columns) {
         if (columns != null) {
-            for (SQLColumn<?> sqlColumn : columns) {
+            for (SQLColumn<TProxy,?> sqlColumn : columns) {
                 column(sqlColumn);
             }
         }
@@ -27,7 +25,7 @@ public interface ProxyOrderSelector extends SQLProxyNative<ProxyOrderSelector> {
     }
 
 
-   default ProxyOrderSelector column(SQLColumn<?> column){
+   default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> ProxyOrderSelector column(SQLColumn<TProxy,TProperty> column){
        getOrderSelector().column(column.getTable(), column.value());
        return this;
    }

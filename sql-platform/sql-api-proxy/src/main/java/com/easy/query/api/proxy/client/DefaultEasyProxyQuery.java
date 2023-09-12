@@ -5,7 +5,7 @@ import com.easy.query.api.proxy.delete.ProxyExpressionDeletable;
 import com.easy.query.api.proxy.delete.impl.EasyProxyEntityDeletable;
 import com.easy.query.api.proxy.delete.impl.EasyProxyExpressionDeletable;
 import com.easy.query.api.proxy.insert.EasyProxyEntityInsertable;
-import com.easy.query.api.proxy.insert.ProxyEntityInsertable;
+import com.easy.query.api.proxy.insert.ProxyOnyEntityInsertable;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.impl.EasyProxyQueryable;
 import com.easy.query.api.proxy.update.ProxyEntityUpdatable;
@@ -61,12 +61,12 @@ public class DefaultEasyProxyQuery implements EasyProxyQuery{
     }
 
     @Override
-    public <T> ProxyEntityInsertable<T> insertable(T entity) {
+    public <T> ProxyOnyEntityInsertable<T> insertable(T entity) {
         return new EasyProxyEntityInsertable<>(easyQueryClient.insertable(entity));
     }
 
     @Override
-    public <T> ProxyEntityInsertable<T> insertable(Collection<T> entities) {
+    public <T> ProxyOnyEntityInsertable<T> insertable(Collection<T> entities) {
         return new EasyProxyEntityInsertable<>(easyQueryClient.insertable(entities));
     }
 

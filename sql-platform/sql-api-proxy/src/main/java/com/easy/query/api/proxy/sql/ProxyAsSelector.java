@@ -12,6 +12,7 @@ import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.function.Function;
 
@@ -23,7 +24,7 @@ import java.util.function.Function;
  */
 public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> extends SQLProxyNative<ProxyAsSelector<TRProxy, TR>> {
 
-    TRProxy getTRProxy();
+    TRProxy tr();
 
     AsSelector getAsSelector();
 
@@ -34,15 +35,15 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> e
        return getAsSelector().getExpressionContext();
    }
 
-    default ProxyAsSelector<TRProxy, TR> columns(SQLColumn<?>... columns) {
+    default ProxyAsSelector<TRProxy, TR> columns(SQLColumn<?,?>... columns) {
         if (columns != null) {
-            for (SQLColumn<?> column : columns) {
-                column(column);
+            for (SQLColumn<?,?> column : columns) {
+                column(EasyObjectUtil.typeCastNullable(column));
             }
         }
         return this;
     }
-    default ProxyAsSelector<TRProxy, TR> column(SQLColumn<?> column) {
+    default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> ProxyAsSelector<TRProxy, TR> column(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().column(column.getTable(), column.value());
         return this;
     }
@@ -56,7 +57,7 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> e
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnIgnore(SQLColumn<?> column) {
+    default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> ProxyAsSelector<TRProxy, TR> columnIgnore(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().columnIgnore(column.getTable(), column.value());
         return this;
     }
@@ -71,19 +72,13 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> e
         return this;
     }
 
-    default <TProperty> ProxyAsSelector<TRProxy, TR> columnAs(SQLColumn<TProperty> column, Function<TRProxy, SQLColumn<TProperty>> mapAlias) {
-        SQLColumn<?> aliasColumn = mapAlias.apply(getTRProxy());
-        return columnAs(column, aliasColumn.value());
-    }
-
-    default ProxyAsSelector<TRProxy, TR> columnAs(SQLColumn<?> column, String alias) {
-        getAsSelector().columnAs(column.getTable(), column.value(), alias);
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty> ProxyAsSelector<TRProxy, TR> columnAs(SQLColumn<TProxy,TProperty> column, SQLColumn<TRProxy,TProperty> aliasColumn) {
+        getAsSelector().columnAs(column.getTable(), column.value(), aliasColumn.value());
         return this;
     }
 
-    default <TSubQueryProxy extends ProxyEntity<TSubQueryProxy, TSubQuery>, TSubQuery> ProxyAsSelector<TRProxy, TR> columnSubQueryAs(SQLFuncExpression<ProxyQueryable<TSubQueryProxy, TSubQuery>> subQueryableFunc, Function<TRProxy, SQLColumn<?>> mapAlias) {
-        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
-        return columnSubQueryAs(subQueryableFunc, sqlColumn.value());
+    default <TSubQueryProxy extends ProxyEntity<TSubQueryProxy, TSubQuery>, TSubQuery> ProxyAsSelector<TRProxy, TR> columnSubQueryAs(SQLFuncExpression<ProxyQueryable<TSubQueryProxy, TSubQuery>> subQueryableFunc, SQLColumn<TRProxy,TSubQuery> aliasColumn) {
+        return columnSubQueryAs(subQueryableFunc, aliasColumn.value());
     }
 
     default <TSubQueryProxy extends ProxyEntity<TSubQueryProxy, TSubQuery>, TSubQuery> ProxyAsSelector<TRProxy, TR> columnSubQueryAs(SQLFuncExpression<ProxyQueryable<TSubQueryProxy, TSubQuery>> subQueryableFunc, String alias) {
@@ -92,154 +87,146 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> e
     }
 
 
-    default ProxyAsSelector<TRProxy, TR> columnCount(SQLColumn<?> column) {
+    default  <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty> ProxyAsSelector<TRProxy, TR> columnCount(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().columnCount(column.getTable(), column.value());
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnCountAs(SQLColumn<?> column, Function<TRProxy, SQLColumn<?>> mapAlias) {
-        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
-        return columnCountAs(column, sqlColumn.value());
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty> ProxyAsSelector<TRProxy, TR> columnCountAs(SQLColumn<TProxy,TProperty> column, SQLColumn<TRProxy,TProperty> aliasColumn) {
+        return columnCountAs(column, aliasColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnCountAs(SQLColumn<?> column, String alias) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty> ProxyAsSelector<TRProxy, TR> columnCountAs(SQLColumn<TProxy,TProperty> column, String alias) {
         getAsSelector().columnCountAs(column.getTable(), column.value(), alias);
         return this;
     }
 
 
-    default ProxyAsSelector<TRProxy, TR> columnCountDistinct(SQLColumn<?> column) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty> ProxyAsSelector<TRProxy, TR> columnCountDistinct(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().columnCountDistinct(column.getTable(), column.value());
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnCountDistinctAs(SQLColumn<?> column, String alias) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty> ProxyAsSelector<TRProxy, TR> columnCountDistinctAs(SQLColumn<TProxy,TProperty> column, String alias) {
         getAsSelector().columnCountDistinctAs(column.getTable(), column.value(), alias);
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnCountDistinctAs(SQLColumn<?> column, Function<TRProxy, SQLColumn<?>> mapAlias) {
-        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
-        return columnCountDistinctAs(column,sqlColumn.value());
+    default  <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty> ProxyAsSelector<TRProxy, TR> columnCountDistinctAs(SQLColumn<TProxy,TProperty> column, SQLColumn<TRProxy,TProperty> aliasColumn) {
+        return columnCountDistinctAs(column,aliasColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSum(SQLColumn<? extends Number> column) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnSum(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().columnSum(column.getTable(), column.value());
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSumAs(SQLColumn<? extends Number> column, Function<TRProxy, SQLColumn<? extends Number>> mapAlias) {
-        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
-        return columnSumAs(column,sqlColumn.value());
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnSumAs(SQLColumn<TProxy,TProperty> column, SQLColumn<TRProxy,TProperty> aliasColumn) {
+        return columnSumAs(column,aliasColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSumAs(SQLColumn<? extends Number> column, String alias) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnSumAs(SQLColumn<TProxy,TProperty> column, String alias) {
         getAsSelector().columnSumAs(column.getTable(), column.value(), alias);
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSumDistinct(SQLColumn<? extends Number> column) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnSumDistinct(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().columnSumDistinct(column.getTable(), column.value());
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSumDistinctAs(SQLColumn<? extends Number> column, Function<TRProxy, SQLColumn<? extends Number>> mapAlias) {
-        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
-        return columnSumDistinctAs(column,sqlColumn.value());
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnSumDistinctAs(SQLColumn<TProxy,TProperty> column, SQLColumn<TRProxy,TProperty> aliasColumn) {
+        return columnSumDistinctAs(column,aliasColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnSumDistinctAs(SQLColumn<? extends Number> column, String alias) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnSumDistinctAs(SQLColumn<TProxy,TProperty> column, String alias) {
         getAsSelector().columnSumDistinctAs(column.getTable(), column.value(), alias);
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnMax(SQLColumn<?> column) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Comparable<TProperty>> ProxyAsSelector<TRProxy, TR> columnMax(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().columnMax(column.getTable(), column.value());
         return this;
     }
 
-    default <TProperty> ProxyAsSelector<TRProxy, TR> columnMaxAs(SQLColumn<TProperty> column, Function<TRProxy, SQLColumn<TProperty>> mapAlias) {
-        SQLColumn<TProperty> sqlColumn = mapAlias.apply(getTRProxy());
-        return columnMaxAs(column,sqlColumn.value());
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Comparable<TProperty>>  ProxyAsSelector<TRProxy, TR> columnMaxAs(SQLColumn<TProxy,TProperty> column, SQLColumn<TRProxy,TProperty> aliasColumn) {
+        return columnMaxAs(column,aliasColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnMaxAs(SQLColumn<?> column, String alias) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Comparable<TProperty>>  ProxyAsSelector<TRProxy, TR> columnMaxAs(SQLColumn<TProxy,TProperty> column, String alias) {
         getAsSelector().columnMaxAs(column.getTable(), column.value(), alias);
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnMin(SQLColumn<?> column) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Comparable<TProperty>> ProxyAsSelector<TRProxy, TR> columnMin(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().columnMin(column.getTable(), column.value());
         return this;
     }
 
-    default <TProperty> ProxyAsSelector<TRProxy, TR> columnMinAs(SQLColumn<TProperty> column, Function<TRProxy, SQLColumn<TProperty>> mapAlias) {
-        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
-        return columnMinAs(column,sqlColumn.value());
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Comparable<TProperty>> ProxyAsSelector<TRProxy, TR> columnMinAs(SQLColumn<TProxy,TProperty> column, SQLColumn<TRProxy,TProperty> aliasColumn) {
+        return columnMinAs(column,aliasColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnMinAs(SQLColumn<?> column, String alias) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Comparable<TProperty>> ProxyAsSelector<TRProxy, TR> columnMinAs(SQLColumn<TProxy,TProperty> column, String alias) {
         getAsSelector().columnMinAs(column.getTable(), column.value(), alias);
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvg(SQLColumn<? extends Number> column) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnAvg(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().columnAvg(column.getTable(), column.value());
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvgAs(SQLColumn<? extends Number> column, Function<TRProxy, SQLColumn<? extends Number>> mapAlias) {
-        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnAvgAs(SQLColumn<TProxy,TProperty> column, Function<TRProxy, SQLColumn<TProxy,TProperty>> mapAlias) {
+        SQLColumn<TProxy,TProperty> sqlColumn = mapAlias.apply(tr());
         return columnAvgAs(column,sqlColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvgAs(SQLColumn<? extends Number> column, String alias) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnAvgAs(SQLColumn<TProxy,TProperty> column, String alias) {
         getAsSelector().columnAvgAs(column.getTable(), column.value(), alias);
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvgDistinct(SQLColumn<? extends Number> column) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnAvgDistinct(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().columnAvgDistinct(column.getTable(), column.value());
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvgDistinctAs(SQLColumn<? extends Number> column, Function<TRProxy, SQLColumn<? extends Number>> mapAlias) {
-        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnAvgDistinctAs(SQLColumn<TProxy,TProperty> column, Function<TRProxy, SQLColumn<TProxy,TProperty>> mapAlias) {
+        SQLColumn<TProxy,TProperty> sqlColumn = mapAlias.apply(tr());
         return columnAvgDistinctAs(column,sqlColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnAvgDistinctAs(SQLColumn<? extends Number> column, String alias) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty extends Number> ProxyAsSelector<TRProxy, TR> columnAvgDistinctAs(SQLColumn<TProxy,TProperty> column, String alias) {
         getAsSelector().columnAvgDistinctAs(column.getTable(), column.value(),alias);
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnLen(SQLColumn<?> column) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty> ProxyAsSelector<TRProxy, TR> columnLen(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().columnLen(column.getTable(), column.value());
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnLenAs(SQLColumn<?> column, Function<TRProxy, SQLColumn<?>> mapAlias) {
-        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty> ProxyAsSelector<TRProxy, TR> columnLenAs(SQLColumn<TProxy,TProperty> column, Function<TRProxy, SQLColumn<TProxy,TProperty>> mapAlias) {
+        SQLColumn<TProxy,TProperty> sqlColumn = mapAlias.apply(tr());
         return columnLenAs(column,sqlColumn.value());
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnLenAs(SQLColumn<?> column, String alias) {
+    default <TProxy extends ProxyEntity<TProxy,TEntity>,TEntity,TProperty> ProxyAsSelector<TRProxy, TR> columnLenAs(SQLColumn<TProxy,TProperty> column, String alias) {
         getAsSelector().columnLenAs(column.getTable(), column.value(),alias);
         return this;
     }
 
-    default ProxyAsSelector<TRProxy, TR> columnFuncAs(ProxyColumnPropertyFunction proxyColumnPropertyFunction, Function<TRProxy, SQLColumn<?>> mapAlias) {
-        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
-        return columnFuncAs(proxyColumnPropertyFunction,sqlColumn.value());
+    default ProxyAsSelector<TRProxy, TR> columnFuncAs(ProxyColumnPropertyFunction proxyColumnPropertyFunction, SQLColumn<TRProxy,?> aliasColumn) {
+        return columnFuncAs(proxyColumnPropertyFunction,aliasColumn.value());
     }
 
     default ProxyAsSelector<TRProxy, TR> columnFuncAs(ProxyColumnPropertyFunction proxyColumnPropertyFunction, String alias) {
         getAsSelector().columnFuncAs(proxyColumnPropertyFunction.getColumn().getTable(), proxyColumnPropertyFunction.getColumnPropertyFunction(),alias);
         return this;
     }
-    default ProxyAsSelector<TRProxy,TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, Function<TRProxy, SQLColumn<?>> mapAlias){
-        SQLColumn<?> sqlColumn = mapAlias.apply(getTRProxy());
-        getAsSelector().sqlSegmentAs(sqlColumnSegment, sqlColumn.value());
+    default ProxyAsSelector<TRProxy,TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, SQLColumn<TRProxy,?> aliasColumn){
+        getAsSelector().sqlSegmentAs(sqlColumnSegment, aliasColumn.value());
         return this;
     }
 }

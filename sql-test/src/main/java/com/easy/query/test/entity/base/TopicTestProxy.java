@@ -27,10 +27,10 @@ public class TopicTestProxy extends AbstractProxyEntity<TopicTestProxy, Topic> {
         this.table = table;
     }
 
-    public SQLColumn<String> id(){
+    public SQLColumn<TopicTestProxy,String> id(){
         return get("id");
     }
-    public SQLColumn<String> title(){
+    public SQLColumn<TopicTestProxy,String> title(){
         return get("title");
     }
 
@@ -48,11 +48,12 @@ public class TopicTestProxy extends AbstractProxyEntity<TopicTestProxy, Topic> {
     public TopicTestProxy create(TableAvailable table) {
         if(this.table==null){
             this.table=table;
-        }else{
-            if(this.table!=table){
-                throw new IllegalArgumentException("proxy repeat create table");
-            }
         }
+//        else{
+//            if(this.table!=table){
+//                throw new IllegalArgumentException("proxy repeat create table");
+//            }
+//        }
         return this;
     }
 

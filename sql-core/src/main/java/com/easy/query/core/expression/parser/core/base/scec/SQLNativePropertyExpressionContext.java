@@ -16,7 +16,6 @@ public interface SQLNativePropertyExpressionContext {
      * @return
      */
     SQLNativePropertyExpressionContext expression(String property);
-   <TEntity> SQLNativePropertyExpressionContext expression(ClientQueryable<TEntity> subQuery);
     /**
      * 当前表的使用的列,自动识别所属表别名
      * @param table 哪张表
@@ -24,6 +23,8 @@ public interface SQLNativePropertyExpressionContext {
      * @return
      */
     SQLNativePropertyExpressionContext expression(TableAvailable table, String property);
+   <TEntity> SQLNativePropertyExpressionContext expression(ClientQueryable<TEntity> subQuery);
+    SQLNativePropertyExpressionContext expressionAlias(String property);
 
     /**
      * 参数,将以[?]参数化形式拼接到sql中

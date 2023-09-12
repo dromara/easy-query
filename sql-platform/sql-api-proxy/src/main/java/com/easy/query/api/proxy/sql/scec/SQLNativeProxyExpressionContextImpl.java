@@ -19,7 +19,7 @@ public class SQLNativeProxyExpressionContextImpl implements SQLNativeProxyExpres
         this.sqlConstExpressionContext = sqlConstExpressionContext;
     }
     @Override
-    public SQLNativeProxyExpressionContext expression(SQLColumn<?> property) {
+    public <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLNativeProxyExpressionContext expression(SQLColumn<TEntityProxy, TProperty> property) {
         sqlConstExpressionContext.expression(property.getTable(),property.value());
         return this;
     }

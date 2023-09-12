@@ -1,8 +1,6 @@
 package com.easy.query.core.expression.segment.impl;
 
-import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
@@ -35,17 +33,5 @@ public class OrderBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements
     @Override
     public String getAlias() {
         return null;
-    }
-
-    @Override
-    public String toSQL(ToSQLContext toSQLContext) {
-
-        StringBuilder sql = new StringBuilder().append(sqlSegment);
-        if(asc){
-            sql.append(" ").append(SQLKeywordEnum.ASC.toSQL());
-        }else {
-            sql.append(" ").append(SQLKeywordEnum.DESC.toSQL());
-        }
-        return sql.toString();
     }
 }

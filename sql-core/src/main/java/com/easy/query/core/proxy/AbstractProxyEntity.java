@@ -4,8 +4,6 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
-import java.util.Objects;
-
 /**
  * create time 2023/6/25 12:39
  * 文件说明
@@ -15,13 +13,12 @@ import java.util.Objects;
 public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ProxyEntity<TProxy,TEntity> {
 
     protected TableAvailable table;
-    public <TProperty> SQLColumn<TProperty> get(String property){
+    public <TProperty> SQLColumn<TProxy,TProperty> get(String property){
         return new SQLColumnImpl<>(getTable(),property);
     }
 
     @Override
     public TableAvailable getTable() {
-        Objects.requireNonNull(table,"cant found table in sql context");
         return table;
     }
     @Override

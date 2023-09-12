@@ -175,7 +175,7 @@ public class RelationTest extends BaseTest {
                 SchoolStudentProxy table1 = SchoolStudentProxy.createTable();
                 SchoolClassProxy table2 = SchoolClassProxy.createTable();
                 List<SchoolStudent> list1 = easyProxyQuery.queryable(table1)
-                        .include((i,t) -> i.one(t.schoolClass(), table2, 1))
+                        .include((i, t) -> i.one(t.schoolClass(), table2))
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());

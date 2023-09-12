@@ -38,6 +38,12 @@ public class SQLNativeLambdaExpressionContextImpl<T1> implements SQLNativeLambda
     }
 
     @Override
+    public <TR> SQLNativeLambdaExpressionContext<T1> expressionAlias(Property<TR, ?> property) {
+        columnConstExpressionContext.expressionAlias(EasyLambdaUtil.getPropertyName(property));
+        return this;
+    }
+
+    @Override
     public SQLNativeLambdaExpressionContext<T1> value(Object val) {
         columnConstExpressionContext.value(val);
         return this;

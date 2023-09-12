@@ -14,15 +14,15 @@ import com.easy.query.core.proxy.SQLColumn;
 public interface ProxySelector extends SQLProxyNative<ProxySelector> {
     Selector getSelector();
 
-   default ProxySelector columns(SQLColumn<?>... columns){
+   default <TProxy extends ProxyEntity<TProxy,T>,T> ProxySelector columns(SQLColumn<TProxy,?>... columns){
        if(columns != null){
-           for (SQLColumn<?> sqlColumn : columns) {
+           for (SQLColumn<TProxy,?> sqlColumn : columns) {
                column(sqlColumn);
            }
        }
        return this;
    }
-   default ProxySelector column(SQLColumn<?> column){
+   default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> ProxySelector column(SQLColumn<TProxy,TProperty> column){
        getSelector().column(column.getTable(),column.value());
        return this;
    }
@@ -32,7 +32,7 @@ public interface ProxySelector extends SQLProxyNative<ProxySelector> {
        return this;
    }
 
-   default ProxySelector columnIgnore(SQLColumn<?> column){
+   default <TProxy extends ProxyEntity<TProxy,T>,T> ProxySelector columnIgnore(SQLColumn<TProxy,?> column){
        getSelector().columnIgnore(column.getTable(),column.value());
        return this;
    }

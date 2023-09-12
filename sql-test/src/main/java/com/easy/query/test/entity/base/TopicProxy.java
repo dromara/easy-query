@@ -18,8 +18,8 @@ public class TopicProxy implements ProxyEntity<TopicProxy, Topic> {
 
     private static final Class<Topic> entityClass = Topic.class;
 
-    public final SQLColumn<String> id;
-    public final SQLColumn<String> title;
+    public final SQLColumn<TopicProxy,String> id;
+    public final SQLColumn<TopicProxy,String> title;
     private final TableAvailable table;
 
     private TopicProxy() {

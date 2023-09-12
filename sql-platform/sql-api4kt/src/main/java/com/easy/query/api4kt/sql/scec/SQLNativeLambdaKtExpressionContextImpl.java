@@ -38,6 +38,12 @@ public class SQLNativeLambdaKtExpressionContextImpl<T1> implements SQLNativeLamb
     }
 
     @Override
+    public SQLNativeLambdaKtExpressionContext<T1> expressionAlias(KProperty1<? super T1, ?> property) {
+        columnConstExpressionContext.expressionAlias(EasyKtLambdaUtil.getPropertyName(property));
+        return this;
+    }
+
+    @Override
     public SQLNativeLambdaKtExpressionContext<T1> value(Object val) {
         columnConstExpressionContext.value(val);
         return this;

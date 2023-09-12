@@ -11,11 +11,12 @@ import com.easy.query.core.proxy.SQLColumn;
  * @author xuejiaming
  */
 public interface SQLNativeProxyExpressionContext {
-    SQLNativeProxyExpressionContext expression(SQLColumn<?> property);
+    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLNativeProxyExpressionContext expression(SQLColumn<TEntityProxy, TProperty> property);
 
     <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> SQLNativeProxyExpressionContext expression(ProxyQueryable<TEntityProxy, TEntity> subQuery);
 
     SQLNativeProxyExpressionContext value(Object val);
+
     SQLNativeProxyExpressionContext format(Object formatVal);
 
     SQLNativeProxyExpressionContext setAlias(String alias);

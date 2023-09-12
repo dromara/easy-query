@@ -23,7 +23,7 @@ public class ProxyAsSelectorImpl<TRProxy extends ProxyEntity<TRProxy, TR>, TR> i
     }
 
     @Override
-    public TRProxy getTRProxy() {
+    public TRProxy tr() {
         return trProxy;
     }
 

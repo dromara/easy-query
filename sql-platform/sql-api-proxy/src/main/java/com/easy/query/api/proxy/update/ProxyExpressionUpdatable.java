@@ -7,7 +7,6 @@ import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -23,129 +22,117 @@ import java.util.Collection;
 public interface ProxyExpressionUpdatable<TProxy extends ProxyEntity<TProxy, T>, T>  extends ProxyUpdatable<TProxy,T, ProxyExpressionUpdatable<TProxy,T>>, WithVersionable<ProxyExpressionUpdatable<TProxy,T>>, ConfigureVersionable<ProxyExpressionUpdatable<TProxy,T>> {
     ClientExpressionUpdatable<T> getClientUpdate();
 
-    default <TProperty> ProxyExpressionUpdatable<TProxy,T> set(SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction, TProperty val) {
-        SQLColumn<TProperty> sqlColumn = columnFunction.apply(getProxy());
-        getClientUpdate().set(sqlColumn.value(), val);
+    default <TProperty> ProxyExpressionUpdatable<TProxy,T> set(SQLColumn<TProxy,TProperty> setColumn, TProperty val) {
+        getClientUpdate().set(setColumn.value(), val);
         return this;
     }
 
-    default <TProperty> ProxyExpressionUpdatable<TProxy,T> set(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction, TProperty val) {
+    default <TProperty> ProxyExpressionUpdatable<TProxy,T> set(boolean condition, SQLColumn<TProxy,TProperty> setColumn, TProperty val) {
         if(condition){
-            SQLColumn<TProperty> sqlColumn = columnFunction.apply(getProxy());
-            getClientUpdate().set(sqlColumn.value(), val); 
+            getClientUpdate().set(setColumn.value(), val);
         }
         return this;
     }
 
-    default <TProperty> ProxyExpressionUpdatable<TProxy,T> setWithColumn(SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction1, SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction2) {
-        return setWithColumn(true,columnFunction1,columnFunction2);
+    default <TProperty> ProxyExpressionUpdatable<TProxy,T> setWithColumn(SQLColumn<TProxy,TProperty> setColumn1, SQLColumn<TProxy,TProperty> setColumn2) {
+        return setWithColumn(true,setColumn1,setColumn2);
     }
 
-    default <TProperty> ProxyExpressionUpdatable<TProxy,T> setWithColumn(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction1, SQLFuncExpression1<TProxy, SQLColumn<TProperty>> columnFunction2) {
+    default <TProperty> ProxyExpressionUpdatable<TProxy,T> setWithColumn(boolean condition, SQLColumn<TProxy,TProperty> setColumn1, SQLColumn<TProxy,TProperty> setColumn2) {
         if(condition){
-            SQLColumn<TProperty> sqlColumn1 = columnFunction1.apply(getProxy());
-            SQLColumn<TProperty> sqlColumn2 = columnFunction2.apply(getProxy());
-            getClientUpdate().setWithColumn(sqlColumn1.value(), sqlColumn2.value());
+            getClientUpdate().setWithColumn(setColumn1.value(), setColumn2.value());
         }
         return this;
     }
     // region 列++ --
 
 
-    default ProxyExpressionUpdatable<TProxy,T> setIncrement(SQLFuncExpression1<TProxy, SQLColumn<Integer>> columnFunction) {
-        return setIncrement(true,columnFunction);
+    default ProxyExpressionUpdatable<TProxy,T> setIncrement(SQLColumn<TProxy,Integer> setColumn) {
+        return setIncrement(true,setColumn);
     }
 
-    default ProxyExpressionUpdatable<TProxy,T> setIncrement(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<Integer>> columnFunction) {
+    default ProxyExpressionUpdatable<TProxy,T> setIncrement(boolean condition, SQLColumn<TProxy,Integer> setColumn) {
         if(condition){
-            SQLColumn<Integer> sqlColumn = columnFunction.apply(getProxy());
-            getClientUpdate().setIncrement(sqlColumn.value());
+            getClientUpdate().setIncrement(setColumn.value());
         }
         return this;
     }
 
-    default ProxyExpressionUpdatable<TProxy,T> setIncrement(SQLFuncExpression1<TProxy, SQLColumn<Integer>> columnFunction, int val) {
-        return setIncrement(true,columnFunction,val);
+    default ProxyExpressionUpdatable<TProxy,T> setIncrement(SQLColumn<TProxy,Integer> setColumn, int val) {
+        return setIncrement(true,setColumn,val);
     }
 
-    default ProxyExpressionUpdatable<TProxy,T> setIncrement(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<Integer>> columnFunction, int val) {
+    default ProxyExpressionUpdatable<TProxy,T> setIncrement(boolean condition, SQLColumn<TProxy,Integer> setColumn, int val) {
         if(condition){
-            SQLColumn<Integer> sqlColumn = columnFunction.apply(getProxy());
-            getClientUpdate().setIncrement(sqlColumn.value(), val);
+            getClientUpdate().setIncrement(setColumn.value(), val);
         }
         return this;
     }
 
-    default ProxyExpressionUpdatable<TProxy,T> setIncrement(SQLFuncExpression1<TProxy, SQLColumn<Long>> columnFunction, long val) {
-        return setIncrement(true,columnFunction,val);
+    default ProxyExpressionUpdatable<TProxy,T> setIncrement(SQLColumn<TProxy,Long> setColumn, long val) {
+        return setIncrement(true,setColumn,val);
     }
 
-    default ProxyExpressionUpdatable<TProxy,T> setIncrement(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<Long>> columnFunction, long val) {
+    default ProxyExpressionUpdatable<TProxy,T> setIncrement(boolean condition, SQLColumn<TProxy,Long> setColumn, long val) {
         if(condition){
-            SQLColumn<Long> sqlColumn = columnFunction.apply(getProxy());
-            getClientUpdate().setIncrement(sqlColumn.value(),val);
-        }
-        return this;
-    }
-
-
-    default ProxyExpressionUpdatable<TProxy,T> setIncrement(SQLFuncExpression1<TProxy, SQLColumn<? extends Number>> columnFunction, Number val) {
-        return setIncrementNumber(true,columnFunction,val);
-    }
-
-    default ProxyExpressionUpdatable<TProxy,T> setIncrementNumber(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<? extends Number>> columnFunction, Number val) {
-        if(condition){
-            SQLColumn<? extends Number> sqlColumn = columnFunction.apply(getProxy());
-            getClientUpdate().setIncrementNumber(true,sqlColumn.value(), val);
-        }
-        return this;
-    }
-
-    default ProxyExpressionUpdatable<TProxy,T> setDecrement(SQLFuncExpression1<TProxy, SQLColumn<Integer>> columnFunction) {
-        return setDecrement(true,columnFunction);
-    }
-
-    default ProxyExpressionUpdatable<TProxy,T> setDecrement(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<Integer>> columnFunction) {
-        if(condition){
-            SQLColumn<Integer> sqlColumn = columnFunction.apply(getProxy());
-            getClientUpdate().setDecrement(sqlColumn.value());
-        }
-        return this;
-    }
-
-    default ProxyExpressionUpdatable<TProxy,T> setDecrement(SQLFuncExpression1<TProxy, SQLColumn<Integer>> columnFunction, int val) {
-        return setDecrement(true,columnFunction,val);
-    }
-
-    default ProxyExpressionUpdatable<TProxy,T> setDecrement(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<Integer>> columnFunction, int val) {
-        if(condition){
-            SQLColumn<Integer> sqlColumn = columnFunction.apply(getProxy());
-            getClientUpdate().setDecrement(sqlColumn.value(), val);
-        }
-        return this;
-    }
-
-    default ProxyExpressionUpdatable<TProxy,T> setDecrement(SQLFuncExpression1<TProxy, SQLColumn<Long>> columnFunction, long val) {
-        return setDecrement(true,columnFunction,val);
-    }
-
-    default ProxyExpressionUpdatable<TProxy,T> setDecrement(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<Long>> columnFunction, long val) {
-        if(condition){
-            SQLColumn<Long> sqlColumn = columnFunction.apply(getProxy());
-            getClientUpdate().setDecrement(sqlColumn.value(), val);
+            getClientUpdate().setIncrement(setColumn.value(),val);
         }
         return this;
     }
 
 
-    default ProxyExpressionUpdatable<TProxy,T> setDecrement(SQLFuncExpression1<TProxy, SQLColumn<? extends Number>> columnFunction, Number val) {
-        return setDecrementNumber(true,columnFunction,val);
+    default ProxyExpressionUpdatable<TProxy,T> setIncrement(SQLColumn<TProxy,? extends Number> setColumn, Number val) {
+        return setIncrementNumber(true,setColumn,val);
     }
 
-    default ProxyExpressionUpdatable<TProxy,T> setDecrementNumber(boolean condition, SQLFuncExpression1<TProxy, SQLColumn<? extends Number>> columnFunction, Number val) {
+    default ProxyExpressionUpdatable<TProxy,T> setIncrementNumber(boolean condition, SQLColumn<TProxy,? extends Number> setColumn, Number val) {
         if(condition){
-            SQLColumn<? extends Number> sqlColumn = columnFunction.apply(getProxy());
-            getClientUpdate().setDecrementNumber(true,sqlColumn.value(), val);
+            getClientUpdate().setIncrementNumber(true,setColumn.value(), val);
+        }
+        return this;
+    }
+
+    default ProxyExpressionUpdatable<TProxy,T> setDecrement(SQLColumn<TProxy,Integer> setColumn) {
+        return setDecrement(true,setColumn);
+    }
+
+    default ProxyExpressionUpdatable<TProxy,T> setDecrement(boolean condition, SQLColumn<TProxy,Integer> setColumn) {
+        if(condition){
+            getClientUpdate().setDecrement(setColumn.value());
+        }
+        return this;
+    }
+
+    default ProxyExpressionUpdatable<TProxy,T> setDecrement(SQLColumn<TProxy,Integer> setColumn, int val) {
+        return setDecrement(true,setColumn,val);
+    }
+
+    default ProxyExpressionUpdatable<TProxy,T> setDecrement(boolean condition, SQLColumn<TProxy,Integer> setColumn, int val) {
+        if(condition){
+            getClientUpdate().setDecrement(setColumn.value(), val);
+        }
+        return this;
+    }
+
+    default ProxyExpressionUpdatable<TProxy,T> setDecrement(SQLColumn<TProxy,Long> setColumn, long val) {
+        return setDecrement(true,setColumn,val);
+    }
+
+    default ProxyExpressionUpdatable<TProxy,T> setDecrement(boolean condition, SQLColumn<TProxy,Long> setColumn, long val) {
+        if(condition){
+            getClientUpdate().setDecrement(setColumn.value(), val);
+        }
+        return this;
+    }
+
+
+    default ProxyExpressionUpdatable<TProxy,T> setDecrement(SQLColumn<TProxy,? extends Number> setColumn, Number val) {
+        return setDecrementNumber(true,setColumn,val);
+    }
+
+    default ProxyExpressionUpdatable<TProxy,T> setDecrementNumber(boolean condition, SQLColumn<TProxy,? extends Number> setColumn, Number val) {
+        if(condition){
+            getClientUpdate().setDecrementNumber(true,setColumn.value(), val);
         }
         return this;
     }

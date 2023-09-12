@@ -8,6 +8,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 /**
@@ -23,76 +24,77 @@ public interface ProxyAggregateFilter extends SQLProxyNative<ProxyAggregateFilte
         return getAggregateFilter().getRuntimeContext();
     }
 
-    default <TProperty> ProxyAggregateFilter avg(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Number> ProxyAggregateFilter avg(SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return avg(true, column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter avg(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Number> ProxyAggregateFilter avg(boolean condition, SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createAvgFunction(false), column, compare, val);
     }
 
-    default  <TProperty>ProxyAggregateFilter avgDistinct(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Number> ProxyAggregateFilter avgDistinct(SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return avgDistinct(true, column, compare, val);
     }
 
-    default  <TProperty>ProxyAggregateFilter avgDistinct(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Number> ProxyAggregateFilter avgDistinct(boolean condition, SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createAvgFunction(true), column, compare, val);
     }
 
-    default  <TProperty>ProxyAggregateFilter min(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Comparable<TProperty>> ProxyAggregateFilter min(SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return min(true, column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter min(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Comparable<TProperty>> ProxyAggregateFilter min(boolean condition, SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createMinFunction(), column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter max(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Comparable<TProperty>> ProxyAggregateFilter max(SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return max(true, column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter max(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Comparable<TProperty>> ProxyAggregateFilter max(boolean condition, SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createMaxFunction(), column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter sum(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Number> ProxyAggregateFilter sum(SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return sum(true, column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter sum(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Number> ProxyAggregateFilter sum(boolean condition, SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createSumFunction(false), column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter sumDistinct(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Number> ProxyAggregateFilter sumDistinct(SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return sum(true, column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter sumDistinct(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Number> ProxyAggregateFilter sumDistinct(boolean condition, SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createSumFunction(true), column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter countDistinct(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty> ProxyAggregateFilter countDistinct(SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return countDistinct(true, column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter countDistinct(boolean condition, SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty> ProxyAggregateFilter countDistinct(boolean condition, SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createCountFunction(true), column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter count(SQLColumn<TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty> ProxyAggregateFilter count(SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
         return count(true, column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter count(boolean condition, SQLColumn<TProperty> column, SQLPredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty> ProxyAggregateFilter count(boolean condition, SQLColumn<TProxy, TProperty> column, SQLPredicateCompare compare, TProperty val) {
         return func(condition, getRuntimeContext().getColumnFunctionFactory().createCountFunction(false), column, compare, val);
     }
 
-    default <TProperty> ProxyAggregateFilter func(boolean condition, ColumnFunction columnFunction, SQLColumn<TProperty> column, SQLPredicateCompare compare, TProperty val) {
+    default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty> ProxyAggregateFilter func(boolean condition, ColumnFunction columnFunction, SQLColumn<TProxy, TProperty> column, SQLPredicateCompare compare, TProperty val) {
         if (condition) {
             getAggregateFilter().func(column.getTable(), columnFunction, column.value(), compare, val);
         }
         return this;
     }
+
     default ProxyAggregateFilter and() {
         return and(true);
     }

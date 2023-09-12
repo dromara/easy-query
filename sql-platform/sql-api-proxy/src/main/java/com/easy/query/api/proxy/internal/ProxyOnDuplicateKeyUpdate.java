@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.internal;
 
 import com.easy.query.api.proxy.sql.ProxyUpdateSetSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 /**
@@ -13,8 +14,8 @@ import com.easy.query.core.proxy.SQLColumn;
 public interface ProxyOnDuplicateKeyUpdate<T, TChain> {
     TChain onConflictDoUpdate();
 
-    TChain onConflictDoUpdate(SQLColumn<?> constraintProperty);
-    TChain onConflictDoUpdate(SQLColumn<?> constraintProperty, SQLExpression1<ProxyUpdateSetSelector> setColumnSelector);
+    <TProxy extends ProxyEntity<TProxy,T>> TChain onConflictDoUpdate(TProxy tProxy,SQLColumn<TProxy,?> constraintProperty);
+    <TProxy extends ProxyEntity<TProxy,T>> TChain onConflictDoUpdate(TProxy tProxy,SQLColumn<TProxy,?> constraintProperty, SQLExpression1<ProxyUpdateSetSelector> setColumnSelector);
     TChain onConflictDoUpdate(SQLExpression1<ProxyUpdateSetSelector> setColumnSelector);
 
     TChain onDuplicateKeyUpdate();

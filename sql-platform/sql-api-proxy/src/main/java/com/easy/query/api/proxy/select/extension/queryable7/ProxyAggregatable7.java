@@ -28,20 +28,19 @@ public interface ProxyAggregatable7<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
     /**
      * 防止溢出
      *
-     * @param columnSelectorExpression
+     * @param sqlColumn
      * @param <TMember>
      * @return
      */
-    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression) {
+    default <TMember extends Number> BigDecimal sumBigDecimalOrNull(SQLColumn<?,TMember> sqlColumn) {
 
-        return sumBigDecimalOrDefault(columnSelectorExpression, null);
+        return sumBigDecimalOrDefault(sqlColumn, null);
     }
 
 
-    default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression, BigDecimal def) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy());
+    default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLColumn<?,TMember> sqlColumn, BigDecimal def) {
         ColumnFunction sumFunction = getRuntimeContext().getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = getClientQueryable7().selectAggregateList(memberSQLColumn.getTable(), sumFunction, memberSQLColumn.value(), null);
+        List<TMember> result = getClientQueryable7().selectAggregateList(sqlColumn.getTable(), sumFunction, sqlColumn.value(), null);
         TMember resultMember = EasyCollectionUtil.firstOrNull(result);
         if (resultMember == null) {
             return def;
@@ -49,169 +48,66 @@ public interface ProxyAggregatable7<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
         return new BigDecimal(resultMember.toString());
     }
 
-    default <TMember extends Number> TMember sumOrNull(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression) {
-        return sumOrDefault(columnSelectorExpression, null);
+    default <TMember extends Number> TMember sumOrNull(SQLColumn<?,TMember> sqlColumn) {
+        return sumOrDefault(sqlColumn, null);
     }
 
-    default <TMember extends Number> TMember sumOrDefault(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
+    default <TMember extends Number> TMember sumOrDefault(SQLColumn<?,TMember> sqlColumn, TMember def) {
 
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy());
         ColumnFunction sumFunction = getRuntimeContext().getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = getClientQueryable7().selectAggregateList(memberSQLColumn.getTable(), sumFunction, memberSQLColumn.value(), null);
+        List<TMember> result = getClientQueryable7().selectAggregateList(sqlColumn.getTable(), sumFunction, sqlColumn.value(), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
-    default <TMember> TMember maxOrNull(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression) {
-        return maxOrDefault(columnSelectorExpression, null);
+    default <TMember> TMember maxOrNull(SQLColumn<?,TMember> sqlColumn) {
+        return maxOrDefault(sqlColumn, null);
     }
 
-    default <TMember> TMember maxOrDefault(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy());
+    default <TMember> TMember maxOrDefault(SQLColumn<?,TMember> sqlColumn, TMember def) {
         ColumnFunction maxFunction = getRuntimeContext().getColumnFunctionFactory().createMaxFunction();
-        List<TMember> result = getClientQueryable7().selectAggregateList(memberSQLColumn.getTable(), maxFunction, memberSQLColumn.value(), null);
+        List<TMember> result = getClientQueryable7().selectAggregateList(sqlColumn.getTable(), maxFunction, sqlColumn.value(), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
-    default <TMember> TMember minOrNull(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression) {
-        return minOrDefault(columnSelectorExpression, null);
+    default <TMember> TMember minOrNull(SQLColumn<?,TMember> sqlColumn) {
+        return minOrDefault(sqlColumn, null);
     }
 
-    default <TMember> TMember minOrDefault(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
+    default <TMember> TMember minOrDefault(SQLColumn<?,TMember> sqlColumn, TMember def) {
 
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy());
         ColumnFunction minFunction = getRuntimeContext().getColumnFunctionFactory().createMinFunction();
-        List<TMember> result = getClientQueryable7().selectAggregateList(memberSQLColumn.getTable(), minFunction, memberSQLColumn.value(), null);
+        List<TMember> result = getClientQueryable7().selectAggregateList(sqlColumn.getTable(), minFunction, sqlColumn.value(), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
-    default <TMember extends Number> Double avgOrNull(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression) {
-        return avgOrDefault(columnSelectorExpression, null, Double.class);
+    default <TMember extends Number> Double avgOrNull(SQLColumn<?,TMember> sqlColumn) {
+        return avgOrDefault(sqlColumn, null, Double.class);
     }
 
-    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression) {
-        return avgBigDecimalOrDefault(columnSelectorExpression, null);
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNull(SQLColumn<?,TMember> sqlColumn) {
+        return avgBigDecimalOrDefault(sqlColumn, null);
     }
 
-    default <TMember extends Number> Float avgFloatOrNull(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression) {
-        return avgFloatOrDefault(columnSelectorExpression, null);
+    default <TMember extends Number> Float avgFloatOrNull(SQLColumn<?,TMember> sqlColumn) {
+        return avgFloatOrDefault(sqlColumn, null);
     }
 
-    default <TMember extends Number> Double avgOrDefault(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression, Double def) {
-        return avgOrDefault(columnSelectorExpression, def, Double.class);
+    default <TMember extends Number> Double avgOrDefault(SQLColumn<?,TMember> sqlColumn, Double def) {
+        return avgOrDefault(sqlColumn, def, Double.class);
     }
 
-    default <TMember extends Number> BigDecimal avgBigDecimalOrDefault(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression, BigDecimal def) {
-        return avgOrDefault(columnSelectorExpression, def, BigDecimal.class);
+    default <TMember extends Number> BigDecimal avgBigDecimalOrDefault(SQLColumn<?,TMember> sqlColumn, BigDecimal def) {
+        return avgOrDefault(sqlColumn, def, BigDecimal.class);
     }
 
-    default <TMember extends Number> Float avgFloatOrDefault(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression, Float def) {
-        return avgOrDefault(columnSelectorExpression, def, Float.class);
+    default <TMember extends Number> Float avgFloatOrDefault(SQLColumn<?,TMember> sqlColumn, Float def) {
+        return avgOrDefault(sqlColumn, def, Float.class);
     }
 
-    default <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, SQLColumn<TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
+    default <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLColumn<?,TMember> sqlColumn, TResult def, Class<TResult> resultClass) {
 
-        SQLColumn<TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy());
         ColumnFunction avgFunction = getRuntimeContext().getColumnFunctionFactory().createAvgFunction(false);
-        List<TResult> result = getClientQueryable7().selectAggregateList(memberSQLColumn.getTable(), avgFunction, memberSQLColumn.value(), resultClass);
+        List<TResult> result = getClientQueryable7().selectAggregateList(sqlColumn.getTable(), avgFunction, sqlColumn.value(), resultClass);
         return EasyCollectionUtil.firstOrDefault(result, def);
-    }
-
-
-    /**
-     * 防止溢出
-     *
-     * @param columnSelectorExpression
-     * @param <TMember>
-     * @return
-     */
-    default <TMember extends Number> BigDecimal sumBigDecimalOrNullMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression) {
-        return sumBigDecimalOrNull((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        });
-    }
-
-
-    default <TMember extends Number> BigDecimal sumBigDecimalOrDefaultMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression, BigDecimal def) {
-        return sumBigDecimalOrDefault((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        }, def);
-    }
-
-    default <TMember extends Number> TMember sumOrNullMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression) {
-        return sumOrNull((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        });
-    }
-
-    default <TMember extends Number> TMember sumOrDefaultMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
-        return sumOrDefault((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        }, def);
-    }
-
-    default <TMember> TMember maxOrNullMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression) {
-        return maxOrNull((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        });
-    }
-
-    default <TMember> TMember maxOrDefaultMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
-        return maxOrDefault((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        }, def);
-    }
-
-    default <TMember> TMember minOrNullMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression) {
-        return minOrNull((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        });
-    }
-
-    default <TMember> TMember minOrDefaultMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression, TMember def) {
-        return minOrDefault((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        }, def);
-    }
-
-    default <TMember extends Number> Double avgOrNullMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression) {
-        return avgOrNull((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        });
-    }
-
-    default <TMember extends Number> BigDecimal avgBigDecimalOrNullMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression) {
-        return avgBigDecimalOrNull((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        });
-    }
-
-    default <TMember extends Number> Float avgFloatOrNullMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression) {
-        return avgFloatOrNull((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        });
-    }
-
-    default <TMember extends Number> Double avgOrDefaultMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression, Double def) {
-        return avgOrDefault((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        }, def);
-    }
-
-    default <TMember extends Number> BigDecimal avgBigDecimalOrDefaultMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression, BigDecimal def) {
-        return avgBigDecimalOrDefault((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        }, def);
-    }
-
-    default <TMember extends Number> Float avgFloatOrDefaultMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression, Float def) {
-        return avgFloatOrDefault((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        }, def);
-    }
-
-    default <TMember extends Number, TResult extends Number> TResult avgOrDefaultMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, SQLColumn<TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
-        return avgOrDefault((t, t1, t2, t4, t5, t6, t7) -> {
-            return columnSelectorExpression.apply(new Tuple7<>(t, t1, t2, t4, t5, t6, t7));
-        }, def, resultClass);
     }
 }

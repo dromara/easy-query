@@ -104,7 +104,7 @@ public class MultiProxyAsSelector10Impl<T1Proxy extends ProxyEntity<T1Proxy, T1>
     }
 
     @Override
-    public TRProxy getTRProxy() {
+    public TRProxy tr() {
         return trProxy;
     }
 

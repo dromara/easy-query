@@ -17,9 +17,9 @@ public class SysUserProxy implements ProxyEntity<SysUserProxy, SysUser> {
     public static final SysUserProxy SYS_USER_PROXY = new SysUserProxy();
     private static final Class<SysUser> entityClass = SysUser.class;
 
-    public final SQLColumn<String> username;
-    public final SQLColumn<String> phone;
-    public final SQLColumn<String> idCard;
+    public final SQLColumn<SysUserProxy,String> username;
+    public final SQLColumn<SysUserProxy,String> phone;
+    public final SQLColumn<SysUserProxy,String> idCard;
     private final TableAvailable table;
 
     private SysUserProxy() {
