@@ -35,6 +35,14 @@ public class SQLAliasNativeExpressionContextImpl  implements SQLAliasNativeExpre
     }
 
     @Override
+    public SQLAliasNativeExpressionContext setPropertyAlias(String property) {
+        Objects.requireNonNull(resultEntityMetadata, "result entity metadata cannot be null, plz use in select as sql context");
+        Objects.requireNonNull(property, "property cannot be null");
+        this.setAlias(resultEntityMetadata.getColumnName(property));
+        return this;
+    }
+
+    @Override
     public SQLAliasNativeExpressionContext expression(TableAvailable table, String property) {
         sqlNativeExpressionContext.expression(table,property);
         return this;

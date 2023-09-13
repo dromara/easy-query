@@ -26,6 +26,12 @@ public class SQLAliasNativeLambdaKtExpressionContextImpl<T1,TR> implements SQLAl
     }
 
     @Override
+    public SQLAliasNativeLambdaKtExpressionContext<T1, TR> setPropertyAlias(KProperty1<? super TR, ?> property) {
+        sqlAliasNativePropertyExpressionContext.setPropertyAlias(EasyKtLambdaUtil.getPropertyName(property));
+        return this;
+    }
+
+    @Override
     public SQLAliasNativeLambdaKtExpressionContext<T1,TR> expression(KProperty1<? super T1, ?> property) {
         sqlAliasNativePropertyExpressionContext.expression(EasyKtLambdaUtil.getPropertyName(property));
         return this;

@@ -26,6 +26,12 @@ public class SQLAliasNativeLambdaExpressionContextImpl<T1,TR> implements SQLAlia
     }
 
     @Override
+    public SQLAliasNativeLambdaExpressionContext<T1, TR> setPropertyAlias(Property<TR, ?> property) {
+        sqlAliasNativePropertyExpressionContext.setPropertyAlias(EasyLambdaUtil.getPropertyName(property));
+        return this;
+    }
+
+    @Override
     public SQLAliasNativeLambdaExpressionContext<T1,TR> expression(Property<T1, ?> property) {
         sqlAliasNativePropertyExpressionContext.expression(EasyLambdaUtil.getPropertyName(property));
         return this;

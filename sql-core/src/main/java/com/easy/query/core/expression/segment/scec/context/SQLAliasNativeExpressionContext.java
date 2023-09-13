@@ -11,6 +11,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  */
 public interface SQLAliasNativeExpressionContext extends SQLNativeExpressionContext{
     SQLAliasNativeExpressionContext expressionAlias(String property);
+    SQLAliasNativeExpressionContext setPropertyAlias(String property);
 
     @Override
     SQLAliasNativeExpressionContext expression(TableAvailable table, String property);

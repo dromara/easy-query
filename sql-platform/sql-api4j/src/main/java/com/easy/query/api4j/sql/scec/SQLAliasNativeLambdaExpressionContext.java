@@ -13,7 +13,7 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 public interface SQLAliasNativeLambdaExpressionContext<T1,TR> extends SQLNativeLambdaExpressionContext<T1>{
 
     SQLAliasNativeLambdaExpressionContext<T1,TR> expressionAlias(Property<TR, ?> property);
-
+    SQLAliasNativeLambdaExpressionContext<T1,TR> setPropertyAlias(Property<TR, ?> property);
 
 
     @Override

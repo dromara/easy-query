@@ -27,6 +27,12 @@ public class SQLAliasNativePropertyExpressionContextImpl implements SQLAliasNati
     }
 
     @Override
+    public SQLAliasNativePropertyExpressionContext setPropertyAlias(String property) {
+        sqlAliasNativeExpressionContext.setPropertyAlias(property);
+        return this;
+    }
+
+    @Override
     public SQLAliasNativePropertyExpressionContext expression(String property) {
         sqlAliasNativeExpressionContext.expression(this.table,property);
         return this;

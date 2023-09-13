@@ -1790,12 +1790,24 @@ public static class AA{
     public void testSelectAs(){
         String sql = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "123"))
-                .select(Topic.class,o->o.sqlNativeSegment("{0} AS {1}",c->{
+                .select(Topic.class,o->o.sqlNativeSegment("{0} AS {1},{2} AS {3}",c->{
                     c.expression(BlogEntity::getId)
-                            .expressionAlias(Topic::getCreateTime);
+                            .expressionAlias(Topic::getCreateTime)
+                            .expression(BlogEntity::getScore)
+                            .expressionAlias(Topic::getStars);
                 }))
                 .toSQL();
-        Assert.assertEquals("SELECT t.`id` AS `create_time` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?",sql);
+        Assert.assertEquals("SELECT t.`id` AS `create_time`,t.`score` AS `stars` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?",sql);
+    }
+    @Test
+    public void testSelectAs1(){
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"))
+                .select(Topic.class,o->o.sqlNativeSegment("100 - {0}",c->{
+                    c.expression(BlogEntity::getId).setPropertyAlias(Topic::getStars);
+                }))
+                .toSQL();
+        Assert.assertEquals("SELECT 100 - t.`id` AS `stars` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?",sql);
     }
 
 

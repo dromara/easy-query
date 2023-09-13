@@ -12,6 +12,7 @@ import com.easy.query.core.proxy.SQLColumn;
  */
 public interface SQLAliasNativeProxyExpressionContext<TRProxy extends ProxyEntity<TRProxy, TR>, TR> extends SQLNativeProxyExpressionContext{
     <TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expressionAlias(SQLColumn<TRProxy, TProperty> sqlColumn);
+    <TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> setPropertyAlias(SQLColumn<TRProxy, TProperty> sqlColumn);
 
     @Override
     <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expression(SQLColumn<TEntityProxy, TProperty> sqlColumn);

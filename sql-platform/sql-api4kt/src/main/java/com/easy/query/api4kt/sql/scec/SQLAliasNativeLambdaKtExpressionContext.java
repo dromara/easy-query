@@ -13,6 +13,7 @@ import kotlin.reflect.KProperty1;
 public interface SQLAliasNativeLambdaKtExpressionContext<T1,TR> extends SQLNativeLambdaKtExpressionContext<T1> {
 
     SQLAliasNativeLambdaKtExpressionContext<T1,TR> expressionAlias(KProperty1<? super TR, ?> property);
+    SQLAliasNativeLambdaKtExpressionContext<T1,TR> setPropertyAlias(KProperty1<? super TR, ?> property);
 
     @Override
     SQLAliasNativeLambdaKtExpressionContext<T1,TR> expression(KProperty1<? super T1, ?> property);

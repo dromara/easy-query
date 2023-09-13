@@ -11,6 +11,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  */
 public interface SQLAliasNativePropertyExpressionContext extends SQLNativePropertyExpressionContext{
     SQLAliasNativePropertyExpressionContext expressionAlias(String property);
+    SQLAliasNativePropertyExpressionContext setPropertyAlias(String property);
     /**
      * 当前表的使用的列,自动识别所属表别名
      * @param property 使用哪个列
