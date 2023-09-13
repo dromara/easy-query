@@ -3,13 +3,16 @@ package com.easy.query.api4j.select.extension.queryable8.override;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable8;
 import com.easy.query.api4j.select.extension.queryable8.Queryable8Available;
+import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLGroupBySelector;
 import com.easy.query.api4j.sql.SQLNavigateInclude;
 import com.easy.query.api4j.sql.SQLOrderBySelector;
 import com.easy.query.api4j.sql.SQLWhereAggregatePredicate;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -100,6 +103,26 @@ public interface OverrideQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> extends Quer
 
     @Override
     Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
+
+
+    /**
+     * @param configuration
+     * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
+     */
+    @Override
+    default Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> orderByObject(ObjectSort configuration) {
+        return orderByObject(true, configuration);
+    }
+
+    /**
+     * @param condition
+     * @param configuration
+     * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
+     */
+    @Override
+    Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> orderByObject(boolean condition, ObjectSort configuration);
 
     @Override
     default <TREntity> Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> include(SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression) {

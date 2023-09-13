@@ -9,7 +9,9 @@ import com.easy.query.api4kt.sql.SQLKtOrderBySelector;
 import com.easy.query.api4kt.sql.SQLKtWhereAggregatePredicate;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -100,6 +102,26 @@ public interface OverrideKtQueryable2<T1, T2> extends KtQueryable<T1>, KtQueryab
 
     @Override
     KtQueryable2<T1, T2> orderByDesc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression);
+
+
+    /**
+     * @param configuration
+     * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取}
+     */
+    @Override
+    default KtQueryable2<T1, T2> orderByObject(ObjectSort configuration) {
+        return orderByObject(true, configuration);
+    }
+
+    /**
+     * @param condition
+     * @param configuration
+     * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取
+     */
+    @Override
+    KtQueryable2<T1, T2> orderByObject(boolean condition, ObjectSort configuration);
 
     @Override
     default <TREntity> KtQueryable2<T1, T2> include(SQLFuncExpression1<SQLKtNavigateInclude<T1>, KtQueryable<TREntity>> navigateIncludeSQLExpression) {

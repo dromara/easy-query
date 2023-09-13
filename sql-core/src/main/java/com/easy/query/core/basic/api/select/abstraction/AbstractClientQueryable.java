@@ -751,7 +751,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnOrNull(property);
                         if (columnMetadata == null) {
                             if (strictMode) {
-                                throw new EasyQueryOrderByInvalidOperationException(property, EasyClassUtil.getSimpleName(queryClass()) + " not found query entity class");
+                                throw new EasyQueryOrderByInvalidOperationException(property, EasyClassUtil.getSimpleName(queryClass()) + " not found [" + property + "] in entity class");
                             }
                             continue;
                         }

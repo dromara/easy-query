@@ -6,6 +6,8 @@ import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.extension.SQLProxyFunc;
 import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
+import com.easy.query.core.api.dynamic.sort.ObjectSortBuilder;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
@@ -14,6 +16,8 @@ import com.easy.query.core.basic.jdbc.executor.internal.reader.EmptyDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReader;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.enums.dynamic.DynamicModeEnum;
+import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
 import com.easy.query.core.expression.builder.core.ConditionDefaultAccepter;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -49,6 +53,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -1809,6 +1814,59 @@ public static class AA{
                 .toSQL();
         Assert.assertEquals("SELECT 100 - t.`id` AS `stars` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?",sql);
     }
+    @Test
+    public void testOrder1(){
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "123"))
+                .orderByAsc(o->o.column(BlogEntity::getId).sqlNativeSegment("user_name {0}",c->c.format(1==1?"ASC":"DESC")))
+                .toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` = ? ORDER BY `id` ASC,user_name ASC",sql);
+    }
 
+     public static class UISort implements ObjectSort {
+
+         private final Map<String, Boolean> sort;
+
+         public UISort(Map<String,Boolean> sort){
+
+             this.sort = sort;
+         }
+         @Override
+         public void configure(ObjectSortBuilder builder) {
+             for (Map.Entry<String, Boolean> s : sort.entrySet()) {
+
+                 builder.orderBy(s.getKey(),s.getValue());
+             }
+         }
+     }
+
+     @Test
+     public void orderTest1(){
+         HashMap<String, Boolean> id = new HashMap<String, Boolean>() {{
+             put("id", true);
+             put("title", false);
+         }};
+         String sql = easyQuery.queryable(BlogEntity.class)
+                 .orderByObject(new UISort(id))
+                 .toSQL();
+         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? ORDER BY `id` ASC,`title` DESC",sql);
+     }
+     @Test
+     public void orderTest2(){
+         HashMap<String, Boolean> id = new HashMap<String, Boolean>() {{
+             put("id1", true);
+             put("title", false);
+         }};
+
+         try {
+
+             String sql = easyQuery.queryable(BlogEntity.class)
+                     .orderByObject(new UISort(id))
+                     .toSQL();
+         }catch (EasyQueryOrderByInvalidOperationException exception){
+             Assert.assertEquals("id1",exception.getPropertyName());
+             Assert.assertEquals("BlogEntity not found [id1] in entity class",exception.getMessage());
+         }
+     }
 
 }
