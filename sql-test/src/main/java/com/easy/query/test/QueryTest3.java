@@ -1,9 +1,11 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.IntegerProxy;
+import com.easy.query.api.proxy.base.LongProxy;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.extension.SQLProxyFunc;
+import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
@@ -16,7 +18,6 @@ import com.easy.query.core.basic.jdbc.executor.internal.reader.EmptyDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReader;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.enums.dynamic.DynamicModeEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
 import com.easy.query.core.expression.builder.core.ConditionDefaultAccepter;
@@ -33,6 +34,7 @@ import com.easy.query.test.dto.BlogQuery1Request;
 import com.easy.query.test.dto.BlogQuery2Request;
 import com.easy.query.test.dto.UserBookEncryptVO;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
+import com.easy.query.test.dto.proxy.TopicSubQueryBlogProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUserEncrypt;
 import com.easy.query.test.entity.Topic;
@@ -1258,6 +1260,24 @@ public static class AA{
                     .select(MapProxy.createTable(), o -> o.columnAll(o.t())).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?", sql2);
         }
+        {
+            TopicProxy topic = TopicProxy.createTable();
+            BlogEntityProxy blog = BlogEntityProxy.createTable();
+            List<Topic> list = easyProxyQuery.queryable(topic)
+                    .leftJoin(blog, o -> o.eq(topic.id(), blog.id()))
+                    .select(o -> o.columns(topic.id(),topic.title()))
+                    .toList();
+
+        }
+        {
+            TopicProxy topic = TopicProxy.createTable();
+            BlogEntityProxy blog = BlogEntityProxy.createTable();
+            List<Topic> list = easyProxyQuery.queryable(topic)
+                    .leftJoin(blog, o -> o.eq(o.t().id(), o.t1().id()))
+                    .select(o -> o.columns(topic.id(),topic.title()))
+                    .toList();
+
+        }
 
         {
 //
@@ -1868,5 +1888,22 @@ public static class AA{
              Assert.assertEquals("BlogEntity not found [id1] in entity class",exception.getMessage());
          }
      }
+
+
+
+    @Test
+    public void queryProxySubQueryAs() {
+        TopicProxy inner = TopicProxy.createTable();
+        ProxyQueryable<TopicProxy, Topic> subQuery = easyProxyQuery.queryable(inner);
+
+        TopicProxy topic = TopicProxy.createTable();
+        TopicSubQueryBlogProxy subResult = TopicSubQueryBlogProxy.createTable();
+        String sql = easyProxyQuery.queryable(topic)
+                .select(subResult, o -> o.column(topic.id()).columnSubQueryAs(() -> {
+                    return subQuery.where(x -> x.eq(inner.id(), topic.id()))
+                            .select(LongProxy.createTable(), x -> x.columnCount(inner.id()));
+                }, o.tr().blogCount())).toSQL();
+        Assert.assertEquals("SELECT t.`id`,(SELECT COUNT(t1.`id`) AS `id` FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t",sql);
+    }
 
 }
