@@ -23,12 +23,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
     @Override
     public TProxy create(TableAvailable table) {
-        if(this.table==table){
-            return EasyObjectUtil.typeCastNullable(this);
-        }else{
-            if(this.table!=null){
-                throw new IllegalArgumentException("proxy repeat create table");
-            }
+        if(this.table==null){
             this.table=table;
         }
         return EasyObjectUtil.typeCastNullable(this);

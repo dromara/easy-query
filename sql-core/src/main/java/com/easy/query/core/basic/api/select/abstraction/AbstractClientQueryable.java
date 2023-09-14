@@ -165,6 +165,20 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
+    public ClientQueryable<Long> selectCount() {
+        return this.selectCount(Long.class);
+    }
+
+    @Override
+    public <TNumber extends Number> ClientQueryable<TNumber> selectCount(Class<TNumber> numberClass) {
+        EntityQueryExpressionBuilder countQueryExpressionBuilder = createCountQueryExpressionBuilder();
+        if(countQueryExpressionBuilder==null){
+            return cloneQueryable().select(numberClass,o->o.sqlNativeSegment("COUNT(*)"));
+        }
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(numberClass, entityQueryExpressionBuilder);
+    }
+
+    @Override
     public long countDistinct(SQLExpression1<ColumnSelector<T1>> selectExpression) {
         ProjectSQLBuilderSegmentImpl sqlSegmentBuilder = new ProjectSQLBuilderSegmentImpl();
         ColumnSelector<T1> sqlColumnSelector = getSQLExpressionProvider1().getColumnSelector(sqlSegmentBuilder);

@@ -61,7 +61,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.easy.query.test.entity.base.TopicProxy.TOPIC_PROXY;
-import static com.easy.query.test.entity.base.TopicTestProxy.TOPIC_TEST_PROXY;
 
 /**
  * create time 2023/6/8 21:38
@@ -633,7 +632,7 @@ public static class AA{
                 .select(o -> o.columns(o.t().id(), o.t().title()))
                 .toSQL();
         String sqly = easyProxyQuery
-                .queryable(TOPIC_TEST_PROXY)
+                .queryable(TopicTestProxy.createTable())
                 .where(o -> o.eq(o.t().id(), "123").like(o.t().title(), "xxx"))
                 .where(o -> o.eq(o.t().id(), "123").like(o.t().title(), "xxx"))
                 .orderByAsc(o->o.column(o.t().id()))
@@ -1666,7 +1665,7 @@ public static class AA{
     @Test
     public  void newPredicateTest3(){
                 String sqlz1= easyProxyQuery
-                .queryable(TOPIC_TEST_PROXY)
+                .queryable(TopicTestProxy.createTable())
                         .leftJoin(TopicAutoProxy.createTable(),o->o.eq(o.t().id(),o.t1().title()))
                 .where(t->{
                     TopicTestProxy testProxy = t.t();
@@ -1912,8 +1911,7 @@ public static class AA{
         TopicProxy topic = TopicProxy.createTable();
         SQLFuncExpression<ProxyQueryable<LongProxy, Long>> subQueryFunc=()->{
             TopicProxy inner = TopicProxy.createTable();
-            ProxyQueryable<TopicProxy, Topic> subQuery = easyProxyQuery.queryable(inner);
-            ProxyQueryable<LongProxy, Long> select = subQuery.where(x -> x.eq(inner.id(), topic.id()))
+            ProxyQueryable<LongProxy, Long> select = easyProxyQuery.queryable(inner).where(x -> x.eq(inner.id(), topic.id()))
                     .select(LongProxy.createTable(), x -> x.columnCount(inner.id()));
             return select;
         };
@@ -1924,5 +1922,32 @@ public static class AA{
                 .select(subResult, o -> o.column(topic.id()).columnSubQueryAs(subQueryFunc, o.tr().blogCount())).toSQL();
         Assert.assertEquals("SELECT t.`id`,(SELECT COUNT(t1.`id`) AS `id` FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t",sql);
     }
+
+//
+//    @Test
+//    public void toPage(){
+//        EasyPageResult<BlogEntity> pageResult = easyQuery.queryable(BlogEntity.class)
+//                .where(o -> o.eq(false, BlogEntity::getCreateTime, LocalDateTime.now()).and(
+//                        x -> x.or().like(false, BlogEntity::getTitle, "123")
+//                                .or()
+//                                .like(false, BlogEntity::getId, "123")
+//                                .or()
+//                                .like(false, BlogEntity::getId, "123")
+//                )).toPageResult(1, 10);
+//        Assert.assertEquals(10,pageResult.getData().size());
+//    }
+
+//    @Test
+//    public void toCount1(){
+//        EasyPageResult<BlogEntity> pageResult = easyQuery.queryable(BlogEntity.class)
+//                .where(o -> o.eq(false, BlogEntity::getCreateTime, LocalDateTime.now()).and(
+//                        x -> x.or().like(false, BlogEntity::getTitle, "123")
+//                                .or()
+//                                .like(false, BlogEntity::getId, "123")
+//                                .or()
+//                                .like(false, BlogEntity::getId, "123")
+//                ))
+//        Assert.assertEquals(10,pageResult.getData().size());
+//    }
 
 }

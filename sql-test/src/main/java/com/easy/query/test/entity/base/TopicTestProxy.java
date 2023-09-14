@@ -1,6 +1,5 @@
 package com.easy.query.test.entity.base;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.test.entity.Topic;
@@ -12,19 +11,13 @@ import com.easy.query.test.entity.Topic;
  */
 public class TopicTestProxy extends AbstractProxyEntity<TopicTestProxy, Topic> {
 
-    public static final TopicTestProxy TOPIC_TEST_PROXY = new TopicTestProxy();
     public static TopicTestProxy createTable() {
         return new TopicTestProxy();
     }
     private static final Class<Topic> entityClass = Topic.class;
-    private  TableAvailable table;
 
     private TopicTestProxy() {
 
-    }
-
-    public TopicTestProxy(TableAvailable table) {
-        this.table = table;
     }
 
     public SQLColumn<TopicTestProxy,String> id(){
@@ -35,26 +28,8 @@ public class TopicTestProxy extends AbstractProxyEntity<TopicTestProxy, Topic> {
     }
 
     @Override
-    public TableAvailable getTable() {
-        return table;
-    }
-
-    @Override
     public Class<Topic> getEntityClass() {
         return entityClass;
-    }
-
-    @Override
-    public TopicTestProxy create(TableAvailable table) {
-        if(this.table==null){
-            this.table=table;
-        }
-//        else{
-//            if(this.table!=table){
-//                throw new IllegalArgumentException("proxy repeat create table");
-//            }
-//        }
-        return this;
     }
 
 }

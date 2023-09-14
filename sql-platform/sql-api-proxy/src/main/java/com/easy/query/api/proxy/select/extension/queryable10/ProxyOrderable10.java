@@ -3,6 +3,8 @@ package com.easy.query.api.proxy.select.extension.queryable10;
 import com.easy.query.api.proxy.select.ProxyQueryable10;
 import com.easy.query.api.proxy.select.extension.queryable10.sql.MultiProxyOrderSelector10;
 import com.easy.query.api.proxy.select.extension.queryable10.sql.impl.MultiProxyOrderSelector10Impl;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
+import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -49,4 +51,25 @@ public interface ProxyOrderable10<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable10();
     }
 
+    /**
+     * @param configuration
+     * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取
+     */
+    default ProxyQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> orderByObject(ObjectSort configuration) {
+        return orderByObject(true, configuration);
+    }
+
+    /**
+     * @param condition
+     * @param objectSort
+     * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取
+     */
+    default ProxyQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> orderByObject(boolean condition, ObjectSort objectSort){
+        if (condition) {
+            getClientQueryable10().orderByObject(objectSort);
+        }
+        return getQueryable10();
+    }
 }

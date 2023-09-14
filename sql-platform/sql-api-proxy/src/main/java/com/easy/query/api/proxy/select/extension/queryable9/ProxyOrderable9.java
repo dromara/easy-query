@@ -3,6 +3,8 @@ package com.easy.query.api.proxy.select.extension.queryable9;
 import com.easy.query.api.proxy.select.ProxyQueryable9;
 import com.easy.query.api.proxy.select.extension.queryable9.sql.MultiProxyOrderSelector9;
 import com.easy.query.api.proxy.select.extension.queryable9.sql.impl.MultiProxyOrderSelector9Impl;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
+import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -44,6 +46,27 @@ public interface ProxyOrderable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
             getClientQueryable9().orderByDesc((t, t1, t2, t3, t4, t5, t6, t7, t8) -> {
                 selectExpression.apply(new MultiProxyOrderSelector9Impl<>(t.getOrderSelector(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy()));
             });
+        }
+        return getQueryable9();
+    }
+    /**
+     * @param configuration
+     * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取
+     */
+    default ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> orderByObject(ObjectSort configuration) {
+        return orderByObject(true, configuration);
+    }
+
+    /**
+     * @param condition
+     * @param objectSort
+     * @return
+     * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取
+     */
+    default ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> orderByObject(boolean condition, ObjectSort objectSort){
+        if (condition) {
+            getClientQueryable9().orderByObject(objectSort);
         }
         return getQueryable9();
     }
