@@ -21,6 +21,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
 import com.easy.query.core.expression.builder.core.ConditionDefaultAccepter;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.extension.client.SQLClientFunc;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -1903,6 +1904,24 @@ public static class AA{
                     return subQuery.where(x -> x.eq(inner.id(), topic.id()))
                             .select(LongProxy.createTable(), x -> x.columnCount(inner.id()));
                 }, o.tr().blogCount())).toSQL();
+        Assert.assertEquals("SELECT t.`id`,(SELECT COUNT(t1.`id`) AS `id` FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t",sql);
+    }
+
+    @Test
+    public void queryProxySubQueryAs1() {
+        TopicProxy topic = TopicProxy.createTable();
+        SQLFuncExpression<ProxyQueryable<LongProxy, Long>> subQueryFunc=()->{
+            TopicProxy inner = TopicProxy.createTable();
+            ProxyQueryable<TopicProxy, Topic> subQuery = easyProxyQuery.queryable(inner);
+            ProxyQueryable<LongProxy, Long> select = subQuery.where(x -> x.eq(inner.id(), topic.id()))
+                    .select(LongProxy.createTable(), x -> x.columnCount(inner.id()));
+            return select;
+        };
+
+
+        TopicSubQueryBlogProxy subResult = TopicSubQueryBlogProxy.createTable();
+        String sql = easyProxyQuery.queryable(topic)
+                .select(subResult, o -> o.column(topic.id()).columnSubQueryAs(subQueryFunc, o.tr().blogCount())).toSQL();
         Assert.assertEquals("SELECT t.`id`,(SELECT COUNT(t1.`id`) AS `id` FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t",sql);
     }
 
