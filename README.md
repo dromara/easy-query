@@ -50,12 +50,15 @@
 
 ## multi mode
 
-### property mode
+### proxy mode
+
 ```java
-List<Topic> list = easyQueryClient.queryable(Topic.class)
-                .where(o -> o.like("title", "someTitle"))
-                .orderByAsc(o -> o.column("createTime").column("id"))
-                .toList();
+
+TopicProxy topic = TopicProxy.createTable();
+List<Topic> list1 = easyProxyQuery.queryable(topic)
+        .where(f -> f.like(topic.title(), "someTitle"))
+        .orderByAsc(o -> o.columns(topic.createTime(),topic.id()))
+        .toList();
 
         ==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
         ==> Parameters: %someTitle%(String)
@@ -75,20 +78,19 @@ List<Topic> list = easyQuery.queryable(Topic.class)
         <== Time Elapsed: 3(ms)
         <== Total: 0
 ```
-
-### proxy mode
-
+### property mode
 ```java
-List<Topic> list1 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
-        .where((filter,t) -> filter.like(t.title(), "someTitle"))
-        .orderByAsc((order,t) -> order.columns(t.createTime(),t.id()))
-        .toList();
+List<Topic> list = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.like("title", "someTitle"))
+                .orderByAsc(o -> o.column("createTime").column("id"))
+                .toList();
 
         ==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
         ==> Parameters: %someTitle%(String)
         <== Time Elapsed: 3(ms)
         <== Total: 0
 ```
+
 ## Dependency
 ### use property
 ```xml

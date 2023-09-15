@@ -11,6 +11,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 public interface Countable1<T1> {
 
     ClientQueryable<Long> selectCount();
+//    ClientQueryable<Long> selectCount(SQLExpression1<ColumnResultSelector<T1>> countColumnFunc);
     <TNumber extends Number>ClientQueryable<TNumber> selectCount(Class<TNumber> numberClass);
 
 }

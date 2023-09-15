@@ -50,19 +50,21 @@
 
 ## 多模式api
 
-### 属性api
+### 代理对象api
 ```java
-List<Topic> list = easyQueryClient.queryable(Topic.class)
-                .where(o -> o.like("title", "someTitle"))
-                .orderByAsc(o -> o.column("createTime").column("id"))
-                .toList();
+
+TopicProxy topic = TopicProxy.createTable();
+List<Topic> list1 = easyProxyQuery.queryable(topic)
+        .where(f -> f.like(topic.title(), "someTitle"))
+        .orderByAsc(o -> o.columns(topic.createTime(),topic.id()))
+        .toList();
 
         ==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
         ==> Parameters: %someTitle%(String)
         <== Time Elapsed: 3(ms)
         <== Total: 0
 ```
-### 表达式api
+### lambda表达式api
 
 ```java
 List<Topic> list = easyQuery.queryable(Topic.class)
@@ -75,21 +77,18 @@ List<Topic> list = easyQuery.queryable(Topic.class)
         <== Time Elapsed: 3(ms)
         <== Total: 0
 ```
-
-### 代理对象api
-
+### 字符串属性api
 ```java
-List<Topic> list1 = easyProxyQuery.queryable(TopicProxy.DEFAULT)
-        .where((filter,t) -> filter.like(t.title(), "someTitle"))
-        .orderByAsc((order,t) -> order.columns(t.createTime(),t.id()))
-        .toList();
+List<Topic> list = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.like("title", "someTitle"))
+                .orderByAsc(o -> o.column("createTime").column("id"))
+                .toList();
 
         ==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
         ==> Parameters: %someTitle%(String)
         <== Time Elapsed: 3(ms)
         <== Total: 0
 ```
-
 
 ## 依赖
 ### 使用属性
@@ -474,7 +473,7 @@ long rows = easyQuery.updatable(Topic.class)
 easyQuery.updatable(Topic.class)
                     .set(Topic::getStars, 12)
                     .where(o -> o.eq(Topic::getId, "2"))
-                    .executeRows(1,"更新失败");
+                    .executÎeRows(1,"更新失败");
 //判断受影响行数并且进行报错,如果当前操作不在事务内执行那么会自动开启事务!!!会自动开启事务!!!会自动开启事务!!!来实现并发更新控制,异常为:EasyQueryConcurrentException 
 //抛错后数据将不会被更新
 ```
