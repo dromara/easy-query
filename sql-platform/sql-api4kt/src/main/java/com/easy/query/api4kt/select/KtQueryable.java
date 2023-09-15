@@ -56,6 +56,7 @@ public interface KtQueryable<T1> extends Query<T1>,
     @Override
     KtQueryable<T1> cloneQueryable();
 
+
     long countDistinct(SQLExpression1<SQLKtColumnSelector<T1>> selectExpression);
 
 
@@ -68,6 +69,7 @@ public interface KtQueryable<T1> extends Query<T1>,
      * @param whereExpression 表达式最后一个是取反
      * @return
      */
+    @Deprecated
     boolean all(SQLExpression1<SQLKtWherePredicate<T1>> whereExpression);
 
     /**

@@ -1950,4 +1950,20 @@ public static class AA{
 //        Assert.assertEquals(10,pageResult.getData().size());
 //    }
 
+    @Test
+    public void test1(){
+        TopicTestProxy table = TopicTestProxy.createTable();
+        TopicAutoProxy table1 = TopicAutoProxy.createTable();
+       String sql = easyProxyQuery
+                .queryable(table)
+                .leftJoin(table1, o -> o.eq(table.id(), table1.title()))
+                .where(o -> o.eq(table.id(), "123")
+                        .or().eq(table1.title(), "111"))
+                .orderByAsc(o -> o.column(table1.id()))
+                .select(s -> s.columns(table1.id(), table1.createTime()).column(table.title()))
+                .toSQL();
+       Assert.assertEquals("SELECT t1.`id`,t1.`create_time`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE (t.`id` = ? OR t1.`title` = ?) ORDER BY t1.`id` ASC",sql);
+    }
+
+
 }

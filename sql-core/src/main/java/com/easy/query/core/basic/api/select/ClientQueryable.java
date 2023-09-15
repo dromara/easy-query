@@ -75,6 +75,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
      * @param whereExpression 表达式最后一个是取反
      * @return
      */
+    @Deprecated
     boolean all(SQLExpression1<WherePredicate<T1>> whereExpression);
 
     /**

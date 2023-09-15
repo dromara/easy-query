@@ -66,6 +66,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
      * @param whereExpression 表达式最后一个是取反
      * @return
      */
+    @Deprecated
     boolean all(SQLExpression2<ProxyFilter,T1Proxy> whereExpression);
     long countDistinct(SQLExpression2<ProxySelector, T1Proxy> selectExpression);
 
