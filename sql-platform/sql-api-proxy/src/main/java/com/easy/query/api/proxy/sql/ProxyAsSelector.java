@@ -9,7 +9,6 @@ import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
-import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.function.Function;
 
@@ -34,8 +33,8 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> e
 
     default ProxyAsSelector<TRProxy, TR> columns(SQLColumn<?,?>... columns) {
         if (columns != null) {
-            for (SQLColumn<?,?> column : columns) {
-                column(EasyObjectUtil.typeCastNullable(column));
+            for (SQLColumn<?,?> sqlColumn : columns) {
+                getAsSelector().column(sqlColumn.getTable(), sqlColumn.value());
             }
         }
         return this;

@@ -14,10 +14,10 @@ import com.easy.query.core.proxy.SQLColumn;
 public interface ProxyGroupSelector extends SQLProxyNative<ProxyGroupSelector> {
     GroupSelector getGroupSelector();
 
-    default <TProxy extends ProxyEntity<TProxy,T>,T> ProxyGroupSelector columns(SQLColumn<TProxy,?>... columns) {
+    default ProxyGroupSelector columns(SQLColumn<?,?>... columns) {
         if (columns != null) {
-            for (SQLColumn<TProxy,?> sqlColumn : columns) {
-                column(sqlColumn);
+            for (SQLColumn<?,?> sqlColumn : columns) {
+                getGroupSelector().column(sqlColumn.getTable(), sqlColumn.value());
             }
         }
         return this;

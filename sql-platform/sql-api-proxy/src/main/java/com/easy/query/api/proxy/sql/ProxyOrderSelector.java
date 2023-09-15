@@ -15,10 +15,10 @@ public interface ProxyOrderSelector extends SQLProxyNative<ProxyOrderSelector> {
     OrderSelector getOrderSelector();
 
 
-    default <TProxy extends ProxyEntity<TProxy,T>,T> ProxyOrderSelector columns(SQLColumn<TProxy,?>... columns) {
+    default ProxyOrderSelector columns(SQLColumn<?,?>... columns) {
         if (columns != null) {
-            for (SQLColumn<TProxy,?> sqlColumn : columns) {
-                column(sqlColumn);
+            for (SQLColumn<?,?> sqlColumn : columns) {
+                getOrderSelector().column(sqlColumn.getTable(), sqlColumn.value());
             }
         }
         return this;
