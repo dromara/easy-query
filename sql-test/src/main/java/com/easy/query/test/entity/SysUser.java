@@ -2,6 +2,7 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Encryption;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import lombok.Data;
@@ -14,6 +15,7 @@ import lombok.Data;
  */
 @Data
 @Table(value = "t_sys_user",schema = "easy-query-test",ignoreProperties = {"updateTime","createBy","updateBy","deleted"})
+@EntityProxy
 public class SysUser extends BaseEntity{
     private String username;
     @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)

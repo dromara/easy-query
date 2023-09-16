@@ -12,24 +12,24 @@ import com.easy.query.test.entity.SysUser;
  *
  * @author xuejiaming
  */
-public class SysUserProxy implements ProxyEntity<SysUserProxy, SysUser> {
+public class SysUserProxy1 implements ProxyEntity<SysUserProxy1, SysUser> {
 
-    public static final SysUserProxy SYS_USER_PROXY = new SysUserProxy();
+    public static final SysUserProxy1 SYS_USER_PROXY = new SysUserProxy1();
     private static final Class<SysUser> entityClass = SysUser.class;
 
-    public final SQLColumn<SysUserProxy,String> username;
-    public final SQLColumn<SysUserProxy,String> phone;
-    public final SQLColumn<SysUserProxy,String> idCard;
+    public final SQLColumn<SysUserProxy1,String> username;
+    public final SQLColumn<SysUserProxy1,String> phone;
+    public final SQLColumn<SysUserProxy1,String> idCard;
     private final TableAvailable table;
 
-    private SysUserProxy() {
+    private SysUserProxy1() {
         this.table = null;
         this.username = null;
         this.phone = null;
         this.idCard = null;
     }
 
-    public SysUserProxy(TableAvailable table) {
+    public SysUserProxy1(TableAvailable table) {
         this.table = table;
         this.username = new SQLColumnImpl<>(table, "username");
         this.phone = new SQLColumnImpl<>(table, "phone");
@@ -47,7 +47,7 @@ public class SysUserProxy implements ProxyEntity<SysUserProxy, SysUser> {
     }
 
     @Override
-    public SysUserProxy create(TableAvailable table) {
-        return new SysUserProxy(table);
+    public SysUserProxy1 create(TableAvailable table) {
+        return new SysUserProxy1(table);
     }
 }

@@ -10,8 +10,6 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
@@ -39,7 +37,7 @@ import java.util.function.Consumer;
  * @author xuejiaming
  */
 @SupportedAnnotationTypes({"com.easy.query.core.annotation.EntityProxy"})
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
+//@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ProxyGenerateProcessor extends AbstractProcessor {
     private static final Map<String,String> TYPE_MAPPING=new HashMap<>();
     static{

@@ -36,6 +36,7 @@ import com.easy.query.test.dto.BlogQuery2Request;
 import com.easy.query.test.dto.UserBookEncryptVO;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
 import com.easy.query.test.dto.proxy.TopicSubQueryBlogProxy;
+import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUserEncrypt;
 import com.easy.query.test.entity.Topic;
@@ -43,6 +44,7 @@ import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.UserBookEncrypt;
 import com.easy.query.test.entity.base.TopicTestProxy;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.solon.EqUser;
@@ -1963,6 +1965,60 @@ public static class AA{
                 .select(s -> s.columns(table1.id(), table1.createTime()).column(table.title()))
                 .toSQL();
        Assert.assertEquals("SELECT t1.`id`,t1.`create_time`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE (t.`id` = ? OR t1.`title` = ?) ORDER BY t1.`id` ASC",sql);
+    }
+
+    public void test2(){
+
+        {
+            TopicProxy topicTable = TopicProxy.createTable();
+            BlogEntityProxy blogTable = BlogEntityProxy.createTable();
+            SysUserProxy userTable = SysUserProxy.createTable();
+            easyProxyQuery
+                    .queryable(topicTable)
+                    //第一个join采用双参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity
+                    .leftJoin(blogTable, o -> o.eq(topicTable.id(), blogTable.id()))
+                    //第二个join采用三参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity 第三个参数表示第三张表 SysUser
+                    .leftJoin(userTable, o -> o.eq(topicTable.id(), userTable.id()))
+                    .where(o -> o.eq(topicTable.id(), "123").like(blogTable.title(), "456")
+                            .eq(userTable.createTime(), LocalDateTime.now()))
+                    //如果不想用链式大括号方式执行顺序就是代码顺序,默认采用and链接
+                    //动态表达式
+                    .where(o -> {
+                        o.eq(topicTable.id(), "1234");
+                        if (true) {
+                            o.eq(userTable.id(), "1234");
+                        }
+                    })
+                    .select(o -> o.columns(userTable.id(), blogTable.id()))
+                    .select(TopicTypeVOProxy.createTable(), o -> {
+                        o.columns(userTable.id(), blogTable.id());
+                        if(true){
+                            o.columnAs(userTable.id(),o.tr().id());
+                        }
+                    });
+        }
+//
+//
+//        {
+//
+////也支持单表的Queryable返回,但是这样后续操作只可以操作单表没办法操作其他join表了
+//            Queryable<Topic> where = easyQuery
+//                    .queryable(Topic.class)
+//                    //第一个join采用双参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity
+//                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+//                    //第二个join采用三参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity 第三个参数表示第三张表 SysUser
+//                    .leftJoin(SysUser.class, (t, t1, t2) -> t.eq(t2, Topic::getId, SysUser::getId))
+//                    .where(o -> o.eq(Topic::getId, "123"))//单个条件where参数为主表Topic
+//                    //支持单个参数或者全参数,全参数个数为主表+join表个数 链式写法期间可以通过then来切换操作表
+//                    .where((t, t1, t2) -> t.eq(Topic::getId, "123").then(t1).like(BlogEntity::getTitle, "456")
+//                            .then(t2).eq(BaseEntity::getCreateTime, LocalDateTime.now()))
+//                    //如果不想用链式的then来切换也可以通过lambda 大括号方式执行顺序就是代码顺序,默认采用and链接
+//                    .where((t, t1, t2) -> {
+//                        t.eq(Topic::getId, "123");
+//                        t1.like(BlogEntity::getTitle, "456");
+//                        t1.eq(BaseEntity::getCreateTime, LocalDateTime.now());
+//                    });
+//        }
     }
 
 

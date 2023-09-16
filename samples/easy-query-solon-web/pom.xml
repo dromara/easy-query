@@ -26,6 +26,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-processor</artifactId>
+            <version>1.4.22</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>3.3.1</version>

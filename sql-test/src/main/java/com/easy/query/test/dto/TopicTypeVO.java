@@ -1,6 +1,7 @@
 package com.easy.query.test.dto;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.test.conversion.EnumConverter;
 import com.easy.query.test.enums.TopicTypeEnum;
 import lombok.Data;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @ToString
+@EntityProxy
 public class TopicTypeVO {
 
     private String id;

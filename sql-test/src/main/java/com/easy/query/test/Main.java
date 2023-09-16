@@ -48,7 +48,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 
-import static com.easy.query.test.entity.base.SysUserProxy.SYS_USER_PROXY;
+import static com.easy.query.test.entity.base.SysUserProxy1.SYS_USER_PROXY;
 import static com.easy.query.test.entity.base.TopicProxy.TOPIC_PROXY;
 
 public class Main {
