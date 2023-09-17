@@ -41,6 +41,7 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUserEncrypt;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
+import com.easy.query.test.entity.TopicGenericKey;
 import com.easy.query.test.entity.UserBookEncrypt;
 import com.easy.query.test.entity.base.TopicTestProxy;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
@@ -2019,6 +2020,15 @@ public static class AA{
 //                        t1.eq(BaseEntity::getCreateTime, LocalDateTime.now());
 //                    });
 //        }
+
+    }
+    @Test
+    public void testGenericKey(){
+
+        String sql = easyQuery
+                .queryable(TopicGenericKey.class)
+                .limit(1).toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` LIMIT 1", sql);
     }
 
 

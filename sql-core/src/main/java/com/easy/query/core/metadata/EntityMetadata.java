@@ -38,6 +38,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReade
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.common.bean.FastBeanProperty;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
@@ -63,6 +64,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -163,8 +165,8 @@ public class EntityMetadata {
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
         boolean tableEntity = EasyStringUtil.isNotBlank(tableName);
-        this.dataReader = tableEntity? EmptyDataReader.EMPTY :null;
-        int columnIndex=0;
+        this.dataReader = tableEntity ? EmptyDataReader.EMPTY : null;
+        int columnIndex = 0;
         for (Field field : allFields) {
             String property = EasyStringUtil.toLowerCaseFirstOne(field.getName());
             if (Modifier.isStatic(field.getModifiers()) || ignoreProperties.contains(property)) {
@@ -175,6 +177,8 @@ public class EntityMetadata {
             if (propertyDescriptor == null) {
                 continue;
             }
+            Type genericType = field.getGenericType();
+            FastBeanProperty fastBeanProperty = new FastBeanProperty(isGenericType(genericType), propertyDescriptor);
             ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
             if (columnIgnore != null) {
                 continue;
@@ -184,14 +188,14 @@ public class EntityMetadata {
                 String selfProperty = tableEntity ? navigate.selfProperty() : null;
                 String targetProperty = tableEntity ? navigate.targetProperty() : null;
                 RelationTypeEnum relationType = navigate.value();
-                Class<?> navigateType = getNavigateType(relationType, field, propertyDescriptor);
+                Class<?> navigateType = getNavigateType(relationType, field, fastBeanProperty);
                 if (navigateType == null) {
                     throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");
                 }
 
-                Property<Object, ?> beanGetter = fastBean.getBeanGetter(propertyDescriptor);
-                PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(propertyDescriptor);
-                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, propertyDescriptor.getPropertyType(), navigateType, relationType, selfProperty, targetProperty, beanGetter, beanSetter);
+                Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
+                PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
+                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty, beanGetter, beanSetter);
 
                 if (tableEntity) {
                     if (RelationTypeEnum.ManyToMany == relationType) {
@@ -255,7 +259,7 @@ public class EntityMetadata {
                     if (generatedKey) {
                         generatedKeyColumns.add(columnName);
                         Class<? extends GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorClass = column.generatedSQLColumnGenerator();
-                        if(!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class,generatedKeySQLColumnGeneratorClass)){
+                        if (!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class, generatedKeySQLColumnGeneratorClass)) {
                             GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator = configuration.getGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGeneratorClass);
                             if (generatedKeySQLColumnGenerator == null) {
                                 throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown");
@@ -263,9 +267,9 @@ public class EntityMetadata {
                             columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
                         }
                         //兼容代码后续版本删除
-                        else{
+                        else {
                             Class<? extends GeneratedKeySQLColumnGenerator> incrementSQLColumnGeneratorClass = column.incrementSQLColumnGenerator();
-                            if(!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class,incrementSQLColumnGeneratorClass)){
+                            if (!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class, incrementSQLColumnGeneratorClass)) {
                                 GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator = configuration.getGeneratedKeySQLColumnGenerator(incrementSQLColumnGeneratorClass);
                                 if (generatedKeySQLColumnGenerator == null) {
                                     throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown");
@@ -291,7 +295,7 @@ public class EntityMetadata {
                         columnValueUpdateAtomicTrack = true;
                     }
                     Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = column.sqlConversion();
-                    if(!Objects.equals(DefaultColumnValueSQLConverter.class,columnValueSQLConverterClass)){
+                    if (!Objects.equals(DefaultColumnValueSQLConverter.class, columnValueSQLConverterClass)) {
                         //配置列值数据库转换器
                         ColumnValueSQLConverter columnValueSQLConverter = configuration.getColumnValueSQLConverter(columnValueSQLConverterClass);
                         if (columnValueSQLConverter == null) {
@@ -360,17 +364,17 @@ public class EntityMetadata {
                     logicDelCount++;
                 }
             }
-            Property<Object, ?> beanGetter = fastBean.getBeanGetter(propertyDescriptor);
+            Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
             columnOption.setGetterCaller(beanGetter);
-            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(propertyDescriptor);
+            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
             columnOption.setSetterCaller(beanSetter);
             JdbcTypeHandler jdbcTypeHandler = jdbcTypeHandlerManager.getHandler(columnOption.getProperty().getPropertyType());
             columnOption.setJdbcTypeHandler(jdbcTypeHandler);
             ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
             property2ColumnMap.put(property, columnMetadata);
             column2PropertyMap.put(columnName, columnMetadata);
-            if(tableEntity){
-                dataReader=new BeanDataReader(dataReader,new PropertyDataReader(new EntityResultColumnMetadata(columnIndex,columnMetadata)));
+            if (tableEntity) {
+                dataReader = new BeanDataReader(dataReader, new PropertyDataReader(new EntityResultColumnMetadata(columnIndex, columnMetadata)));
             }
             columnIndex++;
         }
@@ -390,7 +394,24 @@ public class EntityMetadata {
         }
     }
 
-    private Class<?> getNavigateType(RelationTypeEnum relationType, Field field, PropertyDescriptor propertyDescriptor) {
+    /**
+     * 检查是否是泛型类型
+     * @param type
+     * @return
+     */
+    private static boolean isGenericType(Type type) {
+        if (type instanceof TypeVariable) {
+            return true;
+        } else if (type instanceof Class) {
+            Class<?> clazz = (Class<?>) type;
+            if (clazz.getTypeParameters().length > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Class<?> getNavigateType(RelationTypeEnum relationType, Field field, FastBeanProperty fastBeanProperty) {
 
         if (relationType.equals(RelationTypeEnum.OneToMany) || relationType.equals(RelationTypeEnum.ManyToMany)) {
             Type genericType = field.getGenericType();
@@ -408,7 +429,7 @@ public class EntityMetadata {
             }
             return null;
         }
-        return propertyDescriptor.getPropertyType();
+        return fastBeanProperty.getPropertyType();
     }
 
     private void initSharding(QueryConfiguration configuration, Class<? extends ShardingInitializer> initializer) {

@@ -1,6 +1,7 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
+import com.easy.query.core.common.bean.FastBeanProperty;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -61,7 +62,7 @@ public class EasyClassUtil {
         return null;
     }
 
-    public static Method getWriteMethodNotNull(PropertyDescriptor prop, Class<?> type){
+    public static Method getWriteMethodNotNull(FastBeanProperty prop, Class<?> type){
         Method writeMethod = getWriteMethodOrNull(prop, type);
         if(writeMethod==null){
             throw new EasyQueryException(EasyClassUtil.getSimpleName(type)+"."+prop.getName()+" cant get write method.");
@@ -76,7 +77,7 @@ public class EasyClassUtil {
      * @param type
      * @return
      */
-    public static Method getWriteMethodOrNull(PropertyDescriptor prop, Class<?> type) {
+    public static Method getWriteMethodOrNull(FastBeanProperty prop, Class<?> type) {
         Method writeMethod = prop.getWriteMethod();
         //当使用lombok等链式编程方式时 有返回值的setter不被认为是writeMethod，需要自己去获取
         //lombok.experimental.Accessors (chain = true)注解影响

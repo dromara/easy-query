@@ -10,6 +10,7 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.common.bean.FastBean;
+import com.easy.query.core.common.bean.FastBeanProperty;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -162,11 +163,11 @@ public class Main {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull("title");
         BlogEntity blog = new BlogEntity();
         FastBean beanFastSetter = EasyBeanUtil.getFastBean(BlogEntity.class);
-        PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(columnMetadata.getProperty());
+        PropertySetterCaller<Object> beanSetter = beanFastSetter.getBeanSetter(new FastBeanProperty(false,columnMetadata.getProperty()));
         beanSetter.call(blog,"123");
         {
             long start = System.currentTimeMillis();
-            PropertySetterCaller<Object> beanSetter1 = beanFastSetter.getBeanSetter(columnMetadata.getProperty());
+            PropertySetterCaller<Object> beanSetter1 = beanFastSetter.getBeanSetter(new FastBeanProperty(false,columnMetadata.getProperty()));
             for (int i = 0; i < 10000000; i++) {
                beanSetter1.call(blog,"123");
             }
@@ -177,14 +178,14 @@ public class Main {
         {
 
             PropertyDescriptor property = columnMetadata.getProperty();
-            Method writeMethodOrNull = EasyClassUtil.getWriteMethodOrNull(property, BlogEntity.class);
+            Method writeMethodOrNull = EasyClassUtil.getWriteMethodOrNull(new FastBeanProperty(false,property), BlogEntity.class);
             callSetter(blog,writeMethodOrNull,property,"123");
         }
         {
             long start = System.currentTimeMillis();
 
             PropertyDescriptor property = columnMetadata.getProperty();
-            Method writeMethodOrNull = EasyClassUtil.getWriteMethodOrNull(property, BlogEntity.class);
+            Method writeMethodOrNull = EasyClassUtil.getWriteMethodOrNull(new FastBeanProperty(false,property), BlogEntity.class);
             writeMethodOrNull.setAccessible(true);
             for (int i = 0; i < 10000000; i++) {
                 callSetter(blog,writeMethodOrNull,property,"123");

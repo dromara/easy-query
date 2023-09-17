@@ -6,7 +6,6 @@ import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.PropertyVoidSetter;
 import com.easy.query.core.util.EasyClassUtil;
 
-import java.beans.PropertyDescriptor;
 import java.lang.invoke.CallSite;
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
@@ -40,12 +39,12 @@ public class FastBean {
 //        return getBeanGetter(prop.getName(),prop.getPropertyType());
 //    }
 
-    public Property<Object, ?> getBeanGetter(PropertyDescriptor prop) {
+    public Property<Object, ?> getBeanGetter(FastBeanProperty prop) {
         return getLambdaProperty(prop);
 //        return EasyMapUtil.computeIfAbsent(propertyGetterCache, prop.getName(), k -> getLambdaProperty(prop));
     }
 
-    private Property<Object, ?> getLambdaProperty(PropertyDescriptor prop) {
+    private Property<Object, ?> getLambdaProperty(FastBeanProperty prop) {
         Class<?> propertyType = prop.getPropertyType();
         Method readMethod = prop.getReadMethod();
         String getFunName = readMethod.getName();
@@ -66,13 +65,14 @@ public class FastBean {
         }
     }
 
-    public PropertySetterCaller<Object> getBeanSetter(PropertyDescriptor prop) {
+    public PropertySetterCaller<Object> getBeanSetter(FastBeanProperty prop) {
         return getLambdaPropertySetter(prop);
 //        return EasyMapUtil.computeIfAbsent(propertySetterCache,prop.getName(), key -> getLambdaPropertySetter(prop));
     }
 
-    private PropertySetterCaller<Object> getLambdaPropertySetter(PropertyDescriptor prop) {
+    private PropertySetterCaller<Object> getLambdaPropertySetter(FastBeanProperty prop) {
         Class<?> propertyType = prop.getPropertyType();
+
         MethodHandles.Lookup caller = MethodHandles.lookup();
         Method writeMethod = EasyClassUtil.getWriteMethodNotNull(prop, beanClass);
         MethodType setter = MethodType.methodType(writeMethod.getReturnType(), propertyType);
