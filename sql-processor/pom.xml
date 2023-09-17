@@ -6,10 +6,11 @@
     <parent>
         <groupId>com.easy-query</groupId>
         <artifactId>easy-query-all</artifactId>
-        <version>1.4.23-beta1</version>
+        <version>1.4.23-beta2</version>
     </parent>
 
     <artifactId>sql-processor</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
