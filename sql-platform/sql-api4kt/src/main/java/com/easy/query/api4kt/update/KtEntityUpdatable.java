@@ -1,9 +1,9 @@
 package com.easy.query.api4kt.update;
 
 import com.easy.query.api4kt.sql.SQLKtColumnConfigurer;
-import com.easy.query.api4kt.sql.SQLKtColumnSetSelector;
+import com.easy.query.api4kt.sql.SQLKtColumnOnlySelector;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnConfigurerImpl;
-import com.easy.query.api4kt.sql.impl.SQLKtColumnSetSelectorImpl;
+import com.easy.query.api4kt.sql.impl.SQLKtColumnOnlySelectorImpl;
 import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
@@ -25,45 +25,45 @@ public interface KtEntityUpdatable<T> extends Updatable<T, KtEntityUpdatable<T>>
         return this;
     }
 
-    default KtEntityUpdatable<T> setColumns(SQLExpression1<SQLKtColumnSetSelector<T>> columnSelectorExpression) {
+    default KtEntityUpdatable<T> setColumns(SQLExpression1<SQLKtColumnOnlySelector<T>> columnSelectorExpression) {
         getClientUpdate().setColumns(selector -> {
-            columnSelectorExpression.apply(new SQLKtColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLKtColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }
 
-    default KtEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<SQLKtColumnSetSelector<T>> columnSelectorExpression) {
+    default KtEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<SQLKtColumnOnlySelector<T>> columnSelectorExpression) {
         getClientUpdate().setColumns(condition, selector -> {
-            columnSelectorExpression.apply(new SQLKtColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLKtColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }
 
-    default KtEntityUpdatable<T> setIgnoreColumns(SQLExpression1<SQLKtColumnSetSelector<T>> columnSelectorExpression) {
+    default KtEntityUpdatable<T> setIgnoreColumns(SQLExpression1<SQLKtColumnOnlySelector<T>> columnSelectorExpression) {
         getClientUpdate().setIgnoreColumns(selector -> {
-            columnSelectorExpression.apply(new SQLKtColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLKtColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }
 
-    default KtEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<SQLKtColumnSetSelector<T>> columnSelectorExpression) {
+    default KtEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<SQLKtColumnOnlySelector<T>> columnSelectorExpression) {
 
         getClientUpdate().setIgnoreColumns(condition, selector -> {
-            columnSelectorExpression.apply(new SQLKtColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLKtColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }
 
-    default KtEntityUpdatable<T> whereColumns(SQLExpression1<SQLKtColumnSetSelector<T>> columnSelectorExpression) {
+    default KtEntityUpdatable<T> whereColumns(SQLExpression1<SQLKtColumnOnlySelector<T>> columnSelectorExpression) {
         getClientUpdate().whereColumns(selector -> {
-            columnSelectorExpression.apply(new SQLKtColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLKtColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }
 
-    default KtEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<SQLKtColumnSetSelector<T>> columnSelectorExpression) {
+    default KtEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<SQLKtColumnOnlySelector<T>> columnSelectorExpression) {
         getClientUpdate().whereColumns(condition, selector -> {
-            columnSelectorExpression.apply(new SQLKtColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLKtColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }

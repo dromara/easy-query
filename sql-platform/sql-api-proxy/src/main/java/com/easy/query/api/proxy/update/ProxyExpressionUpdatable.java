@@ -1,12 +1,12 @@
 package com.easy.query.api.proxy.update;
 
-import com.easy.query.api.proxy.sql.ProxyFilter;
-import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
+import com.easy.query.api.proxy.sql.expression.MultiProxyFilter;
+import com.easy.query.api.proxy.sql.expression.impl.MultiProxyFilterImpl;
 import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -138,15 +138,15 @@ public interface ProxyExpressionUpdatable<TProxy extends ProxyEntity<TProxy, T>,
     }
     // endregion
 
-    default ProxyExpressionUpdatable<TProxy,T> where(SQLExpression2<ProxyFilter,TProxy> whereExpression) {
+    default ProxyExpressionUpdatable<TProxy,T> where(SQLExpression1<MultiProxyFilter<TProxy>> whereExpression) {
         return where(true,whereExpression);
     }
 
-    default ProxyExpressionUpdatable<TProxy,T> where(boolean condition, SQLExpression2<ProxyFilter,TProxy> whereExpression) {
+    default ProxyExpressionUpdatable<TProxy,T> where(boolean condition, SQLExpression1<MultiProxyFilter<TProxy>> whereExpression) {
         if(condition){
 
             getClientUpdate().where(where -> {
-                whereExpression.apply(new ProxyFilterImpl(where.getFilter()),getProxy());
+                whereExpression.apply(new MultiProxyFilterImpl<>(getProxy(),where.getFilter()));
             });
         }
         return this;

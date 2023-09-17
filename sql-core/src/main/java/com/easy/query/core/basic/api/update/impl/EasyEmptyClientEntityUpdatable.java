@@ -5,7 +5,8 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
-import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
+import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 
 import java.util.function.Function;
 
@@ -81,17 +82,17 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     }
 
     @Override
-    public ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnUpdateSetSelector<T>> columnSelectorExpression) {
+    public ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
         return this;
     }
 
     @Override
-    public ClientEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<ColumnUpdateSetSelector<T>> columnSelectorExpression) {
+    public ClientEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
         return this;
     }
 
     @Override
-    public ClientEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<ColumnUpdateSetSelector<T>> columnSelectorExpression) {
+    public ClientEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
         return this;
     }
 
@@ -118,5 +119,10 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     @Override
     public ClientEntityUpdatable<T> noVersionIgnore() {
         return this;
+    }
+
+    @Override
+    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
+        throw new NullPointerException("empty entity can not get EntityUpdateExpressionBuilder");
     }
 }

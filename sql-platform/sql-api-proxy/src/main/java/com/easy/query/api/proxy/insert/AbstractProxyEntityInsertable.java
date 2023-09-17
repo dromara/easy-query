@@ -1,14 +1,10 @@
 package com.easy.query.api.proxy.insert;
 
-import com.easy.query.api.proxy.sql.ProxyUpdateSetSelector;
-import com.easy.query.api.proxy.sql.impl.ProxyUpdateSetSelectorImpl;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLColumn;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -25,6 +21,11 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyOnyEntity
     public AbstractProxyEntityInsertable(ClientInsertable<T> clientInsertable) {
 
         this.clientInsertable = clientInsertable;
+    }
+
+    @Override
+    public <TProxy extends ProxyEntity<TProxy, T>> ProxyEntityInsertable<TProxy, T> useProxy(TProxy proxy) {
+        return new EasyProxyEntityInsertable<>(proxy,clientInsertable);
     }
 
     @Override
@@ -102,11 +103,6 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyOnyEntity
         clientInsertable.onDuplicateKeyIgnore();
         return this;
     }
-    @Override
-    public ProxyOnyEntityInsertable<T> onDuplicateKeyUpdate() {
-        clientInsertable.onDuplicateKeyUpdate();
-        return this;
-    }
 
     @Override
     public String toSQL(Object entity) {
@@ -116,42 +112,6 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyOnyEntity
     @Override
     public String toSQL(Object entity, ToSQLContext toSQLContext) {
         return clientInsertable.toSQL(entity,toSQLContext);
-    }
-
-    @Override
-    public ProxyOnyEntityInsertable<T> onConflictDoUpdate() {
-        clientInsertable.onConflictDoUpdate();
-        return this;
-    }
-
-    @Override
-    public <TProxy extends ProxyEntity<TProxy,T>> ProxyOnyEntityInsertable<T> onConflictDoUpdate(TProxy tProxy,SQLColumn<TProxy,?> constraintProperty) {
-        clientInsertable.onConflictDoUpdate(constraintProperty.value());
-        return this;
-    }
-
-    @Override
-    public <TProxy extends ProxyEntity<TProxy,T>> ProxyOnyEntityInsertable<T> onConflictDoUpdate(TProxy tProxy,SQLColumn<TProxy,?> constraintProperty, SQLExpression1<ProxyUpdateSetSelector> setColumnSelector) {
-        clientInsertable.onConflictDoUpdate(constraintProperty.value(),setSelector->{
-            setColumnSelector.apply(new ProxyUpdateSetSelectorImpl(setSelector.getUpdateSetSelector()));
-        });
-        return this;
-    }
-
-    @Override
-    public ProxyOnyEntityInsertable<T> onConflictDoUpdate(SQLExpression1<ProxyUpdateSetSelector> setColumnSelector) {
-        clientInsertable.onConflictDoUpdate(setSelector->{
-            setColumnSelector.apply(new ProxyUpdateSetSelectorImpl(setSelector.getUpdateSetSelector()));
-        });
-        return this;
-    }
-
-    @Override
-    public ProxyOnyEntityInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ProxyUpdateSetSelector> setColumnSelector) {
-        clientInsertable.onDuplicateKeyUpdate(setSelector->{
-            setColumnSelector.apply(new ProxyUpdateSetSelectorImpl(setSelector.getUpdateSetSelector()));
-        });
-        return this;
     }
 
     @Override

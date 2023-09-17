@@ -12,12 +12,12 @@ import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.builder.impl.ConfigurerImpl;
-import com.easy.query.core.expression.builder.impl.UpdateSetSelectorImpl;
+import com.easy.query.core.expression.builder.impl.OnlySelectorImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
-import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnConfigurerImpl;
-import com.easy.query.core.expression.parser.core.base.impl.ColumnUpdateSetSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnOnlySelectorImpl;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -177,13 +177,13 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate(String constraintProperty, SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
+    public ClientInsertable<T> onConflictDoUpdate(String constraintProperty, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         doOnDuplicateKeyUpdate(constraintProperty, setColumnSelector);
         return this;
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate(SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
+    public ClientInsertable<T> onConflictDoUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         doOnDuplicateKeyUpdate(null, setColumnSelector);
         return this;
     }
@@ -195,17 +195,17 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
+    public ClientInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         doOnDuplicateKeyUpdate(null, setColumnSelector);
         return this;
     }
 
-    private void doOnDuplicateKeyUpdate(String constraintProperty, SQLExpression1<ColumnUpdateSetSelector<T>> setColumnSelector) {
+    private void doOnDuplicateKeyUpdate(String constraintProperty, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         insertOrUpdateBehavior();
         entityInsertExpressionBuilder.setDuplicateKey(constraintProperty);
         entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns().clear();
         if (setColumnSelector != null) {
-            ColumnUpdateSetSelectorImpl<T> columnUpdateSetSelector = new ColumnUpdateSetSelectorImpl<>(entityTableExpressionBuilder.getEntityTable(), new UpdateSetSelectorImpl(entityInsertExpressionBuilder.getRuntimeContext(), entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns()));
+            ColumnOnlySelectorImpl<T> columnUpdateSetSelector = new ColumnOnlySelectorImpl<>(entityTableExpressionBuilder.getEntityTable(), new OnlySelectorImpl(entityInsertExpressionBuilder.getRuntimeContext(),entityInsertExpressionBuilder.getExpressionContext(), entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns()));
             setColumnSelector.apply(columnUpdateSetSelector);
         }
 

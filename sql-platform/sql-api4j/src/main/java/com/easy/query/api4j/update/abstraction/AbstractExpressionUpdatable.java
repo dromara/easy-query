@@ -2,6 +2,7 @@ package com.easy.query.api4j.update.abstraction;
 
 import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
+import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 
 import java.util.function.Function;
 
@@ -16,6 +17,11 @@ public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdata
 
     public AbstractExpressionUpdatable(ClientExpressionUpdatable<T> expressionObjectUpdatable) {
         this.clientExpressionUpdatable = expressionObjectUpdatable;
+    }
+
+    @Override
+    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
+        return clientExpressionUpdatable.getEntityUpdateExpressionBuilder();
     }
 
     @Override

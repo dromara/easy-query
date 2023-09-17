@@ -1,7 +1,6 @@
 package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.SQLColumn;
 
 import java.util.Objects;
@@ -14,11 +13,11 @@ import java.util.Objects;
  */
 public class SQLColumnImpl<TProxy,TProperty> implements SQLColumn<TProxy,TProperty> {
     private final TableAvailable table;
-    private final PropColumn propColumn;
+    private final String property;
 
-    public SQLColumnImpl(TableAvailable table, PropColumn propColumn){
+    public SQLColumnImpl(TableAvailable table, String property){
         this.table = table;
-        this.propColumn = propColumn;
+        this.property = property;
     }
 
     @Override
@@ -29,7 +28,7 @@ public class SQLColumnImpl<TProxy,TProperty> implements SQLColumn<TProxy,TProper
 
     @Override
     public String value() {
-        return propColumn.value();
+        return property;
     }
 //
 //    @Override

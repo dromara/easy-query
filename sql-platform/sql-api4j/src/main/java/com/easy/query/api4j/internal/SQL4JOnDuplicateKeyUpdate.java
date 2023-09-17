@@ -1,6 +1,6 @@
 package com.easy.query.api4j.internal;
 
-import com.easy.query.api4j.sql.SQLColumnSetSelector;
+import com.easy.query.api4j.sql.SQLColumnOnlySelector;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 
@@ -26,7 +26,7 @@ public interface SQL4JOnDuplicateKeyUpdate<T, TChain> {
      * @param setColumnSelector selector columns
      * @return
      */
-    TChain onConflictDoUpdate(Property<T,?> constraintProperty, SQLExpression1<SQLColumnSetSelector<T>> setColumnSelector);
+    TChain onConflictDoUpdate(Property<T,?> constraintProperty, SQLExpression1<SQLColumnOnlySelector<T>> setColumnSelector);
 
     TChain onDuplicateKeyUpdate();
 
@@ -35,5 +35,5 @@ public interface SQL4JOnDuplicateKeyUpdate<T, TChain> {
      * @param setColumnSelector
      * @return
      */
-    TChain onDuplicateKeyUpdate(SQLExpression1<SQLColumnSetSelector<T>> setColumnSelector);
+    TChain onDuplicateKeyUpdate(SQLExpression1<SQLColumnOnlySelector<T>> setColumnSelector);
 }

@@ -15,8 +15,8 @@ import java.util.Objects;
 public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ProxyEntity<TProxy,TEntity> {
 
     protected TableAvailable table;
-    public <TProperty> SQLColumn<TProxy,TProperty> get(PropColumn propColumn){
-        return new SQLColumnImpl<>(table,propColumn);
+    public <TProperty> SQLColumn<TProxy,TProperty> get(String property){
+        return new SQLColumnImpl<>(table,property);
     }
 
     @Override

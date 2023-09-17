@@ -1,9 +1,9 @@
 package com.easy.query.api4j.insert;
 
 import com.easy.query.api4j.sql.SQLColumnConfigurer;
-import com.easy.query.api4j.sql.SQLColumnSetSelector;
+import com.easy.query.api4j.sql.SQLColumnOnlySelector;
 import com.easy.query.api4j.sql.impl.SQLColumnConfigurerImpl;
-import com.easy.query.api4j.sql.impl.SQLColumnSetSelectorImpl;
+import com.easy.query.api4j.sql.impl.SQLColumnOnlySelectorImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -134,18 +134,18 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
     }
 
     @Override
-    public EntityInsertable<T> onConflictDoUpdate(Property<T, ?> constraintProperty, SQLExpression1<SQLColumnSetSelector<T>> setColumnSelector) {
+    public EntityInsertable<T> onConflictDoUpdate(Property<T, ?> constraintProperty, SQLExpression1<SQLColumnOnlySelector<T>> setColumnSelector) {
         clientInsertable.onConflictDoUpdate(EasyLambdaUtil.getPropertyName(constraintProperty),setSelector->{
-            setColumnSelector.apply(new SQLColumnSetSelectorImpl<>(setSelector));
+            setColumnSelector.apply(new SQLColumnOnlySelectorImpl<>(setSelector));
         });
         return this;
     }
 
 
     @Override
-    public EntityInsertable<T> onDuplicateKeyUpdate(SQLExpression1<SQLColumnSetSelector<T>> setColumnSelector) {
+    public EntityInsertable<T> onDuplicateKeyUpdate(SQLExpression1<SQLColumnOnlySelector<T>> setColumnSelector) {
         clientInsertable.onDuplicateKeyUpdate(setSelector->{
-            setColumnSelector.apply(new SQLColumnSetSelectorImpl<>(setSelector));
+            setColumnSelector.apply(new SQLColumnOnlySelectorImpl<>(setSelector));
         });
         return this;
     }

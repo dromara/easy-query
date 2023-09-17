@@ -59,9 +59,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             "\n" +
             "import com.easy.query.core.expression.parser.core.available.TableAvailable;\n" +
             "import com.easy.query.core.proxy.AbstractProxyEntity;\n" +
-            "import com.easy.query.core.proxy.PropColumn;\n" +
             "import com.easy.query.core.proxy.SQLColumn;\n" +
-            "import com.easy.query.core.proxy.impl.SQLPropColumn;\n" +
             "import @entityFullClass;\n" +
             "\n" +
             "/**\n" +
@@ -72,7 +70,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             "public class @entityClassProxy extends AbstractProxyEntity<@entityClassProxy, @entityClass> {\n" +
             "\n" +
             "    private static final Class<@entityClass> entityClass = @entityClass.class;\n" +
-            "    @staticFieldContent" +
+//            "    @staticFieldContent" +
             "    public static @entityClassProxy createTable() {\n" +
             "        return new @entityClassProxy();\n" +
             "    }\n" +
@@ -92,10 +90,10 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
     private static final String FIELD_TEMPLATE = "\n" +
             "    @comment\n" +
             "    public SQLColumn<@entityClassProxy,@propertyType> @property(){\n" +
-            "        return get(@property);\n" +
+            "        return get(\"@property\");\n" +
             "    }";
-    private static final String STATIC_FIELD_TEMPLATE = "    @comment\n"
-            + "    public static final PropColumn @property = new SQLPropColumn(\"@property\");";
+//    private static final String STATIC_FIELD_TEMPLATE = "    @comment\n"
+//            + "    public static final PropColumn @property = new SQLPropColumn(\"@property\");";
     private static final String FIELD_DOC_COMMENT_TEMPLATE = "\n" +
             "    /**\n" +
             "     * {@link @entityClass#@property}\n" +
@@ -168,14 +166,14 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 String realGenPackage = guessTablesPackage(entityFullName);
                 String entityClassName = entityClassElement.getSimpleName().toString();
                 StringBuilder fieldContent = new StringBuilder();
-                StringBuilder staticFieldContent = new StringBuilder();
+//                StringBuilder staticFieldContent = new StringBuilder();
                 TypeElement classElement = (TypeElement) entityClassElement;
                 do {
-                    fillPropertyAndColumns(fieldContent, staticFieldContent, entityClassName, classElement, ignoreProperties);
+                    fillPropertyAndColumns(fieldContent,entityClassName, classElement, ignoreProperties);
                     classElement = (TypeElement) typeUtils.asElement(classElement.getSuperclass());
                 } while (classElement != null);
 
-                String content = buildTablesClass(entityClassName, proxyInstanceName, realGenPackage, entityFullName, fieldContent.toString(), staticFieldContent.toString());
+                String content = buildTablesClass(entityClassName, proxyInstanceName, realGenPackage, entityFullName, fieldContent.toString());
                 genClass(basePath, realGenPackage, proxyEntityName + proxyClassSuffix, content);
 
             });
@@ -325,13 +323,13 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         }
     }
 
-    private String buildTablesClass(String entityClass, String proxyInstanceName, String realGenPackage, String entityFullName, String fieldContent, String staticFieldContent) {
+    private String buildTablesClass(String entityClass, String proxyInstanceName, String realGenPackage, String entityFullName, String fieldContent) {
 
         String tableDef = PROXY_TEMPLATE.replace("@package", realGenPackage)
                 .replace("@entityFullClass", entityFullName)
                 .replace("@proxyInstanceName", proxyInstanceName)
                 .replace("@fieldContent", fieldContent)
-                .replace("@staticFieldContent", staticFieldContent)
+//                .replace("@staticFieldContent", staticFieldContent)
                 .replace("@entityClass", entityClass);
 
         return tableDef;
@@ -347,7 +345,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         return guessPackage.toString();
     }
 
-    private void fillPropertyAndColumns(StringBuilder filedContent, StringBuilder staticFieldContent, String entityClass, TypeElement classElement, Set<String> ignoreProperties) {
+    private void fillPropertyAndColumns(StringBuilder filedContent, String entityClass, TypeElement classElement, Set<String> ignoreProperties) {
         for (Element fieldElement : classElement.getEnclosedElements()) {
 
             //all fields
@@ -390,10 +388,10 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                         .replace("@propertyType", fieldGenericType)
                         .replace("@property", propertyName);
                 filedContent.append(fieldString);
-                String staticFieldString = STATIC_FIELD_TEMPLATE
-                        .replace("@comment", fieldComment)
-                        .replace("@property", propertyName);
-                staticFieldContent.append(staticFieldString);
+//                String staticFieldString = STATIC_FIELD_TEMPLATE
+//                        .replace("@comment", fieldComment)
+//                        .replace("@property", propertyName);
+//                staticFieldContent.append(staticFieldString);
             }
         }
     }

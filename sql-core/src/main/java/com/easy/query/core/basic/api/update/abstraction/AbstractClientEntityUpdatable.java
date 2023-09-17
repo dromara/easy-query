@@ -17,12 +17,12 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.builder.impl.ConfigurerImpl;
-import com.easy.query.core.expression.builder.impl.UpdateSetSelectorImpl;
+import com.easy.query.core.expression.builder.impl.OnlySelectorImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
-import com.easy.query.core.expression.parser.core.base.ColumnUpdateSetSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnConfigurerImpl;
-import com.easy.query.core.expression.parser.core.base.impl.ColumnUpdateSetSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnOnlySelectorImpl;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -48,7 +48,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     protected final EntityMetadata entityMetadata;
     protected final EntityUpdateExpressionBuilder entityUpdateExpressionBuilder;
 
-    public AbstractClientEntityUpdatable(Class<T> clazz,Collection<T> entities, EntityUpdateExpressionBuilder entityUpdateExpression) {
+    public AbstractClientEntityUpdatable(Class<T> clazz, Collection<T> entities, EntityUpdateExpressionBuilder entityUpdateExpression) {
         super(entityUpdateExpression);
         if (entities == null || entities.isEmpty()) {
             throw new EasyQueryException("不支持空对象的update");
@@ -61,6 +61,11 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
         entityMetadata.checkTable();
         table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
         this.entityUpdateExpressionBuilder.addSQLEntityTableExpression(table);
+    }
+
+    @Override
+    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
+        return entityUpdateExpressionBuilder;
     }
 
     @Override
@@ -123,30 +128,30 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     }
 
     @Override
-    public ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnUpdateSetSelector<T>>
+    public ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnOnlySelector<T>>
             columnSelectorExpression) {
         if (condition) {
-            ColumnUpdateSetSelectorImpl<T> columnSelector = new ColumnUpdateSetSelectorImpl<>(table.getEntityTable(), new UpdateSetSelectorImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getSetColumns()));
+            ColumnOnlySelectorImpl<T> columnSelector = new ColumnOnlySelectorImpl<>(table.getEntityTable(), new OnlySelectorImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getSetColumns()));
             columnSelectorExpression.apply(columnSelector);
         }
         return this;
     }
 
     @Override
-    public ClientEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<ColumnUpdateSetSelector<T>>
+    public ClientEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<ColumnOnlySelector<T>>
             columnSelectorExpression) {
         if (condition) {
-            ColumnUpdateSetSelectorImpl<T> columnSelector = new ColumnUpdateSetSelectorImpl<>(table.getEntityTable(), new UpdateSetSelectorImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getSetIgnoreColumns()));
+            ColumnOnlySelectorImpl<T> columnSelector = new ColumnOnlySelectorImpl<>(table.getEntityTable(), new OnlySelectorImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getSetIgnoreColumns()));
             columnSelectorExpression.apply(columnSelector);
         }
         return this;
     }
 
     @Override
-    public ClientEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<ColumnUpdateSetSelector<T>>
+    public ClientEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<ColumnOnlySelector<T>>
             columnSelectorExpression) {
         if (condition) {
-            ColumnUpdateSetSelectorImpl<T> columnSelector = new ColumnUpdateSetSelectorImpl<>(table.getEntityTable(), new UpdateSetSelectorImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getWhereColumns()));
+            ColumnOnlySelectorImpl<T> columnSelector = new ColumnOnlySelectorImpl<>(table.getEntityTable(), new OnlySelectorImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhereColumns()));
             columnSelectorExpression.apply(columnSelector);
         }
         return this;

@@ -3,6 +3,7 @@ package com.easy.query.api.proxy.update.abstraction;
 import com.easy.query.api.proxy.update.ProxyOnlyEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 
 import java.util.function.Function;
 
@@ -20,6 +21,12 @@ public abstract class AbstractProxyOnlyEntityUpdatable<T> implements ProxyOnlyEn
 
         this.clientEntityUpdatable = clientEntityUpdatable;
     }
+
+    @Override
+    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
+        return clientEntityUpdatable.getEntityUpdateExpressionBuilder();
+    }
+
     @Override
     public ClientEntityUpdatable<T> getClientUpdate() {
         return clientEntityUpdatable;

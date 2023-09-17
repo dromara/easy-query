@@ -1,9 +1,9 @@
 package com.easy.query.api4j.update;
 
 import com.easy.query.api4j.sql.SQLColumnConfigurer;
-import com.easy.query.api4j.sql.SQLColumnSetSelector;
+import com.easy.query.api4j.sql.SQLColumnOnlySelector;
 import com.easy.query.api4j.sql.impl.SQLColumnConfigurerImpl;
-import com.easy.query.api4j.sql.impl.SQLColumnSetSelectorImpl;
+import com.easy.query.api4j.sql.impl.SQLColumnOnlySelectorImpl;
 import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
@@ -31,44 +31,44 @@ public interface EntityUpdatable<T> extends Updatable<T, EntityUpdatable<T>>, SQ
      * @param columnSelectorExpression
      * @return
      */
-    default EntityUpdatable<T> setColumns(SQLExpression1<SQLColumnSetSelector<T>> columnSelectorExpression) {
+    default EntityUpdatable<T> setColumns(SQLExpression1<SQLColumnOnlySelector<T>> columnSelectorExpression) {
         getClientUpdate().setColumns(selector -> {
-            columnSelectorExpression.apply(new SQLColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }
 
-    default EntityUpdatable<T> setColumns(boolean condition, SQLExpression1<SQLColumnSetSelector<T>> columnSelectorExpression) {
+    default EntityUpdatable<T> setColumns(boolean condition, SQLExpression1<SQLColumnOnlySelector<T>> columnSelectorExpression) {
         getClientUpdate().setColumns(condition, selector -> {
-            columnSelectorExpression.apply(new SQLColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }
 
-    default EntityUpdatable<T> setIgnoreColumns(SQLExpression1<SQLColumnSetSelector<T>> columnSelectorExpression) {
+    default EntityUpdatable<T> setIgnoreColumns(SQLExpression1<SQLColumnOnlySelector<T>> columnSelectorExpression) {
         getClientUpdate().setIgnoreColumns(true, selector -> {
-            columnSelectorExpression.apply(new SQLColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }
 
-    default EntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<SQLColumnSetSelector<T>> columnSelectorExpression) {
+    default EntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<SQLColumnOnlySelector<T>> columnSelectorExpression) {
         getClientUpdate().setIgnoreColumns(condition, selector -> {
-            columnSelectorExpression.apply(new SQLColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }
 
-    default EntityUpdatable<T> whereColumns(SQLExpression1<SQLColumnSetSelector<T>> columnSelectorExpression) {
+    default EntityUpdatable<T> whereColumns(SQLExpression1<SQLColumnOnlySelector<T>> columnSelectorExpression) {
         getClientUpdate().whereColumns(selector -> {
-            columnSelectorExpression.apply(new SQLColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }
 
-    default EntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<SQLColumnSetSelector<T>> columnSelectorExpression) {
+    default EntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<SQLColumnOnlySelector<T>> columnSelectorExpression) {
         getClientUpdate().whereColumns(condition, selector -> {
-            columnSelectorExpression.apply(new SQLColumnSetSelectorImpl<>(selector));
+            columnSelectorExpression.apply(new SQLColumnOnlySelectorImpl<>(selector));
         });
         return this;
     }

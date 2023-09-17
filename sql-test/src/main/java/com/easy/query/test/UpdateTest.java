@@ -16,6 +16,7 @@ import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicLarge;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.TopicValueUpdateAtomicTrack;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,6 +40,16 @@ public class UpdateTest extends BaseTest {
                 .where(o -> o.eq(Topic::getId, "2"))
                 .executeRows();
         Assert.assertEquals(1, rows);
+    }
+
+    @Test
+    public void updateTest1_1() {
+        TopicProxy table = TopicProxy.createTable();
+        String sql = easyProxyQuery.updatable(table)
+                .set(table.stars(), 123)
+                .where(o -> o.eq(table.id(), "2"))
+                .toSQL();
+        Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `id` = ?",sql);
     }
 
     @Test
@@ -259,6 +270,15 @@ public class UpdateTest extends BaseTest {
                 .setColumns(o -> o.column(Topic::getCreateTime))
                 .whereColumns(o -> o.column(Topic::getStars)).executeRows();
         Assert.assertEquals(1, rows4);
+    }
+    @Test
+    public void updateTest12_1() {
+        Topic topic = easyQuery.queryable(Topic.class).whereById("15").firstOrNull();
+        Assert.assertNotNull(topic);
+        String sql = easyProxyQuery.updatable(topic)
+                .useProxy(TopicProxy.createTable())
+                .whereColumns(o -> o.columnKeys().column(o.t().stars())).toSQL(topic);
+        Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?",sql);
     }
 
 

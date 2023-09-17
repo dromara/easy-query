@@ -3,6 +3,7 @@ package com.easy.query.api.proxy.update.abstraction;
 import com.easy.query.api.proxy.update.ProxyEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.function.Function;
@@ -19,8 +20,13 @@ public abstract class AbstractProxyEntityUpdatable<TProxy extends ProxyEntity<TP
     protected final ClientEntityUpdatable<T> clientEntityUpdatable;
 
     public AbstractProxyEntityUpdatable(TProxy proxy, ClientEntityUpdatable<T> clientEntityUpdatable) {
-        this.proxy = proxy;
+        this.proxy = proxy.create(clientEntityUpdatable.getEntityUpdateExpressionBuilder().getTable(0).getEntityTable());
         this.clientEntityUpdatable = clientEntityUpdatable;
+    }
+
+    @Override
+    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
+        return clientEntityUpdatable.getEntityUpdateExpressionBuilder();
     }
 
     @Override

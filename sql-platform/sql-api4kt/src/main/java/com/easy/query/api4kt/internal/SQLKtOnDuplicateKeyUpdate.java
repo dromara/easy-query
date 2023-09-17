@@ -1,6 +1,6 @@
 package com.easy.query.api4kt.internal;
 
-import com.easy.query.api4kt.sql.SQLKtColumnSetSelector;
+import com.easy.query.api4kt.sql.SQLKtColumnOnlySelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import kotlin.reflect.KProperty1;
 
@@ -14,9 +14,9 @@ public interface SQLKtOnDuplicateKeyUpdate<T, TChain> {
     TChain onConflictDoUpdate();
 
     TChain onConflictDoUpdate(KProperty1<? super T,?> constraintProperty);
-    TChain onConflictDoUpdate(KProperty1<? super T,?> constraintProperty, SQLExpression1<SQLKtColumnSetSelector<T>> setColumnSelector);
+    TChain onConflictDoUpdate(KProperty1<? super T,?> constraintProperty, SQLExpression1<SQLKtColumnOnlySelector<T>> setColumnSelector);
 
     TChain onDuplicateKeyUpdate();
 
-    TChain onDuplicateKeyUpdate(SQLExpression1<SQLKtColumnSetSelector<T>> setColumnSelector);
+    TChain onDuplicateKeyUpdate(SQLExpression1<SQLKtColumnOnlySelector<T>> setColumnSelector);
 }
