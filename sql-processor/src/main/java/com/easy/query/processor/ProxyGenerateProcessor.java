@@ -16,6 +16,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.JavaFileObject;
@@ -41,21 +43,25 @@ import java.util.function.Consumer;
 @SupportedAnnotationTypes({"com.easy.query.core.annotation.EntityProxy"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ProxyGenerateProcessor extends AbstractProcessor {
-    private static final Map<String,String> TYPE_MAPPING=new HashMap<>();
-    static{
-        TYPE_MAPPING.put("float","java.lang.Float");
-        TYPE_MAPPING.put("double","java.lang.Double");
-        TYPE_MAPPING.put("short","java.lang.Short");
-        TYPE_MAPPING.put("int","java.lang.Integer");
-        TYPE_MAPPING.put("long","java.lang.Long");
-        TYPE_MAPPING.put("byte","java.lang.Byte");
-        TYPE_MAPPING.put("boolean","java.lang.Boolean");
+    private static final Map<String, String> TYPE_MAPPING = new HashMap<>();
+
+    static {
+        TYPE_MAPPING.put("float", "java.lang.Float");
+        TYPE_MAPPING.put("double", "java.lang.Double");
+        TYPE_MAPPING.put("short", "java.lang.Short");
+        TYPE_MAPPING.put("int", "java.lang.Integer");
+        TYPE_MAPPING.put("long", "java.lang.Long");
+        TYPE_MAPPING.put("byte", "java.lang.Byte");
+        TYPE_MAPPING.put("boolean", "java.lang.Boolean");
     }
+
     private static final String PROXY_TEMPLATE = "package @package;\n" +
             "\n" +
             "import com.easy.query.core.expression.parser.core.available.TableAvailable;\n" +
             "import com.easy.query.core.proxy.AbstractProxyEntity;\n" +
+            "import com.easy.query.core.proxy.PropColumn;\n" +
             "import com.easy.query.core.proxy.SQLColumn;\n" +
+            "import com.easy.query.core.proxy.impl.SQLPropColumn;\n" +
             "import @entityFullClass;\n" +
             "\n" +
             "/**\n" +
@@ -66,6 +72,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             "public class @entityClassProxy extends AbstractProxyEntity<@entityClassProxy, @entityClass> {\n" +
             "\n" +
             "    private static final Class<@entityClass> entityClass = @entityClass.class;\n" +
+            "    @staticFieldContent" +
             "    public static @entityClassProxy createTable() {\n" +
             "        return new @entityClassProxy();\n" +
             "    }\n" +
@@ -82,24 +89,26 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             "\n" +
             "}";
 
-    private static final String FIELD_TEMPLATE="\n" +
+    private static final String FIELD_TEMPLATE = "\n" +
             "    @comment\n" +
             "    public SQLColumn<@entityClassProxy,@propertyType> @property(){\n" +
-            "        return get(\"@property\");\n" +
+            "        return get(@property);\n" +
             "    }";
-
-    private static final String FIELD_DOC_COMMENT_TEMPLATE="\n" +
+    private static final String STATIC_FIELD_TEMPLATE = "    @comment\n"
+            + "    public static final PropColumn @property = new SQLPropColumn(\"@property\");";
+    private static final String FIELD_DOC_COMMENT_TEMPLATE = "\n" +
             "    /**\n" +
             "     * {@link @entityClass#@property}\n" +
             "     @comment\n" +
             "     */";
-    private static final String FIELD_EMPTY_DOC_COMMENT_TEMPLATE="\n" +
+    private static final String FIELD_EMPTY_DOC_COMMENT_TEMPLATE = "\n" +
             "    /**\n" +
             "     * {@link @entityClass#@property}\n" +
             "     */";
     private Filer filer;
     private Elements elementUtils;
     private Types typeUtils;
+
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
@@ -107,6 +116,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         this.elementUtils = processingEnv.getElementUtils();
         this.typeUtils = processingEnv.getTypeUtils();
     }
+
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (!roundEnv.processingOver()) {
@@ -145,12 +155,11 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
                 entityClassNameReference.set(entityClassElement.toString());
 
-                String proxyInstanceName = EasyStringUtil.isBlank(entityProxy.value())?defaultProxyInstanceName:entityProxy.value();
-                if(EasyStringUtil.isBlank(proxyInstanceName)){
-                    proxyInstanceName=buildName(entityClassNameReference+"Proxy","upperCase");
+                String proxyInstanceName = EasyStringUtil.isBlank(entityProxy.value()) ? defaultProxyInstanceName : entityProxy.value();
+                if (EasyStringUtil.isBlank(proxyInstanceName)) {
+                    proxyInstanceName = buildName(entityClassNameReference + "Proxy", "upperCase");
                 }
                 HashSet<String> ignoreProperties = new HashSet<>(Arrays.asList(entityProxy.ignoreProperties()));
-
 
 
                 //每一个 entity 生成一个独立的文件
@@ -159,22 +168,25 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 String realGenPackage = guessTablesPackage(entityFullName);
                 String entityClassName = entityClassElement.getSimpleName().toString();
                 StringBuilder fieldContent = new StringBuilder();
+                StringBuilder staticFieldContent = new StringBuilder();
                 TypeElement classElement = (TypeElement) entityClassElement;
                 do {
-                    fillPropertyAndColumns(fieldContent,entityClassName, classElement,ignoreProperties);
+                    fillPropertyAndColumns(fieldContent, staticFieldContent, entityClassName, classElement, ignoreProperties);
                     classElement = (TypeElement) typeUtils.asElement(classElement.getSuperclass());
                 } while (classElement != null);
 
-                String content = buildTablesClass(entityClassName, proxyInstanceName, realGenPackage, entityFullName,fieldContent.toString());
+                String content = buildTablesClass(entityClassName, proxyInstanceName, realGenPackage, entityFullName, fieldContent.toString(), staticFieldContent.toString());
                 genClass(basePath, realGenPackage, proxyEntityName + proxyClassSuffix, content);
 
             });
         }
         return false;
     }
-    public  boolean isAbsolutePath(String path) {
+
+    public boolean isAbsolutePath(String path) {
         return path != null && (path.startsWith("/") || path.indexOf(":") > 0);
     }
+
     /**
      * 获取项目的根目录，也就是根节点 pom.xml 所在的目录
      *
@@ -185,6 +197,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         int count = 20;
         return getProjectRootPath(file, count);
     }
+
     private String getProjectRootPath(File file, int count) {
         if (count <= 0) {
             return null;
@@ -199,9 +212,11 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             }
         }
     }
+
     private boolean isFromTestSource(String path) {
         return path.contains("test-sources") || path.contains("test-annotations");
     }
+
     private void genClass(String basePath, String genPackageName, String className, String genContent) {
         Writer writer = null;
         try {
@@ -257,6 +272,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             }
         }
     }
+
     public static String camelToUnderline(String string) {
         if (string == null || string.trim().length() == 0) {
             return "";
@@ -308,16 +324,19 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             return firstCharToLowerCase(name);
         }
     }
-    private String buildTablesClass(String entityClass, String proxyInstanceName, String realGenPackage, String entityFullName,String fieldContent) {
+
+    private String buildTablesClass(String entityClass, String proxyInstanceName, String realGenPackage, String entityFullName, String fieldContent, String staticFieldContent) {
 
         String tableDef = PROXY_TEMPLATE.replace("@package", realGenPackage)
                 .replace("@entityFullClass", entityFullName)
                 .replace("@proxyInstanceName", proxyInstanceName)
                 .replace("@fieldContent", fieldContent)
+                .replace("@staticFieldContent", staticFieldContent)
                 .replace("@entityClass", entityClass);
 
         return tableDef;
     }
+
     private String guessTablesPackage(String entityClassName) {
         StringBuilder guessPackage = new StringBuilder();
         if (!entityClassName.contains(".")) {
@@ -327,7 +346,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         }
         return guessPackage.toString();
     }
-    private void fillPropertyAndColumns(StringBuilder filedContent,String entityClass, TypeElement classElement,Set<String> ignoreProperties) {
+
+    private void fillPropertyAndColumns(StringBuilder filedContent, StringBuilder staticFieldContent, String entityClass, TypeElement classElement, Set<String> ignoreProperties) {
         for (Element fieldElement : classElement.getEnclosedElements()) {
 
             //all fields
@@ -341,7 +361,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
 
                 String propertyName = fieldElement.toString();
-                if(ignoreProperties.contains(propertyName)){
+                if (ignoreProperties.contains(propertyName)) {
                     continue;
                 }
                 ColumnIgnore column = fieldElement.getAnnotation(ColumnIgnore.class);
@@ -357,8 +377,10 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 //                }
 
 //                String typeString =typeMirror.toString().trim();
-                String typeString =fieldElement.asType().toString();
-                String fieldGenericType = TYPE_MAPPING.getOrDefault(typeString, typeString);
+                TypeMirror type = fieldElement.asType();
+                boolean isGeneric = type.getKind() == TypeKind.TYPEVAR;
+                String fieldGenericType = getGenericTypeString(isGeneric, type);
+
 
                 String docComment = elementUtils.getDocComment(fieldElement);
                 String fieldComment = getFiledComment(docComment);
@@ -368,21 +390,34 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                         .replace("@propertyType", fieldGenericType)
                         .replace("@property", propertyName);
                 filedContent.append(fieldString);
+                String staticFieldString = STATIC_FIELD_TEMPLATE
+                        .replace("@comment", fieldComment)
+                        .replace("@property", propertyName);
+                staticFieldContent.append(staticFieldString);
             }
         }
     }
-    private String getFiledComment(String docComment){
-        if(docComment == null){
+
+    private String getFiledComment(String docComment) {
+        if (docComment == null) {
             return FIELD_EMPTY_DOC_COMMENT_TEMPLATE;
         }
         String[] commentLines = docComment.trim().split("\n");
-        StringBuilder fieldComment=new StringBuilder();
+        StringBuilder fieldComment = new StringBuilder();
         fieldComment.append("* ").append(commentLines[0]);
         for (int i = 1; i < commentLines.length; i++) {
             fieldComment.append("\n     *").append(commentLines[i]);
         }
         return FIELD_DOC_COMMENT_TEMPLATE
                 .replace("@comment", fieldComment.toString());
+    }
+
+    private String getGenericTypeString(boolean isGeneric, TypeMirror type) {
+        if (isGeneric) {
+            return "java.lang.Object";
+        }
+        String typeString = type.toString();
+        return TYPE_MAPPING.getOrDefault(typeString, typeString);
     }
 
 }

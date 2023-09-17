@@ -1,7 +1,9 @@
 package com.easy.query.test.entity.base;
 
 import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.impl.SQLPropColumn;
 import com.easy.query.test.entity.Topic;
 
 /**
@@ -14,17 +16,21 @@ public class TopicTestProxy extends AbstractProxyEntity<TopicTestProxy, Topic> {
     public static TopicTestProxy createTable() {
         return new TopicTestProxy();
     }
+
     private static final Class<Topic> entityClass = Topic.class;
+    public static final PropColumn id = new SQLPropColumn("id");
+    public static final PropColumn title = new SQLPropColumn("title");
 
     private TopicTestProxy() {
 
     }
 
-    public SQLColumn<TopicTestProxy,String> id(){
-        return get("id");
+    public SQLColumn<TopicTestProxy, String> id() {
+        return get(id);
     }
-    public SQLColumn<TopicTestProxy,String> title(){
-        return get("title");
+
+    public SQLColumn<TopicTestProxy, String> title() {
+        return get(title);
     }
 
     @Override

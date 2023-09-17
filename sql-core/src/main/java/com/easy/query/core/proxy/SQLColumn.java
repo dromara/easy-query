@@ -6,5 +6,5 @@ package com.easy.query.core.proxy;
  *
  * @author xuejiaming
  */
-public interface SQLColumn<TProxy,TProperty> extends PropColumn<TProperty> {
+public interface SQLColumn<TProxy,TProperty> extends TablePropColumn {
 }

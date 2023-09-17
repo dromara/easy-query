@@ -8,6 +8,6 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public interface TableColumn {
+public interface TablePropColumn extends PropColumn {
     TableAvailable getTable();
 }

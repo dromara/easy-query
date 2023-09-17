@@ -1,5 +1,6 @@
 package com.easy.query.test.entity;
 
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.test.entity.base.BaseGenericEntity;
 import lombok.Data;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table("t_topic")
+@EntityProxy
 public class TopicGenericKey extends BaseGenericEntity<String> {
 
     private Integer stars;

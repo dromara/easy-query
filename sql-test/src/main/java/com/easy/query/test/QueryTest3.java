@@ -63,8 +63,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.easy.query.test.entity.base.TopicProxy.TOPIC_PROXY;
-
 /**
  * create time 2023/6/8 21:38
  * 文件说明
@@ -565,12 +563,12 @@ public static class AA{
     public void testProxy1() {
 
         List<Topic> list1 = easyProxyQuery
-                .queryable(TOPIC_PROXY)
-                .where(o -> o.eq(o.t().id, "123").like(o.t().title, "xxx"))
-                .where(o -> o.eq(o.t().id, "123").like(o.t().title, "xxx"))
+                .queryable(TopicProxy.createTable())
+                .where(o -> o.eq(o.t().id(), "123").like(o.t().title(), "xxx"))
+                .where(o -> o.eq(o.t().id(), "123").like(o.t().title(), "xxx"))
                 .select(o -> {
-                    com.easy.query.test.entity.base.TopicProxy topicProxy = o.t();
-                    o.columns(topicProxy.id, topicProxy.title);
+                    TopicProxy topicProxy = o.t();
+                    o.columns(topicProxy.id(), topicProxy.title());
                 })
                 .toList();
 
@@ -580,8 +578,8 @@ public static class AA{
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`deleted` = ? AND t1.`title` = t.`id`",sql);
 
         EasyPageResult<Topic> topicPageResult = easyProxyQuery
-                .queryable(TOPIC_PROXY)
-                .where(o -> o.isNotNull(o.t().id))
+                .queryable(TopicProxy.createTable())
+                .where(o -> o.isNotNull(o.t().id()))
                 .toPageResult(3, 10);
         List<Topic> data = topicPageResult.getData();
         Assert.assertEquals(10, data.size());
@@ -827,9 +825,9 @@ public static class AA{
     public void testProxy6() {
 
         List<Map<String, Object>> list = easyProxyQuery
-                .queryable(TOPIC_PROXY)
+                .queryable(TopicProxy.createTable())
                 .select(MapProxy.createTable(), o -> {
-                    o.columns(o.t().id, o.t().title);
+                    o.columns(o.t().id(), o.t().title());
                 })
                 .toList();
         for (Map<?, ?> map : list) {
@@ -2029,6 +2027,16 @@ public static class AA{
                 .queryable(TopicGenericKey.class)
                 .limit(1).toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` LIMIT 1", sql);
+    }
+    @Test
+    public void testGenericKey1(){
+        List<TopicGenericKey> list = easyQuery
+                .queryable(TopicGenericKey.class)
+                .whereById("1")
+                .limit(1).toList();
+        Assert.assertEquals(1,list.size());
+        TopicGenericKey topicGenericKey = list.get(0);
+        Assert.assertEquals("1",topicGenericKey.getId());
     }
 
 

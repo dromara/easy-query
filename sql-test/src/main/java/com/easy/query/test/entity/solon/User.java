@@ -1,6 +1,5 @@
 package com.easy.query.test.entity.solon;
 
-import com.sun.istack.internal.NotNull;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -83,7 +82,6 @@ public class User implements Serializable {
     /**
      * 删除标志（true 是，false 否）
      */
-    @NotNull
     private Boolean del = Boolean.FALSE;
 
     /**
