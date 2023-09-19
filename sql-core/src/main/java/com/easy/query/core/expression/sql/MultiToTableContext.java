@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.HashMap;
 
@@ -10,12 +11,12 @@ import java.util.HashMap;
  *
  * @author xuejiaming
  */
-public final class MultiToTableContext implements ToTableContext{
+public final class MultiToTableContext implements ToTableContext {
     private final HashMap<TableAvailable, String> aliasMapping;
     private final int tableCount;
     private final boolean firstHasAlias;
 
-    public MultiToTableContext(HashMap<TableAvailable,String> aliasMapping, int tableCount, boolean firstHasAlias){
+    public MultiToTableContext(HashMap<TableAvailable, String> aliasMapping, int tableCount, boolean firstHasAlias) {
 
         this.aliasMapping = aliasMapping;
         this.tableCount = tableCount;
@@ -23,7 +24,10 @@ public final class MultiToTableContext implements ToTableContext{
     }
 
     @Override
-    public String getAlias(TableAvailable table){
+    public String getAlias(TableAvailable table) {
+        if (!aliasMapping.containsKey(table)) {
+            throw new UnsupportedOperationException("not found table:[" + EasyClassUtil.getSimpleName(table.getEntityClass()) + "] in sql context");
+        }
         if (tableCount == 1) {
             if (firstHasAlias) {
                 return aliasMapping.get(table);

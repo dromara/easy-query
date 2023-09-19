@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.util.EasyClassUtil;
 
 /**
  * create time 2023/8/11 09:35
@@ -9,15 +10,19 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  * @author xuejiaming
  */
 public class SingleToTableContext implements ToTableContext{
+    private final TableAvailable table;
     private final String alias;
-    public static final ToTableContext DEFAULT=new  SingleToTableContext(null);
 
-    public SingleToTableContext(String alias){
+    public SingleToTableContext(TableAvailable table,String alias){
+        this.table = table;
 
         this.alias = alias;
     }
     @Override
     public String getAlias(TableAvailable table) {
+        if (!this.table.equals(table)) {
+            throw new UnsupportedOperationException("not found table:[" + EasyClassUtil.getSimpleName(table.getEntityClass()) + ":"+table+"] in sql context");
+        }
         return alias;
     }
 }

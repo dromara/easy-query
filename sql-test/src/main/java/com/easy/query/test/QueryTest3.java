@@ -561,9 +561,9 @@ public static class AA{
 
     @Test
     public void testProxy1() {
-
+        TopicProxy table = TopicProxy.createTable();
         List<Topic> list1 = easyProxyQuery
-                .queryable(TopicProxy.createTable())
+                .queryable(table)
                 .where(o -> o.eq(o.t().id(), "123").like(o.t().title(), "xxx"))
                 .where(o -> o.eq(o.t().id(), "123").like(o.t().title(), "xxx"))
                 .select(o -> {
@@ -571,6 +571,18 @@ public static class AA{
                     o.columns(topicProxy.id(), topicProxy.title());
                 })
                 .toList();
+        {
+            try {
+
+                List<Topic> list = easyProxyQuery.queryable(TopicProxy.createTable())
+                        .where(o -> o.eq(table.id(), "123"))
+                        .toList();
+            }catch (Exception ex){
+                Assert.assertTrue(ex instanceof  UnsupportedOperationException);
+                Assert.assertTrue(ex.getMessage().startsWith("not found table:[Topic:"));
+                Assert.assertTrue(ex.getMessage().endsWith("] in sql context"));
+            }
+        }
 
         String sql = easyProxyQuery.queryable(BlogEntityProxy.createTable())
                 .leftJoin(TopicAutoProxy.createTable(), o -> o.eq(o.t().id(), o.t1().title()))
@@ -1423,6 +1435,37 @@ public static class AA{
     }
 
     @Test
+    public void query9_1() {
+        try (JdbcStreamResult<BlogEntity> streamResult = easyProxyQuery.queryable(BlogEntityProxy.createTable()).where(o -> o.le(o.t().star(), 100))
+                .orderByAsc(o -> o.column(o.t().createTime())).toStreamResult()) {
+
+            LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
+            int i = 0;
+            for (BlogEntity blog : streamResult.getStreamIterable()) {
+                String indexStr = String.valueOf(i);
+                Assert.assertEquals(indexStr, blog.getId());
+                Assert.assertEquals(indexStr, blog.getCreateBy());
+                Assert.assertEquals(begin.plusDays(i), blog.getCreateTime());
+                Assert.assertEquals(indexStr, blog.getUpdateBy());
+                Assert.assertEquals(begin.plusDays(i), blog.getUpdateTime());
+                Assert.assertEquals("title" + indexStr, blog.getTitle());
+//            Assert.assertEquals("content" + indexStr, blog.getContent());
+                Assert.assertEquals("http://blog.easy-query.com/" + indexStr, blog.getUrl());
+                Assert.assertEquals(i, (int) blog.getStar());
+                Assert.assertEquals(0, new BigDecimal("1.2").compareTo(blog.getScore()));
+                Assert.assertEquals(i % 3 == 0 ? 0 : 1, (int) blog.getStatus());
+                Assert.assertEquals(0, new BigDecimal("1.2").multiply(BigDecimal.valueOf(i)).compareTo(blog.getOrder()));
+                Assert.assertEquals(i % 2 == 0, blog.getIsTop());
+                Assert.assertEquals(i % 2 == 0, blog.getTop());
+                Assert.assertEquals(false, blog.getDeleted());
+                i++;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
     public void queryToList1() {
         List<Topic> list = easyQuery.queryable(Topic.class).toList();
     }
@@ -2038,6 +2081,5 @@ public static class AA{
         TopicGenericKey topicGenericKey = list.get(0);
         Assert.assertEquals("1",topicGenericKey.getId());
     }
-
 
 }

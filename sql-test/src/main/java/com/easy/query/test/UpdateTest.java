@@ -51,6 +51,25 @@ public class UpdateTest extends BaseTest {
                 .toSQL();
         Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `id` = ?",sql);
     }
+    @Test
+    public void updateTest1_2() {
+        TopicProxy table = TopicProxy.createTable();
+        String sql = easyProxyQuery.updatable(table)
+                .set(table.stars(), 123)
+                .where(o -> o.eq(table.id(), "2"))
+                .toSQL();
+        Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `id` = ?",sql);
+        try {
+            String sql1 = easyProxyQuery.updatable(table)
+                    .set(table.stars(), 123)
+                    .where(o -> o.eq(table.id(), "2"))
+                    .toSQL();
+        }catch (Exception ex){
+            Assert.assertTrue(ex instanceof  UnsupportedOperationException);
+            Assert.assertTrue(ex.getMessage().startsWith("not found table:[Topic:"));
+            Assert.assertTrue(ex.getMessage().endsWith("] in sql context"));
+        }
+    }
 
     @Test
     public void updateTest2() {

@@ -43,9 +43,9 @@ public final class TableContext {
             TableAliasSchema tableAliasSchema = EasyCollectionUtil.first(aliasMapping.values());
             if (tableAliasSchema.getTable().isAnonymous() || tableAliasSchema.getTable().hasAlias()) {
                 String tableAlias = tableAliasSchema.getTableAlias(alias);
-                return new SingleToTableContext(tableAlias);
+                return new SingleToTableContext(tableAliasSchema.getTable(),tableAlias);
             }
-            return SingleToTableContext.DEFAULT;
+            return new SingleToTableContext(tableAliasSchema.getTable(),null);
         }
         HashMap<TableAvailable, String> result = new HashMap<>(mappingSize);
         int i = 0;

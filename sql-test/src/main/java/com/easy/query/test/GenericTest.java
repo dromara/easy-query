@@ -803,7 +803,6 @@ public class GenericTest extends BaseTest {
     @Test
     public void nameConversionTest1(){
         {
-
             LowerCamelCaseNameConversion lowerCamelCaseNameConversion = new LowerCamelCaseNameConversion();
             {
                 String nameConversion = "NameConversion";
@@ -831,7 +830,6 @@ public class GenericTest extends BaseTest {
             }
         }
         {
-
             UnderlinedNameConversion underlinedNameConversion = new UnderlinedNameConversion();
             {
                 String nameConversion = "NameConversion";
@@ -845,7 +843,6 @@ public class GenericTest extends BaseTest {
             }
         }
         {
-
             UpperUnderlinedNameConversion upperUnderlinedNameConversion = new UpperUnderlinedNameConversion();
             {
                 String nameConversion = "NameConversion";
