@@ -258,6 +258,11 @@ public class EasyQueryStarterAutoConfiguration {
     public EasyProxyQuery easyProxyQuery(EasyQueryClient easyQueryClient) {
         return new DefaultEasyProxyQuery(easyQueryClient);
     }
+//    @Bean
+//    @ConditionalOnMissingBean
+//    public EntityQuery entityQuery(EasyQueryClient easyQueryClient) {
+//        return new DefaultEntityQuery(easyQueryClient);
+//    }
 
     @Bean
     @ConditionalOnMissingBean

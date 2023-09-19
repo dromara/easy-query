@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql;
 
+import com.easy.query.core.exception.EasyQueryTableNotInSQLContextException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.EasyClassUtil;
 
@@ -26,7 +27,7 @@ public final class MultiToTableContext implements ToTableContext {
     @Override
     public String getAlias(TableAvailable table) {
         if (!aliasMapping.containsKey(table)) {
-            throw new UnsupportedOperationException("not found table:[" + EasyClassUtil.getSimpleName(table.getEntityClass()) + "] in sql context");
+            throw new EasyQueryTableNotInSQLContextException("not found table:[" + EasyClassUtil.getSimpleName(table.getEntityClass()) + "] in sql context");
         }
         if (tableCount == 1) {
             if (firstHasAlias) {

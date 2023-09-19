@@ -20,6 +20,7 @@ public interface EasyQueryHolder {
     EasyProxyQuery getEasyProxyQuery();
 
     EasyKtQuery getEasyKtQuery();
+//    EntityQuery getEntityQuery();
 
     void injectTo(VarHolder varH);
 }

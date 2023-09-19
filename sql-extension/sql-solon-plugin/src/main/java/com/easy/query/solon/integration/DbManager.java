@@ -145,6 +145,7 @@ public class DbManager {
         DefaultEasyQuery easyQuery = new DefaultEasyQuery(easyQueryClient);
         DefaultEasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
         EasyKtQuery easyKtQuery = new DefaultEasyKtQuery(easyQueryClient);
+//        EntityQuery entityQuery = new DefaultEntityQuery(easyQueryClient);
 
         return new DefaultEasyQueryHolder(easyQueryClient,easyQuery,easyProxyQuery,easyKtQuery);
     }

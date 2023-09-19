@@ -1,6 +1,8 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.api.pagination.Pagination;
+import com.easy.query.core.api.pagination.ShardingPagination;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -14,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * @author xuejiaming
  * @FileName: Query.java
  * @Description: 文件说明
  * @Date: 2023/3/3 16:30
- * @author xuejiaming
  */
 public interface Query<T> {
     /**
@@ -45,6 +47,7 @@ public interface Query<T> {
     /**
      * 设置column所有join表都会生效
      * queryable.select(" t.name,t.age ")通过字符串实现要查询的列
+     *
      * @param columns
      * @return
      */
@@ -61,6 +64,7 @@ public interface Query<T> {
 
     /**
      * 传入生成sql的上下文用来获取生成sql后的表达式内部的参数
+     *
      * @param toSQLContext
      * @return
      */
@@ -86,6 +90,7 @@ public interface Query<T> {
     /**
      * 返回long类型的数量结果
      * eg. SELECT  COUNT(*)  FROM table t [WHERE t.`columns` = ?]
+     *
      * @return
      */
     long count();
@@ -93,6 +98,7 @@ public interface Query<T> {
     /**
      * 返回int类型的数量结果
      * eg. SELECT  COUNT(*)  FROM table t [WHERE t.`columns` = ?]
+     *
      * @return
      */
 
@@ -111,6 +117,7 @@ public interface Query<T> {
     /**
      * 返回第一条,如果第一条没有就返回null
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     *
      * @return
      */
 
@@ -121,9 +128,10 @@ public interface Query<T> {
     /**
      * 返回第一条,如果第一条没有就返回null,并且select并不是表的全部而是映射到 {@code resultClass} 上
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     *
      * @param resultClass
-     * @return
      * @param <TR>
+     * @return
      */
 
     <TR> TR firstOrNull(Class<TR> resultClass);
@@ -131,6 +139,7 @@ public interface Query<T> {
     /**
      * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     *
      * @param msg
      * @return
      */
@@ -141,6 +150,7 @@ public interface Query<T> {
     /**
      * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     *
      * @param msg
      * @param code
      * @return
@@ -152,10 +162,11 @@ public interface Query<T> {
     /**
      * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     *
      * @param resultClass
      * @param msg
-     * @return
      * @param <TR>
+     * @return
      */
 
     default <TR> TR firstNotNull(Class<TR> resultClass, String msg) {
@@ -165,31 +176,35 @@ public interface Query<T> {
     /**
      * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     *
      * @param resultClass 返回结果
      * @param msg
      * @param code
-     * @return
      * @param <TR>
+     * @return
      */
     <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code);
 
     /**
      * 返回所有的查询结果集
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
+     *
      * @return 获取查询结果集
      */
-   default List<T> toList(){
-       return toList(queryClass());
-   }
+    default List<T> toList() {
+        return toList(queryClass());
+    }
 
     /**
      * 返回所有的查询结果集
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
+     *
      * @param resultClass 映射对象
+     * @param <TR>        映射对象类型
      * @return 获取查询结果集
-     * @param <TR> 映射对象类型
      */
     <TR> List<TR> toList(Class<TR> resultClass);
+
     /**
      * 可迭代的流式结果集
      *
@@ -211,11 +226,12 @@ public interface Query<T> {
      *             throw new RuntimeException(e);
      *         }
      * </pre></blockquote>
+     *
      * @return
      */
-   default JdbcStreamResult<T> toStreamResult(){
-       return toStreamResult(queryClass());
-   }
+    default JdbcStreamResult<T> toStreamResult() {
+        return toStreamResult(queryClass());
+    }
 
     /**
      * 可迭代的流式相当于 queryable.select(resultClass,o->o.columnAll()).toStreamResult();
@@ -237,14 +253,16 @@ public interface Query<T> {
      *             throw new RuntimeException(e);
      *         }
      * </pre></blockquote>
+     *
      * @param resultClass 映射结果集
-     * @return 可迭代的流式结果
      * @param <TR>
+     * @return 可迭代的流式结果
      */
     <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass);
 
     /**
      * 将查询结果第一条映射到map中,map的key值忽略大小写,其中key为列名
+     *
      * @return map结果
      */
     default Map<String, Object> toMap() {
@@ -255,6 +273,7 @@ public interface Query<T> {
 
     /**
      * 将查询结果映射到map中,map的key值忽略大小写,其中key为列名
+     *
      * @return map集合结果
      */
     List<Map<String, Object>> toMaps();
@@ -262,8 +281,9 @@ public interface Query<T> {
 
     /**
      * 分页获取结果
+     *
      * @param pageIndex 第几页 默认第一页为1
-     * @param pageSize 每页多少条
+     * @param pageSize  每页多少条
      * @return 分页结果
      */
     default EasyPageResult<T> toPageResult(long pageIndex, long pageSize) {
@@ -274,16 +294,38 @@ public interface Query<T> {
      * 分页 如果{@param pageTotal}  < 0 那么将会查询一次count,否则不查询count在total非常大的时候可以有效的提高性能
      *
      * @param pageIndex 第几页 默认第一页为1
-     * @param pageSize 每页多少条
+     * @param pageSize  每页多少条
      * @param pageTotal 总条数有多少
      * @return 分页结果
      */
     EasyPageResult<T> toPageResult(long pageIndex, long pageSize, long pageTotal);
 
     /**
+     * 进行用户自定义分页结果
+     * @param pageIndex
+     * @param pageSize
+     * @param pageTotal
+     * @return
+     */
+    default Pagination<T> toPage(long pageIndex, long pageSize, long pageTotal) {
+        return new Pagination<>(this, pageIndex, pageSize, pageTotal);
+    }
+
+    /**
+     * 进行用户自定义分页结果
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    default Pagination<T> toPage(long pageIndex, long pageSize) {
+        return toPage(pageIndex, pageSize, -1);
+    }
+
+    /**
      * 分片的分页结果,对分片而言有相对较高的性能和优化点
+     *
      * @param pageIndex 第几页 默认第一页为1
-     * @param pageSize 总条数有多少
+     * @param pageSize  总条数有多少
      * @return 分页结果
      */
     default EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize) {
@@ -292,8 +334,9 @@ public interface Query<T> {
 
     /**
      * 分片的分页结果,对分片而言有相对较高的性能和优化点,通过{@param totalLines}指定顺序分片的结果无需count即可精确到具体
-     * @param pageIndex 第几页 默认第一页为1
-     * @param pageSize 总条数有多少
+     *
+     * @param pageIndex  第几页 默认第一页为1
+     * @param pageSize   总条数有多少
      * @param totalLines 分页各个分页节点的数量
      * @return 分页结果
      */
@@ -301,8 +344,29 @@ public interface Query<T> {
 
 
     /**
+     * 进行用户自定义分页结果
+     * @param pageIndex
+     * @param pageSize
+     * @param totalLines
+     * @return
+     */
+    default ShardingPagination<T> toShardingPage(long pageIndex, long pageSize, List<Long> totalLines) {
+        return new ShardingPagination<>(this, pageIndex, pageSize, totalLines);
+    }
+
+    /**
+     * 进行用户自定义分页结果
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    default ShardingPagination<T> toShardingPage(long pageIndex, long pageSize) {
+        return toShardingPage(pageIndex, pageSize, null);
+    }
+    /**
      * 去重
      * eg. SELECT DISTINCT projects  FROM table t [WHERE t.`columns` = ?]
+     *
      * @return
      */
     default Query<T> distinct() {
@@ -313,10 +377,12 @@ public interface Query<T> {
     /**
      * 去重 {@param condition} 为true就使用distinct,false则不使用
      * eg. SELECT DISTINCT projects  FROM table t [WHERE t.`columns` = ?]
+     *
      * @param condition
      * @return
      */
     Query<T> distinct(boolean condition);
+
     default Query<T> limit(long rows) {
         return limit(true, rows);
     }

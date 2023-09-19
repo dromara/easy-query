@@ -20,13 +20,15 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
     private final EasyQuery easyQuery;
     private final EasyProxyQuery easyProxyQuery;
     private final EasyKtQuery easyKtQuery;
+//    private final EntityQuery entityQuery;
 
-    public DefaultEasyQueryHolder(EasyQueryClient easyQueryClient, EasyQuery easyQuery, EasyProxyQuery easyProxyQuery,EasyKtQuery easyKtQuery){
+    public DefaultEasyQueryHolder(EasyQueryClient easyQueryClient, EasyQuery easyQuery, EasyProxyQuery easyProxyQuery, EasyKtQuery easyKtQuery){
         this.easyQueryClient = easyQueryClient;
         this.easyQuery = easyQuery;
 
         this.easyProxyQuery = easyProxyQuery;
         this.easyKtQuery = easyKtQuery;
+//        this.entityQuery = entityQuery;
     }
 
     @Override
@@ -49,6 +51,11 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
         return easyKtQuery;
     }
 
+//    @Override
+//    public EntityQuery getEntityQuery() {
+//        return entityQuery;
+//    }
+
     @Override
     public void injectTo(VarHolder varH) {
 
@@ -56,6 +63,10 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
             varH.setValue(this.easyQuery);
             return;
         }
+//        if(EntityQuery.class.isAssignableFrom(varH.getType())){
+//            varH.setValue(this.entityQuery);
+//            return;
+//        }
 
         if (EasyQueryClient.class.isAssignableFrom(varH.getType())) {
             varH.setValue(this.easyQueryClient);

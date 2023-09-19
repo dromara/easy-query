@@ -30,6 +30,8 @@ import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.test.common.MyPager;
+import com.easy.query.test.common.PageResult;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.BlogQuery1Request;
 import com.easy.query.test.dto.BlogQuery2Request;
@@ -2080,6 +2082,15 @@ public static class AA{
         Assert.assertEquals(1,list.size());
         TopicGenericKey topicGenericKey = list.get(0);
         Assert.assertEquals("1",topicGenericKey.getId());
+    }
+    @Test
+    public void testGenericKey2(){
+        PageResult<TopicGenericKey> result = easyQuery
+                .queryable(TopicGenericKey.class)
+                .whereById("1")
+                .toPage(1, 2)
+                .toResult(new MyPager<>());
+        Assert.assertEquals(1,result.getTotalCount());
     }
 
 }
