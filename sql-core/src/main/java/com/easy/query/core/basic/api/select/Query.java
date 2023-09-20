@@ -1,8 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.api.pagination.Pagination;
-import com.easy.query.core.api.pagination.ShardingPagination;
+import com.easy.query.core.api.pagination.Pager;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -299,26 +298,8 @@ public interface Query<T> {
      * @return 分页结果
      */
     EasyPageResult<T> toPageResult(long pageIndex, long pageSize, long pageTotal);
-
-    /**
-     * 进行用户自定义分页结果
-     * @param pageIndex
-     * @param pageSize
-     * @param pageTotal
-     * @return
-     */
-    default Pagination<T> toPage(long pageIndex, long pageSize, long pageTotal) {
-        return new Pagination<>(this, pageIndex, pageSize, pageTotal);
-    }
-
-    /**
-     * 进行用户自定义分页结果
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    default Pagination<T> toPage(long pageIndex, long pageSize) {
-        return toPage(pageIndex, pageSize, -1);
+    default <TPageResult> TPageResult toPageResult(Pager<T,TPageResult> pager){
+        return pager.toResult(this);
     }
 
     /**
@@ -342,27 +323,6 @@ public interface Query<T> {
      */
     EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines);
 
-
-    /**
-     * 进行用户自定义分页结果
-     * @param pageIndex
-     * @param pageSize
-     * @param totalLines
-     * @return
-     */
-    default ShardingPagination<T> toShardingPage(long pageIndex, long pageSize, List<Long> totalLines) {
-        return new ShardingPagination<>(this, pageIndex, pageSize, totalLines);
-    }
-
-    /**
-     * 进行用户自定义分页结果
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    default ShardingPagination<T> toShardingPage(long pageIndex, long pageSize) {
-        return toShardingPage(pageIndex, pageSize, null);
-    }
     /**
      * 去重
      * eg. SELECT DISTINCT projects  FROM table t [WHERE t.`columns` = ?]

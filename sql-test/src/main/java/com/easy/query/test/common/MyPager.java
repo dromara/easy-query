@@ -13,15 +13,22 @@ import java.util.List;
  * @author xuejiaming
  */
 public class MyPager<TEntity> implements Pager<TEntity,PageResult<TEntity>> {
-    @Override
-    public PageResult<TEntity> toResult(Query<TEntity> query, long pageIndex, long pageSize, long pageTotal) {
-        EasyPageResult<TEntity> pageResult = query.toPageResult(pageIndex, pageSize,pageTotal);
-        return new MyPageResult<>(pageResult.getTotal(),pageResult.getData());
-    }
+    private final long pageIndex;
+    private final long pageSize;
+    private final long pageTotal;
 
+    public MyPager(long pageIndex, long pageSize){
+        this(pageIndex,pageSize,-1);
+    }
+    public MyPager(long pageIndex, long pageSize, long pageTotal){
+
+        this.pageIndex = pageIndex;
+        this.pageSize = pageSize;
+        this.pageTotal = pageTotal;
+    }
     @Override
-    public PageResult<TEntity> toResult(Query<TEntity> query, long pageIndex, long pageSize, List<Long> totalLines) {
-        EasyPageResult<TEntity> pageResult = query.toShardingPageResult(pageIndex, pageSize,totalLines);
+    public PageResult<TEntity> toResult(Query<TEntity> query) {
+        EasyPageResult<TEntity> pageResult = query.toPageResult(pageIndex, pageSize,pageTotal);
         return new MyPageResult<>(pageResult.getTotal(),pageResult.getData());
     }
 }

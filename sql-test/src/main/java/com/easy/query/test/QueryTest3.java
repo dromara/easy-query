@@ -2085,12 +2085,12 @@ public static class AA{
     }
     @Test
     public void testGenericKey2(){
-        PageResult<TopicGenericKey> result = easyQuery
+        PageResult<TopicGenericKey> pageResult = easyQuery
                 .queryable(TopicGenericKey.class)
                 .whereById("1")
-                .toPage(1, 2)
-                .toResult(new MyPager<>());
-        Assert.assertEquals(1,result.getTotalCount());
+                .toPageResult(new MyPager<>(1, 2));
+        Assert.assertEquals(1,pageResult.getTotalCount());
+        Assert.assertEquals("1",pageResult.getList().get(0).getId());
     }
 
 }
