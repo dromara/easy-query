@@ -9,7 +9,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  *
  * @author xuejiaming
  */
-public class IntegerNotValueUpdateAtomicTrack implements ValueUpdateAtomicTrack<Integer> {
+public class IntegerNotNullValueUpdateAtomicTrack implements ValueUpdateAtomicTrack<Integer> {
     @Override
     public void configureSet(String propertyName, Integer originalValue, Integer currentValue, ColumnSetter<Object> sqlColumnSetter) {
         if (originalValue == null || currentValue == null) {

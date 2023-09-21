@@ -11,6 +11,8 @@ import com.easy.query.core.basic.extension.logicdel.impl.BooleanLogicDeleteStrat
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateTimeLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.impl.LongTimestampLogicDeleteStrategy;
+import com.easy.query.core.basic.extension.track.update.IntegerNotNullValueUpdateAtomicTrack;
+import com.easy.query.core.basic.extension.track.update.LongNotNullValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionIntStrategy;
 import com.easy.query.core.basic.extension.version.VersionLongStrategy;
@@ -75,6 +77,8 @@ public class QueryConfiguration {
         easyVersionStrategyMap.put(VersionUUIDStrategy.class, new VersionUUIDStrategy());
         easyVersionStrategyMap.put(VersionTimestampStrategy.class, new VersionTimestampStrategy());
         shardingInitializerMap.put(UnShardingInitializer.class, UnShardingInitializer.INSTANCE);
+        valueUpdateAtomicTrackMap.put(IntegerNotNullValueUpdateAtomicTrack.class,new IntegerNotNullValueUpdateAtomicTrack());
+        valueUpdateAtomicTrackMap.put(LongNotNullValueUpdateAtomicTrack.class,new LongNotNullValueUpdateAtomicTrack());
     }
 
     public boolean deleteThrow() {

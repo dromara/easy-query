@@ -5,7 +5,6 @@ import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.extension.track.update.IntegerNotValueUpdateAtomicTrack;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -160,7 +159,7 @@ public abstract class BaseTest {
         configuration.applyShardingInitializer(new DataSourceShardingInitializer());
         configuration.applyValueConverter(new EnumConverter());
         configuration.applyValueConverter(new JsonConverter());
-        configuration.applyValueUpdateAtomicTrack(new IntegerNotValueUpdateAtomicTrack());
+//        configuration.applyValueUpdateAtomicTrack(new IntegerNotNullValueUpdateAtomicTrack());
         configuration.applyColumnValueSQLConverter(new MySQLAesEncryptColumnValueSQLConverter());
         configuration.applyIncrementSQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
