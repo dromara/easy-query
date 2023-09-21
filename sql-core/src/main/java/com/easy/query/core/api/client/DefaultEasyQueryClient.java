@@ -65,8 +65,8 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
     }
 
     @Override
-    public <T> ClientQueryable<T> queryable(String sql, Class<T> clazz) {
-        return easySQLApiFactory.createQueryable(sql, clazz, runtimeContext);
+    public <T> ClientQueryable<T> queryable(String sql, Class<T> clazz, Collection<Object> sqlParams) {
+        return easySQLApiFactory.createQueryable(sql,sqlParams, clazz, runtimeContext);
     }
 
     @Override

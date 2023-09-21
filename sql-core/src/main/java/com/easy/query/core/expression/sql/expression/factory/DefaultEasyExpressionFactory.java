@@ -20,6 +20,7 @@ import com.easy.query.core.expression.sql.expression.impl.QuerySQLExpressionImpl
 import com.easy.query.core.expression.sql.expression.impl.TableSQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImpl;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -58,10 +59,9 @@ public class DefaultEasyExpressionFactory implements ExpressionFactory {
     public EntityTableSQLExpression createAnonymousEntityTableSQLExpression(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQuerySQLExpression entityQuerySQLExpression, QueryRuntimeContext runtimeContext) {
         return new AnonymousEntityTableSQLExpressionImpl(entityTable,multiTableType, entityQuerySQLExpression,runtimeContext);
     }
-
     @Override
-    public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql) {
-        return new AnonymousEntityQuerySQLExpressionImpl(entitySQLExpressionMetadata,sql);
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql, Collection<Object> sqlParams) {
+        return new AnonymousEntityQuerySQLExpressionImpl(entitySQLExpressionMetadata,sql,sqlParams);
     }
 
     @Override

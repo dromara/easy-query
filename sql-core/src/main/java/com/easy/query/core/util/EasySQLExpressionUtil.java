@@ -37,6 +37,7 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -96,6 +97,12 @@ public class EasySQLExpressionUtil {
         return sqlEntityExpression.getProjects().isEmpty() && !sqlEntityExpression.hasGroup();
     }
 
+    public static boolean onlyNativeSqlExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+        if(entityQueryExpressionBuilder instanceof SQLAnonymousEntityQueryExpressionBuilder){
+            return EasyCollectionUtil.isEmpty(entityQueryExpressionBuilder.getTables());
+        }
+        return false;
+    }
     public static boolean moreTableExpressionOrNoAnonymous(EntityQueryExpressionBuilder sqlEntityExpression) {
         if (EasyCollectionUtil.isNotSingle(sqlEntityExpression.getTables())) {
             return true;
@@ -227,6 +234,9 @@ public class EasySQLExpressionUtil {
             entityQueryExpressionBuilder.getOrder().clear();
         }
         if (EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpressionBuilder)) {
+            return null;
+        }
+        if(EasySQLExpressionUtil.onlyNativeSqlExpression(entityQueryExpressionBuilder)){
             return null;
         }
 

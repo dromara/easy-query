@@ -46,8 +46,8 @@ public class DefaultEasyQuery implements EasyQuery {
     }
 
     @Override
-    public <T> Queryable<T> queryable(String sql, Class<T> clazz) {
-        return new EasyQueryable<>(easyQueryClient.queryable(sql, clazz));
+    public <T> Queryable<T> queryable(String sql, Class<T> clazz, Collection<Object> sqlParams) {
+        return new EasyQueryable<>(easyQueryClient.queryable(sql, clazz, sqlParams));
     }
 
     @Override
@@ -89,6 +89,7 @@ public class DefaultEasyQuery implements EasyQuery {
     public <T> EntityDeletable<T> deletable(T entity) {
         return new EasyEntityDeletable<>(easyQueryClient.deletable(entity));
     }
+
     @Override
     public <T> EntityDeletable<T> deletable(Collection<T> entities) {
         return new EasyEntityDeletable<>(easyQueryClient.deletable(entities));

@@ -13,6 +13,7 @@ import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import java.util.Map;
  */
 public interface EasyQuery {
     EasyQueryClient getEasyQueryClient();
+
     QueryRuntimeContext getRuntimeContext();
 
     default <T> List<T> sqlQuery(String sql, Class<T> clazz) {
@@ -31,32 +33,36 @@ public interface EasyQuery {
     }
 
     default <T> List<T> sqlQuery(String sql, Class<T> clazz, List<Object> parameters) {
-        return getEasyQueryClient().sqlQuery(sql,clazz,parameters);
+        return getEasyQueryClient().sqlQuery(sql, clazz, parameters);
     }
 
-   default  <T> List<T> sqlEasyQuery(String sql, Class<T> clazz, List<SQLParameter> parameters){
-        return getEasyQueryClient().sqlEasyQuery(sql,clazz,parameters);
-   }
+    default <T> List<T> sqlEasyQuery(String sql, Class<T> clazz, List<SQLParameter> parameters) {
+        return getEasyQueryClient().sqlEasyQuery(sql, clazz, parameters);
+    }
 
     default List<Map<String, Object>> sqlQueryMap(String sql) {
         return getEasyQueryClient().sqlQueryMap(sql);
     }
 
-   default List<Map<String, Object>> sqlQueryMap(String sql, List<Object> parameters){
-        return getEasyQueryClient().sqlQueryMap(sql,parameters);
-   }
+    default List<Map<String, Object>> sqlQueryMap(String sql, List<Object> parameters) {
+        return getEasyQueryClient().sqlQueryMap(sql, parameters);
+    }
 
     default long sqlExecute(String sql) {
         return getEasyQueryClient().sqlExecute(sql);
     }
 
-   default long sqlExecute(String sql, List<Object> parameters){
-        return getEasyQueryClient().sqlExecute(sql,parameters);
-   }
+    default long sqlExecute(String sql, List<Object> parameters) {
+        return getEasyQueryClient().sqlExecute(sql, parameters);
+    }
 
     <T> Queryable<T> queryable(Class<T> clazz);
 
-    <T> Queryable<T> queryable(String sql, Class<T> clazz);
+    default <T> Queryable<T> queryable(String sql, Class<T> clazz) {
+        return queryable(sql, clazz, Collections.emptyList());
+    }
+
+    <T> Queryable<T> queryable(String sql, Class<T> clazz, Collection<Object> sqlParams);
 
     default Transaction beginTransaction() {
         return beginTransaction(null);
@@ -99,6 +105,8 @@ public interface EasyQuery {
      * @return true:添加成功,false:已经存在相同对象 或者未开启追踪
      */
     boolean addTracking(Object entity);
+
     boolean removeTracking(Object entity);
+
     EntityState getTrackEntityStateNotNull(Object entity);
 }

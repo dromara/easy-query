@@ -172,8 +172,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public <TNumber extends Number> ClientQueryable<TNumber> selectCount(Class<TNumber> numberClass) {
         EntityQueryExpressionBuilder countQueryExpressionBuilder = createCountQueryExpressionBuilder();
-        if(countQueryExpressionBuilder==null){
-            return cloneQueryable().select(numberClass,o->o.sqlNativeSegment("COUNT(*)"));
+        if (countQueryExpressionBuilder == null) {
+            return cloneQueryable().select(numberClass, o -> o.sqlNativeSegment("COUNT(*)"));
         }
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(numberClass, entityQueryExpressionBuilder);
     }
@@ -798,7 +798,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         //如果当前只有一张表并且是匿名表,那么limit直接处理当前的匿名表的表达式
         if (EasySQLExpressionUtil.limitAndOrderNotSetCurrent(sqlEntityExpression)) {
             AnonymousEntityTableExpressionBuilder anonymousEntityTableExpression = (AnonymousEntityTableExpressionBuilder) sqlEntityExpression.getTable(0);
-            doWithOutAnonymousAndClearExpression(anonymousEntityTableExpression.getEntityQueryExpressionBuilder(), consumer);
+            if(EasySQLExpressionUtil.onlyNativeSqlExpression(anonymousEntityTableExpression.getEntityQueryExpressionBuilder())){
+                consumer.accept(sqlEntityExpression);
+            }else{
+                doWithOutAnonymousAndClearExpression(anonymousEntityTableExpression.getEntityQueryExpressionBuilder(), consumer);
+            }
         } else {
             consumer.accept(sqlEntityExpression);
         }

@@ -15,8 +15,8 @@ import com.easy.query.core.expression.sql.builder.impl.AnonymousQueryExpressionB
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * @Description: 文件说明
@@ -34,8 +34,8 @@ public interface ExpressionBuilderFactory {
    }
     EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
     EntityQueryExpressionBuilder createEntityQueryExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass);
-    default EntityQueryExpressionBuilder createAnonymousQueryExpressionBuilder(String sql, ExpressionContext sqlExpressionContext,Class<?> queryClass){
-        return new AnonymousQueryExpressionBuilder(sql,sqlExpressionContext,queryClass);
+    default EntityQueryExpressionBuilder createAnonymousQueryExpressionBuilder(String sql, Collection<Object> sqlParams, ExpressionContext sqlExpressionContext, Class<?> queryClass){
+        return new AnonymousQueryExpressionBuilder(sql,sqlParams,sqlExpressionContext,queryClass);
     }
     default EntityQueryExpressionBuilder createAnonymousUnionQueryExpressionBuilder(List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders, ExpressionContext sqlExpressionContext,Class<?> queryClass, SQLUnionEnum sqlUnion){
         return new AnonymousUnionQueryExpressionBuilder(entityQueryExpressionBuilders,sqlExpressionContext,queryClass,sqlUnion);

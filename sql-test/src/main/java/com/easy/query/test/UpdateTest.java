@@ -9,6 +9,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
+import com.easy.query.core.exception.EasyQueryTableNotInSQLContextException;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.SysUserSQLEncryption;
 import com.easy.query.test.entity.Topic;
@@ -65,7 +66,7 @@ public class UpdateTest extends BaseTest {
                     .where(o -> o.eq(table.id(), "2"))
                     .toSQL();
         }catch (Exception ex){
-            Assert.assertTrue(ex instanceof  UnsupportedOperationException);
+            Assert.assertTrue(ex instanceof EasyQueryTableNotInSQLContextException);
             Assert.assertTrue(ex.getMessage().startsWith("not found table:[Topic:"));
             Assert.assertTrue(ex.getMessage().endsWith("] in sql context"));
         }

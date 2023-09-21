@@ -28,7 +28,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public class DefaultEasyProxyQuery implements EasyProxyQuery{
+public class DefaultEasyProxyQuery implements EasyProxyQuery {
     private final EasyQueryClient easyQueryClient;
 
     public DefaultEasyProxyQuery(EasyQueryClient easyQueryClient) {
@@ -51,8 +51,8 @@ public class DefaultEasyProxyQuery implements EasyProxyQuery{
     }
 
     @Override
-    public <TProxy extends ProxyEntity<TProxy, T>, T> ProxyQueryable<TProxy, T> queryable(String sql, TProxy table) {
-        return new EasyProxyQueryable<>(table, easyQueryClient.queryable(sql,table.getEntityClass()));
+    public <TProxy extends ProxyEntity<TProxy, T>, T> ProxyQueryable<TProxy, T> queryable(String sql, TProxy table, Collection<Object> sqlParams) {
+        return new EasyProxyQueryable<>(table, easyQueryClient.queryable(sql, table.getEntityClass(), sqlParams));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class DefaultEasyProxyQuery implements EasyProxyQuery{
 
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T> ProxyExpressionUpdatable<TProxy, T> updatable(TProxy proxy) {
-        return new EasyProxyExpressionUpdatable<>(proxy,easyQueryClient.updatable(proxy.getEntityClass()));
+        return new EasyProxyExpressionUpdatable<>(proxy, easyQueryClient.updatable(proxy.getEntityClass()));
     }
 
     @Override
@@ -87,13 +87,13 @@ public class DefaultEasyProxyQuery implements EasyProxyQuery{
 
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy, T> updatable(T entity, TProxy proxy) {
-        return new EasyProxyEntityUpdatable<>(proxy,easyQueryClient.updatable(entity));
+        return new EasyProxyEntityUpdatable<>(proxy, easyQueryClient.updatable(entity));
     }
 
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy, T> updatable(Collection<T> entities, TProxy proxy) {
 
-        return new EasyProxyEntityUpdatable<>(proxy,easyQueryClient.updatable(entities));
+        return new EasyProxyEntityUpdatable<>(proxy, easyQueryClient.updatable(entities));
     }
 
     @Override
@@ -108,7 +108,7 @@ public class DefaultEasyProxyQuery implements EasyProxyQuery{
 
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T> ProxyExpressionDeletable<TProxy, T> deletable(TProxy proxy) {
-        return new EasyProxyExpressionDeletable<>(proxy,easyQueryClient.deletable(proxy.getEntityClass()));
+        return new EasyProxyExpressionDeletable<>(proxy, easyQueryClient.deletable(proxy.getEntityClass()));
     }
 
     @Override

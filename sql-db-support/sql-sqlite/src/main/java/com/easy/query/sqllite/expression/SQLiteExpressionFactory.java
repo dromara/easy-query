@@ -17,6 +17,7 @@ import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySQL
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -33,33 +34,33 @@ public class SQLiteExpressionFactory implements ExpressionFactory {
 
     @Override
     public EntityInsertSQLExpression createEasyInsertSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new SQLiteInsertSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
+        return new SQLiteInsertSQLExpression(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 
     @Override
     public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new SQLiteUpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
+        return new SQLiteUpdateSQLExpression(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 
     @Override
     public EntityDeleteSQLExpression createEasyDeleteSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new SQLiteDeleteSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
+        return new SQLiteDeleteSQLExpression(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 
     @Override
     public EntityTableSQLExpression createEntityTableSQLExpression(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
-        return new SQLiteTableSQLExpression(entityTable,multiTableType,runtimeContext);
+        return new SQLiteTableSQLExpression(entityTable, multiTableType, runtimeContext);
     }
 
     @Override
     public EntityTableSQLExpression createAnonymousEntityTableSQLExpression(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQuerySQLExpression entityQuerySQLExpression, QueryRuntimeContext runtimeContext) {
-        return new AnonymousEntityTableSQLExpressionImpl(entityTable,multiTableType, entityQuerySQLExpression,runtimeContext);
+        return new AnonymousEntityTableSQLExpressionImpl(entityTable, multiTableType, entityQuerySQLExpression, runtimeContext);
     }
 
 
     @Override
-    public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql) {
-        return new AnonymousEntityQuerySQLExpressionImpl(entitySQLExpressionMetadata, sql);
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql, Collection<Object> sqlParams) {
+        return new AnonymousEntityQuerySQLExpressionImpl(entitySQLExpressionMetadata, sql, sqlParams);
     }
 
     @Override

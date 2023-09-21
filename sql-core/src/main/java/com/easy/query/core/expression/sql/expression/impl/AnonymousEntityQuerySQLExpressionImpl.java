@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
+import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -10,6 +11,7 @@ import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,17 +23,23 @@ import java.util.List;
  */
 public class AnonymousEntityQuerySQLExpressionImpl implements AnonymousEntityQuerySQLExpression {
     protected final String sql;
+    private final Collection<Object> sqlParams;
     protected final List<EntityTableSQLExpression> tables;
     private final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
 
-    public AnonymousEntityQuerySQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql){
+    public AnonymousEntityQuerySQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql, Collection<Object> sqlParams) {
         this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;
         this.sql = sql;
+        this.sqlParams = sqlParams;
         this.tables = Collections.emptyList();
     }
+
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
+        sqlParams.forEach(sqlParam -> {
+            toSQLContext.addParameter(new EasyConstSQLParameter(null, null, sqlParam));
+        });
         return sql;
     }
 
@@ -158,7 +166,7 @@ public class AnonymousEntityQuerySQLExpressionImpl implements AnonymousEntityQue
     @Override
     public EntityQuerySQLExpression cloneSQLExpression() {
         ExpressionFactory expressionFactory = entitySQLExpressionMetadata.getRuntimeContext().getExpressionFactory();
-        return expressionFactory.createEasyAnonymousQuerySQLExpression(entitySQLExpressionMetadata,sql);
+        return expressionFactory.createEasyAnonymousQuerySQLExpression(entitySQLExpressionMetadata, sql, sqlParams);
     }
 
 }

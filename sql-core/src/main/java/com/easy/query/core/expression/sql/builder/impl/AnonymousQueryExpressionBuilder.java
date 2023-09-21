@@ -4,8 +4,11 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.AnonymousEntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
+
+import java.util.Collection;
 
 /**
  * create time 2023/3/31 10:59
@@ -15,10 +18,12 @@ import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMet
  */
 public class AnonymousQueryExpressionBuilder extends QueryExpressionBuilder implements SQLAnonymousEntityQueryExpressionBuilder {
     private final String sql;
+    private final Collection<Object> sqlParams;
 
-    public AnonymousQueryExpressionBuilder(String sql, ExpressionContext queryExpressionContext,Class<?> queryClass) {
-        super(queryExpressionContext,queryClass);
+    public AnonymousQueryExpressionBuilder(String sql, Collection<Object> sqlParams, ExpressionContext queryExpressionContext, Class<?> queryClass) {
+        super(queryExpressionContext, queryClass);
         this.sql = sql;
+        this.sqlParams = sqlParams;
     }
 
     @Override
@@ -30,15 +35,16 @@ public class AnonymousQueryExpressionBuilder extends QueryExpressionBuilder impl
     @Override
     public EntityQuerySQLExpression toExpression() {
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
-        return runtimeContext.getExpressionFactory().createEasyAnonymousQuerySQLExpression(entitySQLExpressionMetadata,sql);
+        AnonymousEntityQuerySQLExpression easyAnonymousQuerySQLExpression = runtimeContext.getExpressionFactory().createEasyAnonymousQuerySQLExpression(entitySQLExpressionMetadata, sql, sqlParams);
+        easyAnonymousQuerySQLExpression.setProjects(this.projects);
+        return easyAnonymousQuerySQLExpression;
     }
-
 
 
     @Override
     public EntityQueryExpressionBuilder cloneEntityExpressionBuilder() {
 
-        EntityQueryExpressionBuilder anonymousQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousQueryExpressionBuilder(sql, expressionContext.cloneExpressionContext(),queryClass);
+        EntityQueryExpressionBuilder anonymousQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousQueryExpressionBuilder(sql, sqlParams, expressionContext.cloneExpressionContext(), queryClass);
 
         for (EntityTableExpressionBuilder table : super.tables) {
             anonymousQueryExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());

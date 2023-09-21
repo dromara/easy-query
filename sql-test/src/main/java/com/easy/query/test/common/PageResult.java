@@ -9,7 +9,15 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface PageResult<T> {
+    /**
+     * 返回总数
+     * @return
+     */
     long getTotalCount();
 
+    /**
+     * 结果内容
+     * @return
+     */
     List<T> getList();
 }

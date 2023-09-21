@@ -47,8 +47,8 @@ public class DefaultEasyKtQuery implements EasyKtQuery {
     }
 
     @Override
-    public <T> KtQueryable<T> queryable(String sql, Class<T> clazz) {
-        return new EasyKtQueryable<>(easyQueryClient.queryable(sql, clazz));
+    public <T> KtQueryable<T> queryable(String sql, Class<T> clazz, Collection<Object> sqlParams) {
+        return new EasyKtQueryable<>(easyQueryClient.queryable(sql, clazz, sqlParams));
     }
 
     @Override

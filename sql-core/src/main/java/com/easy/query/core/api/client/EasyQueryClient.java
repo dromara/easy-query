@@ -54,7 +54,10 @@ public interface EasyQueryClient {
 
     <T> ClientQueryable<T> queryable(ClientQueryable<T> queryable);
 
-    <T> ClientQueryable<T> queryable(String sql, Class<T> clazz);
+   default  <T> ClientQueryable<T> queryable(String sql, Class<T> clazz){
+       return queryable(sql,clazz,Collections.emptyList());
+   }
+    <T> ClientQueryable<T> queryable(String sql, Class<T> clazz,Collection<Object> sqlParams);
 
     default Transaction beginTransaction() {
         return beginTransaction(null);

@@ -23,6 +23,7 @@ import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * create time 2023/6/1 17:24
@@ -36,7 +37,11 @@ public interface SQLClientApiFactory {
 
     <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext);
 
-    <T> ClientQueryable<T> createQueryable(String sql, Class<T> clazz, QueryRuntimeContext runtimeContext);
+    default <T> ClientQueryable<T> createQueryable(String sql, Class<T> clazz, QueryRuntimeContext runtimeContext) {
+        return createQueryable(sql, Collections.emptyList(), clazz, runtimeContext);
+    }
+
+    <T> ClientQueryable<T> createQueryable(String sql, Collection<Object> sqlParams, Class<T> clazz, QueryRuntimeContext runtimeContext);
 
     <T> ClientQueryable<T> cloneQueryable(ClientQueryable<T> source);
 
