@@ -123,7 +123,8 @@ public class EasyTrackUtil {
             Object originalPropertyValue = propertyGetter.apply(entityState.getOriginalValue());
             Object currentPropertyValue = propertyGetter.apply(entityState.getCurrentValue());
 
-            if ((originalPropertyValue == null && currentPropertyValue == null) || Objects.equals(originalPropertyValue, currentPropertyValue)) {
+
+            if (propertyValueEquals(columnMetadata,originalPropertyValue,currentPropertyValue)) {
                 entityTrackProperty.getSameProperties().add(propertyName);
             } else {
                 entityTrackProperty.getDiffProperties().put(propertyName, new TrackDiffEntry(originalPropertyValue, currentPropertyValue));
@@ -131,6 +132,23 @@ public class EasyTrackUtil {
         }
         return entityTrackProperty;
     }
+
+    private static boolean propertyValueEquals(ColumnMetadata columnMetadata,Object original,Object current){
+        if(original == null && current == null){
+          return true;
+        }
+        if(original==null){
+            return false;
+        }
+        if(current==null){
+            return false;
+        }
+        if(Comparable.class.isAssignableFrom(columnMetadata.getPropertyType())){
+            return ((Comparable<?>)original).compareTo(EasyObjectUtil.typeCastNullable(current))==0;
+        }
+        return Objects.equals(original, current);
+    }
+
 
     public static boolean trackBean(ExecutorContext context, Class<?> clazz) {
         //当前查询是否使用了追踪如果没有就直接不使用追踪

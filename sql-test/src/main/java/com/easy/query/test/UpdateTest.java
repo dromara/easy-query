@@ -12,6 +12,7 @@ import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQueryTableNotInSQLContextException;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUserSQLEncryption;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
@@ -24,6 +25,7 @@ import com.easy.query.test.enums.TopicTypeEnum;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.UUID;
@@ -771,5 +773,36 @@ public class UpdateTest extends BaseTest {
         String sql = ((EasyEntityUpdatable<TopicLarge>) easyQuery.updatable(topicLarge))
                 .toSQL(topicLarge);
         Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`create_time` = ? WHERE `id` = ?", sql);
+    }
+    @Test
+    public void updateTest30() {
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        try {
+            BlogEntity blogEntity = new BlogEntity();
+            blogEntity.setId("123123123x");
+            blogEntity.setContent("123");
+            blogEntity.setScore(new BigDecimal("1.0"));
+
+            trackManager.begin();
+
+            boolean b = easyQuery.addTracking(blogEntity);
+            Assert.assertTrue(b);
+            String newTitle = "test123" + new Random().nextInt(100);
+            blogEntity.setContent("111");
+            blogEntity.setScore(new BigDecimal("1"));//1.0和1一样
+            ((EasyEntityUpdatable<BlogEntity>) easyQuery.updatable(blogEntity))
+                    .asTable("x1234")
+                    .executeRows();
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `x1234` SET `content` = ? WHERE `deleted` = ? AND `id` = ?", sql);
+        } finally {
+
+            trackManager.release();
+        }
+        Assert.assertFalse(trackManager.currentThreadTracking());
     }
 }
