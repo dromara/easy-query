@@ -10,8 +10,19 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
  */
 public interface Countable1<T1> {
 
+
+    /**
+     * SELECT COUNT(*) FROM TABLE
+     */
     ClientQueryable<Long> selectCount();
-//    ClientQueryable<Long> selectCount(SQLExpression1<ColumnResultSelector<T1>> countColumnFunc);
-    <TNumber extends Number>ClientQueryable<TNumber> selectCount(Class<TNumber> numberClass);
+
+
+    /**
+     * SELECT COUNT(*) FROM TABLE
+     * @param numberClass 自定义返回结果字节
+     * @return 返回当前queryable链式
+     * @param <TNumber> 返回结果类型
+     */
+    <TNumber extends Number> ClientQueryable<TNumber> selectCount(Class<TNumber> numberClass);
 
 }

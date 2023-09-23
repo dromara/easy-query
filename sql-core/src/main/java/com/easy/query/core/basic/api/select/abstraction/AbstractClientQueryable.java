@@ -16,6 +16,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
 import com.easy.query.core.basic.api.select.JdbcResultWrap;
+import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -175,7 +176,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (countQueryExpressionBuilder == null) {
             return cloneQueryable().select(numberClass, o -> o.sqlNativeSegment("COUNT(*)"));
         }
-        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(numberClass, entityQueryExpressionBuilder);
+        return new EasyClientQueryable<>(numberClass,countQueryExpressionBuilder);
     }
 
     @Override

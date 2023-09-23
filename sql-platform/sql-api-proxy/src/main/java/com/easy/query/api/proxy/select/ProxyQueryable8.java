@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.select;
 
+import com.easy.query.api.proxy.select.extension.queryable.ProxyCountable1;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyUnionable1;
 import com.easy.query.api.proxy.select.extension.queryable8.ClientProxyQueryable8Available;
 import com.easy.query.api.proxy.select.extension.queryable8.ProxyAggregatable8;
@@ -43,6 +44,7 @@ public interface ProxyQueryable8<T1Proxy extends ProxyEntity<T1Proxy, T1>,
         QueryStrategy<ProxyQueryable8<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3,T4Proxy, T4,T5Proxy, T5,T6Proxy, T6,T7Proxy, T7,T8Proxy, T8>>,
         ClientProxyQueryable8Available<T1,T2,T3,T4,T5,T6,T7,T8>,
         ProxyUnionable1<T1Proxy,T1>,
+        ProxyCountable1<T1Proxy, T1>,
         ProxyIncludeable8<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3,T4Proxy, T4,T5Proxy, T5,T6Proxy, T6,T7Proxy, T7,T8Proxy, T8>,
         ProxyFilterable8<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3,T4Proxy, T4,T5Proxy, T5,T6Proxy, T6,T7Proxy, T7,T8Proxy, T8>,
         ProxyGroupable8<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3,T4Proxy, T4,T5Proxy, T5,T6Proxy, T6,T7Proxy, T7,T8Proxy, T8>,

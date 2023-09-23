@@ -2,6 +2,7 @@ package com.easy.query.api4kt.select;
 
 import com.easy.query.api4kt.select.extension.queryable.ClientKtQueryableAvailable;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtAggregatable1;
+import com.easy.query.api4kt.select.extension.queryable.SQLKtCountable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtFillable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtFilterable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtGroupable1;
@@ -45,6 +46,7 @@ public interface KtQueryable<T1> extends Query<T1>,
         SQLKtFilterable1<T1>,
         SQLKtIncludeable1<T1>,
         SQLKtFillable1<T1>,
+        SQLKtCountable1<T1>,
         ClientKtQueryableAvailable<T1> {
 
     /**

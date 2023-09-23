@@ -2,7 +2,9 @@ package com.easy.query.api4j.select;
 
 import com.easy.query.api4j.select.extension.queryable.ClientQueryableAvailable;
 import com.easy.query.api4j.select.extension.queryable.SQLAggregatable1;
+import com.easy.query.api4j.select.extension.queryable.SQLCountable1;
 import com.easy.query.api4j.select.extension.queryable.SQLFillable1;
+import com.easy.query.api4j.select.extension.queryable.SQLFilterable1;
 import com.easy.query.api4j.select.extension.queryable.SQLGroupable1;
 import com.easy.query.api4j.select.extension.queryable.SQLHavingable1;
 import com.easy.query.api4j.select.extension.queryable.SQLIncludeable1;
@@ -10,7 +12,6 @@ import com.easy.query.api4j.select.extension.queryable.SQLJoinable1;
 import com.easy.query.api4j.select.extension.queryable.SQLOrderable1;
 import com.easy.query.api4j.select.extension.queryable.SQLSelectable1;
 import com.easy.query.api4j.select.extension.queryable.SQLUnionable1;
-import com.easy.query.api4j.select.extension.queryable.SQLFilterable1;
 import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -45,6 +46,7 @@ public interface Queryable<T1> extends Query<T1>,
         SQLFilterable1<T1>,
         SQLIncludeable1<T1>,
         SQLFillable1<T1>,
+        SQLCountable1<T1>,
         ClientQueryableAvailable<T1> {
 
     /**

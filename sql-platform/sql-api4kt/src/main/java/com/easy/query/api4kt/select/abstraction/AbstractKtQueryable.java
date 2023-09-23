@@ -88,7 +88,16 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
         });
     }
 
+    @Override
+    public KtQueryable<Long> selectCount() {
+        return this.selectCount(Long.class);
+    }
 
+    @Override
+    public <TNumber extends Number> KtQueryable<TNumber> selectCount(Class<TNumber> numberClass) {
+        ClientQueryable<TNumber> tNumberClientQueryable = getClientQueryable().selectCount(numberClass);
+        return new EasyKtQueryable<>(tNumberClientQueryable);
+    }
     @Override
     public <TR> TR firstOrNull(Class<TR> resultClass) {
         return entityQueryable.firstOrNull(resultClass);

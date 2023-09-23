@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.select;
 
+import com.easy.query.api.proxy.select.extension.queryable.ProxyCountable1;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyUnionable1;
 import com.easy.query.api.proxy.select.extension.queryable3.ClientProxyQueryable3Available;
 import com.easy.query.api.proxy.select.extension.queryable3.ProxyAggregatable3;
@@ -38,6 +39,7 @@ public interface ProxyQueryable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         QueryStrategy<ProxyQueryable3<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3>>,
         ClientProxyQueryable3Available<T1,T2,T3>,
         ProxyUnionable1<T1Proxy,T1>,
+        ProxyCountable1<T1Proxy, T1>,
         ProxyIncludeable3<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3>,
         ProxyFilterable3<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3>,
         ProxyGroupable3<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3>,

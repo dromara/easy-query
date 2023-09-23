@@ -86,7 +86,16 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
             whereExpression.apply(new SQLWherePredicateImpl<>(wherePredicate));
         });
     }
+    @Override
+    public Queryable<Long> selectCount() {
+        return this.selectCount(Long.class);
+    }
 
+    @Override
+    public <TNumber extends Number> Queryable<TNumber> selectCount(Class<TNumber> numberClass) {
+        ClientQueryable<TNumber> tNumberClientQueryable = getClientQueryable().selectCount(numberClass);
+        return new EasyQueryable<>(tNumberClientQueryable);
+    }
 
     @Override
     public <TR> TR firstOrNull(Class<TR> resultClass) {

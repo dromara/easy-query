@@ -1984,6 +1984,22 @@ public class QueryTest3 extends BaseTest {
                 .select(subResult, o -> o.column(topic.id()).columnSubQueryAs(subQueryFunc, o.tr().blogCount())).toSQL();
         Assert.assertEquals("SELECT t.`id`,(SELECT COUNT(t1.`id`) AS `id` FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t", sql);
     }
+    @Test
+    public void queryProxySubQueryAs1_1() {
+        TopicProxy topic = TopicProxy.createTable();
+        SQLFuncExpression<ProxyQueryable<LongProxy, Long>> subQueryFunc = () -> {
+            TopicProxy inner = TopicProxy.createTable();
+            ProxyQueryable<LongProxy, Long> select = easyProxyQuery.queryable(inner).where(x -> x.eq(inner.id(), topic.id()))
+                    .selectCount();
+            return select;
+        };
+
+
+        TopicSubQueryBlogProxy subResult = TopicSubQueryBlogProxy.createTable();
+        String sql = easyProxyQuery.queryable(topic)
+                .select(subResult, o -> o.column(topic.id()).columnSubQueryAs(subQueryFunc, o.tr().blogCount())).toSQL();
+        Assert.assertEquals("SELECT t.`id`,(SELECT COUNT(*) FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t", sql);
+    }
 
 //
 //    @Test
@@ -2204,6 +2220,29 @@ public class QueryTest3 extends BaseTest {
         BlogEntity blogEntity = pageResult.getData().get(0);
         Assert.assertEquals("1",blogEntity.getId());
         Assert.assertEquals("MySQL5.7-1",blogEntity.getContent());
+    }
+    @Test
+    public void selectCount1(){
+        String sql = easyQuery.queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, 123))
+                .selectCount().toSQL();
+        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` WHERE `id` = ?",sql);
+    }
+    @Test
+    public void selectCount2(){
+        String sql = easyQuery.queryable(Topic.class)
+                .innerJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
+                .where(o -> o.eq(Topic::getId, 123))
+                .selectCount().toSQL();
+        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?",sql);
+    }
+    @Test
+    public void selectCount3(){
+        String sql = easyQuery.queryable(Topic.class)
+                .innerJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
+                .where(o -> o.eq(Topic::getId, 123))
+                .selectCount().toSQL();
+        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?",sql);
     }
 
 
