@@ -45,7 +45,7 @@ public class SQLAliasNativeLambdaKtExpressionContextImpl<T1,TR> implements SQLAl
 
     @Override
     public <T2> SQLAliasNativeLambdaKtExpressionContext<T1,TR> expression(EntitySQLTableOwner<T2> table, KProperty1<? super T2, ?> property) {
-        sqlAliasNativePropertyExpressionContext.expression(table.getTable(),EasyKtLambdaUtil.getPropertyName(property));
+        sqlAliasNativePropertyExpressionContext.expression(table,EasyKtLambdaUtil.getPropertyName(property));
         return this;
     }
 

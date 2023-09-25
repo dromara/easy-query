@@ -2,6 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
@@ -37,9 +38,24 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class QueryTest2 extends BaseTest {
+    @Test
+    public void query1231(){
+
+        String sql = easyQueryClient.queryable(Topic.class)
+                .where(o -> {
+                    o.sqlNativeSegment("{0} = ({1})", c -> {
+                        ClientQueryable<LocalDateTime> maxCreateTimeQuery = easyQueryClient.queryable(Topic.class)
+                                .select(LocalDateTime.class, x -> x.columnMax("createTime"));
+                        c.expression(o, "createTime")
+                                .expression(maxCreateTimeQuery);
+                    });
+                }).toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` = (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1)",sql);
+    }
 
     @Test
     public void query124() {
+
         String toSql = easyQuery
                 .queryable(Topic.class)
                 .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))

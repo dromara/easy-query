@@ -549,6 +549,11 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLProperty
     }
 
     <T2> WherePredicate<T1> eq(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2);
+//    default <TProperty> WherePredicate<T1> eq(String property, Query<TProperty> subQuery) {
+//        return eq(true, property, subQuery);
+//    }
+//
+//    <TProperty> WherePredicate<T1> eq(boolean condition, String property, Query<TProperty> subQuery);
     default <T2> WherePredicate<T1> ne(EntitySQLTableOwner<T2> sub, String property1, String property2) {
         return ne(true, sub, property1, property2);
     }

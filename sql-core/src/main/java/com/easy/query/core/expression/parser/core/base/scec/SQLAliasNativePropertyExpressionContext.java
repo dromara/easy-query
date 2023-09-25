@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.parser.core.base.scec;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.SQLTableOwner;
 
 /**
  * create time 2023/9/12 22:02
@@ -21,12 +21,12 @@ public interface SQLAliasNativePropertyExpressionContext extends SQLNativeProper
     SQLAliasNativePropertyExpressionContext expression(String property);
     /**
      * 当前表的使用的列,自动识别所属表别名
-     * @param table 哪张表
+     * @param sqlTableOwner 哪张表
      * @param property 哪个列
      * @return
      */
     @Override
-    SQLAliasNativePropertyExpressionContext expression(TableAvailable table, String property);
+    SQLAliasNativePropertyExpressionContext expression(SQLTableOwner sqlTableOwner, String property);
     @Override
     <TEntity> SQLAliasNativePropertyExpressionContext expression(ClientQueryable<TEntity> subQuery);
 

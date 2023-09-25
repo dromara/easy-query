@@ -33,7 +33,7 @@ public class SQLNativeLambdaKtExpressionContextImpl<T1> implements SQLNativeLamb
 
     @Override
     public <T2> SQLNativeLambdaKtExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, KProperty1<? super T2, ?> property) {
-        columnConstExpressionContext.expression(table.getTable(),EasyKtLambdaUtil.getPropertyName(property));
+        columnConstExpressionContext.expression(table,EasyKtLambdaUtil.getPropertyName(property));
         return this;
     }
 

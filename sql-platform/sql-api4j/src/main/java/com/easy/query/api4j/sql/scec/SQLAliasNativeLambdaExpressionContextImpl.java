@@ -39,7 +39,7 @@ public class SQLAliasNativeLambdaExpressionContextImpl<T1,TR> implements SQLAlia
 
     @Override
     public <T2> SQLAliasNativeLambdaExpressionContext<T1,TR> expression(EntitySQLTableOwner<T2> table, Property<T2, ?> property) {
-        sqlAliasNativePropertyExpressionContext.expression(table.getTable(),EasyLambdaUtil.getPropertyName(property));
+        sqlAliasNativePropertyExpressionContext.expression(table,EasyLambdaUtil.getPropertyName(property));
         return this;
     }
 

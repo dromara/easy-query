@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.parser.core.base.scec;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
@@ -22,7 +23,7 @@ public class SQLNativePropertyExpressionContextImpl implements SQLNativeProperty
 
     @Override
     public SQLNativePropertyExpressionContext expression(String property) {
-        sqlNativeExpressionContext.expression(table, property);
+        sqlNativeExpressionContext.expression(this.table, property);
         return this;
     }
 
@@ -33,8 +34,8 @@ public class SQLNativePropertyExpressionContextImpl implements SQLNativeProperty
     }
 
     @Override
-    public SQLNativePropertyExpressionContext expression(TableAvailable table, String property) {
-        sqlNativeExpressionContext.expression(table, property);
+    public SQLNativePropertyExpressionContext expression(SQLTableOwner sqlTableOwner, String property) {
+        sqlNativeExpressionContext.expression(sqlTableOwner.getTable(), property);
         return this;
     }
 

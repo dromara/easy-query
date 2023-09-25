@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.parser.core.base.scec;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.context.SQLAliasNativeExpressionContext;
 
@@ -39,8 +40,8 @@ public class SQLAliasNativePropertyExpressionContextImpl implements SQLAliasNati
     }
 
     @Override
-    public SQLAliasNativePropertyExpressionContext expression(TableAvailable table, String property) {
-        sqlAliasNativeExpressionContext.expression(table,property);
+    public SQLAliasNativePropertyExpressionContext expression(SQLTableOwner sqlTableOwner, String property) {
+        sqlAliasNativeExpressionContext.expression(sqlTableOwner.getTable(),property);
         return this;
     }
 

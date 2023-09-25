@@ -216,7 +216,6 @@ public class FilterImpl implements Filter {
     }
 
     private <TProperty> void subQueryIn(TableAvailable table, String property, Query<TProperty> subQueryable, SQLPredicateCompareEnum sqlPredicateCompare) {
-
         extract(subQueryable);
         nextPredicateSegment.setPredicate(new ColumnInSubQueryPredicate(table, property, subQueryable, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
         next();

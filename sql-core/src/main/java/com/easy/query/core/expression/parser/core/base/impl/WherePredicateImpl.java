@@ -212,6 +212,11 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
         return compareSelf(condition, sub, property1, property2, SQLPredicateCompareEnum.EQ);
     }
 
+//    @Override
+//    public <TProperty> WherePredicate<T1> eq(boolean condition, String property, Query<TProperty> subQuery) {
+//
+//    }
+
     @Override
     public <T2> WherePredicate<T1> ne(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2) {
         return compareSelf(condition, sub, property1, property2, SQLPredicateCompareEnum.NE);
