@@ -28,7 +28,7 @@ public class SQLKtColumnSelectorImpl<T1> implements SQLKtColumnSelector<T1> {
     }
 
     @Override
-    public SQLKtColumnSelector<T1> castTChain() {
+    public SQLKtColumnSelector<T1> castChain() {
         return this;
     }
 }

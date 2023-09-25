@@ -52,6 +52,17 @@ public class QueryTest2 extends BaseTest {
                 }).toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` = (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1)",sql);
     }
+    @Test
+    public void query1232(){
+
+        ClientQueryable<LocalDateTime> maxCreateTimeQuery = easyQueryClient.queryable(Topic.class)
+                .select(LocalDateTime.class, x -> x.columnMax("createTime"));
+        String sql = easyQueryClient.queryable(Topic.class)
+                .where(o -> {
+                    o.eq("createTime",maxCreateTimeQuery);
+                }).toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` = (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1)",sql);
+    }
 
     @Test
     public void query124() {

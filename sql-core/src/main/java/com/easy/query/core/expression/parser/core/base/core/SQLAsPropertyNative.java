@@ -3,6 +3,7 @@ package com.easy.query.core.expression.parser.core.base.core;
 import com.easy.query.core.expression.builder.core.SQLAsNative;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
 import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContextImpl;
 
@@ -12,9 +13,8 @@ import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativeProper
  *
  * @author xuejiaming
  */
-public interface SQLAsPropertyNative<TChain> extends SQLTableOwner {
+public interface SQLAsPropertyNative<TChain> extends SQLTableOwner, ChainCast<TChain> {
     <T> SQLAsNative<T> getSQLAsNative();
-    TChain castTChain();
     /**
      * 参数格式化 占位符 {0} {1}
      * @param sqlSegment
@@ -48,7 +48,7 @@ public interface SQLAsPropertyNative<TChain> extends SQLTableOwner {
                 contextConsume.apply(new SQLAliasNativePropertyExpressionContextImpl(getTable(),context));
             });
         }
-        return castTChain();
+        return castChain();
     }
 
 }

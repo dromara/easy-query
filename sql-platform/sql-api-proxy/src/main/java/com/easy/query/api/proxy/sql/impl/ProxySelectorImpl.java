@@ -29,7 +29,7 @@ public class ProxySelectorImpl implements ProxySelector {
     }
 
     @Override
-    public ProxySelector castTChain() {
+    public ProxySelector castChain() {
         return this;
     }
 }

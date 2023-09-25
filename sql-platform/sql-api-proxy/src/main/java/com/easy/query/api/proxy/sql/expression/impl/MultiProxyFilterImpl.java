@@ -33,7 +33,7 @@ public class MultiProxyFilterImpl<T1Proxy extends ProxyEntity<T1Proxy,T1>,T1> im
     }
 
     @Override
-    public ProxyFilter castTChain() {
+    public ProxyFilter castChain() {
         return this;
     }
 

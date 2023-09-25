@@ -29,7 +29,7 @@ public class SQLOrderByColumnSelectorImpl<T> implements SQLOrderBySelector<T> {
     }
 
     @Override
-    public SQLOrderBySelector<T> castTChain() {
+    public SQLOrderBySelector<T> castChain() {
         return this;
     }
 }

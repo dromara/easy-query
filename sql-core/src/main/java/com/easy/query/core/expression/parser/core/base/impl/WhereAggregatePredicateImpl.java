@@ -94,7 +94,7 @@ public class WhereAggregatePredicateImpl<T1> implements WhereAggregatePredicate<
     }
 
     @Override
-    public WhereAggregatePredicate<T1> castTChain() {
+    public WhereAggregatePredicate<T1> castChain() {
         return this;
     }
 }

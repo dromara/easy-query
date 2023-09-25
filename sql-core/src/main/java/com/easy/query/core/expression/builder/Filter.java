@@ -186,6 +186,73 @@ public interface Filter extends SQLNative<Filter> {
     Filter compareSelf(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2, SQLPredicateCompare sqlPredicateCompare);
 
 
+    /**
+     * 大于 column > val
+     *
+     * @param property 字段
+     * @param subQuery 子查询
+     * @return children
+     */
+    default <TProperty> Filter gt(TableAvailable table, String property, Query<TProperty> subQuery) {
+        return subQueryFilter(table, property, subQuery, SQLPredicateCompareEnum.GT);
+    }
+
+    /**
+     * 等于 column >= val
+     *
+     * @param property 字段
+     * @param subQuery 子查询
+     * @return children
+     */
+    default <TProperty> Filter ge(TableAvailable table, String property, Query<TProperty> subQuery) {
+        return subQueryFilter(table, property, subQuery, SQLPredicateCompareEnum.GE);
+    }
+
+    /**
+     * 等于 column = val
+     *
+     * @param property 字段
+     * @param subQuery 子查询
+     * @return children
+     */
+    default <TProperty> Filter eq(TableAvailable table, String property, Query<TProperty> subQuery) {
+        return subQueryFilter(table, property, subQuery, SQLPredicateCompareEnum.EQ);
+    }
+
+    /**
+     * 不等于 column <> val
+     *
+     * @param property 字段
+     * @param subQuery 子查询
+     * @return children
+     */
+    default <TProperty> Filter ne(TableAvailable table, String property, Query<TProperty> subQuery) {
+        return subQueryFilter(table, property, subQuery, SQLPredicateCompareEnum.NE);
+    }
+
+    /**
+     * 小于等于 column <= val
+     *
+     * @param property 字段
+     * @param subQuery 子查询
+     * @return children
+     */
+    default <TProperty> Filter le(TableAvailable table, String property, Query<TProperty> subQuery) {
+        return subQueryFilter(table, property, subQuery, SQLPredicateCompareEnum.LE);
+    }
+
+    /**
+     * 小于 column < val
+     *
+     * @param property 字段
+     * @param subQuery 子查询
+     * @return children
+     */
+    default <TProperty> Filter lt(TableAvailable table, String property, Query<TProperty> subQuery) {
+        return subQueryFilter(table, property, subQuery, SQLPredicateCompareEnum.LT);
+    }
+
+    <TProperty> Filter subQueryFilter(TableAvailable table, String property, Query<TProperty> subQuery, SQLPredicateCompare sqlPredicateCompare);
 
     Filter and();
 

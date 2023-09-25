@@ -71,7 +71,7 @@ public class MultiProxyAggregateFilter5Impl<T1Proxy extends ProxyEntity<T1Proxy,
     }
 
     @Override
-    public ProxyAggregateFilter castTChain() {
+    public ProxyAggregateFilter castChain() {
         return this;
     }
 }

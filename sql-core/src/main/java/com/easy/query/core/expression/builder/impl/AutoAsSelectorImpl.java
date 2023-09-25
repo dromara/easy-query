@@ -67,7 +67,7 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
     }
 
     @Override
-    protected AsSelector castTChain() {
+    protected AsSelector castChain() {
         return this;
     }
 

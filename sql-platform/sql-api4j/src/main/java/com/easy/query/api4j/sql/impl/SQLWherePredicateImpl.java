@@ -68,7 +68,7 @@ public class SQLWherePredicateImpl<T1> implements SQLWherePredicate<T1> {
     }
 
     @Override
-    public SQLWherePredicate<T1> castTChain() {
+    public SQLWherePredicate<T1> castChain() {
         return this;
     }
 }

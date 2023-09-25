@@ -103,7 +103,7 @@ public class MultiProxyFilter9Impl<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     }
 
     @Override
-    public ProxyFilter castTChain() {
+    public ProxyFilter castChain() {
         return this;
     }
 }

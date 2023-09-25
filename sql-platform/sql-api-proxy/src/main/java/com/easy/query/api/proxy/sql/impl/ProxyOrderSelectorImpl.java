@@ -29,7 +29,7 @@ public class ProxyOrderSelectorImpl implements ProxyOrderSelector {
     }
 
     @Override
-    public ProxyOrderSelector castTChain() {
+    public ProxyOrderSelector castChain() {
         return this;
     }
 }

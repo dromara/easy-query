@@ -3,6 +3,7 @@ package com.easy.query.api4kt.sql.core;
 import com.easy.query.api4kt.sql.scec.SQLAliasNativeLambdaKtExpressionContext;
 import com.easy.query.api4kt.sql.scec.SQLAliasNativeLambdaKtExpressionContextImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.expression.parser.core.base.core.SQLAsPropertyNative;
 
 /**
@@ -11,9 +12,8 @@ import com.easy.query.core.expression.parser.core.base.core.SQLAsPropertyNative;
  *
  * @author xuejiaming
  */
-public interface SQLAsLambdaKtNative<T1,TR,TChain> {
+public interface SQLAsLambdaKtNative<T1,TR,TChain> extends ChainCast<TChain> {
     <T> SQLAsPropertyNative<T> getSQLAsPropertyNative();
-    TChain castTChain();
 
 
     /**
@@ -54,6 +54,6 @@ public interface SQLAsLambdaKtNative<T1,TR,TChain> {
                 contextConsume.apply(new SQLAliasNativeLambdaKtExpressionContextImpl<>(context));
             });
         }
-        return castTChain();
+        return castChain();
     }
 }

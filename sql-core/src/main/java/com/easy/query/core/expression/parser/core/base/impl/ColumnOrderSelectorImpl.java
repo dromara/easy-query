@@ -54,7 +54,7 @@ public class ColumnOrderSelectorImpl<T1> implements ColumnOrderSelector<T1> {
     }
 
     @Override
-    public ColumnOrderSelector<T1> castTChain() {
+    public ColumnOrderSelector<T1> castChain() {
         return this;
     }
 }

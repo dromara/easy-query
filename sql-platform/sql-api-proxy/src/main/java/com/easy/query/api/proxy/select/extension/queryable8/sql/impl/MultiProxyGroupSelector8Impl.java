@@ -94,7 +94,7 @@ public class MultiProxyGroupSelector8Impl<T1Proxy extends ProxyEntity<T1Proxy, T
     }
 
     @Override
-    public ProxyGroupSelector castTChain() {
+    public ProxyGroupSelector castChain() {
         return this;
     }
 }

@@ -51,7 +51,7 @@ public class SQLWhereAggregatePredicateImpl<T1> implements SQLWhereAggregatePred
     }
 
     @Override
-    public SQLWhereAggregatePredicate<T1> castTChain() {
+    public SQLWhereAggregatePredicate<T1> castChain() {
         return this;
     }
 }

@@ -3,6 +3,7 @@ package com.easy.query.api4j.sql.core;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContext;
 import com.easy.query.api4j.sql.scec.SQLNativeLambdaExpressionContextImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 
 /**
@@ -11,9 +12,8 @@ import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
  *
  * @author xuejiaming
  */
-public interface SQLLambdaNative<TEntity,TChain> {
+public interface SQLLambdaNative<TEntity,TChain> extends ChainCast<TChain> {
     <T> SQLPropertyNative<T> getSQLPropertyNative();
-    TChain castTChain();
     /**
      * 参数格式化 占位符 {0} {1}
      * @param sqlSegment
@@ -47,7 +47,7 @@ public interface SQLLambdaNative<TEntity,TChain> {
                 contextConsume.apply(new SQLNativeLambdaExpressionContextImpl<>(context));
             });
         }
-        return castTChain();
+        return castChain();
     }
 
 }

@@ -30,7 +30,7 @@ public class SQLKtGroupBySelectorImpl<T1> implements SQLKtGroupBySelector<T1> {
     }
 
     @Override
-    public SQLKtGroupBySelector<T1> castTChain() {
+    public SQLKtGroupBySelector<T1> castChain() {
         return this;
     }
 }

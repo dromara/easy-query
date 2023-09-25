@@ -61,7 +61,7 @@ public class ColumnSelectorImpl<T1> implements ColumnSelector<T1> {
     }
 
     @Override
-    public ColumnSelector<T1> castTChain() {
+    public ColumnSelector<T1> castChain() {
         return this;
     }
 }

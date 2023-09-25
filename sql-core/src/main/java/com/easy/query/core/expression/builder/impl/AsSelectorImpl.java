@@ -92,11 +92,11 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
         contextConsume.apply(sqlAliasNativeExpressionContext);
         SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlAliasNativeExpressionContext);
         sqlBuilderSegment.append(columnSegment);
-        return castTChain();
+        return castChain();
     }
 
     @Override
-    protected AsSelector castTChain() {
+    protected AsSelector castChain() {
         return this;
     }
 

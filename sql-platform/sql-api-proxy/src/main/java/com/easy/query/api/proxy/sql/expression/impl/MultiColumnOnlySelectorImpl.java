@@ -44,7 +44,7 @@ public class MultiColumnOnlySelectorImpl<T1Proxy extends ProxyEntity<T1Proxy,T1>
     }
 
     @Override
-    public ProxyColumnOnlySelector<T1Proxy, T1> castTChain() {
+    public ProxyColumnOnlySelector<T1Proxy, T1> castChain() {
         return this;
     }
 }

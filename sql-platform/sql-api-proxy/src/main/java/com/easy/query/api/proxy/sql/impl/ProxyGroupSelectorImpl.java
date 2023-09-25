@@ -29,7 +29,7 @@ public class ProxyGroupSelectorImpl implements ProxyGroupSelector {
     }
 
     @Override
-    public ProxyGroupSelector castTChain() {
+    public ProxyGroupSelector castChain() {
         return this;
     }
 }

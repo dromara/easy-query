@@ -28,7 +28,7 @@ public class SQLColumnSelectorImpl<T1> implements SQLColumnSelector<T1> {
     }
 
     @Override
-    public SQLColumnSelector<T1> castTChain() {
+    public SQLColumnSelector<T1> castChain() {
         return this;
     }
 }

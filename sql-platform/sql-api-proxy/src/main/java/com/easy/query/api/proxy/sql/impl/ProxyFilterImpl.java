@@ -29,7 +29,7 @@ public class ProxyFilterImpl implements ProxyFilter {
     }
 
     @Override
-    public ProxyFilter castTChain() {
+    public ProxyFilter castChain() {
         return this;
     }
 }

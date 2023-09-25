@@ -50,7 +50,7 @@ public class ColumnGroupSelectorImpl<T1> implements ColumnGroupSelector<T1> {
     }
 
     @Override
-    public ColumnGroupSelector<T1> castTChain() {
+    public ColumnGroupSelector<T1> castChain() {
         return this;
     }
 }

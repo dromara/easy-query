@@ -53,7 +53,7 @@ public class MultiProxyOrderSelector3Impl<T1Proxy extends ProxyEntity<T1Proxy, T
     }
 
     @Override
-    public ProxyOrderSelector castTChain() {
+    public ProxyOrderSelector castChain() {
         return this;
     }
 }

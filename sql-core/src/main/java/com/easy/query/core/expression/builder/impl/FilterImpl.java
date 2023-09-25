@@ -215,7 +215,7 @@ public class FilterImpl implements Filter {
         expressionContext.extract(subQueryableSQLEntityExpressionBuilder.getExpressionContext());
     }
 
-    private <TProperty> void subQueryIn(TableAvailable table, String property, Query<TProperty> subQueryable, SQLPredicateCompareEnum sqlPredicateCompare) {
+    private <TProperty> void subQueryFilter0(TableAvailable table, String property, Query<TProperty> subQueryable, SQLPredicateCompare sqlPredicateCompare) {
         extract(subQueryable);
         nextPredicateSegment.setPredicate(new ColumnInSubQueryPredicate(table, property, subQueryable, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
         next();
@@ -233,7 +233,7 @@ public class FilterImpl implements Filter {
     @Override
     public <TProperty> Filter in(TableAvailable table, String property, Query<TProperty> subQuery) {
         if (conditionAppend(table, property, subQuery)) {
-            subQueryIn(table, property, subQuery, SQLPredicateCompareEnum.IN);
+            subQueryFilter0(table, property, subQuery, SQLPredicateCompareEnum.IN);
         }
         return this;
     }
@@ -259,7 +259,7 @@ public class FilterImpl implements Filter {
     @Override
     public <TProperty> Filter notIn(TableAvailable table, String property, Query<TProperty> subQuery) {
         if (conditionAppend(table, property, subQuery)) {
-            subQueryIn(table, property, subQuery, SQLPredicateCompareEnum.NOT_IN);
+            subQueryFilter0(table, property, subQuery, SQLPredicateCompareEnum.NOT_IN);
         }
         return this;
     }
@@ -306,6 +306,14 @@ public class FilterImpl implements Filter {
         nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, property1, rightTable, property2, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
         next();
         return this;
+    }
+
+    @Override
+    public <TProperty> Filter subQueryFilter(TableAvailable table, String property, Query<TProperty> subQuery, SQLPredicateCompare sqlPredicateCompare) {
+        if (conditionAppend(table, property, subQuery)) {
+            subQueryFilter0(table, property, subQuery,sqlPredicateCompare);
+        }
+         return this;
     }
 
     @Override

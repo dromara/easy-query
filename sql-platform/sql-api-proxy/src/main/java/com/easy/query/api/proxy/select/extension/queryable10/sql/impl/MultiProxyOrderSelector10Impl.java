@@ -110,7 +110,7 @@ public class MultiProxyOrderSelector10Impl<T1Proxy extends ProxyEntity<T1Proxy, 
     }
 
     @Override
-    public ProxyOrderSelector castTChain() {
+    public ProxyOrderSelector castChain() {
         return this;
     }
 }

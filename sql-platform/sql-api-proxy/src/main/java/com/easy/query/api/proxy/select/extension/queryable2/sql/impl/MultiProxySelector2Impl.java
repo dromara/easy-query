@@ -1,6 +1,5 @@
 package com.easy.query.api.proxy.select.extension.queryable2.sql.impl;
 
-import com.easy.query.api.proxy.select.extension.queryable10.sql.MultiProxySelector10;
 import com.easy.query.api.proxy.select.extension.queryable2.sql.MultiProxySelector2;
 import com.easy.query.api.proxy.sql.ProxySelector;
 import com.easy.query.core.expression.builder.Selector;
@@ -47,7 +46,7 @@ public class MultiProxySelector2Impl<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     }
 
     @Override
-    public ProxySelector castTChain() {
+    public ProxySelector castChain() {
         return this;
     }
 }

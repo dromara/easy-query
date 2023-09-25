@@ -73,7 +73,7 @@ public class ColumnAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR> {
     }
 
     @Override
-    public ColumnAsSelector<T1, TR> castTChain() {
+    public ColumnAsSelector<T1, TR> castChain() {
         return this;
     }
     @Override

@@ -55,7 +55,7 @@ public abstract class AbstractSelector<TChain> {
         this.sqlBuilderSegment = sqlBuilderSegment;
     }
 
-    protected abstract TChain castTChain();
+    protected abstract TChain castChain();
 
     public ExpressionContext getExpressionContext(){
         return expressionContext;
@@ -66,13 +66,13 @@ public abstract class AbstractSelector<TChain> {
     public TChain column(TableAvailable table, String property) {
         ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, runtimeContext, null);
         sqlBuilderSegment.append(columnSegment);
-        return castTChain();
+        return castChain();
     }
     public TChain columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression) {
         NavigateMetadata navigateMetadata = table.getEntityMetadata().getNavigateNotNull(selfProperty);
         Map<String, ColumnIncludeExpression> propertyColumnIncludeExpressionMap = expressionContext.getColumnIncludeMaps().computeIfAbsent(table, k -> new HashMap<>());
         propertyColumnIncludeExpressionMap.put(navigateMetadata.getSelfPropertyOrPrimary(),new ColumnIncludeExpression(table,selfProperty,aliasProperty,includeSelectorExpression));
-        return castTChain();
+        return castChain();
     }
 
     public TChain columnIgnore(TableAvailable table, String property) {
@@ -83,7 +83,7 @@ public abstract class AbstractSelector<TChain> {
             }
             return false;
         });
-        return castTChain();
+        return castChain();
     }
 
     public TChain columnAll(TableAvailable table) {
@@ -108,7 +108,7 @@ public abstract class AbstractSelector<TChain> {
                 sqlBuilderSegment.append(columnSegment);
             }
         }
-        return castTChain();
+        return castChain();
     }
 
     private EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
@@ -157,7 +157,7 @@ public abstract class AbstractSelector<TChain> {
                 }
             }
         }
-        return castTChain();
+        return castChain();
     }
 
     /**

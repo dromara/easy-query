@@ -29,7 +29,7 @@ public class SQLKtColumnAsSelectorImpl<T1, TR> implements SQLKtColumnAsSelector<
     }
 
     @Override
-    public SQLKtColumnAsSelector<T1, TR> castTChain() {
+    public SQLKtColumnAsSelector<T1, TR> castChain() {
         return this;
     }
 }

@@ -28,7 +28,7 @@ public class SelectorImpl extends AbstractSelector<Selector> implements Selector
     }
 
     @Override
-    protected Selector castTChain() {
+    protected Selector castChain() {
         return this;
     }
 
@@ -48,6 +48,6 @@ public class SelectorImpl extends AbstractSelector<Selector> implements Selector
         contextConsume.apply(sqlNativeExpressionContext);
         SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(columnSegment);
-        return castTChain();
+        return castChain();
     }
 }

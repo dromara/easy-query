@@ -102,7 +102,7 @@ public class MultiProxySelector9Impl<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     }
 
     @Override
-    public ProxySelector castTChain() {
+    public ProxySelector castChain() {
         return this;
     }
 }

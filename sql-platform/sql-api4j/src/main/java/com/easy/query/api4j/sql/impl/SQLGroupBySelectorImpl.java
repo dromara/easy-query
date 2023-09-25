@@ -30,7 +30,7 @@ public class SQLGroupBySelectorImpl<T1> implements SQLGroupBySelector<T1> {
     }
 
     @Override
-    public SQLGroupBySelector<T1> castTChain() {
+    public SQLGroupBySelector<T1> castChain() {
         return this;
     }
 }

@@ -38,7 +38,7 @@ public class ProxyAsSelectorImpl<TRProxy extends ProxyEntity<TRProxy, TR>, TR> i
     }
 
     @Override
-    public ProxyAsSelector<TRProxy, TR> castTChain() {
+    public ProxyAsSelector<TRProxy, TR> castChain() {
         return this;
     }
 }

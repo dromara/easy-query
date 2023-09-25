@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.ChainCast;
 
 /**
  * create time 2023/7/31 14:35
@@ -11,9 +12,8 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
  *
  * @author xuejiaming
  */
-public interface SQLProxyNative<TChain> {
+public interface SQLProxyNative<TChain> extends ChainCast<TChain> {
     <T> SQLNative<T> getSQLNative();
-    TChain castTChain();
 
     /**
      * 参数格式化 占位符 {0} {1}
@@ -53,6 +53,6 @@ public interface SQLProxyNative<TChain> {
                 contextConsume.apply(new SQLNativeProxyExpressionContextImpl(context));
             });
         }
-        return castTChain();
+        return castChain();
     }
 }
