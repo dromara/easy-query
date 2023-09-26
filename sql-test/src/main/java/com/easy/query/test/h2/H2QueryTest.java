@@ -1,8 +1,12 @@
 package com.easy.query.test.h2;
 
+import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.api4j.select.Queryable3;
 import com.easy.query.api4j.select.Queryable4;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.builder.core.ConditionDefaultAccepter;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.h2.domain.ALLTYPE1;
@@ -708,6 +712,42 @@ public class H2QueryTest extends H2BaseTest {
                         )
                 ).toSQL();
         Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2 FROM t_book_test x", sql);
+    }
+    @Test
+    public void nativeSQLTest2_1() {
+        Queryable<H2BookTest> x = easyQuery.queryable(H2BookTest.class)
+                .asAlias("x")
+                .select(o -> o.columnAll()
+                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
+                        .sqlNativeSegment("rank() over(partition by {0} order by {0} desc) as rank2", it -> it
+                                .value(1)
+                        )
+                );
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(x.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        String sql =x.toSQL(toSQLContext);
+        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by ? order by ? desc) as rank2 FROM t_book_test x", sql);
+        List<SQLParameter> parameters = toSQLContext.getParameters();
+        Assert.assertEquals(parameters.size(),2);
+    }
+    @Test
+    public void nativeSQLTest2_2() {
+        Queryable<H2BookTest> x = easyQuery.queryable(H2BookTest.class)
+                .asAlias("x")
+                .select(o -> o.columnAll()
+                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
+                        .sqlNativeSegment("rank() over(partition by {0} {1} order by {1}{0} desc) as rank2", it -> it
+                                .value(1).value(2)
+                        )
+                );
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(x.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        String sql =x.toSQL(toSQLContext);
+        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by ? ? order by ?? desc) as rank2 FROM t_book_test x", sql);
+        List<SQLParameter> parameters = toSQLContext.getParameters();
+        Assert.assertEquals(parameters.size(),4);
+        Assert.assertEquals(1,parameters.get(0).getValue());
+        Assert.assertEquals(2,parameters.get(1).getValue());
+        Assert.assertEquals(2,parameters.get(2).getValue());
+        Assert.assertEquals(1,parameters.get(3).getValue());
     }
 
     @Test

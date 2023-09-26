@@ -53,13 +53,13 @@ public abstract class AbstractSQLNativeSegmentImpl {
     private String getResultSQL(ToSQLContext toSQLContext){
 
         if(EasyCollectionUtil.isNotEmpty(sqlConstExpressionContext.getExpressions())){
+            MessageFormat messageFormat = new MessageFormat(sqlSegment);
             Object[] args = new Object[sqlConstExpressionContext.getExpressions().size()];
             for (int i = 0; i < sqlConstExpressionContext.getExpressions().size(); i++) {
                 ParamExpression paramExpression = sqlConstExpressionContext.getExpressions().get(i);
-                String arg =EasySQLExpressionUtil.parseParamExpression(runtimeContext,paramExpression,toSQLContext);
+                Object arg =EasySQLExpressionUtil.parseParamExpression(runtimeContext,paramExpression,toSQLContext);
                 args[i]=arg;
             }
-            MessageFormat messageFormat = new MessageFormat(sqlSegment);
             return messageFormat.format(args);
         }
         return sqlSegment;

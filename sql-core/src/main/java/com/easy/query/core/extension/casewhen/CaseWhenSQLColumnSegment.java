@@ -51,10 +51,10 @@ public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
             ParamExpression paramExpression = when.t1();
             AndPredicateSegment resolve = resolve(filterExpression);
             String caseWhenPredicateSql = resolve.toSQL(toSQLContext);
-            String thenValue = EasySQLExpressionUtil.parseParamExpression(runtimeContext, paramExpression, toSQLContext);
+            Object thenValue = EasySQLExpressionUtil.parseParamExpression(runtimeContext, paramExpression, toSQLContext);
             sql.append("WHEN ").append(caseWhenPredicateSql).append(" THEN ").append(thenValue).append(" ");
         }
-        String elseValue = EasySQLExpressionUtil.parseParamExpression(runtimeContext, this.elseValue, toSQLContext);
+        Object elseValue = EasySQLExpressionUtil.parseParamExpression(runtimeContext, this.elseValue, toSQLContext);
         sql.append("ELSE ").append(elseValue).append(" END");
         return sql.toString();
     }
