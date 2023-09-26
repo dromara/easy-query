@@ -5,7 +5,7 @@ import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
-import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
+import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -123,7 +123,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         Collection<Field> allFields = EasyClassUtil.getAllFields(object.getClass());
 
 
-        FilterImpl filter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false, ConditionAllAccepter.DEFAULT);
+        FilterImpl filter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false, AnyValueFilter.DEFAULT);
 
         for (Field field : allFields) {
             boolean accessible = field.isAccessible();

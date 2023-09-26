@@ -6,7 +6,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
@@ -76,7 +76,7 @@ public interface ExpressionContext {
     Map<TableAvailable, Map<String, ColumnIncludeExpression>> getColumnIncludeMaps();
     boolean hasColumnIncludeMaps();
 
-    void conditionConfigure(ConditionAccepter conditionAccepter);
-    ConditionAccepter getConditionAccepter();
+    void filterConfigure(ValueFilter valueFilter);
+    ValueFilter getConditionAccepter();
 
 }

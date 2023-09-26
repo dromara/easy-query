@@ -9,6 +9,6 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  * @author xuejiaming
  */
 @FunctionalInterface
-public interface ConditionAccepter {
+public interface ValueFilter {
     boolean accept(TableAvailable table, String property, Object value);
 }

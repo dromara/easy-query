@@ -9,8 +9,8 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
-import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.builder.core.AnyValueFilter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
@@ -49,7 +49,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private ConnectionModeEnum connectionMode;
     private boolean sharding;
     private boolean hasSubQuery;
-    private ConditionAccepter conditionAccepter;
+    private ValueFilter valueFilter;
     private List<SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>>> includes;
     private List<FillExpression> fills;
 
@@ -78,7 +78,7 @@ public class EasyExpressionContext implements ExpressionContext {
         this.maxShardingQueryLimit = null;
         this.connectionMode = null;
         this.sharding = false;
-        this.conditionAccepter = ConditionAllAccepter.DEFAULT;
+        this.conditionAccepter = AnyValueFilter.DEFAULT;
     }
 
     @Override
@@ -281,13 +281,13 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public void conditionConfigure(ConditionAccepter conditionAccepter) {
+    public void filterConfigure(ValueFilter valueFilter) {
         Objects.requireNonNull(conditionAccepter, "conditionAccepter can not be null");
         this.conditionAccepter = conditionAccepter;
     }
 
     @Override
-    public ConditionAccepter getConditionAccepter() {
+    public ValueFilter getConditionAccepter() {
         return conditionAccepter;
     }
 

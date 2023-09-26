@@ -18,7 +18,7 @@ import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.List;
@@ -105,5 +105,5 @@ public interface ProxyQueryable10<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     ProxyQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
     ProxyQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> useConnectionMode(ConnectionModeEnum connectionMode);
-    ProxyQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> conditionConfigure(ConditionAccepter conditionAccepter);
+    ProxyQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> filterConfigure(ValueFilter valueFilter);
 }

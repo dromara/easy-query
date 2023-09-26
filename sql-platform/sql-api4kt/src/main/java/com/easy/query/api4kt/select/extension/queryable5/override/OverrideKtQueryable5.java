@@ -12,7 +12,7 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
-import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
@@ -248,5 +248,5 @@ public interface OverrideKtQueryable5<T1, T2, T3,T4,T5> extends KtQueryable<T1>,
     @Override
     KtQueryable5<T1,T2,T3,T4,T5> asTableLink(Function<String, String> linkAs);
     @Override
-    KtQueryable5<T1,T2,T3,T4,T5> conditionConfigure(ConditionAccepter conditionAccepter);
+    KtQueryable5<T1,T2,T3,T4,T5> filterConfigure(ValueFilter valueFilter);
 }

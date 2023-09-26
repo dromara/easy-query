@@ -2,7 +2,7 @@ package com.easy.query.core.expression.parser.factory;
 
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProviderImpl;
-import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
+import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
@@ -23,7 +23,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 public class DefaultSQLExpressionInvokeFactory implements SQLExpressionInvokeFactory {
     @Override
     public <T1> WherePredicate<T1> createWherePredicate(TableAvailable table, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment) {
-        return new WherePredicateImpl<>(table, new FilterImpl(sqlEntityExpression.getRuntimeContext(), sqlEntityExpression.getExpressionContext(), predicateSegment, false, ConditionAllAccepter.DEFAULT));
+        return new WherePredicateImpl<>(table, new FilterImpl(sqlEntityExpression.getRuntimeContext(), sqlEntityExpression.getExpressionContext(), predicateSegment, false, AnyValueFilter.DEFAULT));
 //        return new SQLWherePredicateImpl<>(index,sqlEntityExpression,predicateSegment);
     }
 

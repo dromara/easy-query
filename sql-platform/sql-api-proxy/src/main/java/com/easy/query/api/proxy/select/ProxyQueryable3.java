@@ -19,7 +19,7 @@ import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.List;
@@ -100,5 +100,5 @@ public interface ProxyQueryable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
     ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> useConnectionMode(ConnectionModeEnum connectionMode);
-    ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> conditionConfigure(ConditionAccepter conditionAccepter);
+    ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> filterConfigure(ValueFilter valueFilter);
 }

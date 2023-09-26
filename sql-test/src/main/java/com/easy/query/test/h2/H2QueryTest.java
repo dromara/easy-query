@@ -7,7 +7,7 @@ import com.easy.query.api4j.select.Queryable4;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.builder.core.ConditionDefaultAccepter;
+import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.h2.domain.ALLTYPE1;
 import com.easy.query.test.h2.domain.ALLTYPESharding;
@@ -817,11 +817,11 @@ public class H2QueryTest extends H2BaseTest {
 
             String sql = easyQuery.queryable(DefTable.class)
                     .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                    .conditionConfigure((t, p, v) -> {
+                    .filterConfigure((t, p, v) -> {
                         if ("id".equals(p)) {
                             return true;
                         }
-                        return ConditionDefaultAccepter.DEFAULT.accept(t, p, v);
+                        return NotNullOrEmptyValueFilter.DEFAULT.accept(t, p, v);
                     })
                     .where((t, t1) -> t
                             .eq(DefTable::getId, id)
@@ -835,11 +835,11 @@ public class H2QueryTest extends H2BaseTest {
 
             String sql = easyQuery.queryable(DefTable.class)
                     .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                    .conditionConfigure((t, p, v) -> {
+                    .filterConfigure((t, p, v) -> {
                         if ("enable".equals(p)) {
                             return false;
                         }
-                        return ConditionDefaultAccepter.DEFAULT.accept(t, p, v);
+                        return NotNullOrEmptyValueFilter.DEFAULT.accept(t, p, v);
                     })
                     .where((t, t1) -> t
                             .eq(DefTable::getId, id)

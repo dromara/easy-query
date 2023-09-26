@@ -33,7 +33,7 @@ import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.include.IncludeProcessor;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
@@ -978,8 +978,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public ClientQueryable<T1> conditionConfigure(ConditionAccepter conditionAccepter) {
-        entityQueryExpressionBuilder.getExpressionContext().conditionConfigure(conditionAccepter);
+    public ClientQueryable<T1> filterConfigure(ValueFilter valueFilter) {
+        entityQueryExpressionBuilder.getExpressionContext().filterConfigure(conditionAccepter);
         return this;
     }
 }

@@ -1,6 +1,5 @@
 package com.easy.query.core.basic.api.select.provider;
 
-import com.easy.query.core.expression.builder.core.ConditionAccepter;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;

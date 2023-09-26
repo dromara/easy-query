@@ -9,8 +9,8 @@ import com.easy.query.core.util.EasyStringUtil;
  *
  * @author xuejiaming
  */
-public class ConditionDefaultAccepter implements ConditionAccepter {
-    public static final ConditionAccepter DEFAULT=new ConditionDefaultAccepter();
+public class NotNullOrEmptyValueFilter implements ValueFilter {
+    public static final ValueFilter DEFAULT=new NotNullOrEmptyValueFilter();
     @Override
     public boolean accept(TableAvailable table, String property, Object value) {
         if(value==null){

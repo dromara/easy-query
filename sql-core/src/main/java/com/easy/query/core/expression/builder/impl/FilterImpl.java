@@ -7,7 +7,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -44,10 +44,10 @@ public class FilterImpl implements Filter {
     private final ExpressionContext expressionContext;
     private final PredicateSegment rootPredicateSegment;
     private final boolean reverse;
-    private final ConditionAccepter conditionAcceptAssert;
+    private final ValueFilter conditionAcceptAssert;
     private PredicateSegment nextPredicateSegment;
 
-    public FilterImpl(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, PredicateSegment predicateSegment, boolean reverse, ConditionAccepter conditionAcceptAssert) {
+    public FilterImpl(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, PredicateSegment predicateSegment, boolean reverse, ValueFilter conditionAcceptAssert) {
 
         this.runtimeContext = runtimeContext;
         this.expressionContext = expressionContext;

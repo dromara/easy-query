@@ -8,9 +8,9 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public class ConditionAllAccepter implements ConditionAccepter {
-    public static final ConditionAccepter DEFAULT=new ConditionAllAccepter();
-    private ConditionAllAccepter(){
+public class AnyValueFilter implements ValueFilter {
+    public static final ValueFilter DEFAULT=new AnyValueFilter();
+    private AnyValueFilter(){
 
     }
     @Override

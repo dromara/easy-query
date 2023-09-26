@@ -12,7 +12,7 @@ import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable6;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.expression.builder.core.ConditionAccepter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
@@ -215,8 +215,8 @@ public abstract class AbstractOverrideKtQueryable6<T1, T2, T3, T4, T5, T6> exten
     }
 
     @Override
-    public KtQueryable6<T1, T2, T3, T4, T5, T6> conditionConfigure(ConditionAccepter conditionAccepter) {
-        super.conditionConfigure(conditionAccepter);
+    public KtQueryable6<T1, T2, T3, T4, T5, T6> filterConfigure(ValueFilter valueFilter) {
+        super.filterConfigure(conditionAccepter);
         return getQueryable6();
     }
 }

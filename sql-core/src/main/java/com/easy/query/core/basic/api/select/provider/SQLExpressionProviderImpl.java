@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.select.provider;
 
-import com.easy.query.core.expression.builder.core.ConditionAllAccepter;
+import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.AggregateFilterImpl;
 import com.easy.query.core.expression.builder.impl.AsSelectorImpl;
 import com.easy.query.core.expression.builder.impl.AutoAsSelectorImpl;
@@ -87,7 +87,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public WherePredicate<TEntity> getAllWherePredicate() {
         if (allPredicate == null) {
-            allPredicate = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getAllPredicate(), true, ConditionAllAccepter.DEFAULT));
+            allPredicate = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getAllPredicate(), true, AnyValueFilter.DEFAULT));
         }
         return allPredicate;
     }
@@ -103,7 +103,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public WherePredicate<TEntity> getOnPredicate() {
         if (on == null) {
-            on = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), EasyUtil.getCurrentPredicateTable(entityQueryExpressionBuilder).getOn(), false, ConditionAllAccepter.DEFAULT));
+            on = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), EasyUtil.getCurrentPredicateTable(entityQueryExpressionBuilder).getOn(), false, AnyValueFilter.DEFAULT));
         }
         return on;
     }

@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.api.internal.ConditionConfigurable;
+import com.easy.query.core.basic.api.internal.FilterConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
@@ -35,7 +35,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
         LogicDeletable<ClientQueryable<T1>>,
         TableReNameable<ClientQueryable<T1>>,
         QueryStrategy<ClientQueryable<T1>>,
-        ConditionConfigurable<ClientQueryable<T1>>,
+        FilterConfigurable<ClientQueryable<T1>>,
         Aggregatable1<T1>,
         Joinable1<T1>,
         Multiable1<T1>,
