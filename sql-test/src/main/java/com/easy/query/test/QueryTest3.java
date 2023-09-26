@@ -943,6 +943,63 @@ public class QueryTest3 extends BaseTest {
     }
 
     @Test
+    public void proxyCaseWhen1() {
+        TopicProxy table = TopicProxy.createTable();
+        String sql = easyProxyQuery.queryable(table)
+                .where(o -> o.like(o.t().title(), "someTitle"))
+                .select(TopicProxy.createTable(), o -> {
+
+                            o.sqlSegmentAs(
+                                            SQLProxyFunc.caseWhenBuilder(o)
+                                                    .caseWhen(f -> {
+                                                        f.eq(table.title(), "123");
+                                                    }, o.t().title())
+                                                    .caseWhen(f -> f.eq(table.title(), "456"), "222")
+                                                    .elseEnd("222")
+                                            , o.tr().title())
+                                    .column(o.t().id());
+                        }
+                )
+                .toSQL();
+        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?", sql);
+
+        List<Topic> list = easyProxyQuery.queryable(TopicProxy.createTable())
+                .where(o -> o.like(o.t().title(), "someTitle"))
+                .select(TopicProxy.createTable(), o -> o
+                        .sqlSegmentAs(
+                                SQLProxyFunc.caseWhenBuilder(o)
+                                        .caseWhen(f -> f.eq(o.t().title(), "123"), o.t().title())
+                                        .caseWhen(f -> f.eq(o.t().title(), "456"), "222")
+                                        .elseEnd("222")
+                                , o.tr().title())
+                        .column(o.t().id())
+                ).toList();
+        Assert.assertEquals(0, list.size());
+    }
+    @Test
+    public void proxyCaseWhen2() {
+        TopicProxy table = TopicProxy.createTable();
+        String sql = easyProxyQuery.queryable(table)
+                .where(o -> o.like(o.t().title(), "someTitle"))
+                .select(TopicProxy.createTable(), o -> {
+
+                            o.sqlSegmentAs(
+                                            SQLProxyFunc.caseWhenBuilder(o)
+                                                    .caseWhen(f -> {
+                                                        f.eq(table.title(), "123");
+                                                    }, o.t().title())
+                                                    .caseWhen(f -> f.eq(table.title(), "456"), "222")
+                                                    .elseEnd(o.t().id())
+                                            , o.tr().title())
+                                    .column(o.t().id());
+                        }
+                )
+                .toSQL();
+        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE t.`id` END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?", sql);
+
+    }
+
+    @Test
     public void propertyCaseWhen() {
 
         String sql = easyQueryClient.queryable(Topic.class)
@@ -1027,6 +1084,67 @@ public class QueryTest3 extends BaseTest {
                                             .caseWhen((f, f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar, 100), "111")
                                             .caseWhen((f, f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar, 200), "222")
                                             .elseEnd("222")
+                                    , Topic::getTitle)
+                            .column(Topic::getId)
+                    ).toList();
+            Assert.assertEquals(0, list.size());
+        }
+    }
+    @Test
+    public void lambdaCaseWhen1() {
+        {
+
+            String sql = easyQuery.queryable(Topic.class)
+                    .where(t -> t.like(Topic::getTitle, "someTitle"))
+                    .select(Topic.class, t -> t
+                            .sqlSegmentAs(
+                                    SQL4JFunc.caseWhenBuilder(t)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "123"), Topic::getId)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
+                                            .elseEnd(Topic::getId)
+                                    , Topic::getTitle)
+                            .column(Topic::getId)
+                    )
+                    .toSQL();
+            Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t.`id` WHEN t.`title` = ? THEN ? ELSE t.`id` END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?", sql);
+            List<Topic> list = easyQuery.queryable(Topic.class)
+                    .where(t -> t.like(Topic::getTitle, "someTitle"))
+                    .select(Topic.class, t -> t
+                            .sqlSegmentAs(
+                                    SQL4JFunc.caseWhenBuilder(t)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "123"), Topic::getId)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
+                                            .elseEnd("222")
+                                    , Topic::getTitle)
+                            .column(Topic::getId)
+                    ).toList();
+            Assert.assertEquals(0, list.size());
+        }
+        {
+
+            String sql = easyQuery.queryable(Topic.class)
+                    .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(t -> t.like(Topic::getTitle, "someTitle"))
+                    .select(Topic.class, (t, t1) -> t
+                            .sqlSegmentAs(
+                                    SQL4JFunc.caseWhenBuilder(t, t1)
+                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar, 100),t1, BlogEntity::getId)
+                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar, 200), "222")
+                                            .elseEnd(t1, BlogEntity::getOrder)
+                                    , Topic::getTitle)
+                            .column(Topic::getId)
+                    )
+                    .toSQL();
+            Assert.assertEquals("SELECT CASE WHEN t.`title` = ? AND t1.`star` <= ? THEN t1.`id` WHEN t.`title` = ? AND t1.`star` >= ? THEN ? ELSE t1.`order` END AS `title`,t.`id` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`title` LIKE ?", sql);
+            List<Topic> list = easyQuery.queryable(Topic.class)
+                    .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where(t -> t.like(Topic::getTitle, "someTitle"))
+                    .select(Topic.class, (t, t1) -> t
+                            .sqlSegmentAs(
+                                    SQL4JFunc.caseWhenBuilder(t, t1)
+                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar, 100),t1, BlogEntity::getId)
+                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar, 200), "222")
+                                            .elseEnd(t1, BlogEntity::getOrder)
                                     , Topic::getTitle)
                             .column(Topic::getId)
                     ).toList();
@@ -1984,6 +2102,7 @@ public class QueryTest3 extends BaseTest {
                 .select(subResult, o -> o.column(topic.id()).columnSubQueryAs(subQueryFunc, o.tr().blogCount())).toSQL();
         Assert.assertEquals("SELECT t.`id`,(SELECT COUNT(t1.`id`) AS `id` FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t", sql);
     }
+
     @Test
     public void queryProxySubQueryAs1_1() {
         TopicProxy topic = TopicProxy.createTable();
@@ -2170,29 +2289,32 @@ public class QueryTest3 extends BaseTest {
         }
 
     }
+
     @Test
     public void nativePage3() {
 
-        EasyPageResult<Map> pageResult = easyQuery.queryable("select * from t_topic where id = ?", Map.class,Arrays.asList("1"))
+        EasyPageResult<Map> pageResult = easyQuery.queryable("select * from t_topic where id = ?", Map.class, Arrays.asList("1"))
                 .toPageResult(1, 20);
         Assert.assertEquals(1, pageResult.getData().size());
         Assert.assertEquals(1, pageResult.getTotal());
     }
+
     @Test
     public void nativePage4() {
 
-        EasyPageResult<BlogEntity> pageResult = easyQuery.queryable("select * from t_blog where id = ?", BlogEntity.class,Arrays.asList("1"))
-                .where(o->o.like(BlogEntity::getContent,"5"))
+        EasyPageResult<BlogEntity> pageResult = easyQuery.queryable("select * from t_blog where id = ?", BlogEntity.class, Arrays.asList("1"))
+                .where(o -> o.like(BlogEntity::getContent, "5"))
                 .toPageResult(1, 20);
         Assert.assertEquals(1, pageResult.getData().size());
         Assert.assertEquals(1, pageResult.getTotal());
     }
+
     @Test
     public void nativePage5() {
 
-        EasyPageResult<BlogEntity> pageResult = easyQuery.queryable("select * from t_blog where id = ?", BlogEntity.class,Arrays.asList("1"))
-                .where(o->o.like(BlogEntity::getContent,"5"))
-                .select(BlogEntity.class,o->o.column(BlogEntity::getId).sqlNativeSegment("CONCAT({0},{1},{2})",c->{
+        EasyPageResult<BlogEntity> pageResult = easyQuery.queryable("select * from t_blog where id = ?", BlogEntity.class, Arrays.asList("1"))
+                .where(o -> o.like(BlogEntity::getContent, "5"))
+                .select(BlogEntity.class, o -> o.column(BlogEntity::getId).sqlNativeSegment("CONCAT({0},{1},{2})", c -> {
                     c.value("MySQL")
                             .value("5.7-").expression(BlogEntity::getId)
                             .setPropertyAlias(BlogEntity::getContent);
@@ -2201,15 +2323,16 @@ public class QueryTest3 extends BaseTest {
         Assert.assertEquals(1, pageResult.getData().size());
         Assert.assertEquals(1, pageResult.getTotal());
         BlogEntity blogEntity = pageResult.getData().get(0);
-        Assert.assertEquals("1",blogEntity.getId());
-        Assert.assertEquals("MySQL5.7-1",blogEntity.getContent());
+        Assert.assertEquals("1", blogEntity.getId());
+        Assert.assertEquals("MySQL5.7-1", blogEntity.getContent());
     }
+
     @Test
     public void nativePage6() {
 
-        EasyPageResult<BlogEntity> pageResult = easyQuery.queryable("select * from t_blog where id = ?", BlogEntity.class,Arrays.asList("1"))
-                .where(o->o.like(BlogEntity::getContent,"5"))
-                .select(BlogEntity.class,o->o.column(BlogEntity::getId).sqlNativeSegment("CONCAT({0},{1},{2})",c->{
+        EasyPageResult<BlogEntity> pageResult = easyQuery.queryable("select * from t_blog where id = ?", BlogEntity.class, Arrays.asList("1"))
+                .where(o -> o.like(BlogEntity::getContent, "5"))
+                .select(BlogEntity.class, o -> o.column(BlogEntity::getId).sqlNativeSegment("CONCAT({0},{1},{2})", c -> {
                     c.format("'MySQL'")
                             .format("'5.7-'").expression(BlogEntity::getId)
                             .setPropertyAlias(BlogEntity::getContent);
@@ -2218,31 +2341,34 @@ public class QueryTest3 extends BaseTest {
         Assert.assertEquals(1, pageResult.getData().size());
         Assert.assertEquals(1, pageResult.getTotal());
         BlogEntity blogEntity = pageResult.getData().get(0);
-        Assert.assertEquals("1",blogEntity.getId());
-        Assert.assertEquals("MySQL5.7-1",blogEntity.getContent());
+        Assert.assertEquals("1", blogEntity.getId());
+        Assert.assertEquals("MySQL5.7-1", blogEntity.getContent());
     }
+
     @Test
-    public void selectCount1(){
+    public void selectCount1() {
         String sql = easyQuery.queryable(Topic.class)
                 .where(o -> o.eq(Topic::getId, 123))
                 .selectCount().toSQL();
-        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` WHERE `id` = ?",sql);
+        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` WHERE `id` = ?", sql);
     }
+
     @Test
-    public void selectCount2(){
+    public void selectCount2() {
         String sql = easyQuery.queryable(Topic.class)
-                .innerJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, 123))
                 .selectCount().toSQL();
-        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?",sql);
+        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?", sql);
     }
+
     @Test
-    public void selectCount3(){
+    public void selectCount3() {
         String sql = easyQuery.queryable(Topic.class)
-                .innerJoin(BlogEntity.class,(t,t1)->t.eq(t1,Topic::getId,BlogEntity::getId))
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, 123))
                 .selectCount().toSQL();
-        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?",sql);
+        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?", sql);
     }
 
 
