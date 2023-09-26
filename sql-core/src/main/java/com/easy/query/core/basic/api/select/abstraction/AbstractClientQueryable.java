@@ -1,8 +1,7 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
-import com.easy.query.core.api.dynamic.sort.internal.ObjectSortBuilderImpl;
-import com.easy.query.core.api.dynamic.sort.internal.ObjectSortEntry;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable10;
@@ -34,9 +33,7 @@ import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ConditionAccepter;
-import com.easy.query.core.expression.builder.impl.OrderSelectorImpl;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.include.IncludeProcessor;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
@@ -600,44 +597,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public ClientQueryable<T1> orderByObject(boolean condition, ObjectSort configuration) {
+    public ClientQueryable<T1> orderByObject(boolean condition, ObjectSort objectSort) {
 
         if (condition) {
-            if (configuration != null) {
-                boolean strictMode = configuration.useStrictMode();
-
-                ObjectSortBuilderImpl orderByBuilder = new ObjectSortBuilderImpl();
-                configuration.configure(orderByBuilder);
-                Map<String, ObjectSortEntry> orderProperties = orderByBuilder.build();
-                if (!orderProperties.isEmpty()) {
-
-                    for (Map.Entry<String, ObjectSortEntry> sortKv : orderProperties.entrySet()) {
-                        String property = sortKv.getKey();
-                        ObjectSortEntry objectSortEntry = sortKv.getValue();
-                        int tableIndex = objectSortEntry.getTableIndex();
-                        if (tableIndex < 0 || tableIndex > entityQueryExpressionBuilder.getTables().size() - 1) {
-                            if (strictMode) {
-                                throw new EasyQueryOrderByInvalidOperationException(property, "table index:[" + tableIndex + "] not found in query context");
-                            }
-                            continue;
-                        }
-                        TableAvailable entityTable = entityQueryExpressionBuilder.getTable(tableIndex).getEntityTable();
-                        ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnOrNull(property);
-                        if (columnMetadata == null) {
-                            if (strictMode) {
-                                throw new EasyQueryOrderByInvalidOperationException(property, EasyClassUtil.getSimpleName(queryClass()) + " not found [" + property + "] in entity class");
-                            }
-                            continue;
-                        }
-
-                        OrderSelectorImpl orderSelector = new OrderSelectorImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getOrder());
-                        orderSelector.setAsc(objectSortEntry.isAsc());
-                        orderSelector.column(entityTable, property);
-                    }
-
-                }
-                orderByBuilder.clear();
-            }
+            Objects.requireNonNull(objectSort, "order by object param object sort can not be null");
+            ObjectSortQueryExecutor objectSortQueryExecutor = entityQueryExpressionBuilder.getRuntimeContext().getObjectSortQueryExecutor();
+            objectSortQueryExecutor.whereObject(objectSort,entityQueryExpressionBuilder);
         }
         return this;
     }

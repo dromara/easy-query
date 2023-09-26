@@ -1,4 +1,4 @@
-package com.easy.query.core.api.dynamic.query;
+package com.easy.query.core.api.dynamic.executor.query;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 

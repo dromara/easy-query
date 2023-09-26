@@ -1,7 +1,8 @@
 package com.easy.query.core.context;
 
 import com.easy.query.core.api.SQLClientApiFactory;
-import com.easy.query.core.api.dynamic.query.WhereObjectQueryExecutor;
+import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
+import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -65,4 +66,5 @@ public interface QueryRuntimeContext {
     IncludeProcessorFactory getIncludeProcessorFactory();
     IncludeParserEngine getIncludeParserEngine();
     WhereObjectQueryExecutor getWhereObjectQueryExecutor();
+    ObjectSortQueryExecutor getObjectSortQueryExecutor();
 }

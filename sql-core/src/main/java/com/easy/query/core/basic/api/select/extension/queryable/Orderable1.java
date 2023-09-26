@@ -48,10 +48,10 @@ public interface Orderable1<T1> {
 
     /**
      * @param condition
-     * @param configuration
+     * @param objectSort
      * @return
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link ColumnSelector}
      */
-    ClientQueryable<T1> orderByObject(boolean condition, ObjectSort configuration);
+    ClientQueryable<T1> orderByObject(boolean condition, ObjectSort objectSort);
 
 }

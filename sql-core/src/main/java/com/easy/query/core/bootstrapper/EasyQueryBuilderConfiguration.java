@@ -4,8 +4,10 @@ import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.api.client.DefaultEasyQueryClient;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.def.DefaultSQLClientApiFactory;
-import com.easy.query.core.api.dynamic.query.DefaultWhereObjectQueryExecutor;
-import com.easy.query.core.api.dynamic.query.WhereObjectQueryExecutor;
+import com.easy.query.core.api.dynamic.executor.query.DefaultWhereObjectQueryExecutor;
+import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
+import com.easy.query.core.api.dynamic.executor.sort.DefaultObjectSortQueryExecutor;
+import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.basic.extension.track.DefaultTrackManager;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
@@ -156,6 +158,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(IncludeProcessorFactory.class, EasyIncludeProcessorFactory.class)
                 .replaceService(IncludeParserEngine.class, DefaultIncludeParserEngine.class)
                 .replaceService(WhereObjectQueryExecutor.class, DefaultWhereObjectQueryExecutor.class)
+                .replaceService(ObjectSortQueryExecutor.class, DefaultObjectSortQueryExecutor.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }
 
