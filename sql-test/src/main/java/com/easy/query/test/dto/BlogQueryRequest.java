@@ -25,6 +25,16 @@ public class BlogQueryRequest implements ObjectSort {
     @EasyWhereCondition
     private String title;
     /**
+     * 标题
+     */
+    @EasyWhereCondition(mode = EasyWhereCondition.Mode.MULTI_OR,propNames = {"title","content"})
+    private String title2;
+    /**
+     * 标题
+     */
+    @EasyWhereCondition(mode = EasyWhereCondition.Mode.MULTI_OR,propNames = {"id","content"},type = EasyWhereCondition.Condition.EQUAL)
+    private String title3;
+    /**
      * 内容
      */
     @EasyWhereCondition(propName = "url")

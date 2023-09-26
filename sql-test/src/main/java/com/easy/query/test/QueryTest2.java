@@ -975,6 +975,50 @@ public class QueryTest2 extends BaseTest {
     }
 
     @Test
+    public void queryTest18_1() {
+        BlogQueryRequest blogQueryRequest = new BlogQueryRequest();
+        blogQueryRequest.setTitle("123");
+        blogQueryRequest.setTitle2("123");
+        blogQueryRequest.setContent("123");
+        blogQueryRequest.setStar(123);
+        blogQueryRequest.setPublishTimeBegin(LocalDateTime.now());
+        blogQueryRequest.setPublishTimeEnd(LocalDateTime.now());
+        blogQueryRequest.setScore(new BigDecimal("123"));
+        blogQueryRequest.setStatus(1);
+        blogQueryRequest.setOrder(new BigDecimal("12"));
+        blogQueryRequest.setIsTop(false);
+        blogQueryRequest.getOrders().add("status");
+        blogQueryRequest.getOrders().add("score");
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .whereObject(true, blogQueryRequest)
+                .orderByObject(true, blogQueryRequest)
+                .toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND (`title` LIKE ? OR `content` LIKE ?) AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? ORDER BY `status` ASC,`score` ASC", sql);
+    }
+    @Test
+    public void queryTest18_2() {
+        BlogQueryRequest blogQueryRequest = new BlogQueryRequest();
+        blogQueryRequest.setTitle("123");
+        blogQueryRequest.setTitle2("123");
+        blogQueryRequest.setTitle3("123");
+        blogQueryRequest.setContent("123");
+        blogQueryRequest.setStar(123);
+        blogQueryRequest.setPublishTimeBegin(LocalDateTime.now());
+        blogQueryRequest.setPublishTimeEnd(LocalDateTime.now());
+        blogQueryRequest.setScore(new BigDecimal("123"));
+        blogQueryRequest.setStatus(1);
+        blogQueryRequest.setOrder(new BigDecimal("12"));
+        blogQueryRequest.setIsTop(false);
+        blogQueryRequest.getOrders().add("status");
+        blogQueryRequest.getOrders().add("score");
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .whereObject(true, blogQueryRequest)
+                .orderByObject(true, blogQueryRequest)
+                .toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND (`title` LIKE ? OR `content` LIKE ?) AND (`id` = ? OR `content` = ?) AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? ORDER BY `status` ASC,`score` ASC", sql);
+    }
+
+    @Test
     public void queryTest19() {
         BlogQueryRequest blogQueryRequest = new BlogQueryRequest();
         blogQueryRequest.setTitle("123");
