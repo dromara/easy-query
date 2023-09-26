@@ -19,7 +19,7 @@ public interface SQLKtValuesPredicate<T1, TChain> extends EntitySQLTableOwner<T1
      * column in collection
      * 集合为空返回False
      */
-    default <TProperty> TChain in(KProperty1<T1, TProperty> column, Collection<TProperty> collection) {
+    default <TProperty> TChain in(KProperty1<? super T1, TProperty> column, Collection<TProperty> collection) {
         getWherePredicate().in(EasyKtLambdaUtil.getPropertyName(column), collection);
         return castChain();
     }
@@ -28,17 +28,17 @@ public interface SQLKtValuesPredicate<T1, TChain> extends EntitySQLTableOwner<T1
      * column in collection
      * 集合为空返回False
      */
-    default <TProperty> TChain in(boolean condition, KProperty1<T1, TProperty> column, Collection<TProperty> collection) {
+    default <TProperty> TChain in(boolean condition, KProperty1<? super T1, TProperty> column, Collection<TProperty> collection) {
         getWherePredicate().in(condition, EasyKtLambdaUtil.getPropertyName(column), collection);
         return castChain();
     }
 
-    default <TProperty> TChain in(KProperty1<T1, TProperty> column, TProperty[] collection) {
+    default <TProperty> TChain in(KProperty1<? super T1, TProperty> column, TProperty[] collection) {
         getWherePredicate().in(EasyKtLambdaUtil.getPropertyName(column), collection);
         return castChain();
     }
 
-    default <TProperty> TChain in(boolean condition, KProperty1<T1, TProperty> column, TProperty[] collection) {
+    default <TProperty> TChain in(boolean condition, KProperty1<? super T1, TProperty> column, TProperty[] collection) {
         getWherePredicate().in(condition, EasyKtLambdaUtil.getPropertyName(column), collection);
         return castChain();
     }
@@ -46,7 +46,7 @@ public interface SQLKtValuesPredicate<T1, TChain> extends EntitySQLTableOwner<T1
      * column not in collection
      * 集合为空返回True
      */
-    default <TProperty> TChain notIn(KProperty1<T1, TProperty> column, Collection<TProperty> collection) {
+    default <TProperty> TChain notIn(KProperty1<? super T1, TProperty> column, Collection<TProperty> collection) {
         getWherePredicate().notIn(EasyKtLambdaUtil.getPropertyName(column), collection);
         return castChain();
     }
@@ -55,17 +55,17 @@ public interface SQLKtValuesPredicate<T1, TChain> extends EntitySQLTableOwner<T1
      * column not in collection
      * 集合为空返回True
      */
-    default <TProperty> TChain notIn(boolean condition, KProperty1<T1, TProperty> column, Collection<TProperty> collection) {
+    default <TProperty> TChain notIn(boolean condition, KProperty1<? super T1, TProperty> column, Collection<TProperty> collection) {
         getWherePredicate().notIn(condition, EasyKtLambdaUtil.getPropertyName(column), collection);
         return castChain();
     }
 
-    default <TProperty> TChain notIn(KProperty1<T1, TProperty> column, TProperty[] collection) {
+    default <TProperty> TChain notIn(KProperty1<? super T1, TProperty> column, TProperty[] collection) {
         getWherePredicate().notIn(EasyKtLambdaUtil.getPropertyName(column), collection);
         return castChain();
     }
 
-    default <TProperty> TChain notIn(boolean condition, KProperty1<T1, TProperty> column, TProperty[] collection) {
+    default <TProperty> TChain notIn(boolean condition, KProperty1<? super T1, TProperty> column, TProperty[] collection) {
         getWherePredicate().notIn(condition, EasyKtLambdaUtil.getPropertyName(column), collection);
         return castChain();
     }

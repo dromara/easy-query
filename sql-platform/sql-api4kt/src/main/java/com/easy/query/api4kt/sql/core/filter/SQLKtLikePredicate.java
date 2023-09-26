@@ -22,7 +22,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * @param val
      * @return
      */
-    default <TProperty> TChain likeMatchLeft(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain likeMatchLeft(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().likeMatchLeft(EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -36,7 +36,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * @param val
      * @return
      */
-    default <TProperty> TChain likeMatchLeft(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain likeMatchLeft(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().likeMatchLeft(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -49,7 +49,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * @param val
      * @return
      */
-    default <TProperty> TChain likeMatchRight(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain likeMatchRight(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().likeMatchRight(EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -63,7 +63,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * @param val
      * @return
      */
-    default <TProperty> TChain likeMatchRight(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain likeMatchRight(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().likeMatchRight(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -72,7 +72,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * column like %val%
      * 列全匹配
      */
-    default <TProperty> TChain like(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain like(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().like(EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -86,7 +86,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain like(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain like(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().like(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -101,7 +101,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * @param sqlLike
      * @return
      */
-    default <TProperty> TChain like(boolean condition, KProperty1<T1, TProperty> column, TProperty val, SQLLikeEnum sqlLike) {
+    default <TProperty> TChain like(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val, SQLLikeEnum sqlLike) {
         getWherePredicate().like(condition, EasyKtLambdaUtil.getPropertyName(column), val, sqlLike);
         return castChain();
     }
@@ -113,7 +113,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * @param val
      * @return
      */
-    default <TProperty> TChain notLikeMatchLeft(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain notLikeMatchLeft(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().notLikeMatchLeft(EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -126,7 +126,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * @param val
      * @return
      */
-    default <TProperty> TChain notLikeMatchLeft(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain notLikeMatchLeft(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().notLikeMatchLeft(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -138,7 +138,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * @param val
      * @return
      */
-    default <TProperty> TChain notLikeMatchRight(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain notLikeMatchRight(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().notLikeMatchRight(EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -151,7 +151,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * @param val
      * @return
      */
-    default <TProperty> TChain notLikeMatchRight(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain notLikeMatchRight(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().notLikeMatchRight(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -159,7 +159,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
     /**
      * column not like %val%
      */
-    default <TProperty> TChain notLike(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain notLike(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().notLike(EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -172,12 +172,12 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain notLike(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain notLike(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().notLike(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
 
-    default <TProperty> TChain notLike(boolean condition, KProperty1<T1, TProperty> column, TProperty val, SQLLikeEnum sqlLike) {
+    default <TProperty> TChain notLike(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val, SQLLikeEnum sqlLike) {
         getWherePredicate().notLike(condition, EasyKtLambdaUtil.getPropertyName(column), val, sqlLike);
         return castChain();
     }

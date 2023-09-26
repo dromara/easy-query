@@ -3,6 +3,7 @@ package com.easy.query.core.context;
 //import com.easy.query.core.api.SQLApiFactory;
 
 import com.easy.query.core.api.SQLClientApiFactory;
+import com.easy.query.core.api.dynamic.query.WhereObjectQueryExecutor;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -62,6 +63,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final EasyTimeJobManager easyTimeJobManager;
     private final IncludeProcessorFactory includeProcessorFactory;
     private final IncludeParserEngine includeParserEngine;
+    private final WhereObjectQueryExecutor whereObjectQueryExecutor;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -88,7 +90,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           DataSourceManager dataSourceManager,
                                           EasyTimeJobManager easyTimeJobManager,
                                           IncludeProcessorFactory includeProcessorFactory,
-                                          IncludeParserEngine includeParserEngine) {
+                                          IncludeParserEngine includeParserEngine,
+                                          WhereObjectQueryExecutor whereObjectQueryExecutor) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -115,6 +118,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.easyTimeJobManager = easyTimeJobManager;
         this.includeProcessorFactory = includeProcessorFactory;
         this.includeParserEngine = includeParserEngine;
+        this.whereObjectQueryExecutor = whereObjectQueryExecutor;
     }
 
     @Override
@@ -246,5 +250,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public IncludeParserEngine getIncludeParserEngine() {
         return includeParserEngine;
+    }
+
+    @Override
+    public WhereObjectQueryExecutor getWhereObjectQueryExecutor() {
+        return whereObjectQueryExecutor;
     }
 }

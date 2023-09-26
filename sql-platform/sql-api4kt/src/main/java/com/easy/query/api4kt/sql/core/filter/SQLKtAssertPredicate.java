@@ -16,7 +16,7 @@ public interface SQLKtAssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1
     /**
      * column is null
      */
-    default <TProperty> TChain isNull(KProperty1<T1, TProperty> column) {
+    default <TProperty> TChain isNull(KProperty1<? super T1, TProperty> column) {
         getWherePredicate().isNull(EasyKtLambdaUtil.getPropertyName(column));
         return castChain();
     }
@@ -28,7 +28,7 @@ public interface SQLKtAssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1
      * @param column    字段
      * @return children
      */
-    default <TProperty> TChain isNull(boolean condition, KProperty1<T1, TProperty> column) {
+    default <TProperty> TChain isNull(boolean condition, KProperty1<? super T1, TProperty> column) {
         getWherePredicate().isNull(condition, EasyKtLambdaUtil.getPropertyName(column));
         return castChain();
     }
@@ -36,7 +36,7 @@ public interface SQLKtAssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1
     /**
      * column is not null
      */
-    default <TProperty> TChain isNotNull(KProperty1<T1, TProperty> column) {
+    default <TProperty> TChain isNotNull(KProperty1<? super T1, TProperty> column) {
         getWherePredicate().isNotNull(EasyKtLambdaUtil.getPropertyName(column));
         return castChain();
     }
@@ -48,7 +48,7 @@ public interface SQLKtAssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1
      * @param column    字段
      * @return children
      */
-    default <TProperty> TChain isNotNull(boolean condition, KProperty1<T1, TProperty> column) {
+    default <TProperty> TChain isNotNull(boolean condition, KProperty1<? super T1, TProperty> column) {
         getWherePredicate().isNotNull(condition, EasyKtLambdaUtil.getPropertyName(column));
         return castChain();
     }

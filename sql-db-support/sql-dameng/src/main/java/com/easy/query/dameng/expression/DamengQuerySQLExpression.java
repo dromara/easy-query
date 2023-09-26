@@ -101,7 +101,7 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
             }else if(offset>0){
                 sql.insert(0,"SELECT rt.* FROM (").append(") rt WHERE ROWNUM > ").append(offset);
             }else if(rows>0){
-                sql.insert(0,"SELECT rt.* FROM (").append(") t WHERE ROWNUM < ").append(rows + 1);
+                sql.insert(0,"SELECT rt.* FROM (").append(") rt WHERE ROWNUM < ").append(rows + 1);
             }
         }
 

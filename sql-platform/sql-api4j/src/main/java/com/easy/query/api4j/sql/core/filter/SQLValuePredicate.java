@@ -16,7 +16,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
     /**
      * 大于 column > val
      */
-    default <TProperty> TChain gt(Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain gt(Property<T1, TProperty> column, TValue val) {
         getWherePredicate().gt(true, EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -29,7 +29,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain gt(boolean condition, Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain gt(boolean condition, Property<T1, TProperty> column, TValue val) {
         getWherePredicate().gt(condition, EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -37,7 +37,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
     /**
      * 等于 column >= val
      */
-    default <TProperty> TChain ge(Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain ge(Property<T1, TProperty> column, TValue val) {
         getWherePredicate().ge(EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -50,7 +50,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain ge(boolean condition, Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain ge(boolean condition, Property<T1, TProperty> column, TValue val) {
         getWherePredicate().ge(condition, EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -58,7 +58,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
     /**
      * 等于 column = val
      */
-    default <TProperty> TChain eq(Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain eq(Property<T1, TProperty> column, TValue val) {
         getWherePredicate().eq(EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -71,7 +71,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain eq(boolean condition, Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain eq(boolean condition, Property<T1, TProperty> column, TValue val) {
         getWherePredicate().eq(condition, EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -79,7 +79,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
     /**
      * 不等于 column <> val
      */
-    default <TProperty> TChain ne(Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain ne(Property<T1, TProperty> column, TValue val) {
         getWherePredicate().ne(EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -92,7 +92,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain ne(boolean condition, Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain ne(boolean condition, Property<T1, TProperty> column, TValue val) {
         getWherePredicate().ne(condition, EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -100,7 +100,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
     /**
      * 小于等于 column <= val
      */
-    default <TProperty> TChain le(Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain le(Property<T1, TProperty> column, TValue val) {
         getWherePredicate().le(EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -113,7 +113,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain le(boolean condition, Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain le(boolean condition, Property<T1, TProperty> column, TValue val) {
         getWherePredicate().le(condition, EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -121,7 +121,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
     /**
      * 小于 column < val
      */
-    default <TProperty> TChain lt(Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain lt(Property<T1, TProperty> column, TValue val) {
         getWherePredicate().lt(EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -134,7 +134,7 @@ public interface SQLValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain lt(boolean condition, Property<T1, TProperty> column, TProperty val) {
+    default <TProperty, TValue> TChain lt(boolean condition, Property<T1, TProperty> column, TValue val) {
         getWherePredicate().lt(condition, EasyLambdaUtil.getPropertyName(column), val);
         return castChain();
     }

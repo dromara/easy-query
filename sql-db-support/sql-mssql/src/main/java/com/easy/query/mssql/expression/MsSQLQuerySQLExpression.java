@@ -111,7 +111,7 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
                 notExistsResultSQL.append(resultSQL).append(hasWhere ? " AND " : " WHERE ").append("( ").append(allPredicate.toSQL(toSQLContext))
                         .append(" )").append(" )");
             } else {
-                notExistsResultSQL.append("SELECT 1 FROM ( ").append(resultSQL).append(" ) t ").append(" WHERE ").append(allPredicate.toSQL(toSQLContext))
+                notExistsResultSQL.append("SELECT 1 FROM ( ").append(resultSQL).append(" ) rrt ").append(" WHERE ").append(allPredicate.toSQL(toSQLContext))
                         .append(" )");
             }
             return notExistsResultSQL.toString();

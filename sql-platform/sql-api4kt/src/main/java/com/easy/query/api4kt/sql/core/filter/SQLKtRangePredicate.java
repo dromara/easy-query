@@ -23,7 +23,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight
      * @return
      */
-    default <TProperty> TChain rangeOpenClosed(KProperty1<T1, TProperty> column, TProperty valLeft, TProperty valRight) {
+    default <TProperty> TChain rangeOpenClosed(KProperty1<? super T1, TProperty> column, TProperty valLeft, TProperty valRight) {
         return rangeOpenClosed(true, column, true, valLeft, true, valRight);
     }
 
@@ -38,7 +38,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight
      * @return
      */
-    default <TProperty> TChain rangeOpenClosed(KProperty1<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
+    default <TProperty> TChain rangeOpenClosed(KProperty1<? super T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeOpenClosed(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -54,7 +54,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight
      * @return
      */
-    default <TProperty> TChain rangeOpenClosed(boolean condition, KProperty1<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
+    default <TProperty> TChain rangeOpenClosed(boolean condition, KProperty1<? super T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN_CLOSED);
     }
 
@@ -67,7 +67,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight 区间右侧的值
      * @return
      */
-    default <TProperty> TChain rangeOpen(KProperty1<T1, TProperty> column, TProperty valLeft, TProperty valRight) {
+    default <TProperty> TChain rangeOpen(KProperty1<? super T1, TProperty> column, TProperty valLeft, TProperty valRight) {
         return rangeOpen(true, column, true, valLeft, true, valRight);
     }
 
@@ -82,7 +82,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight       区间右侧的值
      * @return
      */
-    default <TProperty> TChain rangeOpen(KProperty1<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
+    default <TProperty> TChain rangeOpen(KProperty1<? super T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeOpen(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -98,7 +98,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight
      * @return
      */
-    default <TProperty> TChain rangeOpen(boolean condition, KProperty1<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
+    default <TProperty> TChain rangeOpen(boolean condition, KProperty1<? super T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN);
     }
 
@@ -111,7 +111,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight
      * @return
      */
-    default <TProperty> TChain rangeClosedOpen(KProperty1<T1, TProperty> column, TProperty valLeft, TProperty valRight) {
+    default <TProperty> TChain rangeClosedOpen(KProperty1<? super T1, TProperty> column, TProperty valLeft, TProperty valRight) {
         return rangeClosedOpen(true, column, true, valLeft, true, valRight);
     }
 
@@ -126,7 +126,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight
      * @return
      */
-    default <TProperty> TChain rangeClosedOpen(KProperty1<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
+    default <TProperty> TChain rangeClosedOpen(KProperty1<? super T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeClosedOpen(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -142,7 +142,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight
      * @return
      */
-    default <TProperty> TChain rangeClosedOpen(boolean condition, KProperty1<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
+    default <TProperty> TChain rangeClosedOpen(boolean condition, KProperty1<? super T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED_OPEN);
     }
 
@@ -155,7 +155,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight
      * @return
      */
-    default <TProperty> TChain rangeClosed(KProperty1<T1, TProperty> column, TProperty valLeft, TProperty valRight) {
+    default <TProperty> TChain rangeClosed(KProperty1<? super T1, TProperty> column, TProperty valLeft, TProperty valRight) {
         return rangeClosed(true, column, true, valLeft, true, valRight);
     }
 
@@ -170,7 +170,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight
      * @return
      */
-    default <TProperty> TChain rangeClosed(KProperty1<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
+    default <TProperty> TChain rangeClosed(KProperty1<? super T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return rangeClosed(true, column, conditionLeft, valLeft, conditionRight, valRight);
     }
 
@@ -186,7 +186,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param valRight
      * @return
      */
-    default <TProperty> TChain rangeClosed(boolean condition, KProperty1<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
+    default <TProperty> TChain rangeClosed(boolean condition, KProperty1<? super T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         return range(condition, column, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED);
     }
 
@@ -203,7 +203,7 @@ public interface SQLKtRangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param sqlRange
      * @return
      */
-    default <TProperty> TChain range(boolean condition, KProperty1<T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight, SQLRangeEnum sqlRange) {
+    default <TProperty> TChain range(boolean condition, KProperty1<? super T1, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight, SQLRangeEnum sqlRange) {
         getWherePredicate().range(condition, EasyKtLambdaUtil.getPropertyName(column), conditionLeft, valLeft, conditionRight, valRight, sqlRange);
         return castChain();
     }

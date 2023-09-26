@@ -16,7 +16,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
     /**
      * 大于 column > val
      */
-    default <TProperty> TChain gt(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain gt(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().gt(true, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -29,7 +29,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain gt(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain gt(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().gt(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -37,7 +37,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
     /**
      * 等于 column >= val
      */
-    default <TProperty> TChain ge(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain ge(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().ge(EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -50,7 +50,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain ge(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain ge(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().ge(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -58,7 +58,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
     /**
      * 等于 column = val
      */
-    default <TProperty> TChain eq(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain eq(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().eq(EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -71,7 +71,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain eq(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain eq(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().eq(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -79,7 +79,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
     /**
      * 不等于 column <> val
      */
-    default <TProperty> TChain ne(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain ne(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().ne(EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -92,7 +92,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain ne(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain ne(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().ne(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -100,7 +100,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
     /**
      * 小于等于 column <= val
      */
-    default <TProperty> TChain le(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain le(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().le(EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -113,7 +113,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain le(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain le(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().le(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -121,7 +121,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
     /**
      * 小于 column < val
      */
-    default <TProperty> TChain lt(KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain lt(KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().lt(EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }
@@ -134,7 +134,7 @@ public interface SQLKtValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>
      * @param val       值
      * @return children
      */
-    default <TProperty> TChain lt(boolean condition, KProperty1<T1, TProperty> column, TProperty val) {
+    default <TProperty> TChain lt(boolean condition, KProperty1<? super T1, TProperty> column, TProperty val) {
         getWherePredicate().lt(condition, EasyKtLambdaUtil.getPropertyName(column), val);
         return castChain();
     }

@@ -42,6 +42,15 @@ public class DamengQueryTest extends DamengBaseTest{
         List<DamengMyTopic> msSQLMyTopic = queryable.toList();
         Assert.assertNotNull(msSQLMyTopic);
     }
+    @Test
+    public void query3() {
+        Queryable<DamengMyTopic> queryable = easyQuery.queryable(DamengMyTopic.class)
+                .where(o -> o.eq(DamengMyTopic::getId, "123xxx")).limit(0,10).orderByAsc(o->o.column(DamengMyTopic::getCreateTime));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT rt.* FROM (SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\" FROM \"MY_TOPIC\" WHERE \"ID\" = ? ORDER BY \"CREATE_TIME\" ASC) rt WHERE ROWNUM < 11", sql);
+        List<DamengMyTopic> msSQLMyTopic = queryable.toList();
+        Assert.assertNotNull(msSQLMyTopic);
+    }
 
 
     @Test
