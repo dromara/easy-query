@@ -78,7 +78,7 @@ public class EasyExpressionContext implements ExpressionContext {
         this.maxShardingQueryLimit = null;
         this.connectionMode = null;
         this.sharding = false;
-        this.conditionAccepter = AnyValueFilter.DEFAULT;
+        this.valueFilter = AnyValueFilter.DEFAULT;
     }
 
     @Override
@@ -282,13 +282,13 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public void filterConfigure(ValueFilter valueFilter) {
-        Objects.requireNonNull(conditionAccepter, "conditionAccepter can not be null");
-        this.conditionAccepter = conditionAccepter;
+        Objects.requireNonNull(valueFilter, "valueFilter can not be null");
+        this.valueFilter = valueFilter;
     }
 
     @Override
-    public ValueFilter getConditionAccepter() {
-        return conditionAccepter;
+    public ValueFilter getValueFilter() {
+        return valueFilter;
     }
 
     @Override

@@ -215,7 +215,7 @@ public abstract class AbstractOverrideKtQueryable8<T1, T2, T3, T4, T5, T6, T7, T
     }
     @Override
     public KtQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> filterConfigure(ValueFilter valueFilter) {
-        super.filterConfigure(conditionAccepter);
+        super.filterConfigure(valueFilter);
         return getQueryable8();
     }
 }

@@ -256,7 +256,7 @@ public abstract class AbstractOverrideProxyQueryable4<T1Proxy extends ProxyEntit
 
     @Override
     public ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> filterConfigure(ValueFilter valueFilter) {
-        entityQueryable.filterConfigure(conditionAccepter);
+        entityQueryable.filterConfigure(valueFilter);
         return this;
     }
 }

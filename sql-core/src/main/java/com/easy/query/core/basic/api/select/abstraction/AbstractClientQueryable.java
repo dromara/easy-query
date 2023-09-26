@@ -979,7 +979,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     @Override
     public ClientQueryable<T1> filterConfigure(ValueFilter valueFilter) {
-        entityQueryExpressionBuilder.getExpressionContext().filterConfigure(conditionAccepter);
+        entityQueryExpressionBuilder.getExpressionContext().filterConfigure(valueFilter);
         return this;
     }
 }

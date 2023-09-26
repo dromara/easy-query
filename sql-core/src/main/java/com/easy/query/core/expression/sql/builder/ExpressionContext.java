@@ -77,6 +77,6 @@ public interface ExpressionContext {
     boolean hasColumnIncludeMaps();
 
     void filterConfigure(ValueFilter valueFilter);
-    ValueFilter getConditionAccepter();
+    ValueFilter getValueFilter();
 
 }

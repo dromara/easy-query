@@ -9,5 +9,10 @@ import com.easy.query.core.expression.builder.core.ValueFilter;
  * @author xuejiaming
  */
 public interface FilterConfigurable<TChain> {
+    /**
+     * 除了subQuery参数其余都会进入这个判断比较包括collection和array
+     * @param valueFilter
+     * @return
+     */
     TChain filterConfigure(ValueFilter valueFilter);
 }

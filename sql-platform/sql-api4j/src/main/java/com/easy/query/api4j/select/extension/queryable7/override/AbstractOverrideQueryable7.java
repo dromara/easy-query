@@ -215,7 +215,7 @@ public abstract class AbstractOverrideQueryable7<T1, T2, T3,T4,T5,T6,T7> extends
     }
     @Override
     public Queryable7<T1, T2,T3,T4,T5,T6,T7> filterConfigure(ValueFilter valueFilter) {
-        super.filterConfigure(conditionAccepter);
+        super.filterConfigure(valueFilter);
         return getQueryable7();
     }
 }

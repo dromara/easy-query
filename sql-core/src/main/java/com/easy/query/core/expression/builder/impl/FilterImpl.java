@@ -232,9 +232,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter in(TableAvailable table, String property, Query<TProperty> subQuery) {
-        if (conditionAppend(table, property, subQuery)) {
-            subQueryFilter0(table, property, subQuery, SQLPredicateCompareEnum.IN);
-        }
+        subQueryFilter0(table, property, subQuery, SQLPredicateCompareEnum.IN);
         return this;
     }
 
@@ -258,9 +256,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter notIn(TableAvailable table, String property, Query<TProperty> subQuery) {
-        if (conditionAppend(table, property, subQuery)) {
-            subQueryFilter0(table, property, subQuery, SQLPredicateCompareEnum.NOT_IN);
-        }
+        subQueryFilter0(table, property, subQuery, SQLPredicateCompareEnum.NOT_IN);
         return this;
     }
 
@@ -279,12 +275,12 @@ public class FilterImpl implements Filter {
     @Override
     public Filter range(TableAvailable table, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
 
-        if (conditionLeft && conditionAppend(table,property,valLeft)) {
+        if (conditionLeft && conditionAppend(table, property, valLeft)) {
             boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
             appendThisPredicate(table, property, valLeft, getReallyPredicateCompare(openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE));
             next();
         }
-        if (conditionRight && conditionAppend(table,property,valRight)) {
+        if (conditionRight && conditionAppend(table, property, valRight)) {
             boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
             appendThisPredicate(table, property, valRight, getReallyPredicateCompare(openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE));
             next();
@@ -294,7 +290,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
-        if (conditionAppend(table, columnPropertyFunction.getPropertyName(),val)) {
+        if (conditionAppend(table, columnPropertyFunction.getPropertyName(), val)) {
             appendThisFuncPredicate(table, columnPropertyFunction.getPropertyName(), columnPropertyFunction.getColumnFunction(), getReallyPredicateCompare(sqlPredicateCompare), val);
             next();
         }
@@ -310,10 +306,8 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter subQueryFilter(TableAvailable table, String property, Query<TProperty> subQuery, SQLPredicateCompare sqlPredicateCompare) {
-        if (conditionAppend(table, property, subQuery)) {
-            subQueryFilter0(table, property, subQuery,sqlPredicateCompare);
-        }
-         return this;
+        subQueryFilter0(table, property, subQuery, sqlPredicateCompare);
+        return this;
     }
 
     @Override

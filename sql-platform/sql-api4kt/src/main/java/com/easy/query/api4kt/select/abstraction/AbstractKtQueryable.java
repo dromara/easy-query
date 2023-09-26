@@ -434,7 +434,7 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
 
     @Override
     public KtQueryable<T1> filterConfigure(ValueFilter valueFilter) {
-        entityQueryable.filterConfigure(conditionAccepter);
+        entityQueryable.filterConfigure(valueFilter);
         return this;
     }
 }

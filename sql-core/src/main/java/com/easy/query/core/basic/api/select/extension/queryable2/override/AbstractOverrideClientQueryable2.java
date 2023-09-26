@@ -211,7 +211,7 @@ public abstract class AbstractOverrideClientQueryable2<T1,T2> extends AbstractCl
     }
     @Override
     public ClientQueryable2<T1, T2> filterConfigure(ValueFilter valueFilter) {
-        super.filterConfigure(conditionAccepter);
+        super.filterConfigure(valueFilter);
         return getClientQueryable2();
     }
 }

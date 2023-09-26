@@ -223,7 +223,7 @@ public abstract class AbstractOverrideClientQueryable4<T1, T2, T3, T4> extends A
 
     @Override
     public ClientQueryable4<T1, T2, T3,T4> filterConfigure(ValueFilter valueFilter) {
-        super.filterConfigure(conditionAccepter);
+        super.filterConfigure(valueFilter);
         return getClientQueryable4();
     }
 }

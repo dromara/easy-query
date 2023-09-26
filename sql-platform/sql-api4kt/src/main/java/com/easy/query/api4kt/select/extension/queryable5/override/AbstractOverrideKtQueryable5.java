@@ -215,7 +215,7 @@ public abstract class AbstractOverrideKtQueryable5<T1, T2, T3,T4,T5> extends Abs
     }
     @Override
     public KtQueryable5<T1, T2,T3,T4,T5> filterConfigure(ValueFilter valueFilter) {
-        super.filterConfigure(conditionAccepter);
+        super.filterConfigure(valueFilter);
         return getQueryable5();
     }
 }

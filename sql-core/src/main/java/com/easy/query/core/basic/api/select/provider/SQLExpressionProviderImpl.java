@@ -74,7 +74,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     @Override
     public WherePredicate<TEntity> getWherePredicate() {
         if (where == null) {
-            where = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false,entityQueryExpressionBuilder.getExpressionContext().getConditionAccepter()));
+            where = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false,entityQueryExpressionBuilder.getExpressionContext().getValueFilter()));
         }
         return where;
     }

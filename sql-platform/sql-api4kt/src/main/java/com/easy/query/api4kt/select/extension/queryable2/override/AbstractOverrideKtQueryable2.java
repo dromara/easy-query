@@ -216,7 +216,7 @@ public abstract class AbstractOverrideKtQueryable2<T1, T2> extends AbstractKtQue
 
     @Override
     public KtQueryable2<T1, T2> filterConfigure(ValueFilter valueFilter) {
-        super.filterConfigure(conditionAccepter);
+        super.filterConfigure(valueFilter);
         return getQueryable2();
     }
 }

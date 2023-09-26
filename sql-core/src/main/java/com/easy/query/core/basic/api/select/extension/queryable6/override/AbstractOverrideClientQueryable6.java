@@ -238,7 +238,7 @@ public abstract class AbstractOverrideClientQueryable6<T1, T2, T3, T4, T5, T6> e
 
     @Override
     public ClientQueryable6<T1, T2, T3, T4, T5,T6> filterConfigure(ValueFilter valueFilter) {
-        super.filterConfigure(conditionAccepter);
+        super.filterConfigure(valueFilter);
         return getClientQueryable6();
     }
 }
