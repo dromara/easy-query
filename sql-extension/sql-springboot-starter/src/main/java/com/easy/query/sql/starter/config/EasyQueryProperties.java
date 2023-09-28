@@ -108,6 +108,10 @@ public class EasyQueryProperties {
      */
     private int relationGroupSize = 512;
     private boolean noVersionError = true;
+    /**
+     * sqlNativeSegment保持输入风格单引号自动改为双引号
+     */
+    private boolean keepNativeStyle = false;
 
     public Boolean getEnable() {
         return enable;
@@ -327,6 +331,14 @@ public class EasyQueryProperties {
 
     public void setNoVersionError(boolean noVersionError) {
         this.noVersionError = noVersionError;
+    }
+
+    public boolean isKeepNativeStyle() {
+        return keepNativeStyle;
+    }
+
+    public void setKeepNativeStyle(boolean keepNativeStyle) {
+        this.keepNativeStyle = keepNativeStyle;
     }
 
     public EasyQueryProperties() {

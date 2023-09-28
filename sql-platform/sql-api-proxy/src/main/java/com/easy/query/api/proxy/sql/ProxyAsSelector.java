@@ -44,6 +44,19 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> e
         return this;
     }
 
+    default ProxyAsSelector<TRProxy, TR> groupKey(int index) {
+        getAsSelector().groupKeys(index);
+        return this;
+    }
+    default <TProperty> ProxyAsSelector<TRProxy, TR> groupKeyAs(int index, SQLColumn<TRProxy,TProperty> aliasColumn) {
+        getAsSelector().groupKeysAs(index,aliasColumn.value());
+        return this;
+    }
+    default ProxyAsSelector<TRProxy, TR> groupKeyAs(int index, String alias) {
+        getAsSelector().groupKeysAs(index,alias);
+        return this;
+    }
+
     default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> ProxyAsSelector<TRProxy, TR> columnIgnore(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().columnIgnore(column.getTable(), column.value());
         return this;

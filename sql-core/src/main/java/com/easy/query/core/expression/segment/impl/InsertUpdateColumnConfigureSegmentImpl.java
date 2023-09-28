@@ -4,7 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
-import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 
 /**
  * create time 2023/8/7 11:07
@@ -15,8 +15,8 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
 public class InsertUpdateColumnConfigureSegmentImpl extends AbstractSQLNativeSegmentImpl implements InsertUpdateSetColumnSQLSegment {
     private final InsertUpdateSetColumnSQLSegment insertUpdateSetColumnSQLSegment;
 
-    public InsertUpdateColumnConfigureSegmentImpl(InsertUpdateSetColumnSQLSegment insertUpdateSetColumnSQLSegment, QueryRuntimeContext runtimeContext, String sqlSegment, SQLNativeExpressionContext sqlConstExpressionContext) {
-        super(runtimeContext, sqlSegment, sqlConstExpressionContext);
+    public InsertUpdateColumnConfigureSegmentImpl(InsertUpdateSetColumnSQLSegment insertUpdateSetColumnSQLSegment, QueryRuntimeContext runtimeContext, String sqlSegment, SQLNativeExpression sqlNativeExpression) {
+        super(runtimeContext, sqlSegment, sqlNativeExpression);
         this.insertUpdateSetColumnSQLSegment = insertUpdateSetColumnSQLSegment;
     }
 
@@ -42,6 +42,6 @@ public class InsertUpdateColumnConfigureSegmentImpl extends AbstractSQLNativeSeg
 
     @Override
     public InsertUpdateSetColumnSQLSegment cloneSQLColumnSegment() {
-        return new InsertUpdateColumnConfigureSegmentImpl(insertUpdateSetColumnSQLSegment,runtimeContext,sqlSegment,sqlConstExpressionContext);
+        return new InsertUpdateColumnConfigureSegmentImpl(insertUpdateSetColumnSQLSegment,runtimeContext,sqlSegment, sqlNativeExpression);
     }
 }

@@ -25,6 +25,8 @@ public interface AsSelector extends SQLAsNative<AsSelector> {
     EntityQueryExpressionBuilder getEntityQueryExpressionBuilder();
 
     AsSelector column(TableAvailable table, String property);
+     AsSelector groupKeys(int index);
+     AsSelector groupKeysAs(int index, String alias);
 
     /**
      * 哪张表的目标属性

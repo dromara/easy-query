@@ -38,6 +38,19 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQ
         return getColumnAsSelector().getTable();
     }
 
+    default SQLColumnAsSelector<T1, TR> groupKey(int index) {
+        getColumnAsSelector().groupKeys(index);
+        return this;
+    }
+    default <TProperty> SQLColumnAsSelector<T1, TR> groupKeyAs(int index, Property<TR, TProperty> alias) {
+        getColumnAsSelector().groupKeysAs(index,EasyLambdaUtil.getPropertyName(alias));
+        return this;
+    }
+    default SQLColumnAsSelector<T1, TR> groupKeyAs(int index, String alias) {
+        getColumnAsSelector().groupKeysAs(index,alias);
+        return this;
+    }
+
     default <TProperty> SQLColumnAsSelector<T1, TR> columns(Collection<Property<T1, TProperty>> columns) {
         if(EasyCollectionUtil.isNotEmpty(columns)){
             for (Property<T1, TProperty> column : columns) {
@@ -126,6 +139,13 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQ
     }
 
 
+    /**
+     * 如果是map结果或者基本类型那么alias就是别名
+     * 如果是其他情况则为TR类型的属性名
+     * @param column
+     * @param alias
+     * @return
+     */
     default SQLColumnAsSelector<T1, TR> columnAs(Property<T1, ?> column, String alias) {
         getColumnAsSelector().columnAs(EasyLambdaUtil.getPropertyName(column), alias);
         return this;

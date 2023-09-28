@@ -3,7 +3,7 @@ package com.easy.query.core.expression.segment.impl;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -19,12 +19,12 @@ import java.text.MessageFormat;
 public abstract class AbstractSQLNativeSegmentImpl {
     protected final QueryRuntimeContext runtimeContext;
     protected final String sqlSegment;
-    protected final SQLNativeExpressionContext sqlConstExpressionContext;
+    protected final SQLNativeExpression sqlNativeExpression;
 
-    public AbstractSQLNativeSegmentImpl(QueryRuntimeContext runtimeContext, String sqlSegment, SQLNativeExpressionContext sqlConstExpressionContext) {
+    public AbstractSQLNativeSegmentImpl(QueryRuntimeContext runtimeContext, String sqlSegment, SQLNativeExpression sqlNativeExpression) {
         this.runtimeContext = runtimeContext;
         this.sqlSegment = sqlSegment;
-        this.sqlConstExpressionContext = sqlConstExpressionContext;
+        this.sqlNativeExpression = sqlNativeExpression;
     }
 
     public TableAvailable getTable() {
@@ -36,7 +36,7 @@ public abstract class AbstractSQLNativeSegmentImpl {
     }
 
     public String getAlias() {
-        return sqlConstExpressionContext.getAlias();
+        return sqlNativeExpression.getAlias();
     }
 
 
@@ -50,17 +50,20 @@ public abstract class AbstractSQLNativeSegmentImpl {
         }
         return resultColumnConst;
     }
-    private String getResultSQL(ToSQLContext toSQLContext){
 
-        if(EasyCollectionUtil.isNotEmpty(sqlConstExpressionContext.getExpressions())){
-            MessageFormat messageFormat = new MessageFormat(sqlSegment);
-            Object[] args = new Object[sqlConstExpressionContext.getExpressions().size()];
-            for (int i = 0; i < sqlConstExpressionContext.getExpressions().size(); i++) {
-                ParamExpression paramExpression = sqlConstExpressionContext.getExpressions().get(i);
-                Object arg =EasySQLExpressionUtil.parseParamExpression(runtimeContext,paramExpression,toSQLContext);
-                args[i]=arg;
+    private String getResultSQL(ToSQLContext toSQLContext) {
+
+        if (EasyCollectionUtil.isNotEmpty(sqlNativeExpression.getExpressions())) {
+            Object[] args = new Object[sqlNativeExpression.getExpressions().size()];
+            for (int i = 0; i < sqlNativeExpression.getExpressions().size(); i++) {
+                ParamExpression paramExpression = sqlNativeExpression.getExpressions().get(i);
+                Object arg = EasySQLExpressionUtil.parseParamExpression(runtimeContext, paramExpression, toSQLContext);
+                args[i] = arg;
             }
-            return messageFormat.format(args);
+            if (sqlNativeExpression.isKeepStyle()) {
+                return MessageFormat.format(sqlSegment.replace("'", "''"), args);
+            }
+            return MessageFormat.format(sqlSegment, args);
         }
         return sqlSegment;
     }

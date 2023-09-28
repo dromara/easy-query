@@ -23,6 +23,14 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAs
     QueryRuntimeContext getRuntimeContext();
     ExpressionContext getExpressionContext();
 
+    default ColumnAsSelector<T1, TR> groupKeys(int index) {
+        getAsSelector().groupKeys(index);
+        return this;
+    }
+    default ColumnAsSelector<T1, TR> groupKeysAs(int index, String alias) {
+        getAsSelector().groupKeysAs(index,alias);
+        return this;
+    }
     ColumnAsSelector<T1, TR> column(String property);
    default   ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty){
         return columnInclude(true,property,aliasProperty);

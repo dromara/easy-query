@@ -61,7 +61,7 @@ public class FuncColumnSegmentImpl implements FuncColumnSegment {
 
     @Override
     public FuncColumnSegment cloneSQLColumnSegment() {
-        throw new UnsupportedOperationException();
+        return new FuncColumnSegmentImpl(this.table,this.columnMetadata,this.runtimeContext,this.columnFunction,this.alias);
     }
 
 

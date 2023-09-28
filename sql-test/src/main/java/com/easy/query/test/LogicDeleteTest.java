@@ -77,6 +77,7 @@ public class LogicDeleteTest extends BaseTest {
     }
     @Test
     public void Test6(){
+
         LogicDelTopic logicDelTopic = easyQuery.queryable(LogicDelTopic.class)
                 .disableLogicDelete().firstOrNull();
         Assert.assertNotNull(logicDelTopic);

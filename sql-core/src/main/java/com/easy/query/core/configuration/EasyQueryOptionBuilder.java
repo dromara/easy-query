@@ -60,6 +60,11 @@ public class EasyQueryOptionBuilder {
      * 无版本号报错
      */
     private boolean noVersionError;
+    /**
+     * sqlNativeSegment单引号默认改为双引号
+     * 保持输入风格和输出一样
+     */
+    private boolean keepNativeStyle;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -85,6 +90,7 @@ public class EasyQueryOptionBuilder {
         this.defaultTrack = false;
         this.relationGroupSize = 512;
         this.noVersionError = true;
+        this.keepNativeStyle = false;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -199,6 +205,11 @@ public class EasyQueryOptionBuilder {
         this.noVersionError = noVersionError;
     }
 
+
+    public void setKeepNativeStyle(boolean keepNativeStyle) {
+        this.keepNativeStyle = keepNativeStyle;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -224,6 +235,7 @@ public class EasyQueryOptionBuilder {
                 this.startTimeJob,
                 this.defaultTrack,
                 this.relationGroupSize,
-                this.noVersionError);
+                this.noVersionError,
+                this.keepNativeStyle);
     }
 }

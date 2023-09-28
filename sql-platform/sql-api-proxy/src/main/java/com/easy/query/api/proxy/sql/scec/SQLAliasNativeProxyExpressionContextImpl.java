@@ -60,4 +60,16 @@ public class SQLAliasNativeProxyExpressionContextImpl<TRProxy extends ProxyEntit
         sqlAliasNativeExpressionContext.setAlias(alias);
         return this;
     }
+
+    @Override
+    public SQLAliasNativeProxyExpressionContext<TRProxy, TR> keepStyle() {
+        sqlAliasNativeExpressionContext.keepStyle();
+        return this;
+    }
+
+    @Override
+    public SQLAliasNativeProxyExpressionContext<TRProxy, TR> messageFormat() {
+        sqlAliasNativeExpressionContext.messageFormat();
+        return this;
+    }
 }

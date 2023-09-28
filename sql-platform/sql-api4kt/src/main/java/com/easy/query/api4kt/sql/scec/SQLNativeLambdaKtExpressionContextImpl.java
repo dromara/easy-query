@@ -54,4 +54,15 @@ public class SQLNativeLambdaKtExpressionContextImpl<T1> implements SQLNativeLamb
         columnConstExpressionContext.setAlias(alias);
         return this;
     }
+
+    @Override
+    public SQLNativeLambdaKtExpressionContext<T1> keepStyle() {
+        columnConstExpressionContext.keepStyle();
+        return this;
+    }
+
+    @Override
+    public SQLNativeLambdaKtExpressionContext<T1> messageFormat() {
+        return null;
+    }
 }

@@ -110,6 +110,7 @@ public class SolonEasyQueryProperties {
      * 无版本号时更新删除报错
      */
     private final static boolean noVersionError = true;
+    private final static boolean keepNativeStyle = false;
 
     private final Props props;
 
@@ -295,6 +296,9 @@ public class SolonEasyQueryProperties {
 
     public int getRelationGroupSize() {
         return this.props.getInt("relation-group-size",relationGroupSize);
+    }
+    public boolean isKeepNativeStyle() {
+        return this.props.getBool("keep-native-style",keepNativeStyle);
     }
 
 

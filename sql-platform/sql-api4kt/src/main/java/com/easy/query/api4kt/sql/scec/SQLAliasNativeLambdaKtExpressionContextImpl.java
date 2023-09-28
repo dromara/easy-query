@@ -66,4 +66,16 @@ public class SQLAliasNativeLambdaKtExpressionContextImpl<T1,TR> implements SQLAl
         sqlAliasNativePropertyExpressionContext.setAlias(alias);
         return this;
     }
+
+    @Override
+    public SQLAliasNativeLambdaKtExpressionContext<T1, TR> keepStyle() {
+        sqlAliasNativePropertyExpressionContext.keepStyle();
+        return this;
+    }
+
+    @Override
+    public SQLAliasNativeLambdaKtExpressionContext<T1, TR> messageFormat() {
+        sqlAliasNativePropertyExpressionContext.messageFormat();
+        return this;
+    }
 }

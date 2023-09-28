@@ -68,4 +68,16 @@ public class SQLAliasNativePropertyExpressionContextImpl implements SQLAliasNati
         sqlAliasNativeExpressionContext.setAlias(alias);
         return this;
     }
+
+    @Override
+    public SQLAliasNativePropertyExpressionContext keepStyle() {
+        sqlAliasNativeExpressionContext.keepStyle();
+        return this;
+    }
+
+    @Override
+    public SQLAliasNativePropertyExpressionContext messageFormat() {
+        sqlAliasNativeExpressionContext.messageFormat();
+        return this;
+    }
 }

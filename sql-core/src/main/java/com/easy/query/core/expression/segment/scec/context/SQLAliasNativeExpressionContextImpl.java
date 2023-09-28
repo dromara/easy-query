@@ -77,8 +77,25 @@ public class SQLAliasNativeExpressionContextImpl  implements SQLAliasNativeExpre
     }
 
     @Override
+    public boolean isKeepStyle() {
+        return sqlNativeExpressionContext.isKeepStyle();
+    }
+
+    @Override
     public SQLAliasNativeExpressionContext setAlias(String alias) {
         sqlNativeExpressionContext.setAlias(alias);
+        return this;
+    }
+
+    @Override
+    public SQLAliasNativeExpressionContext keepStyle() {
+        sqlNativeExpressionContext.keepStyle();
+        return this;
+    }
+
+    @Override
+    public SQLAliasNativeExpressionContext messageFormat() {
+        sqlNativeExpressionContext.messageFormat();
         return this;
     }
 }

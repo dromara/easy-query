@@ -126,6 +126,7 @@ public class DbManager {
                     builder.setStartTimeJob(solonEasyQueryProperties.isStartTimeJob());
                     builder.setDefaultTrack(solonEasyQueryProperties.isDefaultTrack());
                     builder.setRelationGroupSize(solonEasyQueryProperties.getRelationGroupSize());
+                    builder.setKeepNativeStyle(solonEasyQueryProperties.isKeepNativeStyle());
                     builder.setConnectionMode(solonEasyQueryProperties.getConnectionMode());
                     builder.setNoVersionError(solonEasyQueryProperties.isNoVersionError());
                 });

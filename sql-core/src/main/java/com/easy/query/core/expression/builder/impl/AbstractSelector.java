@@ -63,6 +63,7 @@ public abstract class AbstractSelector<TChain> {
     public EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(){
         return entityQueryExpressionBuilder;
     }
+
     public TChain column(TableAvailable table, String property) {
         ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, runtimeContext, null);
         sqlBuilderSegment.append(columnSegment);

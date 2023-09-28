@@ -38,7 +38,7 @@ public class DefaultSQLPropertyConverter implements SQLPropertyConverter {
     public void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
         Objects.requireNonNull(sqlSegment, "sqlSegment can not be null");
         Objects.requireNonNull(contextConsume, "contextConsume can not be null");
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(null);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(null,runtimeContext);
         SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(table, sqlNativeExpressionContext);
         contextConsume.apply(sqlNativePropertyExpressionContext);
         if (ignoreAlias) {

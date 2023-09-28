@@ -47,6 +47,16 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
     }
 
     @Override
+    public AsSelector groupKeys(int index) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public AsSelector groupKeysAs(int index, String alias) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public AsSelector columnAs(TableAvailable table, String property, String propertyAlias) {
         throw new UnsupportedOperationException();
     }

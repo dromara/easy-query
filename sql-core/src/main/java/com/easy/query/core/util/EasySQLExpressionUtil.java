@@ -34,7 +34,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
-import com.easy.query.core.expression.segment.scec.expression.NativeSQLArgument;
+import com.easy.query.core.expression.segment.scec.expression.SQLFormatArgument;
 import com.easy.query.core.expression.segment.scec.expression.ColumnParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyAsAliasParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyParamExpression;
@@ -356,25 +356,25 @@ public class EasySQLExpressionUtil {
     public static Object parseParamExpression(QueryRuntimeContext runtimeContext, ParamExpression paramExpression, ToSQLContext toSQLContext) {
         if (paramExpression instanceof ColumnPropertyParamExpression) {
             ColumnPropertyParamExpression columnPropertyExpression = (ColumnPropertyParamExpression) paramExpression;
-            return new NativeSQLArgument(()->{
+            return SQLFormatArgument.create(()->{
                 return columnPropertyExpression.toSQL(runtimeContext, toSQLContext);
             });
 
         } else if (paramExpression instanceof ColumnParamExpression) {
             ColumnParamExpression columnConstValueExpression = (ColumnParamExpression) paramExpression;
-            return new NativeSQLArgument(()->{
+            return SQLFormatArgument.create(()->{
                 columnConstValueExpression.addParams(toSQLContext);
                 return "?";
             });
         } else if(paramExpression instanceof FormatValueParamExpression){
             FormatValueParamExpression constValueParamExpression = (FormatValueParamExpression) paramExpression;
-            return new NativeSQLArgument(constValueParamExpression::toSQLSegment);
+            return SQLFormatArgument.create(constValueParamExpression::toSQLSegment);
         } else if(paramExpression instanceof SubQueryParamExpression){
             SubQueryParamExpression subQueryParamExpression = (SubQueryParamExpression) paramExpression;
-            return new NativeSQLArgument(()-> subQueryParamExpression.toSQL(toSQLContext));
+            return SQLFormatArgument.create(()-> subQueryParamExpression.toSQL(toSQLContext));
         } else if(paramExpression instanceof ColumnPropertyAsAliasParamExpression){
             ColumnPropertyAsAliasParamExpression columnPropertyAsAliasParamExpression = (ColumnPropertyAsAliasParamExpression) paramExpression;
-            return new NativeSQLArgument(()-> columnPropertyAsAliasParamExpression.toSQL(runtimeContext));
+            return SQLFormatArgument.create(()-> columnPropertyAsAliasParamExpression.toSQL(runtimeContext));
         }
         throw new EasyQueryInvalidOperationException("can not process ParamExpression:" + EasyClassUtil.getInstanceSimpleName(paramExpression));
     }

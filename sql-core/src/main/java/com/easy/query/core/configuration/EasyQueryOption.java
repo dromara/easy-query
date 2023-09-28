@@ -113,12 +113,16 @@ public class EasyQueryOption {
      * 无版本号报错
      */
     private final boolean noVersionError;
+    /**
+     * 使用sqlNativeSegment时如果使用单引号默认改为双引号
+     */
+    private final boolean keepNativeStyle;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql, boolean startTimeJob, boolean defaultTrack,
-                           int relationGroupSize,boolean noVersionError) {
+                           int relationGroupSize,boolean noVersionError,boolean keepNativeStyle) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -181,6 +185,7 @@ public class EasyQueryOption {
         this.defaultTrack = defaultTrack;
         this.relationGroupSize = relationGroupSize;
         this.noVersionError = noVersionError;
+        this.keepNativeStyle = keepNativeStyle;
     }
 
     public int getMaxShardingRouteCount() {
@@ -281,5 +286,9 @@ public class EasyQueryOption {
 
     public boolean isNoVersionError() {
         return noVersionError;
+    }
+
+    public boolean isKeepNativeStyle() {
+        return keepNativeStyle;
     }
 }

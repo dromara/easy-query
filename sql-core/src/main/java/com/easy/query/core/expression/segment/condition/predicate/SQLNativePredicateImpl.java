@@ -2,9 +2,9 @@ package com.easy.query.core.expression.segment.condition.predicate;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
-import com.easy.query.core.expression.segment.impl.AbstractSQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
-import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.impl.AbstractSQLNativeSegmentImpl;
+import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 
 /**
  * create time 2023/7/30 21:06
@@ -13,13 +13,13 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
  * @author xuejiaming
  */
 public class SQLNativePredicateImpl extends AbstractSQLNativeSegmentImpl implements Predicate {
-    public SQLNativePredicateImpl(QueryRuntimeContext runtimeContext, String sqlSegment, SQLNativeExpressionContext sqlConstExpressionContext) {
-        super(runtimeContext, sqlSegment, sqlConstExpressionContext);
+    public SQLNativePredicateImpl(QueryRuntimeContext runtimeContext, String sqlSegment, SQLNativeExpression sqlNativeExpression) {
+        super(runtimeContext, sqlSegment, sqlNativeExpression);
     }
 
     @Override
     public CloneableSQLSegment cloneSQLColumnSegment() {
-        return new SQLNativePredicateImpl(runtimeContext,sqlSegment,sqlConstExpressionContext);
+        return new SQLNativePredicateImpl(runtimeContext,sqlSegment, sqlNativeExpression);
     }
 
     @Override

@@ -10,22 +10,7 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface SQLAliasNativeProxyExpressionContext<TRProxy extends ProxyEntity<TRProxy, TR>, TR> extends SQLNativeProxyExpressionContext{
+public interface SQLAliasNativeProxyExpressionContext<TRProxy extends ProxyEntity<TRProxy, TR>, TR> extends SQLNativeProxyExpressionChain<SQLAliasNativeProxyExpressionContext<TRProxy,TR>>{
     <TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expressionAlias(SQLColumn<TRProxy, TProperty> sqlColumn);
     <TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> setPropertyAlias(SQLColumn<TRProxy, TProperty> sqlColumn);
-
-    @Override
-    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expression(SQLColumn<TEntityProxy, TProperty> sqlColumn);
-
-    @Override
-    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expression(ProxyQueryable<TEntityProxy, TEntity> subQuery);
-
-    @Override
-    SQLAliasNativeProxyExpressionContext<TRProxy, TR> value(Object val);
-
-    @Override
-    SQLAliasNativeProxyExpressionContext<TRProxy, TR> format(Object formatVal);
-
-    @Override
-    SQLAliasNativeProxyExpressionContext<TRProxy, TR> setAlias(String alias);
 }

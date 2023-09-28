@@ -5,9 +5,9 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.impl.AbstractSQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
-import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.impl.AbstractSQLNativeSegmentImpl;
+import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -20,8 +20,8 @@ public class SQLNativeColumnSetPredicate extends AbstractSQLNativeSegmentImpl im
     protected final TableAvailable table;
     protected final String propertyName;
 
-    public SQLNativeColumnSetPredicate(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String sqlSegment, SQLNativeExpressionContext sqlConstExpressionContext) {
-        super(runtimeContext, sqlSegment, sqlConstExpressionContext);
+    public SQLNativeColumnSetPredicate(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String sqlSegment, SQLNativeExpression sqlNativeExpression) {
+        super(runtimeContext, sqlSegment, sqlNativeExpression);
         this.table = table;
         this.propertyName = propertyName;
     }
@@ -38,7 +38,7 @@ public class SQLNativeColumnSetPredicate extends AbstractSQLNativeSegmentImpl im
 
     @Override
     public CloneableSQLSegment cloneSQLColumnSegment() {
-        return new SQLNativeColumnSetPredicate(this.table,this.propertyName,runtimeContext,sqlSegment,sqlConstExpressionContext);
+        return new SQLNativeColumnSetPredicate(this.table,this.propertyName,runtimeContext,sqlSegment, sqlNativeExpression);
     }
 
     @Override

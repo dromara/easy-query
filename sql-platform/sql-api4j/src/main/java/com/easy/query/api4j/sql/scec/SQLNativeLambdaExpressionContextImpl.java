@@ -13,45 +13,57 @@ import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExp
  * @author xuejiaming
  */
 public class SQLNativeLambdaExpressionContextImpl<T1> implements SQLNativeLambdaExpressionContext<T1> {
-    protected final SQLNativePropertyExpressionContext columnConstExpressionContext;
+    protected final SQLNativePropertyExpressionContext sqlNativePropertyExpressionContext;
 
     public SQLNativeLambdaExpressionContextImpl(SQLNativePropertyExpressionContext columnConstExpressionContext){
 
-        this.columnConstExpressionContext = columnConstExpressionContext;
+        this.sqlNativePropertyExpressionContext = columnConstExpressionContext;
     }
     @Override
     public SQLNativeLambdaExpressionContext<T1> expression(Property<T1, ?> property) {
-        columnConstExpressionContext.expression(EasyLambdaUtil.getPropertyName(property));
+        sqlNativePropertyExpressionContext.expression(EasyLambdaUtil.getPropertyName(property));
         return this;
     }
 
     @Override
     public <TEntity> SQLNativeLambdaExpressionContext<T1> expression(Queryable<TEntity> subQuery) {
-        columnConstExpressionContext.expression(subQuery.getClientQueryable());
+        sqlNativePropertyExpressionContext.expression(subQuery.getClientQueryable());
         return this;
     }
 
     @Override
     public <T2> SQLNativeLambdaExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, Property<T2, ?> property) {
-        columnConstExpressionContext.expression(table,EasyLambdaUtil.getPropertyName(property));
+        sqlNativePropertyExpressionContext.expression(table,EasyLambdaUtil.getPropertyName(property));
         return this;
     }
 
     @Override
     public SQLNativeLambdaExpressionContext<T1> value(Object val) {
-        columnConstExpressionContext.value(val);
+        sqlNativePropertyExpressionContext.value(val);
         return this;
     }
 
     @Override
     public SQLNativeLambdaExpressionContext<T1> format(Object formatVal) {
-        columnConstExpressionContext.format(formatVal);
+        sqlNativePropertyExpressionContext.format(formatVal);
         return this;
     }
 
     @Override
     public SQLNativeLambdaExpressionContext<T1> setAlias(String alias) {
-        columnConstExpressionContext.setAlias(alias);
+        sqlNativePropertyExpressionContext.setAlias(alias);
+        return this;
+    }
+
+    @Override
+    public SQLNativeLambdaExpressionContext<T1> keepStyle() {
+        sqlNativePropertyExpressionContext.keepStyle();
+        return this;
+    }
+
+    @Override
+    public SQLNativeLambdaExpressionContext<T1> messageFormat() {
+        sqlNativePropertyExpressionContext.messageFormat();
         return this;
     }
 }

@@ -28,6 +28,7 @@ import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SubQueryColumnSegmentImpl;
+import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 
@@ -59,8 +60,8 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
 //    }
 
     @Override
-    public SQLNativeSegment createSQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext) {
-        return new SQLNativeSegmentImpl(runtimeContext,columnConst,sqlConstExpressionContext);
+    public SQLNativeSegment createSQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpression sqlNativeExpression) {
+        return new SQLNativeSegmentImpl(runtimeContext,columnConst,sqlNativeExpression);
     }
 
     @Override
