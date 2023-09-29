@@ -248,7 +248,10 @@ public class EntityMetadata {
                     columnOption.setValueConverter(valueConverter);
                 }
                 Class<? extends ComplexPropType> complexPropTypeClass = column.complexPropType();
-                if(!Objects.equals(DefaultComplexPropType.class,complexPropTypeClass)){
+                if(Objects.equals(DefaultComplexPropType.class,complexPropTypeClass)){
+                    ComplexPropType complexPropType = new DefaultComplexPropType(fastBeanProperty.getPropertyType());
+                    columnOption.setComplexPropType(complexPropType);
+                }else{
                     ComplexPropType complexPropType = EasyClassUtil.newInstance(complexPropTypeClass);
                     columnOption.setComplexPropType(complexPropType);
                 }

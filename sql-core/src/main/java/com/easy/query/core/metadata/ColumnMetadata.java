@@ -12,6 +12,7 @@ import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.util.EasyClassUtil;
 
 import java.beans.PropertyDescriptor;
+import java.util.List;
 
 /**
  * create time 2023/2/11 18:13
@@ -250,6 +251,12 @@ public class ColumnMetadata {
         return generatedSQLColumnGenerator;
     }
 
+    /**
+     * 表示当前属性的复杂类型
+     * 如果当前属性为基本类型那么就是基本类型
+     * 如果当前属性是{@link List<Object>} 这种泛型类型通过添加 {@link ComplexPropType}来表示为正确的真实类型
+     * @return
+     */
     public ComplexPropType getComplexPropType() {
         return complexPropType;
     }

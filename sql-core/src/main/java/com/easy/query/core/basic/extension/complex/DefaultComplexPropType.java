@@ -9,8 +9,14 @@ import java.lang.reflect.Type;
  * @author xuejiaming
  */
 public class DefaultComplexPropType implements ComplexPropType {
+    private final Class<?> propertyType;
+
+    public DefaultComplexPropType(Class<?> propertyType){
+
+        this.propertyType = propertyType;
+    }
     @Override
     public Type getComplexType() {
-        throw new UnsupportedOperationException("default complex type not support get type");
+        return propertyType;
     }
 }

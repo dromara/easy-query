@@ -28,10 +28,7 @@ public class JsonConverter implements ValueConverter<Object, String> {
             return null;
         }
         ComplexPropType complexType = columnMetadata.getComplexPropType();
-        if(complexType!=null){
-            return JSON.parseObject(s, complexType.getComplexType());
-        }
-        return JSON.parseObject(s, columnMetadata.getPropertyType());
+        return JSON.parseObject(s, complexType.getComplexType());
     }
 //    @Override
 //    public String serialize(Object o) {
