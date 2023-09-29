@@ -28,3 +28,4 @@ easy-query:
   default-data-source-merge-pool-size: 60
   default-data-source-name: ds0
   start-time-job: true
+  keep-native-style: true

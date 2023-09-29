@@ -1,5 +1,7 @@
 package com.easy.query.core.annotation;
 
+import com.easy.query.core.basic.extension.complex.ComplexPropType;
+import com.easy.query.core.basic.extension.complex.DefaultComplexPropType;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
@@ -97,6 +99,12 @@ public @interface Column {
      */
 
     Class<? extends GeneratedKeySQLColumnGenerator> generatedSQLColumnGenerator() default DefaultGeneratedKeySQLColumnGenerator.class;
+
+    /**
+     * 复杂类型
+     * @return
+     */
+    Class<? extends ComplexPropType> complexPropType() default DefaultComplexPropType.class;
 
 //    /**
 //     * 当且仅当查询指定该属性才会查询出来

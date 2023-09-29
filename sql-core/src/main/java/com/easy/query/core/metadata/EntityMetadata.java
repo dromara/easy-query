@@ -13,6 +13,8 @@ import com.easy.query.core.annotation.ShardingTableKey;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.UpdateIgnore;
 import com.easy.query.core.annotation.Version;
+import com.easy.query.core.basic.extension.complex.ComplexPropType;
+import com.easy.query.core.basic.extension.complex.DefaultComplexPropType;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
@@ -244,6 +246,11 @@ public class EntityMetadata {
                         throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion unknown");
                     }
                     columnOption.setValueConverter(valueConverter);
+                }
+                Class<? extends ComplexPropType> complexPropTypeClass = column.complexPropType();
+                if(!Objects.equals(DefaultComplexPropType.class,complexPropTypeClass)){
+                    ComplexPropType complexPropType = EasyClassUtil.newInstance(complexPropTypeClass);
+                    columnOption.setComplexPropType(complexPropType);
                 }
 
             }

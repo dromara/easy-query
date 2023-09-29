@@ -35,6 +35,15 @@ create table t_topic_type
     topic_type int null comment '主题类型',
     create_time datetime not null comment '创建时间'
 )comment '主题表';
+create table t_topic_type_array
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    stars int not null comment '点赞数',
+    title varchar(50) null comment '标题',
+    title2 varchar(100) null comment '标题2',
+    topic_type int null comment '主题类型',
+    create_time datetime not null comment '创建时间'
+)comment '主题表';
 
 
 create table t_topic_auto

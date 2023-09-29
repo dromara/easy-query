@@ -1,6 +1,7 @@
 package com.easy.query.test.conversion;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
 
 /**
@@ -11,12 +12,21 @@ import com.easy.query.core.util.EasyObjectUtil;
  */
 public class EnumConverter implements ValueConverter<IEnum<?>,Integer> {
     @Override
-    public Integer serialize(IEnum<?> anEnum) {
-        return anEnum.getCode();
+    public Integer serialize(IEnum<?> iEnum, ColumnMetadata columnMetadata) {
+        return iEnum.getCode();
     }
 
     @Override
-    public IEnum<?> deserialize(Class<IEnum<?>> propertyClass,Integer integer) {
-        return EnumDeserializer.deserialize(EasyObjectUtil.typeCast(propertyClass),integer);
+    public IEnum<?> deserialize(Integer integer, ColumnMetadata columnMetadata) {
+        return EnumDeserializer.deserialize(EasyObjectUtil.typeCast(columnMetadata.getPropertyType()),integer);
     }
+//    @Override
+//    public Integer serialize(IEnum<?> anEnum) {
+//        return anEnum.getCode();
+//    }
+//
+//    @Override
+//    public IEnum<?> deserialize(Class<IEnum<?>> propertyClass,Integer integer) {
+//        return EnumDeserializer.deserialize(EasyObjectUtil.typeCast(propertyClass),integer);
+//    }
 }

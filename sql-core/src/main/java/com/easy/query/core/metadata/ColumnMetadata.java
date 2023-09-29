@@ -1,5 +1,6 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.basic.extension.complex.ComplexPropType;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
@@ -116,6 +117,7 @@ public class ColumnMetadata {
      * 当前属性对应的jdbc处理器
      */
     private final JdbcTypeHandler jdbcTypeHandler;
+    private final ComplexPropType complexPropType;
 
     public ColumnMetadata(ColumnOption columnOption) {
         this.entityMetadata = columnOption.getEntityMetadata();
@@ -147,6 +149,7 @@ public class ColumnMetadata {
         this.getterCaller = columnOption.getGetterCaller();
         this.setterCaller = columnOption.getSetterCaller();
         this.jdbcTypeHandler=columnOption.getJdbcTypeHandler();
+        this.complexPropType =columnOption.getComplexPropType();
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -245,5 +248,9 @@ public class ColumnMetadata {
 
     public GeneratedKeySQLColumnGenerator getGeneratedSQLColumnGenerator() {
         return generatedSQLColumnGenerator;
+    }
+
+    public ComplexPropType getComplexPropType() {
+        return complexPropType;
     }
 }

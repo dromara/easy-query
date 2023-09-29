@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
  * create time 2023/6/30 22:03
@@ -12,6 +13,7 @@ import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
  * @author xuejiaming
  */
 public interface ResultColumnMetadata {
+    ColumnMetadata getColumnMetadata();
     Class<?> getEntityClass();
     JdbcProperty getDataReader();
     String getPropertyName();

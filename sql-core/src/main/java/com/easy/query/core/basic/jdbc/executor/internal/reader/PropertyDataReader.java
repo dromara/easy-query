@@ -28,7 +28,7 @@ public class PropertyDataReader implements DataReader {
     public <TBean> void readTo(TBean entity, StreamResultSet streamResultSet) throws SQLException {
         JdbcTypeHandler handler = resultColumnMetadata.getJdbcTypeHandler();
         JdbcProperty dataReader = resultColumnMetadata.getDataReader();
-        Object value = EasyJdbcExecutorUtil.fromValue(resultColumnMetadata.getEntityClass(), resultColumnMetadata, handler.getValue(dataReader, streamResultSet));
+        Object value = EasyJdbcExecutorUtil.fromValue(resultColumnMetadata, handler.getValue(dataReader, streamResultSet));
         resultColumnMetadata.setValue(entity, value);
     }
 }

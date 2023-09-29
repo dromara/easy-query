@@ -1,5 +1,6 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.basic.extension.complex.ComplexPropType;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
@@ -41,6 +42,7 @@ public final class ColumnOption {
     private boolean large = false;
 
     private ValueConverter<?, ?> valueConverter;
+    private ComplexPropType complexPropType;
     private ColumnValueSQLConverter columnValueSQLConverter;
     private ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
     private GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator;
@@ -201,5 +203,13 @@ public final class ColumnOption {
 
     public void setGeneratedKeySQLColumnGenerator(GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator) {
         this.generatedKeySQLColumnGenerator = generatedKeySQLColumnGenerator;
+    }
+
+    public ComplexPropType getComplexPropType() {
+        return complexPropType;
+    }
+
+    public void setComplexPropType(ComplexPropType complexPropType) {
+        this.complexPropType = complexPropType;
     }
 }

@@ -389,10 +389,10 @@ public class EasyJdbcExecutorUtil {
      * @param value
      * @return
      */
-    public static Object fromValue(Class<?> entityClass, ResultColumnMetadata resultColumnMetadata, Object value) {
+    public static Object fromValue(ResultColumnMetadata resultColumnMetadata, Object value) {
+        Class<?> entityClass = resultColumnMetadata.getEntityClass();
         Object fromValue = fromValue0(entityClass, resultColumnMetadata, value);
-        Class<?> propertyType = resultColumnMetadata.getDataReader().getPropertyType();
-        return resultColumnMetadata.getValueConverter().deserialize(EasyObjectUtil.typeCast(propertyType), EasyObjectUtil.typeCast(fromValue));
+        return resultColumnMetadata.getValueConverter().deserialize(EasyObjectUtil.typeCast(fromValue),resultColumnMetadata.getColumnMetadata());
     }
 
     private static Object fromValue0(Class<?> entityClass, ResultColumnMetadata resultColumnMetadata, Object value) {
@@ -412,9 +412,9 @@ public class EasyJdbcExecutorUtil {
                 ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
                 if (value != null) {
                     Object toValue = toValue(columnMetadata, sqlParameter, value, entityMetadata.getEntityClass(), propertyName);
-                    return valueConverter.serialize(EasyObjectUtil.typeCast(toValue));
+                    return valueConverter.serialize(EasyObjectUtil.typeCast(toValue),columnMetadata);
                 }
-                return valueConverter.serialize(null);
+                return valueConverter.serialize(null,columnMetadata);
             }
         }
         return value;

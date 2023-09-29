@@ -25,6 +25,11 @@ public class EntityResultColumnMetadata implements ResultColumnMetadata {
     }
 
     @Override
+    public ColumnMetadata getColumnMetadata() {
+        return this.columnMetadata;
+    }
+
+    @Override
     public Class<?> getEntityClass() {
         return columnMetadata.getEntityMetadata().getEntityClass();
     }

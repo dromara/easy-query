@@ -156,12 +156,11 @@ public class DefaultTrackContext implements TrackContext {
             Property<Object, ?> beanGetter = columnMetadata.getGetterCaller();
             Object value = beanGetter.apply(entity);
             if (EasyClassUtil.isBasicType(propertyType) || EasyClassUtil.isEnumType(propertyType)) {
-
                 beanSetter.call(original, value);
             } else {
                 ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
-                Object serializeValue = valueConverter.serialize(EasyObjectUtil.typeCastNullable(value));
-                Object deserialize = valueConverter.deserialize(EasyObjectUtil.typeCastNullable(propertyType), EasyObjectUtil.typeCastNullable(serializeValue));
+                Object serializeValue = valueConverter.serialize(EasyObjectUtil.typeCastNullable(value),columnMetadata);
+                Object deserialize = valueConverter.deserialize(EasyObjectUtil.typeCastNullable(serializeValue),columnMetadata);
                 beanSetter.call(original, deserialize);
             }
         }
