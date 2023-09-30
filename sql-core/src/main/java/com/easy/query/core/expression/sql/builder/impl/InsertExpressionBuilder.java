@@ -42,8 +42,8 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     protected SQLBuilderSegment duplicateKeyUpdateColumns;
     protected Map<String, ColumnConfigurerContext> columnConfigurers;
 
-    public InsertExpressionBuilder(ExpressionContext expressionContext, Class<?> queryClass) {
-        super(expressionContext, queryClass);
+    public InsertExpressionBuilder(ExpressionContext expressionContext, Class<?> entityClass) {
+        super(expressionContext, entityClass);
         this.columns = new ProjectSQLBuilderSegmentImpl();
     }
 

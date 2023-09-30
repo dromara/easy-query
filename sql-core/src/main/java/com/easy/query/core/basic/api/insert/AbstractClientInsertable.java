@@ -230,16 +230,16 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public String toSQL(Object entity) {
+    public String toSQL(T entity) {
         return toSQL(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext()));
     }
 
     @Override
-    public String toSQL(Object entity, ToSQLContext toSQLContext) {
+    public String toSQL(T entity, ToSQLContext toSQLContext) {
         return toSQLWithParam(entity, toSQLContext);
     }
 
-    private String toSQLWithParam(Object entity, ToSQLContext toSQLContext) {
+    private String toSQLWithParam(T entity, ToSQLContext toSQLContext) {
         return entityInsertExpressionBuilder.toExpression(entity).toSQL(toSQLContext);
     }
 

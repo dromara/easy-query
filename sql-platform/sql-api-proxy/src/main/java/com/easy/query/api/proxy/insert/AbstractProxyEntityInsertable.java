@@ -105,12 +105,12 @@ public abstract class AbstractProxyEntityInsertable<T> implements ProxyOnyEntity
     }
 
     @Override
-    public String toSQL(Object entity) {
+    public String toSQL(T entity) {
         return clientInsertable.toSQL(entity);
     }
 
     @Override
-    public String toSQL(Object entity, ToSQLContext toSQLContext) {
+    public String toSQL(T entity, ToSQLContext toSQLContext) {
         return clientInsertable.toSQL(entity,toSQLContext);
     }
 
