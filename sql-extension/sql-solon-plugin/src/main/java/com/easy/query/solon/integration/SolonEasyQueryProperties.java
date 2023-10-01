@@ -111,6 +111,7 @@ public class SolonEasyQueryProperties {
      */
     private final static boolean noVersionError = true;
     private final static boolean keepNativeStyle = false;
+    private final static long reverseOffsetThreshold = 0;
 
     private final Props props;
 
@@ -299,6 +300,9 @@ public class SolonEasyQueryProperties {
     }
     public boolean isKeepNativeStyle() {
         return this.props.getBool("keep-native-style",keepNativeStyle);
+    }
+    public long getReverseOffsetThreshold() {
+        return this.props.getLong("reverse-offset-threshold",reverseOffsetThreshold);
     }
 
 
