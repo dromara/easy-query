@@ -47,15 +47,15 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> groupKey(int index) {
+    default SQLKtColumnAsSelector<T1, TR> groupKeys(int index) {
         getColumnAsSelector().groupKeys(index);
         return this;
     }
-    default <TProperty> SQLKtColumnAsSelector<T1, TR> groupKeyAs(int index, KProperty1<? super TR, TProperty> alias) {
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> groupKeysAs(int index, KProperty1<? super TR, TProperty> alias) {
         getColumnAsSelector().groupKeysAs(index,EasyKtLambdaUtil.getPropertyName(alias));
         return this;
     }
-    default SQLKtColumnAsSelector<T1, TR> groupKeyAs(int index, String alias) {
+    default SQLKtColumnAsSelector<T1, TR> groupKeysAs(int index, String alias) {
         getColumnAsSelector().groupKeysAs(index,alias);
         return this;
     }

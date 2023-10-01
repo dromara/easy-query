@@ -574,7 +574,7 @@ public class QueryTest3 extends BaseTest {
                     .groupBy(o -> o.column(Topic::getId))
                     .orderByAsc((t) -> t.column(Topic::getStars))
                     .distinct()
-                    .select(Topic.class, o -> o.groupKey(0))
+                    .select(Topic.class, o -> o.groupKeys(0))
                     .select("count(1)").toSQL();
             Assert.assertEquals("SELECT count(1) FROM (SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` RIGHT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t.`stars` ASC) t4", sql);
         }

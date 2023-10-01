@@ -488,7 +488,7 @@ public class QueryTest extends BaseTest {
                 .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
                 .groupBy((t, t1) -> t1.columnFunc(SQLFunc.ifNULL(BlogEntity::getId)))
-                .select(BlogEntity.class, (t, t1) -> t1.groupKeyAs(0, BlogEntity::getId).columnSum(BlogEntity::getScore));
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeysAs(0, BlogEntity::getId).columnSum(BlogEntity::getScore));
         Queryable<BlogEntity> blogEntityQueryable = sql.cloneQueryable();
         String countSql = sql.cloneQueryable().select("COUNT(1)").toSQL();
         Assert.assertEquals("SELECT COUNT(1) FROM (SELECT IFNULL(t1.`id`,'') AS `id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY IFNULL(t1.`id`,'')) t2", countSql);
@@ -507,7 +507,7 @@ public class QueryTest extends BaseTest {
                 .groupBy((t, t1) -> t1.sqlNativeSegment("IFNULL({0},'''')", c -> {
                     c.expression(BlogEntity::getId);
                 }))
-                .select(BlogEntity.class, (t, t1) -> t1.groupKeyAs(0, BlogEntity::getId).columnSum(BlogEntity::getScore));
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeysAs(0, BlogEntity::getId).columnSum(BlogEntity::getScore));
         Queryable<BlogEntity> blogEntityQueryable = sql.cloneQueryable();
         String countSql = sql.cloneQueryable().select("COUNT(1)").toSQL();
         Assert.assertEquals("SELECT COUNT(1) FROM (SELECT IFNULL(t1.`id`,'') AS `id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY IFNULL(t1.`id`,'')) t2", countSql);
@@ -526,7 +526,7 @@ public class QueryTest extends BaseTest {
                 .groupBy((t, t1) -> t1.sqlNativeSegment("IFNULL({0},'')", c -> {
                     c.keepStyle().expression(BlogEntity::getId);
                 }))
-                .select(BlogEntity.class, (t, t1) -> t1.groupKeyAs(0, BlogEntity::getId).columnSum(BlogEntity::getScore));
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeysAs(0, BlogEntity::getId).columnSum(BlogEntity::getScore));
         Queryable<BlogEntity> blogEntityQueryable = sql.cloneQueryable();
         String countSql = sql.cloneQueryable().select("COUNT(1)").toSQL();
         Assert.assertEquals("SELECT COUNT(1) FROM (SELECT IFNULL(t1.`id`,'') AS `id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY IFNULL(t1.`id`,'')) t2", countSql);
