@@ -112,6 +112,11 @@ public class EasyQueryProperties {
      * sqlNativeSegment保持输入风格单引号自动改为双引号
      */
     private boolean keepNativeStyle = false;
+    /**
+     * 启用反向排序的偏移量阈值
+     * 小于等于0表示不启用
+     */
+    private long reverseOffsetThreshold = 0;
 
     public Boolean getEnable() {
         return enable;
@@ -339,6 +344,14 @@ public class EasyQueryProperties {
 
     public void setKeepNativeStyle(boolean keepNativeStyle) {
         this.keepNativeStyle = keepNativeStyle;
+    }
+
+    public long getReverseOffsetThreshold() {
+        return reverseOffsetThreshold;
+    }
+
+    public void setReverseOffsetThreshold(long reverseOffsetThreshold) {
+        this.reverseOffsetThreshold = reverseOffsetThreshold;
     }
 
     public EasyQueryProperties() {

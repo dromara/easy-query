@@ -4,6 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.GroupBySQLBuilderSegmentImpl;
+import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -36,7 +37,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     protected PredicateSegment allPredicate;
     protected SQLBuilderSegment group;
     protected PredicateSegment having;
-    protected SQLBuilderSegment order;
+    protected OrderBySQLBuilderSegment order;
     protected long offset;
     protected long rows;
     protected boolean distinct;
@@ -137,7 +138,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     }
 
     @Override
-    public SQLBuilderSegment getOrder() {
+    public OrderBySQLBuilderSegment getOrder() {
         if (order == null) {
             order = new OrderBySQLBuilderSegmentImpl();
         }

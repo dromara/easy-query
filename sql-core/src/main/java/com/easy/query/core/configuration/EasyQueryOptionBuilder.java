@@ -65,6 +65,11 @@ public class EasyQueryOptionBuilder {
      * 保持输入风格和输出一样
      */
     private boolean keepNativeStyle;
+    /**
+     * 启用反向排序的偏移量阈值
+     * 小于等于0表示不启用
+     */
+    private long reverseOffsetThreshold;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -91,6 +96,7 @@ public class EasyQueryOptionBuilder {
         this.relationGroupSize = 512;
         this.noVersionError = true;
         this.keepNativeStyle = false;
+        this.reverseOffsetThreshold = 0;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -210,6 +216,10 @@ public class EasyQueryOptionBuilder {
         this.keepNativeStyle = keepNativeStyle;
     }
 
+    public void setReverseOffsetThreshold(long reverseOffsetThreshold) {
+        this.reverseOffsetThreshold = reverseOffsetThreshold;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -236,6 +246,7 @@ public class EasyQueryOptionBuilder {
                 this.defaultTrack,
                 this.relationGroupSize,
                 this.noVersionError,
-                this.keepNativeStyle);
+                this.keepNativeStyle,
+                this.reverseOffsetThreshold);
     }
 }

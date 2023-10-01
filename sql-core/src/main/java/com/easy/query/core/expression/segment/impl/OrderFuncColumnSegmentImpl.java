@@ -8,6 +8,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
+import com.easy.query.core.expression.segment.ReverseOrderBySegment;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
@@ -17,7 +18,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @Date: 2023/2/19 22:17
  * @author xuejiaming
  */
-public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
+public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment, ReverseOrderBySegment {
 
 
     protected final TableAvailable table;
@@ -25,6 +26,7 @@ public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
     protected final QueryRuntimeContext runtimeContext;
     protected final ColumnFunction columnFunction;
     private final boolean asc;
+    private  boolean reverse;
 
     public OrderFuncColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, boolean asc){
         this.table = table;
@@ -32,6 +34,7 @@ public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
         this.runtimeContext = runtimeContext;
         this.columnFunction = columnFunction;
         this.asc = asc;
+        this.reverse = false;
     }
 
     @Override
@@ -39,7 +42,7 @@ public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext,table,columnMetadata,toSQLContext);
         String funcColumn = columnFunction.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
-        if(asc){
+        if(getOrderByAsc()){
             sql.append(" ").append(SQLKeywordEnum.ASC.toSQL());
         }else {
             sql.append(" ").append(SQLKeywordEnum.DESC.toSQL());
@@ -66,6 +69,9 @@ public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
     public FuncColumnSegment cloneSQLColumnSegment() {
         throw new UnsupportedOperationException();
     }
+    private boolean getOrderByAsc(){
+        return isReverse() != isAsc();
+    }
 
 
     @Override
@@ -82,5 +88,15 @@ public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment {
     @Override
     public boolean isAsc() {
         return asc;
+    }
+
+    @Override
+    public void reverseOrder() {
+        this.reverse=true;
+    }
+
+    @Override
+    public boolean isReverse() {
+        return reverse;
     }
 }

@@ -2,7 +2,7 @@ package com.easy.query.core.expression.segment.builder;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLKeywordEnum;
-import com.easy.query.core.expression.segment.OrderBySegment;
+import com.easy.query.core.expression.segment.ReverseOrderBySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
  * @Date: 2023/2/13 22:39
  * @author xuejiaming
  */
-public class OrderBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment {
+public class OrderBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment implements OrderBySQLBuilderSegment {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
@@ -42,5 +42,17 @@ public class OrderBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment {
         OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
         copyTo(orderBySQLBuilderSegment);
         return orderBySQLBuilderSegment;
+    }
+
+    @Override
+    public boolean reverseOrder() {
+        if(getSQLSegments().stream().allMatch(o->o instanceof ReverseOrderBySegment)){
+            for (SQLSegment sqlSegment : getSQLSegments()) {
+                ReverseOrderBySegment reverseOrderBySegment = (ReverseOrderBySegment) sqlSegment;
+                reverseOrderBySegment.reverseOrder();
+            }
+            return true;
+        }
+        return false;
     }
 }

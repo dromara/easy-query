@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
@@ -41,7 +42,7 @@ public interface EntityQueryExpressionBuilder extends EntityPredicateExpressionB
 
      boolean hasGroup();
 
-     SQLBuilderSegment getOrder() ;
+    OrderBySQLBuilderSegment getOrder() ;
 
      boolean hasOrder();
     @Override

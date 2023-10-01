@@ -117,12 +117,17 @@ public class EasyQueryOption {
      * 使用sqlNativeSegment时如果使用单引号默认改为双引号
      */
     private final boolean keepNativeStyle;
+    /**
+     * 启用反向排序的偏移量阈值
+     * 小于等于0表示不启用
+     */
+    private final long reverseOffsetThreshold;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql, boolean startTimeJob, boolean defaultTrack,
-                           int relationGroupSize,boolean noVersionError,boolean keepNativeStyle) {
+                           int relationGroupSize,boolean noVersionError,boolean keepNativeStyle,long reverseOffsetThreshold) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -186,6 +191,7 @@ public class EasyQueryOption {
         this.relationGroupSize = relationGroupSize;
         this.noVersionError = noVersionError;
         this.keepNativeStyle = keepNativeStyle;
+        this.reverseOffsetThreshold = reverseOffsetThreshold;
     }
 
     public int getMaxShardingRouteCount() {
@@ -291,4 +297,12 @@ public class EasyQueryOption {
     public boolean isKeepNativeStyle() {
         return keepNativeStyle;
     }
+
+    public boolean enableReverseOrder(long offset){
+        if(this.reverseOffsetThreshold<=0){
+            return false;
+        }
+        return this.reverseOffsetThreshold>=offset;
+    }
+
 }

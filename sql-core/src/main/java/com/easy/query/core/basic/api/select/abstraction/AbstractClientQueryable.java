@@ -54,6 +54,7 @@ import com.easy.query.core.expression.parser.core.base.impl.FillSelectorImpl;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
+import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -602,7 +603,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (condition) {
             Objects.requireNonNull(objectSort, "order by object param object sort can not be null");
             ObjectSortQueryExecutor objectSortQueryExecutor = entityQueryExpressionBuilder.getRuntimeContext().getObjectSortQueryExecutor();
-            objectSortQueryExecutor.whereObject(objectSort,entityQueryExpressionBuilder);
+            objectSortQueryExecutor.whereObject(objectSort, entityQueryExpressionBuilder);
         }
         return this;
     }
@@ -656,7 +657,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         //需要跳过多少条
         long offset = (index - 1) * take;
         long total = pageTotal < 0 ? this.count() : pageTotal;
-        EasyPageResultProvider easyPageResultProvider = entityQueryExpressionBuilder.getRuntimeContext().getEasyPageResultProvider();
+
+        EasyPageResultProvider easyPageResultProvider = runtimeContext.getEasyPageResultProvider();
         if (total <= offset) {
             return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, Collections.emptyList());
         }//获取剩余条数
@@ -666,8 +668,21 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (realTake <= 0) {
             return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, Collections.emptyList());
         }
-        this.limit(offset, realTake);
-        List<TR> data = this.toList(clazz);
+        boolean enableReverseOrder = runtimeContext.getQueryConfiguration().getEasyQueryOption().enableReverseOrder(offset);
+        OrderBySQLBuilderSegment order = entityQueryExpressionBuilder.getOrder();
+        //反排序 当偏移量大于1/2 总量时 (优化深分页)
+        boolean reverseOrder = enableReverseOrder && offset > (total / 2) && EasySQLSegmentUtil.isNotEmpty(order) && entityQueryExpressionBuilder.getOrder().reverseOrder();
+
+        List<TR> data;
+        if (reverseOrder) {
+            this.limit(total - offset - realTake, realTake);
+            data = this.toList(clazz);
+            Collections.reverse(data);
+
+        } else {
+            this.limit(offset, realTake);
+            data = this.toList(clazz);
+        }
         return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, data);
     }
 
