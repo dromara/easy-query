@@ -302,7 +302,7 @@ public class EasyQueryOption {
         if(this.reverseOffsetThreshold<=0){
             return false;
         }
-        return this.reverseOffsetThreshold>=offset;
+        return offset>=this.reverseOffsetThreshold;
     }
 
 }
