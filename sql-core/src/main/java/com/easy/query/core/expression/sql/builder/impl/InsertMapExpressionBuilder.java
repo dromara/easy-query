@@ -4,7 +4,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
-import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
