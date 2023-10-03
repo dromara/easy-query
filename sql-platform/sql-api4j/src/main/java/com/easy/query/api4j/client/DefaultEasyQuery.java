@@ -14,6 +14,8 @@ import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.api4j.update.impl.EasyEntityUpdatable;
 import com.easy.query.api4j.update.impl.EasyExpressionUpdatable;
+import com.easy.query.api4j.update.map.EasyMapUpdatable;
+import com.easy.query.api4j.update.map.MapUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -96,6 +98,16 @@ public class DefaultEasyQuery implements EasyQuery {
     @Override
     public <T> EntityUpdatable<T> updatable(Collection<T> entities) {
         return new EasyEntityUpdatable<>(easyQueryClient.updatable(entities));
+    }
+
+    @Override
+    public MapUpdatable<Map<String, Object>> mapUpdatable(Map<String, Object> map) {
+        return new EasyMapUpdatable(easyQueryClient.mapUpdatable(map));
+    }
+
+    @Override
+    public MapUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
+        return new EasyMapUpdatable(easyQueryClient.mapUpdatable(maps));
     }
 
     @Override

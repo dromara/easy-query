@@ -7,6 +7,7 @@ import com.easy.query.api4j.insert.map.MapInsertable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.api4j.update.ExpressionUpdatable;
+import com.easy.query.api4j.update.map.MapUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -92,6 +93,10 @@ public interface EasyQuery {
     <T> EntityUpdatable<T> updatable(T entity);
 
     <T> EntityUpdatable<T> updatable(Collection<T> entities);
+
+    MapUpdatable<Map<String,Object>> mapUpdatable(Map<String,Object> map);
+
+    MapUpdatable<Map<String,Object>> mapUpdatable(Collection<Map<String,Object>> maps);
 
     <T> EntityDeletable<T> deletable(T entity);
 
