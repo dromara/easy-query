@@ -43,4 +43,7 @@ public interface ExpressionBuilderFactory {
     EntityInsertExpressionBuilder createEntityInsertExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass);
     EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression);
     EntityDeleteExpressionBuilder createEntityDeleteExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression);
+
+    EntityInsertExpressionBuilder createMapInsertExpressionBuilder(ExpressionContext sqlExpressionContext);
+
 }

@@ -248,10 +248,10 @@ public class EntityMetadata {
                     columnOption.setValueConverter(valueConverter);
                 }
                 Class<? extends ComplexPropType> complexPropTypeClass = column.complexPropType();
-                if(Objects.equals(DefaultComplexPropType.class,complexPropTypeClass)){
+                if (Objects.equals(DefaultComplexPropType.class, complexPropTypeClass)) {
                     ComplexPropType complexPropType = new DefaultComplexPropType(fastBeanProperty.getPropertyType());
                     columnOption.setComplexPropType(complexPropType);
-                }else{
+                } else {
                     ComplexPropType complexPropType = EasyClassUtil.newInstance(complexPropTypeClass);
                     columnOption.setComplexPropType(complexPropType);
                 }
@@ -406,6 +406,7 @@ public class EntityMetadata {
 
     /**
      * 检查是否是泛型类型
+     *
      * @param type
      * @return
      */
@@ -622,8 +623,10 @@ public class EntityMetadata {
     }
 
     public void checkTable() {
-        if (EasyStringUtil.isEmpty(tableName)) {
-            throw new EasyQueryException("current entity not mapping table name," + EasyClassUtil.getSimpleName(entityClass));
+        if (entityMetadataType != EntityMetadataTypeEnum.MAP) {
+            if (EasyStringUtil.isEmpty(tableName)) {
+                throw new EasyQueryException("current entity not mapping table name," + EasyClassUtil.getSimpleName(entityClass));
+            }
         }
     }
 

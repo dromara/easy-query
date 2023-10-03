@@ -805,4 +805,11 @@ public class UpdateTest extends BaseTest {
         }
         Assert.assertFalse(trackManager.currentThreadTracking());
     }
+//
+//     public void mapUpdate(){
+//         easyQuery.updatable(Map.class)
+//                 .set(Topic::getStars, 12)
+//                 .where(o -> o.eq(Topic::getId, "2"))
+//                 .executeRows();
+//     }
 }

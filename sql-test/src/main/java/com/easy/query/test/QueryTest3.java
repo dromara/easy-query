@@ -2317,7 +2317,7 @@ public class QueryTest3 extends BaseTest {
     public void nativePage4() {
 
         EasyPageResult<BlogEntity> pageResult = easyQuery.queryable("select * from t_blog where id = ?", BlogEntity.class, Arrays.asList("1"))
-                .where(o -> o.like(BlogEntity::getContent, "5"))
+                .where(o -> o.like(BlogEntity::getContent, "-"))
                 .toPageResult(1, 20);
         Assert.assertEquals(1, pageResult.getData().size());
         Assert.assertEquals(1, pageResult.getTotal());
@@ -2327,7 +2327,7 @@ public class QueryTest3 extends BaseTest {
     public void nativePage5() {
 
         EasyPageResult<BlogEntity> pageResult = easyQuery.queryable("select * from t_blog where id = ?", BlogEntity.class, Arrays.asList("1"))
-                .where(o -> o.like(BlogEntity::getContent, "5"))
+                .where(o -> o.like(BlogEntity::getContent, "-"))
                 .select(BlogEntity.class, o -> o.column(BlogEntity::getId).sqlNativeSegment("CONCAT({0},{1},{2})", c -> {
                     c.value("MySQL")
                             .value("5.7-").expression(BlogEntity::getId)
@@ -2345,7 +2345,7 @@ public class QueryTest3 extends BaseTest {
     public void nativePage6() {
 
         EasyPageResult<BlogEntity> pageResult = easyQuery.queryable("select * from t_blog where id = ?", BlogEntity.class, Arrays.asList("1"))
-                .where(o -> o.like(BlogEntity::getContent, "5"))
+                .where(o -> o.like(BlogEntity::getContent, "-"))
                 .select(BlogEntity.class, o -> o.column(BlogEntity::getId).sqlNativeSegment("CONCAT({0},{1},{2})", c -> {
                     c.format("'MySQL'")
                             .format("'5.7-'").expression(BlogEntity::getId)

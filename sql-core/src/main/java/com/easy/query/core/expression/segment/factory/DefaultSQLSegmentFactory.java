@@ -21,6 +21,7 @@ import com.easy.query.core.expression.segment.impl.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.GroupBySQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.GroupColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.InsertColumnSegmentImpl;
+import com.easy.query.core.expression.segment.impl.InsertMapColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderBySQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderFuncColumnSegmentImpl;
@@ -67,6 +68,11 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     @Override
     public InsertUpdateSetColumnSQLSegment createInsertColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext) {
         return new InsertColumnSegmentImpl(table, propertyName, runtimeContext);
+    }
+
+    @Override
+    public InsertUpdateSetColumnSQLSegment createInsertMapColumnSegment(String columnName, QueryRuntimeContext runtimeContext) {
+        return new InsertMapColumnSegmentImpl(columnName,runtimeContext);
     }
 
     @Override

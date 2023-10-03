@@ -69,10 +69,10 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     protected PredicateSegment where;
     protected SQLBuilderSegment setIgnoreColumns;
     protected SQLBuilderSegment whereColumns;
-    protected  Map<String, ColumnConfigurerContext> columnConfigurers;
+    protected Map<String, ColumnConfigurerContext> columnConfigurers;
 
-    public UpdateExpressionBuilder(ExpressionContext queryExpressionContext,Class<?> queryClass, boolean isExpressionUpdate) {
-        super(queryExpressionContext,queryClass);
+    public UpdateExpressionBuilder(ExpressionContext queryExpressionContext, Class<?> queryClass, boolean isExpressionUpdate) {
+        super(queryExpressionContext, queryClass);
         this.isExpressionUpdate = isExpressionUpdate;
     }
 
@@ -131,8 +131,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
     @Override
     public Map<String, ColumnConfigurerContext> getColumnConfigurer() {
-        if(columnConfigurers==null){
-            columnConfigurers=new HashMap<>();
+        if (columnConfigurers == null) {
+            columnConfigurers = new HashMap<>();
         }
         return columnConfigurers;
     }
@@ -196,7 +196,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
             Predicate<Interceptor> interceptorFilter = getExpressionContext().getInterceptorFilter();
             for (UpdateSetInterceptor updateSetInterceptor : updateSetInterceptors) {
-                if(interceptorFilter.test(updateSetInterceptor)){
+                if (interceptorFilter.test(updateSetInterceptor)) {
                     updateSetInterceptor.configure(entityMetadata.getEntityClass(), this, sqlColumnSetter);
                 }
             }
@@ -209,17 +209,11 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                 VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
                 Object newVersionValue = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
                 sqlColumnSetter.set(propertyName, newVersionValue);
-            }else if(expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.NO_VERSION_ERROR)){
-                throw new EasyQueryInvalidOperationException("entity:"+ EasyClassUtil.getSimpleName(table.getEntityClass())+" has version expression not found version");
+            } else if (expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.NO_VERSION_ERROR)) {
+                throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getSimpleName(table.getEntityClass()) + " has version expression not found version");
             }
         }
         return updateSet;
-    }
-
-    protected void throwValueUpdateAtomicTrack(EntityMetadata entityMetadata) {
-        if (entityMetadata.isColumnValueUpdateAtomicTrack()) {
-            throw new EasyQueryColumnValueUpdateAtomicTrackException("entity:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " property has configure value update atomic track，but current update not use track update.");
-        }
     }
 
     public EntityUpdateSQLExpression entityToExpression(Object entity, EntityTableExpressionBuilder tableExpressionBuilder) {
@@ -248,8 +242,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                     ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
                     ValueUpdateAtomicTrack<Object> trackValueUpdate = columnMetadata.getValueUpdateAtomicTrack();
                     if (trackValueUpdate != null) {
-                        if(!updateTrack){
-                            throw new EasyQueryColumnValueUpdateAtomicTrackException("entity:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " property:["+propertyName+"] has configure value update atomic track，but current update not use track update.");
+                        if (!updateTrack) {
+                            throw new EasyQueryColumnValueUpdateAtomicTrackException("entity:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " property:[" + propertyName + "] has configure value update atomic track，but current update not use track update.");
                         }
                         TrackDiffEntry diffValue = propertyTrackDiff.getValue();
                         trackValueUpdate.configureWhere(propertyName, diffValue.getOriginal(), diffValue.getCurrent(), wherePredicate);
@@ -257,9 +251,6 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                 }
             }
         }
-//        else {
-//            throwValueUpdateAtomicTrack(entityMetadata);
-//        }
         PredicateSegment sqlWhere = sqlPredicateFilter(tableExpressionBuilder, where);
         //替换掉配置的片段
         SQLBuilderSegment updateSet = updateSetConfigurer(getUpdateSetSegment(sqlWhere, entity, tableExpressionBuilder, entityUpdateSetProcessor));
@@ -272,19 +263,19 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         return easyUpdateSQLExpression;
     }
 
-    private SQLBuilderSegment updateSetConfigurer(SQLBuilderSegment updateSet){
+    private SQLBuilderSegment updateSetConfigurer(SQLBuilderSegment updateSet) {
         boolean hasConfigure = columnConfigurers != null && !columnConfigurers.isEmpty();
-        if(!hasConfigure){
+        if (!hasConfigure) {
             return updateSet;
         }
         int size = updateSet.getSQLSegments().size();
         for (int i = 0; i < size; i++) {
-            InsertUpdateSetColumnSQLSegment sqlSegment = (InsertUpdateSetColumnSQLSegment)updateSet.getSQLSegments().get(i);
+            InsertUpdateSetColumnSQLSegment sqlSegment = (InsertUpdateSetColumnSQLSegment) updateSet.getSQLSegments().get(i);
             ColumnConfigurerContext columnConfigurerContext = columnConfigurers.get(sqlSegment.getPropertyName());
-            if(columnConfigurerContext==null){
+            if (columnConfigurerContext == null) {
                 continue;
             }
-            updateSet.getSQLSegments().set(i,new InsertUpdateColumnConfigureSegmentImpl(sqlSegment,columnConfigurerContext.getRuntimeContext(),columnConfigurerContext.getSqlSegment(),columnConfigurerContext.getSqlNativeExpressionContext()));
+            updateSet.getSQLSegments().set(i, new InsertUpdateColumnConfigureSegmentImpl(sqlSegment, columnConfigurerContext.getRuntimeContext(), columnConfigurerContext.getSqlSegment(), columnConfigurerContext.getSqlNativeExpressionContext()));
         }
         return updateSet;
     }
@@ -295,12 +286,12 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             TrackManager trackManager = runtimeContext.getTrackManager();
             boolean envTracked = trackManager.currentThreadTracking();
             for (SQLSegment sqlSegment : setColumns.getSQLSegments()) {
-                if(sqlSegment instanceof SQLEntitySegment){
+                if (sqlSegment instanceof SQLEntitySegment) {
                     SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
                     ColumnMetadata columnMetadata = sqlEntitySegment.getTable().getEntityMetadata().getColumnNotNull(sqlEntitySegment.getPropertyName());
                     ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack = columnMetadata.getValueUpdateAtomicTrack();
-                    if(valueUpdateAtomicTrack!=null&&!envTracked){
-                        throw new EasyQueryColumnValueUpdateAtomicTrackException("entity:" + EasyClassUtil.getSimpleName(sqlEntitySegment.getTable().getEntityClass()) + " property:["+sqlEntitySegment.getPropertyName()+"] has configure value update atomic track，but current update not use track update.");
+                    if (valueUpdateAtomicTrack != null && !envTracked) {
+                        throw new EasyQueryColumnValueUpdateAtomicTrackException("entity:" + EasyClassUtil.getSimpleName(sqlEntitySegment.getTable().getEntityClass()) + " property:[" + sqlEntitySegment.getPropertyName() + "] has configure value update atomic track，but current update not use track update.");
                     }
                 }
             }
@@ -325,7 +316,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         for (String property : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
             //(&&!columnMetadata.isLarge())
-            if (columnMetadata.isPrimary() || columnMetadata.isVersion() || (columnMetadata.isUpdateIgnore()&&!columnMetadata.isUpdateSetInTrackDiff())) {
+            if (columnMetadata.isPrimary() || columnMetadata.isVersion() || (columnMetadata.isUpdateIgnore() && !columnMetadata.isUpdateSetInTrackDiff())) {
                 continue;
             }
             if (entityUpdateSetProcessor.shouldRemove(property)) {
@@ -334,9 +325,9 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack = columnMetadata.getValueUpdateAtomicTrack();
 
             //如果不是原子更新的话如果出现在where了的属性不应该出现在set中,除非手动指定,但是如果是需要更新的那么应该也需要添加到set中
-            if ((columnMetadata.isUpdateIgnore()&&columnMetadata.isUpdateSetInTrackDiff())||(valueUpdateAtomicTrack == null && predicateIndex.contains(entityClass, property))) {
+            if ((columnMetadata.isUpdateIgnore() && columnMetadata.isUpdateSetInTrackDiff()) || (valueUpdateAtomicTrack == null && predicateIndex.contains(entityClass, property))) {
                 EntityTrackProperty entityTrackProperty = entityUpdateSetProcessor.getEntityTrackProperty();
-                if(entityTrackProperty==null||!entityTrackProperty.getDiffProperties().containsKey(property)){
+                if (entityTrackProperty == null || !entityTrackProperty.getDiffProperties().containsKey(property)) {
                     continue;
                 }
             }
@@ -346,8 +337,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             //如果是 track value
 
             if (valueUpdateAtomicTrack != null) {
-                if(!envTracked){
-                    throw new EasyQueryColumnValueUpdateAtomicTrackException("entity:" + EasyClassUtil.getSimpleName(entityClass) + " property:["+property+"] has configure value update atomic track，but current update not use track update.");
+                if (!envTracked) {
+                    throw new EasyQueryColumnValueUpdateAtomicTrackException("entity:" + EasyClassUtil.getSimpleName(entityClass) + " property:[" + property + "] has configure value update atomic track，but current update not use track update.");
                 }
 
                 TrackDiffEntry trackDiffEntry = entityUpdateSetProcessor.trackValue(property);
@@ -386,7 +377,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                     throw new EasyQueryException("where expression sql segment not instanceof SQLEntitySegment");
                 }
                 SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
-                buildWhereByProperty(where, trackContext, sqlEntitySegment.getPropertyName(), entity, tableExpressionBuilder);
+                buildWhereByProperty(where, trackContext, sqlEntitySegment.getPropertyName(), entity, tableExpressionBuilder, true);
             }
         } else {
             EntityMetadata entityMetadata = tableExpressionBuilder.getEntityMetadata();
@@ -395,22 +386,22 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                 throw new EasyQueryException("entity:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " not found primary key properties");
             }
             for (String keyProperty : keyProperties) {
-                buildWhereByProperty(where, trackContext, keyProperty, entity, tableExpressionBuilder);
+                buildWhereByProperty(where, trackContext, keyProperty, entity, tableExpressionBuilder, false);
             }
         }
         return where;
     }
 
-    protected void buildWhereByProperty(PredicateSegment where, TrackContext trackContext, String propertyName, Object entity, EntityTableExpressionBuilder tableExpressionBuilder) {
+    protected void buildWhereByProperty(PredicateSegment where, TrackContext trackContext, String propertyName, Object entity, EntityTableExpressionBuilder tableExpressionBuilder, boolean nullAssert) {
         if (entity != null) {
             Object predicateValue = getPredicateValue(entity, trackContext, propertyName, tableExpressionBuilder.getEntityMetadata());
-            if(predicateValue!=null){
-                ColumnValuePredicate columnValuePredicate = new ColumnValuePredicate(tableExpressionBuilder.getEntityTable(), propertyName, predicateValue, SQLPredicateCompareEnum.EQ, runtimeContext);
-                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnValuePredicate);
-                where.addPredicateSegment(andPredicateSegment);
-            }else{
+            if (nullAssert && predicateValue == null) {
                 ColumnNullAssertPredicate columnPredicate = new ColumnNullAssertPredicate(tableExpressionBuilder.getEntityTable(), propertyName, SQLPredicateCompareEnum.IS_NULL, runtimeContext);
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPredicate);
+                where.addPredicateSegment(andPredicateSegment);
+            } else {
+                ColumnValuePredicate columnValuePredicate = new ColumnValuePredicate(tableExpressionBuilder.getEntityTable(), propertyName, predicateValue, SQLPredicateCompareEnum.EQ, runtimeContext);
+                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnValuePredicate);
                 where.addPredicateSegment(andPredicateSegment);
             }
         } else {
@@ -438,7 +429,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     @Override
     public EntityUpdateExpressionBuilder cloneEntityExpressionBuilder() {
 
-        EntityUpdateExpressionBuilder updateExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityUpdateExpressionBuilder(expressionContext,queryClass, isExpressionUpdate);
+        EntityUpdateExpressionBuilder updateExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityUpdateExpressionBuilder(expressionContext, queryClass, isExpressionUpdate);
 
         if (hasSetColumns()) {
             getSetColumns().copyTo(updateExpressionBuilder.getSetColumns());
@@ -452,7 +443,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         if (EasySQLSegmentUtil.isNotEmpty(whereColumns)) {
             whereColumns.copyTo(updateExpressionBuilder.getWhereColumns());
         }
-        if(columnConfigurers!=null){
+        if (columnConfigurers != null) {
             updateExpressionBuilder.getColumnConfigurer().putAll(columnConfigurers);
         }
         for (EntityTableExpressionBuilder table : super.tables) {

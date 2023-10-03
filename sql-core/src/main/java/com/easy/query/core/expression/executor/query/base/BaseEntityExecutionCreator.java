@@ -1,12 +1,10 @@
 package com.easy.query.core.expression.executor.query.base;
 
-import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -38,23 +36,24 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     @Override
     protected List<ExecutionUnit> createExecutionUnits() {
         if(!Objects.equals(ExecuteMethodEnum.DELETE,executorContext.getExecuteMethod())){
-            //是否单个对象运行sql
-            boolean allColumns = EasySQLExpressionUtil.sqlExecuteStrategyIsAllColumns(entityExpressionBuilder.getExpressionContext(), executorContext);
-            if (!allColumns || updateSingleEntityRun()) {
-                return createSingleExecutionUnits();
-            }
+//            //是否单个对象运行sql
+//            boolean allColumns = EasySQLExpressionUtil.sqlExecuteStrategyIsAllColumns(entityExpressionBuilder.getExpressionContext(), executorContext);
+//            if (!allColumns || updateSingleEntityRun()) {
+//                return createSingleExecutionUnits();
+//            }
+            return createSingleExecutionUnits();
         }
 
         return createMultiExecutionUnits();
     }
-    private boolean updateSingleEntityRun(){
-        if(entityExpressionBuilder instanceof EntityUpdateExpressionBuilder){
-            EntityUpdateExpressionBuilder entityUpdateExpressionBuilder = (EntityUpdateExpressionBuilder) entityExpressionBuilder;
-            TrackManager trackManager = entityUpdateExpressionBuilder.getRuntimeContext().getTrackManager();
-            return trackManager.currentThreadTracking();
-        }
-        return false;
-    }
+//    private boolean updateSingleEntityRun(){
+//        if(entityExpressionBuilder instanceof EntityUpdateExpressionBuilder){
+//            EntityUpdateExpressionBuilder entityUpdateExpressionBuilder = (EntityUpdateExpressionBuilder) entityExpressionBuilder;
+//            TrackManager trackManager = entityUpdateExpressionBuilder.getRuntimeContext().getTrackManager();
+//            return trackManager.currentThreadTracking();
+//        }
+//        return false;
+//    }
 
     protected List<ExecutionUnit> createSingleExecutionUnits() {
         List<ExecutionUnit> routeExecutionUnits = new ArrayList<>(entities.size());

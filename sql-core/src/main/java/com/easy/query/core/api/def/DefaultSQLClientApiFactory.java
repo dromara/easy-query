@@ -9,6 +9,9 @@ import com.easy.query.core.basic.api.delete.impl.EasyEmptyClientEntityDeletable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.api.insert.EasyClientInsertable;
 import com.easy.query.core.basic.api.insert.EasyEmptyClientInsertable;
+import com.easy.query.core.basic.api.insert.EasyEmptyMapClientInsertable;
+import com.easy.query.core.basic.api.insert.EasyMapClientInsertable;
+import com.easy.query.core.basic.api.insert.MapClientInsertable;
 import com.easy.query.core.basic.api.jdbc.EasyJdbcExecutor;
 import com.easy.query.core.basic.api.jdbc.JdbcExecutor;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -56,6 +59,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xuejiaming
@@ -452,6 +456,13 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     }
 
     @Override
+    public MapClientInsertable<Map<String, Object>> createMapInsertable(QueryRuntimeContext runtimeContext) {
+        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        EntityInsertExpressionBuilder entityInsertExpressionBuilder = expressionBuilderFactory.createMapInsertExpressionBuilder(expressionContext);
+        return createMapInsertable(entityInsertExpressionBuilder);
+    }
+
+    @Override
     public <T> ClientInsertable<T> createEmptyInsertable(QueryRuntimeContext runtimeContext) {
         ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
         EntityInsertExpressionBuilder entityInsertExpressionBuilder = expressionBuilderFactory.createEntityInsertExpressionBuilder(expressionContext, null);
@@ -461,6 +472,18 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T> ClientInsertable<T> createInsertable(Class<T> clazz, EntityInsertExpressionBuilder entityInsertExpression) {
         return new EasyClientInsertable<>(clazz, entityInsertExpression);
+    }
+
+    @Override
+    public MapClientInsertable<Map<String, Object>> createMapInsertable(EntityInsertExpressionBuilder entityInsertExpressionBuilder) {
+        return new EasyMapClientInsertable(entityInsertExpressionBuilder);
+    }
+
+    @Override
+    public MapClientInsertable<Map<String, Object>> createEmptyMapInsertable(QueryRuntimeContext runtimeContext) {
+        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        EntityInsertExpressionBuilder entityInsertExpressionBuilder = expressionBuilderFactory.createEntityInsertExpressionBuilder(expressionContext, null);
+        return new EasyEmptyMapClientInsertable(entityInsertExpressionBuilder);
     }
 
     @Override

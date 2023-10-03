@@ -4,15 +4,16 @@ import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
+import com.easy.query.core.basic.api.insert.MapClientInsertable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.extension.track.EntityState;
+import com.easy.query.core.basic.extension.track.TrackContext;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
-import com.easy.query.core.basic.extension.track.TrackContext;
-import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 
@@ -66,7 +67,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
     @Override
     public <T> ClientQueryable<T> queryable(String sql, Class<T> clazz, Collection<Object> sqlParams) {
-        return easySQLApiFactory.createQueryable(sql,sqlParams, clazz, runtimeContext);
+        return easySQLApiFactory.createQueryable(sql, sqlParams, clazz, runtimeContext);
     }
 
     @Override
@@ -94,6 +95,22 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             return easySQLApiFactory.createEmptyInsertable(runtimeContext);
         }
         return easySQLApiFactory.createInsertable((Class<T>) entities.iterator().next().getClass(), runtimeContext).insert(entities);
+    }
+
+    @Override
+    public MapClientInsertable<Map<String, Object>> mapInsertable(Map<String, Object> map) {
+        if (map == null) {
+            return easySQLApiFactory.createEmptyMapInsertable(runtimeContext);
+        }
+        return easySQLApiFactory.createMapInsertable(runtimeContext).insert(map);
+    }
+
+    @Override
+    public MapClientInsertable<Map<String, Object>> mapInsertable(Collection<Map<String, Object>> maps) {
+        if (maps == null || maps.isEmpty()) {
+            return easySQLApiFactory.createEmptyMapInsertable(runtimeContext);
+        }
+        return easySQLApiFactory.createMapInsertable(runtimeContext).insert(maps);
     }
 
     @Override
@@ -163,7 +180,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
     public EntityState getTrackEntityStateNotNull(Object entity) {
         TrackManager trackManager = runtimeContext.getTrackManager();
         TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
-        if(currentTrackContext==null){
+        if (currentTrackContext == null) {
             throw new EasyQueryInvalidOperationException("currentTrackContext can not be null ");
         }
         return currentTrackContext.getTrackEntityStateNotNull(entity);

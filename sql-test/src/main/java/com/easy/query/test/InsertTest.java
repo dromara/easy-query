@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -22,7 +23,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @FileName: InsertTest.java
@@ -542,6 +545,63 @@ public class InsertTest extends BaseTest {
             EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
             String sql = cause1.getSQL();
             Assert.assertEquals("INSERT INTO `custom_increment` (`id`,`name`,`address`) VALUES (mysqlNextId(),?,?)",sql);
+        }
+    }
+    @Test
+    public void mapInsertTest1(){
+        try {
+            Map<String, Object> stringObjectHashMap = new LinkedHashMap<>();
+            stringObjectHashMap.put("id",123);
+            stringObjectHashMap.put("name","小明");
+            easyQuery.mapInsertable(stringObjectHashMap)
+                    .asTable("aaaaa")
+                    .executeRows();
+        }catch (Exception ex){
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("INSERT INTO `aaaaa` (`id`,`name`) VALUES (?,?)",sql);
+        }
+    }
+    @Test
+    public void mapInsertTest2(){
+        try {
+            Map<String, Object> stringObjectHashMap = new LinkedHashMap<>();
+            stringObjectHashMap.put("id",123);
+            stringObjectHashMap.put("name","小明");
+            stringObjectHashMap.put("name1","小明");
+            stringObjectHashMap.put("name2",null);
+            easyQuery.mapInsertable(stringObjectHashMap)
+                    .asTable("aaaaa")
+                    .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
+                    .executeRows();
+        }catch (Exception ex){
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("INSERT INTO `aaaaa` (`id`,`name`,`name1`) VALUES (?,?,?)",sql);
+        }
+    }
+    @Test
+    public void mapInsertTest3(){
+        try {
+            Map<String, Object> stringObjectHashMap = new LinkedHashMap<>();
+            stringObjectHashMap.put("id",123);
+            stringObjectHashMap.put("name","小明");
+            stringObjectHashMap.put("name1","小明");
+            stringObjectHashMap.put("name2",null);
+            easyQuery.mapInsertable(stringObjectHashMap)
+                    .asTable("aaaaa")
+                    .setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS)
+                    .executeRows();
+        }catch (Exception ex){
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("INSERT INTO `aaaaa` (`id`,`name`,`name1`,`name2`) VALUES (?,?,?,?)",sql);
         }
     }
 }

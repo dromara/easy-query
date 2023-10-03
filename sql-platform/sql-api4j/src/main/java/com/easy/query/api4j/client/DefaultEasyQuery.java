@@ -6,6 +6,8 @@ import com.easy.query.api4j.delete.impl.EasyEntityDeletable;
 import com.easy.query.api4j.delete.impl.EasyExpressionDeletable;
 import com.easy.query.api4j.insert.EasyEntityInsertable;
 import com.easy.query.api4j.insert.EntityInsertable;
+import com.easy.query.api4j.insert.map.EasyMapInsertable;
+import com.easy.query.api4j.insert.map.MapInsertable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.impl.EasyQueryable;
 import com.easy.query.api4j.update.EntityUpdatable;
@@ -18,6 +20,7 @@ import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author xuejiaming
@@ -68,6 +71,16 @@ public class DefaultEasyQuery implements EasyQuery {
     @Override
     public <T> EntityInsertable<T> insertable(Collection<T> entities) {
         return new EasyEntityInsertable<>(easyQueryClient.insertable(entities));
+    }
+
+    @Override
+    public MapInsertable<Map<String, Object>> mapInsertable(Map<String, Object> map) {
+        return new EasyMapInsertable(easyQueryClient.mapInsertable(map));
+    }
+
+    @Override
+    public MapInsertable<Map<String, Object>> mapInsertable(Collection<Map<String, Object>> maps) {
+        return new EasyMapInsertable(easyQueryClient.mapInsertable(maps));
     }
 
     @Override

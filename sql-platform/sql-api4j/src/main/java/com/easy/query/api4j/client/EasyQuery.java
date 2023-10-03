@@ -3,6 +3,7 @@ package com.easy.query.api4j.client;
 import com.easy.query.api4j.delete.EntityDeletable;
 import com.easy.query.api4j.delete.ExpressionDeletable;
 import com.easy.query.api4j.insert.EntityInsertable;
+import com.easy.query.api4j.insert.map.MapInsertable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.api4j.update.ExpressionUpdatable;
@@ -83,6 +84,8 @@ public interface EasyQuery {
     <T> EntityInsertable<T> insertable(T entity);
 
     <T> EntityInsertable<T> insertable(Collection<T> entities);
+    MapInsertable<Map<String,Object>> mapInsertable(Map<String,Object> map);
+    MapInsertable<Map<String,Object>> mapInsertable(Collection<Map<String,Object>> maps);
 
     <T> ExpressionUpdatable<T> updatable(Class<T> entityClass);
 

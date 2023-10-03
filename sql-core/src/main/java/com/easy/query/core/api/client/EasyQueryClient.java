@@ -3,6 +3,7 @@ package com.easy.query.core.api.client;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
+import com.easy.query.core.basic.api.insert.MapClientInsertable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
@@ -78,6 +79,8 @@ public interface EasyQueryClient {
     <T> ClientInsertable<T> insertable(T entity);
 
     <T> ClientInsertable<T> insertable(Collection<T> entities);
+    MapClientInsertable<Map<String,Object>> mapInsertable(Map<String,Object> map);
+    MapClientInsertable<Map<String,Object>> mapInsertable(Collection<Map<String,Object>> maps);
 
     <T> ClientExpressionUpdatable<T> updatable(Class<T> entityClass);
 

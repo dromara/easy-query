@@ -3,6 +3,7 @@ package com.easy.query.core.api;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
+import com.easy.query.core.basic.api.insert.MapClientInsertable;
 import com.easy.query.core.basic.api.jdbc.JdbcExecutor;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable10;
@@ -24,6 +25,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * create time 2023/6/1 17:24
@@ -107,6 +109,7 @@ public interface SQLClientApiFactory {
     <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> createQueryable10(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, Class<T6> t6Class, Class<T7> t7Class, Class<T8> t8Class, Class<T9> t9Class, ClientQueryable<T10> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
 
     <T> ClientInsertable<T> createInsertable(Class<T> clazz, QueryRuntimeContext runtimeContext);
+    MapClientInsertable<Map<String,Object>> createMapInsertable(QueryRuntimeContext runtimeContext);
 
     /**
      * 创建一个空的insert接口
@@ -117,7 +120,9 @@ public interface SQLClientApiFactory {
      */
     <T> ClientInsertable<T> createEmptyInsertable(QueryRuntimeContext runtimeContext);
 
-    <T> ClientInsertable<T> createInsertable(Class<T> clazz, EntityInsertExpressionBuilder entityInsertExpression);
+    <T> ClientInsertable<T> createInsertable(Class<T> clazz, EntityInsertExpressionBuilder entityInsertExpressionBuilder);
+    MapClientInsertable<Map<String,Object>> createMapInsertable(EntityInsertExpressionBuilder entityInsertExpressionBuilder);
+    MapClientInsertable<Map<String,Object>> createEmptyMapInsertable(QueryRuntimeContext runtimeContext);
 
     <T> ClientEntityUpdatable<T> createEmptyEntityUpdatable();
 

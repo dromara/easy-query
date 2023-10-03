@@ -13,6 +13,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.DeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.InsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.InsertMapExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.QueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.UpdateExpressionBuilder;
@@ -57,5 +58,10 @@ public  class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFa
     @Override
     public EntityDeleteExpressionBuilder createEntityDeleteExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression) {
         return new DeleteExpressionBuilder(sqlExpressionContext,queryClass,expression);
+    }
+
+    @Override
+    public EntityInsertExpressionBuilder createMapInsertExpressionBuilder(ExpressionContext sqlExpressionContext) {
+        return new InsertMapExpressionBuilder(sqlExpressionContext);
     }
 }
