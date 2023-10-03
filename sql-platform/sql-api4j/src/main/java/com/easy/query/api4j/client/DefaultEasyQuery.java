@@ -6,17 +6,15 @@ import com.easy.query.api4j.delete.impl.EasyEntityDeletable;
 import com.easy.query.api4j.delete.impl.EasyExpressionDeletable;
 import com.easy.query.api4j.insert.EasyEntityInsertable;
 import com.easy.query.api4j.insert.EntityInsertable;
-import com.easy.query.api4j.insert.map.EasyMapInsertable;
-import com.easy.query.api4j.insert.map.MapInsertable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.impl.EasyQueryable;
 import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.api4j.update.impl.EasyEntityUpdatable;
 import com.easy.query.api4j.update.impl.EasyExpressionUpdatable;
-import com.easy.query.api4j.update.map.EasyMapUpdatable;
-import com.easy.query.api4j.update.map.MapUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
+import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -76,16 +74,6 @@ public class DefaultEasyQuery implements EasyQuery {
     }
 
     @Override
-    public MapInsertable<Map<String, Object>> mapInsertable(Map<String, Object> map) {
-        return new EasyMapInsertable(easyQueryClient.mapInsertable(map));
-    }
-
-    @Override
-    public MapInsertable<Map<String, Object>> mapInsertable(Collection<Map<String, Object>> maps) {
-        return new EasyMapInsertable(easyQueryClient.mapInsertable(maps));
-    }
-
-    @Override
     public <T> ExpressionUpdatable<T> updatable(Class<T> entityClass) {
         return new EasyExpressionUpdatable<>(easyQueryClient.updatable(entityClass));
     }
@@ -98,16 +86,6 @@ public class DefaultEasyQuery implements EasyQuery {
     @Override
     public <T> EntityUpdatable<T> updatable(Collection<T> entities) {
         return new EasyEntityUpdatable<>(easyQueryClient.updatable(entities));
-    }
-
-    @Override
-    public MapUpdatable<Map<String, Object>> mapUpdatable(Map<String, Object> map) {
-        return new EasyMapUpdatable(easyQueryClient.mapUpdatable(map));
-    }
-
-    @Override
-    public MapUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
-        return new EasyMapUpdatable(easyQueryClient.mapUpdatable(maps));
     }
 
     @Override

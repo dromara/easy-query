@@ -3,12 +3,12 @@ package com.easy.query.api4j.client;
 import com.easy.query.api4j.delete.EntityDeletable;
 import com.easy.query.api4j.delete.ExpressionDeletable;
 import com.easy.query.api4j.insert.EntityInsertable;
-import com.easy.query.api4j.insert.map.MapInsertable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.api4j.update.ExpressionUpdatable;
-import com.easy.query.api4j.update.map.MapUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
+import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -85,8 +85,6 @@ public interface EasyQuery {
     <T> EntityInsertable<T> insertable(T entity);
 
     <T> EntityInsertable<T> insertable(Collection<T> entities);
-    MapInsertable<Map<String,Object>> mapInsertable(Map<String,Object> map);
-    MapInsertable<Map<String,Object>> mapInsertable(Collection<Map<String,Object>> maps);
 
     <T> ExpressionUpdatable<T> updatable(Class<T> entityClass);
 
@@ -94,9 +92,6 @@ public interface EasyQuery {
 
     <T> EntityUpdatable<T> updatable(Collection<T> entities);
 
-    MapUpdatable<Map<String,Object>> mapUpdatable(Map<String,Object> map);
-
-    MapUpdatable<Map<String,Object>> mapUpdatable(Collection<Map<String,Object>> maps);
 
     <T> EntityDeletable<T> deletable(T entity);
 
@@ -117,4 +112,19 @@ public interface EasyQuery {
     boolean removeTracking(Object entity);
 
     EntityState getTrackEntityStateNotNull(Object entity);
+
+    default MapClientInsertable<Map<String, Object>> mapInsertable(Map<String, Object> map) {
+        return getEasyQueryClient().mapInsertable(map);
+    }
+
+    default MapClientInsertable<Map<String, Object>> mapInsertable(Collection<Map<String, Object>> maps) {
+        return getEasyQueryClient().mapInsertable(maps);
+    }
+    default MapClientUpdatable<Map<String, Object>> mapUpdatable(Map<String, Object> map) {
+        return getEasyQueryClient().mapUpdatable(map);
+    }
+
+    default MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
+        return getEasyQueryClient().mapUpdatable(maps);
+    }
 }

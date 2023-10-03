@@ -86,9 +86,6 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     @Override
     public String getTableName() {
         String tableName = dialect.getQuoteName(doGetTableName());
-        if (tableName == null) {
-            throw new EasyQueryException("table " + EasyClassUtil.getSimpleName(entityTable.getEntityClass()) + " cant found mapping table name");
-        }
         String schema = doGetSchema();
         if (EasyStringUtil.isNotBlank(schema)) {
             return dialect.getQuoteName(schema) + "." + tableName;
@@ -110,7 +107,16 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     protected String doGetTableName() {
         String tableName = entityTable.getTableName();
         if (tableNameAs != null) {
-            return tableNameAs.apply(tableName);
+            String applyTableName = tableNameAs.apply(tableName);
+            return checkTableName(applyTableName);
+        }
+        return checkTableName(tableName);
+    }
+
+    private String checkTableName(String tableName) {
+
+        if (tableName == null) {
+            throw new EasyQueryException("table " + EasyClassUtil.getSimpleName(entityTable.getEntityClass()) + " cant found mapping table name");
         }
         return tableName;
     }

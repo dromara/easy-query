@@ -12,7 +12,6 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.MapColumnNullAssertPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.MapColumnValuePredicate;
 import com.easy.query.core.expression.segment.impl.UpdateMapColumnSegmentImpl;
-import com.easy.query.core.expression.segment.index.SegmentIndex;
 import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -158,9 +157,6 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
         SQLBuilderSegment updateSetSQLBuilderSegment = new UpdateSetSQLBuilderSegment();
         TableAvailable entityTable = tableExpressionBuilder.getEntityTable();
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
-        Class<?> entityClass = entityMetadata.getEntityClass();
-        //非手动指定的那么需要移除where的那一部分
-        SegmentIndex predicateIndex = sqlWhere.buildPredicateIndex();
         //查询其他所有列除了在where里面的
         Set<String> columns = map.keySet();
 
@@ -171,7 +167,7 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
             if(clearIgnoreProperties&&ignorePropertySet.contains(column)){
                 continue;
             }
-            if (predicateIndex.contains(entityClass, column)) {
+            if (whereColumns.contains(column)) {
                 continue;
             }
             updateSetSQLBuilderSegment.append(new UpdateMapColumnSegmentImpl(entityTable, column, runtimeContext));

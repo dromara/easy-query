@@ -117,24 +117,15 @@ public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder 
         SQLBuilderSegment insertCloneColumns = new ProjectSQLBuilderSegmentImpl();
         SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
         //format
-        for (String columnName : map.keySet()) {
-            InsertUpdateSetColumnSQLSegment columnInsertSegment = sqlSegmentFactory.createInsertMapColumnSegment(columnName, runtimeContext);
-            insertCloneColumns.append(columnInsertSegment);
-        }
 
         Set<String> ignorePropertySet = new HashSet<>(map.size());
         boolean clearIgnoreProperties = clearIgnoreProperties(ignorePropertySet, getRuntimeContext(), map);
-
-        if (clearIgnoreProperties) {
-
-            insertCloneColumns.getSQLSegments().removeIf(o -> {
-                if (o instanceof SQLEntitySegment) {
-                    SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) o;
-                    String propertyName = sqlEntitySegment.getPropertyName();
-                    return ignorePropertySet.contains(propertyName);
-                }
-                return false;
-            });
+        for (String columnName : map.keySet()) {
+            if(clearIgnoreProperties&&ignorePropertySet.contains(columnName)){
+                continue;
+            }
+            InsertUpdateSetColumnSQLSegment columnInsertSegment = sqlSegmentFactory.createInsertMapColumnSegment(columnName, runtimeContext);
+            insertCloneColumns.append(columnInsertSegment);
         }
 
         int insertColumns = insertCloneColumns.getSQLSegments().size();

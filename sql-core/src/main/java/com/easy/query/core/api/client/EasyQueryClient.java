@@ -80,17 +80,12 @@ public interface EasyQueryClient {
     <T> ClientInsertable<T> insertable(T entity);
 
     <T> ClientInsertable<T> insertable(Collection<T> entities);
-    MapClientInsertable<Map<String,Object>> mapInsertable(Map<String,Object> map);
-    MapClientInsertable<Map<String,Object>> mapInsertable(Collection<Map<String,Object>> maps);
 
     <T> ClientExpressionUpdatable<T> updatable(Class<T> entityClass);
 
     <T> ClientEntityUpdatable<T> updatable(T entity);
 
     <T> ClientEntityUpdatable<T> updatable(Collection<T> entities);
-    MapClientUpdatable<Map<String,Object>> mapUpdatable(Map<String,Object> map);
-
-    MapClientUpdatable<Map<String,Object>> mapUpdatable(Collection<Map<String,Object>> maps);
 
     <T> ClientEntityDeletable<T> deletable(T entity);
 
@@ -109,4 +104,9 @@ public interface EasyQueryClient {
     boolean removeTracking(Object entity);
 
     EntityState getTrackEntityStateNotNull(Object entity);
+    MapClientInsertable<Map<String,Object>> mapInsertable(Map<String,Object> map);
+    MapClientInsertable<Map<String,Object>> mapInsertable(Collection<Map<String,Object>> maps);
+    MapClientUpdatable<Map<String,Object>> mapUpdatable(Map<String,Object> map);
+
+    MapClientUpdatable<Map<String,Object>> mapUpdatable(Collection<Map<String,Object>> maps);
 }

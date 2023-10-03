@@ -8,6 +8,8 @@ import com.easy.query.api.proxy.update.ProxyEntityUpdatable;
 import com.easy.query.api.proxy.update.ProxyExpressionUpdatable;
 import com.easy.query.api.proxy.update.ProxyOnlyEntityUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
+import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -115,4 +117,19 @@ public interface EasyProxyQuery {
     boolean removeTracking(Object entity);
 
     EntityState getTrackEntityStateNotNull(Object entity);
+
+    default MapClientInsertable<Map<String, Object>> mapInsertable(Map<String, Object> map) {
+        return getEasyQueryClient().mapInsertable(map);
+    }
+
+    default MapClientInsertable<Map<String, Object>> mapInsertable(Collection<Map<String, Object>> maps) {
+        return getEasyQueryClient().mapInsertable(maps);
+    }
+    default MapClientUpdatable<Map<String, Object>> mapUpdatable(Map<String, Object> map) {
+        return getEasyQueryClient().mapUpdatable(map);
+    }
+
+    default MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
+        return getEasyQueryClient().mapUpdatable(maps);
+    }
 }

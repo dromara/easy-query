@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
 
@@ -805,11 +806,63 @@ public class UpdateTest extends BaseTest {
         }
         Assert.assertFalse(trackManager.currentThreadTracking());
     }
-//
-//     public void mapUpdate(){
-//         easyQuery.updatable(Map.class)
-//                 .set(Topic::getStars, 12)
-//                 .where(o -> o.eq(Topic::getId, "2"))
-//                 .executeRows();
-//     }
+
+    @Test
+     public void mapUpdateTest1(){
+        try {
+
+            HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+            stringObjectHashMap.put("id","123");
+            stringObjectHashMap.put("name","123");
+            easyQuery.mapUpdatable(stringObjectHashMap).asTable("aaa")
+                    .whereColumns("id")
+                    .executeRows();
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `aaa` SET `name` = ? WHERE `id` = ?", sql);
+        }
+    }
+    @Test
+     public void mapUpdateTest2(){
+        try {
+
+            HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+            stringObjectHashMap.put("id","123");
+            stringObjectHashMap.put("name","123");
+            stringObjectHashMap.put("name1",null);
+            easyQuery.mapUpdatable(stringObjectHashMap).asTable("aaa")
+                    .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
+                    .whereColumns("id")
+                    .executeRows();
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `aaa` SET `name` = ? WHERE `id` = ?", sql);
+        }
+    }
+    @Test
+     public void mapUpdateTest3(){
+        try {
+
+            HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+            stringObjectHashMap.put("id","123");
+            stringObjectHashMap.put("name","123");
+            stringObjectHashMap.put("name1",null);
+            easyQuery.mapUpdatable(stringObjectHashMap).asTable("aaa")
+                    .setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS)
+                    .whereColumns("id")
+                    .executeRows();
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `aaa` SET `name` = ?,`name1` = ? WHERE `id` = ?", sql);
+        }
+    }
 }
