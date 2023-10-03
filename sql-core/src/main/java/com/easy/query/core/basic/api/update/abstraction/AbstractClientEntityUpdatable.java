@@ -43,7 +43,7 @@ import java.util.function.Predicate;
  * @Date: 2023/2/24 22:06
  */
 public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecuteRows<ClientEntityUpdatable<T>> implements ClientEntityUpdatable<T> {
-    protected final List<T> entities = new ArrayList<>();
+    protected final List<T> entities;
     protected final EntityTableExpressionBuilder table;
     protected final EntityMetadata entityMetadata;
     protected final EntityUpdateExpressionBuilder entityUpdateExpressionBuilder;
@@ -53,7 +53,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
         if (entities == null || entities.isEmpty()) {
             throw new EasyQueryException("不支持空对象的update");
         }
-        this.entities.addAll(entities);
+        this.entities= new ArrayList<>(entities);
 
         this.entityUpdateExpressionBuilder = entityUpdateExpression;
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
@@ -64,7 +64,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     }
 
     @Override
-    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
+    public EntityUpdateExpressionBuilder getUpdateExpressionBuilder() {
         return entityUpdateExpressionBuilder;
     }
 

@@ -16,7 +16,6 @@ import com.easy.query.core.expression.sql.builder.internal.AbstractEntityExpress
 import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
-import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -115,7 +114,6 @@ public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder 
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(entitySQLExpressionMetadata, table.toExpression());
-        EntityMetadata entityMetadata = table.getEntityMetadata();
         SQLBuilderSegment insertCloneColumns = new ProjectSQLBuilderSegmentImpl();
         SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
         //format
@@ -124,7 +122,7 @@ public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder 
             insertCloneColumns.append(columnInsertSegment);
         }
 
-        Set<String> ignorePropertySet = new HashSet<>(entityMetadata.getProperties().size());
+        Set<String> ignorePropertySet = new HashSet<>(map.size());
         boolean clearIgnoreProperties = clearIgnoreProperties(ignorePropertySet, getRuntimeContext(), map);
 
         if (clearIgnoreProperties) {

@@ -20,8 +20,8 @@ public abstract class AbstractKtExpressionUpdatable<T> implements KtExpressionUp
     }
 
     @Override
-    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
-        return clientExpressionUpdatable.getEntityUpdateExpressionBuilder();
+    public EntityUpdateExpressionBuilder getUpdateExpressionBuilder() {
+        return clientExpressionUpdatable.getUpdateExpressionBuilder();
     }
 
     @Override

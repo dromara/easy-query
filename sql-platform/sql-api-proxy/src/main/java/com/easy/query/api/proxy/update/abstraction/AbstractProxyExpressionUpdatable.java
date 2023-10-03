@@ -18,13 +18,13 @@ public abstract class AbstractProxyExpressionUpdatable<TProxy extends ProxyEntit
     protected final ClientExpressionUpdatable<T> clientExpressionUpdatable;
 
     public AbstractProxyExpressionUpdatable(TProxy proxy, ClientExpressionUpdatable<T> expressionObjectUpdatable) {
-        this.proxy = proxy.create(expressionObjectUpdatable.getEntityUpdateExpressionBuilder().getTable(0).getEntityTable());
+        this.proxy = proxy.create(expressionObjectUpdatable.getUpdateExpressionBuilder().getTable(0).getEntityTable());
         this.clientExpressionUpdatable = expressionObjectUpdatable;
     }
 
     @Override
-    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
-        return clientExpressionUpdatable.getEntityUpdateExpressionBuilder();
+    public EntityUpdateExpressionBuilder getUpdateExpressionBuilder() {
+        return clientExpressionUpdatable.getUpdateExpressionBuilder();
     }
 
     @Override

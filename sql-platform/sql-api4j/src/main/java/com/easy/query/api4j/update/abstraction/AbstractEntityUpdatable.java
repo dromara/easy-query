@@ -22,8 +22,8 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     }
 
     @Override
-    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
-        return clientEntityUpdatable.getEntityUpdateExpressionBuilder();
+    public EntityUpdateExpressionBuilder getUpdateExpressionBuilder() {
+        return clientEntityUpdatable.getUpdateExpressionBuilder();
     }
 
     @Override

@@ -1,7 +1,6 @@
-package com.easy.query.core.basic.api.insert;
+package com.easy.query.core.basic.api.insert.map;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
+import com.easy.query.core.basic.api.insert.Insertable;
 
 import java.util.Collection;
 

@@ -1,10 +1,8 @@
-package com.easy.query.core.basic.api.insert;
+package com.easy.query.core.basic.api.insert.map;
 
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
 import java.util.Map;

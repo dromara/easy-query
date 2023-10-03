@@ -3,7 +3,7 @@ package com.easy.query.core.api;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
-import com.easy.query.core.basic.api.insert.MapClientInsertable;
+import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.basic.api.jdbc.JdbcExecutor;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable10;
@@ -17,6 +17,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
+import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
@@ -125,10 +126,14 @@ public interface SQLClientApiFactory {
     MapClientInsertable<Map<String,Object>> createEmptyMapInsertable(QueryRuntimeContext runtimeContext);
 
     <T> ClientEntityUpdatable<T> createEmptyEntityUpdatable();
+    MapClientUpdatable<Map<String,Object>> createEmptyMapUpdatable();
 
     <T> ClientEntityUpdatable<T> createEntityUpdatable(T entity, QueryRuntimeContext runtimeContext);
 
     <T> ClientEntityUpdatable<T> createEntityUpdatable(Collection<T> entities, QueryRuntimeContext runtimeContext);
+    <T> MapClientUpdatable<Map<String,Object>> createMapUpdatable(Map<String,Object> entity, QueryRuntimeContext runtimeContext);
+
+    <T> MapClientUpdatable<Map<String,Object>> createMapUpdatable(Collection<Map<String,Object>> entities, QueryRuntimeContext runtimeContext);
 
     <T> ClientExpressionUpdatable<T> createExpressionUpdatable(Class<T> entityClass, QueryRuntimeContext runtimeContext);
 

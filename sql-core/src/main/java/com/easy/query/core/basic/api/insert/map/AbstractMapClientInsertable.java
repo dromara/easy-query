@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.api.insert;
+package com.easy.query.core.basic.api.insert.map;
 
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -9,10 +9,6 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.core.expression.builder.impl.ConfigurerImpl;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
-import com.easy.query.core.expression.parser.core.base.impl.ColumnConfigurerImpl;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;

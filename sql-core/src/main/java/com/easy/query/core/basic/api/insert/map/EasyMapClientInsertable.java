@@ -1,4 +1,4 @@
-package com.easy.query.core.basic.api.insert;
+package com.easy.query.core.basic.api.insert.map;
 
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 

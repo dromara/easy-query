@@ -22,8 +22,8 @@ public abstract class AbstractKtEntityUpdatable<T> implements KtEntityUpdatable<
     }
 
     @Override
-    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
-        return entityObjectUpdatable.getEntityUpdateExpressionBuilder();
+    public EntityUpdateExpressionBuilder getUpdateExpressionBuilder() {
+        return entityObjectUpdatable.getUpdateExpressionBuilder();
     }
 
     @Override

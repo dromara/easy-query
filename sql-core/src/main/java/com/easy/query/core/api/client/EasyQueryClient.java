@@ -3,10 +3,11 @@ package com.easy.query.core.api.client;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
-import com.easy.query.core.basic.api.insert.MapClientInsertable;
+import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
+import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -87,6 +88,9 @@ public interface EasyQueryClient {
     <T> ClientEntityUpdatable<T> updatable(T entity);
 
     <T> ClientEntityUpdatable<T> updatable(Collection<T> entities);
+    MapClientUpdatable<Map<String,Object>> mapUpdatable(Map<String,Object> map);
+
+    MapClientUpdatable<Map<String,Object>> mapUpdatable(Collection<Map<String,Object>> maps);
 
     <T> ClientEntityDeletable<T> deletable(T entity);
 

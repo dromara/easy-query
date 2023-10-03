@@ -1,6 +1,6 @@
 package com.easy.query.api4j.insert.map;
 
-import com.easy.query.core.basic.api.insert.MapClientInsertable;
+import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;

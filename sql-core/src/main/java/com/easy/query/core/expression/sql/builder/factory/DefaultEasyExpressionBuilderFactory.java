@@ -10,6 +10,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.DeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.InsertExpressionBuilder;
@@ -17,6 +18,7 @@ import com.easy.query.core.expression.sql.builder.impl.InsertMapExpressionBuilde
 import com.easy.query.core.expression.sql.builder.impl.QueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.UpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.UpdateMapExpressionBuilder;
 
 /**
  * create time 2023/4/2 22:09
@@ -53,6 +55,11 @@ public  class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFa
     @Override
     public EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression) {
         return new UpdateExpressionBuilder(sqlExpressionContext,queryClass,expression);
+    }
+
+    @Override
+    public MapUpdateExpressionBuilder createMapUpdateExpressionBuilder(ExpressionContext sqlExpressionContext) {
+        return new UpdateMapExpressionBuilder(sqlExpressionContext);
     }
 
     @Override

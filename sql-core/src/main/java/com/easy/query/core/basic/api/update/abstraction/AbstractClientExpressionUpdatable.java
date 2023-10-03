@@ -60,7 +60,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     }
 
     @Override
-    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
+    public EntityUpdateExpressionBuilder getUpdateExpressionBuilder() {
         return entityUpdateExpressionBuilder;
     }
 

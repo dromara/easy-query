@@ -23,8 +23,8 @@ public abstract class AbstractProxyOnlyEntityUpdatable<T> implements ProxyOnlyEn
     }
 
     @Override
-    public EntityUpdateExpressionBuilder getEntityUpdateExpressionBuilder() {
-        return clientEntityUpdatable.getEntityUpdateExpressionBuilder();
+    public EntityUpdateExpressionBuilder getUpdateExpressionBuilder() {
+        return clientEntityUpdatable.getUpdateExpressionBuilder();
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.easy.query.api4j.insert.map;
 
-import com.easy.query.core.basic.api.insert.MapClientInsertable;
+import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 
 import java.util.Map;
 

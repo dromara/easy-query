@@ -11,6 +11,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -42,6 +43,7 @@ public interface ExpressionBuilderFactory {
     }
     EntityInsertExpressionBuilder createEntityInsertExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass);
     EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression);
+    MapUpdateExpressionBuilder createMapUpdateExpressionBuilder(ExpressionContext sqlExpressionContext);
     EntityDeleteExpressionBuilder createEntityDeleteExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression);
 
     EntityInsertExpressionBuilder createMapInsertExpressionBuilder(ExpressionContext sqlExpressionContext);

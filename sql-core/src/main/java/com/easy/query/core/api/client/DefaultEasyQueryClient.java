@@ -4,10 +4,11 @@ import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
-import com.easy.query.core.basic.api.insert.MapClientInsertable;
+import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
+import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.basic.extension.track.TrackManager;
@@ -132,6 +133,22 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             return easySQLApiFactory.createEmptyEntityUpdatable();
         }
         return easySQLApiFactory.createEntityUpdatable(entities, runtimeContext);
+    }
+
+    @Override
+    public MapClientUpdatable<Map<String, Object>> mapUpdatable(Map<String, Object> map) {
+        if (map == null) {
+            return easySQLApiFactory.createEmptyMapUpdatable();
+        }
+        return easySQLApiFactory.createMapUpdatable(map, runtimeContext);
+    }
+
+    @Override
+    public MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
+        if (maps == null || maps.isEmpty()) {
+            return easySQLApiFactory.createEmptyMapUpdatable();
+        }
+        return easySQLApiFactory.createMapUpdatable(maps, runtimeContext);
     }
 
     @Override

@@ -9,9 +9,9 @@ import com.easy.query.core.basic.api.delete.impl.EasyEmptyClientEntityDeletable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.api.insert.EasyClientInsertable;
 import com.easy.query.core.basic.api.insert.EasyEmptyClientInsertable;
-import com.easy.query.core.basic.api.insert.EasyEmptyMapClientInsertable;
-import com.easy.query.core.basic.api.insert.EasyMapClientInsertable;
-import com.easy.query.core.basic.api.insert.MapClientInsertable;
+import com.easy.query.core.basic.api.insert.map.EasyEmptyMapClientInsertable;
+import com.easy.query.core.basic.api.insert.map.EasyMapClientInsertable;
+import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.basic.api.jdbc.EasyJdbcExecutor;
 import com.easy.query.core.basic.api.jdbc.JdbcExecutor;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -39,6 +39,9 @@ import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.impl.EasyClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.impl.EasyClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.impl.EasyEmptyClientEntityUpdatable;
+import com.easy.query.core.basic.api.update.map.EasyEmptyMapClientUpdatable;
+import com.easy.query.core.basic.api.update.map.EasyMapClientUpdatable;
+import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
@@ -49,6 +52,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -492,6 +496,11 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     }
 
     @Override
+    public MapClientUpdatable<Map<String, Object>> createEmptyMapUpdatable() {
+        return new EasyEmptyMapClientUpdatable();
+    }
+
+    @Override
     public <T> ClientEntityUpdatable<T> createEntityUpdatable(T entity, QueryRuntimeContext runtimeContext) {
         return createEntityUpdatable(Collections.singletonList(entity), runtimeContext);
     }
@@ -504,6 +513,17 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
         return new EasyClientEntityUpdatable<>(clazz, entities, entityUpdateExpression);
     }
 
+    @Override
+    public <T> MapClientUpdatable<Map<String,Object>> createMapUpdatable(Map<String, Object> entity, QueryRuntimeContext runtimeContext) {
+        return createMapUpdatable(Collections.singletonList(entity),runtimeContext);
+    }
+
+    @Override
+    public <T> MapClientUpdatable<Map<String,Object>> createMapUpdatable(Collection<Map<String, Object>> entities, QueryRuntimeContext runtimeContext) {
+        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        MapUpdateExpressionBuilder entityUpdateExpression = expressionBuilderFactory.createMapUpdateExpressionBuilder(sqlExpressionContext);
+        return new EasyMapClientUpdatable(entities, entityUpdateExpression);
+    }
 
     @Override
     public <T> ClientExpressionUpdatable<T> createExpressionUpdatable(Class<T> entityClass, QueryRuntimeContext runtimeContext) {
