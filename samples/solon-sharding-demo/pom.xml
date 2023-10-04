@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.easy-query</groupId>
         <artifactId>samples</artifactId>
-        <version>1.4.32</version>
+        <version>1.5.0</version>
     </parent>
 
     <groupId>com.easy.query</groupId>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-solon-plugin</artifactId>
-            <version>1.4.32</version>
+            <version>1.5.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

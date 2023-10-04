@@ -189,4 +189,9 @@ public class QueryTest4 extends BaseTest {
 
         Assert.assertEquals(TopicTypeEnum.CLASSER.getCode(), topicTypeVO.getTopicType());
     }
+//    @Test
+//    public void testBean1(){
+//        List<TestBean> list = easyQuery.queryable(TestBean.class)
+//                .toList();
+//    }
 }
