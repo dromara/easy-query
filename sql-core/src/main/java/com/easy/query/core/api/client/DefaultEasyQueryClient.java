@@ -17,6 +17,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.func.SQLFunc;
 
 import java.util.Collection;
 import java.util.List;
@@ -201,5 +202,10 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             throw new EasyQueryInvalidOperationException("currentTrackContext can not be null ");
         }
         return currentTrackContext.getTrackEntityStateNotNull(entity);
+    }
+
+    @Override
+    public SQLFunc sqlFunc() {
+        return runtimeContext.sqlFunc();
     }
 }

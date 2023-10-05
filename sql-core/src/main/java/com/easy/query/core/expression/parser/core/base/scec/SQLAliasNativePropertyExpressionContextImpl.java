@@ -46,6 +46,12 @@ public class SQLAliasNativePropertyExpressionContextImpl implements SQLAliasNati
     }
 
     @Override
+    public SQLAliasNativePropertyExpressionContext expression(TableAvailable table, String property) {
+        sqlAliasNativeExpressionContext.expression(table,property);
+        return this;
+    }
+
+    @Override
     public <TEntity> SQLAliasNativePropertyExpressionContext expression(ClientQueryable<TEntity> subQuery) {
         sqlAliasNativeExpressionContext.expression(subQuery);
         return this;

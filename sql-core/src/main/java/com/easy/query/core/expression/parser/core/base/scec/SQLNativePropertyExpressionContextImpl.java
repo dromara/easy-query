@@ -40,6 +40,12 @@ public class SQLNativePropertyExpressionContextImpl implements SQLNativeProperty
     }
 
     @Override
+    public SQLNativePropertyExpressionContext expression(TableAvailable table, String property) {
+        sqlNativeExpressionContext.expression(table, property);
+        return this;
+    }
+
+    @Override
     public SQLNativePropertyExpressionContext value(Object val) {
         sqlNativeExpressionContext.value(val);
         return this;

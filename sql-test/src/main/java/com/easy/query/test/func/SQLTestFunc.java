@@ -12,7 +12,7 @@ import com.easy.query.core.expression.lambda.Property;
  *
  * @author xuejiaming
  */
-public class SQLFunc {
+public class SQLTestFunc {
 //
 //    public static <T1,TR> CaseWhenBuilder<T1,TR> caseWhenBuilder(SQLColumnAsSelector<T1, TR> sqlColumnAsSelector){
 //        return new CaseWhenBuilder<>(sqlColumnAsSelector);

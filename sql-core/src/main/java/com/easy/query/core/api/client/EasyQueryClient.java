@@ -13,6 +13,7 @@ import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
@@ -109,4 +110,5 @@ public interface EasyQueryClient {
     MapClientUpdatable<Map<String,Object>> mapUpdatable(Map<String,Object> map);
 
     MapClientUpdatable<Map<String,Object>> mapUpdatable(Collection<Map<String,Object>> maps);
+    SQLFunc sqlFunc();
 }

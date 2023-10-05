@@ -2,6 +2,7 @@ package com.easy.query.core.expression.parser.core.base.scec;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.text.MessageFormat;
 
@@ -25,6 +26,7 @@ public interface SQLNativePropertyExpressionChain<TChain> {
      * @return
      */
     TChain expression(SQLTableOwner sqlTableOwner, String property);
+    TChain expression(TableAvailable table, String property);
     <TEntity> TChain expression(ClientQueryable<TEntity> subQuery);
 
     /**

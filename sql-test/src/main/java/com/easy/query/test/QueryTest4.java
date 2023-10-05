@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.func.SQLFunc;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeArrayJson;
 import com.easy.query.test.entity.TopicTypeJsonValue;
@@ -194,4 +195,12 @@ public class QueryTest4 extends BaseTest {
 //        List<TestBean> list = easyQuery.queryable(TestBean.class)
 //                .toList();
 //    }
+    @Test
+    public void testSQLFunc1(){
+        SQLFunc sqlFunc = easyQueryClient.sqlFunc();
+        String sql1 = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1"))
+                .select(String.class, o -> o.func(sqlFunc.ifNull(o,"id","1"))).toSQL();
+        Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
+    }
 }

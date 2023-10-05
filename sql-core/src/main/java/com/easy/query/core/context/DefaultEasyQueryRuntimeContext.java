@@ -21,6 +21,7 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
+import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -66,6 +67,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final IncludeParserEngine includeParserEngine;
     private final WhereObjectQueryExecutor whereObjectQueryExecutor;
     private final ObjectSortQueryExecutor objectSortQueryExecutor;
+    private final SQLFunc sqlFunc;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -94,7 +96,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           IncludeProcessorFactory includeProcessorFactory,
                                           IncludeParserEngine includeParserEngine,
                                           WhereObjectQueryExecutor whereObjectQueryExecutor,
-                                          ObjectSortQueryExecutor objectSortQueryExecutor) {
+                                          ObjectSortQueryExecutor objectSortQueryExecutor,
+                                          SQLFunc sqlFunc) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -123,6 +126,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.includeParserEngine = includeParserEngine;
         this.whereObjectQueryExecutor = whereObjectQueryExecutor;
         this.objectSortQueryExecutor = objectSortQueryExecutor;
+        this.sqlFunc = sqlFunc;
     }
 
     @Override
@@ -264,5 +268,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public ObjectSortQueryExecutor getObjectSortQueryExecutor() {
         return objectSortQueryExecutor;
+    }
+
+    @Override
+    public SQLFunc sqlFunc() {
+        return sqlFunc;
     }
 }

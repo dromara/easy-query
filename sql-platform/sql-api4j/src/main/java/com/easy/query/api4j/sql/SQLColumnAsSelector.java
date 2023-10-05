@@ -38,6 +38,11 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQ
         return getColumnAsSelector().getTable();
     }
 
+    /**
+     * 从group的列里面快速获取对应的列
+     * @param index
+     * @return
+     */
     default SQLColumnAsSelector<T1, TR> groupKeys(int index) {
         getColumnAsSelector().groupKeys(index);
         return this;

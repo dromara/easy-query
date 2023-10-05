@@ -6,6 +6,7 @@ import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
 import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContextImpl;
+import com.easy.query.core.func.SQLFunction;
 
 /**
  * create time 2023/7/31 13:23
@@ -46,6 +47,19 @@ public interface SQLAsPropertyNative<TChain> extends SQLTableOwner, ChainCast<TC
         if(condition){
             getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
                 contextConsume.apply(new SQLAliasNativePropertyExpressionContextImpl(getTable(),context));
+            });
+        }
+        return castChain();
+    }
+
+    default TChain func(SQLFunction sqlFunction){
+        return func(true,sqlFunction);
+    }
+    default TChain func(boolean condition, SQLFunction sqlFunction){
+        if(condition){
+            String sqlSegment = sqlFunction.sqlSegment();
+            getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
+                sqlFunction.consume(new SQLAliasNativePropertyExpressionContextImpl(getTable(),context));
             });
         }
         return castChain();

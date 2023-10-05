@@ -20,13 +20,4 @@ public class EnumConverter implements ValueConverter<IEnum<?>,Integer> {
     public IEnum<?> deserialize(Integer integer, ColumnMetadata columnMetadata) {
         return EnumDeserializer.deserialize(EasyObjectUtil.typeCast(columnMetadata.getPropertyType()),integer);
     }
-//    @Override
-//    public Integer serialize(IEnum<?> anEnum) {
-//        return anEnum.getCode();
-//    }
-//
-//    @Override
-//    public IEnum<?> deserialize(Class<IEnum<?>> propertyClass,Integer integer) {
-//        return EnumDeserializer.deserialize(EasyObjectUtil.typeCast(propertyClass),integer);
-//    }
 }
