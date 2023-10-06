@@ -203,4 +203,28 @@ public class QueryTest4 extends BaseTest {
                 .select(String.class, o -> o.func(sqlFunc.ifNull(o,"id","1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
+    @Test
+    public void testSQLFunc2(){
+        SQLFunc sqlFunc = easyQueryClient.sqlFunc();
+        String sql1 = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1"))
+                .select(String.class, o -> o.func(sqlFunc.ifNull("id","1"))).toSQL();
+        Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
+    }
+    @Test
+    public void testSQLFunc3(){
+        SQLFunc sqlFunc = easyQueryClient.sqlFunc();
+        String sql1 = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1"))
+                .select(String.class, o -> o.func(sqlFunc.dateTimeFormat("createTime","yyyy/MM/dd"))).toSQL();
+        Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`, '%Y/%m/%d') FROM `t_topic` t WHERE t.`id` = ?", sql1);
+    }
+    @Test
+    public void testSQLFunc4(){
+        SQLFunc sqlFunc = easyQueryClient.sqlFunc();
+        String sql1 = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1"))
+                .select(String.class, o -> o.func(sqlFunc.dateTimeFormat("createTime","yyyy-MM-dd"))).toSQL();
+        Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`, '%Y-%m-%d') FROM `t_topic` t WHERE t.`id` = ?", sql1);
+    }
 }

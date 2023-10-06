@@ -1,4 +1,4 @@
-package com.easy.query.core.func.ifnull;
+package com.easy.query.core.func.def;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
@@ -15,13 +15,13 @@ public class IfNullSQLFunction implements SQLFunction {
     private final TableAvailable table;
     private final String property;
     private final Object def;
-
-    public IfNullSQLFunction(TableAvailable table, String property, Object def){
+    public IfNullSQLFunction(TableAvailable table, String property, Object def) {
 
         this.table = table;
         this.property = property;
         this.def = def;
     }
+
     @Override
     public String sqlSegment() {
         return "IFNULL({0},{1})";
@@ -29,15 +29,23 @@ public class IfNullSQLFunction implements SQLFunction {
 
     @Override
     public void consume(SQLNativePropertyExpressionContext context) {
-        context.keepStyle()
-                .expression(this.table,this.property)
-                .value(this.def);
+        context.keepStyle();
+        if (this.table == null) {
+            context.expression(this.property);
+        } else {
+            context.expression(this.table, this.property);
+        }
+        context.value(this.def);
     }
 
     @Override
     public void consume(SQLAliasNativePropertyExpressionContext context) {
-        context.keepStyle()
-                .expression(this.table,this.property)
-                .value(this.def);
+        context.keepStyle();
+        if (this.table == null) {
+            context.expression(this.property);
+        } else {
+            context.expression(this.table, this.property);
+        }
+        context.value(this.def);
     }
 }
