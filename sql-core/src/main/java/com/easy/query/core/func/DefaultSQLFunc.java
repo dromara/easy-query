@@ -1,7 +1,8 @@
 package com.easy.query.core.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.func.def.DateTimeFormatSQLFunction;
+import com.easy.query.core.func.def.DateTimeJavaFormatSQLFunction;
+import com.easy.query.core.func.def.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.IfNullSQLFunction;
 
 /**
@@ -18,7 +19,12 @@ public class DefaultSQLFunc implements SQLFunc{
     }
 
     @Override
-    public SQLFunction dateTimeFormat(TableAvailable table, String property, String javaFormat) {
-        return new DateTimeFormatSQLFunction(table,property,javaFormat);
+    public SQLFunction dateTimeJavaFormat(TableAvailable table, String property, String javaFormat) {
+        return new DateTimeJavaFormatSQLFunction(table,property,javaFormat);
+    }
+
+    @Override
+    public SQLFunction dateTimeSQLFormat(TableAvailable table, String property, String format) {
+        return new DateTimeSQLFormatSQLFunction(table,property,format);
     }
 }

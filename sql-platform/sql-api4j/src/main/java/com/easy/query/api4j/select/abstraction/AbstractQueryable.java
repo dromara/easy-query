@@ -108,6 +108,16 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
+    public <TR> TR singleOrNull(Class<TR> resultClass) {
+        return entityQueryable.singleOrNull(resultClass);
+    }
+
+    @Override
+    public <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code) {
+        return entityQueryable.singleNotNull(resultClass, msg, code);
+    }
+
+    @Override
     public List<Map<String, Object>> toMaps() {
         return entityQueryable.toMaps();
     }

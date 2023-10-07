@@ -6,7 +6,6 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamRes
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -20,13 +19,7 @@ import java.util.Map;
  * @Description: 文件说明
  * @Date: 2023/3/3 16:30
  */
-public interface Query<T> {
-    /**
-     * 当前查询对象的字节信息
-     *
-     * @return 当前查询的对象字节
-     */
-    Class<T> queryClass();
+public interface Query<T> extends QueryAvailable<T> ,QueryFirst<T>,QuerySingle<T> {
 
     /**
      * 只clone表达式共享上下文
@@ -120,69 +113,6 @@ public interface Query<T> {
      * @return
      */
 
-    default T firstOrNull() {
-        return firstOrNull(queryClass());
-    }
-
-    /**
-     * 返回第一条,如果第一条没有就返回null,并且select并不是表的全部而是映射到 {@code resultClass} 上
-     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
-     *
-     * @param resultClass
-     * @param <TR>
-     * @return
-     */
-
-    <TR> TR firstOrNull(Class<TR> resultClass);
-
-    /**
-     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
-     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
-     *
-     * @param msg
-     * @return
-     */
-    default T firstNotNull(String msg) {
-        return firstNotNull(msg, null);
-    }
-
-    /**
-     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
-     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
-     *
-     * @param msg
-     * @param code
-     * @return
-     */
-    default T firstNotNull(String msg, String code) {
-        return firstNotNull(queryClass(), msg, code);
-    }
-
-    /**
-     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
-     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
-     *
-     * @param resultClass
-     * @param msg
-     * @param <TR>
-     * @return
-     */
-
-    default <TR> TR firstNotNull(Class<TR> resultClass, String msg) {
-        return firstNotNull(resultClass, msg, null);
-    }
-
-    /**
-     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
-     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
-     *
-     * @param resultClass 返回结果
-     * @param msg
-     * @param code
-     * @param <TR>
-     * @return
-     */
-    <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code);
 
     /**
      * 返回所有的查询结果集

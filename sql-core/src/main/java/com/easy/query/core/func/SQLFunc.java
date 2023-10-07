@@ -20,13 +20,22 @@ public interface SQLFunc {
 
     SQLFunction ifNull(TableAvailable table, String property, Object def);
 
-    default SQLFunction dateTimeFormat(String property, String javaFormat) {
-        return dateTimeFormat((TableAvailable) null, property, javaFormat);
+    default SQLFunction dateTimeJavaFormat(String property, String javaFormat) {
+        return dateTimeJavaFormat((TableAvailable) null, property, javaFormat);
     }
 
-    default SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat){
-        return dateTimeFormat(tableOwner.getTable(), property, javaFormat);
+    default SQLFunction dateTimeJavaFormat(SQLTableOwner tableOwner, String property, String javaFormat){
+        return dateTimeJavaFormat(tableOwner.getTable(), property, javaFormat);
     }
 
-    SQLFunction dateTimeFormat(TableAvailable table, String property, String javaFormat);
+    SQLFunction dateTimeJavaFormat(TableAvailable table, String property, String javaFormat);
+    default SQLFunction dateTimeSQLFormat(String property, String format) {
+        return dateTimeSQLFormat((TableAvailable) null, property, format);
+    }
+
+    default SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format){
+        return dateTimeSQLFormat(tableOwner.getTable(), property, format);
+    }
+
+    SQLFunction dateTimeSQLFormat(TableAvailable table, String property, String format);
 }

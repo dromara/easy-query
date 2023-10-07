@@ -88,10 +88,18 @@ public class QueryTest extends BaseTest {
 
     @Test
     public void query0_2() {
-        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
-                .where(o -> o.eq(SysUser::getId, "123xxx"));
-        SysUser sysUser = queryable.firstOrNull();
-        Assert.assertNull(sysUser);
+        {
+            Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                    .where(o -> o.eq(SysUser::getId, "123xxx"));
+            SysUser sysUser = queryable.firstOrNull();
+            Assert.assertNull(sysUser);
+        }
+        {
+            Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                    .where(o -> o.eq(SysUser::getId, "123xxx"));
+            SysUser sysUser = queryable.singleOrNull();
+            Assert.assertNull(sysUser);
+        }
     }
 
     @Test

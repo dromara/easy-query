@@ -1,7 +1,10 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.exception.EasyQuerySQLStatementException;
+import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.func.SQLFunc;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeArrayJson;
 import com.easy.query.test.entity.TopicTypeJsonValue;
@@ -11,6 +14,7 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * create time 2023/9/26 08:19
@@ -130,6 +134,7 @@ public class QueryTest4 extends BaseTest {
 
         Assert.assertEquals(TopicTypeEnum.CLASSER.getCode(), topicTypeVO.getTopicType());
     }
+
     @Test
     public void testJson2() {
         String id = "1231";
@@ -190,41 +195,108 @@ public class QueryTest4 extends BaseTest {
 
         Assert.assertEquals(TopicTypeEnum.CLASSER.getCode(), topicTypeVO.getTopicType());
     }
-//    @Test
+
+    //    @Test
 //    public void testBean1(){
 //        List<TestBean> list = easyQuery.queryable(TestBean.class)
 //                .toList();
 //    }
     @Test
-    public void testSQLFunc1(){
+    public void testSQLFunc1() {
         SQLFunc sqlFunc = easyQueryClient.sqlFunc();
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.func(sqlFunc.ifNull(o,"id","1"))).toSQL();
+                .select(String.class, o -> o.func(sqlFunc.ifNull(o, "id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
+
     @Test
-    public void testSQLFunc2(){
+    public void testSQLFunc2() {
         SQLFunc sqlFunc = easyQueryClient.sqlFunc();
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.func(sqlFunc.ifNull("id","1"))).toSQL();
+                .select(String.class, o -> o.func(sqlFunc.ifNull("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
+
     @Test
-    public void testSQLFunc3(){
+    public void testSQLFunc3() {
         SQLFunc sqlFunc = easyQueryClient.sqlFunc();
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.func(sqlFunc.dateTimeFormat("createTime","yyyy/MM/dd"))).toSQL();
+                .select(String.class, o -> o.func(sqlFunc.dateTimeJavaFormat("createTime", "yyyy/MM/dd"))).toSQL();
         Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`, '%Y/%m/%d') FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
+
     @Test
-    public void testSQLFunc4(){
+    public void testSQLFunc4() {
         SQLFunc sqlFunc = easyQueryClient.sqlFunc();
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.func(sqlFunc.dateTimeFormat("createTime","yyyy-MM-dd"))).toSQL();
+                .select(String.class, o -> o.func(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toSQL();
         Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`, '%Y-%m-%d') FROM `t_topic` t WHERE t.`id` = ?", sql1);
+    }
+
+    @Test
+    public void testSQLFunc5() {
+        SQLFunc sqlFunc = easyQueryClient.sqlFunc();
+        List<String> list = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1")
+                        //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
+                )
+                .orderByDesc(o -> o.column("createTime"))
+                .select(String.class, o -> o.func(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toList();
+        for (String s : list) {
+            Assert.assertEquals("2023-05-25", s);
+        }
+    }
+
+
+    @Test
+    public void queryFirstSingle() {
+        {
+            try {
+
+                Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                        .asTable("sys_123")
+                        .where(o -> o.eq(SysUser::getId, "123xxx"));
+                SysUser sysUser = queryable.firstOrNull();
+                Assert.assertNull(sysUser);
+            } catch (Exception e) {
+                Throwable cause = e.getCause();
+                Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+                EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+                String sql = cause1.getSQL();
+                Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`sys_123` WHERE `id` = ? LIMIT 1", sql);
+            }
+        }
+        {
+
+            try {
+
+                Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                        .asTable("sys_123")
+                        .where(o -> o.eq(SysUser::getId, "123xxx"));
+                SysUser sysUser = queryable.singleOrNull();
+                Assert.assertNull(sysUser);
+            } catch (Exception e) {
+                Throwable cause = e.getCause();
+                Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+                EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+                String sql = cause1.getSQL();
+                Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`sys_123` WHERE `id` = ?", sql);
+            }
+        }
+        {
+
+            try {
+
+                Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class);
+                SysUser sysUser = queryable.singleOrNull();
+                Assert.assertNull(sysUser);
+            } catch (Exception e) {
+                Assert.assertTrue(e instanceof EasyQuerySingleMoreElementException);
+            }
+        }
     }
 }

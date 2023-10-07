@@ -91,6 +91,16 @@ public abstract class AbstractOverrideProxyQueryable4<T1Proxy extends ProxyEntit
     }
 
     @Override
+    public <TR> TR singleOrNull(Class<TR> resultClass) {
+        return entityQueryable.singleOrNull(resultClass);
+    }
+
+    @Override
+    public <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code) {
+        return entityQueryable.singleNotNull(resultClass, msg, code);
+    }
+
+    @Override
     public List<Map<String, Object>> toMaps() {
         return entityQueryable.toMaps();
     }

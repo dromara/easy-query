@@ -11,15 +11,15 @@ import com.easy.query.core.func.SQLFunction;
  *
  * @author xuejiaming
  */
-public class DateTimeFormatSQLFunction implements SQLFunction {
+public class DateTimeSQLFormatSQLFunction implements SQLFunction {
     private final TableAvailable table;
     private final String property;
-    private final String javaFormat;
+    private final String format;
 
-    public DateTimeFormatSQLFunction(TableAvailable table, String property, String javaFormat){
+    public DateTimeSQLFormatSQLFunction(TableAvailable table, String property, String format){
         this.table = table;
         this.property = property;
-        this.javaFormat = javaFormat;
+        this.format = format;
     }
     @Override
     public String sqlSegment() {
@@ -34,14 +34,6 @@ public class DateTimeFormatSQLFunction implements SQLFunction {
         }else{
             context.expression(table,property);
         }
-        //%Y-%m-%d %H:%i:%S
-        String format = this.javaFormat
-                .replace("yyyy", "%Y")
-                .replace("MM", "%m")
-                .replace("dd", "%d")
-                .replace("HH", "%H")
-                .replace("mm", "%i")
-                .replace("ss", "%S");
         context.format(format);
     }
 
@@ -53,14 +45,6 @@ public class DateTimeFormatSQLFunction implements SQLFunction {
         }else{
             context.expression(table,property);
         }
-        //%Y-%m-%d %H:%i:%S
-        String format = this.javaFormat
-                .replace("yyyy", "%Y")
-                .replace("MM", "%m")
-                .replace("dd", "%d")
-                .replace("HH", "%H")
-                .replace("mm", "%i")
-                .replace("ss", "%S");
         context.format(format);
     }
 }

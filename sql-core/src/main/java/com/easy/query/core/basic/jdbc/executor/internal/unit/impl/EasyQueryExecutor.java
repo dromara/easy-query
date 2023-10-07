@@ -57,6 +57,7 @@ public class EasyQueryExecutor extends AbstractExecutor<QueryExecuteResult> {
     @Override
     protected CircuitBreaker createCircuitBreak() {
         ExecuteMethodEnum executeMethod = streamMergeContext.getExecuteMethod();
+        //todo single熔断
         switch (executeMethod){
             case FIRST:
             case MAX:

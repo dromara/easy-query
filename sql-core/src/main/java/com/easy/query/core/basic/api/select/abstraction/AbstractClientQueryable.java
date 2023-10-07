@@ -21,6 +21,7 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterable;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
@@ -33,6 +34,9 @@ import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
+import com.easy.query.core.exception.EasyQuerySingleOrNotNullException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.include.IncludeProcessor;
@@ -67,6 +71,8 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.FillParams;
@@ -79,10 +85,12 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -98,6 +106,7 @@ import java.util.stream.Collectors;
  * @Date: 2023/2/6 23:44
  */
 public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1> {
+    private static final Log log= LogFactory.getLog(AbstractClientQueryable.class);
     protected final Class<T1> t1Class;
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final QueryRuntimeContext runtimeContext;
@@ -286,6 +295,59 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
+    public <TR> TR singleOrNull(Class<TR> resultClass) {
+        setExecuteMethod(ExecuteMethodEnum.SINGLE);
+        boolean autoAllColumn = compensateSelect(resultClass);
+        boolean printSql = runtimeContext.getQueryConfiguration().getEasyQueryOption().isPrintSql();
+        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass, autoAllColumn);
+        TR next = null;
+        try (JdbcStreamResult<TR> jdbcStreamResult = jdbcResultWrap.getJdbcResult().getJdbcStreamResult()) {
+            StreamIterable<TR> streamResult = jdbcStreamResult.getStreamIterable();
+
+            Iterator<TR> iterator = streamResult.iterator();
+            boolean firstHasNext = iterator.hasNext();
+            if (!firstHasNext) {
+                if(printSql){
+                    log.info("<== Total: 0");
+                }
+                return null;
+            }
+            do {
+                if(next!=null){
+                    throw new EasyQuerySingleMoreElementException("single query has more element in result set.");
+                }
+                next = iterator.next();
+
+            } while (iterator.hasNext());
+            if(printSql){
+                log.info("<== Total: 1");
+            }
+
+        } catch (SQLException e) {
+            throw new EasyQuerySQLCommandException(e);
+        }
+        if(next!=null){
+            ExpressionContext expressionContext = jdbcResultWrap.getExpressionContext();
+            EntityMetadata entityMetadata = jdbcResultWrap.getEntityMetadata();
+            doIncludes(expressionContext, entityMetadata, Collections.singletonList(next));
+            doFills(expressionContext, Collections.singletonList(next));
+        }
+        //将当前方法设置为unknown
+        setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
+
+        return next;
+    }
+
+    @Override
+    public <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code) {
+        TR result = singleOrNull(resultClass);
+        if (result == null) {
+            throw new EasyQuerySingleOrNotNullException(msg, code);
+        }
+        return result;
+    }
+
+    @Override
     public List<Map<String, Object>> toMaps() {
         List<Map> queryMaps = toQueryMaps();
         return EasyObjectUtil.typeCastNullable(queryMaps);
@@ -356,7 +418,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ExecuteMethodEnum executeMethod = jdbcResultWrap.getExecuteMethod();
         ExpressionContext expressionContext = jdbcResultWrap.getExpressionContext();
         EntityMetadata entityMetadata = jdbcResultWrap.getEntityMetadata();
-        if (ExecuteMethodEnum.LIST == executeMethod || ExecuteMethodEnum.FIRST == executeMethod) {
+        if (ExecuteMethodEnum.LIST == executeMethod || ExecuteMethodEnum.FIRST == executeMethod || ExecuteMethodEnum.SINGLE == executeMethod) {
             if (EasyCollectionUtil.isNotEmpty(result)) {
                 doIncludes(expressionContext, entityMetadata, result);
                 doFills(expressionContext, result);
