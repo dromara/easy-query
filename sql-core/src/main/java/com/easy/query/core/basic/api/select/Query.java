@@ -19,7 +19,7 @@ import java.util.Map;
  * @Description: 文件说明
  * @Date: 2023/3/3 16:30
  */
-public interface Query<T> extends QueryAvailable<T> ,QueryFirst<T>,QuerySingle<T> {
+public interface Query<T> extends QueryAvailable<T> , FirstAble<T>, SingleAble<T> {
 
     /**
      * 只clone表达式共享上下文

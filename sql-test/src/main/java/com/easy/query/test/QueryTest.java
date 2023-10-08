@@ -488,6 +488,18 @@ public class QueryTest extends BaseTest {
         String sql1 = blogEntityQueryable.select(Long.class, o -> o.columnCount(BlogEntity::getId)).toSQL();
         Assert.assertEquals("SELECT COUNT(t2.`id`) AS `id` FROM (SELECT IFNULL(t1.`id`,'') AS `id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY IFNULL(t1.`id`,'')) t2", sql1);
     }
+    @Test
+    public void query16_2x() {
+        Long aLong = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1) -> t1.columnFunc(SQLTestFunc.ifNULL(BlogEntity::getId)))
+                .select(BlogEntity.class, (t, t1) -> t1.columnFuncAs(SQLTestFunc.ifNULL(BlogEntity::getId), BlogEntity::getId).columnSum(BlogEntity::getScore))
+                .distinct()
+                .select(Long.class, o -> o.columnCount(BlogEntity::getId)).firstOrNull();
+        System.out.println(aLong);
+    }
 
     @Test
     public void query16_1_1() {

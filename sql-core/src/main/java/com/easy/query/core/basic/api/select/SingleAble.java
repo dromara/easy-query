@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
+import com.easy.query.core.exception.EasyQuerySingleOrNotNullException;
 
 /**
  * create time 2023/10/7 15:04
@@ -8,7 +9,7 @@ import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
  *
  * @author xuejiaming
  */
-public interface QuerySingle<T> extends QueryAvailable<T> {
+public interface SingleAble<T> extends QueryAvailable<T> {
     /**
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
      * @return
@@ -38,6 +39,7 @@ public interface QuerySingle<T> extends QueryAvailable<T> {
      * @param msg
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
+     * @throws EasyQuerySingleOrNotNullException 如果查询不到数据
      */
     default T singleNotNull(String msg) {
         return singleNotNull(msg, null);
@@ -51,6 +53,7 @@ public interface QuerySingle<T> extends QueryAvailable<T> {
      * @param code
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
+     * @throws EasyQuerySingleOrNotNullException 如果查询不到数据
      */
     default T singleNotNull(String msg, String code) {
         return singleNotNull(queryClass(), msg, code);
@@ -65,6 +68,7 @@ public interface QuerySingle<T> extends QueryAvailable<T> {
      * @param <TR>
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
+     * @throws EasyQuerySingleOrNotNullException 如果查询不到数据
      */
 
     default <TR> TR singleNotNull(Class<TR> resultClass, String msg) {
@@ -81,6 +85,7 @@ public interface QuerySingle<T> extends QueryAvailable<T> {
      * @param <TR>
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
+     * @throws EasyQuerySingleOrNotNullException 如果查询不到数据
      */
     <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code);
 }

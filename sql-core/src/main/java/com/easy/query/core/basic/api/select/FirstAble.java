@@ -8,7 +8,12 @@ import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
  *
  * @author xuejiaming
  */
-public interface QueryFirst<T> extends QueryAvailable<T> {
+public interface FirstAble<T> extends QueryAvailable<T> {
+    /**
+     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     * @return
+     */
     default T firstOrNull() {
         return firstOrNull(queryClass());
     }
