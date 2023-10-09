@@ -1,6 +1,8 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.common.anonymous.AnonymousType2;
+import com.easy.query.core.common.anonymous.AnonymousType3;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.func.SQLFunc;
@@ -299,4 +301,15 @@ public class QueryTest4 extends BaseTest {
             }
         }
     }
+
+    @Test
+     public void queryTest4(){
+
+        Queryable<AnonymousType3> select = easyQuery.queryable(SysUser.class)
+                .select(AnonymousType3.class, o -> o.columnAs(SysUser::getId, AnonymousType3::getP1).columnAs(SysUser::getIdCard, AnonymousType2::getP2));
+        String sql = select.toSQL();
+         Assert.assertEquals("SELECT t.`id` AS `anonymous_type_p1`,t.`id_card` AS `anonymous_type_p2` FROM `easy-query-test`.`t_sys_user` t", sql);
+        AnonymousType3 sysUser = select.firstOrNull();
+        Assert.assertNull(sysUser);
+     }
 }
