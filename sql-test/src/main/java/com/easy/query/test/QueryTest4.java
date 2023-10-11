@@ -256,6 +256,18 @@ public class QueryTest4 extends BaseTest {
             Assert.assertEquals("2023-05-25", s);
         }
     }
+    @Test
+    public void testSQLFunc6() {
+        List<String> list = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1")
+                        //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
+                )
+                .orderByDesc(o -> o.column("createTime"))
+                .select(String.class, o -> o.func(o.sqlFunc().dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toList();
+        for (String s : list) {
+            Assert.assertEquals("2023-05-25", s);
+        }
+    }
 
 
     @Test

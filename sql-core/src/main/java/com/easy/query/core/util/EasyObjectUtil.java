@@ -5,7 +5,9 @@ import com.easy.query.core.exception.EasyQueryException;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * create time 2023/5/20 22:32
@@ -16,6 +18,16 @@ import java.util.Optional;
 public class EasyObjectUtil {
 
     private EasyObjectUtil(){}
+
+    public static <T,TR> TR getValueOrNull(T source, Function<T,TR> getter){
+        return getValueOrDefault(source,getter,null);
+    }
+    public static <T,TR> TR getValueOrDefault(T source, Function<T,TR> getter,TR def){
+        if(Objects.isNull(source)){
+            return def;
+        }
+        return getter.apply(source);
+    }
 
     /**
      * 强制类型转换

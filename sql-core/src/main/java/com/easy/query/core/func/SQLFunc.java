@@ -1,7 +1,14 @@
 package com.easy.query.core.func;
 
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.SQLColumnOwner;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.func.concat.ColumnConcatSelector;
+import com.easy.query.core.func.concat.DefaultColumnConcatSelector;
+import com.easy.query.core.util.EasyArrayUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * create time 2023/10/5 22:12
@@ -11,31 +18,55 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  */
 public interface SQLFunc {
     default SQLFunction ifNull(String property, Object def) {
-        return ifNull((TableAvailable) null, property, def);
+        return ifNull(null, property, def);
     }
 
-    default SQLFunction ifNull(SQLTableOwner tableOwner, String property, Object def) {
-        return ifNull(tableOwner.getTable(), property, def);
-    }
+    SQLFunction ifNull(SQLTableOwner tableOwner, String property, Object def);
 
-    SQLFunction ifNull(TableAvailable table, String property, Object def);
 
     default SQLFunction dateTimeJavaFormat(String property, String javaFormat) {
-        return dateTimeJavaFormat((TableAvailable) null, property, javaFormat);
+        return dateTimeJavaFormat(null, property, javaFormat);
     }
 
-    default SQLFunction dateTimeJavaFormat(SQLTableOwner tableOwner, String property, String javaFormat){
-        return dateTimeJavaFormat(tableOwner.getTable(), property, javaFormat);
-    }
-
-    SQLFunction dateTimeJavaFormat(TableAvailable table, String property, String javaFormat);
+    SQLFunction dateTimeJavaFormat(SQLTableOwner tableOwner, String property, String javaFormat);
     default SQLFunction dateTimeSQLFormat(String property, String format) {
-        return dateTimeSQLFormat((TableAvailable) null, property, format);
+        return dateTimeSQLFormat(null, property, format);
     }
 
-    default SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format){
-        return dateTimeSQLFormat(tableOwner.getTable(), property, format);
-    }
+    SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format);
 
-    SQLFunction dateTimeSQLFormat(TableAvailable table, String property, String format);
+    default SQLFunction concat(String property1,String property2,String... properties){
+        return concat(s->{
+            s.column(property1)
+                    .column(property2);
+            if(EasyArrayUtil.isNotEmpty(properties)){
+                for (String property : properties) {
+                    s.column(property);
+                }
+            }
+        });
+    }
+   default SQLFunction concat(SQLExpression1<ColumnConcatSelector> sqlExpression){
+       List<SQLColumnOwner> sqlColumns = new ArrayList<>();
+       sqlExpression.apply(new DefaultColumnConcatSelector(sqlColumns));
+        return concat(sqlColumns.toArray(new SQLColumnOwner[0]));
+   }
+    SQLFunction concat(SQLColumnOwner[] sqlColumns);
+    default SQLFunction concatWs(String separator,String property1,String property2,String... properties){
+        return concatWs(separator,s->{
+            s.column(property1)
+                    .column(property2);
+            if(EasyArrayUtil.isNotEmpty(properties)){
+                for (String property : properties) {
+                    s.column(property);
+                }
+            }
+        });
+    }
+   default SQLFunction concatWs(String separator,SQLExpression1<ColumnConcatSelector> sqlExpression){
+       List<SQLColumnOwner> sqlColumns = new ArrayList<>();
+       sqlExpression.apply(new DefaultColumnConcatSelector(sqlColumns));
+        return concatWs(separator,sqlColumns.toArray(new SQLColumnOwner[0]));
+   }
+    SQLFunction concatWs(String separator,SQLColumnOwner[] sqlColumns);
 }
