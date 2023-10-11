@@ -3,9 +3,13 @@ package com.easy.query.test;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.common.anonymous.AnonymousType2;
 import com.easy.query.core.common.anonymous.AnonymousType3;
+import com.easy.query.core.common.anonymous.AnonymousType4;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasyTypeUtil;
+import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeArrayJson;
@@ -304,12 +308,26 @@ public class QueryTest4 extends BaseTest {
 
     @Test
      public void queryTest4(){
+        Class<AnonymousType3<String,String,String>> resultClass = EasyTypeUtil.cast(AnonymousType3.class);
 
-        Queryable<AnonymousType3> select = easyQuery.queryable(SysUser.class)
-                .select(AnonymousType3.class, o -> o.columnAs(SysUser::getId, AnonymousType3::getP1).columnAs(SysUser::getIdCard, AnonymousType2::getP2));
+        Queryable<AnonymousType3<String,String,String>> select = easyQuery.queryable(SysUser.class)
+                .select(resultClass, o -> o.columnAs(SysUser::getId, AnonymousType3::getP1).columnAs(SysUser::getIdCard, AnonymousType2::getP2));
         String sql = select.toSQL();
          Assert.assertEquals("SELECT t.`id` AS `anonymous_type_p1`,t.`id_card` AS `anonymous_type_p2` FROM `easy-query-test`.`t_sys_user` t", sql);
-        AnonymousType3 sysUser = select.firstOrNull();
-        Assert.assertNull(sysUser);
+        AnonymousType3<String, String, String> sysUser = select.firstOrNull();
+        Assert.assertNotNull(sysUser);
      }
+    @Test
+     public void queryTest5(){
+
+        Class<AnonymousType4<String,Integer,String,String>> resultClass=EasyObjectUtil.typeCastNullable(AnonymousType4.class);
+        Queryable<AnonymousType4<String, Integer, String, String>> select = easyQuery.queryable(BlogEntity.class)
+                .select(resultClass, o -> o.columnAs(BlogEntity::getId, AnonymousType4::getP1).columnAs(BlogEntity::getStar, AnonymousType4::getP2));
+        String sql = select.toSQL();
+         Assert.assertEquals("SELECT t.`id` AS `anonymous_type_p1`,t.`star` AS `anonymous_type_p2` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
+        AnonymousType4<String, Integer, String, String> blog = select.firstOrNull();
+        Assert.assertNotNull(blog);
+        Assert.assertNotNull(blog.getP1());
+        Assert.assertNotNull(blog.getP2());
+    }
 }
