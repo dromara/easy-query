@@ -2,6 +2,7 @@ package com.easy.query.api4kt.client;
 
 import com.easy.query.api4kt.delete.KtEntityDeletable;
 import com.easy.query.api4kt.delete.KtExpressionDeletable;
+import com.easy.query.api4kt.func.SQLKtLambdaFunc;
 import com.easy.query.api4kt.insert.KtEntityInsertable;
 import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.update.KtEntityUpdatable;
@@ -125,4 +126,5 @@ public interface EasyKtQuery {
     default MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
         return getEasyQueryClient().mapUpdatable(maps);
     }
+    SQLKtLambdaFunc sqlFunc();
 }

@@ -12,6 +12,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -27,6 +28,7 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.util.EasySQLUtil;
 
 import java.util.Arrays;
@@ -220,6 +222,15 @@ public class FilterImpl implements Filter {
         nextPredicateSegment.setPredicate(new ColumnInSubQueryPredicate(table, property, subQueryable, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
         next();
     }
+    private void columnFuncFilter0(TableAvailable table,SQLFunction sqlFunction, Object val, SQLPredicateCompare sqlPredicateCompare) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,sqlNativeExpressionContext));
+        SQLPredicateCompare predicateCompare = getReallyPredicateCompare(sqlPredicateCompare);
+        String sqlSegment = sqlFunction.sqlSegment();
+        sqlNativeExpressionContext.value(val);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment+" "+predicateCompare+" {"+(sqlFunction.paramMarks()+1)+"}", sqlNativeExpressionContext));
+        next();
+    }
 
     private <T2> void subQueryExists(TableAvailable table, Query<T2> subQuery, SQLPredicateCompareEnum sqlPredicateCompare) {
 
@@ -307,6 +318,12 @@ public class FilterImpl implements Filter {
     @Override
     public <TProperty> Filter subQueryFilter(TableAvailable table, String property, Query<TProperty> subQuery, SQLPredicateCompare sqlPredicateCompare) {
         subQueryFilter0(table, property, subQuery, sqlPredicateCompare);
+        return this;
+    }
+
+    @Override
+    public Filter columnFuncFilter(TableAvailable table,SQLFunction sqlFunction, Object val, SQLPredicateCompare sqlPredicateCompare) {
+        columnFuncFilter0(table,sqlFunction,val,sqlPredicateCompare);
         return this;
     }
 

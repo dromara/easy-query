@@ -30,7 +30,7 @@ public class SQLColumnAsSelectorImpl<T1, TR> implements SQLColumnAsSelector<T1, 
     }
 
     @Override
-    public SQLColumnAsSelector<T1, TR> castTChain() {
+    public SQLColumnAsSelector<T1, TR> castChain() {
         return this;
     }
 }

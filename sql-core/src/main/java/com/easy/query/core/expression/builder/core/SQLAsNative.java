@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.builder.core;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.segment.scec.context.SQLAliasNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
 /**
  * create time 2023/7/31 13:20
@@ -16,5 +16,5 @@ public interface SQLAsNative<TChain> {
      * @param contextConsume
      * @return
      */
-    TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLAliasNativeExpressionContext> contextConsume);
+    TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume);
 }

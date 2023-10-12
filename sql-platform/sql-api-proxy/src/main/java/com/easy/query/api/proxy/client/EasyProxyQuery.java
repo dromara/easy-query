@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.client;
 
 import com.easy.query.api.proxy.delete.ProxyEntityDeletable;
 import com.easy.query.api.proxy.delete.ProxyExpressionDeletable;
+import com.easy.query.api.proxy.func.SQLProxyFunc;
 import com.easy.query.api.proxy.insert.ProxyOnyEntityInsertable;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.update.ProxyEntityUpdatable;
@@ -132,4 +133,5 @@ public interface EasyProxyQuery {
     default MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
         return getEasyQueryClient().mapUpdatable(maps);
     }
+    SQLProxyFunc sqlFunc();
 }

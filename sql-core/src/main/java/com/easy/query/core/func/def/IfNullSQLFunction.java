@@ -1,9 +1,7 @@
 package com.easy.query.core.func.def;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
-import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 
 /**
  * create time 2023/10/5 22:03
@@ -11,7 +9,7 @@ import com.easy.query.core.func.SQLFunction;
  *
  * @author xuejiaming
  */
-public class IfNullSQLFunction implements SQLFunction {
+public class IfNullSQLFunction extends AbstractSQLFunction {
     private final TableAvailable table;
     private final String property;
     private final Object def;
@@ -28,19 +26,12 @@ public class IfNullSQLFunction implements SQLFunction {
     }
 
     @Override
-    public void consume(SQLNativePropertyExpressionContext context) {
-        context.keepStyle();
-        if (this.table == null) {
-            context.expression(this.property);
-        } else {
-            context.expression(this.table, this.property);
-        }
-        context.value(this.def);
+    public int paramMarks() {
+        return 2;
     }
 
     @Override
-    public void consume(SQLAliasNativePropertyExpressionContext context) {
-        context.keepStyle();
+    public void consume0(SQLNativeChainExpressionContext context) {
         if (this.table == null) {
             context.expression(this.property);
         } else {

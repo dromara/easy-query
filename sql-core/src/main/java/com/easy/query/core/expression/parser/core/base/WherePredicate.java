@@ -7,6 +7,7 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 import com.easy.query.core.expression.parser.core.base.core.filter.AssertPredicate;
+import com.easy.query.core.expression.parser.core.base.core.filter.FuncColumnValuePredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.LikePredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.RangePredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.SelfPredicate;
@@ -23,6 +24,7 @@ import com.easy.query.core.expression.parser.core.base.core.filter.ValuesPredica
 public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<WherePredicate<T1>>
         , SelfPredicate<T1, WherePredicate<T1>>
         , ValuePredicate<T1, WherePredicate<T1>>
+        , FuncColumnValuePredicate<T1, WherePredicate<T1>>
         , ValuesPredicate<T1, WherePredicate<T1>>
         , RangePredicate<T1, WherePredicate<T1>>
         , LikePredicate<T1, WherePredicate<T1>>

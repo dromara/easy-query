@@ -3,7 +3,9 @@ package com.easy.query.core.expression.parser.core.base.scec;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.scec.context.SQLAliasNativeExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
 /**
  * create time 2023/7/29 22:58
@@ -13,77 +15,83 @@ import com.easy.query.core.expression.segment.scec.context.SQLAliasNativeExpress
  */
 public class SQLAliasNativePropertyExpressionContextImpl implements SQLAliasNativePropertyExpressionContext {
 
-    private final TableAvailable table;
-    protected final SQLAliasNativeExpressionContext sqlAliasNativeExpressionContext;
-    public SQLAliasNativePropertyExpressionContextImpl(TableAvailable table,SQLAliasNativeExpressionContext sqlAliasNativeExpressionContext) {
-        this.table = table;
-        this.sqlAliasNativeExpressionContext=sqlAliasNativeExpressionContext;
+    private final SQLNativeChainExpressionContext sqlNativeChainExpressionContext;
+    public SQLAliasNativePropertyExpressionContextImpl(TableAvailable table, SQLNativeExpressionContext sqlAliasNativeExpressionContext) {
+        this(new SQLNativeChainExpressionContextImpl(table,sqlAliasNativeExpressionContext));
+    }
+    public SQLAliasNativePropertyExpressionContextImpl(SQLNativeChainExpressionContext sqlNativeChainExpressionContext) {
 
+        this.sqlNativeChainExpressionContext = sqlNativeChainExpressionContext;
     }
 
     @Override
     public SQLAliasNativePropertyExpressionContext expressionAlias(String property) {
-        sqlAliasNativeExpressionContext.expressionAlias(property);
+        sqlNativeChainExpressionContext.expressionAlias(property);
         return this;
     }
 
     @Override
     public SQLAliasNativePropertyExpressionContext setPropertyAlias(String property) {
-        sqlAliasNativeExpressionContext.setPropertyAlias(property);
+        sqlNativeChainExpressionContext.setPropertyAlias(property);
         return this;
     }
 
     @Override
+    public SQLNativeChainExpressionContext getSQLNativeChainExpressionContext() {
+        return sqlNativeChainExpressionContext;
+    }
+
+    @Override
     public SQLAliasNativePropertyExpressionContext expression(String property) {
-        sqlAliasNativeExpressionContext.expression(this.table,property);
+        sqlNativeChainExpressionContext.expression(property);
         return this;
     }
 
     @Override
     public SQLAliasNativePropertyExpressionContext expression(SQLTableOwner sqlTableOwner, String property) {
-        sqlAliasNativeExpressionContext.expression(sqlTableOwner.getTable(),property);
+        sqlNativeChainExpressionContext.expression(sqlTableOwner.getTable(),property);
         return this;
     }
 
     @Override
     public SQLAliasNativePropertyExpressionContext expression(TableAvailable table, String property) {
-        sqlAliasNativeExpressionContext.expression(table,property);
+        sqlNativeChainExpressionContext.expression(table,property);
         return this;
     }
 
     @Override
     public <TEntity> SQLAliasNativePropertyExpressionContext expression(ClientQueryable<TEntity> subQuery) {
-        sqlAliasNativeExpressionContext.expression(subQuery);
+        sqlNativeChainExpressionContext.expression(subQuery);
         return this;
     }
 
     @Override
     public SQLAliasNativePropertyExpressionContext value(Object val) {
-        sqlAliasNativeExpressionContext.value(val);
+        sqlNativeChainExpressionContext.value(val);
         return this;
     }
 
     @Override
     public SQLAliasNativePropertyExpressionContext format(Object formatVal) {
-        sqlAliasNativeExpressionContext.format(formatVal);
+        sqlNativeChainExpressionContext.format(formatVal);
         return this;
     }
 
     @Override
     public SQLAliasNativePropertyExpressionContext setAlias(String alias) {
-        sqlAliasNativeExpressionContext.setAlias(alias);
+        sqlNativeChainExpressionContext.setAlias(alias);
         return this;
     }
 
     @Override
     public SQLAliasNativePropertyExpressionContext keepStyle() {
-        sqlAliasNativeExpressionContext.keepStyle();
+        sqlNativeChainExpressionContext.keepStyle();
         return this;
     }
 
     @Override
     public SQLAliasNativePropertyExpressionContext messageFormat() {
-        sqlAliasNativeExpressionContext.messageFormat();
+        sqlNativeChainExpressionContext.messageFormat();
         return this;
     }
 }

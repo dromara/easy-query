@@ -17,8 +17,7 @@ import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
-import com.easy.query.core.expression.segment.scec.context.SQLAliasNativeExpressionContext;
-import com.easy.query.core.expression.segment.scec.context.SQLAliasNativeExpressionContextImpl;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -118,11 +117,12 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
     }
 
     @Override
-    public AsSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLAliasNativeExpressionContext> contextConsume){
+    public AsSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume){
         Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
-        SQLAliasNativeExpressionContextImpl sqlAliasNativeExpressionContext=new SQLAliasNativeExpressionContextImpl(new SQLNativeExpressionContextImpl(expressionContext,runtimeContext),resultEntityMetadata);
-        contextConsume.apply(sqlAliasNativeExpressionContext);
-        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlAliasNativeExpressionContext);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        sqlNativeExpressionContext.setResultEntityMetadata(resultEntityMetadata);
+        contextConsume.apply(sqlNativeExpressionContext);
+        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(columnSegment);
         return castChain();
     }

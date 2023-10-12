@@ -11,6 +11,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -233,7 +234,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                     break;
                     case IN:
                         if (val.getClass().isArray()) {
-                            if (EasyCollectionUtil.isNotEmptyArray((Object[]) val)) {
+                            if (EasyArrayUtil.isNotEmpty((Object[]) val)) {
                                 if (queries.size() > 1) {
                                     filter.and(x -> {
                                         for (WhereObjectEntry whereObjectEntry : queries) {
@@ -260,7 +261,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                         break;
                     case NOT_IN:
                         if (val.getClass().isArray()) {
-                            if (EasyCollectionUtil.isNotEmptyArray((Object[]) val)) {
+                            if (EasyArrayUtil.isNotEmpty((Object[]) val)) {
                                 if (queries.size() > 1) {
                                     filter.and(x -> {
                                         for (WhereObjectEntry whereObjectEntry : queries) {
@@ -299,7 +300,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                     break;
                     case COLLECTION_EQUAL_OR: {
                         if (val.getClass().isArray()) {
-                            if (EasyCollectionUtil.isNotEmptyArray((Object[]) val)) {
+                            if (EasyArrayUtil.isNotEmpty((Object[]) val)) {
 
                                 if (queries.size() > 1) {
                                     filter.and(x -> {

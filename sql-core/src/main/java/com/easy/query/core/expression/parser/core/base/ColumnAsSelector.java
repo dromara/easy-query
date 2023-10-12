@@ -8,7 +8,7 @@ import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.available.SQLFuncAvailable;
+import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLAsPropertyNative;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -18,7 +18,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  */
-public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAsPropertyNative<ColumnAsSelector<T1, TR>>, SQLFuncAvailable {
+public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAsPropertyNative<ColumnAsSelector<T1, TR>>, RuntimeContextAvailable {
     AsSelector getAsSelector();
     ExpressionContext getExpressionContext();
 

@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api4j.func.SQLLambdaFunc;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.common.anonymous.AnonymousType2;
 import com.easy.query.core.common.anonymous.AnonymousType3;
@@ -256,16 +257,96 @@ public class QueryTest4 extends BaseTest {
             Assert.assertEquals("2023-05-25", s);
         }
     }
+
     @Test
     public void testSQLFunc6() {
+        SQLFunc sqlFunc = easyQueryClient.sqlFunc();
         List<String> list = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1")
                         //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                 )
                 .orderByDesc(o -> o.column("createTime"))
-                .select(String.class, o -> o.func(o.sqlFunc().dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toList();
+                .select(String.class, o -> o.func(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toList();
         for (String s : list) {
             Assert.assertEquals("2023-05-25", s);
+        }
+    }
+
+    @Test
+    public void testSQLFunc7() {
+        SQLFunc sqlFunc = easyQueryClient.sqlFunc();
+        List<Topic> list = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1")
+                        //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
+                )
+                .orderByDesc(o -> o.column("createTime"))
+                .select(Topic.class, o -> o.funcAs(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"),"title")).toList();
+        for (Topic s : list) {
+            Assert.assertEquals("2023-05-25", s.getTitle());
+        }
+        String sql = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1")
+                        //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
+                )
+                .orderByDesc(o -> o.column("createTime"))
+                .select(Topic.class, o -> o.funcAs(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"), "title")).toSQL();
+        Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`, '%Y-%m-%d') AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC",sql);
+    }
+    @Test
+    public void testSQLFunc8() {
+        SQLFunc sqlFunc = easyQueryClient.sqlFunc();
+        String sql = easyQueryClient.queryable(Topic.class)
+                .where(o -> o.eq("id", "1")
+                        //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
+                )
+                .orderByDesc(o -> o.column("createTime"))
+                .select(Topic.class, o -> o.funcAs(sqlFunc.abs("createTime"), "title")).toSQL();
+        Assert.assertEquals("SELECT ABS(t.`create_time`) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC",sql);
+    }
+    @Test
+    public void testSQLFunc9() {
+        {
+            SQLFunc sqlFunc = easyQueryClient.sqlFunc();
+            String sql = easyQueryClient.queryable(Topic.class)
+                    .where(o -> o.eq("id", "1")
+                            //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
+                    )
+                    .orderByDesc(o -> o.column("createTime"))
+                    .select(Topic.class, o -> o.funcAs(sqlFunc.round("stars",1), "title")).toSQL();
+            Assert.assertEquals("SELECT ROUND(t.`stars`,1) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC",sql);
+        }
+        {
+            SQLLambdaFunc sqlFunc = easyQuery.sqlFunc();
+            String sql = easyQuery.queryable(Topic.class)
+                    .where(o -> o.eq(Topic::getId, "1")
+                            //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
+                    )
+                    .orderByDesc(o -> o.column(Topic::getCreateTime))
+                    .select(Topic.class, o -> o.funcAs(sqlFunc.round(Topic::getStars,1), Topic::getTitle)).toSQL();
+            Assert.assertEquals("SELECT ROUND(t.`stars`,1) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC",sql);
+        }
+    }
+    @Test
+    public void testSQLFunc10() {
+        {
+            SQLFunc sqlFunc = easyQueryClient.sqlFunc();
+            String sql = easyQueryClient.queryable(Topic.class)
+                    .where(o -> o.eq("id", "1")
+                            //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
+                    )
+                    .orderByDesc(o -> o.column("createTime"))
+                    .select(Topic.class, o -> o.funcAs(sqlFunc.concat("stars","id"), "title")).toSQL();
+            Assert.assertEquals("SELECT CONCAT(t.`stars`,t.`id`) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC",sql);
+        }
+        {
+            SQLLambdaFunc sqlFunc = easyQuery.sqlFunc();
+            String sql = easyQuery.queryable(Topic.class)
+                    .where(o -> o.eq(Topic::getId, "1")
+                            //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
+                    )
+                    .orderByDesc(o -> o.column(Topic::getCreateTime))
+                    .select(Topic.class, o -> o.funcAs(sqlFunc.concat(Topic::getStars,Topic::getId), Topic::getTitle)).toSQL();
+            Assert.assertEquals("SELECT CONCAT(t.`stars`,t.`id`) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC",sql);
         }
     }
 
@@ -319,24 +400,42 @@ public class QueryTest4 extends BaseTest {
     }
 
     @Test
-     public void queryTest4(){
-        Class<AnonymousType3<String,String,String>> resultClass = EasyTypeUtil.cast(AnonymousType3.class);
+    public void queryTest4() {
+        Class<AnonymousType3<String, String, String>> resultClass = EasyTypeUtil.cast(AnonymousType3.class);
 
-        Queryable<AnonymousType3<String,String,String>> select = easyQuery.queryable(SysUser.class)
+        Queryable<AnonymousType3<String, String, String>> select = easyQuery.queryable(SysUser.class)
                 .select(resultClass, o -> o.columnAs(SysUser::getId, AnonymousType3::getP1).columnAs(SysUser::getIdCard, AnonymousType2::getP2));
         String sql = select.toSQL();
-         Assert.assertEquals("SELECT t.`id` AS `anonymous_type_p1`,t.`id_card` AS `anonymous_type_p2` FROM `easy-query-test`.`t_sys_user` t", sql);
+        Assert.assertEquals("SELECT t.`id` AS `anonymous_type_p1`,t.`id_card` AS `anonymous_type_p2` FROM `easy-query-test`.`t_sys_user` t", sql);
         AnonymousType3<String, String, String> sysUser = select.firstOrNull();
         Assert.assertNotNull(sysUser);
-     }
-    @Test
-     public void queryTest5(){
+    }
 
-        Class<AnonymousType4<String,Integer,String,String>> resultClass=EasyObjectUtil.typeCastNullable(AnonymousType4.class);
+    @Test
+    public void queryTest5() {
+
+        Class<AnonymousType4<String, Integer, String, String>> resultClass = EasyObjectUtil.typeCastNullable(AnonymousType4.class);
         Queryable<AnonymousType4<String, Integer, String, String>> select = easyQuery.queryable(BlogEntity.class)
                 .select(resultClass, o -> o.columnAs(BlogEntity::getId, AnonymousType4::getP1).columnAs(BlogEntity::getStar, AnonymousType4::getP2));
         String sql = select.toSQL();
-         Assert.assertEquals("SELECT t.`id` AS `anonymous_type_p1`,t.`star` AS `anonymous_type_p2` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
+        Assert.assertEquals("SELECT t.`id` AS `anonymous_type_p1`,t.`star` AS `anonymous_type_p2` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
+        AnonymousType4<String, Integer, String, String> blog = select.firstOrNull();
+        Assert.assertNotNull(blog);
+        Assert.assertNotNull(blog.getP1());
+        Assert.assertNotNull(blog.getP2());
+    }
+
+    @Test
+    public void queryTest6() {
+
+        Class<AnonymousType4<String, Integer, String, String>> resultClass = EasyObjectUtil.typeCastNullable(AnonymousType4.class);
+        Queryable<AnonymousType4<String, Integer, String, String>> select = easyQuery.queryable(BlogEntity.class)
+                .select(resultClass, o -> o
+                        .columnAs(BlogEntity::getId, AnonymousType4::getP1)
+                        .columnAs(BlogEntity::getStar, AnonymousType4::getP2)
+                );
+        String sql = select.toSQL();
+        Assert.assertEquals("SELECT t.`id` AS `anonymous_type_p1`,t.`star` AS `anonymous_type_p2` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
         AnonymousType4<String, Integer, String, String> blog = select.firstOrNull();
         Assert.assertNotNull(blog);
         Assert.assertNotNull(blog.getP1());

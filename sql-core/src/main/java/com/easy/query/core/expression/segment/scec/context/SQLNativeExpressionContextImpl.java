@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstSQLParameterExpressionImpl;
+import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyAsAliasParamExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnSQLParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.FormatValueParamExpressionImpl;
@@ -12,6 +13,7 @@ import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.SubQueryParamExpressionImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
     protected final List<ParamExpression> expressions = new ArrayList<>();
     protected final ExpressionContext expressionContext;
     private String alias;
+    private EntityMetadata resultEntityMetadata;
     private boolean keep;
 
     public SQLNativeExpressionContextImpl(ExpressionContext expressionContext, QueryRuntimeContext runtimeContext) {
@@ -36,74 +39,90 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
         this.keep = runtimeContext.getQueryConfiguration().getEasyQueryOption().isKeepNativeStyle();
     }
 
-    public SQLNativeExpressionContextImpl expression(TableAvailable table, String property) {
+    public void expression(TableAvailable table, String property) {
         Objects.requireNonNull(table, "table cannot be null");
         Objects.requireNonNull(property, "property cannot be null");
         ColumnPropertyExpressionImpl columnPropertyExpression = new ColumnPropertyExpressionImpl(table, property);
-        expressions.add(columnPropertyExpression);
-        return this;
+        this.expressions.add(columnPropertyExpression);
     }
 
     @Override
-    public <TEntity> SQLNativeExpressionContext expression(Query<TEntity> subQuery) {
+    public <TEntity> void expression(Query<TEntity> subQuery) {
         Objects.requireNonNull(subQuery, "subQuery cannot be null");
         extract(subQuery);
         SubQueryParamExpressionImpl subQueryParamExpression = new SubQueryParamExpressionImpl(subQuery);
-        expressions.add(subQueryParamExpression);
-        return this;
+        this.expressions.add(subQueryParamExpression);
     }
 
-    public SQLNativeExpressionContextImpl value(Object val) {
+    public void value(Object val) {
         if (val instanceof SQLParameter) {
             ColumnSQLParameterExpressionImpl columnParamValueExpression = new ColumnSQLParameterExpressionImpl((SQLParameter) val);
-            expressions.add(columnParamValueExpression);
+            this.expressions.add(columnParamValueExpression);
         } else {
             ColumnConstSQLParameterExpressionImpl columnConstValueExpression = new ColumnConstSQLParameterExpressionImpl(val);
-            expressions.add(columnConstValueExpression);
+            this.expressions.add(columnConstValueExpression);
         }
-        return this;
     }
 
     @Override
-    public SQLNativeExpressionContext format(Object formatVal) {
+    public void format(Object formatVal) {
         FormatValueParamExpressionImpl constValueParamExpression = new FormatValueParamExpressionImpl(formatVal);
-        expressions.add(constValueParamExpression);
-        return this;
+        this.expressions.add(constValueParamExpression);
     }
 
     public List<ParamExpression> getExpressions() {
-        return expressions;
+        return this.expressions;
     }
 
     public String getAlias() {
-        return alias;
+        return this.alias;
     }
 
     @Override
     public boolean isKeepStyle() {
-        return keep;
+        return this.keep;
     }
 
-    public SQLNativeExpressionContext setAlias(String alias) {
+    public void setAlias(String alias) {
         this.alias = alias;
-        return this;
     }
 
     @Override
-    public SQLNativeExpressionContext keepStyle() {
+    public void keepStyle() {
         keep = true;
-        return this;
     }
 
     @Override
-    public SQLNativeExpressionContext messageFormat() {
+    public void messageFormat() {
         keep = false;
-        return this;
+    }
+
+    @Override
+    public void expressionAlias(String property) {
+        Objects.requireNonNull(this.resultEntityMetadata, "result entity metadata cannot be null, plz use in select as sql context");
+        Objects.requireNonNull(property, "property cannot be null");
+        ColumnPropertyAsAliasParamExpressionImpl columnPropertyAsAliasParamExpression = new ColumnPropertyAsAliasParamExpressionImpl(resultEntityMetadata.getColumnName(property));
+        this.expressions.add(columnPropertyAsAliasParamExpression);
+    }
+
+    @Override
+    public void setPropertyAlias(String property) {
+        Objects.requireNonNull(this.resultEntityMetadata, "result entity metadata cannot be null, plz use in select as sql context");
+        Objects.requireNonNull(property, "property cannot be null");
+        this.setAlias(this.resultEntityMetadata.getColumnName(property));
+    }
+
+    @Override
+    public void setResultEntityMetadata(EntityMetadata entityMetadata) {
+        if(this.resultEntityMetadata!=null){
+            throw new NullPointerException("result entity metadata can not repeat set");
+        }
+        this.resultEntityMetadata=entityMetadata;
     }
 
     private <T2> void extract(Query<T2> subQuery) {
-        Objects.requireNonNull(expressionContext, "expressionContext cannot be null");
+        Objects.requireNonNull(this.expressionContext, "expressionContext cannot be null");
         EntityQueryExpressionBuilder subQueryableSQLEntityExpressionBuilder = subQuery.getSQLEntityExpressionBuilder();
-        expressionContext.extract(subQueryableSQLEntityExpressionBuilder.getExpressionContext());
+        this.expressionContext.extract(subQueryableSQLEntityExpressionBuilder.getExpressionContext());
     }
 }

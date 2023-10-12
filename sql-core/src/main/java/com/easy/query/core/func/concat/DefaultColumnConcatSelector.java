@@ -1,8 +1,9 @@
 package com.easy.query.core.func.concat;
 
-import com.easy.query.core.expression.parser.core.DefaultSQLColumnOwner;
-import com.easy.query.core.expression.parser.core.SQLColumnOwner;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.func.concat.impl.ConcatColumnExpressionImpl;
+import com.easy.query.core.func.concat.impl.ConcatFormatExpressionImpl;
+import com.easy.query.core.func.concat.impl.ConcatValueExpressionImpl;
 
 import java.util.List;
 
@@ -13,21 +14,33 @@ import java.util.List;
  * @author xuejiaming
  */
 public class DefaultColumnConcatSelector implements ColumnConcatSelector{
-    private final List<SQLColumnOwner> sqlColumns;
+    private final List<ConcatExpression> concatExpressions;
 
-    public DefaultColumnConcatSelector(List<SQLColumnOwner> sqlColumns){
+    public DefaultColumnConcatSelector(List<ConcatExpression> concatExpressions){
 
-        this.sqlColumns = sqlColumns;
+        this.concatExpressions = concatExpressions;
     }
     @Override
     public ColumnConcatSelector column(String property) {
-        sqlColumns.add(new DefaultSQLColumnOwner(null,property));
+        concatExpressions.add(new ConcatColumnExpressionImpl(null,property));
         return this;
     }
 
     @Override
     public ColumnConcatSelector column(SQLTableOwner tableOwner, String property) {
-        sqlColumns.add(new DefaultSQLColumnOwner(tableOwner,property));
+        concatExpressions.add(new ConcatColumnExpressionImpl(tableOwner.getTable(),property));
+        return this;
+    }
+
+    @Override
+    public ColumnConcatSelector value(Object val) {
+        concatExpressions.add(new ConcatValueExpressionImpl(val));
+        return this;
+    }
+
+    @Override
+    public ColumnConcatSelector format(Object valFormat) {
+        concatExpressions.add(new ConcatFormatExpressionImpl(valFormat));
         return this;
     }
 }

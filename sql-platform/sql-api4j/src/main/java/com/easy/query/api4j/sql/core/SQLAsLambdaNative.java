@@ -2,8 +2,13 @@ package com.easy.query.api4j.sql.core;
 
 import com.easy.query.api4j.sql.scec.SQLAliasNativeLambdaExpressionContext;
 import com.easy.query.api4j.sql.scec.SQLAliasNativeLambdaExpressionContextImpl;
+import com.easy.query.api4j.util.EasyLambdaUtil;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.expression.parser.core.base.core.SQLAsPropertyNative;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
+import com.easy.query.core.func.SQLFunction;
 
 /**
  * create time 2023/7/31 14:09
@@ -11,9 +16,9 @@ import com.easy.query.core.expression.parser.core.base.core.SQLAsPropertyNative;
  *
  * @author xuejiaming
  */
-public interface SQLAsLambdaNative<TEntity,TR,TChain> {
+public interface SQLAsLambdaNative<TEntity,TR,TChain> extends ChainCast<TChain> {
     <T> SQLAsPropertyNative<T> getSQLAsPropertyNative();
-    TChain castTChain();
+
     /**
      * 参数格式化 占位符 {0} {1}
      * @param sqlSegment
@@ -47,7 +52,38 @@ public interface SQLAsLambdaNative<TEntity,TR,TChain> {
                 contextConsume.apply(new SQLAliasNativeLambdaExpressionContextImpl<>(context));
             });
         }
-        return castTChain();
+        return castChain();
+    }
+
+
+
+
+    default TChain func(SQLFunction sqlFunction){
+        return func(true,sqlFunction);
+    }
+    default TChain func(boolean condition, SQLFunction sqlFunction){
+        if(condition){
+            String sqlSegment = sqlFunction.sqlSegment();
+            getSQLAsPropertyNative().sqlNativeSegment(sqlSegment,context->{
+                sqlFunction.consume(context.getSQLNativeChainExpressionContext());
+            });
+        }
+        return castChain();
+    }
+
+    default TChain funcAs(SQLFunction sqlFunction, Property<TR,?> property){
+        return funcAs(true,sqlFunction,property);
+    }
+    default TChain funcAs(boolean condition, SQLFunction sqlFunction,Property<TR,?> property){
+        if(condition){
+            String sqlSegment = sqlFunction.sqlSegment();
+            getSQLAsPropertyNative().sqlNativeSegment(sqlSegment,context->{
+                SQLNativeChainExpressionContext sqlNativeChainExpressionContext = context.getSQLNativeChainExpressionContext();
+                sqlNativeChainExpressionContext.setPropertyAlias(EasyLambdaUtil.getPropertyName(property));
+                sqlFunction.consume(sqlNativeChainExpressionContext);
+            });
+        }
+        return castChain();
     }
 
 }

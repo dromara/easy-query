@@ -1,9 +1,7 @@
 package com.easy.query.core.func.def;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
-import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 
 /**
  * create time 2023/10/6 21:57
@@ -11,7 +9,7 @@ import com.easy.query.core.func.SQLFunction;
  *
  * @author xuejiaming
  */
-public class DateTimeJavaFormatSQLFunction implements SQLFunction {
+public class DateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
     private final TableAvailable table;
     private final String property;
     private final String javaFormat;
@@ -27,12 +25,16 @@ public class DateTimeJavaFormatSQLFunction implements SQLFunction {
     }
 
     @Override
-    public void consume(SQLNativePropertyExpressionContext context) {
-        context.keepStyle();
-        if(table==null){
+    public int paramMarks() {
+        return 2;
+    }
+
+    @Override
+    protected void consume0(SQLNativeChainExpressionContext context) {
+        if (table == null) {
             context.expression(property);
-        }else{
-            context.expression(table,property);
+        } else {
+            context.expression(table, property);
         }
         //%Y-%m-%d %H:%i:%S
         String format = this.javaFormat
@@ -45,22 +47,41 @@ public class DateTimeJavaFormatSQLFunction implements SQLFunction {
         context.format(format);
     }
 
-    @Override
-    public void consume(SQLAliasNativePropertyExpressionContext context) {
-        context.keepStyle();
-        if(table==null){
-            context.expression(property);
-        }else{
-            context.expression(table,property);
-        }
-        //%Y-%m-%d %H:%i:%S
-        String format = this.javaFormat
-                .replace("yyyy", "%Y")
-                .replace("MM", "%m")
-                .replace("dd", "%d")
-                .replace("HH", "%H")
-                .replace("mm", "%i")
-                .replace("ss", "%S");
-        context.format(format);
-    }
+//    @Override
+//    public void consume(SQLNativePropertyExpressionContext context) {
+//        context.keepStyle();
+//        if(table==null){
+//            context.expression(property);
+//        }else{
+//            context.expression(table,property);
+//        }
+//        //%Y-%m-%d %H:%i:%S
+//        String format = this.javaFormat
+//                .replace("yyyy", "%Y")
+//                .replace("MM", "%m")
+//                .replace("dd", "%d")
+//                .replace("HH", "%H")
+//                .replace("mm", "%i")
+//                .replace("ss", "%S");
+//        context.format(format);
+//    }
+//
+//    @Override
+//    public void consume(SQLAliasNativePropertyExpressionContext context) {
+//        context.keepStyle();
+//        if(table==null){
+//            context.expression(property);
+//        }else{
+//            context.expression(table,property);
+//        }
+//        //%Y-%m-%d %H:%i:%S
+//        String format = this.javaFormat
+//                .replace("yyyy", "%Y")
+//                .replace("MM", "%m")
+//                .replace("dd", "%d")
+//                .replace("HH", "%H")
+//                .replace("mm", "%i")
+//                .replace("ss", "%S");
+//        context.format(format);
+//    }
 }

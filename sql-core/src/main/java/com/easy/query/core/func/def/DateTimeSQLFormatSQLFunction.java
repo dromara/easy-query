@@ -1,9 +1,7 @@
 package com.easy.query.core.func.def;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
-import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 
 /**
  * create time 2023/10/6 21:57
@@ -11,7 +9,7 @@ import com.easy.query.core.func.SQLFunction;
  *
  * @author xuejiaming
  */
-public class DateTimeSQLFormatSQLFunction implements SQLFunction {
+public class DateTimeSQLFormatSQLFunction extends AbstractSQLFunction {
     private final TableAvailable table;
     private final String property;
     private final String format;
@@ -27,24 +25,39 @@ public class DateTimeSQLFormatSQLFunction implements SQLFunction {
     }
 
     @Override
-    public void consume(SQLNativePropertyExpressionContext context) {
-        context.keepStyle();
-        if(table==null){
+    public int paramMarks() {
+        return 2;
+    }
+
+    @Override
+    protected void consume0(SQLNativeChainExpressionContext context) {
+        if (table == null) {
             context.expression(property);
-        }else{
-            context.expression(table,property);
+        } else {
+            context.expression(table, property);
         }
         context.format(format);
     }
 
-    @Override
-    public void consume(SQLAliasNativePropertyExpressionContext context) {
-        context.keepStyle();
-        if(table==null){
-            context.expression(property);
-        }else{
-            context.expression(table,property);
-        }
-        context.format(format);
-    }
+//    @Override
+//    public void consume(SQLNativePropertyExpressionContext context) {
+//        context.keepStyle();
+//        if(table==null){
+//            context.expression(property);
+//        }else{
+//            context.expression(table,property);
+//        }
+//        context.format(format);
+//    }
+//
+//    @Override
+//    public void consume(SQLAliasNativePropertyExpressionContext context) {
+//        context.keepStyle();
+//        if(table==null){
+//            context.expression(property);
+//        }else{
+//            context.expression(table,property);
+//        }
+//        context.format(format);
+//    }
 }

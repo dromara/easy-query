@@ -3,6 +3,8 @@ package com.easy.query.core.expression.parser.core.base.scec;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
 /**
@@ -12,66 +14,72 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
  * @author xuejiaming
  */
 public class SQLNativePropertyExpressionContextImpl implements SQLNativePropertyExpressionContext {
-    protected final TableAvailable table;
-    protected final SQLNativeExpressionContext sqlNativeExpressionContext;
 
-    public SQLNativePropertyExpressionContextImpl(TableAvailable table, SQLNativeExpressionContext sqlNativeExpressionContext) {
-        this.table = table;
+    private final SQLNativeChainExpressionContext sqlNativeChainExpressionContext;
+    public SQLNativePropertyExpressionContextImpl(TableAvailable table, SQLNativeExpressionContext sqlAliasNativeExpressionContext) {
+        this(new SQLNativeChainExpressionContextImpl(table,sqlAliasNativeExpressionContext));
+    }
+    public SQLNativePropertyExpressionContextImpl(SQLNativeChainExpressionContext sqlNativeChainExpressionContext) {
 
-        this.sqlNativeExpressionContext = sqlNativeExpressionContext;
+        this.sqlNativeChainExpressionContext = sqlNativeChainExpressionContext;
+    }
+
+    @Override
+    public SQLNativeChainExpressionContext getSQLNativeChainExpressionContext() {
+        return sqlNativeChainExpressionContext;
     }
 
     @Override
     public SQLNativePropertyExpressionContext expression(String property) {
-        sqlNativeExpressionContext.expression(this.table, property);
+        sqlNativeChainExpressionContext.expression(property);
         return this;
     }
 
     @Override
     public <TEntity> SQLNativePropertyExpressionContext expression(ClientQueryable<TEntity> subQuery) {
-        sqlNativeExpressionContext.expression(subQuery);
+        sqlNativeChainExpressionContext.expression(subQuery);
         return this;
     }
 
     @Override
     public SQLNativePropertyExpressionContext expression(SQLTableOwner sqlTableOwner, String property) {
-        sqlNativeExpressionContext.expression(sqlTableOwner.getTable(), property);
+        sqlNativeChainExpressionContext.expression(sqlTableOwner.getTable(), property);
         return this;
     }
 
     @Override
     public SQLNativePropertyExpressionContext expression(TableAvailable table, String property) {
-        sqlNativeExpressionContext.expression(table, property);
+        sqlNativeChainExpressionContext.expression(table, property);
         return this;
     }
 
     @Override
     public SQLNativePropertyExpressionContext value(Object val) {
-        sqlNativeExpressionContext.value(val);
+        sqlNativeChainExpressionContext.value(val);
         return this;
     }
 
     @Override
     public SQLNativePropertyExpressionContext format(Object formatVal) {
-        sqlNativeExpressionContext.format(formatVal);
+        sqlNativeChainExpressionContext.format(formatVal);
         return this;
     }
 
     @Override
     public SQLNativePropertyExpressionContext setAlias(String alias) {
-        sqlNativeExpressionContext.setAlias(alias);
+        sqlNativeChainExpressionContext.setAlias(alias);
         return this;
     }
 
     @Override
     public SQLNativePropertyExpressionContext keepStyle() {
-        sqlNativeExpressionContext.keepStyle();
+        sqlNativeChainExpressionContext.keepStyle();
         return this;
     }
 
     @Override
     public SQLNativePropertyExpressionContext messageFormat() {
-        sqlNativeExpressionContext.messageFormat();
+        sqlNativeChainExpressionContext.messageFormat();
         return this;
     }
 }

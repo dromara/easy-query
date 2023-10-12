@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
-import com.easy.query.core.expression.segment.scec.context.SQLAliasNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -132,7 +132,7 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
     }
 
     @Override
-    public AsSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLAliasNativeExpressionContext> contextConsume) {
+    public AsSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
         throw new UnsupportedOperationException();
     }
 }

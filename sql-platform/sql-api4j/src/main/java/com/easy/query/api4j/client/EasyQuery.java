@@ -2,6 +2,7 @@ package com.easy.query.api4j.client;
 
 import com.easy.query.api4j.delete.EntityDeletable;
 import com.easy.query.api4j.delete.ExpressionDeletable;
+import com.easy.query.api4j.func.SQLLambdaFunc;
 import com.easy.query.api4j.insert.EntityInsertable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.update.EntityUpdatable;
@@ -127,4 +128,5 @@ public interface EasyQuery {
     default MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
         return getEasyQueryClient().mapUpdatable(maps);
     }
+    SQLLambdaFunc sqlFunc();
 }

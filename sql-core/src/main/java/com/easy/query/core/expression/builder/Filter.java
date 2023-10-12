@@ -10,6 +10,7 @@ import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.func.SQLFunction;
 
 import java.util.Collection;
 
@@ -253,6 +254,81 @@ public interface Filter extends SQLNative<Filter> {
     }
 
     <TProperty> Filter subQueryFilter(TableAvailable table, String property, Query<TProperty> subQuery, SQLPredicateCompare sqlPredicateCompare);
+
+
+    /**
+     * 大于 func(column) > val
+     *
+     * @param table
+     * @param sqlFunction
+     * @param val
+     * @return
+     */
+    default Filter gt(TableAvailable table, SQLFunction sqlFunction, Object val) {
+        return columnFuncFilter(table, sqlFunction, val, SQLPredicateCompareEnum.GT);
+    }
+
+    /**
+     * 等于 func(column) >= val
+     *
+     * @param table
+     * @param sqlFunction
+     * @param val
+     * @return
+     */
+    default Filter ge(TableAvailable table, SQLFunction sqlFunction, Object val) {
+        return columnFuncFilter(table, sqlFunction, val, SQLPredicateCompareEnum.GE);
+    }
+
+    /**
+     * 等于 func(column) = val
+     *
+     * @param table
+     * @param sqlFunction
+     * @param val
+     * @return
+     */
+    default Filter eq(TableAvailable table, SQLFunction sqlFunction, Object val) {
+        return columnFuncFilter(table, sqlFunction, val, SQLPredicateCompareEnum.EQ);
+    }
+
+    /**
+     * 不等于 func(column) <> val
+     *
+     * @param table
+     * @param sqlFunction
+     * @param val
+     * @return
+     */
+    default Filter ne(TableAvailable table, SQLFunction sqlFunction, Object val) {
+        return columnFuncFilter(table, sqlFunction, val, SQLPredicateCompareEnum.NE);
+    }
+
+    /**
+     * 小于等于 func(column) <= val
+     *
+     * @param table
+     * @param sqlFunction
+     * @param val
+     * @return
+     */
+    default Filter le(TableAvailable table, SQLFunction sqlFunction, Object val) {
+        return columnFuncFilter(table, sqlFunction, val, SQLPredicateCompareEnum.LE);
+    }
+
+    /**
+     * 小于 func(column) < val
+     *
+     * @param table
+     * @param sqlFunction
+     * @param val
+     * @return
+     */
+    default Filter lt(TableAvailable table, SQLFunction sqlFunction, Object val) {
+        return columnFuncFilter(table, sqlFunction, val, SQLPredicateCompareEnum.LT);
+    }
+
+    Filter columnFuncFilter(TableAvailable table, SQLFunction sqlFunction, Object val, SQLPredicateCompare sqlPredicateCompare);
 
     Filter and();
 

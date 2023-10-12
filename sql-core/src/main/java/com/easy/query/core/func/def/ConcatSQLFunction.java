@@ -1,11 +1,15 @@
 package com.easy.query.core.func.def;
 
-import com.easy.query.core.expression.parser.core.SQLColumnOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
-import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.util.EasyArrayUtil;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
+import com.easy.query.core.func.concat.ConcatColumnExpression;
+import com.easy.query.core.func.concat.ConcatExpression;
+import com.easy.query.core.func.concat.ConcatFormatExpression;
+import com.easy.query.core.func.concat.ConcatValueExpression;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
+
+import java.util.List;
 
 /**
  * create time 2023/10/11 22:45
@@ -13,42 +17,48 @@ import com.easy.query.core.util.EasyArrayUtil;
  *
  * @author xuejiaming
  */
-public class ConcatSQLFunction implements SQLFunction {
-    private final SQLColumnOwner[] sqlColumns;
+public class ConcatSQLFunction extends AbstractSQLFunction {
 
-    public ConcatSQLFunction(SQLColumnOwner[] sqlColumns) {
-        if (EasyArrayUtil.isEmpty(sqlColumns)) {
+    private final List<ConcatExpression> concatExpressions;
+
+    public ConcatSQLFunction(List<ConcatExpression> concatExpressions) {
+        if (EasyCollectionUtil.isEmpty(concatExpressions)) {
             throw new IllegalArgumentException("ConcatSQLFunction columns empty");
         }
-        this.sqlColumns = sqlColumns;
+        this.concatExpressions = concatExpressions;
     }
 
     @Override
     public String sqlSegment() {
-        Iterable<String> params = EasyArrayUtil.select(sqlColumns, (t, i) -> "{" + i + "}");
+        Iterable<String> params = EasyCollectionUtil.select(concatExpressions, (t, i) -> "{" + i + "}");
         return String.format("CONCAT(%s)", String.join(",", params));
     }
 
     @Override
-    public void consume(SQLNativePropertyExpressionContext context) {
-        for (SQLColumnOwner sqlColumn : sqlColumns) {
-            TableAvailable table = sqlColumn.getTable();
-            if(table==null){
-                context.expression(sqlColumn.getProperty());
-            }else{
-                context.expression(table,sqlColumn.getProperty());
-            }
-        }
+    public int paramMarks() {
+        return concatExpressions.size();
     }
 
     @Override
-    public void consume(SQLAliasNativePropertyExpressionContext context) {
-        for (SQLColumnOwner sqlColumn : sqlColumns) {
-            TableAvailable table = sqlColumn.getTable();
-            if(table==null){
-                context.expression(sqlColumn.getProperty());
+    protected void consume0(SQLNativeChainExpressionContext context) {
+        for (ConcatExpression concatExpression : concatExpressions) {
+            if(concatExpression instanceof ConcatColumnExpression){
+                ConcatColumnExpression concatColumnExpression = (ConcatColumnExpression) concatExpression;
+                TableAvailable tableOrNull = concatColumnExpression.getTableOrNull();
+                if(tableOrNull==null){
+                    context.expression(concatColumnExpression.getProperty());
+                } else {
+                    context.expression(tableOrNull, concatColumnExpression.getProperty());
+                }
+            }else if(concatExpression instanceof ConcatValueExpression){
+                ConcatValueExpression concatValueExpression = (ConcatValueExpression) concatExpression;
+                context.value(concatValueExpression.getValue());
+
+            }else if(concatExpression instanceof ConcatFormatExpression){
+                ConcatFormatExpression concatFormatExpression = (ConcatFormatExpression) concatExpression;
+                context.format(concatFormatExpression.getFormat());
             }else{
-                context.expression(table,sqlColumn.getProperty());
+                throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(concatExpression));
             }
         }
     }

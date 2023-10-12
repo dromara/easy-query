@@ -11,4 +11,6 @@ import com.easy.query.core.expression.parser.core.SQLTableOwner;
 public interface ColumnConcatSelector {
     ColumnConcatSelector column(String property);
     ColumnConcatSelector column(SQLTableOwner tableOwner, String property);
+    ColumnConcatSelector value(Object val);
+    ColumnConcatSelector format(Object valFormat);
 }

@@ -1,7 +1,6 @@
 package com.easy.query.core.func;
 
-import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 
 /**
  * create time 2023/10/5 22:03
@@ -11,6 +10,8 @@ import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExp
  */
 public interface SQLFunction {
     String sqlSegment();
-    void consume(SQLNativePropertyExpressionContext context);
-    void consume(SQLAliasNativePropertyExpressionContext context);
+    int paramMarks();
+    void setAlias(String alias);
+    void setPropertyAlias(String propertyAlias);
+    void consume(SQLNativeChainExpressionContext context);
 }

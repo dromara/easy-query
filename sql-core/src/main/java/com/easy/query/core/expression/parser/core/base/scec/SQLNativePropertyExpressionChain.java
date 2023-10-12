@@ -3,6 +3,7 @@ package com.easy.query.core.expression.parser.core.base.scec;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 
 import java.text.MessageFormat;
 
@@ -13,6 +14,7 @@ import java.text.MessageFormat;
  * @author xuejiaming
  */
 public interface SQLNativePropertyExpressionChain<TChain> {
+    SQLNativeChainExpressionContext getSQLNativeChainExpressionContext();
     /**
      * 当前表的使用的列,自动识别所属表别名
      * @param property 使用哪个列
