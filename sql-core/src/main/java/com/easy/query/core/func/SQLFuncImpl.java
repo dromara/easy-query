@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class DefaultSQLFunc implements SQLFunc {
+public class SQLFuncImpl implements SQLFunc {
     private TableAvailable getTable(SQLTableOwner tableOwner) {
         return EasyObjectUtil.getValueOrNull(tableOwner, SQLTableOwner::getTable);
     }
