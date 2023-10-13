@@ -8,10 +8,10 @@ import com.easy.query.core.func.SQLFunc;
  *
  * @author xuejiaming
  */
-public class DefaultSQLLambdaFunc implements SQLLambdaFunc{
+public class LambdaSQLFuncImpl<T1> implements LambdaSQLFunc<T1> {
     private final SQLFunc sqlFunc;
 
-    public DefaultSQLLambdaFunc(SQLFunc sqlFunc){
+    public LambdaSQLFuncImpl(SQLFunc sqlFunc){
 
         this.sqlFunc = sqlFunc;
     }

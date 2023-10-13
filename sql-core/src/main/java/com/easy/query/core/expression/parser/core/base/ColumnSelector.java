@@ -1,8 +1,10 @@
 package com.easy.query.core.expression.parser.core.base;
 
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.SQLFuncAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 
 /**
@@ -10,8 +12,11 @@ import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
  * @Description: 文件说明
  * @Date: 2023/2/6 23:20
  */
-public interface ColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<ColumnSelector<T1>> {
+public interface ColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<ColumnSelector<T1>>, SQLFuncAvailable {
     Selector getSelector();
+    default QueryRuntimeContext getRuntimeContext(){
+        return getSelector().getRuntimeContext();
+    }
 
     ColumnSelector<T1> column(String property);
 

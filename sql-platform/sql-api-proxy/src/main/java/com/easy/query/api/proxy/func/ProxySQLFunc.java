@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface SQLProxyFunc {
+public interface ProxySQLFunc {
     SQLFunc getSQLFunc();
 
 //    default <TProxy,T> SQLFunction ifNull(SQLColumn<TProxy, T> sqlColumn, Object def) {

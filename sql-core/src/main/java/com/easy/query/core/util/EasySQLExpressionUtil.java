@@ -41,6 +41,7 @@ import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyAsAl
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.FormatValueParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.SQLSegmentParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.SubQueryParamExpression;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -382,6 +383,9 @@ public class EasySQLExpressionUtil {
         } else if(paramExpression instanceof ColumnPropertyAsAliasParamExpression){
             ColumnPropertyAsAliasParamExpression columnPropertyAsAliasParamExpression = (ColumnPropertyAsAliasParamExpression) paramExpression;
             return SQLFormatArgument.create(()-> columnPropertyAsAliasParamExpression.toSQL(runtimeContext));
+        }else if(paramExpression instanceof SQLSegmentParamExpression){
+            SQLSegmentParamExpression sqlSegmentParamExpression = (SQLSegmentParamExpression) paramExpression;
+            return SQLFormatArgument.create(()-> sqlSegmentParamExpression.toSQL(toSQLContext));
         }
         throw new EasyQueryInvalidOperationException("can not process ParamExpression:" + EasyClassUtil.getInstanceSimpleName(paramExpression));
     }

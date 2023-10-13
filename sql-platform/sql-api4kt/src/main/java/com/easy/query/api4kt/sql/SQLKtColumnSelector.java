@@ -1,7 +1,9 @@
 package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.sql.core.SQLLambdaKtNative;
+import com.easy.query.api4kt.sql.core.available.SQLKtLambdaFuncAvailable;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -16,11 +18,14 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/6 23:20
  */
-public interface SQLKtColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLLambdaKtNative<T1,SQLKtColumnSelector<T1>> {
+public interface SQLKtColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLKtLambdaFuncAvailable<T1>, SQLLambdaKtNative<T1,SQLKtColumnSelector<T1>> {
     ColumnSelector<T1> getColumnSelector();
 
     default TableAvailable getTable() {
         return getColumnSelector().getTable();
+    }
+    default QueryRuntimeContext getRuntimeContext() {
+        return getColumnSelector().getRuntimeContext();
     }
 
     default <TProperty> SQLKtColumnSelector<T1> columns(Collection<KProperty1<? super T1, TProperty>> columns) {

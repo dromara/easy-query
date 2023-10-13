@@ -27,6 +27,7 @@ import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.extension.client.SQLClientFunc;
+import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.SQLColumn;
@@ -734,6 +735,37 @@ public class QueryTest3 extends BaseTest {
                 .where(t -> t.eq("id", "3").or().like("title", "你好"))
                 .firstOrNull();
         Assert.assertNotNull(topic);
+    }
+
+    @Test
+    public void testProperty3_1() {
+        SQLFunc sqlFunc = easyQueryClient.sqlFunc();
+        Topic topic = easyQueryClient.queryable(Topic.class)
+                .where(t -> t.eq(sqlFunc.ifNull("id","1"), sqlFunc.ifNull("stars","3")).or().like("title", "你好"))
+                .firstOrNull();
+        Assert.assertNotNull(topic);
+        String sql = easyQueryClient.queryable(Topic.class)
+                .where(t -> t.eq(sqlFunc.ifNull("id", "1"), sqlFunc.ifNull("stars", "3")).or().like("title", "你好"))
+                .toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (IFNULL(`id`,?) = IFNULL(`stars`,?) OR `title` LIKE ?)",sql);
+
+        String sql1 = easyQueryClient.queryable(Topic.class)
+                .where(t -> t.eq(sqlFunc.ifNull("id", "1"), sqlFunc.ifNull(x->x.column("stars").column("id").value("3"))).or().like("title", "你好"))
+                .toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (IFNULL(`id`,?) = IFNULL(`stars`,`id`,?) OR `title` LIKE ?)",sql1);
+
+
+        String sql2 = easyQueryClient.queryable(Topic.class)
+                .where(t -> {
+                    t.eq(
+                            sqlFunc.ifNull("id", "1"),
+                            sqlFunc.ifNull(x->x.column("stars").column("id").value("3"))
+                    );
+                    t.or().like("title", "你好");
+                })
+                .toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (IFNULL(`id`,?) = IFNULL(`stars`,`id`,?) OR `title` LIKE ?)",sql1);
+
     }
 
     @Test

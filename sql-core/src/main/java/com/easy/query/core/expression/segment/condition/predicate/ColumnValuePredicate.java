@@ -10,7 +10,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLUtil;
@@ -64,7 +63,7 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     }
 
     @Override
-    public SQLEntitySegment cloneSQLColumnSegment() {
+    public Predicate cloneSQLColumnSegment() {
         return new ColumnValuePredicate(table,propertyName,val,compare,runtimeContext);
     }
 

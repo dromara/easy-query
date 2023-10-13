@@ -21,30 +21,30 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface SQLKtLambdaFunc {
+public interface KtLambdaSQLFunc<T> {
     SQLFunc getSQLFunc();
 
-//    default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
+//    default SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
 //        return ifNull(null, property, def);
 //    }
 //
-//    default <T> SQLFunction ifNull(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property, Object def) {
+//    default SQLFunction ifNull(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property, Object def) {
 //        return getSQLFunc().ifNull(tableOwner, EasyKtLambdaUtil.getPropertyName(property), def);
 //    }
-default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
+default SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
     return this.<T>ifNull(s -> {
         s.column(property)
                 .value(def);
     });
 }
 
-    default <T> SQLFunction ifNull(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
+    default SQLFunction ifNull(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
         List<ColumnExpression> columnExpressions = new ArrayList<>();
         sqlExpression.apply(new SQLKtColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
         return ifNull(columnExpressions);
     }
 
-    default <T> SQLFunction ifNull(List<ColumnExpression> columnExpressions) {
+    default SQLFunction ifNull(List<ColumnExpression> columnExpressions) {
         return getSQLFunc().ifNull(columnExpressions);
     }
 
@@ -54,7 +54,7 @@ default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
      * @param property
      * @return
      */
-    default <T> SQLFunction abs(KProperty1<? super T, ?> property) {
+    default SQLFunction abs(KProperty1<? super T, ?> property) {
         return abs(null, property);
     }
 
@@ -65,7 +65,7 @@ default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
      * @param property
      * @return
      */
-    default <T> SQLFunction abs(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property) {
+    default SQLFunction abs(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property) {
         return getSQLFunc().abs(tableOwner, EasyKtLambdaUtil.getPropertyName(property));
     }
 
@@ -75,7 +75,7 @@ default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
      * @param property
      * @return
      */
-    default <T> SQLFunction round(KProperty1<? super T, ?> property, int scale) {
+    default SQLFunction round(KProperty1<? super T, ?> property, int scale) {
         return round(null, property, scale);
     }
 
@@ -86,27 +86,27 @@ default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
      * @param property
      * @return
      */
-    default <T> SQLFunction round(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property, int scale) {
+    default SQLFunction round(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property, int scale) {
         return getSQLFunc().round(tableOwner, EasyKtLambdaUtil.getPropertyName(property), scale);
     }
 
-    default <T> SQLFunction dateTimeJavaFormat(KProperty1<? super T, ?> property, String javaFormat) {
+    default SQLFunction dateTimeJavaFormat(KProperty1<? super T, ?> property, String javaFormat) {
         return dateTimeJavaFormat(null, property, javaFormat);
     }
 
-    default <T> SQLFunction dateTimeJavaFormat(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property, String javaFormat) {
+    default SQLFunction dateTimeJavaFormat(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property, String javaFormat) {
         return getSQLFunc().dateTimeJavaFormat(tableOwner, EasyKtLambdaUtil.getPropertyName(property), javaFormat);
     }
 
-    default <T> SQLFunction dateTimeSQLFormat(KProperty1<? super T, ?> property, String format) {
+    default SQLFunction dateTimeSQLFormat(KProperty1<? super T, ?> property, String format) {
         return dateTimeSQLFormat(null, property, format);
     }
 
-    default <T> SQLFunction dateTimeSQLFormat(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property, String format) {
+    default SQLFunction dateTimeSQLFormat(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property, String format) {
         return getSQLFunc().dateTimeSQLFormat(tableOwner, EasyKtLambdaUtil.getPropertyName(property), format);
     }
 
-    default <T> SQLFunction concat(KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2) {
+    default SQLFunction concat(KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2) {
         return concat(s -> {
             SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
             s1.column(property1)
@@ -114,7 +114,7 @@ default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
         });
     }
 
-    default <T> SQLFunction concat(KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2, KProperty1<? super T, ?> property3) {
+    default SQLFunction concat(KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2, KProperty1<? super T, ?> property3) {
         return concat(s -> {
             SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
             s1.column(property1)
@@ -123,7 +123,7 @@ default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
         });
     }
 
-    default <T> SQLFunction concat(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
+    default SQLFunction concat(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
         List<ColumnExpression> concatExpressions = new ArrayList<>();
         sqlExpression.apply(new SQLKtColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(concatExpressions)));
         return concat(concatExpressions);
@@ -133,7 +133,7 @@ default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
         return getSQLFunc().concat(concatExpressions);
     }
 
-    default <T> SQLFunction join(String separator, KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2) {
+    default SQLFunction join(String separator, KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2) {
         return join(separator, s -> {
             SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
             s1.column(property1)
@@ -141,7 +141,7 @@ default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
         });
     }
 
-    default <T> SQLFunction join(String separator, KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2, KProperty1<? super T, ?> property3) {
+    default SQLFunction join(String separator, KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2, KProperty1<? super T, ?> property3) {
         return join(separator, s -> {
             SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
             s1.column(property1)
@@ -150,7 +150,7 @@ default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
         });
     }
 
-    default <T> SQLFunction join(String separator, SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
+    default SQLFunction join(String separator, SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
         List<ColumnExpression> concatExpressions = new ArrayList<>();
         sqlExpression.apply(new SQLKtColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(concatExpressions)));
         return join(separator, concatExpressions);

@@ -2,6 +2,7 @@ package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.sql.core.SQLAsLambdaKtNative;
+import com.easy.query.api4kt.sql.core.available.SQLKtLambdaFuncAvailable;
 import com.easy.query.api4kt.sql.impl.SQLKtColumnAsSelectorImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -23,7 +24,7 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  */
-public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAsLambdaKtNative<T1,TR,SQLKtColumnAsSelector<T1, TR>> {
+public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLKtLambdaFuncAvailable<T1>, SQLAsLambdaKtNative<T1,TR,SQLKtColumnAsSelector<T1, TR>> {
     ColumnAsSelector<T1, TR> getColumnAsSelector();
 
     default QueryRuntimeContext getRuntimeContext() {

@@ -4,8 +4,6 @@ import com.easy.query.api4j.delete.EntityDeletable;
 import com.easy.query.api4j.delete.ExpressionDeletable;
 import com.easy.query.api4j.delete.impl.EasyEntityDeletable;
 import com.easy.query.api4j.delete.impl.EasyExpressionDeletable;
-import com.easy.query.api4j.func.DefaultSQLLambdaFunc;
-import com.easy.query.api4j.func.SQLLambdaFunc;
 import com.easy.query.api4j.insert.EasyEntityInsertable;
 import com.easy.query.api4j.insert.EntityInsertable;
 import com.easy.query.api4j.select.Queryable;
@@ -27,11 +25,9 @@ import java.util.Collection;
  */
 public class DefaultEasyQuery implements EasyQuery {
     private final EasyQueryClient easyQueryClient;
-    private final SQLLambdaFunc sqlLambdaFunc ;
 
     public DefaultEasyQuery(EasyQueryClient easyQueryClient) {
         this.easyQueryClient = easyQueryClient;
-        this.sqlLambdaFunc = new DefaultSQLLambdaFunc(easyQueryClient.sqlFunc());
     }
 
     @Override
@@ -118,10 +114,5 @@ public class DefaultEasyQuery implements EasyQuery {
     @Override
     public EntityState getTrackEntityStateNotNull(Object entity) {
         return easyQueryClient.getTrackEntityStateNotNull(entity);
-    }
-
-    @Override
-    public SQLLambdaFunc sqlFunc() {
-        return sqlLambdaFunc;
     }
 }

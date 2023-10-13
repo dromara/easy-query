@@ -1,6 +1,8 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.sql.core.SQLProxyNative;
+import com.easy.query.api.proxy.sql.core.available.ProxySQLFuncAvailable;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -11,8 +13,11 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface ProxySelector extends SQLProxyNative<ProxySelector> {
+public interface ProxySelector extends SQLProxyNative<ProxySelector>, ProxySQLFuncAvailable {
     Selector getSelector();
+    default QueryRuntimeContext getRuntimeContext() {
+        return getSelector().getRuntimeContext();
+    }
 
     default ProxySelector columns(SQLColumn<?, ?>... columns) {
         if (columns != null) {

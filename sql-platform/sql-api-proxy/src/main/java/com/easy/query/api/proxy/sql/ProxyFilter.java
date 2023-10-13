@@ -1,7 +1,10 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.sql.core.SQLProxyNative;
+import com.easy.query.api.proxy.sql.core.available.ProxySQLFuncAvailable;
 import com.easy.query.api.proxy.sql.core.filter.ProxyAssertPredicate;
+import com.easy.query.api.proxy.sql.core.filter.ProxyFuncColumnPredicate;
+import com.easy.query.api.proxy.sql.core.filter.ProxyFuncValuePredicate;
 import com.easy.query.api.proxy.sql.core.filter.ProxyLikePredicate;
 import com.easy.query.api.proxy.sql.core.filter.ProxyRangePredicate;
 import com.easy.query.api.proxy.sql.core.filter.ProxySelfPredicate;
@@ -9,6 +12,7 @@ import com.easy.query.api.proxy.sql.core.filter.ProxySubQueryPredicate;
 import com.easy.query.api.proxy.sql.core.filter.ProxyValuePredicate;
 import com.easy.query.api.proxy.sql.core.filter.ProxyValuesPredicate;
 import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -20,15 +24,20 @@ import com.easy.query.core.proxy.ProxyEntity;
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface ProxyFilter extends SQLProxyNative<ProxyFilter>
+public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAvailable
         , ProxyAssertPredicate<ProxyFilter>
         , ProxyRangePredicate<ProxyFilter>
         , ProxySelfPredicate<ProxyFilter>
         , ProxySubQueryPredicate<ProxyFilter>
+        , ProxyFuncValuePredicate<ProxyFilter>
+        , ProxyFuncColumnPredicate<ProxyFilter>
         , ProxyValuePredicate<ProxyFilter>
         , ProxyValuesPredicate<ProxyFilter>
         , ProxyLikePredicate<ProxyFilter> {
     Filter getFilter();
+    default QueryRuntimeContext getRuntimeContext() {
+        return getFilter().getRuntimeContext();
+    }
 
 
 

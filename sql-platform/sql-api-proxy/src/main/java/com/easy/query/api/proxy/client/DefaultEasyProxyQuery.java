@@ -4,8 +4,8 @@ import com.easy.query.api.proxy.delete.ProxyEntityDeletable;
 import com.easy.query.api.proxy.delete.ProxyExpressionDeletable;
 import com.easy.query.api.proxy.delete.impl.EasyProxyEntityDeletable;
 import com.easy.query.api.proxy.delete.impl.EasyProxyExpressionDeletable;
-import com.easy.query.api.proxy.func.DefaultSQLProxyFunc;
-import com.easy.query.api.proxy.func.SQLProxyFunc;
+import com.easy.query.api.proxy.func.ProxySQLFuncImpl;
+import com.easy.query.api.proxy.func.ProxySQLFunc;
 import com.easy.query.api.proxy.insert.EasyProxyOnlyEntityInsertable;
 import com.easy.query.api.proxy.insert.ProxyOnyEntityInsertable;
 import com.easy.query.api.proxy.select.ProxyQueryable;
@@ -32,11 +32,11 @@ import java.util.Collection;
  */
 public class DefaultEasyProxyQuery implements EasyProxyQuery {
     private final EasyQueryClient easyQueryClient;
-    private final SQLProxyFunc sqlProxyFunc;
+    private final ProxySQLFunc sqlProxyFunc;
 
     public DefaultEasyProxyQuery(EasyQueryClient easyQueryClient) {
         this.easyQueryClient = easyQueryClient;
-        this.sqlProxyFunc = new DefaultSQLProxyFunc(easyQueryClient.sqlFunc());
+        this.sqlProxyFunc = new ProxySQLFuncImpl(easyQueryClient.sqlFunc());
     }
 
     @Override
@@ -131,7 +131,7 @@ public class DefaultEasyProxyQuery implements EasyProxyQuery {
     }
 
     @Override
-    public SQLProxyFunc sqlFunc() {
+    public ProxySQLFunc sqlFunc() {
         return sqlProxyFunc;
     }
 }

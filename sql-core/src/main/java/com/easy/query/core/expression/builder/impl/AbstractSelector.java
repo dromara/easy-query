@@ -175,6 +175,10 @@ public abstract class AbstractSelector<TChain> {
         return false;
     }
 
+    public QueryRuntimeContext getRuntimeContext(){
+        return runtimeContext;
+    }
+
 //    public TChain columnConstAs(String columnConst, String alias) {
 //        ColumnAsConstSegment columnSegment = sqlSegmentFactory.createColumnAsConstSegment(null, runtimeContext, columnConst, alias);
 //        sqlBuilderSegment.append(columnSegment);

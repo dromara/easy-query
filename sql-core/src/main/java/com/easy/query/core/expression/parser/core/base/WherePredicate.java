@@ -1,13 +1,16 @@
 package com.easy.query.core.expression.parser.core.base;
 
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.SQLFuncAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 import com.easy.query.core.expression.parser.core.base.core.filter.AssertPredicate;
-import com.easy.query.core.expression.parser.core.base.core.filter.FuncColumnValuePredicate;
+import com.easy.query.core.expression.parser.core.base.core.filter.FuncColumnPredicate;
+import com.easy.query.core.expression.parser.core.base.core.filter.FuncValuePredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.LikePredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.RangePredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.SelfPredicate;
@@ -21,10 +24,11 @@ import com.easy.query.core.expression.parser.core.base.core.filter.ValuesPredica
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<WherePredicate<T1>>
+public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFuncAvailable, SQLPropertyNative<WherePredicate<T1>>
         , SelfPredicate<T1, WherePredicate<T1>>
         , ValuePredicate<T1, WherePredicate<T1>>
-        , FuncColumnValuePredicate<T1, WherePredicate<T1>>
+        , FuncValuePredicate<T1, WherePredicate<T1>>
+        , FuncColumnPredicate<T1, WherePredicate<T1>>
         , ValuesPredicate<T1, WherePredicate<T1>>
         , RangePredicate<T1, WherePredicate<T1>>
         , LikePredicate<T1, WherePredicate<T1>>
@@ -32,6 +36,9 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLProperty
         , SubQueryPredicate<T1, WherePredicate<T1>> {
 
 
+    default QueryRuntimeContext getRuntimeContext(){
+        return getFilter().getRuntimeContext();
+    }
     default WherePredicate<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
         return columnFunc(true, columnPropertyFunction, sqlPredicateCompare, val);
     }

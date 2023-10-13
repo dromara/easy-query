@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.builder.impl;
 
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -23,14 +24,16 @@ import java.util.Objects;
  */
 public class GroupSelectorImpl implements GroupSelector {
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
+    protected final QueryRuntimeContext runtimeContext;
     protected final SQLBuilderSegment sqlSegmentBuilder;
     protected final SQLSegmentFactory sqlSegmentFactory;
 
     public GroupSelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder){
 
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
-        sqlSegmentBuilder=entityQueryExpressionBuilder.getGroup();
-        sqlSegmentFactory=entityQueryExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
+        this.sqlSegmentBuilder=entityQueryExpressionBuilder.getGroup();
+        this.runtimeContext=entityQueryExpressionBuilder.getRuntimeContext();
+        this.sqlSegmentFactory=runtimeContext.getSQLSegmentFactory();
     }
     @Override
     public GroupSelector column(TableAvailable table, String property) {
@@ -63,5 +66,10 @@ public class GroupSelectorImpl implements GroupSelector {
         FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, null);
         sqlSegmentBuilder.append(funcColumnSegment);
         return this;
+    }
+
+    @Override
+    public QueryRuntimeContext getRuntimeContext() {
+        return runtimeContext;
     }
 }

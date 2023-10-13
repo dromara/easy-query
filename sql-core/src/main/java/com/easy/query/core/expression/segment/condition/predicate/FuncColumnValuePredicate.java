@@ -1,14 +1,13 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SQLEntitySegment;
-import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
-import com.easy.query.core.enums.SQLPredicateCompare;
-import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLUtil;
 
 /**
  * @FileName: FuncColumnValuePredicate.java
@@ -51,7 +50,7 @@ public class FuncColumnValuePredicate implements Predicate {
     }
 
     @Override
-    public SQLEntitySegment cloneSQLColumnSegment() {
+    public Predicate cloneSQLColumnSegment() {
 
         throw new UnsupportedOperationException();
     }

@@ -1,7 +1,9 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.sql.core.SQLLambdaNative;
+import com.easy.query.api4j.sql.core.available.LambdaSQLFuncAvailable;
 import com.easy.query.api4j.util.EasyLambdaUtil;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
@@ -14,11 +16,15 @@ import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
  *
  * @author xuejiaming
  */
-public interface SQLGroupBySelector<T1> extends EntitySQLTableOwner<T1>, SQLLambdaNative<T1,SQLGroupBySelector<T1>> {
+public interface SQLGroupBySelector<T1> extends EntitySQLTableOwner<T1>, LambdaSQLFuncAvailable<T1>, SQLLambdaNative<T1,SQLGroupBySelector<T1>> {
     ColumnGroupSelector<T1> getGroupBySelector();
 
     default TableAvailable getTable() {
         return getGroupBySelector().getTable();
+    }
+
+    default QueryRuntimeContext getRuntimeContext() {
+        return getGroupBySelector().getRuntimeContext();
     }
 
     default <TProperty> SQLGroupBySelector<T1> column(Property<T1, TProperty> column) {

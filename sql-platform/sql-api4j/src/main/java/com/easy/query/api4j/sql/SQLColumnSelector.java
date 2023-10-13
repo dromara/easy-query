@@ -1,7 +1,9 @@
 package com.easy.query.api4j.sql;
 
 import com.easy.query.api4j.sql.core.SQLLambdaNative;
+import com.easy.query.api4j.sql.core.available.LambdaSQLFuncAvailable;
 import com.easy.query.api4j.util.EasyLambdaUtil;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
@@ -16,11 +18,15 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/6 23:20
  */
-public interface SQLColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLLambdaNative<T1,SQLColumnSelector<T1>> {
+public interface SQLColumnSelector<T1> extends EntitySQLTableOwner<T1>, LambdaSQLFuncAvailable<T1>, SQLLambdaNative<T1,SQLColumnSelector<T1>> {
     ColumnSelector<T1> getColumnSelector();
 
     default TableAvailable getTable() {
         return getColumnSelector().getTable();
+    }
+
+    default QueryRuntimeContext getRuntimeContext() {
+        return getColumnSelector().getRuntimeContext();
     }
 
     default <TProperty> SQLColumnSelector<T1> columns(Collection<Property<T1, TProperty>> columns) {

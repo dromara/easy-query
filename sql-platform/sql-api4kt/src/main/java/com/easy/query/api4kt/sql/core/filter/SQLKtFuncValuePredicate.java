@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.parser.core.base.core.filter;
+package com.easy.query.api4kt.sql.core.filter;
 
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
@@ -10,7 +10,7 @@ import com.easy.query.core.func.SQLFunction;
  *
  * @author xuejiaming
  */
-public interface FuncColumnValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, FilterAvailable, ChainCast<TChain> {
+public interface SQLKtFuncValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, SQLKtWherePredicateAvailable<T1>, ChainCast<TChain> {
 
     /**
      * 大于 func(column) > val
@@ -30,7 +30,7 @@ public interface FuncColumnValuePredicate<T1, TChain> extends EntitySQLTableOwne
     default TChain gt(boolean condition, SQLFunction sqlFunction, Object val) {
 
         if (condition) {
-            getFilter().gt(getTable(), sqlFunction, val);
+            getWherePredicate().gt(sqlFunction, val);
         }
         return castChain();
     }
@@ -53,7 +53,7 @@ public interface FuncColumnValuePredicate<T1, TChain> extends EntitySQLTableOwne
     default TChain ge(boolean condition, SQLFunction sqlFunction, Object val){
 
         if (condition) {
-            getFilter().ge(getTable(), sqlFunction, val);
+            getWherePredicate().ge(sqlFunction, val);
         }
         return castChain();
     }
@@ -76,7 +76,7 @@ public interface FuncColumnValuePredicate<T1, TChain> extends EntitySQLTableOwne
     default TChain eq(boolean condition, SQLFunction sqlFunction, Object val) {
 
         if (condition) {
-            getFilter().eq(getTable(), sqlFunction, val);
+            getWherePredicate().eq(sqlFunction, val);
         }
         return castChain();
     }
@@ -99,7 +99,7 @@ public interface FuncColumnValuePredicate<T1, TChain> extends EntitySQLTableOwne
      */
     default TChain ne(boolean condition, SQLFunction sqlFunction, Object val){
         if (condition) {
-            getFilter().ne(getTable(), sqlFunction, val);
+            getWherePredicate().ne(sqlFunction, val);
         }
         return castChain();
     }
@@ -121,7 +121,7 @@ public interface FuncColumnValuePredicate<T1, TChain> extends EntitySQLTableOwne
      */
     default TChain le(boolean condition, SQLFunction sqlFunction, Object val){
         if (condition) {
-            getFilter().le(getTable(), sqlFunction, val);
+            getWherePredicate().le(sqlFunction, val);
         }
         return castChain();
     }
@@ -143,7 +143,7 @@ public interface FuncColumnValuePredicate<T1, TChain> extends EntitySQLTableOwne
      */
     default TChain lt(boolean condition, SQLFunction sqlFunction, Object val){
         if (condition) {
-            getFilter().lt(getTable(), sqlFunction, val);
+            getWherePredicate().lt(sqlFunction, val);
         }
         return castChain();
     }

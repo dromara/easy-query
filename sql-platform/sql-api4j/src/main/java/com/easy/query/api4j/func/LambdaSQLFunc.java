@@ -21,23 +21,23 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface SQLLambdaFunc {
+public interface LambdaSQLFunc<T1> {
     SQLFunc getSQLFunc();
 
-    default <T> SQLFunction ifNull(Property<T, ?> property, Object def) {
-        return this.<T>ifNull(s -> {
+    default SQLFunction ifNull(Property<T1, ?> property, Object def) {
+        return ifNull(s -> {
             s.column(property)
                     .value(def);
         });
     }
 
-    default <T> SQLFunction ifNull(SQLExpression1<SQLColumnFuncSelector<T>> sqlExpression) {
+    default SQLFunction ifNull(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
         List<ColumnExpression> columnExpressions = new ArrayList<>();
         sqlExpression.apply(new SQLColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
         return ifNull(columnExpressions);
     }
 
-    default <T> SQLFunction ifNull(List<ColumnExpression> columnExpressions) {
+    default SQLFunction ifNull(List<ColumnExpression> columnExpressions) {
         return getSQLFunc().ifNull(columnExpressions);
     }
 
@@ -47,7 +47,7 @@ public interface SQLLambdaFunc {
      * @param property
      * @return
      */
-    default <T> SQLFunction abs(Property<T, ?> property) {
+    default SQLFunction abs(Property<T1, ?> property) {
         return abs(null, property);
     }
 
@@ -58,7 +58,7 @@ public interface SQLLambdaFunc {
      * @param property
      * @return
      */
-    default <T> SQLFunction abs(EntitySQLTableOwner<T> tableOwner, Property<T, ?> property) {
+    default SQLFunction abs(EntitySQLTableOwner<T1> tableOwner, Property<T1, ?> property) {
         return getSQLFunc().abs(tableOwner, EasyLambdaUtil.getPropertyName(property));
     }
 
@@ -68,7 +68,7 @@ public interface SQLLambdaFunc {
      * @param property
      * @return
      */
-    default <T> SQLFunction round(Property<T, ?> property, int scale) {
+    default SQLFunction round(Property<T1, ?> property, int scale) {
         return round(null, property, scale);
     }
 
@@ -79,43 +79,43 @@ public interface SQLLambdaFunc {
      * @param property
      * @return
      */
-    default <T> SQLFunction round(EntitySQLTableOwner<T> tableOwner, Property<T, ?> property, int scale) {
+    default SQLFunction round(EntitySQLTableOwner<T1> tableOwner, Property<T1, ?> property, int scale) {
         return getSQLFunc().round(tableOwner, EasyLambdaUtil.getPropertyName(property), scale);
     }
 
-    default <T> SQLFunction dateTimeJavaFormat(Property<T, ?> property, String javaFormat) {
+    default SQLFunction dateTimeJavaFormat(Property<T1, ?> property, String javaFormat) {
         return dateTimeJavaFormat(null, property, javaFormat);
     }
 
-    default <T> SQLFunction dateTimeJavaFormat(EntitySQLTableOwner<T> tableOwner, Property<T, ?> property, String javaFormat) {
+    default SQLFunction dateTimeJavaFormat(EntitySQLTableOwner<T1> tableOwner, Property<T1, ?> property, String javaFormat) {
         return getSQLFunc().dateTimeJavaFormat(tableOwner, EasyLambdaUtil.getPropertyName(property), javaFormat);
     }
 
-    default <T> SQLFunction dateTimeSQLFormat(Property<T, ?> property, String format) {
+    default SQLFunction dateTimeSQLFormat(Property<T1, ?> property, String format) {
         return dateTimeSQLFormat(null, property, format);
     }
 
-    default <T> SQLFunction dateTimeSQLFormat(EntitySQLTableOwner<T> tableOwner, Property<T, ?> property, String format) {
+    default SQLFunction dateTimeSQLFormat(EntitySQLTableOwner<T1> tableOwner, Property<T1, ?> property, String format) {
         return getSQLFunc().dateTimeSQLFormat(tableOwner, EasyLambdaUtil.getPropertyName(property), format);
     }
 
-    default <T> SQLFunction concat(Property<T, ?> property1, Property<T, ?> property2) {
+    default SQLFunction concat(Property<T1, ?> property1, Property<T1, ?> property2) {
         return concat(s -> {
-            SQLColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
+            SQLColumnFuncSelector<T1> s1 = EasyObjectUtil.typeCastNullable(s);
             s1.column(property1)
                     .column(property2);
         });
     }
 
-    default <T> SQLFunction concat(Property<T, ?> property1, Property<T, ?> property2, Property<T, ?> property3) {
-        return this.<T>concat(s -> {
+    default SQLFunction concat(Property<T1, ?> property1, Property<T1, ?> property2, Property<T1, ?> property3) {
+        return this.<T1>concat(s -> {
             s.column(property1)
                     .column(property2)
                     .column(property3);
         });
     }
 
-    default <T> SQLFunction concat(SQLExpression1<SQLColumnFuncSelector<T>> sqlExpression) {
+    default SQLFunction concat(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
         List<ColumnExpression> columnExpressions = new ArrayList<>();
         sqlExpression.apply(new SQLColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
         return concat(columnExpressions);
@@ -125,22 +125,22 @@ public interface SQLLambdaFunc {
         return getSQLFunc().concat(concatExpressions);
     }
 
-    default <T> SQLFunction join(String separator, Property<T, ?> property1, Property<T, ?> property2) {
-        return this.<T>join(separator, s -> {
+    default SQLFunction join(String separator, Property<T1, ?> property1, Property<T1, ?> property2) {
+        return this.<T1>join(separator, s -> {
             s.column(property1)
                     .column(property2);
         });
     }
 
-    default <T> SQLFunction join(String separator, Property<T, ?> property1, Property<T, ?> property2, Property<T, ?> property3) {
-        return this.<T>join(separator, s -> {
+    default SQLFunction join(String separator, Property<T1, ?> property1, Property<T1, ?> property2, Property<T1, ?> property3) {
+        return this.<T1>join(separator, s -> {
             s.column(property1)
                     .column(property2)
                     .column(property3);
         });
     }
 
-    default <T> SQLFunction join(String separator, SQLExpression1<SQLColumnFuncSelector<T>> sqlExpression) {
+    default SQLFunction join(String separator, SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
         List<ColumnExpression> columnExpressions = new ArrayList<>();
         sqlExpression.apply(new SQLColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
         return join(separator, columnExpressions);

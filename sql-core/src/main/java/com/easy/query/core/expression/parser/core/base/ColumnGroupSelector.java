@@ -1,8 +1,10 @@
 package com.easy.query.core.expression.parser.core.base;
 
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.SQLFuncAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 
 /**
@@ -11,8 +13,11 @@ import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
  *
  * @author xuejiaming
  */
-public interface ColumnGroupSelector<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<ColumnGroupSelector<T1>> {
+public interface ColumnGroupSelector<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<ColumnGroupSelector<T1>>, SQLFuncAvailable {
     GroupSelector getGroupSelector();
+    default QueryRuntimeContext getRuntimeContext(){
+        return getGroupSelector().getRuntimeContext();
+    }
     ColumnGroupSelector<T1> column(String property);
 
     /**

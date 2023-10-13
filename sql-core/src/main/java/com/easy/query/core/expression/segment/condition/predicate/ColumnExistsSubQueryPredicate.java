@@ -5,7 +5,6 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SQLEntitySegment;
 
 /**
  * create time 2023/4/27 09:22
@@ -37,7 +36,7 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
     }
 
     @Override
-    public SQLEntitySegment cloneSQLColumnSegment() {
+    public Predicate cloneSQLColumnSegment() {
         throw new UnsupportedOperationException();
     }
 

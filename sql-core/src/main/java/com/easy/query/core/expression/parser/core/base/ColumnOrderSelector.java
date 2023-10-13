@@ -1,8 +1,10 @@
 package com.easy.query.core.expression.parser.core.base;
 
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.SQLFuncAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 
 /**
@@ -11,8 +13,11 @@ import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
  *
  * @author xuejiaming
  */
-public interface ColumnOrderSelector<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<ColumnOrderSelector<T1>> {
+public interface ColumnOrderSelector<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<ColumnOrderSelector<T1>>, SQLFuncAvailable {
     OrderSelector getOrderSelector();
+    default QueryRuntimeContext getRuntimeContext(){
+        return getOrderSelector().getRuntimeContext();
+    }
 
     ColumnOrderSelector<T1> column(String property);
 

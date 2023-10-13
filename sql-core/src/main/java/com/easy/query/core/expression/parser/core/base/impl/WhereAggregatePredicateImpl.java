@@ -35,11 +35,6 @@ public class WhereAggregatePredicateImpl<T1> implements WhereAggregatePredicate<
     }
 
     @Override
-    public QueryRuntimeContext getRuntimeContext() {
-        return aggregateFilter.getRuntimeContext();
-    }
-
-    @Override
     public WhereAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, String property, SQLPredicateCompare compare, Object val) {
         if (condition) {
             aggregateFilter.func(table,columnFunction,property,compare,val);

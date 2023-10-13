@@ -142,7 +142,8 @@ public class DbManager {
 //                .useStarterConfigure()
 
         //推到事件中心，用于扩展
-        EventBus.push(easyQueryBuilderConfiguration);
+        EventBus.publish(easyQueryBuilderConfiguration);
+
         EasyQueryClient easyQueryClient =easyQueryBuilderConfiguration.build();
         DefaultEasyQuery easyQuery = new DefaultEasyQuery(easyQueryClient);
         DefaultEasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);

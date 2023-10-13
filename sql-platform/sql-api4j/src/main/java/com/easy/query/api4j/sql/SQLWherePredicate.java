@@ -1,18 +1,19 @@
 package com.easy.query.api4j.sql;
 
-import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.sql.core.SQLLambdaNative;
+import com.easy.query.api4j.sql.core.available.LambdaSQLFuncAvailable;
 import com.easy.query.api4j.sql.core.filter.SQLAssertPredicate;
+import com.easy.query.api4j.sql.core.filter.SQLFuncColumnPredicate;
+import com.easy.query.api4j.sql.core.filter.SQLFuncValuePredicate;
 import com.easy.query.api4j.sql.core.filter.SQLLikePredicate;
 import com.easy.query.api4j.sql.core.filter.SQLRangePredicate;
 import com.easy.query.api4j.sql.core.filter.SQLSelfPredicate;
 import com.easy.query.api4j.sql.core.filter.SQLSubQueryPredicate;
 import com.easy.query.api4j.sql.core.filter.SQLValuePredicate;
 import com.easy.query.api4j.sql.core.filter.SQLValuesPredicate;
-import com.easy.query.api4j.util.EasyLambdaUtil;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
@@ -25,10 +26,12 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambdaNative<T1, SQLWherePredicate<T1>>
+public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, LambdaSQLFuncAvailable<T1>, SQLLambdaNative<T1, SQLWherePredicate<T1>>
         , SQLLikePredicate<T1, SQLWherePredicate<T1>>
         , SQLRangePredicate<T1, SQLWherePredicate<T1>>
         , SQLSelfPredicate<T1, SQLWherePredicate<T1>>
+        , SQLFuncColumnPredicate<T1, SQLWherePredicate<T1>>
+        , SQLFuncValuePredicate<T1, SQLWherePredicate<T1>>
         , SQLValuePredicate<T1, SQLWherePredicate<T1>>
         , SQLValuesPredicate<T1, SQLWherePredicate<T1>>
         , SQLSubQueryPredicate<T1, SQLWherePredicate<T1>>
@@ -39,6 +42,9 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambd
         return getWherePredicate().getTable();
     }
 
+    default QueryRuntimeContext getRuntimeContext() {
+        return getWherePredicate().getRuntimeContext();
+    }
 
 
     default <TProperty> SQLWherePredicate<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, TProperty val) {

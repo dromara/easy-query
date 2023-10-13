@@ -1,6 +1,8 @@
 package com.easy.query.api.proxy.sql;
 
 import com.easy.query.api.proxy.sql.core.SQLProxyNative;
+import com.easy.query.api.proxy.sql.core.available.ProxySQLFuncAvailable;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -11,8 +13,11 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface ProxyOrderSelector extends SQLProxyNative<ProxyOrderSelector> {
+public interface ProxyOrderSelector extends SQLProxyNative<ProxyOrderSelector>, ProxySQLFuncAvailable {
     OrderSelector getOrderSelector();
+    default QueryRuntimeContext getRuntimeContext() {
+        return getOrderSelector().getRuntimeContext();
+    }
 
 
     default ProxyOrderSelector columns(SQLColumn<?,?>... columns) {

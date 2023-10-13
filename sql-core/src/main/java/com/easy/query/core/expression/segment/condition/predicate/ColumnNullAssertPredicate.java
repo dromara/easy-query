@@ -1,10 +1,9 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SQLEntitySegment;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -43,7 +42,7 @@ public class ColumnNullAssertPredicate implements Predicate {
     }
 
     @Override
-    public SQLEntitySegment cloneSQLColumnSegment() {
+    public Predicate cloneSQLColumnSegment() {
         throw new UnsupportedOperationException();
     }
 

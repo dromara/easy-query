@@ -1,6 +1,7 @@
 package com.easy.query.api4j.sql.impl;
 
 import com.easy.query.api4j.sql.SQLWherePredicate;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -71,4 +72,5 @@ public class SQLWherePredicateImpl<T1> implements SQLWherePredicate<T1> {
     public SQLWherePredicate<T1> castChain() {
         return this;
     }
+
 }

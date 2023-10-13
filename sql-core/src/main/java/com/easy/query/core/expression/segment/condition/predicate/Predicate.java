@@ -11,4 +11,6 @@ import com.easy.query.core.expression.segment.SQLEntitySegment;
  */
 public interface Predicate extends SQLEntitySegment {
     SQLPredicateCompare getOperator();
+    @Override
+    Predicate cloneSQLColumnSegment();
 }

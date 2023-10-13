@@ -74,4 +74,9 @@ public class OrderSelectorImpl implements OrderSelector {
     public void setAsc(boolean asc) {
         this.asc=asc;
     }
+
+    @Override
+    public QueryRuntimeContext getRuntimeContext() {
+        return runtimeContext;
+    }
 }

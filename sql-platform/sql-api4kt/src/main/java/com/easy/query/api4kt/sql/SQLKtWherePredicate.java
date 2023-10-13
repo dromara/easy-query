@@ -1,13 +1,16 @@
 package com.easy.query.api4kt.sql;
 
 import com.easy.query.api4kt.sql.core.SQLLambdaKtNative;
+import com.easy.query.api4kt.sql.core.available.SQLKtLambdaFuncAvailable;
 import com.easy.query.api4kt.sql.core.filter.SQLKtAssertPredicate;
+import com.easy.query.api4kt.sql.core.filter.SQLKtFuncValuePredicate;
 import com.easy.query.api4kt.sql.core.filter.SQLKtLikePredicate;
 import com.easy.query.api4kt.sql.core.filter.SQLKtRangePredicate;
 import com.easy.query.api4kt.sql.core.filter.SQLKtSelfPredicate;
 import com.easy.query.api4kt.sql.core.filter.SQLKtSubQueryPredicate;
 import com.easy.query.api4kt.sql.core.filter.SQLKtValuePredicate;
 import com.easy.query.api4kt.sql.core.filter.SQLKtValuesPredicate;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -22,11 +25,12 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface SQLKtWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLambdaKtNative<T1, SQLKtWherePredicate<T1>>
+public interface SQLKtWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLKtLambdaFuncAvailable<T1>, SQLLambdaKtNative<T1, SQLKtWherePredicate<T1>>
         , SQLKtAssertPredicate<T1, SQLKtWherePredicate<T1>>
         , SQLKtRangePredicate<T1, SQLKtWherePredicate<T1>>
         , SQLKtSelfPredicate<T1, SQLKtWherePredicate<T1>>
         , SQLKtSubQueryPredicate<T1, SQLKtWherePredicate<T1>>
+        , SQLKtFuncValuePredicate<T1, SQLKtWherePredicate<T1>>
         , SQLKtValuePredicate<T1, SQLKtWherePredicate<T1>>
         , SQLKtValuesPredicate<T1, SQLKtWherePredicate<T1>>
         , SQLKtLikePredicate<T1, SQLKtWherePredicate<T1>> {
@@ -34,6 +38,9 @@ public interface SQLKtWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLLam
 
     default TableAvailable getTable() {
         return getWherePredicate().getTable();
+    }
+    default QueryRuntimeContext getRuntimeContext() {
+        return getWherePredicate().getRuntimeContext();
     }
 
     default <TProperty> SQLKtWherePredicate<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, TProperty val) {

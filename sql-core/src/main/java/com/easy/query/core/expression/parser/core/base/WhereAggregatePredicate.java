@@ -7,6 +7,7 @@ import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.SQLFuncAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 
 /**
@@ -15,10 +16,12 @@ import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
  * @Description: 文件说明
  * @Date: 2023/2/18 22:17
  */
-public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<WhereAggregatePredicate<T1>> {
+public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<WhereAggregatePredicate<T1>>, SQLFuncAvailable {
     AggregateFilter getAggregateFilter();
 
-    QueryRuntimeContext getRuntimeContext();
+    default QueryRuntimeContext getRuntimeContext(){
+        return getAggregateFilter().getRuntimeContext();
+    }
 
     default WhereAggregatePredicate<T1> avg(String property, AggregatePredicateCompare compare, Object val) {
         return avg(true, property, compare, val);

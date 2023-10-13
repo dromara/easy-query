@@ -1,17 +1,17 @@
-package com.easy.query.api4kt.func;
+package com.easy.query.api.proxy.func;
 
 import com.easy.query.core.func.SQLFunc;
 
 /**
- * create time 2023/10/12 17:17
+ * create time 2023/10/12 21:58
  * 文件说明
  *
  * @author xuejiaming
  */
-public class DefaultSQLKtLambdaFunc implements SQLKtLambdaFunc {
+public class ProxySQLFuncImpl implements ProxySQLFunc {
     private final SQLFunc sqlFunc;
 
-    public DefaultSQLKtLambdaFunc(SQLFunc sqlFunc){
+    public ProxySQLFuncImpl(SQLFunc sqlFunc){
 
         this.sqlFunc = sqlFunc;
     }
