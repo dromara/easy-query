@@ -6,6 +6,8 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 import kotlin.reflect.KProperty1;
 
+import java.util.Collection;
+
 /**
  * create time 2023/7/29 23:41
  * 文件说明
@@ -40,6 +42,12 @@ public class SQLNativeLambdaKtExpressionContextImpl<T1> implements SQLNativeLamb
     @Override
     public SQLNativeLambdaKtExpressionContext<T1> value(Object val) {
         columnConstExpressionContext.value(val);
+        return this;
+    }
+
+    @Override
+    public <T> SQLNativeLambdaKtExpressionContext<T1> collection(Collection<T> values) {
+        columnConstExpressionContext.collection(values);
         return this;
     }
 

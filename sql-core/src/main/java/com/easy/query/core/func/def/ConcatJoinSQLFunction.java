@@ -1,7 +1,7 @@
 package com.easy.query.core.func.def;
 
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
-import com.easy.query.core.func.concat.ConcatExpression;
+import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
@@ -15,9 +15,9 @@ import java.util.Objects;
  */
 public class ConcatJoinSQLFunction extends ConcatSQLFunction {
     private final String separator;
-    private final List<ConcatExpression> concatExpressions;
+    private final List<ColumnExpression> concatExpressions;
 
-    public ConcatJoinSQLFunction(String separator, List<ConcatExpression> concatExpressions) {
+    public ConcatJoinSQLFunction(String separator, List<ColumnExpression> concatExpressions) {
         super(concatExpressions);
         this.concatExpressions = concatExpressions;
         Objects.requireNonNull(separator, "concat_ws separator can not be null");

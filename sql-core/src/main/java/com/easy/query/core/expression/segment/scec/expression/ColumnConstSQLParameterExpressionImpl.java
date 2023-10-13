@@ -14,7 +14,6 @@ public class ColumnConstSQLParameterExpressionImpl implements ColumnParamExpress
     private final Object val;
 
     public ColumnConstSQLParameterExpressionImpl(Object val){
-
         this.val = val;
     }
     @Override

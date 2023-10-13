@@ -34,6 +34,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.scec.expression.ColumnMultiParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.SQLFormatArgument;
 import com.easy.query.core.expression.segment.scec.expression.ColumnParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyAsAliasParamExpression;
@@ -361,10 +362,16 @@ public class EasySQLExpressionUtil {
             });
 
         } else if (paramExpression instanceof ColumnParamExpression) {
-            ColumnParamExpression columnConstValueExpression = (ColumnParamExpression) paramExpression;
+            ColumnParamExpression columnParamExpression = (ColumnParamExpression) paramExpression;
             return SQLFormatArgument.create(()->{
-                columnConstValueExpression.addParams(toSQLContext);
+                columnParamExpression.addParams(toSQLContext);
                 return "?";
+            });
+        }  else if (paramExpression instanceof ColumnMultiParamExpression) {
+            ColumnMultiParamExpression columnMultiParamExpression = (ColumnMultiParamExpression) paramExpression;
+            return SQLFormatArgument.create(()->{
+                columnMultiParamExpression.addParams(toSQLContext);
+                return EasyCollectionUtil.join(columnMultiParamExpression.getParamSize(),",","?");
             });
         } else if(paramExpression instanceof FormatValueParamExpression){
             FormatValueParamExpression constValueParamExpression = (FormatValueParamExpression) paramExpression;

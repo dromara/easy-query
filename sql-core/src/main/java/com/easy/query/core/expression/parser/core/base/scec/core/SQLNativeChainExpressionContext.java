@@ -5,6 +5,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 
 /**
  * create time 2023/10/12 13:39
@@ -15,15 +16,21 @@ import java.text.MessageFormat;
 public interface SQLNativeChainExpressionContext {
 
     void expression(String property);
+
     void expression(TableAvailable table, String property);
+
     <TEntity> void expression(Query<TEntity> subQuery);
+
     void value(Object val);
+
+    <T> void collection(Collection<T> values);
 
     void format(Object formatVal);
 
 
     /**
      * 别名 column_name
+     *
      * @param alias
      * @return
      */
@@ -33,21 +40,25 @@ public interface SQLNativeChainExpressionContext {
      * 因为默认{@link MessageFormat#format(Object)}会将参数"ifnull(id,'')"改为"ifnull(id,')"
      * 会认为单引号是转义符所以这边需要将单引号全部改为双引号,所以采用和输入文本一样的风格
      * 如果需要参数化将文本单引号改成双引号
+     *
      * @return
      */
     void keepStyle();
 
     /**
      * 不将单引号设置为双引号
+     *
      * @return
      */
     void messageFormat();
 
     void expressionAlias(String property);
+
     void setPropertyAlias(String property);
 
     /**
      * 添加返回对象结果
+     *
      * @param entityMetadata
      */
     void setResultEntityMetadata(EntityMetadata entityMetadata);

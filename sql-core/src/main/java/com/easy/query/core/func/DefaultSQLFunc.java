@@ -2,7 +2,7 @@ package com.easy.query.core.func;
 
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.func.concat.ConcatExpression;
+import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbsSQLFunction;
 import com.easy.query.core.func.def.ConcatJoinSQLFunction;
 import com.easy.query.core.func.def.ConcatSQLFunction;
@@ -26,8 +26,8 @@ public class DefaultSQLFunc implements SQLFunc {
     }
 
     @Override
-    public SQLFunction ifNull(SQLTableOwner tableOwner, String property, Object def) {
-        return new IfNullSQLFunction(getTable(tableOwner), property, def);
+    public SQLFunction ifNull(List<ColumnExpression> columnExpressions) {
+        return new IfNullSQLFunction(columnExpressions);
     }
 
     @Override
@@ -51,12 +51,12 @@ public class DefaultSQLFunc implements SQLFunc {
     }
 
     @Override
-    public SQLFunction concat(List<ConcatExpression> concatExpressions) {
+    public SQLFunction concat(List<ColumnExpression> concatExpressions) {
         return new ConcatSQLFunction(concatExpressions);
     }
 
     @Override
-    public SQLFunction join(String separator, List<ConcatExpression> concatExpressions) {
+    public SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
         return new ConcatJoinSQLFunction(separator, concatExpressions);
     }
 

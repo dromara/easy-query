@@ -1,7 +1,7 @@
-package com.easy.query.core.func.concat.impl;
+package com.easy.query.core.func.column.impl;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.func.concat.ConcatColumnExpression;
+import com.easy.query.core.func.column.ColumnFuncExpression;
 
 /**
  * create time 2023/10/12 14:18
@@ -9,11 +9,11 @@ import com.easy.query.core.func.concat.ConcatColumnExpression;
  *
  * @author xuejiaming
  */
-public class ConcatColumnExpressionImpl implements ConcatColumnExpression {
+public class ColumnFuncExpressionImpl implements ColumnFuncExpression {
     private final TableAvailable table;
     private final String property;
 
-    public ConcatColumnExpressionImpl(TableAvailable table, String property){
+    public ColumnFuncExpressionImpl(TableAvailable table, String property){
         this.table = table;
 
         this.property = property;

@@ -13,6 +13,9 @@ import java.util.List;
  * @author xuejiaming
  */
 public class EasyArrayUtil {
+    public static boolean isArray(Object value){
+        return value!=null&&value.getClass().isArray();
+    }
 
     /**
      * 判断数组是否为空

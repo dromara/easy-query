@@ -7,6 +7,8 @@ import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainE
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
+import java.util.Collection;
+
 /**
  * create time 2023/7/29 22:58
  * 文件说明
@@ -68,6 +70,12 @@ public class SQLAliasNativePropertyExpressionContextImpl implements SQLAliasNati
     @Override
     public SQLAliasNativePropertyExpressionContext value(Object val) {
         sqlNativeChainExpressionContext.value(val);
+        return this;
+    }
+
+    @Override
+    public <T> SQLAliasNativePropertyExpressionContext collection(Collection<T> values) {
+        sqlNativeChainExpressionContext.collection(values);
         return this;
     }
 

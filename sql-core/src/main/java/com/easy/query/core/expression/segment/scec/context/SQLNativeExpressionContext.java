@@ -6,6 +6,7 @@ import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpress
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 
 /**
  * create time 2023/7/29 21:44
@@ -18,6 +19,7 @@ public interface SQLNativeExpressionContext extends SQLNativeExpression {
     void expression(TableAvailable table, String property);
     <TEntity> void expression(Query<TEntity> subQuery);
     void value(Object val);
+    <T> void collection(Collection<T> values);
 
     void format(Object formatVal);
 

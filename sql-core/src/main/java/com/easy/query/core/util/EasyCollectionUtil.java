@@ -24,6 +24,19 @@ import java.util.function.Predicate;
  * @Date: 2023/2/26 14:07
  */
 public class EasyCollectionUtil {
+    public static String join(int size,String separator,String placeholder){
+        if(size <= 0){
+            throw new IllegalArgumentException("size <= 0");
+        }
+        if(size==1){
+            return placeholder;
+        }
+        StringBuilder sb = new StringBuilder().append(placeholder);
+        for (int i = 0; i < size-1; i++) {
+            sb.append(separator).append(placeholder);
+        }
+        return sb.toString();
+    }
 
     public static <TElement> TElement getLastOrNull(List<TElement> list){
         if(isEmpty(list)){

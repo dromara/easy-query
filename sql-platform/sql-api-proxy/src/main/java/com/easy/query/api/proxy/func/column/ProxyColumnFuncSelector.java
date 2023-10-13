@@ -1,7 +1,7 @@
-package com.easy.query.api.proxy.func.concat;
+package com.easy.query.api.proxy.func.column;
 
 import com.easy.query.core.expression.parser.core.base.SimpleSQLTableOwner;
-import com.easy.query.core.func.concat.ColumnConcatSelector;
+import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyArrayUtil;
 
@@ -11,13 +11,13 @@ import com.easy.query.core.util.EasyArrayUtil;
  *
  * @author xuejiaming
  */
-public interface ProxyColumnConcatSelector{
-    ColumnConcatSelector getColumnConcatSelector();
-   default <TProxy,T> ProxyColumnConcatSelector column(SQLColumn<TProxy, T> sqlColumn){
+public interface ProxyColumnFuncSelector {
+    ColumnFuncSelector getColumnConcatSelector();
+   default <TProxy,T> ProxyColumnFuncSelector column(SQLColumn<TProxy, T> sqlColumn){
        getColumnConcatSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.value());
        return this;
    }
-   default ProxyColumnConcatSelector columns(SQLColumn<?, ?>... sqlColumns){
+   default ProxyColumnFuncSelector columns(SQLColumn<?, ?>... sqlColumns){
        if(EasyArrayUtil.isNotEmpty(sqlColumns)){
            for (SQLColumn<?, ?> sqlColumn : sqlColumns) {
                getColumnConcatSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.value());
@@ -25,11 +25,11 @@ public interface ProxyColumnConcatSelector{
        }
        return this;
    }
-    default ProxyColumnConcatSelector value(Object val){
+    default ProxyColumnFuncSelector value(Object val){
         getColumnConcatSelector().value(val);
         return this;
     }
-    default ProxyColumnConcatSelector format(Object valFormat){
+    default ProxyColumnFuncSelector format(Object valFormat){
         getColumnConcatSelector().format(valFormat);
         return this;
     }

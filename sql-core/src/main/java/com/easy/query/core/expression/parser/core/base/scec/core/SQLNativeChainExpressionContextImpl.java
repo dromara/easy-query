@@ -5,6 +5,8 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 
+import java.util.Collection;
+
 /**
  * create time 2023/10/12 13:39
  * 文件说明
@@ -37,6 +39,11 @@ public class SQLNativeChainExpressionContextImpl implements SQLNativeChainExpres
     @Override
     public void value(Object val) {
         sqlNativeExpressionContext.value(val);
+    }
+
+    @Override
+    public <T> void collection(Collection<T> values) {
+        sqlNativeExpressionContext.collection(values);
     }
 
     @Override

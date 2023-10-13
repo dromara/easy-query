@@ -5,6 +5,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 
 /**
  * create time 2023/9/28 21:20
@@ -19,6 +20,13 @@ public interface SQLNativeLambdaExpressionChain<T1,TChain> {
     <TEntity> TChain expression(Queryable<TEntity> subQuery);
 
     TChain value(Object val);
+    /**
+     * 将参数以[?,?,?]参数化形式拼接到sql中
+     * @param values
+     * @return
+     * @param <T>
+     */
+    <T> TChain collection(Collection<T> values);
 
     TChain format(Object formatVal);
 

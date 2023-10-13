@@ -5,6 +5,8 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
+import java.util.Collection;
+
 /**
  * create time 2023/7/29 23:41
  * 文件说明
@@ -33,6 +35,12 @@ public class SQLNativeProxyExpressionContextImpl implements SQLNativeProxyExpres
     @Override
     public SQLNativeProxyExpressionContext value(Object val) {
         sqlConstExpressionContext.value(val);
+        return this;
+    }
+
+    @Override
+    public <T> SQLNativeProxyExpressionContext collection(Collection<T> values) {
+        sqlConstExpressionContext.collection(values);
         return this;
     }
 

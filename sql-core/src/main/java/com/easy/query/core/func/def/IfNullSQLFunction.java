@@ -1,7 +1,10 @@
 package com.easy.query.core.func.def;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
+import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.util.EasyCollectionUtil;
+
+import java.util.List;
 
 /**
  * create time 2023/10/5 22:03
@@ -9,34 +12,32 @@ import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainE
  *
  * @author xuejiaming
  */
-public class IfNullSQLFunction extends AbstractSQLFunction {
-    private final TableAvailable table;
-    private final String property;
-    private final Object def;
-    public IfNullSQLFunction(TableAvailable table, String property, Object def) {
+public class IfNullSQLFunction extends AbstractExpressionSQLFunction {
+    private final List<ColumnExpression> columnExpressions;
 
-        this.table = table;
-        this.property = property;
-        this.def = def;
+    public IfNullSQLFunction(List<ColumnExpression> columnExpressions) {
+
+        this.columnExpressions = columnExpressions;
     }
 
     @Override
     public String sqlSegment() {
-        return "IFNULL({0},{1})";
+        Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
+        return String.format("IFNULL(%s)", String.join(",", params));
     }
 
     @Override
     public int paramMarks() {
-        return 2;
+        return columnExpressions.size();
     }
 
     @Override
     public void consume0(SQLNativeChainExpressionContext context) {
-        if (this.table == null) {
-            context.expression(this.property);
-        } else {
-            context.expression(this.table, this.property);
-        }
-        context.value(this.def);
+        invokeExpression(context);
+    }
+
+    @Override
+    protected List<ColumnExpression> getColumnExpressions() {
+        return columnExpressions;
     }
 }

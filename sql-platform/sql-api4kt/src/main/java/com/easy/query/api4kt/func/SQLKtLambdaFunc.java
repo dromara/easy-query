@@ -1,14 +1,14 @@
 package com.easy.query.api4kt.func;
 
-import com.easy.query.api4kt.func.concat.DefaultSQLKtColumnConcatSelector;
-import com.easy.query.api4kt.func.concat.SQLKtColumnConcatSelector;
+import com.easy.query.api4kt.func.column.SQLKtColumnConcatSelectorImpl;
+import com.easy.query.api4kt.func.column.SQLKtColumnFuncSelector;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.func.concat.ConcatExpression;
-import com.easy.query.core.func.concat.DefaultColumnConcatSelector;
+import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 import kotlin.reflect.KProperty1;
 
@@ -24,12 +24,28 @@ import java.util.List;
 public interface SQLKtLambdaFunc {
     SQLFunc getSQLFunc();
 
-    default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
-        return ifNull(null, property, def);
+//    default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
+//        return ifNull(null, property, def);
+//    }
+//
+//    default <T> SQLFunction ifNull(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property, Object def) {
+//        return getSQLFunc().ifNull(tableOwner, EasyKtLambdaUtil.getPropertyName(property), def);
+//    }
+default <T> SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
+    return this.<T>ifNull(s -> {
+        s.column(property)
+                .value(def);
+    });
+}
+
+    default <T> SQLFunction ifNull(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
+        List<ColumnExpression> columnExpressions = new ArrayList<>();
+        sqlExpression.apply(new SQLKtColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
+        return ifNull(columnExpressions);
     }
 
-    default <T> SQLFunction ifNull(EntitySQLTableOwner<T> tableOwner, KProperty1<? super T, ?> property, Object def) {
-        return getSQLFunc().ifNull(tableOwner, EasyKtLambdaUtil.getPropertyName(property), def);
+    default <T> SQLFunction ifNull(List<ColumnExpression> columnExpressions) {
+        return getSQLFunc().ifNull(columnExpressions);
     }
 
     /**
@@ -92,7 +108,7 @@ public interface SQLKtLambdaFunc {
 
     default <T> SQLFunction concat(KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2) {
         return concat(s -> {
-            SQLKtColumnConcatSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
+            SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
             s1.column(property1)
                     .column(property2);
         });
@@ -100,26 +116,26 @@ public interface SQLKtLambdaFunc {
 
     default <T> SQLFunction concat(KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2, KProperty1<? super T, ?> property3) {
         return concat(s -> {
-            SQLKtColumnConcatSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
+            SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
             s1.column(property1)
                     .column(property2)
                     .column(property3);
         });
     }
 
-    default <T> SQLFunction concat(SQLExpression1<SQLKtColumnConcatSelector<T>> sqlExpression) {
-        List<ConcatExpression> concatExpressions = new ArrayList<>();
-        sqlExpression.apply(new DefaultSQLKtColumnConcatSelector<>(new DefaultColumnConcatSelector(concatExpressions)));
+    default <T> SQLFunction concat(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
+        List<ColumnExpression> concatExpressions = new ArrayList<>();
+        sqlExpression.apply(new SQLKtColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(concatExpressions)));
         return concat(concatExpressions);
     }
 
-    default SQLFunction concat(List<ConcatExpression> concatExpressions) {
+    default SQLFunction concat(List<ColumnExpression> concatExpressions) {
         return getSQLFunc().concat(concatExpressions);
     }
 
     default <T> SQLFunction join(String separator, KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2) {
         return join(separator, s -> {
-            SQLKtColumnConcatSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
+            SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
             s1.column(property1)
                     .column(property2);
         });
@@ -127,20 +143,20 @@ public interface SQLKtLambdaFunc {
 
     default <T> SQLFunction join(String separator, KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2, KProperty1<? super T, ?> property3) {
         return join(separator, s -> {
-            SQLKtColumnConcatSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
+            SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
             s1.column(property1)
                     .column(property2)
                     .column(property3);
         });
     }
 
-    default <T> SQLFunction join(String separator, SQLExpression1<SQLKtColumnConcatSelector<T>> sqlExpression) {
-        List<ConcatExpression> concatExpressions = new ArrayList<>();
-        sqlExpression.apply(new DefaultSQLKtColumnConcatSelector<>(new DefaultColumnConcatSelector(concatExpressions)));
+    default <T> SQLFunction join(String separator, SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
+        List<ColumnExpression> concatExpressions = new ArrayList<>();
+        sqlExpression.apply(new SQLKtColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(concatExpressions)));
         return join(separator, concatExpressions);
     }
 
-    default SQLFunction join(String separator, List<ConcatExpression> concatExpressions){
+    default SQLFunction join(String separator, List<ColumnExpression> concatExpressions){
         return getSQLFunc().join(separator,concatExpressions);
     }
 }

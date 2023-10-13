@@ -5,6 +5,7 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 
 /**
  * create time 2023/9/28 21:41
@@ -18,6 +19,13 @@ public interface SQLNativeProxyExpressionChain<TChain> {
     <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> TChain expression(ProxyQueryable<TEntityProxy, TEntity> subQuery);
 
     TChain value(Object val);
+    /**
+     * 将参数以[?,?,?]参数化形式拼接到sql中
+     * @param values
+     * @return
+     * @param <T>
+     */
+    <T> TChain collection(Collection<T> values);
 
     TChain format(Object formatVal);
 

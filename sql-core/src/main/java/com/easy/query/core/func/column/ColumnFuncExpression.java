@@ -1,4 +1,4 @@
-package com.easy.query.core.func.concat;
+package com.easy.query.core.func.column;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
@@ -8,7 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public interface ConcatColumnExpression extends ConcatExpression{
+public interface ColumnFuncExpression extends ColumnExpression {
     TableAvailable getTableOrNull();
     String getProperty();
 }

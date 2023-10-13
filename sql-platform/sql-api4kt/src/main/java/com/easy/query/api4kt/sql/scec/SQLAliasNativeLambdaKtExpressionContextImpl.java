@@ -6,6 +6,8 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
 import kotlin.reflect.KProperty1;
 
+import java.util.Collection;
+
 /**
  * create time 2023/7/29 23:41
  * 文件说明
@@ -52,6 +54,12 @@ public class SQLAliasNativeLambdaKtExpressionContextImpl<T1,TR> implements SQLAl
     @Override
     public SQLAliasNativeLambdaKtExpressionContext<T1,TR> value(Object val) {
         sqlAliasNativePropertyExpressionContext.value(val);
+        return this;
+    }
+
+    @Override
+    public <T> SQLAliasNativeLambdaKtExpressionContext<T1, TR> collection(Collection<T> values) {
+        sqlAliasNativePropertyExpressionContext.collection(values);
         return this;
     }
 

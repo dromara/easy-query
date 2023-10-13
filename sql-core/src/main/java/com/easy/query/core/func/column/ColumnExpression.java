@@ -1,4 +1,4 @@
-package com.easy.query.core.func.concat;
+package com.easy.query.core.func.column;
 
 /**
  * create time 2023/10/12 14:16
@@ -6,5 +6,5 @@ package com.easy.query.core.func.concat;
  *
  * @author xuejiaming
  */
-public interface ConcatExpression {
+public interface ColumnExpression {
 }

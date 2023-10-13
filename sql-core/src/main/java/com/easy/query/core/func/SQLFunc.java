@@ -2,9 +2,9 @@ package com.easy.query.core.func;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
-import com.easy.query.core.func.concat.ColumnConcatSelector;
-import com.easy.query.core.func.concat.ConcatExpression;
-import com.easy.query.core.func.concat.DefaultColumnConcatSelector;
+import com.easy.query.core.func.column.ColumnFuncSelector;
+import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
 import com.easy.query.core.util.EasyArrayUtil;
 
 import java.util.ArrayList;
@@ -18,10 +18,18 @@ import java.util.List;
  */
 public interface SQLFunc {
     default SQLFunction ifNull(String property, Object def) {
-        return ifNull(null, property, def);
+        return ifNull(s->{
+            s.column(property)
+                    .value(def);
+        });
     }
 
-    SQLFunction ifNull(SQLTableOwner tableOwner, String property, Object def);
+   default SQLFunction ifNull(SQLExpression1<ColumnFuncSelector> sqlExpression){
+       List<ColumnExpression> columnExpressions = new ArrayList<>();
+       sqlExpression.apply(new ColumnFuncSelectorImpl(columnExpressions));
+       return ifNull(columnExpressions);
+   }
+    SQLFunction ifNull(List<ColumnExpression> columnExpressions);
 
     /**
      * 获取绝对值
@@ -85,13 +93,13 @@ public interface SQLFunc {
         });
     }
 
-    default SQLFunction concat(SQLExpression1<ColumnConcatSelector> sqlExpression) {
-        List<ConcatExpression> concatExpressions = new ArrayList<>();
-        sqlExpression.apply(new DefaultColumnConcatSelector(concatExpressions));
+    default SQLFunction concat(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        List<ColumnExpression> concatExpressions = new ArrayList<>();
+        sqlExpression.apply(new ColumnFuncSelectorImpl(concatExpressions));
         return concat(concatExpressions);
     }
 
-    SQLFunction concat(List<ConcatExpression> concatExpressions);
+    SQLFunction concat(List<ColumnExpression> concatExpressions);
 
     default SQLFunction join(String separator, String property1, String property2, String... properties) {
         return join(separator, s -> {
@@ -105,11 +113,11 @@ public interface SQLFunc {
         });
     }
 
-    default SQLFunction join(String separator, SQLExpression1<ColumnConcatSelector> sqlExpression) {
-        List<ConcatExpression> concatExpressions = new ArrayList<>();
-        sqlExpression.apply(new DefaultColumnConcatSelector(concatExpressions));
+    default SQLFunction join(String separator, SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        List<ColumnExpression> concatExpressions = new ArrayList<>();
+        sqlExpression.apply(new ColumnFuncSelectorImpl(concatExpressions));
         return join(separator, concatExpressions);
     }
 
-    SQLFunction join(String separator, List<ConcatExpression> concatExpressions);
+    SQLFunction join(String separator, List<ColumnExpression> concatExpressions);
 }

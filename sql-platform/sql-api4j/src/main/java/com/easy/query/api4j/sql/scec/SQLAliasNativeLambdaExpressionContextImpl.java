@@ -6,6 +6,8 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
 
+import java.util.Collection;
+
 /**
  * create time 2023/7/29 23:41
  * 文件说明
@@ -52,6 +54,12 @@ public class SQLAliasNativeLambdaExpressionContextImpl<T1,TR> implements SQLAlia
     @Override
     public SQLAliasNativeLambdaExpressionContext<T1,TR> value(Object val) {
         sqlAliasNativePropertyExpressionContext.value(val);
+        return this;
+    }
+
+    @Override
+    public <T> SQLAliasNativeLambdaExpressionContext<T1, TR> collection(Collection<T> values) {
+        sqlAliasNativePropertyExpressionContext.collection(values);
         return this;
     }
 
