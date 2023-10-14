@@ -1,4 +1,4 @@
-package com.easy.query.pgsql.func;
+package com.easy.query.oracle.func;
 
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -13,11 +13,11 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class PgSQLStringJoinSQLFunction extends ConcatSQLFunction {
+public class OracleStringJoinSQLFunction extends ConcatSQLFunction {
     private final String separator;
     private final List<ColumnExpression> concatExpressions;
 
-    public PgSQLStringJoinSQLFunction(String separator, List<ColumnExpression> concatExpressions) {
+    public OracleStringJoinSQLFunction(String separator, List<ColumnExpression> concatExpressions) {
         super(concatExpressions);
         this.concatExpressions = concatExpressions;
         Objects.requireNonNull(separator, "join separator can not be null");

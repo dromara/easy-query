@@ -20,7 +20,7 @@ public class StringJoinSQLFunction extends ConcatSQLFunction {
     public StringJoinSQLFunction(String separator, List<ColumnExpression> concatExpressions) {
         super(concatExpressions);
         this.concatExpressions = concatExpressions;
-        Objects.requireNonNull(separator, "concat_ws separator can not be null");
+        Objects.requireNonNull(separator, "join separator can not be null");
         this.separator = separator;
     }
 

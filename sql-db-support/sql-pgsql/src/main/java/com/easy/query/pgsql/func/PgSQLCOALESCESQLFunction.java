@@ -13,10 +13,10 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class COALESCESQLFunction extends AbstractExpressionSQLFunction {
+public class PgSQLCOALESCESQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
 
-    public COALESCESQLFunction(List<ColumnExpression> columnExpressions) {
+    public PgSQLCOALESCESQLFunction(List<ColumnExpression> columnExpressions) {
 
         this.columnExpressions = columnExpressions;
     }

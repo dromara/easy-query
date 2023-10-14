@@ -1,4 +1,4 @@
-package com.easy.query.pgsql.func;
+package com.easy.query.oracle.func;
 
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -13,13 +13,13 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class PgSQLConcatSQLFunction extends AbstractExpressionSQLFunction {
+public class OracleConcatSQLFunction extends AbstractExpressionSQLFunction {
 
     private final List<ColumnExpression> columnExpressions;
 
-    public PgSQLConcatSQLFunction(List<ColumnExpression> concatExpressions) {
+    public OracleConcatSQLFunction(List<ColumnExpression> concatExpressions) {
         if (EasyCollectionUtil.isEmpty(concatExpressions)) {
-            throw new IllegalArgumentException("PgSQLConcatSQLFunction columns empty");
+            throw new IllegalArgumentException("OracleConcatSQLFunction columns empty");
         }
         this.columnExpressions = concatExpressions;
     }
