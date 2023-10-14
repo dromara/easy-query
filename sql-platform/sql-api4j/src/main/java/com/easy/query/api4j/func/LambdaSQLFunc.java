@@ -83,6 +83,10 @@ public interface LambdaSQLFunc<T1> {
         return getSQLFunc().round(tableOwner, EasyLambdaUtil.getPropertyName(property), scale);
     }
 
+    default SQLFunction dateTimeJavaFormat(Property<T1, ?> property) {
+        return dateTimeJavaFormat(property, null);
+    }
+
     default SQLFunction dateTimeJavaFormat(Property<T1, ?> property, String javaFormat) {
         return dateTimeJavaFormat(null, property, javaFormat);
     }
@@ -148,5 +152,14 @@ public interface LambdaSQLFunc<T1> {
 
     default SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
         return getSQLFunc().join(separator, concatExpressions);
+    }
+
+
+    default SQLFunction now() {
+        return getSQLFunc().now();
+    }
+
+    default SQLFunction utcNow() {
+        return getSQLFunc().utcNow();
     }
 }

@@ -115,4 +115,39 @@ public class QueryTest extends PgSQLBaseTest {
             i++;
         }
     }
+
+
+    @Test
+    public void query8() {
+        Queryable<String> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "97"))
+                .select(String.class,o->o.func(o.sqlFunc().concat(BlogEntity::getId,BlogEntity::getId)));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT t.\"id\" || t.\"id\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
+        String blogEntity = queryable.firstOrNull();
+        Assert.assertNotNull(blogEntity);
+        Assert.assertEquals("9797", blogEntity);
+    }
+    @Test
+    public void query9() {
+        Queryable<String> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "97"))
+                .select(String.class,o->o.func(o.sqlFunc().concat(BlogEntity::getId,BlogEntity::getTitle)));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT t.\"id\" || t.\"title\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
+        String blogEntity = queryable.firstOrNull();
+        Assert.assertNotNull(blogEntity);
+        Assert.assertEquals("97title97", blogEntity);
+    }
+    @Test
+    public void query10() {
+        Queryable<String> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "97"))
+                .select(String.class,o->o.func(o.sqlFunc().join(",",BlogEntity::getId,BlogEntity::getTitle)));
+        String sql = queryable.toSQL();
+        Assert.assertEquals("SELECT t.\"id\" || ? || t.\"title\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
+        String blogEntity = queryable.firstOrNull();
+        Assert.assertNotNull(blogEntity);
+        Assert.assertEquals("97,title97", blogEntity);
+    }
 }

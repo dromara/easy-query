@@ -1,7 +1,8 @@
-package com.easy.query.core.func.def;
+package com.easy.query.kingbase.es.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
+import com.easy.query.core.func.def.AbstractSQLFunction;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -13,12 +14,12 @@ import java.util.regex.Pattern;
  *
  * @author xuejiaming
  */
-public class DateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
+public class KingbaseESDateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
     private final TableAvailable table;
     private final String property;
     private final String javaFormat;
 
-    public DateTimeJavaFormatSQLFunction(TableAvailable table, String property, String javaFormat) {
+    public KingbaseESDateTimeJavaFormatSQLFunction(TableAvailable table, String property, String javaFormat) {
         this.table = table;
         this.property = property;
         this.javaFormat = javaFormat;
@@ -53,46 +54,56 @@ public class DateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
             String format = this.javaFormat;
             switch (format) {
                 case "yyyy-MM-dd HH:mm:ss":
-                    return "DATE_FORMAT({0},'%Y-%m-%d %H:%i:%s')";
+                    return "to_char({0},'YYYY-MM-DD HH24:MI:SS')";
                 case "yyyy-MM-dd HH:mm":
-                    return "DATE_FORMAT({0},'%Y-%m-%d %H:%i')";
+                    return "to_char({0},'YYYY-MM-DD HH24:MI')";
                 case "yyyy-MM-dd HH":
-                    return "DATE_FORMAT({0},'%Y-%m-%d %H')";
+                    return "to_char({0},'YYYY-MM-DD HH24')";
                 case "yyyy-MM-dd":
-                    return "DATE_FORMAT({0},'%Y-%m-%d')";
+                    return "to_char({0},'YYYY-MM-DD')";
                 case "yyyy-MM":
-                    return "DATE_FORMAT({0},'%Y-%m')";
+                    return "to_char({0},'YYYY-MM')";
                 case "yyyyMMddHHmmss":
-                    return "DATE_FORMAT({0},'%Y%m%d%H%i%s')";
+                    return "to_char({0},'YYYYMMDDHH24MISS')";
                 case "yyyyMMddHHmm":
-                    return "DATE_FORMAT({0},'%Y%m%d%H%i')";
+                    return "to_char({0},'YYYYMMDDHH24MI')";
                 case "yyyyMMddHH":
-                    return "DATE_FORMAT({0},'%Y%m%d%H')";
+                    return "to_char({0},'YYYYMMDDHH24')";
                 case "yyyyMMdd":
-                    return "DATE_FORMAT({0},'%Y%m%d')";
+                    return "to_char({0},'YYYYMMDD')";
                 case "yyyyMM":
-                    return "DATE_FORMAT({0},'%Y%m')";
+                    return "to_char({0},'YYYYMM')";
                 case "yyyy":
-                    return "DATE_FORMAT({0},'%Y')";
+                    return "to_char({0},'YYYY')";
                 case "HH:mm:ss":
-                    return "DATE_FORMAT({0},'%H:%i:%s')";
+                    return "to_char({0},'HH24:MI:SS')";
             }
+            format=replaceFormat(format);
 
-            format = replaceFormat(format);
-
-            String[] argsFinds = {"%Y", "%y", "%_a1", "%c", "%d", "%e", "%H", "%k", "%h", "%l", "%i", "%_a2", "%p"};
-            String[] argsSpts = format.split("(m|s|t)");
-
+            String[] argsFinds = { "YYYY", "YY", "%_a1", "%_a2", "%_a3", "%_a4", "%_a5", "SS", "%_a6" };
+            String[] argsSpts = format.split("(M|d|H|h|m|s|t)");
             for (int a = 0; a < argsSpts.length; a++) {
                 switch (argsSpts[a]) {
+                    case "M":
+                        argsSpts[a] = "ltrim(to_char({0},'MM'),'0')";
+                        break;
+                    case "d":
+                        argsSpts[a] = "case when substr(to_char({0},'DD'),1,1) = '0' then substr(to_char({0},'DD'),2,1) else to_char({0},'DD') end";
+                        break;
+                    case "H":
+                        argsSpts[a] = "case when substr(to_char({0},'HH24'),1,1) = '0' then substr(to_char({0},'HH24'),2,1) else to_char({0},'HH24') end";
+                        break;
+                    case "h":
+                        argsSpts[a] = "case when substr(to_char({0},'HH12'),1,1) = '0' then substr(to_char({0},'HH12'),2,1) else to_char({0},'HH12') end";
+                        break;
                     case "m":
-                        argsSpts[a] = "CASE WHEN SUBSTR(DATE_FORMAT({0},'%i'),1,1) = '0' THEN SUBSTR(DATE_FORMAT({0},'%i'),2,1) ELSE DATE_FORMAT({0},'%i') END";
+                        argsSpts[a] = "case when substr(to_char({0},'MI'),1,1) = '0' then substr(to_char({0},'MI'),2,1) else to_char({0},'MI') end";
                         break;
                     case "s":
-                        argsSpts[a] = "CASE WHEN SUBSTR(DATE_FORMAT({0},'%s'),1,1) = '0' THEN SUBSTR(DATE_FORMAT({0},'%s'),2,1) ELSE DATE_FORMAT({0},'%s') END";
+                        argsSpts[a] = "case when substr(to_char({0},'SS'),1,1) = '0' then substr(to_char({0},'SS'),2,1) else to_char({0},'SS') end";
                         break;
                     case "t":
-                        argsSpts[a] = "TRIM(TRAILING 'M' FROM DATE_FORMAT({0},'%p'))";
+                        argsSpts[a] = "rtrim(to_char({0},'AM'),'M')";
                         break;
                     default:
                         String argsSptsA = argsSpts[a];
@@ -103,72 +114,64 @@ public class DateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
                             argsSptsA = argsSptsA.substring(0, argsSptsA.length() - 1);
                         }
                         if (Arrays.stream(argsFinds).anyMatch(argsSptsA::contains)) {
-                            argsSpts[a] = "DATE_FORMAT({0},'" + argsSptsA + "')";
+                            argsSpts[a] = "to_char({0},'"+argsSptsA+"')";
                         } else {
                             argsSpts[a] = "'" + argsSptsA + "'";
                         }
                         break;
                 }
             }
-
-            if (argsSpts.length == 1) {
-                format = argsSpts[0];
-            } else if (argsSpts.length > 1) {
-                format = "CONCAT(" + String.join(", ", Arrays.stream(argsSpts).filter(a -> !a.equals("''")).toArray(String[]::new)) + ")";
+            if(argsSpts.length==1){
+                format=argsSpts[0];
+            }else if(argsSpts.length>1){
+                format = "(" + String.join(" || ", Arrays.stream(argsSpts)
+                        .filter(a -> !a.equals("''"))
+                        .toArray(String[]::new)) + ")";
             }
-
-            return format.replace("%_a1", "%m").replace("%_a2", "%s");
+            return format.replace("%_a1", "MM")
+                    .replace("%_a2", "DD")
+                    .replace("%_a3", "HH24")
+                    .replace("%_a4", "HH12")
+                    .replace("%_a5", "MI")
+                    .replace("%_a6", "AM");
         }
-        return "DATE_FORMAT({0},'%Y-%m-%d %H:%i:%s.%f')";
+        return "to_char({0},'YYYY-MM-DD HH24:MI:SS.US')";
     }
 
     protected String replaceFormat(String format) {
-        String pattern = "(yyyy|yy|MM|M|dd|d|HH|H|hh|h|mm|ss|tt)";
+        String pattern = "(yyyy|yy|MM|dd|HH|hh|mm|ss|tt)";
         Pattern r = Pattern.compile(pattern);
         Matcher matcher = r.matcher(format);
-
         StringBuffer result = new StringBuffer();
         while (matcher.find()) {
             String match = matcher.group(1);
             switch (match) {
                 case "yyyy":
-                    matcher.appendReplacement(result, "%Y");
+                    matcher.appendReplacement(result, "YYYY");
                     break;
                 case "yy":
-                    matcher.appendReplacement(result, "%y");
+                    matcher.appendReplacement(result, "YY");
                     break;
                 case "MM":
                     matcher.appendReplacement(result, "%_a1");
                     break;
-                case "M":
-                    matcher.appendReplacement(result, "%c");
-                    break;
                 case "dd":
-                    matcher.appendReplacement(result, "%d");
-                    break;
-                case "d":
-                    matcher.appendReplacement(result, "%e");
-                    break;
-                case "HH":
-                    matcher.appendReplacement(result, "%H");
-                    break;
-                case "H":
-                    matcher.appendReplacement(result, "%k");
-                    break;
-                case "hh":
-                    matcher.appendReplacement(result, "%h");
-                    break;
-                case "h":
-                    matcher.appendReplacement(result, "%l");
-                    break;
-                case "mm":
-                    matcher.appendReplacement(result, "%i");
-                    break;
-                case "ss":
                     matcher.appendReplacement(result, "%_a2");
                     break;
+                case "HH":
+                    matcher.appendReplacement(result, "%_a3");
+                    break;
+                case "hh":
+                    matcher.appendReplacement(result, "%_a4");
+                    break;
+                case "mm":
+                    matcher.appendReplacement(result, "%_a5");
+                    break;
+                case "ss":
+                    matcher.appendReplacement(result, "SS");
+                    break;
                 case "tt":
-                    matcher.appendReplacement(result, "%p");
+                    matcher.appendReplacement(result, "%_a6");
                     break;
             }
         }

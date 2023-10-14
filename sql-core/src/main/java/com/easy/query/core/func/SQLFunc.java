@@ -69,6 +69,9 @@ public interface SQLFunc {
      */
     SQLFunction round(SQLTableOwner tableOwner, String property, int scale);
 
+    default SQLFunction dateTimeJavaFormat(String property) {
+        return dateTimeJavaFormat(property, null);
+    }
     default SQLFunction dateTimeJavaFormat(String property, String javaFormat) {
         return dateTimeJavaFormat(null, property, javaFormat);
     }
@@ -120,4 +123,7 @@ public interface SQLFunc {
     }
 
     SQLFunction join(String separator, List<ColumnExpression> concatExpressions);
+
+    SQLFunction now();
+    SQLFunction utcNow();
 }

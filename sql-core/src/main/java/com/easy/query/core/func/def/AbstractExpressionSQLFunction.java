@@ -16,28 +16,33 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public abstract class AbstractExpressionSQLFunction extends AbstractSQLFunction{
+public abstract class AbstractExpressionSQLFunction extends AbstractSQLFunction {
     protected abstract List<ColumnExpression> getColumnExpressions();
+
     protected void invokeExpression(SQLNativeChainExpressionContext context) {
         for (ColumnExpression concatExpression : getColumnExpressions()) {
-            if(concatExpression instanceof ColumnFuncExpression){
-                ColumnFuncExpression concatColumnExpression = (ColumnFuncExpression) concatExpression;
-                TableAvailable tableOrNull = concatColumnExpression.getTableOrNull();
-                if(tableOrNull==null){
-                    context.expression(concatColumnExpression.getProperty());
-                } else {
-                    context.expression(tableOrNull, concatColumnExpression.getProperty());
-                }
-            }else if(concatExpression instanceof ColumnFuncValueExpression){
-                ColumnFuncValueExpression concatValueExpression = (ColumnFuncValueExpression) concatExpression;
-                context.value(concatValueExpression.getValue());
+            invokeExpression0(context,concatExpression);
+        }
+    }
 
-            }else if(concatExpression instanceof ColumnFuncFormatExpression){
-                ColumnFuncFormatExpression concatFormatExpression = (ColumnFuncFormatExpression) concatExpression;
-                context.format(concatFormatExpression.getFormat());
-            }else{
-                throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(concatExpression));
+    protected void invokeExpression0(SQLNativeChainExpressionContext context, ColumnExpression concatExpression) {
+        if (concatExpression instanceof ColumnFuncExpression) {
+            ColumnFuncExpression concatColumnExpression = (ColumnFuncExpression) concatExpression;
+            TableAvailable tableOrNull = concatColumnExpression.getTableOrNull();
+            if (tableOrNull == null) {
+                context.expression(concatColumnExpression.getProperty());
+            } else {
+                context.expression(tableOrNull, concatColumnExpression.getProperty());
             }
+        } else if (concatExpression instanceof ColumnFuncValueExpression) {
+            ColumnFuncValueExpression concatValueExpression = (ColumnFuncValueExpression) concatExpression;
+            context.value(concatValueExpression.getValue());
+
+        } else if (concatExpression instanceof ColumnFuncFormatExpression) {
+            ColumnFuncFormatExpression concatFormatExpression = (ColumnFuncFormatExpression) concatExpression;
+            context.format(concatFormatExpression.getFormat());
+        } else {
+            throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(concatExpression));
         }
     }
 }

@@ -13,11 +13,11 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class ConcatJoinSQLFunction extends ConcatSQLFunction {
+public class StringJoinSQLFunction extends ConcatSQLFunction {
     private final String separator;
     private final List<ColumnExpression> concatExpressions;
 
-    public ConcatJoinSQLFunction(String separator, List<ColumnExpression> concatExpressions) {
+    public StringJoinSQLFunction(String separator, List<ColumnExpression> concatExpressions) {
         super(concatExpressions);
         this.concatExpressions = concatExpressions;
         Objects.requireNonNull(separator, "concat_ws separator can not be null");

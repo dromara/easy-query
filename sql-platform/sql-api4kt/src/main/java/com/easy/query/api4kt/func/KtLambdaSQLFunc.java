@@ -90,6 +90,9 @@ default SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
         return getSQLFunc().round(tableOwner, EasyKtLambdaUtil.getPropertyName(property), scale);
     }
 
+    default SQLFunction dateTimeJavaFormat(KProperty1<? super T, ?> property) {
+        return dateTimeJavaFormat( property, null);
+    }
     default SQLFunction dateTimeJavaFormat(KProperty1<? super T, ?> property, String javaFormat) {
         return dateTimeJavaFormat(null, property, javaFormat);
     }
@@ -158,5 +161,13 @@ default SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
 
     default SQLFunction join(String separator, List<ColumnExpression> concatExpressions){
         return getSQLFunc().join(separator,concatExpressions);
+    }
+
+    default SQLFunction now() {
+        return getSQLFunc().now();
+    }
+
+    default SQLFunction utcNow() {
+        return getSQLFunc().utcNow();
     }
 }

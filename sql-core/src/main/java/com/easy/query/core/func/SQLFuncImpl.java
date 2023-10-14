@@ -4,12 +4,14 @@ import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbsSQLFunction;
-import com.easy.query.core.func.def.ConcatJoinSQLFunction;
+import com.easy.query.core.func.def.NowSQLFunction;
+import com.easy.query.core.func.def.StringJoinSQLFunction;
 import com.easy.query.core.func.def.ConcatSQLFunction;
 import com.easy.query.core.func.def.DateTimeJavaFormatSQLFunction;
 import com.easy.query.core.func.def.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.IfNullSQLFunction;
 import com.easy.query.core.func.def.RoundSQLFunction;
+import com.easy.query.core.func.def.UtcNowSQLFunction;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public class SQLFuncImpl implements SQLFunc {
-    private TableAvailable getTable(SQLTableOwner tableOwner) {
+    protected TableAvailable getTable(SQLTableOwner tableOwner) {
         return EasyObjectUtil.getValueOrNull(tableOwner, SQLTableOwner::getTable);
     }
 
@@ -57,7 +59,16 @@ public class SQLFuncImpl implements SQLFunc {
 
     @Override
     public SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
-        return new ConcatJoinSQLFunction(separator, concatExpressions);
+        return new StringJoinSQLFunction(separator, concatExpressions);
     }
 
+    @Override
+    public SQLFunction now() {
+        return NowSQLFunction.INSTANCE;
+    }
+
+    @Override
+    public SQLFunction utcNow() {
+        return UtcNowSQLFunction.INSTANCE;
+    }
 }

@@ -65,6 +65,9 @@ public interface ProxySQLFunc {
         return getSQLFunc().round(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.value(), scale);
     }
 
+    default <TProxy, T> SQLFunction dateTimeJavaFormat(SQLColumn<TProxy, T> sqlColumn) {
+        return getSQLFunc().dateTimeJavaFormat(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.value(), null);
+    }
     default <TProxy, T> SQLFunction dateTimeJavaFormat(SQLColumn<TProxy, T> sqlColumn, String javaFormat) {
         return getSQLFunc().dateTimeJavaFormat(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.value(), javaFormat);
     }
@@ -115,5 +118,13 @@ public interface ProxySQLFunc {
 
     default SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
         return getSQLFunc().join(separator, concatExpressions);
+    }
+
+    default SQLFunction now() {
+        return getSQLFunc().now();
+    }
+
+    default SQLFunction utcNow() {
+        return getSQLFunc().utcNow();
     }
 }

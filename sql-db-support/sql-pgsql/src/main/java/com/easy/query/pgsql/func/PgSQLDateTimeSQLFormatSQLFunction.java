@@ -1,7 +1,8 @@
-package com.easy.query.core.func.def;
+package com.easy.query.pgsql.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
+import com.easy.query.core.func.def.AbstractSQLFunction;
 
 /**
  * create time 2023/10/6 21:57
@@ -9,19 +10,19 @@ import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainE
  *
  * @author xuejiaming
  */
-public class DateTimeSQLFormatSQLFunction extends AbstractSQLFunction {
+public class PgSQLDateTimeSQLFormatSQLFunction extends AbstractSQLFunction {
     private final TableAvailable table;
     private final String property;
     private final String format;
 
-    public DateTimeSQLFormatSQLFunction(TableAvailable table, String property, String format){
+    public PgSQLDateTimeSQLFormatSQLFunction(TableAvailable table, String property, String format){
         this.table = table;
         this.property = property;
         this.format = format;
     }
     @Override
     public String sqlSegment() {
-        return "DATE_FORMAT({0}, '{1}')";
+        return "to_char({0}, '{1}')";
     }
 
     @Override
