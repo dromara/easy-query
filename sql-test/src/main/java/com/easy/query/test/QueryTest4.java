@@ -215,7 +215,7 @@ public class QueryTest4 extends BaseTest {
         SQLFunc sqlFunc = easyQueryClient.sqlFunc();
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.func(sqlFunc.ifNull("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(sqlFunc.ifNull("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -224,7 +224,7 @@ public class QueryTest4 extends BaseTest {
         SQLFunc sqlFunc = easyQueryClient.sqlFunc();
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.func(sqlFunc.ifNull("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(sqlFunc.ifNull("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -233,7 +233,7 @@ public class QueryTest4 extends BaseTest {
         SQLFunc sqlFunc = easyQueryClient.sqlFunc();
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.func(sqlFunc.ifNull(x -> x.column("id").column("title").value("1")))).toSQL();
+                .select(String.class, o -> o.sqlFunc(sqlFunc.ifNull(x -> x.column("id").column("title").value("1")))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,t.`title`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -242,7 +242,7 @@ public class QueryTest4 extends BaseTest {
         SQLFunc sqlFunc = easyQueryClient.sqlFunc();
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.func(sqlFunc.dateTimeJavaFormat("createTime", "yyyy/MM/dd"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(sqlFunc.dateTimeJavaFormat("createTime", "yyyy/MM/dd"))).toSQL();
         Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y/%m/%d') FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -251,7 +251,7 @@ public class QueryTest4 extends BaseTest {
         SQLFunc sqlFunc = easyQueryClient.sqlFunc();
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.func(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toSQL();
         Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y-%m-%d') FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -263,7 +263,7 @@ public class QueryTest4 extends BaseTest {
                         //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                 )
                 .orderByDesc(o -> o.column("createTime"))
-                .select(String.class, o -> o.func(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toList();
+                .select(String.class, o -> o.sqlFunc(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toList();
         for (String s : list) {
             Assert.assertEquals("2023-05-25", s);
         }
@@ -277,7 +277,7 @@ public class QueryTest4 extends BaseTest {
                         //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                 )
                 .orderByDesc(o -> o.column("createTime"))
-                .select(String.class, o -> o.func(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toList();
+                .select(String.class, o -> o.sqlFunc(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toList();
         for (String s : list) {
             Assert.assertEquals("2023-05-25", s);
         }
@@ -291,7 +291,7 @@ public class QueryTest4 extends BaseTest {
                         //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                 )
                 .orderByDesc(o -> o.column("createTime"))
-                .select(Topic.class, o -> o.funcAs(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"), "title")).toList();
+                .select(Topic.class, o -> o.sqlFuncAs(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"), "title")).toList();
         for (Topic s : list) {
             Assert.assertEquals("2023-05-25", s.getTitle());
         }
@@ -300,7 +300,7 @@ public class QueryTest4 extends BaseTest {
                         //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                 )
                 .orderByDesc(o -> o.column("createTime"))
-                .select(Topic.class, o -> o.funcAs(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"), "title")).toSQL();
+                .select(Topic.class, o -> o.sqlFuncAs(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"), "title")).toSQL();
         Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
     }
 
@@ -312,7 +312,7 @@ public class QueryTest4 extends BaseTest {
                         //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                 )
                 .orderByDesc(o -> o.column("createTime"))
-                .select(Topic.class, o -> o.funcAs(sqlFunc.abs("createTime"), "title")).toSQL();
+                .select(Topic.class, o -> o.sqlFuncAs(sqlFunc.abs("createTime"), "title")).toSQL();
         Assert.assertEquals("SELECT ABS(t.`create_time`) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
     }
 
@@ -325,7 +325,7 @@ public class QueryTest4 extends BaseTest {
                             //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                     )
                     .orderByDesc(o -> o.column("createTime"))
-                    .select(Topic.class, o -> o.funcAs(sqlFunc.round("stars", 1), "title")).toSQL();
+                    .select(Topic.class, o -> o.sqlFuncAs(sqlFunc.round("stars", 1), "title")).toSQL();
             Assert.assertEquals("SELECT ROUND(t.`stars`,1) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
         }
         {
@@ -336,7 +336,7 @@ public class QueryTest4 extends BaseTest {
                     .orderByDesc(o -> o.column(Topic::getCreateTime))
                     .select(Topic.class, o -> {
                         LambdaSQLFunc<Topic> sqlFunc = o.fx();
-                        o.funcAs(sqlFunc.round(Topic::getStars, 1), Topic::getTitle);
+                        o.sqlFuncAs(sqlFunc.round(Topic::getStars, 1), Topic::getTitle);
                     }).toSQL();
             Assert.assertEquals("SELECT ROUND(t.`stars`,1) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
         }
@@ -351,7 +351,7 @@ public class QueryTest4 extends BaseTest {
                             //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                     )
                     .orderByDesc(o -> o.column("createTime"))
-                    .select(Topic.class, o -> o.funcAs(sqlFunc.concat("stars", "id"), "title")).toSQL();
+                    .select(Topic.class, o -> o.sqlFuncAs(sqlFunc.concat("stars", "id"), "title")).toSQL();
             Assert.assertEquals("SELECT CONCAT(t.`stars`,t.`id`) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
         }
         {
@@ -362,7 +362,7 @@ public class QueryTest4 extends BaseTest {
                     .orderByDesc(o -> o.column(Topic::getCreateTime))
                     .select(Topic.class, o -> {
                         LambdaSQLFunc<Topic> sqlFunc = o.fx();
-                        o.funcAs(sqlFunc.concat(Topic::getStars, Topic::getId), Topic::getTitle);
+                        o.sqlFuncAs(sqlFunc.concat(Topic::getStars, Topic::getId), Topic::getTitle);
                     }).toSQL();
             Assert.assertEquals("SELECT CONCAT(t.`stars`,t.`id`) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
         }
@@ -430,7 +430,7 @@ public class QueryTest4 extends BaseTest {
             TopicProxy table = TopicProxy.createTable();
             String topic = easyProxyQuery.queryable(table)
                     .where(o -> o.eq(table.id(), "1"))
-                    .select(StringProxy.createTable(), o -> o.func(o.fx().dateTimeJavaFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
+                    .select(StringProxy.createTable(), o -> o.sqlFunc(o.fx().dateTimeJavaFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
                     .firstOrNull();
             Assert.assertEquals("2023/05/25 10:48:05", topic);
         }
@@ -439,7 +439,7 @@ public class QueryTest4 extends BaseTest {
             TopicProxy table = TopicProxy.createTable();
             String topic = easyProxyQuery.queryable(table)
                     .where(o -> o.eq(table.id(), "1"))
-                    .select(StringProxy.createTable(), o -> o.func(o.fx().dateTimeJavaFormat(table.createTime(), "yyyy-MM/dd HH:mm:ss")))
+                    .select(StringProxy.createTable(), o -> o.sqlFunc(o.fx().dateTimeJavaFormat(table.createTime(), "yyyy-MM/dd HH:mm:ss")))
                     .firstOrNull();
             Assert.assertEquals("2023-05/25 10:48:05", topic);
         }
@@ -447,7 +447,7 @@ public class QueryTest4 extends BaseTest {
 
             String topic = easyQuery.queryable(Topic.class)
                     .where(o -> o.eq(Topic::getId, "1"))
-                    .select(String.class, o -> o.func(o.fx().dateTimeJavaFormat(Topic::getCreateTime)))
+                    .select(String.class, o -> o.sqlFunc(o.fx().dateTimeJavaFormat(Topic::getCreateTime)))
                     .firstOrNull();
             Assert.assertEquals("2023-05-25 10:48:05.000000", topic);
         }

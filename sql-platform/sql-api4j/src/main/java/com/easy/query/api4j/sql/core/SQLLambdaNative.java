@@ -49,17 +49,5 @@ public interface SQLLambdaNative<TEntity,TChain> extends ChainCast<TChain> {
         }
         return castChain();
     }
-    default TChain sqlFunc(SQLFuncLambdaInvoker<TEntity> sqlFuncLambdaInvoker){
-        return sqlFunc(true,sqlFuncLambdaInvoker);
-    }
-    default TChain sqlFunc(boolean condition,SQLFuncLambdaInvoker<TEntity> sqlFuncLambdaInvoker){
-        if(condition){
-            String sqlSegment = sqlFuncLambdaInvoker.sqlSegment();
-            getSQLPropertyNative().sqlNativeSegment(sqlSegment,context->{
-                sqlFuncLambdaInvoker.contextConsume(new SQLNativeLambdaExpressionContextImpl<>(context));
-            });
-        }
-        return castChain();
-    }
 
 }

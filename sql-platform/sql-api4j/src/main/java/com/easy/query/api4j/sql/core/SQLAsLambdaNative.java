@@ -59,10 +59,10 @@ public interface SQLAsLambdaNative<TEntity,TR,TChain> extends EntitySQLTableOwne
 
 
 
-    default TChain func(SQLFunction sqlFunction){
-        return func(true,sqlFunction);
+    default TChain sqlFunc(SQLFunction sqlFunction){
+        return sqlFunc(true,sqlFunction);
     }
-    default TChain func(boolean condition, SQLFunction sqlFunction){
+    default TChain sqlFunc(boolean condition, SQLFunction sqlFunction){
         if(condition){
             String sqlSegment = sqlFunction.sqlSegment(getTable());
             getSQLAsPropertyNative().sqlNativeSegment(sqlSegment,context->{
@@ -72,10 +72,10 @@ public interface SQLAsLambdaNative<TEntity,TR,TChain> extends EntitySQLTableOwne
         return castChain();
     }
 
-    default TChain funcAs(SQLFunction sqlFunction, Property<TR,?> property){
-        return funcAs(true,sqlFunction,property);
+    default TChain sqlFuncAs(SQLFunction sqlFunction, Property<TR,?> property){
+        return sqlFuncAs(true,sqlFunction,property);
     }
-    default TChain funcAs(boolean condition, SQLFunction sqlFunction,Property<TR,?> property){
+    default TChain sqlFuncAs(boolean condition, SQLFunction sqlFunction, Property<TR,?> property){
         if(condition){
             String sqlSegment = sqlFunction.sqlSegment(getTable());
             getSQLAsPropertyNative().sqlNativeSegment(sqlSegment,context->{
