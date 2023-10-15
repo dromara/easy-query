@@ -5,6 +5,7 @@ import com.easy.query.api4j.sql.scec.SQLAliasNativeLambdaExpressionContextImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.expression.parser.core.base.core.SQLAsPropertyNative;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
@@ -16,7 +17,7 @@ import com.easy.query.core.func.SQLFunction;
  *
  * @author xuejiaming
  */
-public interface SQLAsLambdaNative<TEntity,TR,TChain> extends ChainCast<TChain> {
+public interface SQLAsLambdaNative<TEntity,TR,TChain> extends EntitySQLTableOwner<TEntity>,ChainCast<TChain> {
     <T> SQLAsPropertyNative<T> getSQLAsPropertyNative();
 
     /**
@@ -63,7 +64,7 @@ public interface SQLAsLambdaNative<TEntity,TR,TChain> extends ChainCast<TChain> 
     }
     default TChain func(boolean condition, SQLFunction sqlFunction){
         if(condition){
-            String sqlSegment = sqlFunction.sqlSegment();
+            String sqlSegment = sqlFunction.sqlSegment(getTable());
             getSQLAsPropertyNative().sqlNativeSegment(sqlSegment,context->{
                 sqlFunction.consume(context.getSQLNativeChainExpressionContext());
             });
@@ -76,7 +77,7 @@ public interface SQLAsLambdaNative<TEntity,TR,TChain> extends ChainCast<TChain> 
     }
     default TChain funcAs(boolean condition, SQLFunction sqlFunction,Property<TR,?> property){
         if(condition){
-            String sqlSegment = sqlFunction.sqlSegment();
+            String sqlSegment = sqlFunction.sqlSegment(getTable());
             getSQLAsPropertyNative().sqlNativeSegment(sqlSegment,context->{
                 SQLNativeChainExpressionContext sqlNativeChainExpressionContext = context.getSQLNativeChainExpressionContext();
                 sqlNativeChainExpressionContext.setPropertyAlias(EasyLambdaUtil.getPropertyName(property));

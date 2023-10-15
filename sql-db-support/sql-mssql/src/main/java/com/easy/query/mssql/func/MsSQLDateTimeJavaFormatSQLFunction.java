@@ -25,7 +25,7 @@ public class MsSQLDateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
     }
 
     @Override
-    public String sqlSegment() {
+    public String sqlSegment(TableAvailable defaultTable) {
         return getSQLSegment();
     }
 
@@ -54,28 +54,28 @@ public class MsSQLDateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
             String format = this.javaFormat;
             switch (format) {
                 case "yyyy-MM-dd HH:mm:ss":
-                    return "convert(char(19), {0}, 120)";
+                    return "CONVERT(CHAR(19), {0}, 120)";
                 case "yyyy-MM-dd HH:mm":
-                    return "substring(convert(char(19), {0}, 120), 1, 16)";
+                    return "SUBSTRING(CONVERT(CHAR(19), {0}, 120), 1, 16)";
                 case "yyyy-MM-dd HH":
-                    return "substring(convert(char(19), {0}, 120), 1, 13)";
+                    return "SUBSTRING(CONVERT(CHAR(19), {0}, 120), 1, 13)";
                 case "yyyy-MM-dd":
-                    return "convert(char(10), {0}, 23)";
+                    return "CONVERT(CHAR(10), {0}, 23)";
                 case "yyyy-MM":
-                    return "substring(convert(char(10), {0}, 23), 1, 7)";
+                    return "SUBSTRING(CONVERT(CHAR(10), {0}, 23), 1, 7)";
                 case "yyyyMMdd":
-                    return "convert(char(8), {0}, 112)";
+                    return "CONVERT(CHAR(8), {0}, 112)";
                 case "yyyyMM":
-                    return "substring(convert(char(8), {0}, 112), 1, 6)";
+                    return "SUBSTRING(CONVERT(CHAR(8), {0}, 112), 1, 6)";
                 case "yyyy":
-                    return "substring(convert(char(8), {0}, 112), 1, 4)";
+                    return "SUBSTRING(CONVERT(CHAR(8), {0}, 112), 1, 4)";
                 case "HH:mm:ss":
-                    return "convert(char(8), {0}, 24)";
+                    return "CONVERT(CHAR(8), {0}, 24)";
             }
 
             return replaceFormat(format);
         }
-        return "convert(varchar, {0}, 121)";
+        return "CONVERT(VARCHAR, {0}, 121)";
     }
 
     protected String replaceFormat(String format) {
@@ -90,54 +90,54 @@ public class MsSQLDateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
             String match = matcher.group(1);
             switch (match) {
                 case "yyyy":
-                    matcher.appendReplacement(result, "' + substring(convert(char(8), {left}, 112), 1, 4)'");
+                    matcher.appendReplacement(result, "' + SUBSTRING(CONVERT(CHAR(8), {0}, 112), 1, 4)'");
                     break;
                 case "yy":
-                    matcher.appendReplacement(result, "' + substring(convert(char(6), {left}, 12), 1, 2)'");
+                    matcher.appendReplacement(result, "' + SUBSTRING(CONVERT(CHAR(6), {0}, 12), 1, 2)'");
                     break;
                 case "MM":
-                    matcher.appendReplacement(result, "' + substring(convert(char(6), {left}, 12), 3, 2)'");
+                    matcher.appendReplacement(result, "' + SUBSTRING(CONVERT(CHAR(6), {0}, 12), 3, 2)'");
                     break;
                 case "M":
-                    matcher.appendReplacement(result, "' + case when substring(convert(char(6), {left}, 12), 3, 1) = '0' then substring(convert(char(6), {left}, 12), 4, 1) else substring(convert(char(6), {left}, 12), 3, 2) end'");
+                    matcher.appendReplacement(result, "' + CASE WHEN SUBSTRING(CONVERT(CHAR(6), {0}, 12), 3, 1) = '0' THEN SUBSTRING(CONVERT(CHAR(6), {0}, 12), 4, 1) else SUBSTRING(CONVERT(CHAR(6), {0}, 12), 3, 2) END'");
                     break;
                 case "dd":
-                    matcher.appendReplacement(result, "' + substring(convert(char(6), {left}, 12), 5, 2)'");
+                    matcher.appendReplacement(result, "' + SUBSTRING(CONVERT(CHAR(6), {0}, 12), 5, 2)'");
                     break;
                 case "d":
-                    matcher.appendReplacement(result, "' + case when substring(convert(char(6), {left}, 12), 5, 1) = '0' then substring(convert(char(6), {left}, 12), 6, 1) else substring(convert(char(6), {left}, 12), 5, 2) end'");
+                    matcher.appendReplacement(result, "' + CASE WHEN SUBSTRING(CONVERT(CHAR(6), {0}, 12), 5, 1) = '0' THEN SUBSTRING(CONVERT(CHAR(6), {0}, 12), 6, 1) ELSE SUBSTRING(CONVERT(CHAR(6), {0}, 12), 5, 2) END'");
                     break;
                 case "HH":
-                    matcher.appendReplacement(result, "' + substring(convert(char(8), {left}, 24), 1, 2)'");
+                    matcher.appendReplacement(result, "' + SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 2)'");
                     break;
                 case "H":
-                    matcher.appendReplacement(result, "' + case when substring(convert(char(8), {left}, 24), 1, 1) = '0' then substring(convert(char(8), {left}, 24), 2, 1) else substring(convert(char(8), {left}, 24), 1, 2) end'");
+                    matcher.appendReplacement(result, "' + CASE WHEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 1) = '0' THEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 2, 1) ELSE SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 2) END'");
                     break;
                 case "hh":
-                    matcher.appendReplacement(result, "' + case cast(case when substring(convert(char(8), {left}, 24), 1, 1) = '0' then substring(convert(char(8), {left}, 24), 2, 1) else substring(convert(char(8), {left}, 24), 1, 2) end as int) % 12 " +
-                            "when 0 then '12' when 1 then '01' when 2 then '02' when 3 then '03' when 4 then '04' when 5 then '05' when 6 then '06' when 7 then '07' when 8 then '08' when 9 then '09' when 10 then '10' when 11 then '11' end'");
+                    matcher.appendReplacement(result, "' + CASE CAST(CASE WHEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 1) = '0' THEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 2, 1) ELSE SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 2) END as int) % 12 " +
+                            "WHEN 0 THEN '12' WHEN 1 THEN '01' WHEN 2 THEN '02' WHEN 3 THEN '03' WHEN 4 THEN '04' WHEN 5 THEN '05' WHEN 6 THEN '06' WHEN 7 THEN '07' WHEN 8 THEN '08' WHEN 9 THEN '09' WHEN 10 THEN '10' WHEN 11 THEN '11' END'");
                     break;
                 case "h":
-                    matcher.appendReplacement(result, "' + case cast(case when substring(convert(char(8), {left}, 24), 1, 1) = '0' then substring(convert(char(8), {left}, 24), 2, 1) else substring(convert(char(8), {left}, 24), 1, 2) end as int) % 12" +
-                            "when 0 then '12' when 1 then '1' when 2 then '2' when 3 then '3' when 4 then '4' when 5 then '5' when 6 then '6' when 7 then '7' when 8 then '8' when 9 then '9' when 10 then '10' when 11 then '11' end'");
+                    matcher.appendReplacement(result, "' + case cast(CASE WHEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 1) = '0' THEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 2, 1) ELSE SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 2) END as int) % 12" +
+                            "WHEN 0 THEN '12' WHEN 1 THEN '1' WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4' WHEN 5 THEN '5' WHEN 6 THEN '6' WHEN 7 THEN '7' WHEN 8 THEN '8' WHEN 9 THEN '9' WHEN 10 THEN '10' WHEN 11 THEN '11' END'");
                     break;
                 case "mm":
-                    matcher.appendReplacement(result, "' + substring(convert(char(8), {left}, 24), 4, 2)'");
+                    matcher.appendReplacement(result, "' + SUBSTRING(CONVERT(CHAR(8), {0}, 24), 4, 2)'");
                     break;
                 case "m":
-                    matcher.appendReplacement(result, "' + case when substring(convert(char(8), {left}, 24), 4, 1) = '0' then substring(convert(char(8), {left}, 24), 5, 1) else substring(convert(char(8), {left}, 24), 4, 2) end'");
+                    matcher.appendReplacement(result, "' + CASE WHEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 4, 1) = '0' THEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 5, 1) else SUBSTRING(CONVERT(CHAR(8), {0}, 24), 4, 2) END'");
                     break;
                 case "ss":
-                    matcher.appendReplacement(result, "' + substring(convert(char(8), {left}, 24), 7, 2)'");
+                    matcher.appendReplacement(result, "' + SUBSTRING(CONVERT(CHAR(8), {0}, 24), 7, 2)'");
                     break;
                 case "s":
-                    matcher.appendReplacement(result, "' + case when substring(convert(char(8), {left}, 24), 7, 1) = '0' then substring(convert(char(8), {left}, 24), 8, 1) else substring(convert(char(8), {left}, 24), 7, 2) end'");
+                    matcher.appendReplacement(result, "' + CASE WHEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 7, 1) = '0' THEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 8, 1) else SUBSTRING(CONVERT(CHAR(8), {0}, 24), 7, 2) END'");
                     break;
                 case "tt":
-                    matcher.appendReplacement(result, "' + case when cast(case when substring(convert(char(8), {left}, 24), 1, 1) = '0' then substring(convert(char(8), {left}, 24), 2, 1) else substring(convert(char(8), {left}, 24), 1, 2) end as int) >= 12 then 'PM' else 'AM' end'");
+                    matcher.appendReplacement(result, "' + CASE WHEN cast(CASE WHEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 1) = '0' THEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 2, 1) else SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 2) END as int) >= 12 THEN 'PM' else 'AM' END'");
                     break;
                 case "t":
-                    matcher.appendReplacement(result, "' + case when cast(case when substring(convert(char(8), {left}, 24), 1, 1) = '0' then substring(convert(char(8), {left}, 24), 2, 1) else substring(convert(char(8), {left}, 24), 1, 2) end as int) >= 12 then 'P' else 'A' end'");
+                    matcher.appendReplacement(result, "' + CASE WHEN cast(CASE WHEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 1) = '0' THEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 2, 1) else SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 2) END as int) >= 12 THEN 'P' else 'A' END'");
                     break;
             }
         }

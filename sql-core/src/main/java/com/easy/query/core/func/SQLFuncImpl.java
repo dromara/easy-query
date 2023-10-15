@@ -4,12 +4,11 @@ import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbsSQLFunction;
-import com.easy.query.core.func.def.NowSQLFunction;
-import com.easy.query.core.func.def.StringJoinSQLFunction;
 import com.easy.query.core.func.def.ConcatSQLFunction;
 import com.easy.query.core.func.def.DateTimeJavaFormatSQLFunction;
 import com.easy.query.core.func.def.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.IfNullSQLFunction;
+import com.easy.query.core.func.def.NowSQLFunction;
 import com.easy.query.core.func.def.RoundSQLFunction;
 import com.easy.query.core.func.def.UtcNowSQLFunction;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -57,10 +56,10 @@ public class SQLFuncImpl implements SQLFunc {
         return new ConcatSQLFunction(concatExpressions);
     }
 
-    @Override
-    public SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
-        return new StringJoinSQLFunction(separator, concatExpressions);
-    }
+//    @Override
+//    public SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
+//        return new StringJoinSQLFunction(separator, concatExpressions);
+//    }
 
     @Override
     public SQLFunction now() {

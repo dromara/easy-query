@@ -20,7 +20,7 @@ public class DateTimeSQLFormatSQLFunction extends AbstractSQLFunction {
         this.format = format;
     }
     @Override
-    public String sqlSegment() {
+    public String sqlSegment(TableAvailable defaultTable) {
         return "DATE_FORMAT({0}, '{1}')";
     }
 

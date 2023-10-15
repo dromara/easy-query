@@ -74,7 +74,7 @@ public interface SQLAsProxyNative<TRProxy extends ProxyEntity<TRProxy, TR>, TR, 
     }
     default TChain func(boolean condition, SQLFunction sqlFunction){
         if(condition){
-            String sqlSegment = sqlFunction.sqlSegment();
+            String sqlSegment = sqlFunction.sqlSegment(null);
             getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
                 sqlFunction.consume(new SQLNativeChainExpressionContextImpl(null,context));
             });
@@ -87,7 +87,7 @@ public interface SQLAsProxyNative<TRProxy extends ProxyEntity<TRProxy, TR>, TR, 
     }
     default TChain funcAs(boolean condition, SQLFunction sqlFunction,SQLColumn<TRProxy,TR> sqlColumn){
         if(condition){
-            String sqlSegment = sqlFunction.sqlSegment();
+            String sqlSegment = sqlFunction.sqlSegment(null);
             getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
                 SQLNativeChainExpressionContext sqlNativeChainExpressionContext = new SQLNativeChainExpressionContextImpl(null,context);
                 sqlNativeChainExpressionContext.setPropertyAlias(sqlColumn.value());

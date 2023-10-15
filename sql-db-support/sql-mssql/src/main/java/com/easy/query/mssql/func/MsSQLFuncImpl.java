@@ -1,4 +1,4 @@
-package com.easy.query.pgsql.func;
+package com.easy.query.mssql.func;
 
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFuncImpl;
@@ -13,24 +13,24 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class PgSQLFuncImpl extends SQLFuncImpl {
+public class MsSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction ifNull(List<ColumnExpression> columnExpressions) {
-        return new PgSQLCOALESCESQLFunction(columnExpressions);
+        return new MsSQLIsNullSQLFunction(columnExpressions);
     }
 
     @Override
     public SQLFunction dateTimeJavaFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
-        return new PgSQLDateTimeJavaFormatSQLFunction(getTable(tableOwner), property, javaFormat);
+        return new MsSQLDateTimeJavaFormatSQLFunction(getTable(tableOwner), property, javaFormat);
     }
     @Override
     public SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format) {
-        return new PgSQLDateTimeSQLFormatSQLFunction(getTable(tableOwner), property, format);
+        return new MsSQLDateTimeSQLFormatSQLFunction(getTable(tableOwner), property, format);
     }
 
     @Override
     public SQLFunction concat(List<ColumnExpression> concatExpressions) {
-        return new PgSQLConcatSQLFunction(concatExpressions);
+        return new MsSQLConcatSQLFunction(concatExpressions);
     }
 //    @Override
 //    public SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
@@ -39,11 +39,11 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
 
     @Override
     public SQLFunction now() {
-        return PgSQLNowSQLFunction.INSTANCE;
+        return MsSQLNowSQLFunction.INSTANCE;
     }
 
     @Override
     public SQLFunction utcNow() {
-        return PgSQLUtcNowSQLFunction.INSTANCE;
+        return MsSQLUtcNowSQLFunction.INSTANCE;
     }
 }

@@ -58,7 +58,7 @@ public interface SQLAsPropertyNative<TChain> extends SQLTableOwner, ChainCast<TC
     }
     default TChain func(boolean condition, SQLFunction sqlFunction){
         if(condition){
-            String sqlSegment = sqlFunction.sqlSegment();
+            String sqlSegment = sqlFunction.sqlSegment(getTable());
             getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
                 sqlFunction.consume(new SQLNativeChainExpressionContextImpl(getTable(),context));
             });
@@ -71,7 +71,7 @@ public interface SQLAsPropertyNative<TChain> extends SQLTableOwner, ChainCast<TC
     }
     default TChain funcAs(boolean condition, SQLFunction sqlFunction,String propertyAlias){
         if(condition){
-            String sqlSegment = sqlFunction.sqlSegment();
+            String sqlSegment = sqlFunction.sqlSegment(getTable());
             getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
                 SQLNativeChainExpressionContextImpl sqlNativeChainExpressionContext = new SQLNativeChainExpressionContextImpl(getTable(), context);
                 sqlNativeChainExpressionContext.setPropertyAlias(propertyAlias);

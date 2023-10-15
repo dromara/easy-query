@@ -227,7 +227,7 @@ public class FilterImpl implements Filter {
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,sqlNativeExpressionContext));
         SQLPredicateCompare predicateCompare = getReallyPredicateCompare(sqlPredicateCompare);
-        String sqlSegment = sqlFunction.sqlSegment();
+        String sqlSegment = sqlFunction.sqlSegment(table);
         sqlNativeExpressionContext.value(val);
         nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment+" "+predicateCompare.getSQL()+" {"+sqlFunction.paramMarks()+"}", sqlNativeExpressionContext));
         next();
@@ -235,11 +235,11 @@ public class FilterImpl implements Filter {
     private void funcColumnFilter0(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight, SQLPredicateCompare sqlPredicateCompare) {
         SQLNativeExpressionContextImpl sqlNativeExpressionContextLeft = new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
         sqlFunctionLeft.consume(new SQLNativeChainExpressionContextImpl(tableLeft,sqlNativeExpressionContextLeft));
-        String sqlSegmentLeft = sqlFunctionLeft.sqlSegment();
+        String sqlSegmentLeft = sqlFunctionLeft.sqlSegment(tableLeft);
         SQLNativePredicateImpl sqlNativePredicateLeft = new SQLNativePredicateImpl(runtimeContext, sqlSegmentLeft, sqlNativeExpressionContextLeft);
         SQLNativeExpressionContextImpl sqlNativeExpressionContextRight = new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
         sqlFunctionRight.consume(new SQLNativeChainExpressionContextImpl(tableRight,sqlNativeExpressionContextRight));
-        String sqlSegmentRight = sqlFunctionRight.sqlSegment();
+        String sqlSegmentRight = sqlFunctionRight.sqlSegment(tableRight);
         SQLNativePredicateImpl sqlNativePredicateRight = new SQLNativePredicateImpl(runtimeContext, sqlSegmentRight, sqlNativeExpressionContextRight);
 
         SQLPredicateCompare predicateCompare = getReallyPredicateCompare(sqlPredicateCompare);

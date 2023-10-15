@@ -243,7 +243,7 @@ public class QueryTest4 extends BaseTest {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
                 .select(String.class, o -> o.func(sqlFunc.dateTimeJavaFormat("createTime", "yyyy/MM/dd"))).toSQL();
-        Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`, '%Y/%m/%d') FROM `t_topic` t WHERE t.`id` = ?", sql1);
+        Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y/%m/%d') FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
     @Test
@@ -252,7 +252,7 @@ public class QueryTest4 extends BaseTest {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
                 .select(String.class, o -> o.func(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"))).toSQL();
-        Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`, '%Y-%m-%d') FROM `t_topic` t WHERE t.`id` = ?", sql1);
+        Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y-%m-%d') FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
     @Test
@@ -301,7 +301,7 @@ public class QueryTest4 extends BaseTest {
                 )
                 .orderByDesc(o -> o.column("createTime"))
                 .select(Topic.class, o -> o.funcAs(sqlFunc.dateTimeJavaFormat("createTime", "yyyy-MM-dd"), "title")).toSQL();
-        Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`, '%Y-%m-%d') AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
+        Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
     }
 
     @Test
@@ -335,7 +335,7 @@ public class QueryTest4 extends BaseTest {
                     )
                     .orderByDesc(o -> o.column(Topic::getCreateTime))
                     .select(Topic.class, o -> {
-                        LambdaSQLFunc<Topic> sqlFunc = o.sqlFunc();
+                        LambdaSQLFunc<Topic> sqlFunc = o.fx();
                         o.funcAs(sqlFunc.round(Topic::getStars, 1), Topic::getTitle);
                     }).toSQL();
             Assert.assertEquals("SELECT ROUND(t.`stars`,1) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
@@ -361,7 +361,7 @@ public class QueryTest4 extends BaseTest {
                     )
                     .orderByDesc(o -> o.column(Topic::getCreateTime))
                     .select(Topic.class, o -> {
-                        LambdaSQLFunc<Topic> sqlFunc = o.sqlFunc();
+                        LambdaSQLFunc<Topic> sqlFunc = o.fx();
                         o.funcAs(sqlFunc.concat(Topic::getStars, Topic::getId), Topic::getTitle);
                     }).toSQL();
             Assert.assertEquals("SELECT CONCAT(t.`stars`,t.`id`) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
@@ -374,7 +374,7 @@ public class QueryTest4 extends BaseTest {
 
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .where(o -> {
-                    LambdaSQLFunc<SysUser> userSqlFunc = o.sqlFunc();
+                    LambdaSQLFunc<SysUser> userSqlFunc = o.fx();
                     o.eq(userSqlFunc.ifNull(SysUser::getId, "123"), userSqlFunc.ifNull(x -> x.column(SysUser::getIdCard).value("1243")));
                 });
         String sql = queryable.toSQL();
@@ -389,7 +389,7 @@ public class QueryTest4 extends BaseTest {
 
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .where(o -> {
-                    LambdaSQLFunc<SysUser> userSqlFunc = o.sqlFunc();
+                    LambdaSQLFunc<SysUser> userSqlFunc = o.fx();
                     o.eq(userSqlFunc.ifNull(SysUser::getId, "123"), "abc");
                 });
         String sql = queryable.toSQL();
@@ -402,7 +402,7 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc12() {
         TopicProxy table = TopicProxy.createTable();
         String sql1 = easyProxyQuery.queryable(table)
-                .where(o -> o.eq(o.sqlFunc().ifNull(table.id(), "123"), o.sqlFunc().ifNull(table.createTime(), "123")))
+                .where(o -> o.eq(o.fx().ifNull(table.id(), "123"), o.fx().ifNull(table.createTime(), "123")))
                 .toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = IFNULL(`create_time`,?)", sql1);
     }
@@ -412,7 +412,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             String sql1 = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.sqlFunc().ifNull(table.id(), "123"), o.sqlFunc().dateTimeJavaFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
+                    .where(o -> o.eq(o.fx().ifNull(table.id(), "123"), o.fx().dateTimeJavaFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = DATE_FORMAT(`create_time`,'%Y/%m/%d %H:%i:%s')", sql1);
 
@@ -421,7 +421,7 @@ public class QueryTest4 extends BaseTest {
 
             TopicProxy table = TopicProxy.createTable();
             Topic topic = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.sqlFunc().ifNull(table.id(), "123"), o.sqlFunc().dateTimeJavaFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
+                    .where(o -> o.eq(o.fx().ifNull(table.id(), "123"), o.fx().dateTimeJavaFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
                     .firstOrNull();
             Assert.assertNull(topic);
         }
@@ -430,7 +430,7 @@ public class QueryTest4 extends BaseTest {
             TopicProxy table = TopicProxy.createTable();
             String topic = easyProxyQuery.queryable(table)
                     .where(o -> o.eq(table.id(), "1"))
-                    .select(StringProxy.createTable(), o -> o.func(o.sqlFunc().dateTimeJavaFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
+                    .select(StringProxy.createTable(), o -> o.func(o.fx().dateTimeJavaFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
                     .firstOrNull();
             Assert.assertEquals("2023/05/25 10:48:05", topic);
         }
@@ -439,7 +439,7 @@ public class QueryTest4 extends BaseTest {
             TopicProxy table = TopicProxy.createTable();
             String topic = easyProxyQuery.queryable(table)
                     .where(o -> o.eq(table.id(), "1"))
-                    .select(StringProxy.createTable(), o -> o.func(o.sqlFunc().dateTimeJavaFormat(table.createTime(), "yyyy-MM/dd HH:mm:ss")))
+                    .select(StringProxy.createTable(), o -> o.func(o.fx().dateTimeJavaFormat(table.createTime(), "yyyy-MM/dd HH:mm:ss")))
                     .firstOrNull();
             Assert.assertEquals("2023-05/25 10:48:05", topic);
         }
@@ -447,9 +447,9 @@ public class QueryTest4 extends BaseTest {
 
             String topic = easyQuery.queryable(Topic.class)
                     .where(o -> o.eq(Topic::getId, "1"))
-                    .select(String.class, o -> o.func(o.sqlFunc().dateTimeJavaFormat(Topic::getCreateTime)))
+                    .select(String.class, o -> o.func(o.fx().dateTimeJavaFormat(Topic::getCreateTime)))
                     .firstOrNull();
-            Assert.assertEquals("2023-05/25 10:48:05.000000", topic);
+            Assert.assertEquals("2023-05-25 10:48:05.000000", topic);
         }
     }
 
@@ -458,7 +458,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             String sql1 = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.sqlFunc().ifNull(table.id(), "123"), "111"))
+                    .where(o -> o.eq(o.fx().ifNull(table.id(), "123"), "111"))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = ?", sql1);
 
@@ -466,7 +466,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             Topic topic = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.sqlFunc().ifNull(table.id(), "123"), "111"))
+                    .where(o -> o.eq(o.fx().ifNull(table.id(), "123"), "111"))
                     .firstOrNull();
             Assert.assertNull(topic);
 

@@ -68,5 +68,5 @@ public interface QueryRuntimeContext {
     IncludeParserEngine getIncludeParserEngine();
     WhereObjectQueryExecutor getWhereObjectQueryExecutor();
     ObjectSortQueryExecutor getObjectSortQueryExecutor();
-    SQLFunc sqlFunc();
+    SQLFunc fx();
 }

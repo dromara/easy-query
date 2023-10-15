@@ -1,4 +1,4 @@
-package com.easy.query.pgsql.func;
+package com.easy.query.mssql.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
@@ -11,11 +11,11 @@ import com.easy.query.core.func.def.AbstractSQLFunction;
  *
  * @author xuejiaming
  */
-public class PgSQLNowSQLFunction extends AbstractSQLFunction {
-    public static final SQLFunction INSTANCE=new PgSQLNowSQLFunction();
+public class MsSQLNowSQLFunction extends AbstractSQLFunction {
+    public static final SQLFunction INSTANCE=new MsSQLNowSQLFunction();
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        return "CURRENT_TIMESTAMP";
+        return "GETDATE()";
     }
 
     @Override

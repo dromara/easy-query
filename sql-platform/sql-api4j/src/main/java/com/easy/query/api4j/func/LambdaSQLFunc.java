@@ -128,31 +128,31 @@ public interface LambdaSQLFunc<T1> {
     default SQLFunction concat(List<ColumnExpression> concatExpressions) {
         return getSQLFunc().concat(concatExpressions);
     }
-
-    default SQLFunction join(String separator, Property<T1, ?> property1, Property<T1, ?> property2) {
-        return this.<T1>join(separator, s -> {
-            s.column(property1)
-                    .column(property2);
-        });
-    }
-
-    default SQLFunction join(String separator, Property<T1, ?> property1, Property<T1, ?> property2, Property<T1, ?> property3) {
-        return this.<T1>join(separator, s -> {
-            s.column(property1)
-                    .column(property2)
-                    .column(property3);
-        });
-    }
-
-    default SQLFunction join(String separator, SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
-        List<ColumnExpression> columnExpressions = new ArrayList<>();
-        sqlExpression.apply(new SQLColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
-        return join(separator, columnExpressions);
-    }
-
-    default SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
-        return getSQLFunc().join(separator, concatExpressions);
-    }
+//
+//    default SQLFunction join(String separator, Property<T1, ?> property1, Property<T1, ?> property2) {
+//        return this.<T1>join(separator, s -> {
+//            s.column(property1)
+//                    .column(property2);
+//        });
+//    }
+//
+//    default SQLFunction join(String separator, Property<T1, ?> property1, Property<T1, ?> property2, Property<T1, ?> property3) {
+//        return this.<T1>join(separator, s -> {
+//            s.column(property1)
+//                    .column(property2)
+//                    .column(property3);
+//        });
+//    }
+//
+//    default SQLFunction join(String separator, SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
+//        List<ColumnExpression> columnExpressions = new ArrayList<>();
+//        sqlExpression.apply(new SQLColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
+//        return join(separator, columnExpressions);
+//    }
+//
+//    default SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
+//        return getSQLFunc().join(separator, concatExpressions);
+//    }
 
 
     default SQLFunction now() {

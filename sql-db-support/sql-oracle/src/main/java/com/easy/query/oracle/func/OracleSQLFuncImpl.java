@@ -32,10 +32,10 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction concat(List<ColumnExpression> concatExpressions) {
         return new OracleConcatSQLFunction(concatExpressions);
     }
-    @Override
-    public SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
-        return new OracleStringJoinSQLFunction(separator, concatExpressions);
-    }
+//    @Override
+//    public SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
+//        return new OracleStringJoinSQLFunction(separator, concatExpressions);
+//    }
 
     @Override
     public SQLFunction now() {

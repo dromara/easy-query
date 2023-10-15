@@ -206,6 +206,6 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
     @Override
     public SQLFunc sqlFunc() {
-        return runtimeContext.sqlFunc();
+        return runtimeContext.fx();
     }
 }

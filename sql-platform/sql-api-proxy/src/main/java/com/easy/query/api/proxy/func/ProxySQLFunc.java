@@ -97,28 +97,28 @@ public interface ProxySQLFunc {
     default SQLFunction concat(List<ColumnExpression> concatExpressions) {
         return getSQLFunc().concat(concatExpressions);
     }
-
-    default SQLFunction join(String separator, SQLColumn<?, ?> sqlColumn1, SQLColumn<?, ?> sqlColumn2, SQLColumn<?, ?>... sqlColumns) {
-        return join(separator, s -> {
-            s.column(sqlColumn1)
-                    .column(sqlColumn2);
-            if (EasyArrayUtil.isNotEmpty(sqlColumns)) {
-                for (SQLColumn<?, ?> sqlColumn : sqlColumns) {
-                    s.column(sqlColumn);
-                }
-            }
-        });
-    }
-
-    default <T> SQLFunction join(String separator, SQLExpression1<ProxyColumnFuncSelector> sqlExpression) {
-        List<ColumnExpression> concatExpressions = new ArrayList<>();
-        sqlExpression.apply(new ProxyColumnFuncSelectorImpl(new ColumnFuncSelectorImpl(concatExpressions)));
-        return join(separator, concatExpressions);
-    }
-
-    default SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
-        return getSQLFunc().join(separator, concatExpressions);
-    }
+//
+//    default SQLFunction join(String separator, SQLColumn<?, ?> sqlColumn1, SQLColumn<?, ?> sqlColumn2, SQLColumn<?, ?>... sqlColumns) {
+//        return join(separator, s -> {
+//            s.column(sqlColumn1)
+//                    .column(sqlColumn2);
+//            if (EasyArrayUtil.isNotEmpty(sqlColumns)) {
+//                for (SQLColumn<?, ?> sqlColumn : sqlColumns) {
+//                    s.column(sqlColumn);
+//                }
+//            }
+//        });
+//    }
+//
+//    default <T> SQLFunction join(String separator, SQLExpression1<ProxyColumnFuncSelector> sqlExpression) {
+//        List<ColumnExpression> concatExpressions = new ArrayList<>();
+//        sqlExpression.apply(new ProxyColumnFuncSelectorImpl(new ColumnFuncSelectorImpl(concatExpressions)));
+//        return join(separator, concatExpressions);
+//    }
+//
+//    default SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
+//        return getSQLFunc().join(separator, concatExpressions);
+//    }
 
     default SQLFunction now() {
         return getSQLFunc().now();

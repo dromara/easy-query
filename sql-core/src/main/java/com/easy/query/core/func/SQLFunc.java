@@ -104,25 +104,25 @@ public interface SQLFunc {
 
     SQLFunction concat(List<ColumnExpression> concatExpressions);
 
-    default SQLFunction join(String separator, String property1, String property2, String... properties) {
-        return join(separator, s -> {
-            s.column(property1)
-                    .column(property2);
-            if (EasyArrayUtil.isNotEmpty(properties)) {
-                for (String property : properties) {
-                    s.column(property);
-                }
-            }
-        });
-    }
+//    default SQLFunction join(String separator, String property1, String property2, String... properties) {
+//        return join(separator, s -> {
+//            s.column(property1)
+//                    .column(property2);
+//            if (EasyArrayUtil.isNotEmpty(properties)) {
+//                for (String property : properties) {
+//                    s.column(property);
+//                }
+//            }
+//        });
+//    }
 
-    default SQLFunction join(String separator, SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        List<ColumnExpression> concatExpressions = new ArrayList<>();
-        sqlExpression.apply(new ColumnFuncSelectorImpl(concatExpressions));
-        return join(separator, concatExpressions);
-    }
-
-    SQLFunction join(String separator, List<ColumnExpression> concatExpressions);
+//    default SQLFunction join(String separator, SQLExpression1<ColumnFuncSelector> sqlExpression) {
+//        List<ColumnExpression> concatExpressions = new ArrayList<>();
+//        sqlExpression.apply(new ColumnFuncSelectorImpl(concatExpressions));
+//        return join(separator, concatExpressions);
+//    }
+//
+//    SQLFunction join(String separator, List<ColumnExpression> concatExpressions);
 
     SQLFunction now();
     SQLFunction utcNow();

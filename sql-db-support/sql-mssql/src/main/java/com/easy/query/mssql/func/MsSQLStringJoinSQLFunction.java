@@ -1,4 +1,4 @@
-//package com.easy.query.oracle.func;
+//package com.easy.query.mssql.func;
 //
 //import com.easy.query.core.expression.parser.core.available.TableAvailable;
 //import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
@@ -14,11 +14,11 @@
 // *
 // * @author xuejiaming
 // */
-//public class OracleStringJoinSQLFunction extends ConcatSQLFunction {
+//public class MsSQLStringJoinSQLFunction extends ConcatSQLFunction {
 //    private final String separator;
 //    private final List<ColumnExpression> concatExpressions;
 //
-//    public OracleStringJoinSQLFunction(String separator, List<ColumnExpression> concatExpressions) {
+//    public MsSQLStringJoinSQLFunction(String separator, List<ColumnExpression> concatExpressions) {
 //        super(concatExpressions);
 //        this.concatExpressions = concatExpressions;
 //        Objects.requireNonNull(separator, "join separator can not be null");

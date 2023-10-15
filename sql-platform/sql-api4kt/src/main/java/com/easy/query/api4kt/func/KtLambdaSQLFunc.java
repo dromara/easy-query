@@ -136,32 +136,32 @@ default SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
         return getSQLFunc().concat(concatExpressions);
     }
 
-    default SQLFunction join(String separator, KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2) {
-        return join(separator, s -> {
-            SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
-            s1.column(property1)
-                    .column(property2);
-        });
-    }
-
-    default SQLFunction join(String separator, KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2, KProperty1<? super T, ?> property3) {
-        return join(separator, s -> {
-            SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
-            s1.column(property1)
-                    .column(property2)
-                    .column(property3);
-        });
-    }
-
-    default SQLFunction join(String separator, SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
-        List<ColumnExpression> concatExpressions = new ArrayList<>();
-        sqlExpression.apply(new SQLKtColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(concatExpressions)));
-        return join(separator, concatExpressions);
-    }
-
-    default SQLFunction join(String separator, List<ColumnExpression> concatExpressions){
-        return getSQLFunc().join(separator,concatExpressions);
-    }
+//    default SQLFunction join(String separator, KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2) {
+//        return join(separator, s -> {
+//            SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
+//            s1.column(property1)
+//                    .column(property2);
+//        });
+//    }
+//
+//    default SQLFunction join(String separator, KProperty1<? super T, ?> property1, KProperty1<? super T, ?> property2, KProperty1<? super T, ?> property3) {
+//        return join(separator, s -> {
+//            SQLKtColumnFuncSelector<T> s1 = EasyObjectUtil.typeCastNullable(s);
+//            s1.column(property1)
+//                    .column(property2)
+//                    .column(property3);
+//        });
+//    }
+//
+//    default SQLFunction join(String separator, SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
+//        List<ColumnExpression> concatExpressions = new ArrayList<>();
+//        sqlExpression.apply(new SQLKtColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(concatExpressions)));
+//        return join(separator, concatExpressions);
+//    }
+//
+//    default SQLFunction join(String separator, List<ColumnExpression> concatExpressions){
+//        return getSQLFunc().join(separator,concatExpressions);
+//    }
 
     default SQLFunction now() {
         return getSQLFunc().now();

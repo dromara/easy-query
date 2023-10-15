@@ -26,7 +26,7 @@ public class OracleDateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
     }
 
     @Override
-    public String sqlSegment() {
+    public String sqlSegment(TableAvailable defaultTable) {
         return getSQLSegment();
     }
 
@@ -53,29 +53,29 @@ public class OracleDateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
             String format = this.javaFormat;
             switch (format) {
                 case "yyyy-MM-dd HH:mm:ss":
-                    return "to_char({0},'YYYY-MM-DD HH24:MI:SS')";
+                    return "TO_CHAR({0},'YYYY-MM-DD HH24:MI:SS')";
                 case "yyyy-MM-dd HH:mm":
-                    return "to_char({0},'YYYY-MM-DD HH24:MI')";
+                    return "TO_CHAR({0},'YYYY-MM-DD HH24:MI')";
                 case "yyyy-MM-dd HH":
-                    return "to_char({0},'YYYY-MM-DD HH24')";
+                    return "TO_CHAR({0},'YYYY-MM-DD HH24')";
                 case "yyyy-MM-dd":
-                    return "to_char({0},'YYYY-MM-DD')";
+                    return "TO_CHAR({0},'YYYY-MM-DD')";
                 case "yyyy-MM":
-                    return "to_char({0},'YYYY-MM')";
+                    return "TO_CHAR({0},'YYYY-MM')";
                 case "yyyyMMddHHmmss":
-                    return "to_char({0},'YYYYMMDDHH24MISS')";
+                    return "TO_CHAR({0},'YYYYMMDDHH24MISS')";
                 case "yyyyMMddHHmm":
-                    return "to_char({0},'YYYYMMDDHH24MI')";
+                    return "TO_CHAR({0},'YYYYMMDDHH24MI')";
                 case "yyyyMMddHH":
-                    return "to_char({0},'YYYYMMDDHH24')";
+                    return "TO_CHAR({0},'YYYYMMDDHH24')";
                 case "yyyyMMdd":
-                    return "to_char({0},'YYYYMMDD')";
+                    return "TO_CHAR({0},'YYYYMMDD')";
                 case "yyyyMM":
-                    return "to_char({0},'YYYYMM')";
+                    return "TO_CHAR({0},'YYYYMM')";
                 case "yyyy":
-                    return "to_char({0},'YYYY')";
+                    return "TO_CHAR({0},'YYYY')";
                 case "HH:mm:ss":
-                    return "to_char({0},'HH24:MI:SS')";
+                    return "TO_CHAR({0},'HH24:MI:SS')";
             }
             format=replaceFormat(format);
 
@@ -85,32 +85,32 @@ public class OracleDateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
             for (int a = 0; a < argsSpts.length; a++) {
                 switch (argsSpts[a]) {
                     case "M":
-                        argsSpts[a] = "ltrim(to_char({0},'MM'),'0')";
+                        argsSpts[a] = "LTRIM(TO_CHAR({0},'MM'),'0')";
                         break;
                     case "d":
-                        argsSpts[a] = "CASE WHEN substr(to_char({0},'DD'),1,1) = '0' THEN substr(to_char({0},'DD'),2,1) ELSE to_char({0},'DD') END";
+                        argsSpts[a] = "CASE WHEN SUBSTR(TO_CHAR({0},'DD'),1,1) = '0' THEN SUBSTR(TO_CHAR({0},'DD'),2,1) ELSE TO_CHAR({0},'DD') END";
                         break;
                     case "H":
-                        argsSpts[a] = "CASE WHEN substr(to_char({0},'HH24'),1,1) = '0' THEN substr(to_char({0},'HH24'),2,1) ELSE to_char({0},'HH24') END";
+                        argsSpts[a] = "CASE WHEN SUBSTR(TO_CHAR({0},'HH24'),1,1) = '0' THEN SUBSTR(TO_CHAR({0},'HH24'),2,1) ELSE TO_CHAR({0},'HH24') END";
                         break;
                     case "hh":
-                        argsSpts[a] = "CASE mod(cast(CASE WHEN substr(to_char({0},'HH24'),1,1) = '0' THEN substr(to_char({0},'HH24'),2,1) ELSE to_char({0},'HH24') END as number),12) " +
+                        argsSpts[a] = "CASE mod(cast(CASE WHEN SUBSTR(TO_CHAR({0},'HH24'),1,1) = '0' THEN SUBSTR(TO_CHAR({0},'HH24'),2,1) ELSE TO_CHAR({0},'HH24') END as number),12) " +
                                 "WHEN 0 THEN '12' WHEN 1 THEN '01' WHEN 2 THEN '02' WHEN 3 THEN '03' WHEN 4 THEN '04' WHEN 5 THEN '05' WHEN 6 THEN '06' " +
                                 "WHEN 7 THEN '07' WHEN 8 THEN '08' WHEN 9 THEN '09' WHEN 10 THEN '10' WHEN 11 THEN '11' END";
                         break;
                     case "h":
-                        argsSpts[a] = "CASE mod(cast(CASE WHEN substr(to_char({0},'HH12'),1,1) = '0' THEN substr(to_char({0},'HH12'),2,1) ELSE to_char({0},'HH12') END as number),12) " +
+                        argsSpts[a] = "CASE mod(cast(CASE WHEN SUBSTR(TO_CHAR({0},'HH12'),1,1) = '0' THEN SUBSTR(TO_CHAR({0},'HH12'),2,1) ELSE TO_CHAR({0},'HH12') END as number),12) " +
                                 "WHEN 0 THEN '12' WHEN 1 THEN '1' WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4' WHEN 5 THEN '5' WHEN 6 THEN '6' " +
                                 "WHEN 7 THEN '7' WHEN 8 THEN '8' WHEN 9 THEN '9' WHEN 10 THEN '10' WHEN 11 THEN '11' END";
                         break;
                     case "m":
-                        argsSpts[a] = "CASE WHEN substr(to_char({0},'MI'),1,1) = '0' THEN substr(to_char({0},'MI'),2,1) ELSE to_char({0},'MI') END";
+                        argsSpts[a] = "CASE WHEN SUBSTR(TO_CHAR({0},'MI'),1,1) = '0' THEN SUBSTR(TO_CHAR({0},'MI'),2,1) ELSE TO_CHAR({0},'MI') END";
                         break;
                     case "s":
-                        argsSpts[a] = "CASE WHEN substr(to_char({0},'SS'),1,1) = '0' THEN substr(to_char({0},'SS'),2,1) ELSE to_char({0},'SS') END";
+                        argsSpts[a] = "CASE WHEN SUBSTR(TO_CHAR({0},'SS'),1,1) = '0' THEN SUBSTR(TO_CHAR({0},'SS'),2,1) ELSE TO_CHAR({0},'SS') END";
                         break;
                     case "t":
-                        argsSpts[a] = "rtrim(to_char({0},'AM'),'M')";
+                        argsSpts[a] = "RTRIM(TO_CHAR({0},'AM'),'M')";
                         break;
                     default:
                         String argsSptsA = argsSpts[a];
@@ -121,7 +121,7 @@ public class OracleDateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
                             argsSptsA = argsSptsA.substring(0, argsSptsA.length() - 1);
                         }
                         if (Arrays.stream(argsFinds).anyMatch(argsSptsA::contains)) {
-                            argsSpts[a] = "to_char({0},'" + argsSptsA + "')";
+                            argsSpts[a] = "TO_CHAR({0},'" + argsSptsA + "')";
                         } else {
                             argsSpts[a] = "'" + argsSptsA + "'";
                         }
@@ -135,7 +135,7 @@ public class OracleDateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
 
             return format.replaceAll("%_a1", "MM").replaceAll("%_a2", "DD").replaceAll("%_a3", "HH24").replaceAll("%_a4", "HH12").replaceAll("%_a5", "MI").replaceAll("%_a6", "AM");
         }
-        return "to_char({0},'YYYY-MM-DD HH24:MI:SS.FF6')";
+        return "TO_CHAR({0},'YYYY-MM-DD HH24:MI:SS.FF6')";
     }
 
     protected String replaceFormat(String format) {

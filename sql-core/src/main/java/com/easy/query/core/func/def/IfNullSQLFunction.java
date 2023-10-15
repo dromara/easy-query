@@ -1,5 +1,6 @@
 package com.easy.query.core.func.def;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -21,7 +22,7 @@ public class IfNullSQLFunction extends AbstractExpressionSQLFunction {
     }
 
     @Override
-    public String sqlSegment() {
+    public String sqlSegment(TableAvailable defaultTable) {
         Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
         return String.format("IFNULL(%s)", String.join(",", params));
     }

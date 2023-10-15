@@ -11,7 +11,7 @@ import com.easy.query.core.expression.parser.core.available.RuntimeContextAvaila
  * @author xuejiaming
  */
 public interface LambdaSQLFuncAvailable<T1> extends RuntimeContextAvailable {
-    default LambdaSQLFunc<T1> sqlFunc(){
-        return new LambdaSQLFuncImpl<>(getRuntimeContext().sqlFunc());
+    default LambdaSQLFunc<T1> fx(){
+        return new LambdaSQLFuncImpl<>(getRuntimeContext().fx());
     }
 }

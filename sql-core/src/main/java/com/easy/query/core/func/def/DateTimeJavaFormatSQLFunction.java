@@ -25,7 +25,7 @@ public class DateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
     }
 
     @Override
-    public String sqlSegment() {
+    public String sqlSegment(TableAvailable defaultTable) {
         return getSQLSegment();
     }
 
@@ -45,10 +45,11 @@ public class DateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
 
     /**
      * 代码参考 <a href="https://github.com/dotnetcore/FreeSql">FreeSQL</a>
+     *
      * @return
      */
     public String getSQLSegment() {
-        if(this.javaFormat!=null){
+        if (this.javaFormat != null) {
 
             String format = this.javaFormat;
             switch (format) {

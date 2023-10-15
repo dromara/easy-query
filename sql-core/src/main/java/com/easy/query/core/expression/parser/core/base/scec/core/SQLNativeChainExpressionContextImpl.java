@@ -22,6 +22,7 @@ public class SQLNativeChainExpressionContextImpl implements SQLNativeChainExpres
 
         this.sqlNativeExpressionContext = sqlNativeExpressionContext;
     }
+
     @Override
     public void expression(String property) {
         sqlNativeExpressionContext.expression(this.table,property);

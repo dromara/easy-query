@@ -4,6 +4,7 @@ import com.easy.query.api4kt.sql.scec.SQLAliasNativeLambdaKtExpressionContext;
 import com.easy.query.api4kt.sql.scec.SQLAliasNativeLambdaKtExpressionContextImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.expression.parser.core.base.core.SQLAsPropertyNative;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
@@ -16,7 +17,7 @@ import kotlin.reflect.KProperty1;
  *
  * @author xuejiaming
  */
-public interface SQLAsLambdaKtNative<T1,TR,TChain> extends ChainCast<TChain> {
+public interface SQLAsLambdaKtNative<T1,TR,TChain> extends EntitySQLTableOwner<T1>,ChainCast<TChain> {
     <T> SQLAsPropertyNative<T> getSQLAsPropertyNative();
 
 
@@ -66,7 +67,7 @@ public interface SQLAsLambdaKtNative<T1,TR,TChain> extends ChainCast<TChain> {
     }
     default TChain func(boolean condition, SQLFunction sqlFunction){
         if(condition){
-            String sqlSegment = sqlFunction.sqlSegment();
+            String sqlSegment = sqlFunction.sqlSegment(getTable());
             getSQLAsPropertyNative().sqlNativeSegment(sqlSegment,context->{
                 sqlFunction.consume(context.getSQLNativeChainExpressionContext());
             });
@@ -79,7 +80,7 @@ public interface SQLAsLambdaKtNative<T1,TR,TChain> extends ChainCast<TChain> {
     }
     default TChain funcAs(boolean condition, SQLFunction sqlFunction,KProperty1<? super TR,?> property){
         if(condition){
-            String sqlSegment = sqlFunction.sqlSegment();
+            String sqlSegment = sqlFunction.sqlSegment(getTable());
             getSQLAsPropertyNative().sqlNativeSegment(sqlSegment,context->{
                 SQLNativeChainExpressionContext sqlNativeChainExpressionContext = context.getSQLNativeChainExpressionContext();
                 sqlNativeChainExpressionContext.setPropertyAlias(EasyKtLambdaUtil.getPropertyName(property));

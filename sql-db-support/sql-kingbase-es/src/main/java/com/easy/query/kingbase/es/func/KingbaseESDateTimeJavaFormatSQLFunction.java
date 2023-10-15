@@ -26,7 +26,7 @@ public class KingbaseESDateTimeJavaFormatSQLFunction extends AbstractSQLFunction
     }
 
     @Override
-    public String sqlSegment() {
+    public String sqlSegment(TableAvailable defaultTable) {
         return getSQLSegment();
     }
 

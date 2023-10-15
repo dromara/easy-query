@@ -271,7 +271,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     }
 
     @Override
-    public SQLFunc sqlFunc() {
+    public SQLFunc fx() {
         return sqlFunc;
     }
 }

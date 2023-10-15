@@ -1,42 +1,42 @@
-package com.easy.query.core.func.def;
+package com.easy.query.mssql.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
+import com.easy.query.core.func.def.AbstractSQLFunction;
 
 /**
- * create time 2023/10/12 16:09
+ * create time 2023/10/6 21:57
  * 文件说明
  *
  * @author xuejiaming
  */
-public class RoundSQLFunction extends AbstractSQLFunction {
+public class MsSQLDateTimeSQLFormatSQLFunction extends AbstractSQLFunction {
     private final TableAvailable table;
     private final String property;
-    private final int scale;
+    private final String format;
 
-    public RoundSQLFunction(TableAvailable table, String property,int scale) {
-
+    public MsSQLDateTimeSQLFormatSQLFunction(TableAvailable table, String property, String format){
         this.table = table;
         this.property = property;
-        this.scale = scale;
+        this.format = format;
     }
-
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        return "ROUND({0},"+scale+")";
+        return "CONVERT(VARCHAR, {0}, '{1}')";
     }
 
     @Override
     public int paramMarks() {
-        return 1;
+        return 2;
     }
 
     @Override
     protected void consume0(SQLNativeChainExpressionContext context) {
-        if (this.table == null) {
-            context.expression(this.property);
+        if (table == null) {
+            context.expression(property);
         } else {
-            context.expression(this.table, this.property);
+            context.expression(table, property);
         }
+        context.format(format);
     }
 }

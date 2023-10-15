@@ -11,7 +11,7 @@ import com.easy.query.core.expression.parser.core.available.RuntimeContextAvaila
  * @author xuejiaming
  */
 public interface ProxySQLFuncAvailable extends RuntimeContextAvailable {
-    default ProxySQLFunc sqlFunc(){
-        return new ProxySQLFuncImpl(getRuntimeContext().sqlFunc());
+    default ProxySQLFunc fx(){
+        return new ProxySQLFuncImpl(getRuntimeContext().fx());
     }
 }

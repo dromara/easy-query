@@ -21,8 +21,8 @@ public class OracleDateTimeSQLFormatSQLFunction extends AbstractSQLFunction {
         this.format = format;
     }
     @Override
-    public String sqlSegment() {
-        return "to_char({0}, '{1}')";
+    public String sqlSegment(TableAvailable defaultTable) {
+        return "TO_CHAR({0}, '{1}')";
     }
 
     @Override

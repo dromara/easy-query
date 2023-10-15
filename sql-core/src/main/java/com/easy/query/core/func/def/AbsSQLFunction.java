@@ -20,7 +20,7 @@ public class AbsSQLFunction extends AbstractSQLFunction {
     }
 
     @Override
-    public String sqlSegment() {
+    public String sqlSegment(TableAvailable defaultTable) {
         return "ABS({0})";
     }
 
