@@ -14,12 +14,12 @@ import java.util.regex.Pattern;
  *
  * @author xuejiaming
  */
-public class SQLiteDateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
+public class SQLiteDateTimeFormatSQLFunction extends AbstractSQLFunction {
     private final TableAvailable table;
     private final String property;
     private final String javaFormat;
 
-    public SQLiteDateTimeJavaFormatSQLFunction(TableAvailable table, String property, String javaFormat) {
+    public SQLiteDateTimeFormatSQLFunction(TableAvailable table, String property, String javaFormat) {
         this.table = table;
         this.property = property;
         this.javaFormat = javaFormat;

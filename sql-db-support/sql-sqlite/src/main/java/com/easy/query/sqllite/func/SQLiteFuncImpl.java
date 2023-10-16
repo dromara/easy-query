@@ -20,8 +20,8 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction dateTimeJavaFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
-        return new SQLiteDateTimeJavaFormatSQLFunction(getTable(tableOwner), property, javaFormat);
+    public SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
+        return new SQLiteDateTimeFormatSQLFunction(getTable(tableOwner), property, javaFormat);
     }
     @Override
     public SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format) {

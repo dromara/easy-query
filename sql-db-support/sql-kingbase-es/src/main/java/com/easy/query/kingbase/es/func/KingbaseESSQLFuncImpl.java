@@ -20,8 +20,8 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction dateTimeJavaFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
-        return new KingbaseESDateTimeJavaFormatSQLFunction(getTable(tableOwner), property, javaFormat);
+    public SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
+        return new KingbaseESDateTimeFormatSQLFunction(getTable(tableOwner), property, javaFormat);
     }
     @Override
     public SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format) {

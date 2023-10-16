@@ -13,12 +13,12 @@ import java.util.regex.Pattern;
  *
  * @author xuejiaming
  */
-public class DateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
+public class DateTimeFormatSQLFunction extends AbstractSQLFunction {
     private final TableAvailable table;
     private final String property;
     private final String javaFormat;
 
-    public DateTimeJavaFormatSQLFunction(TableAvailable table, String property, String javaFormat) {
+    public DateTimeFormatSQLFunction(TableAvailable table, String property, String javaFormat) {
         this.table = table;
         this.property = property;
         this.javaFormat = javaFormat;

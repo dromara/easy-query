@@ -20,8 +20,8 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction dateTimeJavaFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
-        return new PgSQLDateTimeJavaFormatSQLFunction(getTable(tableOwner), property, javaFormat);
+    public SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
+        return new PgSQLDateTimeFormatSQLFunction(getTable(tableOwner), property, javaFormat);
     }
     @Override
     public SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format) {

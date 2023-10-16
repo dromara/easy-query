@@ -16,6 +16,11 @@ public interface SQLFunction {
      * @return
      */
     String sqlSegment(TableAvailable defaultTable);
+
+    /**
+     * 表达式有多少个参数
+     * @return 参数占位个数
+     */
     int paramMarks();
 //    void setAlias(String alias);
 //    void setPropertyAlias(String propertyAlias);

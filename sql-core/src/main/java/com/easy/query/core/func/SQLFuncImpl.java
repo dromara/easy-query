@@ -5,7 +5,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbsSQLFunction;
 import com.easy.query.core.func.def.ConcatSQLFunction;
-import com.easy.query.core.func.def.DateTimeJavaFormatSQLFunction;
+import com.easy.query.core.func.def.DateTimeFormatSQLFunction;
 import com.easy.query.core.func.def.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.IfNullSQLFunction;
 import com.easy.query.core.func.def.NowSQLFunction;
@@ -42,8 +42,8 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction dateTimeJavaFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
-        return new DateTimeJavaFormatSQLFunction(getTable(tableOwner), property, javaFormat);
+    public SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
+        return new DateTimeFormatSQLFunction(getTable(tableOwner), property, javaFormat);
     }
 
     @Override

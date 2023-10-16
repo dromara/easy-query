@@ -14,12 +14,12 @@ import java.util.regex.Pattern;
  *
  * @author xuejiaming
  */
-public class PgSQLDateTimeJavaFormatSQLFunction extends AbstractSQLFunction {
+public class PgSQLDateTimeFormatSQLFunction extends AbstractSQLFunction {
     private final TableAvailable table;
     private final String property;
     private final String javaFormat;
 
-    public PgSQLDateTimeJavaFormatSQLFunction(TableAvailable table, String property, String javaFormat) {
+    public PgSQLDateTimeFormatSQLFunction(TableAvailable table, String property, String javaFormat) {
         this.table = table;
         this.property = property;
         this.javaFormat = javaFormat;
