@@ -204,8 +204,4 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         return currentTrackContext.getTrackEntityStateNotNull(entity);
     }
 
-    @Override
-    public SQLFunc sqlFunc() {
-        return runtimeContext.fx();
-    }
 }

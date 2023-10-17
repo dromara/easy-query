@@ -126,5 +126,4 @@ public interface EasyKtQuery {
     default MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
         return getEasyQueryClient().mapUpdatable(maps);
     }
-    KtLambdaSQLFunc sqlFunc();
 }

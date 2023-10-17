@@ -40,6 +40,7 @@ public final class ColumnOption {
     private EncryptionStrategy encryptionStrategy;
     private boolean supportQueryLike = false;
     private boolean large = false;
+    private boolean autoSelect = true;
 
     private ValueConverter<?, ?> valueConverter;
     private ComplexPropType complexPropType;
@@ -147,6 +148,14 @@ public final class ColumnOption {
 
     public void setLarge(boolean large) {
         this.large = large;
+    }
+
+    public boolean isAutoSelect() {
+        return autoSelect;
+    }
+
+    public void setAutoSelect(boolean autoSelect) {
+        this.autoSelect = autoSelect;
     }
 
     public ValueConverter<?, ?> getValueConverter() {

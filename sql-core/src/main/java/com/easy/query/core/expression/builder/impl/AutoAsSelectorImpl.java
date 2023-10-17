@@ -109,6 +109,10 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
             for (String property : sourceProperties) {
 
                 ColumnMetadata sourceColumnMetadata = sourceEntityMetadata.getColumnNotNull(property);
+                if(!sourceColumnMetadata.isAutoSelect()){
+                    continue;
+                }
+
                 if(ignoreColumnIfLargeNotQuery(queryLargeColumn,sourceColumnMetadata)){
                     continue;
                 }

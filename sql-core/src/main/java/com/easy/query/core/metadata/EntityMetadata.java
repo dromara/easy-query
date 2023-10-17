@@ -220,12 +220,14 @@ public class EntityMetadata {
 
             Column column = field.getAnnotation(Column.class);
             boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
+            boolean autoSelect = column == null || column.autoSelect();
             String columnName = hasColumnName ? column.value() : nameConversion.convert(property);
             ColumnOption columnOption = new ColumnOption(this, columnName);
 //            if (column != null) {
 //                columnMetadata.setNullable(column.nullable());
 //            }
             columnOption.setProperty(propertyDescriptor);
+            columnOption.setAutoSelect(autoSelect);
 
             Encryption encryption = field.getAnnotation(Encryption.class);
             if (encryption != null) {
@@ -382,7 +384,7 @@ public class EntityMetadata {
             ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
             property2ColumnMap.put(property, columnMetadata);
             column2PropertyMap.put(columnName, columnMetadata);
-            if (tableEntity) {
+            if (tableEntity && autoSelect) {
                 dataReader = new BeanDataReader(dataReader, new PropertyDataReader(new EntityResultColumnMetadata(columnIndex, columnMetadata)));
             }
             columnIndex++;

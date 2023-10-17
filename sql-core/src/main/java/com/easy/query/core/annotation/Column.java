@@ -106,13 +106,12 @@ public @interface Column {
      */
     Class<? extends ComplexPropType> complexPropType() default DefaultComplexPropType.class;
 
-//    /**
-//     * 当且仅当查询指定该属性才会查询出来
-//     * columnAll相同对象无法查询出来，如果是不同对象的映射columnAll则可以
-//     * 相同对象columnAll后需要在column指定列
-//     * @return
-//     */
-//    boolean select() default true;
+    /**
+     * 当且仅当查询指定该属性才会查询出来
+     * columnAll相同对象无法查询出来，除非手动指定column列
+     * @return
+     */
+    boolean autoSelect() default true;
 //
 //    /**
 //     * 该字段在数据库中是否为null，如果为null那么在update整个对象的时候

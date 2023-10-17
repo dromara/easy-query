@@ -110,5 +110,4 @@ public interface EasyQueryClient {
     MapClientUpdatable<Map<String,Object>> mapUpdatable(Map<String,Object> map);
 
     MapClientUpdatable<Map<String,Object>> mapUpdatable(Collection<Map<String,Object>> maps);
-    SQLFunc sqlFunc();
 }

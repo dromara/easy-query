@@ -86,6 +86,10 @@ public class ColumnMetadata {
      */
     private final  boolean large;
     /**
+     * 是否自动查询结果
+     */
+    private final  boolean autoSelect;
+    /**
      * 是否是基本类型 int long double 而不是Integer Long...
      */
     private final  boolean primitive;
@@ -135,6 +139,7 @@ public class ColumnMetadata {
         this.encryptionStrategy= columnOption.getEncryptionStrategy();
         this.supportQueryLike= columnOption.isSupportQueryLike();
         this.large= columnOption.isLarge();
+        this.autoSelect= columnOption.isAutoSelect();
         this.valueConverter = columnOption.getValueConverter();
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
         this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
@@ -211,6 +216,9 @@ public class ColumnMetadata {
         return large;
     }
 
+    public boolean isAutoSelect() {
+        return autoSelect;
+    }
 
     public ValueConverter<?, ?> getValueConverter() {
         return valueConverter;

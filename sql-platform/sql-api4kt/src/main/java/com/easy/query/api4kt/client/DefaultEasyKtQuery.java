@@ -4,8 +4,6 @@ import com.easy.query.api4kt.delete.KtEntityDeletable;
 import com.easy.query.api4kt.delete.KtExpressionDeletable;
 import com.easy.query.api4kt.delete.impl.EasyKtEntityDeletable;
 import com.easy.query.api4kt.delete.impl.EasyKtExpressionDeletable;
-import com.easy.query.api4kt.func.KtLambdaSQLFuncImpl;
-import com.easy.query.api4kt.func.KtLambdaSQLFunc;
 import com.easy.query.api4kt.insert.EasyKtEntityInsertable;
 import com.easy.query.api4kt.insert.KtEntityInsertable;
 import com.easy.query.api4kt.select.KtQueryable;
@@ -27,11 +25,9 @@ import java.util.Collection;
  */
 public class DefaultEasyKtQuery implements EasyKtQuery {
     private final EasyQueryClient easyQueryClient;
-    private final KtLambdaSQLFunc sqlKtLambdaFunc;
 
     public DefaultEasyKtQuery(EasyQueryClient easyQueryClient) {
         this.easyQueryClient = easyQueryClient;
-        this.sqlKtLambdaFunc = new KtLambdaSQLFuncImpl(easyQueryClient.sqlFunc());
     }
 
     @Override
@@ -119,10 +115,5 @@ public class DefaultEasyKtQuery implements EasyKtQuery {
     @Override
     public EntityState getTrackEntityStateNotNull(Object entity) {
         return easyQueryClient.getTrackEntityStateNotNull(entity);
-    }
-
-    @Override
-    public KtLambdaSQLFunc sqlFunc() {
-        return sqlKtLambdaFunc;
     }
 }

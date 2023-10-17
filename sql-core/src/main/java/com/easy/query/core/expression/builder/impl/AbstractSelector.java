@@ -57,10 +57,11 @@ public abstract class AbstractSelector<TChain> {
 
     protected abstract TChain castChain();
 
-    public ExpressionContext getExpressionContext(){
+    public ExpressionContext getExpressionContext() {
         return expressionContext;
     }
-    public EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(){
+
+    public EntityQueryExpressionBuilder getEntityQueryExpressionBuilder() {
         return entityQueryExpressionBuilder;
     }
 
@@ -69,10 +70,11 @@ public abstract class AbstractSelector<TChain> {
         sqlBuilderSegment.append(columnSegment);
         return castChain();
     }
+
     public TChain columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression) {
         NavigateMetadata navigateMetadata = table.getEntityMetadata().getNavigateNotNull(selfProperty);
         Map<String, ColumnIncludeExpression> propertyColumnIncludeExpressionMap = expressionContext.getColumnIncludeMaps().computeIfAbsent(table, k -> new HashMap<>());
-        propertyColumnIncludeExpressionMap.put(navigateMetadata.getSelfPropertyOrPrimary(),new ColumnIncludeExpression(table,selfProperty,aliasProperty,includeSelectorExpression));
+        propertyColumnIncludeExpressionMap.put(navigateMetadata.getSelfPropertyOrPrimary(), new ColumnIncludeExpression(table, selfProperty, aliasProperty, includeSelectorExpression));
         return castChain();
     }
 
@@ -90,11 +92,11 @@ public abstract class AbstractSelector<TChain> {
     public TChain columnAll(TableAvailable table) {
         if (table.isAnonymous()) {
             EntityTableExpressionBuilder entityTableExpressionBuilder = EasyCollectionUtil.firstOrDefault(entityQueryExpressionBuilder.getTables(), t -> Objects.equals(table, t.getEntityTable()), null);
-            if(entityTableExpressionBuilder==null){
-                throw new EasyQueryInvalidOperationException("not found table in expression context:"+EasyClassUtil.getSimpleName(table.getEntityClass()));
+            if (entityTableExpressionBuilder == null) {
+                throw new EasyQueryInvalidOperationException("not found table in expression context:" + EasyClassUtil.getSimpleName(table.getEntityClass()));
             }
-            if(!(entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder)){
-                throw new EasyQueryInvalidOperationException("anonymous table is not AnonymousEntityTableExpressionBuilder:"+EasyClassUtil.getSimpleName(table.getEntityClass()));
+            if (!(entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder)) {
+                throw new EasyQueryInvalidOperationException("anonymous table is not AnonymousEntityTableExpressionBuilder:" + EasyClassUtil.getSimpleName(table.getEntityClass()));
             }
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder);
         } else {
@@ -102,6 +104,9 @@ public abstract class AbstractSelector<TChain> {
             EntityMetadata entityMetadata = table.getEntityMetadata();
             Collection<ColumnMetadata> columns = entityMetadata.getColumns();
             for (ColumnMetadata columnMetadata : columns) {
+                if (!columnMetadata.isAutoSelect()) {
+                    continue;
+                }
                 if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
                     continue;
                 }
@@ -163,6 +168,7 @@ public abstract class AbstractSelector<TChain> {
 
     /**
      * 是否忽略当前列
+     *
      * @param queryLargeColumn
      * @param columnMetadata
      * @return
@@ -175,7 +181,7 @@ public abstract class AbstractSelector<TChain> {
         return false;
     }
 
-    public QueryRuntimeContext getRuntimeContext(){
+    public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
 

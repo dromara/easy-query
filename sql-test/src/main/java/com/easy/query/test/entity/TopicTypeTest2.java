@@ -1,11 +1,11 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.EntityProxy;
-import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.Table;
-import com.easy.query.core.annotation.UpdateIgnore;
+import com.easy.query.test.conversion.EnumValueConverter;
+import com.easy.query.test.enums.TopicTypeEnum;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -16,18 +16,15 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 @Data
-@Table("t_topic")
-@EntityProxy //添加这个属性那么Topic对象会代理生成TopicProxy (需要idea build一下当前项目)
-public class Topic {
+@Table("t_topic_type")
+@ToString
+public class TopicTypeTest2 {
 
     @Column(primaryKey = true)
     private String id;
     private Integer stars;
     private String title;
+    @Column(value = "topic_type",conversion = EnumValueConverter.class)
+    private TopicTypeEnum topicType;
     private LocalDateTime createTime;
-
-    @Column(autoSelect = false)
-    @InsertIgnore
-    @UpdateIgnore
-    private String alias;
 }

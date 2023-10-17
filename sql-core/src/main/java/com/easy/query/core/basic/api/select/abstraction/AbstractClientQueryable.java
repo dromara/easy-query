@@ -106,7 +106,7 @@ import java.util.stream.Collectors;
  * @Date: 2023/2/6 23:44
  */
 public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1> {
-    private static final Log log= LogFactory.getLog(AbstractClientQueryable.class);
+    private static final Log log = LogFactory.getLog(AbstractClientQueryable.class);
     protected final Class<T1> t1Class;
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final QueryRuntimeContext runtimeContext;
@@ -307,26 +307,30 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             Iterator<TR> iterator = streamResult.iterator();
             boolean firstHasNext = iterator.hasNext();
             if (!firstHasNext) {
-                if(printSql){
+                if (printSql) {
                     log.info("<== Total: 0");
                 }
                 return null;
             }
+            int i = 0;
             do {
-                if(next!=null){
+//                if(next!=null){ //因为存在查询单个属性单个属性可能为null
+//                    throw new EasyQuerySingleMoreElementException("single query has more element in result set.");
+//                }
+                if (i>=1) {
                     throw new EasyQuerySingleMoreElementException("single query has more element in result set.");
                 }
                 next = iterator.next();
-
+                i++;
             } while (iterator.hasNext());
-            if(printSql){
+            if (printSql) {
                 log.info("<== Total: 1");
             }
 
         } catch (SQLException e) {
             throw new EasyQuerySQLCommandException(e);
         }
-        if(next!=null){
+        if (next != null) {
             ExpressionContext expressionContext = jdbcResultWrap.getExpressionContext();
             EntityMetadata entityMetadata = jdbcResultWrap.getEntityMetadata();
             doIncludes(expressionContext, entityMetadata, Collections.singletonList(next));

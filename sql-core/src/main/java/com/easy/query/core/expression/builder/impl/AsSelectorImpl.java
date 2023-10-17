@@ -155,6 +155,9 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
             EntityMetadata entityMetadata = tableBuilder.getEntityMetadata();
             Collection<ColumnMetadata> columns = entityMetadata.getColumns();
             for (ColumnMetadata columnMetadata : columns) {
+                if(!columnMetadata.isAutoSelect()){
+                    continue;
+                }
 
                 String columnName = columnMetadata.getName();
                 String aliasPropertyName = resultEntityMetadata.getPropertyNameOrNull(columnName);

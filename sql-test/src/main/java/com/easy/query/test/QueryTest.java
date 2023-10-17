@@ -29,6 +29,7 @@ import com.easy.query.test.entity.TopicType;
 import com.easy.query.test.entity.TopicTypeJson;
 import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.TopicTypeTest1;
+import com.easy.query.test.entity.TopicTypeTest2;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.func.SQLTestFunc;
 import com.easy.query.test.vo.BlogEntityVO1;
@@ -1612,6 +1613,35 @@ public class QueryTest extends BaseTest {
         Assert.assertEquals(1, l);
 
         TopicTypeTest1 topicTypeVO = easyQuery.queryable(TopicTypeTest1.class)
+                .whereById("123")
+                .firstOrNull();
+        Assert.assertNotNull(topicTypeVO);
+        System.out.println(topicTypeVO);
+
+        Assert.assertEquals(TopicTypeEnum.CLASSER, topicTypeVO.getTopicType());
+
+    }
+    @Test
+    public void query70_1() {
+        TopicTypeTest2 topicType = easyQuery.queryable(TopicTypeTest2.class)
+                .whereById("123").firstOrNull();
+        if (topicType != null) {
+            long l = easyQuery.deletable(topicType).executeRows();
+            Assert.assertEquals(1, l);
+        }
+        topicType = easyQuery.queryable(TopicTypeTest2.class)
+                .whereById("123").firstOrNull();
+        Assert.assertNull(topicType);
+        TopicTypeTest2 topicType1 = new TopicTypeTest2();
+        topicType1.setId("123");
+        topicType1.setStars(123);
+        topicType1.setTitle("title123");
+        topicType1.setTopicType(TopicTypeEnum.CLASSER);
+        topicType1.setCreateTime(LocalDateTime.now());
+        long l = easyQuery.insertable(topicType1).executeRows();
+        Assert.assertEquals(1, l);
+
+        TopicTypeTest2 topicTypeVO = easyQuery.queryable(TopicTypeTest2.class)
                 .whereById("123")
                 .firstOrNull();
         Assert.assertNotNull(topicTypeVO);

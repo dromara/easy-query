@@ -739,7 +739,7 @@ public class QueryTest3 extends BaseTest {
 
     @Test
     public void testProperty3_1() {
-        SQLFunc sqlFunc = easyQueryClient.sqlFunc();
+        SQLFunc sqlFunc = easyQueryClient.getRuntimeContext().fx();
         Topic topic = easyQueryClient.queryable(Topic.class)
                 .where(t -> t.eq(sqlFunc.ifNull("id","1"), sqlFunc.ifNull("stars","3")).or().like("title", "你好"))
                 .firstOrNull();

@@ -1,5 +1,6 @@
 package com.easy.query.test.enums;
 
+import com.easy.query.test.annotation.EnumValue;
 import com.easy.query.test.conversion.IEnum;
 
 /**
@@ -14,6 +15,7 @@ public enum TopicTypeEnum implements IEnum<TopicTypeEnum> {
     TEACHER(3),
 
     CLASSER(9);
+    @EnumValue
     private final Integer code;
 
     TopicTypeEnum(Integer code){

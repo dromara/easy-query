@@ -18,6 +18,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicLarge;
 import com.easy.query.test.entity.TopicTypeTest1;
+import com.easy.query.test.entity.TopicTypeTest2;
 import com.easy.query.test.entity.TopicValueUpdateAtomicTrack;
 import com.easy.query.test.entity.TopicValueUpdateAtomicTrackIgnore;
 import com.easy.query.test.entity.proxy.TopicProxy;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * @author xuejiaming
@@ -286,6 +288,28 @@ public class UpdateTest extends BaseTest {
                 .where(o -> o.eq(TopicTypeTest1::getTopicType, TopicTypeEnum.CLASSER))
                 .executeRows();
     }
+    @Test
+    public void updateTest11_1() {
+        TopicTypeTest2 topicType = easyQuery.queryable(TopicTypeTest2.class)
+                .whereById("123").firstOrNull();
+        if (topicType != null) {
+            long l = easyQuery.deletable(topicType).executeRows();
+            Assert.assertEquals(1, l);
+        }
+        ExpressionUpdatable<TopicTypeTest2> queryable = easyQuery.updatable(TopicTypeTest2.class)
+                .set(TopicTypeTest2::getStars, 234)
+                .where(o -> o.eq(TopicTypeTest2::getTopicType, TopicTypeEnum.CLASSER));
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getExpressionContext().getTableContext());
+        String sql = queryable.toSQL(toSQLContext);
+        Assert.assertEquals("UPDATE `t_topic_type` SET `stars` = ? WHERE `topic_type` = ?", sql);
+        String parameterToString = EasySQLUtil.sqlParameterToString(toSQLContext.getParameters());
+        Assert.assertEquals("234(Integer),CLASSER(TopicTypeEnum)", parameterToString);
+
+        long l = easyQuery.updatable(TopicTypeTest2.class)
+                .set(TopicTypeTest2::getStars, 234)
+                .where(o -> o.eq(TopicTypeTest2::getTopicType, TopicTypeEnum.CLASSER))
+                .executeRows();
+    }
 
     @Test
     public void updateTest12() {
@@ -380,18 +404,25 @@ public class UpdateTest extends BaseTest {
         TopicValueUpdateAtomicTrackIgnore topicValueUpdateAtomicTrack = new TopicValueUpdateAtomicTrackIgnore();
         topicValueUpdateAtomicTrack.setId("123");
         topicValueUpdateAtomicTrack.setStars(99);
-        try {
-            easyQuery.addTracking(topicValueUpdateAtomicTrack);
-            topicValueUpdateAtomicTrack.setStars(98);
-            long l = easyQuery.updatable(topicValueUpdateAtomicTrack).executeRows();
-            System.out.println(l);
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
-            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
-            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
-            Assert.assertEquals("UPDATE `t_topic_value_atomic` SET `title` = ?,`topic_type` = ?,`create_time` = ? WHERE `id` = ?", sql);
-        }
+        Supplier<Exception> queryF=()->{
+            try {
+                easyQuery.addTracking(topicValueUpdateAtomicTrack);
+                topicValueUpdateAtomicTrack.setStars(98);
+                long l = easyQuery.updatable(topicValueUpdateAtomicTrack).executeRows();
+                System.out.println(l);
+            } catch (Exception ex) {
+                return ex;
+            }
+            return null;
+        };
+
+        Exception ex = queryF.get();
+        Assert.assertNotNull(ex);
+        Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+        Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+        String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+        Assert.assertEquals("UPDATE `t_topic_value_atomic` SET `title` = ?,`topic_type` = ?,`create_time` = ? WHERE `id` = ?", sql);
     }
     @Test
     public void updateTest15_3() {

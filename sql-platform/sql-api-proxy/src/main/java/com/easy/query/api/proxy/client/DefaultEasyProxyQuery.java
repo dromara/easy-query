@@ -36,7 +36,7 @@ public class DefaultEasyProxyQuery implements EasyProxyQuery {
 
     public DefaultEasyProxyQuery(EasyQueryClient easyQueryClient) {
         this.easyQueryClient = easyQueryClient;
-        this.sqlProxyFunc = new ProxySQLFuncImpl(easyQueryClient.sqlFunc());
+        this.sqlProxyFunc = new ProxySQLFuncImpl(easyQueryClient.getRuntimeContext().fx());
     }
 
     @Override

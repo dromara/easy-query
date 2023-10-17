@@ -1,11 +1,14 @@
 package com.easy.query.test.kt
 
 import com.easy.query.core.enums.SQLRangeEnum
+import com.easy.query.core.exception.EasyQuerySQLCommandException
+import com.easy.query.core.exception.EasyQuerySQLStatementException
 import com.sun.org.apache.xpath.internal.operations.String
 import org.junit.Assert
 import org.junit.Test
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import kotlin.Exception
 
 class KtTest : BaseKtTest() {
 
@@ -177,7 +180,7 @@ class KtTest : BaseKtTest() {
     fun query8() {
 
 
-        val strings =  arrayOf("Hello", "kotlin");
+        val strings = arrayOf("Hello", "kotlin");
         var sql = easyKtQuery!!.queryable(BlogKtEntity::class.java)
             .where {
                 it.eq(BlogKtEntity::id, "123");
@@ -185,33 +188,33 @@ class KtTest : BaseKtTest() {
                 it.ne(BlogKtEntity::id, "123");
                 it.ne(true, BlogKtEntity::id, "123");
                 it.ge(BlogKtEntity::createTime, LocalDateTime.now())
-                it.ge(false,BlogKtEntity::createTime, LocalDateTime.now())
+                it.ge(false, BlogKtEntity::createTime, LocalDateTime.now())
                 it.gt(BlogKtEntity::score, BigDecimal.ZERO)
-                it.gt(true,BlogKtEntity::score, BigDecimal.ZERO)
+                it.gt(true, BlogKtEntity::score, BigDecimal.ZERO)
                 it.lt(BlogKtEntity::createTime, LocalDateTime.now())
-                it.lt(true,BlogKtEntity::createTime, LocalDateTime.now())
+                it.lt(true, BlogKtEntity::createTime, LocalDateTime.now())
                 it.le(BlogKtEntity::score, BigDecimal.ZERO)
-                it.le(false,BlogKtEntity::score, BigDecimal.ZERO)
+                it.le(false, BlogKtEntity::score, BigDecimal.ZERO)
                 it.like(BlogKtEntity::title, "123")
-                it.like(true,BlogKtEntity::title, "123")
+                it.like(true, BlogKtEntity::title, "123")
                 it.notLike(BlogKtEntity::title, "123")
-                it.notLike(false,BlogKtEntity::title, "123")
+                it.notLike(false, BlogKtEntity::title, "123")
                 it.likeMatchLeft(BlogKtEntity::title, "123")
-                it.likeMatchLeft(true,BlogKtEntity::title, "123")
+                it.likeMatchLeft(true, BlogKtEntity::title, "123")
                 it.notLikeMatchLeft(BlogKtEntity::title, "123")
-                it.notLikeMatchLeft(false,BlogKtEntity::title, "123")
+                it.notLikeMatchLeft(false, BlogKtEntity::title, "123")
                 it.likeMatchRight(BlogKtEntity::title, "123")
-                it.likeMatchRight(true,BlogKtEntity::title, "123")
+                it.likeMatchRight(true, BlogKtEntity::title, "123")
                 it.notLikeMatchRight(BlogKtEntity::title, "123")
-                it.notLikeMatchRight(false,BlogKtEntity::title, "123")
+                it.notLikeMatchRight(false, BlogKtEntity::title, "123")
                 it.isNull(BlogKtEntity::id)
-                it.isNull(false,BlogKtEntity::id)
+                it.isNull(false, BlogKtEntity::id)
                 it.isNotNull(BlogKtEntity::id)
-                it.isNotNull(false,BlogKtEntity::id)
-                it.`in`(BlogKtEntity::id,strings)
-                it.`in`(false,BlogKtEntity::id,strings)
-                it.notIn(BlogKtEntity::id,strings)
-                it.notIn(false,BlogKtEntity::id,strings)
+                it.isNotNull(false, BlogKtEntity::id)
+                it.`in`(BlogKtEntity::id, strings)
+                it.`in`(false, BlogKtEntity::id, strings)
+                it.notIn(BlogKtEntity::id, strings)
+                it.notIn(false, BlogKtEntity::id, strings)
             }
             .orderByAsc {
                 it.column(BlogKtEntity::score)
@@ -222,7 +225,7 @@ class KtTest : BaseKtTest() {
             .select(BlogKtEntity::class.java) {
                 it.column(BlogKtEntity::content);
                 it.column(BlogKtEntity::title);
-                it.columnAs(BlogKtEntity::title,BlogKtEntity::content);
+                it.columnAs(BlogKtEntity::title, BlogKtEntity::content);
                 it.sqlFuncAs(it.fx().dateTimeFormat(BlogKtEntity::createTime), BlogKtEntity::id)
             }
             .toSQL()
@@ -231,30 +234,53 @@ class KtTest : BaseKtTest() {
             sql
         )
     }
+
     @Test
     fun query9() {
 
         var sql = easyKtQuery!!.queryable(BlogKtEntity::class.java)
             .where {
                 it.rangeClosed(BlogKtEntity::createTime, LocalDateTime.now(), LocalDateTime.now())
-                it.rangeClosed(BlogKtEntity::createTime,false, LocalDateTime.now(),true, LocalDateTime.now())
-                it.rangeClosed(false,BlogKtEntity::createTime,false, LocalDateTime.now(),true, LocalDateTime.now())
+                it.rangeClosed(BlogKtEntity::createTime, false, LocalDateTime.now(), true, LocalDateTime.now())
+                it.rangeClosed(false, BlogKtEntity::createTime, false, LocalDateTime.now(), true, LocalDateTime.now())
 
 
                 it.rangeOpen(BlogKtEntity::createTime, LocalDateTime.now(), LocalDateTime.now())
-                it.rangeOpen(BlogKtEntity::createTime,false, LocalDateTime.now(),true, LocalDateTime.now())
-                it.rangeOpen(false,BlogKtEntity::createTime,false, LocalDateTime.now(),true, LocalDateTime.now())
+                it.rangeOpen(BlogKtEntity::createTime, false, LocalDateTime.now(), true, LocalDateTime.now())
+                it.rangeOpen(false, BlogKtEntity::createTime, false, LocalDateTime.now(), true, LocalDateTime.now())
 
 
                 it.rangeOpenClosed(BlogKtEntity::createTime, LocalDateTime.now(), LocalDateTime.now())
-                it.rangeOpenClosed(BlogKtEntity::createTime,false, LocalDateTime.now(),true, LocalDateTime.now())
-                it.rangeOpenClosed(false,BlogKtEntity::createTime,false, LocalDateTime.now(),true, LocalDateTime.now())
+                it.rangeOpenClosed(BlogKtEntity::createTime, false, LocalDateTime.now(), true, LocalDateTime.now())
+                it.rangeOpenClosed(
+                    false,
+                    BlogKtEntity::createTime,
+                    false,
+                    LocalDateTime.now(),
+                    true,
+                    LocalDateTime.now()
+                )
 
                 it.rangeClosedOpen(BlogKtEntity::createTime, LocalDateTime.now(), LocalDateTime.now())
-                it.rangeClosedOpen(BlogKtEntity::createTime,false, LocalDateTime.now(),true, LocalDateTime.now())
-                it.rangeClosedOpen(false,BlogKtEntity::createTime,false, LocalDateTime.now(),true, LocalDateTime.now())
+                it.rangeClosedOpen(BlogKtEntity::createTime, false, LocalDateTime.now(), true, LocalDateTime.now())
+                it.rangeClosedOpen(
+                    false,
+                    BlogKtEntity::createTime,
+                    false,
+                    LocalDateTime.now(),
+                    true,
+                    LocalDateTime.now()
+                )
 
-                it.range(true,BlogKtEntity::createTime,true, LocalDateTime.now(),false, LocalDateTime.now(),SQLRangeEnum.CLOSED)
+                it.range(
+                    true,
+                    BlogKtEntity::createTime,
+                    true,
+                    LocalDateTime.now(),
+                    false,
+                    LocalDateTime.now(),
+                    SQLRangeEnum.CLOSED
+                )
 
             }
             .orderByAsc {
@@ -266,7 +292,7 @@ class KtTest : BaseKtTest() {
             .select(BlogKtEntity::class.java) {
                 it.column(BlogKtEntity::content);
                 it.column(BlogKtEntity::title);
-                it.columnAs(BlogKtEntity::title,BlogKtEntity::content);
+                it.columnAs(BlogKtEntity::title, BlogKtEntity::content);
                 it.sqlFuncAs(it.fx().dateTimeFormat(BlogKtEntity::createTime), BlogKtEntity::id)
             }
             .toSQL()
@@ -274,5 +300,89 @@ class KtTest : BaseKtTest() {
             "SELECT t.`content`,t.`title`,t.`title` AS `content`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s.%f') AS `id` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`create_time` >= ? AND t.`create_time` <= ? AND t.`create_time` <= ? AND t.`create_time` > ? AND t.`create_time` < ? AND t.`create_time` < ? AND t.`create_time` > ? AND t.`create_time` <= ? AND t.`create_time` <= ? AND t.`create_time` >= ? AND t.`create_time` < ? AND t.`create_time` < ? AND t.`create_time` >= ? ORDER BY t.`score` ASC,t.`star` DESC",
             sql
         )
+    }
+
+    @Test
+    fun query10() {
+
+
+        val strings = arrayOf("Hello", "kotlin");
+        var sql = easyKtQuery!!.queryable(BlogKtEntity::class.java)
+            .where {
+                it.eq(it.fx().ifNull(BlogKtEntity::id, ""), "123");
+                it.eq(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+                it.ne(it.fx().ifNull(BlogKtEntity::id, ""), "123");
+                it.ne(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+                it.ge(it.fx().ifNull(BlogKtEntity::id, ""), "123");
+                it.ge(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+                it.gt(it.fx().ifNull(BlogKtEntity::id, ""), "123");
+                it.gt(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+                it.le(it.fx().ifNull(BlogKtEntity::id, ""), "123");
+                it.le(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+            }
+            .orderByAsc {
+                it.column(BlogKtEntity::score)
+            }
+            .orderByDesc {
+                it.column(BlogKtEntity::star)
+            }
+            .select(BlogKtEntity::class.java) {
+                it.column(BlogKtEntity::content);
+                it.column(BlogKtEntity::title);
+                it.columnAs(BlogKtEntity::title, BlogKtEntity::content);
+                it.sqlFuncAs(it.fx().dateTimeFormat(BlogKtEntity::createTime), BlogKtEntity::id)
+            }
+            .toSQL()
+        Assert.assertEquals(
+            "SELECT t.`content`,t.`title`,t.`title` AS `content`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s.%f') AS `id` FROM `t_blog` t WHERE t.`deleted` = ? AND IFNULL(t.`id`,?) = ? AND IFNULL(t.`id`,?) <> ? AND IFNULL(t.`id`,?) >= ? AND IFNULL(t.`id`,?) > ? AND IFNULL(t.`id`,?) <= ? ORDER BY t.`score` ASC,t.`star` DESC",
+            sql
+        )
+    }
+
+    @Test
+    fun query11() {
+        var firstOrNullException = firstOrNullException()
+        Assert.assertNotNull(firstOrNullException);
+        Assert.assertTrue(firstOrNullException is EasyQuerySQLCommandException);
+        var easyQuerySQLCommandException =firstOrNullException as EasyQuerySQLCommandException
+        Assert.assertTrue(easyQuerySQLCommandException.cause is EasyQuerySQLStatementException)
+        var sql = (easyQuerySQLCommandException.cause as EasyQuerySQLStatementException)
+            .sql
+        Assert.assertEquals("SELECT t.`content`,t.`title`,t.`title` AS `content`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AS `id` FROM `blog_kt_table` t WHERE t.`deleted` = ? AND IFNULL(t.`id`,?) = ? AND IFNULL(t.`id`,?) <> ? AND IFNULL(t.`id`,?) >= ? AND IFNULL(t.`id`,?) > ? AND IFNULL(t.`id`,?) <= ? ORDER BY t.`score` ASC,t.`star` DESC LIMIT 1",sql)
+    }
+
+    fun firstOrNullException(): Exception? {
+        try {
+            var firstOrNull = easyKtQuery!!.queryable(BlogKtEntity::class.java)
+                .asTable("blog_kt_table")
+                .where {
+                    it.eq(it.fx().ifNull(BlogKtEntity::id, ""), "123");
+                    it.eq(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+                    it.ne(it.fx().ifNull(BlogKtEntity::id, ""), "123");
+                    it.ne(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+                    it.ge(it.fx().ifNull(BlogKtEntity::id, ""), "123");
+                    it.ge(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+                    it.gt(it.fx().ifNull(BlogKtEntity::id, ""), "123");
+                    it.gt(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+                    it.le(it.fx().ifNull(BlogKtEntity::id, ""), "123");
+                    it.le(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+                }
+                .orderByAsc {
+                    it.column(BlogKtEntity::score)
+                }
+                .orderByDesc {
+                    it.column(BlogKtEntity::star)
+                }
+                .select(BlogKtEntity::class.java) {
+                    it.column(BlogKtEntity::content);
+                    it.column(BlogKtEntity::title);
+                    it.columnAs(BlogKtEntity::title, BlogKtEntity::content);
+                    it.sqlFuncAs(it.fx().dateTimeFormat(BlogKtEntity::createTime,"yyyy-MM-dd"), BlogKtEntity::id)
+                }
+                .firstOrNull()
+        } catch (e: Exception) {
+            return e;
+        }
+        return null;
     }
 }
