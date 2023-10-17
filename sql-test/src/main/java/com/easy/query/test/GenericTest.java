@@ -26,6 +26,9 @@ import com.easy.query.core.util.EasyBitwiseUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.test.common.MyEnum;
+import com.easy.query.test.conversion.EnumValueConverter;
+import com.easy.query.test.conversion.EnumValueDeserializer;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.DefaultSafeAesEasyEncryptionStrategy;
@@ -1176,5 +1179,33 @@ public class GenericTest extends BaseTest {
         }
 
         return stringBuilder.toString();
+    }
+
+
+    @Test
+    public void EnumValueTest1(){
+        MyEnum zj = EnumValueDeserializer.deserialize(MyEnum.class, 1);
+        Assert.assertEquals(MyEnum.ZJ,zj);
+        MyEnum js = EnumValueDeserializer.deserialize(MyEnum.class, 2);
+        Assert.assertEquals(MyEnum.JS,js);
+        MyEnum sh = EnumValueDeserializer.deserialize(MyEnum.class, 3);
+        Assert.assertEquals(MyEnum.SH,sh);
+        MyEnum bj = EnumValueDeserializer.deserialize(MyEnum.class, 4);
+        Assert.assertEquals(MyEnum.BJ,bj);
+    }
+    @Test
+    public void EnumValueTest2(){
+        EnumValueConverter enumValueConverter = new EnumValueConverter();
+        Integer e1 = enumValueConverter.serialize(null, null);
+        Assert.assertNull(e1);
+        Integer e2 = enumValueConverter.serialize(MyEnum.ZJ, null);
+        Assert.assertEquals(MyEnum.ZJ.getCode(),e2);
+        Integer e3 = enumValueConverter.serialize(MyEnum.JS, null);
+        Assert.assertEquals(MyEnum.JS.getCode(),e3);
+        Integer e4 = enumValueConverter.serialize(MyEnum.SH, null);
+        Assert.assertEquals(MyEnum.SH.getCode(),e4);
+        Integer e5 = enumValueConverter.serialize(MyEnum.BJ, null);
+        Assert.assertEquals(MyEnum.BJ.getCode(),e5);
+
     }
 }

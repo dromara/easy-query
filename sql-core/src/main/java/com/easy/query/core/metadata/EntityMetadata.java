@@ -60,7 +60,6 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -160,7 +159,7 @@ public class EntityMetadata {
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
 
         Collection<Field> allFields = EasyClassUtil.getAllFields(this.entityClass);
-        PropertyDescriptor[] ps = getPropertyDescriptor();
+        PropertyDescriptor[] ps = EasyClassUtil.propertyDescriptors(entityClass);
         PropertyDescriptorFinder propertyDescriptorFinder = new PropertyDescriptorFinder(ps);
         int versionCount = 0;
         int logicDelCount = 0;
@@ -501,14 +500,6 @@ public class EntityMetadata {
                     }
                 }
             }
-        }
-    }
-
-    private PropertyDescriptor[] getPropertyDescriptor() {
-        try {
-            return EasyClassUtil.propertyDescriptors(entityClass);
-        } catch (IntrospectionException e) {
-            throw new EasyQueryException(e);
         }
     }
 

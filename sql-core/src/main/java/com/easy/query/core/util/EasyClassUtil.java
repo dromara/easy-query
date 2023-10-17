@@ -162,9 +162,13 @@ public class EasyClassUtil {
         }
     }
 
-    public static PropertyDescriptor[] propertyDescriptors(Class<?> c) throws IntrospectionException {
+    public static PropertyDescriptor[] propertyDescriptors(Class<?> c) {
         BeanInfo beanInfo = null;
-        beanInfo = Introspector.getBeanInfo(c, Object.class);
+        try {
+            beanInfo = Introspector.getBeanInfo(c, Object.class);
+        } catch (IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
         return beanInfo.getPropertyDescriptors();
     }
     public static PropertyDescriptor[] propertyDescriptorsRuntime(Class<?> c){
