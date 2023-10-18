@@ -1,9 +1,14 @@
 package com.easy.query.core.func.column;
 
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.column.impl.ColumSQLExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFuncExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFuncFormatExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFuncValueExpressionImpl;
+import com.easy.query.core.func.column.impl.ColumnFunctionExpressionImpl;
 
 import java.util.List;
 
@@ -28,7 +33,12 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
 
     @Override
     public ColumnFuncSelector column(SQLTableOwner tableOwner, String property) {
-        concatExpressions.add(new ColumnFuncExpressionImpl(tableOwner.getTable(),property));
+        return column(tableOwner.getTable(),property);
+    }
+
+    @Override
+    public ColumnFuncSelector column(TableAvailable table, String property) {
+        concatExpressions.add(new ColumnFuncExpressionImpl(table,property));
         return this;
     }
 
@@ -42,5 +52,21 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
     public ColumnFuncSelector format(Object valFormat) {
         concatExpressions.add(new ColumnFuncFormatExpressionImpl(valFormat));
         return this;
+    }
+
+    @Override
+    public ColumnFuncSelector sql(SQLSegment sqlSegment) {
+        concatExpressions.add(new ColumSQLExpressionImpl(sqlSegment));
+        return this;
+    }
+
+    @Override
+    public ColumnFuncSelector sqlFunc(SQLFunction sqlFunction) {
+        concatExpressions.add(new ColumnFunctionExpressionImpl(sqlFunction));
+        return this;
+//        SQLNativeExpressionContextImpl sqlNativeExpressionContextLeft = new SQLNativeExpressionContextImpl(null,runtimeContext);
+//        sqlFunctionLeft.consume(new SQLNativeChainExpressionContextImpl(tableLeft,sqlNativeExpressionContextLeft));
+//        String sqlSegmentLeft = sqlFunctionLeft.sqlSegment(tableLeft);
+//        SQLNativePredicateImpl sqlNativePredicateLeft = new SQLNativePredicateImpl(runtimeContext, sqlSegmentLeft, sqlNativeExpressionContextLeft);
     }
 }

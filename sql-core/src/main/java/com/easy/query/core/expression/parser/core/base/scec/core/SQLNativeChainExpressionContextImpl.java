@@ -2,7 +2,9 @@ package com.easy.query.core.expression.parser.core.base.scec.core;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.Collection;
@@ -21,6 +23,16 @@ public class SQLNativeChainExpressionContextImpl implements SQLNativeChainExpres
         this.table = table;
 
         this.sqlNativeExpressionContext = sqlNativeExpressionContext;
+    }
+
+    @Override
+    public ExpressionContext getExpressionContext() {
+        return sqlNativeExpressionContext.getExpressionContext();
+    }
+
+    @Override
+    public TableAvailable getDefaultTable() {
+        return table;
     }
 
     @Override
@@ -45,6 +57,11 @@ public class SQLNativeChainExpressionContextImpl implements SQLNativeChainExpres
     @Override
     public <T> void collection(Collection<T> values) {
         sqlNativeExpressionContext.collection(values);
+    }
+
+    @Override
+    public void sql(SQLSegment sqlSegment) {
+        sqlNativeExpressionContext.sql(sqlSegment);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.easy.query.sqllite.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -31,11 +30,6 @@ public class SQLiteIfNullSQLFunction extends AbstractExpressionSQLFunction {
     @Override
     public int paramMarks() {
         return columnExpressions.size();
-    }
-
-    @Override
-    public void consume0(SQLNativeChainExpressionContext context) {
-        invokeExpression(context);
     }
 
     @Override

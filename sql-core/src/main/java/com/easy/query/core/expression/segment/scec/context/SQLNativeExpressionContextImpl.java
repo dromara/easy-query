@@ -43,6 +43,11 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
         this.keep = runtimeContext.getQueryConfiguration().getEasyQueryOption().isKeepNativeStyle();
     }
 
+    @Override
+    public ExpressionContext getExpressionContext() {
+        return expressionContext;
+    }
+
     public void expression(TableAvailable table, String property) {
         Objects.requireNonNull(table, "table cannot be null");
         Objects.requireNonNull(property, "property cannot be null");

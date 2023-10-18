@@ -2,8 +2,8 @@ package com.easy.query.core.func;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
-import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
 import com.easy.query.core.util.EasyArrayUtil;
 
@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface SQLFunc {
+public interface SQLFunc extends AggregateSQLFunc{
     /**
      * 如果property对应的值为null则返回def值
      *
@@ -24,8 +24,8 @@ public interface SQLFunc {
      * @param def 默认值
      * @return ifNull函数
      */
-    default SQLFunction ifNull(String property, Object def) {
-        return ifNull(s->{
+    default SQLFunction valueOrDefault(String property, Object def) {
+        return valueOrDefault(s->{
             s.column(property)
                     .value(def);
         });
@@ -37,19 +37,7 @@ public interface SQLFunc {
      * @param sqlExpression 属性选择函数
      * @return ifNull函数
      */
-   default SQLFunction ifNull(SQLExpression1<ColumnFuncSelector> sqlExpression){
-       List<ColumnExpression> columnExpressions = new ArrayList<>();
-       sqlExpression.apply(new ColumnFuncSelectorImpl(columnExpressions));
-       return ifNull(columnExpressions);
-   }
-
-    /**
-     * 如果属性常量表达式集合对应的值为null则返回默认值
-     *
-     * @param columnExpressions 常量表达式集合
-     * @return ifNull函数
-     */
-    SQLFunction ifNull(List<ColumnExpression> columnExpressions);
+   SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 获取绝对值

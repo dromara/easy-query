@@ -1,10 +1,9 @@
 package com.easy.query.api.proxy.func;
 
-import com.easy.query.api.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.api.proxy.func.column.ProxyColumnFuncSelector;
+import com.easy.query.api.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.SimpleSQLTableOwner;
-import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
@@ -20,8 +19,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface ProxySQLFunc {
-    SQLFunc getSQLFunc();
+public interface ProxySQLFunc  extends ProxyAggregateSQLFunc{
 
     /**
      * 如果{@code sqlColumn}对应的值为null则返回def值
@@ -32,8 +30,8 @@ public interface ProxySQLFunc {
      * @param <TProxy> 数据库对象代理对象
      * @param <T> 数据库对象
      */
-    default <TProxy, T> SQLFunction ifNull(SQLColumn<TProxy, T> sqlColumn, Object def) {
-        return ifNull(s -> {
+    default <TProxy, T> SQLFunction valueOrDefault(SQLColumn<TProxy, T> sqlColumn, Object def) {
+        return valueOrDefault(s -> {
             s.column(sqlColumn)
                     .value(def);
         });
@@ -44,20 +42,10 @@ public interface ProxySQLFunc {
      * @param sqlExpression 列选择表达式
      * @return ifNull函数
      */
-    default SQLFunction ifNull(SQLExpression1<ProxyColumnFuncSelector> sqlExpression) {
-        List<ColumnExpression> columnExpressions = new ArrayList<>();
-        sqlExpression.apply(new ProxyColumnFuncSelectorImpl(new ColumnFuncSelectorImpl(columnExpressions)));
-        return ifNull(columnExpressions);
-    }
-
-    /**
-     * 如果列对应的值为null则返回def值
-     *
-     * @param columnExpressions 列表达式集合
-     * @return ifNull函数
-     */
-    default SQLFunction ifNull(List<ColumnExpression> columnExpressions){
-        return getSQLFunc().ifNull(columnExpressions);
+    default SQLFunction valueOrDefault(SQLExpression1<ProxyColumnFuncSelector> sqlExpression) {
+        return getSQLFunc().valueOrDefault(o->{
+            sqlExpression.apply(new ProxyColumnFuncSelectorImpl(o));
+        });
     }
 
     /**

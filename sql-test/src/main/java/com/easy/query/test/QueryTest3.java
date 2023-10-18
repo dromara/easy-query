@@ -741,16 +741,16 @@ public class QueryTest3 extends BaseTest {
     public void testProperty3_1() {
         SQLFunc sqlFunc = easyQueryClient.getRuntimeContext().fx();
         Topic topic = easyQueryClient.queryable(Topic.class)
-                .where(t -> t.eq(sqlFunc.ifNull("id","1"), sqlFunc.ifNull("stars","3")).or().like("title", "你好"))
+                .where(t -> t.eq(sqlFunc.valueOrDefault("id","1"), sqlFunc.valueOrDefault("stars","3")).or().like("title", "你好"))
                 .firstOrNull();
         Assert.assertNotNull(topic);
         String sql = easyQueryClient.queryable(Topic.class)
-                .where(t -> t.eq(sqlFunc.ifNull("id", "1"), sqlFunc.ifNull("stars", "3")).or().like("title", "你好"))
+                .where(t -> t.eq(sqlFunc.valueOrDefault("id", "1"), sqlFunc.valueOrDefault("stars", "3")).or().like("title", "你好"))
                 .toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (IFNULL(`id`,?) = IFNULL(`stars`,?) OR `title` LIKE ?)",sql);
 
         String sql1 = easyQueryClient.queryable(Topic.class)
-                .where(t -> t.eq(sqlFunc.ifNull("id", "1"), sqlFunc.ifNull(x->x.column("stars").column("id").value("3"))).or().like("title", "你好"))
+                .where(t -> t.eq(sqlFunc.valueOrDefault("id", "1"), sqlFunc.valueOrDefault(x->x.column("stars").column("id").value("3"))).or().like("title", "你好"))
                 .toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (IFNULL(`id`,?) = IFNULL(`stars`,`id`,?) OR `title` LIKE ?)",sql1);
 
@@ -758,8 +758,8 @@ public class QueryTest3 extends BaseTest {
         String sql2 = easyQueryClient.queryable(Topic.class)
                 .where(t -> {
                     t.eq(
-                            sqlFunc.ifNull("id", "1"),
-                            sqlFunc.ifNull(x->x.column("stars").column("id").value("3"))
+                            sqlFunc.valueOrDefault("id", "1"),
+                            sqlFunc.valueOrDefault(x->x.column("stars").column("id").value("3"))
                     );
                     t.or().like("title", "你好");
                 })

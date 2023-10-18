@@ -1,10 +1,11 @@
 package com.easy.query.core.func.def;
 
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.func.column.ColumnFuncExpression;
+import com.easy.query.core.func.column.ColumnPropertyExpression;
 
 /**
  * create time 2023/10/12 13:27
@@ -32,7 +33,7 @@ public abstract class AbstractSQLFunction implements SQLFunction {
 //        this.defaultTable=table;
 //    }
 
-    protected TableAvailable getTableByExpression(TableAvailable defaultTable,ColumnFuncExpression columnFuncExpression) {
+    protected TableAvailable getTableByExpression(TableAvailable defaultTable, ColumnPropertyExpression columnFuncExpression) {
         if (columnFuncExpression.getTableOrNull() != null) {
             return columnFuncExpression.getTableOrNull();
         }
@@ -54,4 +55,9 @@ public abstract class AbstractSQLFunction implements SQLFunction {
     }
 
     protected abstract void consume0(SQLNativeChainExpressionContext context);
+
+    @Override
+    public AggregationType getAggregationType() {
+        return AggregationType.UNKNOWN;
+    }
 }

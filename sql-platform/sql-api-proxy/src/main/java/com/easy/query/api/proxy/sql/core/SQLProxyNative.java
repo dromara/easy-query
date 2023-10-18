@@ -5,6 +5,9 @@ import com.easy.query.api.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
+import com.easy.query.core.func.SQLFunction;
 
 /**
  * create time 2023/7/31 14:35
@@ -51,6 +54,19 @@ public interface SQLProxyNative<TChain> extends ChainCast<TChain> {
         if(condition){
             getSQLNative().sqlNativeSegment(sqlSegment,context->{
                 contextConsume.apply(new SQLNativeProxyExpressionContextImpl(context));
+            });
+        }
+        return castChain();
+    }
+    default TChain sqlFunc(SQLFunction sqlFunction){
+        return sqlFunc(true,sqlFunction);
+    }
+    default TChain sqlFunc(boolean condition, SQLFunction sqlFunction){
+        if(condition){
+            String sqlSegment = sqlFunction.sqlSegment(null);
+            getSQLNative().sqlNativeSegment(sqlSegment,context->{
+                SQLNativeChainExpressionContext sqlNativeChainExpressionContext = new SQLNativeChainExpressionContextImpl(null,context);
+                sqlFunction.consume(sqlNativeChainExpressionContext);
             });
         }
         return castChain();

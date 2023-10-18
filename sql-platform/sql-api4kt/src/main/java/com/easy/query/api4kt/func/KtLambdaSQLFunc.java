@@ -1,11 +1,10 @@
 package com.easy.query.api4kt.func;
 
-import com.easy.query.api4kt.func.column.SQLKtColumnConcatSelectorImpl;
 import com.easy.query.api4kt.func.column.SQLKtColumnFuncSelector;
+import com.easy.query.api4kt.func.column.SQLKtColumnFuncSelectorImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
@@ -21,8 +20,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface KtLambdaSQLFunc<T> {
-    SQLFunc getSQLFunc();
+public interface KtLambdaSQLFunc<T> extends KtLambdaAggregateSQLFunc<T> {
 
     /**
      * 如果property对应的值为null则返回def值
@@ -31,11 +29,8 @@ public interface KtLambdaSQLFunc<T> {
      * @param def 默认值
      * @return ifNull函数
      */
-    default SQLFunction ifNull(KProperty1<? super T, ?> property, Object def) {
-        return this.<T>ifNull(s -> {
-            s.column(property)
-                    .value(def);
-        });
+    default SQLFunction valueOrDefault(KProperty1<? super T, ?> property, Object def) {
+        return getSQLFunc().valueOrDefault(EasyKtLambdaUtil.getPropertyName(property),def);
     }
 
     /**
@@ -44,20 +39,10 @@ public interface KtLambdaSQLFunc<T> {
      * @param sqlExpression 属性选择函数
      * @return ifNull函数
      */
-    default SQLFunction ifNull(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
-        List<ColumnExpression> columnExpressions = new ArrayList<>();
-        sqlExpression.apply(new SQLKtColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
-        return ifNull(columnExpressions);
-    }
-
-    /**
-     * 如果属性常量表达式集合对应的值为null则返回默认值
-     *
-     * @param columnExpressions 常量表达式集合
-     * @return ifNull函数
-     */
-    default SQLFunction ifNull(List<ColumnExpression> columnExpressions) {
-        return getSQLFunc().ifNull(columnExpressions);
+    default SQLFunction valueOrDefault(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
+        return getSQLFunc().valueOrDefault(o->{
+            sqlExpression.apply(new SQLKtColumnFuncSelectorImpl<>(o));
+        });
     }
 
     /**
@@ -201,7 +186,7 @@ public interface KtLambdaSQLFunc<T> {
      */
     default SQLFunction concat(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
         List<ColumnExpression> concatExpressions = new ArrayList<>();
-        sqlExpression.apply(new SQLKtColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(concatExpressions)));
+        sqlExpression.apply(new SQLKtColumnFuncSelectorImpl<>(new ColumnFuncSelectorImpl(concatExpressions)));
         return concat(concatExpressions);
     }
 

@@ -17,11 +17,14 @@ import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.expression.segment.impl.SQLFunctionColumnSegmentImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.SQLFunctionTranslateImpl;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
@@ -180,6 +183,16 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
         FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, runtimeContext, columnFunction, columnAsName);
         sqlBuilderSegment.append(funcColumnSegment);
         return this;
+    }
+
+    @Override
+    public <T extends SQLFunction> void columnSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias) {
+        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                .toSQLSegment(expressionContext, table, runtimeContext);
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        String columnAsName = propertyAlias == null ? columnMetadata.getName() : getResultColumnName(propertyAlias);
+        FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, columnMetadata, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), columnAsName);
+        sqlBuilderSegment.append(funcColumnSegment);
     }
 
     @Override

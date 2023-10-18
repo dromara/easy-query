@@ -12,6 +12,8 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 
 /**
  * create time 2023/6/22 20:47
@@ -71,14 +73,21 @@ public interface AsSelector extends SQLAsNative<AsSelector> {
         return columnFuncAs(table,columnPropertyFunction, propertyAlias);
     }
 
-    default AsSelector columnSum(TableAvailable table,String property) {
+    default AsSelector columnSum(TableAvailable table, String property) {
         return columnSumAs(table,property, null);
+    }
+    default AsSelector columnSum(TableAvailable table, String property,SQLExpression1<DistinctDefaultSQLFunction> sqlExpression) {
+        return columnSumAs(table,property, null,sqlExpression);
     }
 
     default AsSelector columnSumAs(TableAvailable table,String property, String propertyAlias) {
-        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createSumFunction(false);
-        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(property, countFunction);
-        return columnFuncAs(table,columnPropertyFunction, propertyAlias);
+        return columnSumAs(table,property, propertyAlias,c->{});
+    }
+    default AsSelector columnSumAs(TableAvailable table,String property, String propertyAlias,SQLExpression1<DistinctDefaultSQLFunction> sqlExpression) {
+        DistinctDefaultSQLFunction sum = getRuntimeContext().fx().sum(o -> o.column(table, property));
+        columnSQLFunction(table,property,sum,propertyAlias);
+        sqlExpression.apply(sum);
+        return this;
     }
 
     default AsSelector columnSumDistinct(TableAvailable table,String property) {
@@ -142,5 +151,7 @@ public interface AsSelector extends SQLAsNative<AsSelector> {
     }
 
     AsSelector columnFuncAs(TableAvailable table,ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
+
+    <T extends SQLFunction> void columnSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias);
     AsSelector sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias);
 }

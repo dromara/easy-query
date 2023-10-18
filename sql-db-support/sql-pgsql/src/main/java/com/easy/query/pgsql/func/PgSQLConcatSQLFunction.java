@@ -37,11 +37,6 @@ public class PgSQLConcatSQLFunction extends AbstractExpressionSQLFunction {
     }
 
     @Override
-    protected void consume0(SQLNativeChainExpressionContext context) {
-        invokeExpression(context);
-    }
-
-    @Override
     protected List<ColumnExpression> getColumnExpressions() {
         return columnExpressions;
     }

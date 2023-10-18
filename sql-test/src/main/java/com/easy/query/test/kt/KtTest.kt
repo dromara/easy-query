@@ -3,7 +3,6 @@ package com.easy.query.test.kt
 import com.easy.query.core.enums.SQLRangeEnum
 import com.easy.query.core.exception.EasyQuerySQLCommandException
 import com.easy.query.core.exception.EasyQuerySQLStatementException
-import com.sun.org.apache.xpath.internal.operations.String
 import org.junit.Assert
 import org.junit.Test
 import java.math.BigDecimal
@@ -309,16 +308,16 @@ class KtTest : BaseKtTest() {
         val strings = arrayOf("Hello", "kotlin");
         var sql = easyKtQuery!!.queryable(BlogKtEntity::class.java)
             .where {
-                it.eq(it.fx().ifNull(BlogKtEntity::id, ""), "123");
-                it.eq(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
-                it.ne(it.fx().ifNull(BlogKtEntity::id, ""), "123");
-                it.ne(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
-                it.ge(it.fx().ifNull(BlogKtEntity::id, ""), "123");
-                it.ge(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
-                it.gt(it.fx().ifNull(BlogKtEntity::id, ""), "123");
-                it.gt(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
-                it.le(it.fx().ifNull(BlogKtEntity::id, ""), "123");
-                it.le(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+                it.eq(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
+                it.eq(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                it.ne(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
+                it.ne(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                it.ge(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
+                it.ge(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                it.gt(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
+                it.gt(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                it.le(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
+                it.le(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
             }
             .orderByAsc {
                 it.column(BlogKtEntity::score)
@@ -356,16 +355,16 @@ class KtTest : BaseKtTest() {
             var firstOrNull = easyKtQuery!!.queryable(BlogKtEntity::class.java)
                 .asTable("blog_kt_table")
                 .where {
-                    it.eq(it.fx().ifNull(BlogKtEntity::id, ""), "123");
-                    it.eq(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
-                    it.ne(it.fx().ifNull(BlogKtEntity::id, ""), "123");
-                    it.ne(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
-                    it.ge(it.fx().ifNull(BlogKtEntity::id, ""), "123");
-                    it.ge(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
-                    it.gt(it.fx().ifNull(BlogKtEntity::id, ""), "123");
-                    it.gt(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
-                    it.le(it.fx().ifNull(BlogKtEntity::id, ""), "123");
-                    it.le(false, it.fx().ifNull(BlogKtEntity::id, ""), it.fx().ifNull(BlogKtEntity::title, ""));
+                    it.eq(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
+                    it.eq(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                    it.ne(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
+                    it.ne(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                    it.ge(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
+                    it.ge(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                    it.gt(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
+                    it.gt(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                    it.le(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
+                    it.le(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
                 }
                 .orderByAsc {
                     it.column(BlogKtEntity::score)

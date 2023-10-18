@@ -1,9 +1,11 @@
 package com.easy.query.sqllite.func;
 
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.column.ColumnFuncSelector;
 
 import java.util.List;
 
@@ -14,9 +16,10 @@ import java.util.List;
  * @author xuejiaming
  */
 public class SQLiteFuncImpl extends SQLFuncImpl {
+
     @Override
-    public SQLFunction ifNull(List<ColumnExpression> columnExpressions) {
-        return new SQLiteIfNullSQLFunction(columnExpressions);
+    public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteIfNullSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override

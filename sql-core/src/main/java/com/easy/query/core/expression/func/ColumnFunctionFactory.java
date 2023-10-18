@@ -6,6 +6,7 @@ package com.easy.query.core.expression.func;
  *
  * @author xuejiaming
  */
+@Deprecated
 public interface ColumnFunctionFactory {
     ColumnFunction createCountFunction(boolean distinct);
     ColumnFunction createSumFunction(boolean distinct);

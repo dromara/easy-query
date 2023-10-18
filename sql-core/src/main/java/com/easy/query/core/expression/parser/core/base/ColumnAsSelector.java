@@ -9,7 +9,7 @@ import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.available.SQLFuncAvailable;
+import com.easy.query.core.expression.parser.core.available.SQLFxAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLAsPropertyNative;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -19,32 +19,40 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  * @Description: 文件说明
  * @Date: 2023/2/6 22:58
  */
-public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAsPropertyNative<ColumnAsSelector<T1, TR>>, SQLFuncAvailable {
+public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAsPropertyNative<ColumnAsSelector<T1, TR>>, SQLFxAvailable {
     AsSelector getAsSelector();
-    default QueryRuntimeContext getRuntimeContext(){
+
+    default QueryRuntimeContext getRuntimeContext() {
         return getAsSelector().getRuntimeContext();
     }
+
     ExpressionContext getExpressionContext();
 
     default ColumnAsSelector<T1, TR> groupKeys(int index) {
         getAsSelector().groupKeys(index);
         return this;
     }
+
     default ColumnAsSelector<T1, TR> groupKeysAs(int index, String alias) {
-        getAsSelector().groupKeysAs(index,alias);
+        getAsSelector().groupKeysAs(index, alias);
         return this;
     }
+
     ColumnAsSelector<T1, TR> column(String property);
-   default   ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty){
-        return columnInclude(true,property,aliasProperty);
-   }
-    default ColumnAsSelector<T1, TR> columnInclude(boolean condition,String property, String aliasProperty){
-        return columnInclude(condition,property,aliasProperty,ColumnAsSelector::columnAll);
+
+    default ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty) {
+        return columnInclude(true, property, aliasProperty);
     }
-    default <TIncludeSource,TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression){
-        return columnInclude(true,property,aliasProperty,includeSelectorExpression);
+
+    default ColumnAsSelector<T1, TR> columnInclude(boolean condition, String property, String aliasProperty) {
+        return columnInclude(condition, property, aliasProperty, ColumnAsSelector::columnAll);
     }
-    <TIncludeSource,TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(boolean condition,String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult,TIncludeResult>> includeSelectorExpression);
+
+    default <TIncludeSource, TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression) {
+        return columnInclude(true, property, aliasProperty, includeSelectorExpression);
+    }
+
+    <TIncludeSource, TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(boolean condition, String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression);
 
     ColumnAsSelector<T1, TR> columnIgnore(String property);
 
@@ -58,6 +66,7 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAs
     ColumnAsSelector<T1, TR> columnAs(String property, String propertyAlias);
 
     <TSubQuery> ColumnAsSelector<T1, TR> columnSubQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, String propertyAlias);
+
     default ColumnAsSelector<T1, TR> columnCount(String property) {
         return columnCountAs(property, null);
     }
@@ -150,7 +159,8 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAs
 
     ColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
 
-    ColumnAsSelector<T1,TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias);
+    ColumnAsSelector<T1, TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias);
+
     default <T2> ColumnAsSelector<T2, TR> then(ColumnAsSelector<T2, TR> sub) {
         return sub;
     }

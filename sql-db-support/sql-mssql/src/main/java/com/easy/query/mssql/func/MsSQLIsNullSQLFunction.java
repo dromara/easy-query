@@ -34,11 +34,6 @@ public class MsSQLIsNullSQLFunction extends AbstractExpressionSQLFunction {
     }
 
     @Override
-    public void consume0(SQLNativeChainExpressionContext context) {
-        invokeExpression(context);
-    }
-
-    @Override
     protected List<ColumnExpression> getColumnExpressions() {
         return columnExpressions;
     }

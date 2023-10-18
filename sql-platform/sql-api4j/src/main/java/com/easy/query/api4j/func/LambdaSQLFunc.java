@@ -1,12 +1,11 @@
 package com.easy.query.api4j.func;
 
-import com.easy.query.api4j.func.column.SQLColumnConcatSelectorImpl;
+import com.easy.query.api4j.func.column.SQLColumnFuncSelectorImpl;
 import com.easy.query.api4j.func.column.SQLColumnFuncSelector;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
@@ -21,8 +20,8 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface LambdaSQLFunc<T1> {
-    SQLFunc getSQLFunc();
+public interface LambdaSQLFunc<T1> extends LambdaAggregateSQLFunc<T1> {
+
 
 
     /**
@@ -32,8 +31,8 @@ public interface LambdaSQLFunc<T1> {
      * @param def 默认值
      * @return ifNull函数
      */
-    default SQLFunction ifNull(Property<T1, ?> property, Object def) {
-        return ifNull(s -> {
+    default SQLFunction valueOrDefault(Property<T1, ?> property, Object def) {
+        return valueOrDefault(s -> {
             s.column(property)
                     .value(def);
         });
@@ -45,20 +44,11 @@ public interface LambdaSQLFunc<T1> {
      * @param sqlExpression 属性选择函数
      * @return ifNull函数
      */
-    default SQLFunction ifNull(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
-        List<ColumnExpression> columnExpressions = new ArrayList<>();
-        sqlExpression.apply(new SQLColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
-        return ifNull(columnExpressions);
-    }
-
-    /**
-     * 如果属性常量表达式集合对应的值为null则返回默认值
-     *
-     * @param columnExpressions 常量表达式集合
-     * @return ifNull函数
-     */
-    default SQLFunction ifNull(List<ColumnExpression> columnExpressions) {
-        return getSQLFunc().ifNull(columnExpressions);
+    default SQLFunction valueOrDefault(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
+        return getSQLFunc().valueOrDefault(o->{
+            SQLColumnFuncSelectorImpl<T1> sqlColumnConcatSelector = new SQLColumnFuncSelectorImpl<>(o);
+            sqlExpression.apply(sqlColumnConcatSelector);
+        });
     }
 
     /**
@@ -201,7 +191,7 @@ public interface LambdaSQLFunc<T1> {
      */
     default SQLFunction concat(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
         List<ColumnExpression> columnExpressions = new ArrayList<>();
-        sqlExpression.apply(new SQLColumnConcatSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
+        sqlExpression.apply(new SQLColumnFuncSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
         return concat(columnExpressions);
     }
 

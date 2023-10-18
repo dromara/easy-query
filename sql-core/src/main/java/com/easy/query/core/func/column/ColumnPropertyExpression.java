@@ -8,7 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public interface ColumnFuncExpression extends ColumnExpression {
+public interface ColumnPropertyExpression extends ColumnExpression {
     TableAvailable getTableOrNull();
     String getProperty();
 }

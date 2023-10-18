@@ -218,7 +218,7 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc1() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().ifNull("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -226,7 +226,7 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc2() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().ifNull("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -234,7 +234,7 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc2_1() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().ifNull(x -> x.column("id").column("title").value("1")))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault(x -> x.column("id").column("title").value("1")))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,t.`title`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -368,7 +368,7 @@ public class QueryTest4 extends BaseTest {
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .where(o -> {
                     LambdaSQLFunc<SysUser> userSqlFunc = o.fx();
-                    o.eq(userSqlFunc.ifNull(SysUser::getId, "123"), userSqlFunc.ifNull(x -> x.column(SysUser::getIdCard).value("1243")));
+                    o.eq(userSqlFunc.valueOrDefault(SysUser::getId, "123"), userSqlFunc.valueOrDefault(x -> x.column(SysUser::getIdCard).value("1243")));
                 });
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE IFNULL(`id`,?) = IFNULL(`id_card`,?)", sql);
@@ -383,7 +383,7 @@ public class QueryTest4 extends BaseTest {
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .where(o -> {
                     LambdaSQLFunc<SysUser> userSqlFunc = o.fx();
-                    o.eq(userSqlFunc.ifNull(SysUser::getId, "123"), "abc");
+                    o.eq(userSqlFunc.valueOrDefault(SysUser::getId, "123"), "abc");
                 });
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE IFNULL(`id`,?) = ?", sql);
@@ -397,13 +397,13 @@ public class QueryTest4 extends BaseTest {
 
             TopicProxy table = TopicProxy.createTable();
             String sql = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().ifNull(table.id(), "123"), o.fx().ifNull(table.createTime(), "123")))
+                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), o.fx().valueOrDefault(table.createTime(), "123")))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = IFNULL(`create_time`,?)", sql);
         }
         {
             String sql = easyQuery.queryable(Topic.class)
-                    .where(o -> o.eq(o.fx().ifNull(Topic::getId, "123"), o.fx().ifNull(Topic::getTitle, "456")))
+                    .where(o -> o.eq(o.fx().valueOrDefault(Topic::getId, "123"), o.fx().valueOrDefault(Topic::getTitle, "456")))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = IFNULL(`title`,?)", sql);
 
@@ -415,7 +415,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             String sql1 = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().ifNull(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
+                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = DATE_FORMAT(`create_time`,'%Y/%m/%d %H:%i:%s')", sql1);
 
@@ -424,7 +424,7 @@ public class QueryTest4 extends BaseTest {
 
             TopicProxy table = TopicProxy.createTable();
             Topic topic = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().ifNull(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
+                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
                     .firstOrNull();
             Assert.assertNull(topic);
         }
@@ -515,7 +515,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             String sql1 = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().ifNull(table.id(), "123"), "111"))
+                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), "111"))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = ?", sql1);
 
@@ -523,7 +523,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             Topic topic = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().ifNull(table.id(), "123"), "111"))
+                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), "111"))
                     .firstOrNull();
             Assert.assertNull(topic);
 

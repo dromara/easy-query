@@ -1,9 +1,11 @@
 package com.easy.query.pgsql.func;
 
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.column.ColumnFuncSelector;
 
 import java.util.List;
 
@@ -14,11 +16,12 @@ import java.util.List;
  * @author xuejiaming
  */
 public class PgSQLFuncImpl extends SQLFuncImpl {
-    @Override
-    public SQLFunction ifNull(List<ColumnExpression> columnExpressions) {
-        return new PgSQLCOALESCESQLFunction(columnExpressions);
-    }
 
+
+    @Override
+    public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLCOALESCESQLFunction(getColumnExpressions(sqlExpression));
+    }
     @Override
     public SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
         return new PgSQLDateTimeFormatSQLFunction(getTable(tableOwner), property, javaFormat);

@@ -1,5 +1,6 @@
 package com.easy.query.core.func;
 
+import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 
@@ -25,4 +26,5 @@ public interface SQLFunction {
 //    void setAlias(String alias);
 //    void setPropertyAlias(String propertyAlias);
     void consume(SQLNativeChainExpressionContext context);
+    AggregationType getAggregationType();
 }

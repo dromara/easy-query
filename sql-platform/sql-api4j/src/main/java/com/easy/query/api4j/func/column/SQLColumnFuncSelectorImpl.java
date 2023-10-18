@@ -1,4 +1,4 @@
-package com.easy.query.api4kt.func.column;
+package com.easy.query.api4j.func.column;
 
 import com.easy.query.core.func.column.ColumnFuncSelector;
 
@@ -8,11 +8,11 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
  *
  * @author xuejiaming
  */
-public class SQLKtColumnConcatSelectorImpl<T> implements SQLKtColumnFuncSelector<T> {
+public class SQLColumnFuncSelectorImpl<T> implements SQLColumnFuncSelector<T> {
 
     private final ColumnFuncSelector columnConcatSelector;
 
-    public SQLKtColumnConcatSelectorImpl(ColumnFuncSelector columnConcatSelector){
+    public SQLColumnFuncSelectorImpl(ColumnFuncSelector columnConcatSelector){
 
         this.columnConcatSelector = columnConcatSelector;
     }

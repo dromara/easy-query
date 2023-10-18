@@ -1,9 +1,8 @@
 package com.easy.query.mssql.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.func.column.ColumnExpression;
-import com.easy.query.core.func.column.ColumnFuncExpression;
+import com.easy.query.core.func.column.ColumnPropertyExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyClassUtil;
@@ -37,8 +36,8 @@ public class MsSQLConcatSQLFunction extends AbstractExpressionSQLFunction {
         int i = 0;
         String[] params = new String[columnExpressions.size()];
         for (ColumnExpression columnExpression : columnExpressions) {
-            if (columnExpression instanceof ColumnFuncExpression) {
-                ColumnFuncExpression columnFuncExpression = (ColumnFuncExpression) columnExpression;
+            if (columnExpression instanceof ColumnPropertyExpression) {
+                ColumnPropertyExpression columnFuncExpression = (ColumnPropertyExpression) columnExpression;
                 TableAvailable table = getTableByExpression(defaultTable,columnFuncExpression);
                 ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(columnFuncExpression.getProperty());
                 Class<?> propertyType = columnMetadata.getPropertyType();
@@ -61,11 +60,6 @@ public class MsSQLConcatSQLFunction extends AbstractExpressionSQLFunction {
     @Override
     public int paramMarks() {
         return columnExpressions.size();
-    }
-
-    @Override
-    protected void consume0(SQLNativeChainExpressionContext context) {
-        invokeExpression(context);
     }
 
     @Override

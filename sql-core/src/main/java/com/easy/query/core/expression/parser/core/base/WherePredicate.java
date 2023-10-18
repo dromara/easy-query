@@ -6,7 +6,7 @@ import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.available.SQLFuncAvailable;
+import com.easy.query.core.expression.parser.core.available.SQLFxAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 import com.easy.query.core.expression.parser.core.base.core.filter.AssertPredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.FuncColumnPredicate;
@@ -24,7 +24,7 @@ import com.easy.query.core.expression.parser.core.base.core.filter.ValuesPredica
  * @Description: 文件说明
  * @Date: 2023/2/5 09:09
  */
-public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFuncAvailable, SQLPropertyNative<WherePredicate<T1>>
+public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvailable, SQLPropertyNative<WherePredicate<T1>>
         , SelfPredicate<T1, WherePredicate<T1>>
         , ValuePredicate<T1, WherePredicate<T1>>
         , FuncValuePredicate<T1, WherePredicate<T1>>

@@ -8,7 +8,7 @@ import com.easy.query.core.func.SQLFunc;
  *
  * @author xuejiaming
  */
-public interface SQLFuncAvailable extends RuntimeContextAvailable {
+public interface SQLFxAvailable extends RuntimeContextAvailable {
     default SQLFunc fx(){
         return getRuntimeContext().fx();
     }

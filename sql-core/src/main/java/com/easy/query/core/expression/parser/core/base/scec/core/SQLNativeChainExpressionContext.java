@@ -2,6 +2,8 @@ package com.easy.query.core.expression.parser.core.base.scec.core;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.text.MessageFormat;
@@ -15,6 +17,8 @@ import java.util.Collection;
  */
 public interface SQLNativeChainExpressionContext {
 
+    ExpressionContext getExpressionContext();
+    TableAvailable getDefaultTable();
     void expression(String property);
 
     void expression(TableAvailable table, String property);
@@ -24,6 +28,8 @@ public interface SQLNativeChainExpressionContext {
     void value(Object val);
 
     <T> void collection(Collection<T> values);
+
+    void sql(SQLSegment sqlSegment);
 
     void format(Object formatVal);
 

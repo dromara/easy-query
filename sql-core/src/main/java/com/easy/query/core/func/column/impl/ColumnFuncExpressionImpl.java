@@ -1,7 +1,7 @@
 package com.easy.query.core.func.column.impl;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.func.column.ColumnFuncExpression;
+import com.easy.query.core.func.column.ColumnPropertyExpression;
 
 /**
  * create time 2023/10/12 14:18
@@ -9,7 +9,7 @@ import com.easy.query.core.func.column.ColumnFuncExpression;
  *
  * @author xuejiaming
  */
-public class ColumnFuncExpressionImpl implements ColumnFuncExpression {
+public class ColumnFuncExpressionImpl implements ColumnPropertyExpression {
     private final TableAvailable table;
     private final String property;
 

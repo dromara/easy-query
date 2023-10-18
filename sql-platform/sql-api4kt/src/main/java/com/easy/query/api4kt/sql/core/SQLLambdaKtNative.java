@@ -3,8 +3,10 @@ package com.easy.query.api4kt.sql.core;
 import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContext;
 import com.easy.query.api4kt.sql.scec.SQLNativeLambdaKtExpressionContextImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
+import com.easy.query.core.func.SQLFunction;
 
 /**
  * create time 2023/7/31 14:21
@@ -12,7 +14,7 @@ import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
  *
  * @author xuejiaming
  */
-public interface SQLLambdaKtNative<T1,TChain> extends ChainCast<TChain> {
+public interface SQLLambdaKtNative<T1,TChain> extends EntitySQLTableOwner<T1>,ChainCast<TChain> {
     <T> SQLPropertyNative<T> getSQLPropertyNative();
 
 
@@ -52,6 +54,18 @@ public interface SQLLambdaKtNative<T1,TChain> extends ChainCast<TChain> {
         if(condition){
             getSQLPropertyNative().sqlNativeSegment(sqlSegment,context->{
                 contextConsume.apply(new SQLNativeLambdaKtExpressionContextImpl<>(context));
+            });
+        }
+        return castChain();
+    }
+    default TChain sqlFunc(SQLFunction sqlFunction){
+        return sqlFunc(true,sqlFunction);
+    }
+    default TChain sqlFunc(boolean condition, SQLFunction sqlFunction){
+        if(condition){
+            String sqlSegment = sqlFunction.sqlSegment(getTable());
+            getSQLPropertyNative().sqlNativeSegment(sqlSegment,context->{
+                sqlFunction.consume(context.getSQLNativeChainExpressionContext());
             });
         }
         return castChain();
