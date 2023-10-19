@@ -747,7 +747,9 @@ public class QueryTest2 extends BaseTest {
                 .groupBy(o -> o.column(BlogEntity::getId))
                 .select(BlogEntity.class, o -> o
                         .columnAs(BlogEntity::getId, BlogEntity::getId)
-                        .columnSumDistinct(BlogEntity::getScore)
+                        .columnSum(BlogEntity::getScore,c->{
+                            c.distinct();
+                        })
                         .columnCountDistinct(BlogEntity::getOrder)
                         .columnAvgDistinct(BlogEntity::getStatus)
                 ).toSQL();

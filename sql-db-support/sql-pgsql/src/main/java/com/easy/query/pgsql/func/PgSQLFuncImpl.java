@@ -6,6 +6,7 @@ import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
+import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
 
     @Override
     public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new PgSQLCOALESCESQLFunction(getColumnExpressions(sqlExpression));
+        return new PgSQLValueOrDefaultSQLFunction(getColumnExpressions(sqlExpression));
     }
     @Override
     public SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
@@ -48,5 +49,20 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction utcNow() {
         return PgSQLUtcNowSQLFunction.INSTANCE;
+    }
+
+    @Override
+    public DistinctDefaultSQLFunction sum(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLSumSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public DistinctDefaultSQLFunction count(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLCountSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLAvgSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

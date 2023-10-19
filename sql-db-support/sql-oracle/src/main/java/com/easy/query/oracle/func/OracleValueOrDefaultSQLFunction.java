@@ -1,4 +1,4 @@
-package com.easy.query.pgsql.func;
+package com.easy.query.oracle.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -13,10 +13,10 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class PgSQLCOALESCESQLFunction extends AbstractExpressionSQLFunction {
+public class OracleValueOrDefaultSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
 
-    public PgSQLCOALESCESQLFunction(List<ColumnExpression> columnExpressions) {
+    public OracleValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
 
         this.columnExpressions = columnExpressions;
     }
@@ -24,7 +24,7 @@ public class PgSQLCOALESCESQLFunction extends AbstractExpressionSQLFunction {
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
-        return String.format("COALESCE(%s)", String.join(",", params));
+        return String.format("NVL(%s)", String.join(",", params));
     }
 
     @Override

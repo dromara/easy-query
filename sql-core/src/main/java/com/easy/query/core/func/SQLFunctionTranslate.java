@@ -12,5 +12,5 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  * @author xuejiaming
  */
 public interface SQLFunctionTranslate {
-    SQLSegment toSQLSegment(ExpressionContext expressionContext, TableAvailable defTable, QueryRuntimeContext runtimeContext);
+    SQLSegment toSQLSegment(ExpressionContext expressionContext, TableAvailable defTable, QueryRuntimeContext runtimeContext,String alias);
 }

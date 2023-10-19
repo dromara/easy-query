@@ -187,10 +187,11 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
 
     @Override
     public <T extends SQLFunction> void columnSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias) {
-        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
-                .toSQLSegment(expressionContext, table, runtimeContext);
+
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         String columnAsName = propertyAlias == null ? columnMetadata.getName() : getResultColumnName(propertyAlias);
+        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                .toSQLSegment(expressionContext, table, runtimeContext,columnAsName);
         FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, columnMetadata, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), columnAsName);
         sqlBuilderSegment.append(funcColumnSegment);
     }

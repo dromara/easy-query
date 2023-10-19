@@ -15,6 +15,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.func.DistinctOrDefaultSelector;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
@@ -202,15 +203,21 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, La
         getColumnAsSelector().columnSum(EasyLambdaUtil.getPropertyName(column));
         return this;
     }
-
-    default SQLColumnAsSelector<T1, TR> columnSumAs(Property<T1, Number> column, Property<TR, Number> alias) {
-        return columnSumAs(column, EasyLambdaUtil.getPropertyName(alias));
-    }
-
-    default SQLColumnAsSelector<T1, TR> columnSumAs(Property<T1, Number> column, String alias) {
-        getColumnAsSelector().columnSumAs(EasyLambdaUtil.getPropertyName(column), alias);
+    default SQLColumnAsSelector<T1, TR> columnSum(Property<T1, Number> column, SQLExpression1<DistinctOrDefaultSelector> sqlExpression) {
+        getColumnAsSelector().columnSum(EasyLambdaUtil.getPropertyName(column),sqlExpression);
         return this;
     }
+
+    default SQLColumnAsSelector<T1, TR> columnSumAs(Property<T1, Number> column, Property<TR, Number> alias) {
+        getColumnAsSelector().columnSumAs(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(alias));
+        return this;
+    }
+
+    default SQLColumnAsSelector<T1, TR> columnSumAs(Property<T1, Number> column, Property<TR, Number> alias, SQLExpression1<DistinctOrDefaultSelector> sqlExpression) {
+        getColumnAsSelector().columnSumAs(EasyLambdaUtil.getPropertyName(column),EasyLambdaUtil.getPropertyName(alias),sqlExpression);
+        return this;
+    }
+
 
     default SQLColumnAsSelector<T1, TR> columnSumDistinct(Property<T1, Number> column) {
         getColumnAsSelector().columnSumDistinct(EasyLambdaUtil.getPropertyName(column));

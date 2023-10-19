@@ -13,6 +13,7 @@ import com.easy.query.core.expression.parser.core.available.SQLFxAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLAsPropertyNative;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.func.DistinctOrDefaultSelector;
 
 /**
  * @author xuejiaming
@@ -88,14 +89,24 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAs
     }
 
     default ColumnAsSelector<T1, TR> columnSum(String property) {
-        return columnSumAs(property, null);
+        getAsSelector().columnSum(getTable(), property);
+        return this;
+    }
+
+    default ColumnAsSelector<T1, TR> columnSum(String property, SQLExpression1<DistinctOrDefaultSelector> sqlExpression) {
+        getAsSelector().columnSum(getTable(),property,sqlExpression);
+        return this;
     }
 
     default ColumnAsSelector<T1, TR> columnSumAs(String property, String propertyAlias) {
-        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createSumFunction(false);
-        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(property, countFunction);
-        return columnFuncAs(columnPropertyFunction, propertyAlias);
+        getAsSelector().columnSumAs(getTable(),property,propertyAlias);
+        return this;
     }
+    default ColumnAsSelector<T1, TR> columnSumAs(String property, String propertyAlias, SQLExpression1<DistinctOrDefaultSelector> sqlExpression) {
+        getAsSelector().columnSumAs(getTable(),property,propertyAlias,sqlExpression);
+        return this;
+    }
+
 
     default ColumnAsSelector<T1, TR> columnSumDistinct(String property) {
         return columnSumDistinctAs(property, null);

@@ -12,6 +12,8 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.func.DistinctOrDefaultSelector;
+import com.easy.query.core.func.DistinctDefaultSettingImpl;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 
@@ -76,17 +78,17 @@ public interface AsSelector extends SQLAsNative<AsSelector> {
     default AsSelector columnSum(TableAvailable table, String property) {
         return columnSumAs(table,property, null);
     }
-    default AsSelector columnSum(TableAvailable table, String property,SQLExpression1<DistinctDefaultSQLFunction> sqlExpression) {
+    default AsSelector columnSum(TableAvailable table, String property,SQLExpression1<DistinctOrDefaultSelector> sqlExpression) {
         return columnSumAs(table,property, null,sqlExpression);
     }
 
     default AsSelector columnSumAs(TableAvailable table,String property, String propertyAlias) {
         return columnSumAs(table,property, propertyAlias,c->{});
     }
-    default AsSelector columnSumAs(TableAvailable table,String property, String propertyAlias,SQLExpression1<DistinctDefaultSQLFunction> sqlExpression) {
+    default AsSelector columnSumAs(TableAvailable table,String property, String propertyAlias,SQLExpression1<DistinctOrDefaultSelector> sqlExpression) {
         DistinctDefaultSQLFunction sum = getRuntimeContext().fx().sum(o -> o.column(table, property));
         columnSQLFunction(table,property,sum,propertyAlias);
-        sqlExpression.apply(sum);
+        sqlExpression.apply(new DistinctDefaultSettingImpl(sum));
         return this;
     }
 

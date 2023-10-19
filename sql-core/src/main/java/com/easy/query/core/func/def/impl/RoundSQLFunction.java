@@ -1,7 +1,8 @@
-package com.easy.query.core.func.def;
+package com.easy.query.core.func.def.impl;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
+import com.easy.query.core.func.def.AbstractSQLFunction;
 
 /**
  * create time 2023/10/12 16:09

@@ -13,10 +13,10 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class DamengNVLSQLFunction extends AbstractExpressionSQLFunction {
+public class DamengValueOrDefaultSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
 
-    public DamengNVLSQLFunction(List<ColumnExpression> columnExpressions) {
+    public DamengValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
         this.columnExpressions = columnExpressions;
     }
 

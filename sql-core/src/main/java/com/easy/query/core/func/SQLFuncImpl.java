@@ -6,20 +6,20 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
-import com.easy.query.core.func.def.AbsSQLFunction;
-import com.easy.query.core.func.def.ConcatSQLFunction;
-import com.easy.query.core.func.def.DateTimeFormatSQLFunction;
-import com.easy.query.core.func.def.DateTimeSQLFormatSQLFunction;
+import com.easy.query.core.func.def.impl.AbsSQLFunction;
+import com.easy.query.core.func.def.impl.ConcatSQLFunction;
+import com.easy.query.core.func.def.impl.DateTimeFormatSQLFunction;
+import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
-import com.easy.query.core.func.def.NowSQLFunction;
-import com.easy.query.core.func.def.RoundSQLFunction;
-import com.easy.query.core.func.def.UtcNowSQLFunction;
-import com.easy.query.core.func.def.ValueOrDefaultSQLFunction;
-import com.easy.query.core.func.def.impl.AvgSQLFunctionImpl;
-import com.easy.query.core.func.def.impl.CountSQLFunctionImpl;
-import com.easy.query.core.func.def.impl.MaxSQLFunctionImpl;
-import com.easy.query.core.func.def.impl.MinSQLFunctionImpl;
-import com.easy.query.core.func.def.impl.SumSQLFunctionImpl;
+import com.easy.query.core.func.def.impl.NowSQLFunction;
+import com.easy.query.core.func.def.impl.RoundSQLFunction;
+import com.easy.query.core.func.def.impl.UtcNowSQLFunction;
+import com.easy.query.core.func.def.impl.ValueOrDefaultSQLFunction;
+import com.easy.query.core.func.def.impl.AvgSQLFunction;
+import com.easy.query.core.func.def.impl.CountSQLFunction;
+import com.easy.query.core.func.def.impl.MaxSQLFunction;
+import com.easy.query.core.func.def.impl.MinSQLFunction;
+import com.easy.query.core.func.def.impl.SumSQLFunction;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.ArrayList;
@@ -43,27 +43,27 @@ public class SQLFuncImpl implements SQLFunc {
     }
     @Override
     public DistinctDefaultSQLFunction sum(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new SumSQLFunctionImpl(getColumnExpressions(sqlExpression));
+        return new SumSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
     public DistinctDefaultSQLFunction count(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new CountSQLFunctionImpl(getColumnExpressions(sqlExpression));
+        return new CountSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
     public SQLFunction max(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new MaxSQLFunctionImpl(getColumnExpressions(sqlExpression));
+        return new MaxSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
     public SQLFunction min(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new MinSQLFunctionImpl(getColumnExpressions(sqlExpression));
+        return new MinSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
     public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new AvgSQLFunctionImpl(getColumnExpressions(sqlExpression));
+        return new AvgSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override

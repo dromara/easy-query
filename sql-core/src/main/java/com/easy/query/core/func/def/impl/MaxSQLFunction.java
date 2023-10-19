@@ -14,10 +14,10 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class MaxSQLFunctionImpl extends AbstractExpressionSQLFunction{
+public class MaxSQLFunction extends AbstractExpressionSQLFunction{
     private final List<ColumnExpression> columnExpressions;
 
-    public MaxSQLFunctionImpl(List<ColumnExpression> columnExpressions) {
+    public MaxSQLFunction(List<ColumnExpression> columnExpressions) {
 
         this.columnExpressions = columnExpressions;
     }

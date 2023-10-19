@@ -6,6 +6,7 @@ import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
+import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 public class MsSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new MsSQLIsNullSQLFunction(getColumnExpressions(sqlExpression));
+        return new MsSQLValueOrDefaultSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
@@ -47,5 +48,20 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction utcNow() {
         return MsSQLUtcNowSQLFunction.INSTANCE;
+    }
+
+    @Override
+    public DistinctDefaultSQLFunction sum(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLSumSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public DistinctDefaultSQLFunction count(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLCountSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLAvgSQLFunction(getColumnExpressions(sqlExpression));
     }
 }
