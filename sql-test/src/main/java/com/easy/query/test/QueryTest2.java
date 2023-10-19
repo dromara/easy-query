@@ -9,6 +9,7 @@ import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
+import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.test.dto.BlogEntityGroup;
 import com.easy.query.test.dto.BlogQueryRequest;
@@ -30,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/6/8 21:38
@@ -767,6 +769,31 @@ public class QueryTest2 extends BaseTest {
                         .columnAvg(BlogEntity::getStatus,c->c.distinct(true))
                 ).toSQL();
         Assert.assertEquals("SELECT t.`id` AS `id`,SUM(DISTINCT t.`score`) AS `score`,COUNT(DISTINCT t.`order`) AS `order`,AVG(DISTINCT t.`status`) AS `status` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
+    }
+    @Test
+    public void groupTest5() {
+        String sql = easyQuery.queryable(BlogEntity.class)
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .select(BlogEntity.class, o -> o
+                        .columnAs(BlogEntity::getId, BlogEntity::getId)
+                        .columnSum(BlogEntity::getScore,c->c.distinct(true).nullDefault(BigDecimal.ZERO))
+                        .columnCount(BlogEntity::getOrder,c->c.distinct(true).nullDefault(BigDecimal.ZERO))
+                        .columnAvg(BlogEntity::getStatus,c->c.distinct(true).nullDefault(BigDecimal.ZERO))
+                ).toSQL();
+        Assert.assertEquals("SELECT t.`id` AS `id`,SUM(DISTINCT IFNULL(t.`score`,?)) AS `score`,COUNT(DISTINCT IFNULL(t.`order`,?)) AS `order`,AVG(DISTINCT IFNULL(t.`status`,?)) AS `status` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
+    }
+
+    @Test
+    public void groupTest5_1() {
+        BlogEntity blogEntity = easyQuery.queryable(BlogEntity.class)
+                .groupBy(o -> o.column(BlogEntity::getId))
+                .select(BlogEntity.class, o -> o
+                        .columnAs(BlogEntity::getId, BlogEntity::getId)
+                        .columnSum(BlogEntity::getScore, c -> c.distinct(true).nullDefault(BigDecimal.ZERO))
+                        .columnCount(BlogEntity::getOrder, c -> c.distinct(true).nullDefault(BigDecimal.ONE))
+                        .columnAvg(BlogEntity::getStatus, c -> c.distinct(true).nullDefault(BigDecimal.valueOf(3)))
+                ).firstOrNull();
+        Assert.assertNotNull(blogEntity);
     }
 
     @Test

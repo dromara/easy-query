@@ -3,6 +3,7 @@ package com.easy.query.core.func.def;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.column.impl.ColumnFuncValueExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFunctionExpressionImpl;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public abstract class AbstractWithValueOrDefaultExpressionSQLFunction extends Ab
         if (value != null) {
             hasDefaultValue = true;
             List<ColumnExpression> columnCopyExpressions = new ArrayList<>(columnExpressions);
+            columnCopyExpressions.add(new ColumnFuncValueExpressionImpl(value));
             SQLFunction valueOrDefaultSQLFunction = createValueOrDefaultSQLFunction(columnCopyExpressions);
             ColumnFunctionExpressionImpl columnFunctionExpression = new ColumnFunctionExpressionImpl(valueOrDefaultSQLFunction);
             columnExpressions.clear();

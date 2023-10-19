@@ -2,17 +2,21 @@ package com.easy.query.test;
 
 import com.easy.query.api4j.func.LambdaSQLFunc;
 import com.easy.query.core.enums.AggregatePredicateCompare;
+import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.dto.TopicTypeVO;
+import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/10/17 16:13
@@ -599,5 +603,27 @@ public class QueryTest5 extends BaseTest {
 
             Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t", sql);
         }
+    }
+    @Test
+    public void groupTest5_2() {
+        Supplier<Exception> x=()->{
+            try {
+
+                BlogEntity blogEntity = easyQuery.queryable(BlogEntity.class)
+                        .groupBy(o -> o.column(BlogEntity::getId))
+                        .select(BlogEntity.class, o -> o
+                                .columnAs(BlogEntity::getId, BlogEntity::getId)
+                                .columnSum(BlogEntity::getScore, c -> c.distinct(true).nullDefault(BigDecimal.ZERO))
+                                .columnCount(BlogEntity::getOrder, c -> c.distinct(true).nullDefault(BigDecimal.ONE))
+                                .columnAvg(BlogEntity::getStatus, c -> c.distinct(true).nullDefault(BigDecimal.valueOf(3)))
+                        ).singleOrNull();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = x.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySingleMoreElementException);
     }
 }
