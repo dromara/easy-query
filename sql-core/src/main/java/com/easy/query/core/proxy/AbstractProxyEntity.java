@@ -26,9 +26,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
     @Override
     public TProxy create(TableAvailable table) {
-        if(this.table==null){
-            this.table=table;
-        }
+        this.table=table;
         return EasyObjectUtil.typeCastNullable(this);
     }
 }

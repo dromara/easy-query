@@ -183,21 +183,64 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, La
         return this;
     }
 
+    /**
+     * columnSum(BlogEntity::getScore) SUM(t.`score`)
+     * columnSum(BlogEntity::getScore,c->c.distinct(true)) SUM(DISTINCT t.`score`)
+     * columnSum(BlogEntity::getScore,c->c.nullDefault(BigDecimal.ZERO)) SUM(IFNULL(t.`score`,?))
+     * columnSum(BlogEntity::getScore,c->c.distinct(true).nullDefault(BigDecimal.ZERO)) SUM(DISTINCT IFNULL(t.`score`,?))
+     *
+     * @param column 属性列
+     * @return 当前列选择器
+     */
     default SQLColumnAsSelector<T1, TR> columnSum(Property<T1, Number> column) {
         getColumnAsSelector().columnSum(EasyLambdaUtil.getPropertyName(column));
         return this;
     }
 
+    /**
+     * columnSum(BlogEntity::getScore) SUM(t.`score`)
+     * columnSum(BlogEntity::getScore,c->c.distinct(true)) SUM(DISTINCT t.`score`)
+     * columnSum(BlogEntity::getScore,c->c.nullDefault(BigDecimal.ZERO)) SUM(IFNULL(t.`score`,?))
+     * columnSum(BlogEntity::getScore,c->c.distinct(true).nullDefault(BigDecimal.ZERO)) SUM(DISTINCT IFNULL(t.`score`,?))
+     *
+     * @param column 属性列
+     * @param sqlExpression distinct|null default
+     * @return 当前列选择器
+     */
     default SQLColumnAsSelector<T1, TR> columnSum(Property<T1, Number> column, SQLExpression1<ACSSelector> sqlExpression) {
         getColumnAsSelector().columnSum(EasyLambdaUtil.getPropertyName(column), sqlExpression);
         return this;
     }
 
+    /**
+     * columnSum(BlogEntity::getScore) SUM(t.`score`)
+     * columnSum(BlogEntity::getScore,c->c.distinct(true)) SUM(DISTINCT t.`score`)
+     * columnSum(BlogEntity::getScore,c->c.nullDefault(BigDecimal.ZERO)) SUM(IFNULL(t.`score`,?))
+     * columnSum(BlogEntity::getScore,c->c.distinct(true).nullDefault(BigDecimal.ZERO)) SUM(DISTINCT IFNULL(t.`score`,?))
+     *
+     * @param column 属性列
+     * @param alias 别名
+     * @return 当前列选择器
+     */
     default SQLColumnAsSelector<T1, TR> columnSumAs(Property<T1, Number> column, Property<TR, Number> alias) {
         getColumnAsSelector().columnSumAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias));
         return this;
     }
 
+    /**
+     * {@code columnSum(BlogEntity::getScore) SUM(t.`score`)}
+     *
+     * {@code columnSum(BlogEntity::getScore,c->c.distinct(true)) SUM(DISTINCT t.`score`)}
+     *
+     * {@code columnSum(BlogEntity::getScore,c->c.nullDefault(BigDecimal.ZERO)) SUM(IFNULL(t.`score`,?))}
+     *
+     * {@code columnSum(BlogEntity::getScore,c->c.distinct(true).nullDefault(BigDecimal.ZERO)) SUM(DISTINCT IFNULL(t.`score`,?))}
+     *
+     * @param column 属性列
+     * @param alias 别名
+     * @param sqlExpression distinct|null default
+     * @return 当前列选择器
+     */
     default SQLColumnAsSelector<T1, TR> columnSumAs(Property<T1, Number> column, Property<TR, Number> alias, SQLExpression1<ACSSelector> sqlExpression) {
         getColumnAsSelector().columnSumAs(EasyLambdaUtil.getPropertyName(column), EasyLambdaUtil.getPropertyName(alias), sqlExpression);
         return this;

@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.pagination.EasyPageResult;
@@ -30,6 +31,8 @@ import com.easy.query.test.entity.TopicTypeJson;
 import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.TopicTypeTest2;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.func.SQLTestFunc;
 import com.easy.query.test.vo.BlogEntityVO1;
@@ -385,13 +388,63 @@ public class QueryTest extends BaseTest {
                 .queryable(Topic.class)
                 .where(o -> o.eq(Topic::getId, "3"));
         Assert.assertNotNull(sql);
+        List<String> titles = Arrays.asList("1","2","3");
         List<BlogEntity> topics = easyQuery
                 .queryable(BlogEntity.class)
                 .leftJoin(sql, (a, b) -> a.eq(b, BlogEntity::getId, Topic::getId))
                 .where(o -> o.isNotNull(BlogEntity::getId).eq(BlogEntity::getId, "3"))
+                .where((a, b) -> a.isNotNull(BlogEntity::getId).eq(BlogEntity::getId, "3"))
+                .where((a, b) -> a.isNotNull(BlogEntity::getId).then(b).eq(Topic::getId, "3"))
+                .where((a, b) -> {
+                    a.isNotNull(BlogEntity::getId);
+                    b.eq(Topic::getId, "3");
+                    a.and(x->{
+                        for (String title : titles) {
+                            x.like(BlogEntity::getTitle,title).or();
+                        }
+                    });// where t.id is not null and t1.id=3 and(t.title like ? or t.title like ? or t.title like ? ....)
+                })
                 .toList();
         Assert.assertNotNull(topics);
         Assert.assertEquals(1, topics.size());
+    }
+    @Test
+    public void query11_2() {
+        Queryable<Topic> sql = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "3"));
+        Assert.assertNotNull(sql);
+        String sql1 = easyQuery
+                .queryable(BlogEntity.class)
+                .leftJoin(sql, (a, b) -> a.eq(b, BlogEntity::getId, Topic::getId))
+                .where(o -> o.isNotNull(BlogEntity::getId).eq(BlogEntity::getId, "3"))
+                .select(BlogEntity.class, (a, b) -> {
+                    a.column(BlogEntity::getId);
+                    b.sqlNativeSegment("rank() over(order by {0} desc) as rank1", c -> {
+                        c.expression(Topic::getStars);
+                    });
+                })
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id`,rank() over(order by t2.`stars` desc) as rank1 FROM `t_blog` t LEFT JOIN (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?) t2 ON t.`id` = t2.`id` WHERE t.`deleted` = ? AND t.`id` IS NOT NULL AND t.`id` = ?",sql1);
+    }
+    @Test
+    public void query11_3() {
+        ProxyQueryable<TopicProxy, Topic> sql = easyProxyQuery.queryable(TopicProxy.createTable())
+                .where(o -> o.eq(o.t().id(), "3"));
+
+        Assert.assertNotNull(sql);
+        BlogEntityProxy blog = BlogEntityProxy.createTable();
+        String sql1 = easyProxyQuery.queryable(blog)
+                .leftJoin(sql, o -> o.eq( blog.id(),o.t1().id()))
+                .where(o -> o.isNotNull(blog.id()).eq(blog.id(), "3"))
+                .select(BlogEntityProxy.createTable(), o -> {
+                    o.column(blog.id());
+                    o.sqlNativeSegment("rank() over(order by {0} desc) as rank1", c -> {
+                        c.expression(o.t1().stars());
+                    });
+                }).toSQL();
+
+        Assert.assertEquals("SELECT t.`id`,rank() over(order by t2.`stars` desc) as rank1 FROM `t_blog` t LEFT JOIN (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?) t2 ON t.`id` = t2.`id` WHERE t.`deleted` = ? AND t.`id` IS NOT NULL AND t.`id` = ?",sql1);
     }
 
     @Test
