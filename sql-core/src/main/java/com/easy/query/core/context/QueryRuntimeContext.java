@@ -57,6 +57,7 @@ public interface QueryRuntimeContext {
     DataSourceRouteManager getDataSourceRouteManager();
     ShardingComparer getShardingComparer();
     ShardingQueryCountManager getShardingQueryCountManager();
+    @Deprecated
     ColumnFunctionFactory getColumnFunctionFactory();
     DataSourceUnitFactory getDataSourceUnitFactory();
 

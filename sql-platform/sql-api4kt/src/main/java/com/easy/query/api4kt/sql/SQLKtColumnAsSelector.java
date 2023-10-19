@@ -14,6 +14,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.func.ACSSelector;
 import com.easy.query.core.util.EasyCollectionUtil;
 import kotlin.reflect.KProperty1;
 
@@ -63,16 +64,6 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
     default <TProperty> SQLKtColumnAsSelector<T1, TR> column(KProperty1<? super T1, TProperty> column) {
         getColumnAsSelector().column(EasyKtLambdaUtil.getPropertyName(column));
         return this;
-    }
-
-    /**
-     * 请使用 sqlNativeSegment
-     * @param columnConst
-     * @return
-     */
-    @Deprecated
-    default SQLKtColumnAsSelector<T1,TR> columnConst(String columnConst){
-        return sqlNativeSegment(columnConst,c->{});
     }
 
     default <TIncludeSource,TIncludeResult> SQLKtColumnAsSelector<T1, TR> columnInclude(KProperty1<? super T1, TIncludeSource> column, KProperty1<? super TR, TIncludeResult> aliasProperty){
@@ -143,27 +134,17 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
         getColumnAsSelector().columnCount(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCount(KProperty1<? super T1, TProperty> column, SQLExpression1<ACSSelector> sqlExpression) {
+        getColumnAsSelector().columnCount(EasyKtLambdaUtil.getPropertyName(column),sqlExpression);
+        return this;
+    }
 
     default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCountAs(KProperty1<? super T1, TProperty> column, KProperty1<? super TR, TProperty> alias) {
-        return columnCountAs(column, EasyKtLambdaUtil.getPropertyName(alias));
-    }
-
-    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCountAs(KProperty1<? super T1, TProperty> column, String alias) {
-        getColumnAsSelector().columnCountAs(EasyKtLambdaUtil.getPropertyName(column), alias);
+        getColumnAsSelector().columnCountAs(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(alias));
         return this;
     }
-
-    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCountDistinct(KProperty1<? super T1, TProperty> column) {
-        getColumnAsSelector().columnCountDistinct(EasyKtLambdaUtil.getPropertyName(column));
-        return this;
-    }
-
-    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCountDistinctAs(KProperty1<? super T1, TProperty> column, KProperty1<? super TR, TProperty> alias) {
-        return columnCountDistinctAs(column, EasyKtLambdaUtil.getPropertyName(alias));
-    }
-
-    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCountDistinctAs(KProperty1<? super T1, TProperty> column, String alias) {
-        getColumnAsSelector().columnCountDistinctAs(EasyKtLambdaUtil.getPropertyName(column), alias);
+    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnCountAs(KProperty1<? super T1, TProperty> column, KProperty1<? super TR, TProperty> alias, SQLExpression1<ACSSelector> sqlExpression) {
+        getColumnAsSelector().columnCountAs(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(alias),sqlExpression);
         return this;
     }
 
@@ -171,27 +152,18 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
         getColumnAsSelector().columnSum(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
+    default SQLKtColumnAsSelector<T1, TR> columnSum(KProperty1<? super T1, Number> column, SQLExpression1<ACSSelector> sqlExpression) {
+        getColumnAsSelector().columnSum(EasyKtLambdaUtil.getPropertyName(column),sqlExpression);
+        return this;
+    }
 
     default SQLKtColumnAsSelector<T1, TR> columnSumAs(KProperty1<? super T1, Number> column, KProperty1<? super TR, Number> alias) {
-        return columnSumAs(column, EasyKtLambdaUtil.getPropertyName(alias));
-    }
-
-    default SQLKtColumnAsSelector<T1, TR> columnSumAs(KProperty1<? super T1, Number> column, String alias) {
-        getColumnAsSelector().columnSumAs(EasyKtLambdaUtil.getPropertyName(column), alias);
+        getColumnAsSelector().columnSumAs(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(alias));
         return this;
     }
 
-    default SQLKtColumnAsSelector<T1, TR> columnSumDistinct(KProperty1<? super T1, Number> column) {
-        getColumnAsSelector().columnSumDistinct(EasyKtLambdaUtil.getPropertyName(column));
-        return this;
-    }
-
-    default SQLKtColumnAsSelector<T1, TR> columnSumDistinctAs(KProperty1<? super T1, Number> column, KProperty1<? super TR, Number> alias) {
-        return columnSumDistinctAs(column, EasyKtLambdaUtil.getPropertyName(alias));
-    }
-
-    default SQLKtColumnAsSelector<T1, TR> columnSumDistinctAs(KProperty1<? super T1, Number> column, String alias) {
-        getColumnAsSelector().columnSumDistinctAs(EasyKtLambdaUtil.getPropertyName(column), alias);
+    default SQLKtColumnAsSelector<T1, TR> columnSumAs(KProperty1<? super T1, Number> column, KProperty1<? super TR, Number> alias, SQLExpression1<ACSSelector> sqlExpression) {
+        getColumnAsSelector().columnSumAs(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(alias),sqlExpression);
         return this;
     }
 
@@ -201,11 +173,7 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
     }
 
     default <TProperty> SQLKtColumnAsSelector<T1, TR> columnMaxAs(KProperty1<? super T1, TProperty> column, KProperty1<? super TR, TProperty> alias) {
-        return columnMaxAs(column, EasyKtLambdaUtil.getPropertyName(alias));
-    }
-
-    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnMaxAs(KProperty1<? super T1, TProperty> column, String alias) {
-        getColumnAsSelector().columnMaxAs(EasyKtLambdaUtil.getPropertyName(column), alias);
+        getColumnAsSelector().columnMaxAs(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(alias));
         return this;
     }
 
@@ -215,11 +183,7 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
     }
 
     default <TProperty> SQLKtColumnAsSelector<T1, TR> columnMinAs(KProperty1<? super T1, TProperty> column, KProperty1<? super TR, TProperty> alias) {
-        return columnMinAs(column, EasyKtLambdaUtil.getPropertyName(alias));
-    }
-
-    default <TProperty> SQLKtColumnAsSelector<T1, TR> columnMinAs(KProperty1<? super T1, TProperty> column, String alias) {
-        getColumnAsSelector().columnMinAs(EasyKtLambdaUtil.getPropertyName(column), alias);
+        getColumnAsSelector().columnMinAs(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(alias));
         return this;
     }
 
@@ -227,27 +191,17 @@ public interface SQLKtColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, 
         getColumnAsSelector().columnAvg(EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
+    default SQLKtColumnAsSelector<T1, TR> columnAvg(KProperty1<? super T1, Number> column, SQLExpression1<ACSSelector> sqlExpression) {
+        getColumnAsSelector().columnAvg(EasyKtLambdaUtil.getPropertyName(column),sqlExpression);
+        return this;
+    }
 
     default SQLKtColumnAsSelector<T1, TR> columnAvgAs(KProperty1<? super T1, Number> column, KProperty1<? super TR, Number> alias) {
-        return columnAvgAs(column, EasyKtLambdaUtil.getPropertyName(alias));
-    }
-
-    default SQLKtColumnAsSelector<T1, TR> columnAvgAs(KProperty1<? super T1, Number> column, String alias) {
-        getColumnAsSelector().columnAvgAs(EasyKtLambdaUtil.getPropertyName(column), alias);
+        getColumnAsSelector().columnAvgAs(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(alias));
         return this;
     }
-
-    default SQLKtColumnAsSelector<T1, TR> columnAvgDistinct(KProperty1<? super T1, Number> column) {
-        getColumnAsSelector().columnAvgDistinct(EasyKtLambdaUtil.getPropertyName(column));
-        return this;
-    }
-
-    default SQLKtColumnAsSelector<T1, TR> columnAvgDistinctAs(KProperty1<? super T1, Number> column, KProperty1<? super TR, Number> alias) {
-        return columnAvgDistinctAs(column, EasyKtLambdaUtil.getPropertyName(alias));
-    }
-
-    default SQLKtColumnAsSelector<T1, TR> columnAvgDistinctAs(KProperty1<? super T1, Number> column, String alias) {
-        getColumnAsSelector().columnAvgDistinctAs(EasyKtLambdaUtil.getPropertyName(column), alias);
+    default SQLKtColumnAsSelector<T1, TR> columnAvgAs(KProperty1<? super T1, Number> column, KProperty1<? super TR, Number> alias, SQLExpression1<ACSSelector> sqlExpression) {
+        getColumnAsSelector().columnAvgAs(EasyKtLambdaUtil.getPropertyName(column),EasyKtLambdaUtil.getPropertyName(alias),sqlExpression);
         return this;
     }
 

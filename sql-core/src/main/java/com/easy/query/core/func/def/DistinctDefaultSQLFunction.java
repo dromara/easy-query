@@ -9,6 +9,6 @@ import com.easy.query.core.func.SQLFunction;
  * @author xuejiaming
  */
 public interface DistinctDefaultSQLFunction extends SQLFunction {
-    DistinctDefaultSQLFunction distinct();
-    DistinctDefaultSQLFunction valueOrDefault(Object value);
+    DistinctDefaultSQLFunction distinct(boolean dist);
+    DistinctDefaultSQLFunction nullDefault(Object value);
 }

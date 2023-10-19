@@ -734,9 +734,9 @@ public class QueryTest2 extends BaseTest {
                 .groupBy(o -> o.column(BlogEntity::getId))
                 .select(BlogEntityGroup.class, o -> o
                         .columnAs(BlogEntity::getId, BlogEntityGroup::getId)
-                        .columnSumDistinctAs(BlogEntity::getScore, BlogEntityGroup::getScoreSum)
-                        .columnCountDistinctAs(BlogEntity::getId, BlogEntityGroup::getIdCount)
-                        .columnAvgDistinctAs(BlogEntity::getStatus, BlogEntityGroup::getStatusAvg)
+                        .columnSumAs(BlogEntity::getScore, BlogEntityGroup::getScoreSum,c->c.distinct(true))
+                        .columnCountAs(BlogEntity::getId, BlogEntityGroup::getIdCount,c->c.distinct(true))
+                        .columnAvgAs(BlogEntity::getStatus, BlogEntityGroup::getStatusAvg,c->c.distinct(true))
                 ).toSQL();
         Assert.assertEquals("SELECT t.`id` AS `id`,SUM(DISTINCT t.`score`) AS `score_sum`,COUNT(DISTINCT t.`id`) AS `id_count`,AVG(DISTINCT t.`status`) AS `status_avg` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
     }
@@ -748,10 +748,10 @@ public class QueryTest2 extends BaseTest {
                 .select(BlogEntity.class, o -> o
                         .columnAs(BlogEntity::getId, BlogEntity::getId)
                         .columnSum(BlogEntity::getScore,c->{
-                            c.distinct();
+                            c.distinct(true);
                         })
-                        .columnCountDistinct(BlogEntity::getOrder)
-                        .columnAvgDistinct(BlogEntity::getStatus)
+                        .columnCount(BlogEntity::getOrder,c->c.distinct(true))
+                        .columnAvg(BlogEntity::getStatus,c->c.distinct(true))
                 ).toSQL();
         Assert.assertEquals("SELECT t.`id` AS `id`,SUM(DISTINCT t.`score`) AS `score`,COUNT(DISTINCT t.`order`) AS `order`,AVG(DISTINCT t.`status`) AS `status` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
     }
@@ -762,9 +762,9 @@ public class QueryTest2 extends BaseTest {
                 .groupBy(o -> o.column(BlogEntity::getId))
                 .select(BlogEntity.class, o -> o
                         .columnAs(BlogEntity::getId, BlogEntity::getId)
-                        .columnSumDistinct(BlogEntity::getScore)
-                        .columnCountDistinct(BlogEntity::getOrder)
-                        .columnAvgDistinct(BlogEntity::getStatus)
+                        .columnSum(BlogEntity::getScore,c->c.distinct(true))
+                        .columnCount(BlogEntity::getOrder,c->c.distinct(true))
+                        .columnAvg(BlogEntity::getStatus,c->c.distinct(true))
                 ).toSQL();
         Assert.assertEquals("SELECT t.`id` AS `id`,SUM(DISTINCT t.`score`) AS `score`,COUNT(DISTINCT t.`order`) AS `order`,AVG(DISTINCT t.`status`) AS `status` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
     }

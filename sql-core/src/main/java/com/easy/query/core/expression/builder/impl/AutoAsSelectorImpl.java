@@ -73,7 +73,7 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
     }
 
     @Override
-    public <T extends SQLFunction> void columnSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias) {
+    public <T extends SQLFunction> void columnAppendSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias) {
         throw new UnsupportedOperationException();
     }
 

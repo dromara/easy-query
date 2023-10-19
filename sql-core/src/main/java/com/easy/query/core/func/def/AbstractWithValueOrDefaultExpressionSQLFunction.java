@@ -4,8 +4,6 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.impl.ColumnFunctionExpressionImpl;
-import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
-import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,13 +35,13 @@ public abstract class AbstractWithValueOrDefaultExpressionSQLFunction extends Ab
     }
 
     @Override
-    public DistinctDefaultSQLFunction distinct() {
-        distinct=true;
+    public DistinctDefaultSQLFunction distinct(boolean dist) {
+        distinct=dist;
         return this;
     }
 
     @Override
-    public DistinctDefaultSQLFunction valueOrDefault(Object value) {
+    public DistinctDefaultSQLFunction nullDefault(Object value) {
         if(hasDefaultValue){
             throw new EasyQueryInvalidOperationException("can not repeat value or default");
         }

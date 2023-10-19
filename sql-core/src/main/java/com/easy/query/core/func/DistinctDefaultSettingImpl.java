@@ -8,7 +8,7 @@ import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
  *
  * @author xuejiaming
  */
-public class DistinctDefaultSettingImpl implements DistinctOrDefaultSelector {
+public class DistinctDefaultSettingImpl implements ACSSelector {
     private final DistinctDefaultSQLFunction distinctDefaultSQLFunction;
 
     public DistinctDefaultSettingImpl(DistinctDefaultSQLFunction distinctDefaultSQLFunction) {
@@ -17,14 +17,14 @@ public class DistinctDefaultSettingImpl implements DistinctOrDefaultSelector {
     }
 
     @Override
-    public DistinctOrDefaultSelector distinct() {
-        distinctDefaultSQLFunction.distinct();
+    public ACSSelector distinct(boolean dist) {
+        distinctDefaultSQLFunction.distinct(dist);
         return this;
     }
 
     @Override
-    public DistinctOrDefaultSelector valueOrDefault(Object value) {
-        distinctDefaultSQLFunction.valueOrDefault(value);
+    public ACSSelector nullDefault(Object value) {
+        distinctDefaultSQLFunction.nullDefault(value);
         return this;
     }
 }

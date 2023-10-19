@@ -524,7 +524,7 @@ public class QueryTest5 extends BaseTest {
             String sql = easyQuery.queryable(Topic.class).select(Topic.class,o->{
                 LambdaSQLFunc<Topic> fx = o.fx();
                 SQLFunction ifNull = fx.valueOrDefault(Topic::getStars, 1);
-                o.sqlFuncAs(fx.sum(ifNull).distinct(),Topic::getStars);
+                o.sqlFuncAs(fx.sum(ifNull).distinct(true),Topic::getStars);
             }).toSQL();
 
             Assert.assertEquals("SELECT SUM(DISTINCT IFNULL(t.`stars`,?)) AS `stars` FROM `t_topic` t", sql);

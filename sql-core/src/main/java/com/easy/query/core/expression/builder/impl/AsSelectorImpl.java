@@ -186,7 +186,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
     }
 
     @Override
-    public <T extends SQLFunction> void columnSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias) {
+    public <T extends SQLFunction> void columnAppendSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias) {
 
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         String columnAsName = propertyAlias == null ? columnMetadata.getName() : getResultColumnName(propertyAlias);

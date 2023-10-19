@@ -12,7 +12,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.func.DistinctOrDefaultSelector;
+import com.easy.query.core.func.ACSSelector;
 import com.easy.query.core.func.DistinctDefaultSettingImpl;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
@@ -58,48 +58,35 @@ public interface AsSelector extends SQLAsNative<AsSelector> {
     default AsSelector columnCount(TableAvailable table, String property) {
         return columnCountAs(table,property, null);
     }
+    default AsSelector columnCount(TableAvailable table, String property,SQLExpression1<ACSSelector> sqlExpression) {
+        return columnCountAs(table,property, null,sqlExpression);
+    }
 
     default AsSelector columnCountAs(TableAvailable table, String property, String propertyAlias) {
-        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createCountFunction(false);
-        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(property, countFunction);
-        return columnFuncAs(table,columnPropertyFunction, propertyAlias);
+        return columnCountAs(table,property, propertyAlias,c->{});
     }
-
-    default AsSelector columnCountDistinct(TableAvailable table,String property) {
-        return columnCountDistinctAs(table,property, null);
-    }
-
-    default AsSelector columnCountDistinctAs(TableAvailable table,String property, String propertyAlias) {
-        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createCountFunction(true);
-        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(property, countFunction);
-        return columnFuncAs(table,columnPropertyFunction, propertyAlias);
+    default AsSelector columnCountAs(TableAvailable table, String property, String propertyAlias,SQLExpression1<ACSSelector> sqlExpression) {
+        DistinctDefaultSQLFunction count = getRuntimeContext().fx().count(o -> o.column(table, property));
+        columnAppendSQLFunction(table,property,count,propertyAlias);
+        sqlExpression.apply(new DistinctDefaultSettingImpl(count));
+        return this;
     }
 
     default AsSelector columnSum(TableAvailable table, String property) {
         return columnSumAs(table,property, null);
     }
-    default AsSelector columnSum(TableAvailable table, String property,SQLExpression1<DistinctOrDefaultSelector> sqlExpression) {
+    default AsSelector columnSum(TableAvailable table, String property,SQLExpression1<ACSSelector> sqlExpression) {
         return columnSumAs(table,property, null,sqlExpression);
     }
 
     default AsSelector columnSumAs(TableAvailable table,String property, String propertyAlias) {
         return columnSumAs(table,property, propertyAlias,c->{});
     }
-    default AsSelector columnSumAs(TableAvailable table,String property, String propertyAlias,SQLExpression1<DistinctOrDefaultSelector> sqlExpression) {
+    default AsSelector columnSumAs(TableAvailable table,String property, String propertyAlias,SQLExpression1<ACSSelector> sqlExpression) {
         DistinctDefaultSQLFunction sum = getRuntimeContext().fx().sum(o -> o.column(table, property));
-        columnSQLFunction(table,property,sum,propertyAlias);
+        columnAppendSQLFunction(table,property,sum,propertyAlias);
         sqlExpression.apply(new DistinctDefaultSettingImpl(sum));
         return this;
-    }
-
-    default AsSelector columnSumDistinct(TableAvailable table,String property) {
-        return columnSumDistinctAs(table,property, null);
-    }
-
-    default AsSelector columnSumDistinctAs(TableAvailable table,String property, String propertyAlias) {
-        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createSumFunction(true);
-        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(property, countFunction);
-        return columnFuncAs(table,columnPropertyFunction, propertyAlias);
     }
 
     default AsSelector columnMax(TableAvailable table,String property) {
@@ -107,9 +94,9 @@ public interface AsSelector extends SQLAsNative<AsSelector> {
     }
 
     default AsSelector columnMaxAs(TableAvailable table,String property, String propertyAlias) {
-        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createMaxFunction();
-        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(property, countFunction);
-        return columnFuncAs(table,columnPropertyFunction, propertyAlias);
+        SQLFunction max = getRuntimeContext().fx().max(o -> o.column(table, property));
+        columnAppendSQLFunction(table,property,max,propertyAlias);
+        return this;
     }
 
     default AsSelector columnMin(TableAvailable table,String property) {
@@ -117,29 +104,26 @@ public interface AsSelector extends SQLAsNative<AsSelector> {
     }
 
     default AsSelector columnMinAs(TableAvailable table,String property, String propertyAlias) {
-        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createMinFunction();
-        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(property, countFunction);
-        return columnFuncAs(table,columnPropertyFunction, propertyAlias);
+        SQLFunction min = getRuntimeContext().fx().min(o -> o.column(table, property));
+        columnAppendSQLFunction(table,property,min,propertyAlias);
+        return this;
     }
 
     default AsSelector columnAvg(TableAvailable table,String property) {
-        return columnAvgAs(table,property, null);
+        return columnAvg(table,property, c->{});
+    }
+    default AsSelector columnAvg(TableAvailable table,String property,SQLExpression1<ACSSelector> sqlExpression) {
+        return columnAvgAs(table,property, null,sqlExpression);
     }
 
     default AsSelector columnAvgAs(TableAvailable table,String property, String propertyAlias) {
-        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createAvgFunction(false);
-        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(property, countFunction);
-        return columnFuncAs(table,columnPropertyFunction, propertyAlias);
+        return columnAvgAs(table,property, propertyAlias,c->{});
     }
-
-    default AsSelector columnAvgDistinct(TableAvailable table,String property) {
-        return columnAvgDistinctAs(table,property, null);
-    }
-
-    default AsSelector columnAvgDistinctAs(TableAvailable table,String property, String propertyAlias) {
-        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createAvgFunction(true);
-        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(property, countFunction);
-        return columnFuncAs(table,columnPropertyFunction, propertyAlias);
+    default AsSelector columnAvgAs(TableAvailable table,String property, String propertyAlias,SQLExpression1<ACSSelector> sqlExpression) {
+        DistinctDefaultSQLFunction avg = getRuntimeContext().fx().avg(o -> o.column(table, property));
+        columnAppendSQLFunction(table,property,avg,propertyAlias);
+        sqlExpression.apply(new DistinctDefaultSettingImpl(avg));
+        return this;
     }
 
     default AsSelector columnLen(TableAvailable table,String property) {
@@ -154,6 +138,6 @@ public interface AsSelector extends SQLAsNative<AsSelector> {
 
     AsSelector columnFuncAs(TableAvailable table,ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
 
-    <T extends SQLFunction> void columnSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias);
+    <T extends SQLFunction> void columnAppendSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias);
     AsSelector sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias);
 }
