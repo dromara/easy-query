@@ -21,7 +21,7 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
 
     @Override
     public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new PgSQLValueOrDefaultSQLFunction(getColumnExpressions(sqlExpression));
+        return new PgSQLNullDefaultSQLFunction(getColumnExpressions(sqlExpression));
     }
     @Override
     public SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat) {

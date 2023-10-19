@@ -19,6 +19,6 @@ public class PgSQLSumSQLFunction extends SumSQLFunction {
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new PgSQLValueOrDefaultSQLFunction(columnExpressions);
+        return new PgSQLNullDefaultSQLFunction(columnExpressions);
     }
 }

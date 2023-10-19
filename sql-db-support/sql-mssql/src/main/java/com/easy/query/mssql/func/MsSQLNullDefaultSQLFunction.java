@@ -1,4 +1,4 @@
-package com.easy.query.kingbase.es.func;
+package com.easy.query.mssql.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -13,10 +13,10 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class KingbaseESValueOrDefaultSQLFunction extends AbstractExpressionSQLFunction {
+public class MsSQLNullDefaultSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
 
-    public KingbaseESValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
+    public MsSQLNullDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
 
         this.columnExpressions = columnExpressions;
     }
@@ -24,7 +24,7 @@ public class KingbaseESValueOrDefaultSQLFunction extends AbstractExpressionSQLFu
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
-        return String.format("COALESCE(%s)", String.join(",", params));
+        return String.format("IsNull(%s)", String.join(",", params));
     }
 
     @Override

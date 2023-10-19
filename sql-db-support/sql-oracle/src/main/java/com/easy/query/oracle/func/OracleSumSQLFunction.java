@@ -20,6 +20,6 @@ public class OracleSumSQLFunction extends SumSQLFunction {
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new OracleValueOrDefaultSQLFunction(columnExpressions);
+        return new OracleNullDefaultSQLFunction(columnExpressions);
     }
 }

@@ -20,6 +20,6 @@ public class KingbaseESSumSQLFunction extends SumSQLFunction {
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new KingbaseESValueOrDefaultSQLFunction(columnExpressions);
+        return new KingbaseESNullDefaultSQLFunction(columnExpressions);
     }
 }

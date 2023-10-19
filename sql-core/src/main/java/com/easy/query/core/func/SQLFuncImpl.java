@@ -14,7 +14,7 @@ import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.impl.NowSQLFunction;
 import com.easy.query.core.func.def.impl.RoundSQLFunction;
 import com.easy.query.core.func.def.impl.UtcNowSQLFunction;
-import com.easy.query.core.func.def.impl.ValueOrDefaultSQLFunction;
+import com.easy.query.core.func.def.impl.NullDefaultSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
 import com.easy.query.core.func.def.impl.MaxSQLFunction;
@@ -70,7 +70,7 @@ public class SQLFuncImpl implements SQLFunc {
     public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         List<ColumnExpression> columnExpressions = new ArrayList<>();
         sqlExpression.apply(new ColumnFuncSelectorImpl(columnExpressions));
-        return new ValueOrDefaultSQLFunction(columnExpressions);
+        return new NullDefaultSQLFunction(columnExpressions);
     }
 
     @Override

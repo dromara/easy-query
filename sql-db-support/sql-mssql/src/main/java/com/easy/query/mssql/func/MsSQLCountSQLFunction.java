@@ -19,6 +19,6 @@ public class MsSQLCountSQLFunction extends CountSQLFunction {
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new MsSQLValueOrDefaultSQLFunction(columnExpressions);
+        return new MsSQLNullDefaultSQLFunction(columnExpressions);
     }
 }

@@ -23,7 +23,7 @@ public class CountSQLFunction extends AbstractWithValueOrDefaultExpressionSQLFun
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new ValueOrDefaultSQLFunction(columnExpressions);
+        return new NullDefaultSQLFunction(columnExpressions);
     }
 
     @Override

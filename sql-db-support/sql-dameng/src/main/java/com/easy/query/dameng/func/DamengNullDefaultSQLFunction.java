@@ -1,4 +1,4 @@
-package com.easy.query.pgsql.func;
+package com.easy.query.dameng.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -13,24 +13,24 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class PgSQLValueOrDefaultSQLFunction extends AbstractExpressionSQLFunction {
+public class DamengNullDefaultSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
 
-    public PgSQLValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-
+    public DamengNullDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
         this.columnExpressions = columnExpressions;
     }
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
-        return String.format("COALESCE(%s)", String.join(",", params));
+        return String.format("NVL(%s)", String.join(",", params));
     }
 
     @Override
     public int paramMarks() {
         return columnExpressions.size();
     }
+
 
     @Override
     protected List<ColumnExpression> getColumnExpressions() {

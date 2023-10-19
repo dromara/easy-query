@@ -19,6 +19,6 @@ public class SQLiteCountSQLFunction extends CountSQLFunction {
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new SQLiteValueOrDefaultSQLFunction(columnExpressions);
+        return new SQLiteNullDefaultSQLFunction(columnExpressions);
     }
 }

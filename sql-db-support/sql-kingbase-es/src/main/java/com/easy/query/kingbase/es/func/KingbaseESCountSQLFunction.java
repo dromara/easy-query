@@ -19,6 +19,6 @@ public class KingbaseESCountSQLFunction extends CountSQLFunction {
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new KingbaseESValueOrDefaultSQLFunction(columnExpressions);
+        return new KingbaseESNullDefaultSQLFunction(columnExpressions);
     }
 }

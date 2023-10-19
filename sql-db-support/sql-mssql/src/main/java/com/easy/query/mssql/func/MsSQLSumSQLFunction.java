@@ -19,6 +19,6 @@ public class MsSQLSumSQLFunction extends SumSQLFunction {
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new MsSQLValueOrDefaultSQLFunction(columnExpressions);
+        return new MsSQLNullDefaultSQLFunction(columnExpressions);
     }
 }

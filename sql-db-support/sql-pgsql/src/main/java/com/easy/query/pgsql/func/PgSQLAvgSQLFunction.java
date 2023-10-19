@@ -19,6 +19,6 @@ public class PgSQLAvgSQLFunction extends AvgSQLFunction {
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new PgSQLValueOrDefaultSQLFunction(columnExpressions);
+        return new PgSQLNullDefaultSQLFunction(columnExpressions);
     }
 }

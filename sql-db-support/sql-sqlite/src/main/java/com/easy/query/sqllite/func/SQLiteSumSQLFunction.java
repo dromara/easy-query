@@ -19,6 +19,6 @@ public class SQLiteSumSQLFunction extends SumSQLFunction {
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new SQLiteValueOrDefaultSQLFunction(columnExpressions);
+        return new SQLiteNullDefaultSQLFunction(columnExpressions);
     }
 }

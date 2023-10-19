@@ -1,4 +1,4 @@
-package com.easy.query.mssql.func;
+package com.easy.query.sqllite.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -13,10 +13,10 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class MsSQLValueOrDefaultSQLFunction extends AbstractExpressionSQLFunction {
+public class SQLiteNullDefaultSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
 
-    public MsSQLValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
+    public SQLiteNullDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
 
         this.columnExpressions = columnExpressions;
     }
@@ -24,7 +24,7 @@ public class MsSQLValueOrDefaultSQLFunction extends AbstractExpressionSQLFunctio
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
-        return String.format("IsNull(%s)", String.join(",", params));
+        return String.format("IfNull(%s)", String.join(",", params));
     }
 
     @Override

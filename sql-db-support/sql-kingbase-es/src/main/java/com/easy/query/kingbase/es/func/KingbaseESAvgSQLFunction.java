@@ -19,6 +19,6 @@ public class KingbaseESAvgSQLFunction extends AvgSQLFunction {
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new KingbaseESValueOrDefaultSQLFunction(columnExpressions);
+        return new KingbaseESNullDefaultSQLFunction(columnExpressions);
     }
 }

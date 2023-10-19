@@ -20,6 +20,6 @@ public class DamengAvgSQLFunction extends AvgSQLFunction {
 
     @Override
     protected SQLFunction createValueOrDefaultSQLFunction(List<ColumnExpression> columnExpressions) {
-        return new DamengValueOrDefaultSQLFunction(columnExpressions);
+        return new DamengNullDefaultSQLFunction(columnExpressions);
     }
 }

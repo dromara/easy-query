@@ -20,7 +20,7 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
 
     @Override
     public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new SQLiteValueOrDefaultSQLFunction(getColumnExpressions(sqlExpression));
+        return new SQLiteNullDefaultSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override

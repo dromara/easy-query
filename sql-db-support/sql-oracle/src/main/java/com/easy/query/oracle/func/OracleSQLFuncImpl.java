@@ -19,7 +19,7 @@ import java.util.List;
 public class OracleSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new OracleValueOrDefaultSQLFunction(getColumnExpressions(sqlExpression));
+        return new OracleNullDefaultSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
