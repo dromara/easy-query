@@ -39,6 +39,11 @@ public interface OverrideKtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extend
     KtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> whereById(boolean condition, Object id);
 
     @Override
+    default <TProperty> KtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
+    }
+
+    @Override
     <TProperty> KtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
@@ -123,12 +128,12 @@ public interface OverrideKtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extend
     KtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> orderByObject(boolean condition, ObjectSort configuration);
 
     @Override
-    default <TREntity> KtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> include(SQLFuncExpression1<SQLKtNavigateInclude<T1>,KtQueryable<TREntity>> navigateIncludeSQLExpression) {
+    default <TREntity> KtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> include(SQLFuncExpression1<SQLKtNavigateInclude<T1>, KtQueryable<TREntity>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);
     }
 
     @Override
-    <TREntity> KtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> include(boolean condition, SQLFuncExpression1<SQLKtNavigateInclude<T1>,KtQueryable<TREntity>> navigateIncludeSQLExpression);
+    <TREntity> KtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> include(boolean condition, SQLFuncExpression1<SQLKtNavigateInclude<T1>, KtQueryable<TREntity>> navigateIncludeSQLExpression);
 
     @Override
     default KtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> limit(long rows) {
@@ -247,6 +252,7 @@ public interface OverrideKtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extend
 
     @Override
     KtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> asTableLink(Function<String, String> linkAs);
+
     @Override
     KtQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> filterConfigure(ValueFilter valueFilter);
 }

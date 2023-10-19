@@ -39,6 +39,10 @@ public interface OverrideKtQueryable2<T1, T2> extends KtQueryable<T1>, KtQueryab
     KtQueryable2<T1, T2> whereById(boolean condition, Object id);
 
     @Override
+    default <TProperty> KtQueryable2<T1, T2> whereByIds(Collection<TProperty> ids){
+        return whereByIds(true,ids);
+    }
+    @Override
     <TProperty> KtQueryable2<T1, T2> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**

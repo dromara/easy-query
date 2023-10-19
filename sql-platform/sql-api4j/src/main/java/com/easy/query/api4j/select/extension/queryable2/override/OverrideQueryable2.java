@@ -29,7 +29,7 @@ import java.util.function.Function;
 public interface OverrideQueryable2<T1, T2> extends Queryable<T1>, Queryable2Available<T1, T2> {
 
     @Override
-    Queryable2<T1,T2> cloneQueryable();
+    Queryable2<T1, T2> cloneQueryable();
 
     @Override
     default Queryable2<T1, T2> whereById(Object id) {
@@ -38,6 +38,11 @@ public interface OverrideQueryable2<T1, T2> extends Queryable<T1>, Queryable2Ava
 
     @Override
     Queryable2<T1, T2> whereById(boolean condition, Object id);
+
+    @Override
+    default <TProperty> Queryable2<T1, T2> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
+    }
 
     @Override
     <TProperty> Queryable2<T1, T2> whereByIds(boolean condition, Collection<TProperty> ids);
@@ -249,6 +254,7 @@ public interface OverrideQueryable2<T1, T2> extends Queryable<T1>, Queryable2Ava
 
     @Override
     Queryable2<T1, T2> asTableLink(Function<String, String> linkAs);
+
     @Override
     Queryable2<T1, T2> filterConfigure(ValueFilter valueFilter);
 }

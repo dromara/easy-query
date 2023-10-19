@@ -40,6 +40,11 @@ public interface OverrideQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> extends Quer
     Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> whereById(boolean condition, Object id);
 
     @Override
+    default <TProperty> Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
+    }
+
+    @Override
     <TProperty> Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
@@ -249,6 +254,7 @@ public interface OverrideQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> extends Quer
 
     @Override
     Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> asTableLink(Function<String, String> linkAs);
+
     @Override
     Queryable8<T1, T2, T3, T4, T5, T6, T7, T8> filterConfigure(ValueFilter valueFilter);
 }

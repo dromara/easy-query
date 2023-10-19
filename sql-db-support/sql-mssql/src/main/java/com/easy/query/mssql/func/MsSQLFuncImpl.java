@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class MsSQLFuncImpl extends SQLFuncImpl {
     @Override
-    public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction nullDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new MsSQLNullDefaultSQLFunction(getColumnExpressions(sqlExpression));
     }
 

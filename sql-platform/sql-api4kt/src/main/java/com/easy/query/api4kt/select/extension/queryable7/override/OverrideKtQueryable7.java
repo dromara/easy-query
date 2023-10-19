@@ -25,21 +25,26 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface OverrideKtQueryable7<T1, T2, T3,T4,T5,T6,T7> extends KtQueryable<T1>, KtQueryable7Available<T1, T2,T3,T4,T5,T6,T7> {
+public interface OverrideKtQueryable7<T1, T2, T3, T4, T5, T6, T7> extends KtQueryable<T1>, KtQueryable7Available<T1, T2, T3, T4, T5, T6, T7> {
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> cloneQueryable();
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> cloneQueryable();
 
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> whereById(Object id) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> whereById(Object id) {
         return whereById(true, id);
     }
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> whereById(boolean condition, Object id);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> whereById(boolean condition, Object id);
 
     @Override
-    <TProperty> KtQueryable7<T1,T2,T3,T4,T5,T6,T7> whereByIds(boolean condition, Collection<TProperty> ids);
+    default <TProperty> KtQueryable7<T1, T2, T3, T4, T5, T6, T7> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
+    }
+
+    @Override
+    <TProperty> KtQueryable7<T1, T2, T3, T4, T5, T6, T7> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
      * 仅支持主表的动态对象查询
@@ -48,7 +53,7 @@ public interface OverrideKtQueryable7<T1, T2, T3,T4,T5,T6,T7> extends KtQueryabl
      * @return
      */
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> whereObject(Object object) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> whereObject(Object object) {
         return whereObject(true, object);
     }
 
@@ -60,48 +65,48 @@ public interface OverrideKtQueryable7<T1, T2, T3,T4,T5,T6,T7> extends KtQueryabl
      * @return
      */
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> whereObject(boolean condition, Object object);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> whereObject(boolean condition, Object object);
 
 
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> where(SQLExpression1<SQLKtWherePredicate<T1>> whereExpression) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> where(SQLExpression1<SQLKtWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> where(boolean condition, SQLExpression1<SQLKtWherePredicate<T1>> whereExpression);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> where(boolean condition, SQLExpression1<SQLKtWherePredicate<T1>> whereExpression);
 
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> groupBy(SQLExpression1<SQLKtGroupBySelector<T1>> selectExpression) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> groupBy(SQLExpression1<SQLKtGroupBySelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> groupBy(boolean condition, SQLExpression1<SQLKtGroupBySelector<T1>> selectExpression);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> groupBy(boolean condition, SQLExpression1<SQLKtGroupBySelector<T1>> selectExpression);
 
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> having(SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> having(SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression) {
         return having(true, predicateExpression);
     }
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> having(boolean condition, SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> having(boolean condition, SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression);
 
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> orderByAsc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> orderByAsc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> orderByAsc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> orderByAsc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression);
 
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> orderByDesc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> orderByDesc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> orderByDesc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> orderByDesc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression);
 
     /**
      * @param configuration
@@ -109,7 +114,7 @@ public interface OverrideKtQueryable7<T1, T2, T3,T4,T5,T6,T7> extends KtQueryabl
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取}
      */
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> orderByObject(ObjectSort configuration) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> orderByObject(ObjectSort configuration) {
         return orderByObject(true, configuration);
     }
 
@@ -120,61 +125,61 @@ public interface OverrideKtQueryable7<T1, T2, T3,T4,T5,T6,T7> extends KtQueryabl
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取
      */
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> orderByObject(boolean condition, ObjectSort configuration);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> orderByObject(boolean condition, ObjectSort configuration);
 
     @Override
-    default <TREntity> KtQueryable7<T1,T2,T3,T4,T5,T6,T7> include(SQLFuncExpression1<SQLKtNavigateInclude<T1>, KtQueryable<TREntity>> navigateIncludeSQLExpression) {
+    default <TREntity> KtQueryable7<T1, T2, T3, T4, T5, T6, T7> include(SQLFuncExpression1<SQLKtNavigateInclude<T1>, KtQueryable<TREntity>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);
     }
 
     @Override
-    <TREntity> KtQueryable7<T1,T2,T3,T4,T5,T6,T7> include(boolean condition, SQLFuncExpression1<SQLKtNavigateInclude<T1>, KtQueryable<TREntity>> navigateIncludeSQLExpression);
+    <TREntity> KtQueryable7<T1, T2, T3, T4, T5, T6, T7> include(boolean condition, SQLFuncExpression1<SQLKtNavigateInclude<T1>, KtQueryable<TREntity>> navigateIncludeSQLExpression);
 
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> limit(long rows) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> limit(long rows) {
         return limit(true, rows);
     }
 
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> limit(boolean condition, long rows) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> limit(long offset, long rows) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> limit(boolean condition, long offset, long rows);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> limit(boolean condition, long offset, long rows);
 
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> distinct() {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> distinct() {
         return distinct(true);
     }
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> distinct(boolean condition);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> distinct(boolean condition);
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> disableLogicDelete();
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> disableLogicDelete();
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> enableLogicDelete();
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> enableLogicDelete();
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> useLogicDelete(boolean enable);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> useLogicDelete(boolean enable);
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> noInterceptor();
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> noInterceptor();
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> useInterceptor(String name);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> useInterceptor(String name);
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> noInterceptor(String name);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> noInterceptor(String name);
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> useInterceptor();
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> useInterceptor();
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
@@ -183,22 +188,22 @@ public interface OverrideKtQueryable7<T1, T2, T3,T4,T5,T6,T7> extends KtQueryabl
      * @return
      */
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> asTracking();
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> asTracking();
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> asNoTracking();
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> asNoTracking();
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> queryLargeColumn(boolean queryLarge);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> queryLargeColumn(boolean queryLarge);
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> useConnectionMode(ConnectionModeEnum connectionMode);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> useConnectionMode(ConnectionModeEnum connectionMode);
 
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableName}
@@ -209,7 +214,7 @@ public interface OverrideKtQueryable7<T1, T2, T3,T4,T5,T6,T7> extends KtQueryabl
      * @return
      */
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> asTable(String tableName) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> asTable(String tableName) {
         return asTable(old -> tableName);
     }
 
@@ -222,31 +227,32 @@ public interface OverrideKtQueryable7<T1, T2, T3,T4,T5,T6,T7> extends KtQueryabl
      * @return
      */
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> asTable(Function<String, String> tableNameAs);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> asTable(Function<String, String> tableNameAs);
 
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> asSchema(String schema) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> asSchema(String schema) {
         return asSchema(old -> schema);
     }
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> asSchema(Function<String, String> schemaAs);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> asSchema(Function<String, String> schemaAs);
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> asAlias(String alias);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> asAlias(String alias);
 
     /**
      * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
      * @return
      */
     @Override
-    default KtQueryable7<T1,T2,T3,T4,T5,T6,T7> asTableLink(String linkAs) {
+    default KtQueryable7<T1, T2, T3, T4, T5, T6, T7> asTableLink(String linkAs) {
         return asTableLink(o -> linkAs);
     }
 
 
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> asTableLink(Function<String, String> linkAs);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> asTableLink(Function<String, String> linkAs);
+
     @Override
-    KtQueryable7<T1,T2,T3,T4,T5,T6,T7> filterConfigure(ValueFilter valueFilter);
+    KtQueryable7<T1, T2, T3, T4, T5, T6, T7> filterConfigure(ValueFilter valueFilter);
 }

@@ -45,7 +45,7 @@ public interface LambdaSQLFunc<T1> extends LambdaAggregateSQLFunc<T1> {
      * @return ifNull函数
      */
     default SQLFunction valueOrDefault(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
-        return getSQLFunc().valueOrDefault(o->{
+        return getSQLFunc().nullDefault(o->{
             SQLColumnFuncSelectorImpl<T1> sqlColumnConcatSelector = new SQLColumnFuncSelectorImpl<>(o);
             sqlExpression.apply(sqlColumnConcatSelector);
         });

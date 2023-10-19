@@ -24,8 +24,8 @@ public interface SQLFunc extends AggregateSQLFunc{
      * @param def 默认值
      * @return ifNull函数
      */
-    default SQLFunction valueOrDefault(String property, Object def) {
-        return valueOrDefault(s->{
+    default SQLFunction nullDefault(String property, Object def) {
+        return nullDefault(s->{
             s.column(property)
                     .value(def);
         });
@@ -37,7 +37,7 @@ public interface SQLFunc extends AggregateSQLFunc{
      * @param sqlExpression 属性选择函数
      * @return ifNull函数
      */
-   SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression);
+   SQLFunction nullDefault(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 获取绝对值

@@ -22,24 +22,29 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface ClientOverrideQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> extends ClientQueryable<T1> {
+public interface ClientOverrideQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends ClientQueryable<T1> {
 
 
     ClientQueryable<T1> getClientQueryable();
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> cloneQueryable();
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> cloneQueryable();
 
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> whereById(Object id) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> whereById(Object id) {
         return whereById(true, id);
     }
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> whereById(boolean condition, Object id);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> whereById(boolean condition, Object id);
 
     @Override
-    <TProperty> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> whereByIds(boolean condition, Collection<TProperty> ids);
+    default <TProperty> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
+    }
+
+    @Override
+    <TProperty> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
      * 仅支持主表的动态对象查询
@@ -48,7 +53,7 @@ public interface ClientOverrideQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> ext
      * @return
      */
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> whereObject(Object object) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> whereObject(Object object) {
         return whereObject(true, object);
     }
 
@@ -60,102 +65,102 @@ public interface ClientOverrideQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> ext
      * @return
      */
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> whereObject(boolean condition, Object object);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> whereObject(boolean condition, Object object);
 
 
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> where(SQLExpression1<WherePredicate<T1>> whereExpression) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> where(SQLExpression1<WherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> where(boolean condition, SQLExpression1<WherePredicate<T1>> whereExpression);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> where(boolean condition, SQLExpression1<WherePredicate<T1>> whereExpression);
 
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> groupBy(SQLExpression1<ColumnGroupSelector<T1>> selectExpression) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> groupBy(SQLExpression1<ColumnGroupSelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> groupBy(boolean condition, SQLExpression1<ColumnGroupSelector<T1>> selectExpression);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> groupBy(boolean condition, SQLExpression1<ColumnGroupSelector<T1>> selectExpression);
 
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> having(SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> having(SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
         return having(true, predicateExpression);
     }
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> having(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> having(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression);
 
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> orderByAsc(SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> orderByAsc(SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> orderByAsc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> orderByAsc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression);
 
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> orderByDesc(SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> orderByDesc(SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression);
 
     @Override
-    default <TREntity> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> include(SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TREntity>> navigateIncludeSQLExpression) {
+    default <TREntity> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> include(SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TREntity>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);
     }
 
     @Override
-    <TREntity> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TREntity>> navigateIncludeSQLExpression);
+    <TREntity> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TREntity>> navigateIncludeSQLExpression);
 
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> limit(long rows) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> limit(long rows) {
         return limit(true, rows);
     }
 
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> limit(boolean condition, long rows) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> limit(long offset, long rows) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> limit(boolean condition, long offset, long rows);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> limit(boolean condition, long offset, long rows);
 
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> distinct() {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> distinct() {
         return distinct(true);
     }
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> distinct(boolean condition);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> distinct(boolean condition);
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> disableLogicDelete();
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> disableLogicDelete();
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> enableLogicDelete();
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> enableLogicDelete();
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> useLogicDelete(boolean enable);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> useLogicDelete(boolean enable);
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> noInterceptor();
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> noInterceptor();
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> useInterceptor(String name);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> useInterceptor(String name);
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> noInterceptor(String name);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> noInterceptor(String name);
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> useInterceptor();
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> useInterceptor();
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
@@ -164,22 +169,22 @@ public interface ClientOverrideQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> ext
      * @return
      */
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> asTracking();
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> asTracking();
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> asNoTracking();
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> asNoTracking();
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> queryLargeColumn(boolean queryLarge);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> queryLargeColumn(boolean queryLarge);
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> useConnectionMode(ConnectionModeEnum connectionMode);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> useConnectionMode(ConnectionModeEnum connectionMode);
 
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableName}
@@ -190,7 +195,7 @@ public interface ClientOverrideQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> ext
      * @return
      */
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> asTable(String tableName) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> asTable(String tableName) {
         return asTable(old -> tableName);
     }
 
@@ -203,29 +208,31 @@ public interface ClientOverrideQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> ext
      * @return
      */
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> asTable(Function<String, String> tableNameAs);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> asTable(Function<String, String> tableNameAs);
 
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> asSchema(String schema) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> asSchema(String schema) {
         return asSchema(old -> schema);
     }
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> asSchema(Function<String, String> schemaAs);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> asSchema(Function<String, String> schemaAs);
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> asAlias(String alias);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> asAlias(String alias);
+
     /**
      * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
      * @return
      */
     @Override
-    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> asTableLink(String linkAs) {
+    default ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> asTableLink(String linkAs) {
         return asTableLink(o -> linkAs);
     }
 
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> asTableLink(Function<String, String> linkAs);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> asTableLink(Function<String, String> linkAs);
+
     @Override
-    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8,T9> filterConfigure(ValueFilter valueFilter);
+    ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> filterConfigure(ValueFilter valueFilter);
 }

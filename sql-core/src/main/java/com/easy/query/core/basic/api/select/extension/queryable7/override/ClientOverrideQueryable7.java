@@ -26,6 +26,7 @@ public interface ClientOverrideQueryable7<T1, T2, T3, T4, T5, T6, T7> extends Cl
 
 
     ClientQueryable<T1> getClientQueryable();
+
     @Override
     ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> cloneQueryable();
 
@@ -36,6 +37,11 @@ public interface ClientOverrideQueryable7<T1, T2, T3, T4, T5, T6, T7> extends Cl
 
     @Override
     ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> whereById(boolean condition, Object id);
+
+    @Override
+    default <TProperty> ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
+    }
 
     @Override
     <TProperty> ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> whereByIds(boolean condition, Collection<TProperty> ids);
@@ -214,6 +220,7 @@ public interface ClientOverrideQueryable7<T1, T2, T3, T4, T5, T6, T7> extends Cl
 
     @Override
     ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> asAlias(String alias);
+
     /**
      * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
      * @return
@@ -225,6 +232,7 @@ public interface ClientOverrideQueryable7<T1, T2, T3, T4, T5, T6, T7> extends Cl
 
     @Override
     ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> asTableLink(Function<String, String> linkAs);
+
     @Override
     ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> filterConfigure(ValueFilter valueFilter);
 }

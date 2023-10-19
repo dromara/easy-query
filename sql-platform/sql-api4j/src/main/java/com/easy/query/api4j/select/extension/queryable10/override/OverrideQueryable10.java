@@ -40,6 +40,10 @@ public interface OverrideQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ex
     Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> whereById(boolean condition, Object id);
 
     @Override
+    default <TProperty> Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> whereByIds(Collection<TProperty> ids){
+        return whereByIds(true,ids);
+    }
+    @Override
     <TProperty> Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**

@@ -40,6 +40,11 @@ public interface OverrideQueryable4<T1, T2, T3,T4> extends Queryable<T1>, Querya
     Queryable4<T1,T2,T3,T4> whereById(boolean condition, Object id);
 
     @Override
+   default  <TProperty> Queryable4<T1,T2,T3,T4> whereByIds(Collection<TProperty> ids){
+        return whereByIds(true,ids);
+    }
+
+    @Override
     <TProperty> Queryable4<T1,T2,T3,T4> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**

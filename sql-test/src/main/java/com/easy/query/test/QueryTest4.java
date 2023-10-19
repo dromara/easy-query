@@ -218,7 +218,7 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc1() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().nullDefault("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -226,7 +226,7 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc2() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().nullDefault("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -234,7 +234,7 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc2_1() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault(x -> x.column("id").column("title").value("1")))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().nullDefault(x -> x.column("id").column("title").value("1")))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,t.`title`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 

@@ -39,6 +39,10 @@ public interface OverrideKtQueryable4<T1, T2, T3,T4> extends KtQueryable<T1>, Kt
     KtQueryable4<T1,T2,T3,T4> whereById(boolean condition, Object id);
 
     @Override
+   default  <TProperty> KtQueryable4<T1,T2,T3,T4> whereByIds(Collection<TProperty> ids){
+        return whereByIds(true,ids);
+    }
+    @Override
     <TProperty> KtQueryable4<T1,T2,T3,T4> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**

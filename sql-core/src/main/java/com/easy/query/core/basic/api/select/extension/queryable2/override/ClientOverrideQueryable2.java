@@ -39,6 +39,11 @@ public interface ClientOverrideQueryable2<T1, T2> extends ClientQueryable<T1> {
     ClientQueryable2<T1, T2> whereById(boolean condition, Object id);
 
     @Override
+    default <TProperty> ClientQueryable2<T1, T2> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
+    }
+
+    @Override
     <TProperty> ClientQueryable2<T1, T2> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
