@@ -1,7 +1,16 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.func.LambdaSQLFunc;
+import com.easy.query.api4j.select.Queryable10;
+import com.easy.query.api4j.select.Queryable4;
+import com.easy.query.api4j.select.Queryable5;
+import com.easy.query.api4j.select.Queryable6;
+import com.easy.query.api4j.select.Queryable7;
+import com.easy.query.api4j.select.Queryable8;
+import com.easy.query.api4j.select.Queryable9;
 import com.easy.query.core.enums.AggregatePredicateCompare;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.func.SQLFunction;
@@ -26,11 +35,10 @@ import java.util.function.Supplier;
  */
 public class QueryTest5 extends BaseTest {
 
-    @Test
-    public void joinTest1() {
+    private Queryable10<Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic> baseQueryable1() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
+        Queryable10<Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic> topicTopicTopicTopicTopicTopicTopicTopicTopicTopicQueryable10 = easyQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
@@ -86,19 +94,14 @@ public class QueryTest5 extends BaseTest {
                 .groupByMerge(o -> o.t().column(Topic::getId))
                 .groupByMerge(false, o -> o.t().column(Topic::getId))
                 .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
-        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` LEFT JOIN `t_topic` t9 ON t.`id` = t9.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1));
+        return topicTopicTopicTopicTopicTopicTopicTopicTopicTopicQueryable10;
     }
 
-    @Test
-    public void joinTest2() {
+    private Queryable9<Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic> baseQueryable2() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
+        return easyQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
@@ -153,19 +156,13 @@ public class QueryTest5 extends BaseTest {
                 .groupByMerge(o -> o.t().column(Topic::getId))
                 .groupByMerge(false, o -> o.t().column(Topic::getId))
                 .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
-        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1));
     }
 
-    @Test
-    public void joinTest3() {
+    private Queryable8<Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic> baseQueryable3() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
+        return easyQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
@@ -219,19 +216,13 @@ public class QueryTest5 extends BaseTest {
                 .groupByMerge(o -> o.t().column(Topic::getId))
                 .groupByMerge(false, o -> o.t().column(Topic::getId))
                 .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
-        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1));
     }
 
-    @Test
-    public void joinTest4() {
+    private Queryable7<Topic, Topic, Topic, Topic, Topic, Topic, Topic> baseQueryable4() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
+        return easyQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
@@ -284,19 +275,13 @@ public class QueryTest5 extends BaseTest {
                 .groupByMerge(o -> o.t().column(Topic::getId))
                 .groupByMerge(false, o -> o.t().column(Topic::getId))
                 .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
-        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1));
     }
 
-    @Test
-    public void joinTest5() {
+    private Queryable6<Topic, Topic, Topic, Topic, Topic, Topic> baseQueryable5() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
+        return easyQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
@@ -348,19 +333,13 @@ public class QueryTest5 extends BaseTest {
                 .groupByMerge(o -> o.t().column(Topic::getId))
                 .groupByMerge(false, o -> o.t().column(Topic::getId))
                 .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
-        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1));
     }
 
-    @Test
-    public void joinTest6() {
+    private Queryable5<Topic, Topic, Topic, Topic, Topic> baseQueryable6() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
+        return easyQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
@@ -411,19 +390,13 @@ public class QueryTest5 extends BaseTest {
                 .groupByMerge(o -> o.t().column(Topic::getId))
                 .groupByMerge(false, o -> o.t().column(Topic::getId))
                 .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
-        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1));
     }
 
-    @Test
-    public void joinTest7() {
+    private Queryable4<Topic, Topic, Topic, Topic> baseQueryable7() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
+        return easyQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
                 .leftJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
@@ -473,11 +446,125 @@ public class QueryTest5 extends BaseTest {
                 .groupByMerge(o -> o.t().column(Topic::getId))
                 .groupByMerge(false, o -> o.t().column(Topic::getId))
                 .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
+                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1));
+    }
+
+    @Test
+    public void joinTest1() {
+        String sql = baseQueryable1().selectMerge(Topic.class, o -> {
+            o.t().column(Topic::getId);
+            o.t().columnCountAs(Topic::getId, Topic::getStars);
+        }).toSQL();
+        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` LEFT JOIN `t_topic` t9 ON t.`id` = t9.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+
+    }
+
+    @Test
+    public void joinTest1_1() {
+        Supplier<Exception> f = () -> {
+            try {
+                baseQueryable1().asTable("a123").sumBigDecimalOrDefault(Topic::getStars,BigDecimal.ZERO);
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("SELECT SUM(t.`stars`) FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` LEFT JOIN `a123` t9 ON t.`id` = t9.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1",easyQuerySQLStatementException.getSQL());
+    }
+    @Test
+    public void joinTest1_2() {
+        Supplier<Exception> f = () -> {
+            try {
+                baseQueryable1().asTable("a123").sumOrDefault(Topic::getStars,BigDecimal.ZERO);
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("SELECT SUM(t.`stars`) FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` LEFT JOIN `a123` t9 ON t.`id` = t9.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1",easyQuerySQLStatementException.getSQL());
+    }
+    @Test
+    public void joinTest1_3() {
+        Supplier<Exception> f = () -> {
+            try {
+                baseQueryable1().asTable("a123").avgBigDecimalOrNull(Topic::getStars);
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("SELECT AVG(t.`stars`) FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` LEFT JOIN `a123` t9 ON t.`id` = t9.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1",easyQuerySQLStatementException.getSQL());
+    }
+
+    @Test
+    public void joinTest2() {
+        String sql = baseQueryable2().selectMerge(Topic.class, o -> {
+            o.t().column(Topic::getId);
+            o.t().columnCountAs(Topic::getId, Topic::getStars);
+        }).toSQL();
+        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+    }
+
+    @Test
+    public void joinTest3() {
+        String sql = baseQueryable3().selectMerge(Topic.class, o -> {
+            o.t().column(Topic::getId);
+            o.t().columnCountAs(Topic::getId, Topic::getStars);
+        }).toSQL();
+        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+    }
+
+    @Test
+    public void joinTest4() {
+        String sql = baseQueryable4().selectMerge(Topic.class, o -> {
+            o.t().column(Topic::getId);
+            o.t().columnCountAs(Topic::getId, Topic::getStars);
+        }).toSQL();
+        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+    }
+
+    @Test
+    public void joinTest5() {
+        String sql = baseQueryable5().selectMerge(Topic.class, o -> {
+            o.t().column(Topic::getId);
+            o.t().columnCountAs(Topic::getId, Topic::getStars);
+        }).toSQL();
+        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+    }
+
+    @Test
+    public void joinTest6() {
+        String sql = baseQueryable6().selectMerge(Topic.class, o -> {
+            o.t().column(Topic::getId);
+            o.t().columnCountAs(Topic::getId, Topic::getStars);
+        }).toSQL();
+        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+    }
+
+    @Test
+    public void joinTest7() {
+        String sql = baseQueryable7().selectMerge(Topic.class, o -> {
+            o.t().column(Topic::getId);
+            o.t().columnCountAs(Topic::getId, Topic::getStars);
+        }).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
 
@@ -516,19 +603,19 @@ public class QueryTest5 extends BaseTest {
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic`", sql);
         }
         {
-            String sql = easyQuery.queryable(Topic.class).select(Topic.class,o->{
+            String sql = easyQuery.queryable(Topic.class).select(Topic.class, o -> {
                 LambdaSQLFunc<Topic> fx = o.fx();
                 SQLFunction ifNull = fx.valueOrDefault(Topic::getStars, 1);
-                o.sqlFuncAs(fx.sum(ifNull),Topic::getStars);
+                o.sqlFuncAs(fx.sum(ifNull), Topic::getStars);
             }).toSQL();
 
             Assert.assertEquals("SELECT SUM(IFNULL(t.`stars`,?)) AS `stars` FROM `t_topic` t", sql);
         }
         {
-            String sql = easyQuery.queryable(Topic.class).select(Topic.class,o->{
+            String sql = easyQuery.queryable(Topic.class).select(Topic.class, o -> {
                 LambdaSQLFunc<Topic> fx = o.fx();
                 SQLFunction ifNull = fx.valueOrDefault(Topic::getStars, 1);
-                o.sqlFuncAs(fx.sum(ifNull).distinct(true),Topic::getStars);
+                o.sqlFuncAs(fx.sum(ifNull).distinct(true), Topic::getStars);
             }).toSQL();
 
             Assert.assertEquals("SELECT SUM(DISTINCT IFNULL(t.`stars`,?)) AS `stars` FROM `t_topic` t", sql);
@@ -604,9 +691,10 @@ public class QueryTest5 extends BaseTest {
             Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t", sql);
         }
     }
+
     @Test
     public void groupTest5_2() {
-        Supplier<Exception> x=()->{
+        Supplier<Exception> x = () -> {
             try {
 
                 BlogEntity blogEntity = easyQuery.queryable(BlogEntity.class)
@@ -617,7 +705,7 @@ public class QueryTest5 extends BaseTest {
                                 .columnCount(BlogEntity::getOrder, c -> c.distinct(true).nullDefault(BigDecimal.ONE))
                                 .columnAvg(BlogEntity::getStatus, c -> c.distinct(true).nullDefault(BigDecimal.valueOf(3)))
                         ).singleOrNull();
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 return ex;
             }
             return null;
