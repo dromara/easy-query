@@ -8,5 +8,5 @@ import com.easy.query.core.basic.api.select.QueryAvailable;
  *
  * @author xuejiaming
  */
-public interface QueryExecutable<T> extends QueryAvailable<T> ,FirstAble<T>,SingleAble<T>,ListAble<T>,PageAble<T>,StreamAble<T>,MapAble<T>{
+public interface QueryExecutable<T> extends QueryAvailable<T> ,FirstAble<T>,SingleAble<T>,ListAble<T>,PageAble<T>,StreamAble<T>{
 }

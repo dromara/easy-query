@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select;
 
+import com.easy.query.core.basic.api.select.executor.MapAble;
 import com.easy.query.core.basic.api.select.executor.QueryExecutable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -13,7 +14,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
  * @Description: 文件说明
  * @Date: 2023/3/3 16:30
  */
-public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T> {
+public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAble<T> {
 
     /**
      * 只clone表达式共享上下文
