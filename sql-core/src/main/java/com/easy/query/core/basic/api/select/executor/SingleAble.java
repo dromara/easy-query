@@ -1,5 +1,6 @@
-package com.easy.query.core.basic.api.select;
+package com.easy.query.core.basic.api.select.executor;
 
+import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleOrNotNullException;
 

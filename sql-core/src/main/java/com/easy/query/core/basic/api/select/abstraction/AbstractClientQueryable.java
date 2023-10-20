@@ -352,6 +352,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
+    public Map<String, Object> toMap() {
+        limit(1);
+        List<Map<String, Object>> maps = toMaps();
+        return EasyCollectionUtil.firstOrNull(maps);
+    }
+
+    @Override
     public List<Map<String, Object>> toMaps() {
         List<Map> queryMaps = toQueryMaps();
         return EasyObjectUtil.typeCastNullable(queryMaps);
@@ -448,7 +455,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ExecuteMethodEnum executeMethod = expressionContext.getExecuteMethod();
         EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
         EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
-        ExecutorContext executorContext = ExecutorContext.create(this.entityQueryExpressionBuilder.getRuntimeContext(), true, executeMethod, tracking);
+        ExecutorContext executorContext = ExecutorContext.create(expressionContext, true, executeMethod, tracking);
         DataReader dataReader = autoAllColumn && expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN) ? entityMetadata.getDataReader() : null;
         JdbcResult<TR> jdbcResult = entityExpressionExecutor.queryStreamResultSet(executorContext, new EntityResultMetadata<>(entityMetadata, dataReader), entityQueryExpressionBuilder);
         return new JdbcResultWrap<>(executeMethod, expressionContext, entityMetadata, jdbcResult);
@@ -944,6 +951,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         FillExpression fillExpression = new FillExpression(queryClass(), true, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), fillQueryableExpression);
         fillExpression.setProduceMany(EasyObjectUtil.typeCastNullable(produce));
         entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
+        return this;
+    }
+
+    @Override
+    public ClientQueryable<T1> forEach(Consumer<T1> mapConfigure) {
+        entityQueryExpressionBuilder.getExpressionContext().setForEachConfigurer(EasyObjectUtil.typeCastNullable(mapConfigure));
         return this;
     }
 

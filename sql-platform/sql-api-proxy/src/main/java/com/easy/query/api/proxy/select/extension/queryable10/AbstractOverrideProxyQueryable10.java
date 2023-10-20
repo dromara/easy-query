@@ -108,6 +108,10 @@ public abstract class AbstractOverrideProxyQueryable10<T1Proxy extends ProxyEnti
     }
 
     @Override
+    public Map<String, Object> toMap() {
+        return entityQueryable.toMap();
+    }
+    @Override
     public List<Map<String, Object>> toMaps() {
         return entityQueryable.toMaps();
     }
@@ -276,4 +280,5 @@ public abstract class AbstractOverrideProxyQueryable10<T1Proxy extends ProxyEnti
         entityQueryable.filterConfigure(valueFilter);
         return this;
     }
+
 }

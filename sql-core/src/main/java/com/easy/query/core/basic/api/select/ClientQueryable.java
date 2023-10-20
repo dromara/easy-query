@@ -10,6 +10,7 @@ import com.easy.query.core.basic.api.select.extension.queryable.Aggregatable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Countable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Fillable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Filterable1;
+import com.easy.query.core.basic.api.select.extension.queryable.ForEachConfigurable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Groupable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Havingable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Includeable1;
@@ -47,7 +48,8 @@ public interface ClientQueryable<T1> extends Query<T1>,
         Unionable1<T1>,
         Includeable1<T1>,
         Fillable1<T1>,
-        Countable1<T1> {
+        Countable1<T1>,
+        ForEachConfigurable1<T1> {
     /**
      * 只clone表达式共享上下文
      * 如果是两个独立的表达式建议重新创建如果是

@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class MapStreamIterator<T> extends AbstractStreamIterator<T> {
+public class MapStreamIterator<T> extends AbstractMapToStreamIterator<T> {
     private ResultSetMetaData rsmd;
     private ResultBasicMetadata[] resultBasicMetadatas;
     private int mapCount=-1;
@@ -38,11 +38,8 @@ public class MapStreamIterator<T> extends AbstractStreamIterator<T> {
     }
 
     @Override
-    protected T next0() throws SQLException {
-        return EasyObjectUtil.typeCastNullable(mapToMap());
-    }
+    protected T mapTo() throws SQLException {
 
-    private Map<String, Object> mapToMap() throws SQLException {
         mapCount++;
         Class<T> clazz = resultMetadata.getResultClass();
         Map<String, Object> map = EasyClassUtil.newMapInstanceOrNull(clazz);
@@ -67,6 +64,6 @@ public class MapStreamIterator<T> extends AbstractStreamIterator<T> {
                 throw new IllegalStateException("Duplicate key found: " + resultBasicMetadata.getColumnName());
             }
         }
-        return map;
+        return EasyObjectUtil.typeCastNullable(map);
     }
 }

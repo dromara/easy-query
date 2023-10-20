@@ -68,7 +68,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     public long executeRows() {
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getRuntimeContext(), false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder);
+        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder);
     }
 
     @Override

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -52,6 +53,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private ValueFilter valueFilter;
     private List<SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>>> includes;
     private List<FillExpression> fills;
+    private Consumer<Object> forEachConfigurer;
 
     private Map<TableAvailable, Map<String, ColumnIncludeExpression>> columnIncludeMaps;
 
@@ -289,6 +291,16 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public ValueFilter getValueFilter() {
         return valueFilter;
+    }
+
+    @Override
+    public Consumer<Object> getForEachConfigurer() {
+        return forEachConfigurer;
+    }
+
+    @Override
+    public void setForEachConfigurer(Consumer<Object> forEachConfigurer) {
+        this.forEachConfigurer = forEachConfigurer;
     }
 
     @Override

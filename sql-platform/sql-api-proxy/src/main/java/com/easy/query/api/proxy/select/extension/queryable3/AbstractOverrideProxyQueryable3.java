@@ -99,6 +99,10 @@ public abstract class AbstractOverrideProxyQueryable3<T1Proxy extends ProxyEntit
     }
 
     @Override
+    public Map<String, Object> toMap() {
+        return entityQueryable.toMap();
+    }
+    @Override
     public List<Map<String, Object>> toMaps() {
         return entityQueryable.toMaps();
     }

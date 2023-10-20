@@ -57,7 +57,7 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
         if (!entities.isEmpty()) {
             QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
             EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-            return entityExpressionExecutor.executeRows(ExecutorContext.create(runtimeContext, false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder, entities);
+            return entityExpressionExecutor.executeRows(ExecutorContext.create(getExpressionContext(), false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder, entities);
         }
         return 0;
     }

@@ -20,6 +20,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
+import com.easy.query.core.basic.api.select.executor.QueryExecutable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -33,6 +34,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -115,6 +117,11 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code) {
         return entityQueryable.singleNotNull(resultClass, msg, code);
+    }
+
+    @Override
+    public Map<String, Object> toMap() {
+        return entityQueryable.toMap();
     }
 
     @Override
@@ -444,6 +451,12 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> filterConfigure(ValueFilter valueFilter) {
         entityQueryable.filterConfigure(valueFilter);
+        return this;
+    }
+
+    @Override
+    public QueryExecutable<T1> forEach(Consumer<T1> mapConfigure) {
+        entityQueryable.forEach(mapConfigure);
         return this;
     }
 }

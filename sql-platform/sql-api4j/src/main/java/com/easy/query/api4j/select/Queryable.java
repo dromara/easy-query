@@ -5,6 +5,7 @@ import com.easy.query.api4j.select.extension.queryable.SQLAggregatable1;
 import com.easy.query.api4j.select.extension.queryable.SQLCountable1;
 import com.easy.query.api4j.select.extension.queryable.SQLFillable1;
 import com.easy.query.api4j.select.extension.queryable.SQLFilterable1;
+import com.easy.query.api4j.select.extension.queryable.SQLForEachConfigurable1;
 import com.easy.query.api4j.select.extension.queryable.SQLGroupable1;
 import com.easy.query.api4j.select.extension.queryable.SQLHavingable1;
 import com.easy.query.api4j.select.extension.queryable.SQLIncludeable1;
@@ -47,7 +48,8 @@ public interface Queryable<T1> extends Query<T1>,
         SQLIncludeable1<T1>,
         SQLFillable1<T1>,
         SQLCountable1<T1>,
-        ClientQueryableAvailable<T1> {
+        ClientQueryableAvailable<T1>,
+        SQLForEachConfigurable1<T1> {
 
     /**
      * 只clone表达式共享上下文

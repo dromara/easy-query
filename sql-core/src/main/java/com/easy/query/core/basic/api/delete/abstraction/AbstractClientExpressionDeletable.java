@@ -60,7 +60,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     public long executeRows() {
         QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityDeleteExpressionBuilder.getRuntimeContext(),false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder);
+        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityDeleteExpressionBuilder.getExpressionContext(),false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder);
     }
 
 //    @Override

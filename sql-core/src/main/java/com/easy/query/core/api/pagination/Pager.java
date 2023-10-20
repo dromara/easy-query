@@ -1,6 +1,6 @@
 package com.easy.query.core.api.pagination;
 
-import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.api.select.executor.PageAble;
 
 /**
  * create time 2023/9/19 21:57
@@ -9,6 +9,6 @@ import com.easy.query.core.basic.api.select.Query;
  * @author xuejiaming
  */
 public interface Pager<TEntity,TPageResult> {
-    TPageResult toResult(Query<TEntity> query);
+    TPageResult toResult(PageAble<TEntity> query);
 
 }

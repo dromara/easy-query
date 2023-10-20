@@ -25,7 +25,7 @@ import java.sql.SQLException;
  *
  * @author xuejiaming
  */
-public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
+public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T> {
     private static final Log log = LogFactory.getLog(DefaultBeanStreamIterator.class);
     protected boolean trackBean;
     protected TrackManager trackManager;
@@ -45,7 +45,7 @@ public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
 
     @Override
     protected T next0() throws SQLException {
-        T bean = mapToBean();
+        T bean = nextMapTo();
         if (trackBean && bean != null) {
             EntityState entityState = trackManager.getCurrentTrackContext().addQueryTracking(bean);
             Object entityStateCurrentValue = entityState.getCurrentValue();
@@ -59,24 +59,14 @@ public class DefaultBeanStreamIterator<T> extends AbstractStreamIterator<T> {
 
     /**
      * 映射到bean
-     *
      * @return
      * @throws SQLException
      */
-    private T mapToBean() throws SQLException {
+    @Override
+    protected T mapTo() throws SQLException {
         T bean = resultMetadata.newBean();
         dataReader.readTo(bean, streamResultSet);
-//        for (int i = 0; i < resultColumnCount; i++) {
-//            ResultColumnMetadata resultColumnMetadata = resultMetadata.getResultColumnMetadataByIndex(i);
-//            if (resultColumnMetadata == null) {
-//                continue;
-//            }
-//            JdbcTypeHandler handler = resultColumnMetadata.getJdbcTypeHandler();
-//            JdbcProperty dataReader = resultColumnMetadata.getDataReader();
-//            Object value = context.fromValue(entityClass, resultColumnMetadata, handler.getValue(dataReader,streamResultSet));
-//
-//            resultColumnMetadata.setValue(bean, value);
-//        }
+        //todo forEach
         return bean;
     }
 

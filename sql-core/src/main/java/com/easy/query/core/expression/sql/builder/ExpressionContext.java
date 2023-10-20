@@ -17,6 +17,7 @@ import com.easy.query.core.metadata.IncludeNavigateParams;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -78,5 +79,11 @@ public interface ExpressionContext {
 
     void filterConfigure(ValueFilter valueFilter);
     ValueFilter getValueFilter();
+
+    Consumer<Object> getForEachConfigurer();
+    void setForEachConfigurer(Consumer<Object> forEachConfigurer);
+    default boolean hasForEach(){
+        return getForEachConfigurer()!=null;
+    }
 
 }

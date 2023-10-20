@@ -472,4 +472,32 @@ public class QueryTest7 extends BaseTest{
                 }).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t INNER JOIN `t_topic` t1 ON t.`id` = t1.`id` INNER JOIN `t_topic` t2 ON t.`id` = t2.`id` INNER JOIN `t_topic` t3 ON t.`id` = t3.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
+
+    @Test
+    public void forEachTest1(){
+        {
+
+            Topic topic = easyQuery
+                    .queryable(Topic.class)
+                    .whereById("1")
+//                    .forEach(o -> {
+////                        o.setAlias("xxxx");
+//                    })
+                    .firstOrNull();
+            Assert.assertNotNull(topic);
+            Assert.assertNull(topic.getAlias());
+        }
+        {
+
+            Topic topic = easyQuery
+                    .queryable(Topic.class)
+                    .whereById("1")
+                    .forEach(o -> {
+                        o.setAlias("xxxx");
+                    })
+                    .firstOrNull();
+            Assert.assertNotNull(topic);
+            Assert.assertEquals("xxxx",topic.getAlias());
+        }
+    }
 }

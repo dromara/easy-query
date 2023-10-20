@@ -86,7 +86,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
         if (!entities.isEmpty()) {
             insertBefore();
             EntityExpressionExecutor entityExpressionExecutor = entityInsertExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpressionBuilder.getRuntimeContext(), false, ExecuteMethodEnum.INSERT), entities, entityInsertExpressionBuilder, fillAutoIncrement);
+            return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.INSERT), entities, entityInsertExpressionBuilder, fillAutoIncrement);
         }
 
         return 0;

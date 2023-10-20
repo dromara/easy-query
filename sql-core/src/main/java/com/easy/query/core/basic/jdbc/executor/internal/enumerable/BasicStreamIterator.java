@@ -19,7 +19,7 @@ import java.sql.SQLException;
  *
  * @author xuejiaming
  */
-public class BasicStreamIterator<T> extends AbstractStreamIterator<T>{
+public class BasicStreamIterator<T> extends AbstractMapToStreamIterator<T>{
     private JdbcProperty dataReader;
     private JdbcTypeHandler handler;
     public BasicStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
@@ -39,11 +39,9 @@ public class BasicStreamIterator<T> extends AbstractStreamIterator<T>{
     }
 
     @Override
-    protected T next0() throws SQLException {
-        Object o = mapToBasic();
-        return EasyObjectUtil.typeCastNullable(o);
+    protected T mapTo() throws SQLException {
+        Object value = handler.getValue(dataReader, streamResultSet);
+        return EasyObjectUtil.typeCastNullable(value);
     }
-    private Object mapToBasic() throws SQLException {
-        return handler.getValue(dataReader,streamResultSet);
-    }
+
 }

@@ -48,7 +48,7 @@ public abstract class AbstractMapClientUpdatable extends AbstractSQLExecuteRows<
     public long executeRows() {
         if (EasyCollectionUtil.isNotEmpty(entities)) {
             EntityExpressionExecutor entityExpressionExecutor = mapUpdateExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.executeRows(ExecutorContext.create(mapUpdateExpressionBuilder.getRuntimeContext(), false, ExecuteMethodEnum.UPDATE), mapUpdateExpressionBuilder, entities);
+            return entityExpressionExecutor.executeRows(ExecutorContext.create(mapUpdateExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.UPDATE), mapUpdateExpressionBuilder, entities);
         }
         return 0;
     }

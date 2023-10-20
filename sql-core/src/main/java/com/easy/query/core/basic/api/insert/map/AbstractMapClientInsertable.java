@@ -57,7 +57,7 @@ public abstract class AbstractMapClientInsertable implements MapClientInsertable
     public long executeRows(boolean fillAutoIncrement) {
         if (!maps.isEmpty()) {
             EntityExpressionExecutor entityExpressionExecutor = entityInsertExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpressionBuilder.getRuntimeContext(), false, ExecuteMethodEnum.INSERT), maps, entityInsertExpressionBuilder, fillAutoIncrement);
+            return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.INSERT), maps, entityInsertExpressionBuilder, fillAutoIncrement);
         }
 
         return 0;
