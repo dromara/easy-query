@@ -28,11 +28,11 @@ public abstract class AbstractSQLNativeSegmentImpl {
     }
 
     public TableAvailable getTable() {
-        return null;
+        return sqlNativeExpression.getTableOrNull();
     }
 
     public String getPropertyName() {
-        return null;
+        return sqlNativeExpression.getPropertyOrNull();
     }
 
     public String getAlias() {

@@ -160,7 +160,6 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
     default List<T> toList() {
         return toList(queryClass());
     }
-
     /**
      * 可迭代的流式结果集
      *

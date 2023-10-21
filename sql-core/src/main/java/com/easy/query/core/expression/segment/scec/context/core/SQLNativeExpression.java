@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment.scec.context.core;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 
 import java.util.List;
@@ -20,4 +21,16 @@ public interface SQLNativeExpression {
      * @return
      */
     boolean isKeepStyle();
+
+    /**
+     * 默认属性
+     * @return
+     */
+    String getPropertyOrNull();
+
+    /**
+     * 默认表
+     * @return
+     */
+    TableAvailable getTableOrNull();
 }

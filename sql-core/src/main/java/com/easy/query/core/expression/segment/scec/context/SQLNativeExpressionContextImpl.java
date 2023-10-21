@@ -36,11 +36,16 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
     private EntityMetadata resultEntityMetadata;
     private boolean keep;
 
+    private TableAvailable defaultTable;
+    private String defaultProperty;
+    private boolean nativePropertyInfo;
+
     public SQLNativeExpressionContextImpl(ExpressionContext expressionContext, QueryRuntimeContext runtimeContext) {
 
         Objects.requireNonNull(runtimeContext, "runtimeContext cannot be null");
         this.expressionContext = expressionContext;
         this.keep = runtimeContext.getQueryConfiguration().getEasyQueryOption().isKeepNativeStyle();
+        this.nativePropertyInfo=false;
     }
 
     @Override
@@ -53,7 +58,16 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
         Objects.requireNonNull(property, "property cannot be null");
         ColumnPropertyExpressionImpl columnPropertyExpression = new ColumnPropertyExpressionImpl(table, property);
         this.expressions.add(columnPropertyExpression);
+        if(!nativePropertyInfo){
+            this.nativePropertyInfo=true;
+            this.defaultTable=table;
+            this.defaultProperty=property;
+        } else{
+            this.defaultTable=null;
+            this.defaultProperty=null;
+        }
     }
+
 
     @Override
     public <TEntity> void expression(Query<TEntity> subQuery) {
@@ -61,6 +75,8 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
         extract(subQuery);
         SubQueryParamExpressionImpl subQueryParamExpression = new SubQueryParamExpressionImpl(subQuery);
         this.expressions.add(subQueryParamExpression);
+        this.defaultTable=null;
+        this.defaultProperty=null;
     }
 
     public void value(Object val) {
@@ -102,6 +118,16 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
     @Override
     public boolean isKeepStyle() {
         return this.keep;
+    }
+
+    @Override
+    public String getPropertyOrNull() {
+        return defaultProperty;
+    }
+
+    @Override
+    public TableAvailable getTableOrNull() {
+        return defaultTable;
     }
 
     public void setAlias(String alias) {
