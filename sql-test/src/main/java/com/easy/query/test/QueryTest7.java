@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * create time 2023/10/19 15:12
@@ -488,16 +489,18 @@ public class QueryTest7 extends BaseTest{
             Assert.assertNull(topic.getAlias());
         }
         {
-
+            AtomicInteger atomicInteger = new AtomicInteger(0);
             Topic topic = easyQuery
                     .queryable(Topic.class)
                     .whereById("1")
                     .forEach(o -> {
+                        atomicInteger.getAndIncrement();
                         o.setAlias("xxxx");
                     })
                     .firstOrNull();
             Assert.assertNotNull(topic);
             Assert.assertEquals("xxxx",topic.getAlias());
+            Assert.assertEquals(1,atomicInteger.intValue());
         }
     }
 }

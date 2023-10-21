@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.select.extension.queryable;
 
-import com.easy.query.core.basic.api.select.executor.QueryExecutable;
+import com.easy.query.core.basic.api.select.executor.MethodQuery;
 
 import java.util.function.Consumer;
 
@@ -11,5 +11,5 @@ import java.util.function.Consumer;
  * @author xuejiaming
  */
 public interface ForEachConfigurable1<T1> {
-    QueryExecutable<T1> forEach(Consumer<T1> mapConfigure);
+    MethodQuery<T1> forEach(Consumer<T1> mapConfigure);
 }

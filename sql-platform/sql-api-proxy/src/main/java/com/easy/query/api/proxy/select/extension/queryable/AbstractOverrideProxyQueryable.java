@@ -9,7 +9,7 @@ import com.easy.query.api.proxy.sql.impl.ProxySelectorImpl;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.basic.api.select.executor.QueryExecutable;
+import com.easy.query.core.basic.api.select.executor.MethodQuery;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -326,7 +326,7 @@ public abstract class AbstractOverrideProxyQueryable<T1Proxy extends ProxyEntity
     }
 
     @Override
-    public QueryExecutable<T1> forEach(Consumer<T1> mapConfigure) {
+    public MethodQuery<T1> forEach(Consumer<T1> mapConfigure) {
         entityQueryable.forEach(mapConfigure);
         return this;
     }

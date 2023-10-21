@@ -9,11 +9,10 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamRes
  *
  * @author xuejiaming
  */
-public interface StreamAble<T> extends QueryAvailable<T> {
+public interface StreamResultAble<T> extends QueryAvailable<T> {
 
     /**
-     * 可迭代的流式结果集
-     *
+     * 可迭代的流式相当于 queryable.select(resultClass,o->o.columnAll()).toStreamResult();
      * <blockquote><pre>
      *     {@code
      *
@@ -33,8 +32,9 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      *         }
      * </pre></blockquote>
      *
-     * @return
+     * @param resultClass 映射结果集
+     * @param <TR>
+     * @return 可迭代的流式结果
      */
-    JdbcStreamResult<T> toStreamResult();
-
+    <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass);
 }

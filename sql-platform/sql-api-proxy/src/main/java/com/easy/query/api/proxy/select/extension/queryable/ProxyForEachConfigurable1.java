@@ -1,6 +1,6 @@
 package com.easy.query.api.proxy.select.extension.queryable;
 
-import com.easy.query.core.basic.api.select.executor.QueryExecutable;
+import com.easy.query.core.basic.api.select.executor.MethodQuery;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.function.Consumer;
@@ -12,5 +12,5 @@ import java.util.function.Consumer;
  * @author xuejiaming
  */
 public interface ProxyForEachConfigurable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
-    QueryExecutable<T1> forEach(Consumer<T1> mapConfigure);
+    MethodQuery<T1> forEach(Consumer<T1> mapConfigure);
 }

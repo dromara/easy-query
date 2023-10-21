@@ -20,7 +20,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
-import com.easy.query.core.basic.api.select.executor.QueryExecutable;
+import com.easy.query.core.basic.api.select.executor.MethodQuery;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -455,7 +455,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public QueryExecutable<T1> forEach(Consumer<T1> mapConfigure) {
+    public MethodQuery<T1> forEach(Consumer<T1> mapConfigure) {
         entityQueryable.forEach(mapConfigure);
         return this;
     }

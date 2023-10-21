@@ -10,15 +10,16 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface ListAble<T> extends QueryAvailable<T> {
-
+public interface ListResultAble<T> extends QueryAvailable<T> {
 
 
     /**
      * 返回所有的查询结果集
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
      *
+     * @param resultClass 映射对象
+     * @param <TR>        映射对象类型
      * @return 获取查询结果集
      */
-    List<T> toList();
+    <TR> List<TR> toList(Class<TR> resultClass);
 }

@@ -10,37 +10,48 @@ import com.easy.query.core.exception.EasyQuerySingleOrNotNullException;
  *
  * @author xuejiaming
  */
-public interface SingleAble<T> extends QueryAvailable<T> {
+public interface SingleResultAble<T> extends QueryAvailable<T> {
+
     /**
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
+     * 并且select并不是表的全部而是映射到 {@code resultClass} 上
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
+     *
+     * @param resultClass
+     * @param <TR>
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      */
-   T singleOrNull();
 
+    <TR> TR singleOrNull(Class<TR> resultClass);
 
     /**
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
      *
+     * @param resultClass
      * @param msg
+     * @param <TR>
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      * @throws EasyQuerySingleOrNotNullException 如果查询不到数据
      */
-    default T singleNotNull(String msg) {
-        return singleNotNull(msg, null);
+
+    default <TR> TR singleNotNull(Class<TR> resultClass, String msg) {
+        return singleNotNull(resultClass, msg, null);
     }
 
     /**
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
      *
+     * @param resultClass 返回结果
      * @param msg
      * @param code
+     * @param <TR>
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      * @throws EasyQuerySingleOrNotNullException 如果查询不到数据
      */
-   T singleNotNull(String msg, String code);
+    <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code);
 }
