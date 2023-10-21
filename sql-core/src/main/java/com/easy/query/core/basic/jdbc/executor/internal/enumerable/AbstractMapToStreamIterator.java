@@ -13,7 +13,7 @@ import java.sql.SQLException;
  * @author xuejiaming
  */
 public abstract class AbstractMapToStreamIterator<T> extends AbstractStreamIterator<T> {
-    private final boolean hasForEach;
+    protected final boolean hasForEach;
     public AbstractMapToStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
         super(context, streamResult, resultMetadata);
         this.hasForEach = context.getExpressionContext().hasForEach();
@@ -21,15 +21,7 @@ public abstract class AbstractMapToStreamIterator<T> extends AbstractStreamItera
 
     @Override
     protected T next0() throws SQLException {
-        return nextMapTo();
-    }
-
-    protected T nextMapTo() throws SQLException {
-        T v = mapTo();
-        if(hasForEach){
-            context.getExpressionContext().getForEachConfigurer().accept(v);
-        }
-        return v;
+        return mapTo();
     }
 
     protected abstract T mapTo() throws SQLException;

@@ -45,7 +45,10 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
 
     @Override
     protected T next0() throws SQLException {
-        T bean = nextMapTo();
+        T bean = mapTo();
+        if(hasForEach){
+            context.getExpressionContext().getForEachConfigurer().accept(bean);
+        }
         if (trackBean && bean != null) {
             EntityState entityState = trackManager.getCurrentTrackContext().addQueryTracking(bean);
             Object entityStateCurrentValue = entityState.getCurrentValue();

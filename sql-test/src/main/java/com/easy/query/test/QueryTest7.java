@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.entity.Topic;
@@ -500,6 +501,21 @@ public class QueryTest7 extends BaseTest{
                     .firstOrNull();
             Assert.assertNotNull(topic);
             Assert.assertEquals("xxxx",topic.getAlias());
+            Assert.assertEquals(1,atomicInteger.intValue());
+        }
+        {
+            AtomicInteger atomicInteger = new AtomicInteger(0);
+            EasyPageResult<Topic> pageResult = easyQuery
+                    .queryable(Topic.class)
+                    .whereById("1")
+                    .forEach(o -> {
+                        atomicInteger.getAndIncrement();
+                        o.setAlias("xxxx");
+                    })
+                    .toPageResult(1, 1);
+            Assert.assertNotNull(pageResult);
+            Assert.assertEquals(1,pageResult.getData().size());
+            Assert.assertEquals("xxxx",pageResult.getData().get(0).getAlias());
             Assert.assertEquals(1,atomicInteger.intValue());
         }
     }
