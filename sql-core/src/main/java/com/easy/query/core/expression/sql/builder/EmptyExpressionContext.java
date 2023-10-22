@@ -213,4 +213,14 @@ public class EmptyExpressionContext implements ExpressionContext{
     public void setForEachConfigurer(Consumer<Object> forEachConfigurer) {
 
     }
+
+    @Override
+    public List<ExpressionBuilder> getDeclareExpressions() {
+        return null;
+    }
+
+    @Override
+    public boolean hasDeclareExpressions() {
+        return false;
+    }
 }

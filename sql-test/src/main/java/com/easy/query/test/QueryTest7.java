@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -518,5 +519,15 @@ public class QueryTest7 extends BaseTest{
             Assert.assertEquals("xxxx",pageResult.getData().get(0).getAlias());
             Assert.assertEquals(1,atomicInteger.intValue());
         }
+    }
+
+    @Test
+    public void testCTE(){
+        List<Topic> list = easyQueryClient
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull("id"))
+                .asTreeCTE("id", "stars")
+                .toList();
+        System.out.println(list);
     }
 }

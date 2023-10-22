@@ -18,6 +18,7 @@ import com.easy.query.core.basic.api.select.extension.queryable.Joinable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Multiable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Orderable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Selectable1;
+import com.easy.query.core.basic.api.select.extension.queryable.Treeable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Unionable1;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -49,7 +50,8 @@ public interface ClientQueryable<T1> extends Query<T1>,
         Includeable1<T1>,
         Fillable1<T1>,
         Countable1<T1>,
-        ForEachConfigurable1<T1> {
+        ForEachConfigurable1<T1>,
+        Treeable1<T1> {
     /**
      * 只clone表达式共享上下文
      * 如果是两个独立的表达式建议重新创建如果是

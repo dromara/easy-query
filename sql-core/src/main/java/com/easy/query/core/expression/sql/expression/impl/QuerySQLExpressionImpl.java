@@ -4,8 +4,10 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.SQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -33,7 +35,7 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
     protected long offset;
     protected long rows;
     protected boolean distinct;
-//    protected List<EntityQuerySQLExpression> includes;
+    //    protected List<EntityQuerySQLExpression> includes;
     protected final List<EntityTableSQLExpression> tables = new ArrayList<>();
 
     public QuerySQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
@@ -163,6 +165,24 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         boolean root = EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
+        if(root){
+            if(entitySQLExpressionMetadata.getExpressionContext().hasDeclareExpressions()){
+                StringBuilder sb = new StringBuilder();
+                List<ExpressionBuilder> declareExpressions = entitySQLExpressionMetadata.getExpressionContext().getDeclareExpressions();
+                for (ExpressionBuilder declareExpression : declareExpressions) {
+                    SQLExpression expression = declareExpression.toExpression();
+                    String sql = expression.toSQL(toSQLContext);
+                    sb.append(sql).append(" ");
+                }
+                sb.append(toSQL0(true, toSQLContext));
+                return sb.toString();
+            }
+        }
+        return toSQL0(root, toSQLContext);
+    }
+
+    protected String toSQL0(boolean root,ToSQLContext toSQLContext){
+
         StringBuilder sql = new StringBuilder("SELECT ");
         if (this.distinct) {
             sql.append("DISTINCT ");
@@ -170,7 +190,7 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
 
         sql.append(this.projects.toSQL(toSQLContext));
         List<EntityTableSQLExpression> tables = getTables();
-        buildSQLTableOrJoin(sql,tables,toSQLContext);
+        buildSQLTableOrJoin(sql, tables, toSQLContext);
 
         boolean notExistsSQL = EasySQLSegmentUtil.isNotEmpty(this.allPredicate);
         boolean hasWhere = EasySQLSegmentUtil.isNotEmpty(this.where);
@@ -220,12 +240,12 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         }
     }
 
-    protected void buildSQLTableOrJoin(StringBuilder sql,List<EntityTableSQLExpression> tables,ToSQLContext toSQLContext){
+    protected void buildSQLTableOrJoin(StringBuilder sql, List<EntityTableSQLExpression> tables, ToSQLContext toSQLContext) {
 
-        if(EasyCollectionUtil.isSingle(tables)){
+        if (EasyCollectionUtil.isSingle(tables)) {
             EntityTableSQLExpression firstTable = tables.get(0);
             sql.append(firstTable.toSQL(toSQLContext));
-        }else{
+        } else {
             Iterator<EntityTableSQLExpression> iterator = getTables().iterator();
             EntityTableSQLExpression firstTable = iterator.next();
             sql.append(firstTable.toSQL(toSQLContext));

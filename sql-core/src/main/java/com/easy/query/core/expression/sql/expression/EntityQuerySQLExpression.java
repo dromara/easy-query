@@ -43,6 +43,7 @@ public interface EntityQuerySQLExpression extends EntityPredicateSQLExpression {
 //    List<EntityQuerySQLExpression> getIncludes();
 //    void setIncludes(List<EntityQuerySQLExpression> includes);
 
+
     @Override
     EntityQuerySQLExpression cloneSQLExpression();
 }

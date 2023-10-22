@@ -53,6 +53,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private ValueFilter valueFilter;
     private List<SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>>> includes;
     private List<FillExpression> fills;
+    private List<ExpressionBuilder> declareExpressions;
     private Consumer<Object> forEachConfigurer;
 
     private Map<TableAvailable, Map<String, ColumnIncludeExpression>> columnIncludeMaps;
@@ -332,5 +333,18 @@ public class EasyExpressionContext implements ExpressionContext {
             easyExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
         }
         return easyExpressionContext;
+    }
+
+    @Override
+    public List<ExpressionBuilder> getDeclareExpressions() {
+        if(declareExpressions==null){
+            declareExpressions=new ArrayList<>();
+        }
+        return declareExpressions;
+    }
+
+    @Override
+    public boolean hasDeclareExpressions() {
+        return EasyCollectionUtil.isNotEmpty(declareExpressions);
     }
 }

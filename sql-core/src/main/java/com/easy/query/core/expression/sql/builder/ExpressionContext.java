@@ -86,4 +86,9 @@ public interface ExpressionContext {
         return getForEachConfigurer()!=null;
     }
 
+    List<ExpressionBuilder> getDeclareExpressions();
+    boolean hasDeclareExpressions();
+
+
+
 }

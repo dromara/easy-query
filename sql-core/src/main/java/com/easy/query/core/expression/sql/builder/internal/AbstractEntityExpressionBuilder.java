@@ -24,7 +24,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
         this.expressionContext = expressionContext;
         this.runtimeContext = expressionContext.getRuntimeContext();
         this.queryClass = queryClass;
-        this.tables = new ArrayList<>(10);
+        this.tables = new ArrayList<>();
     }
 
     @Override

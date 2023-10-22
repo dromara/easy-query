@@ -53,6 +53,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.FillSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
+import com.easy.query.core.expression.parser.core.base.TreeCTESelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.impl.FillSelectorImpl;
@@ -69,6 +70,7 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousTreeCTEQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
@@ -88,6 +90,7 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -953,6 +956,23 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         fillExpression.setProduceMany(EasyObjectUtil.typeCastNullable(produce));
         entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
         return this;
+    }
+
+    @Override
+    public ClientQueryable<T1> asTreeCTE(String codeProperty,String parentCodeProperty,SQLExpression1<TreeCTESelector> treeExpression) {
+        //将当前表达式的expression builder放入新表达式的声明里面新表达式还是当前的T类型
+
+        ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(queryClass(), runtimeContext);
+        ClientQueryable<T1> cteQueryable = queryable.asTable("as_tree_cte").innerJoin(queryClass(), (t, t1) -> t.eq(t1, parentCodeProperty, codeProperty))
+                .select(ColumnSelector::columnAll);
+        ClientQueryable<T1> t1ClientQueryable = internalUnion(Arrays.asList(cteQueryable), SQLUnionEnum.UNION_ALL);
+        ClientQueryable<T1> myQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(queryClass(), runtimeContext);
+        myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().extract(this.entityQueryExpressionBuilder.getExpressionContext());
+        AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder)t1ClientQueryable.getSQLEntityExpressionBuilder().getTable(0);
+        EntityQueryExpressionBuilder unionAllEntityQueryExpressionBuilder = table.getEntityQueryExpressionBuilder();
+        myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getDeclareExpressions().add(new AnonymousTreeCTEQueryExpressionBuilder(unionAllEntityQueryExpressionBuilder,t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(),t1ClientQueryable.queryClass()));
+        myQueryable.asTable("as_tree_cte");
+        return myQueryable;
     }
 
     @Override
