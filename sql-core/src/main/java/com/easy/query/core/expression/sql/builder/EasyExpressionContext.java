@@ -236,6 +236,11 @@ public class EasyExpressionContext implements ExpressionContext {
         }
         this.hasSubQuery = true;
         tableContext.extract(otherExpressionContext.getTableContext());
+        if(otherExpressionContext.hasDeclareExpressions()){
+            for (ExpressionBuilder declareExpression : otherExpressionContext.getDeclareExpressions()) {
+                getDeclareExpressions().add(declareExpression);
+            }
+        }
     }
 
     @Override

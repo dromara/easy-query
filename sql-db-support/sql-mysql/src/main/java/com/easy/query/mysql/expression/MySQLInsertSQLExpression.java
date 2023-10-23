@@ -37,7 +37,7 @@ public class MySQLInsertSQLExpression extends InsertSQLExpressionImpl {
         EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         EntityTableSQLExpression easyTableSQLExpression = tables.get(0);
         String tableName = easyTableSQLExpression.toSQL(toSQLContext);
-        List<SQLSegment> sqlSegments = columns.getSQLSegments();
+//        List<SQLSegment> sqlSegments = columns.getSQLSegments();
         ExpressionContext expressionContext = entitySQLExpressionMetadata.getExpressionContext();
         boolean hasIgnore = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE);
         StringBuilder sql = new StringBuilder(hasIgnore ? "INSERT IGNORE INTO " : "INSERT INTO ");
