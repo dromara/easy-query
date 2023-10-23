@@ -24,6 +24,8 @@ public interface SQLNativeChainExpressionContext {
     void expression(TableAvailable table, String property);
 
     <TEntity> void expression(Query<TEntity> subQuery);
+    void columnName(String columnName);
+    void columnName(TableAvailable table, String columnName);
 
     void value(Object val);
 

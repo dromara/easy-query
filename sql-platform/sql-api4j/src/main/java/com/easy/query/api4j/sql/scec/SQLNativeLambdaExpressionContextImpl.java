@@ -4,6 +4,7 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 
 import java.util.Collection;
@@ -36,6 +37,18 @@ public class SQLNativeLambdaExpressionContextImpl<T1> implements SQLNativeLambda
     @Override
     public <T2> SQLNativeLambdaExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, Property<T2, ?> property) {
         sqlNativePropertyExpressionContext.expression(table,EasyLambdaUtil.getPropertyName(property));
+        return this;
+    }
+
+    @Override
+    public SQLNativeLambdaExpressionContext<T1> columnName(String columnName) {
+        sqlNativePropertyExpressionContext.columnName(columnName);
+        return this;
+    }
+
+    @Override
+    public SQLNativeLambdaExpressionContext<T1> columnName(TableAvailable table, String columnName) {
+        sqlNativePropertyExpressionContext.columnName(table,columnName);
         return this;
     }
 

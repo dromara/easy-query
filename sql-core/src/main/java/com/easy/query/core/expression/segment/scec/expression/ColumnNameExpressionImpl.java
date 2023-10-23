@@ -11,17 +11,17 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  *
  * @author xuejiaming
  */
-public final class ColumnPropertyExpressionImpl implements ColumnPropertyParamExpression {
+public final class ColumnNameExpressionImpl implements ColumnPropertyParamExpression {
     private final TableAvailable table;
-    private final String property;
+    private final String columnName;
 
-    public ColumnPropertyExpressionImpl(TableAvailable table, String property) {
+    public ColumnNameExpressionImpl(TableAvailable table, String columnName) {
         this.table = table;
-        this.property = property;
+        this.columnName = columnName;
     }
 
     @Override
     public String toSQL(QueryRuntimeContext runtimeContext, ToSQLContext toSQLContext) {
-        return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext, table, property, toSQLContext);
+        return EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext, table, columnName, toSQLContext);
     }
 }

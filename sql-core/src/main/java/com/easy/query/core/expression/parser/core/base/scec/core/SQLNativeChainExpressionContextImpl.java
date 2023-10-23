@@ -50,6 +50,16 @@ public class SQLNativeChainExpressionContextImpl implements SQLNativeChainExpres
     }
 
     @Override
+    public void columnName(String columnName) {
+        sqlNativeExpressionContext.columnName(this.table,columnName);
+    }
+
+    @Override
+    public void columnName(TableAvailable table, String columnName) {
+        sqlNativeExpressionContext.columnName(table,columnName);
+    }
+
+    @Override
     public void value(Object val) {
         sqlNativeExpressionContext.value(val);
     }

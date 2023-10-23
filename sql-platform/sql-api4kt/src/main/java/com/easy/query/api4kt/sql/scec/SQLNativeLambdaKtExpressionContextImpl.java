@@ -3,6 +3,7 @@ package com.easy.query.api4kt.sql.scec;
 import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 import kotlin.reflect.KProperty1;
 
@@ -36,6 +37,18 @@ public class SQLNativeLambdaKtExpressionContextImpl<T1> implements SQLNativeLamb
     @Override
     public <T2> SQLNativeLambdaKtExpressionContext<T1> expression(EntitySQLTableOwner<T2> table, KProperty1<? super T2, ?> property) {
         columnConstExpressionContext.expression(table,EasyKtLambdaUtil.getPropertyName(property));
+        return this;
+    }
+
+    @Override
+    public SQLNativeLambdaKtExpressionContext<T1> columnName(String columnName) {
+        columnConstExpressionContext.columnName(columnName);
+        return this;
+    }
+
+    @Override
+    public SQLNativeLambdaKtExpressionContext<T1> columnName(TableAvailable table, String columnName) {
+        columnConstExpressionContext.columnName(table,columnName);
         return this;
     }
 

@@ -3,6 +3,7 @@ package com.easy.query.api4j.sql.scec;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -16,6 +17,9 @@ import java.util.Collection;
 public interface SQLNativeLambdaExpressionChain<T1,TChain> {
     TChain expression(Property<T1, ?> property);
     <T2> TChain expression(EntitySQLTableOwner<T2> table, Property<T2, ?> property);
+
+    TChain columnName(String columnName);
+    TChain columnName(TableAvailable table, String columnName);
 
     <TEntity> TChain expression(Queryable<TEntity> subQuery);
 

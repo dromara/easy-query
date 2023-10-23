@@ -35,6 +35,8 @@ public interface SQLNativePropertyExpressionChain<TChain> {
     TChain expression(SQLTableOwner sqlTableOwner, String property);
 
     TChain expression(TableAvailable table, String property);
+    TChain columnName(String columnName);
+    TChain columnName(TableAvailable table, String columnName);
 
     <TEntity> TChain expression(ClientQueryable<TEntity> subQuery);
 

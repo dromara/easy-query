@@ -62,6 +62,18 @@ public class SQLAliasNativePropertyExpressionContextImpl implements SQLAliasNati
     }
 
     @Override
+    public SQLAliasNativePropertyExpressionContext columnName(String columnName) {
+        sqlNativeChainExpressionContext.columnName(columnName);
+        return this;
+    }
+
+    @Override
+    public SQLAliasNativePropertyExpressionContext columnName(TableAvailable table, String columnName) {
+        sqlNativeChainExpressionContext.columnName(table,columnName);
+        return this;
+    }
+
+    @Override
     public <TEntity> SQLAliasNativePropertyExpressionContext expression(ClientQueryable<TEntity> subQuery) {
         sqlNativeChainExpressionContext.expression(subQuery);
         return this;

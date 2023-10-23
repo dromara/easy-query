@@ -2,6 +2,7 @@ package com.easy.query.api4kt.sql.scec;
 
 import com.easy.query.api4kt.select.KtQueryable;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import kotlin.reflect.KProperty1;
 
 import java.text.MessageFormat;
@@ -17,6 +18,8 @@ public interface SQLNativeLambdaKtExpressionChain<T1,TChain> {
     TChain expression(KProperty1<? super T1, ?> property);
 
     <TEntity> TChain expression(KtQueryable<TEntity> subQuery);
+    TChain columnName(String columnName);
+    TChain columnName(TableAvailable table, String columnName);
 
     <T2> TChain expression(EntitySQLTableOwner<T2> table, KProperty1<? super T2, ?> property);
 

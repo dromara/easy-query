@@ -56,6 +56,18 @@ public class SQLNativePropertyExpressionContextImpl implements SQLNativeProperty
     }
 
     @Override
+    public SQLNativePropertyExpressionContext columnName(String columnName) {
+        sqlNativeChainExpressionContext.columnName(columnName);
+        return this;
+    }
+
+    @Override
+    public SQLNativePropertyExpressionContext columnName(TableAvailable table, String columnName) {
+        sqlNativeChainExpressionContext.columnName(table,columnName);
+        return this;
+    }
+
+    @Override
     public SQLNativePropertyExpressionContext value(Object val) {
         sqlNativeChainExpressionContext.value(val);
         return this;

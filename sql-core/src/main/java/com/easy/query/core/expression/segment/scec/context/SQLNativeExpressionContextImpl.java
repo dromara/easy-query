@@ -7,6 +7,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.scec.expression.ColumnCollectionMultiParamExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstSQLParameterExpressionImpl;
+import com.easy.query.core.expression.segment.scec.expression.ColumnNameExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyAsAliasParamExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnSQLParameterExpressionImpl;
@@ -58,6 +59,7 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
         Objects.requireNonNull(property, "property cannot be null");
         ColumnPropertyExpressionImpl columnPropertyExpression = new ColumnPropertyExpressionImpl(table, property);
         this.expressions.add(columnPropertyExpression);
+        //进行原生片段支持表属性和所属表
         if(!nativePropertyInfo){
             this.nativePropertyInfo=true;
             this.defaultTable=table;
@@ -68,6 +70,13 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
         }
     }
 
+    @Override
+    public void columnName(TableAvailable table, String columnName) {
+        Objects.requireNonNull(table, "table cannot be null");
+        Objects.requireNonNull(columnName, "columnName cannot be null");
+        ColumnNameExpressionImpl columnNameExpression = new ColumnNameExpressionImpl(table, columnName);
+        this.expressions.add(columnNameExpression);
+    }
 
     @Override
     public <TEntity> void expression(Query<TEntity> subQuery) {

@@ -53,10 +53,12 @@ import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.FillSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
-import com.easy.query.core.expression.parser.core.base.TreeCTESelector;
+import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.impl.FillSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurerImpl;
+import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
@@ -320,7 +322,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                if(next!=null){ //因为存在查询单个属性单个属性可能为null
 //                    throw new EasyQuerySingleMoreElementException("single query has more element in result set.");
 //                }
-                if (i>=1) {
+                if (i >= 1) {
                     throw new EasyQuerySingleMoreElementException("single query has more element in result set.");
                 }
                 next = iterator.next();
@@ -958,20 +960,42 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public ClientQueryable<T1> asTreeCTE(String codeProperty,String parentCodeProperty,SQLExpression1<TreeCTESelector> treeExpression) {
+    public ClientQueryable<T1> asTreeCTE(String codeProperty, String parentCodeProperty, SQLExpression1<TreeCTEConfigurer> treeExpression) {
         //将当前表达式的expression builder放入新表达式的声明里面新表达式还是当前的T类型
 
-        String cteTableName="as_tree_cte";
+        TreeCTEOption treeCTEOption = new TreeCTEOption();
+        TreeCTEConfigurerImpl treeCTEConfigurer = new TreeCTEConfigurerImpl(treeCTEOption);
+        treeExpression.apply(treeCTEConfigurer);
+        String cteTableName = treeCTEOption.getCTETableName();
+        String deepColumnName = treeCTEOption.getDeepColumnName();
+        int limitDeep = treeCTEOption.getLimitDeep();
+        boolean up = treeCTEOption.isUp();
+
         ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(queryClass(), runtimeContext);
-        ClientQueryable<T1> cteQueryable = queryable.asTable(cteTableName).innerJoin(queryClass(), (t, t1) -> t.eq(t1, parentCodeProperty, codeProperty))
-                .select(ColumnSelector::columnAll);
-        ClientQueryable<T1> t1ClientQueryable = internalUnion(Collections.singletonList(cteQueryable), SQLUnionEnum.UNION_ALL);
+        ClientQueryable<T1> cteQueryable = queryable.asTable(cteTableName)
+                .innerJoin(queryClass(), (t, t1) -> {
+                    if (up) {
+                        t.eq(t1, parentCodeProperty, codeProperty);
+                    } else {
+                        t.eq(t1, codeProperty, parentCodeProperty);
+                    }
+                })
+                .select(t -> t.sqlNativeSegment("{0} + 1", c -> c.columnName(deepColumnName).setAlias(deepColumnName)).columnAll());
+
+        this.select(o -> o.sqlNativeSegment("0", c -> c.setAlias(deepColumnName)).columnAll());
+
+        ClientQueryable<T1> t1ClientQueryable = internalUnion(Collections.singletonList(cteQueryable), treeCTEOption.sqlUnion());
         ClientQueryable<T1> myQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(queryClass(), runtimeContext);
         myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().extract(this.entityQueryExpressionBuilder.getExpressionContext());
-        AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder)t1ClientQueryable.getSQLEntityExpressionBuilder().getTable(0);
+        AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) t1ClientQueryable.getSQLEntityExpressionBuilder().getTable(0);
         EntityQueryExpressionBuilder unionAllEntityQueryExpressionBuilder = table.getEntityQueryExpressionBuilder();
-        myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getDeclareExpressions().add(new AnonymousTreeCTEQueryExpressionBuilder(cteTableName,unionAllEntityQueryExpressionBuilder,t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(),t1ClientQueryable.queryClass()));
+        myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getDeclareExpressions().add(new AnonymousTreeCTEQueryExpressionBuilder(cteTableName, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass()));
         myQueryable.asTable(cteTableName);
+        if (limitDeep >= 0) {
+            myQueryable.where(o -> o.sqlNativeSegment("{0} < {1}", c -> {
+                c.columnName(deepColumnName).value(limitDeep);
+            }));
+        }
         return myQueryable;
     }
 

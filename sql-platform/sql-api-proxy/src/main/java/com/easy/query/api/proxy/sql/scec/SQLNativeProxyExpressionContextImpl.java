@@ -33,6 +33,12 @@ public class SQLNativeProxyExpressionContextImpl implements SQLNativeProxyExpres
     }
 
     @Override
+    public <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLNativeProxyExpressionContext columnName(SQLColumn<TEntityProxy, TProperty> sqlColumn, String columnName) {
+        sqlConstExpressionContext.columnName(sqlColumn.getTable(),columnName);
+        return this;
+    }
+
+    @Override
     public SQLNativeProxyExpressionContext value(Object val) {
         sqlConstExpressionContext.value(val);
         return this;

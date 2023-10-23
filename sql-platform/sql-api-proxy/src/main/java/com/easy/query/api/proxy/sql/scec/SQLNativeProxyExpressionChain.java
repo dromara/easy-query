@@ -18,6 +18,9 @@ public interface SQLNativeProxyExpressionChain<TChain> {
 
     <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> TChain expression(ProxyQueryable<TEntityProxy, TEntity> subQuery);
 
+    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> TChain columnName(SQLColumn<TEntityProxy, TProperty> sqlColumn,String columnName);
+
+
     TChain value(Object val);
     /**
      * 将参数以[?,?,?]参数化形式拼接到sql中
