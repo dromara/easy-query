@@ -1,7 +1,9 @@
 package com.easy.query.test.dto;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 @Data
+@EntityProxy
 public class BlogEntityTest2 {
 
     /**
@@ -22,6 +25,7 @@ public class BlogEntityTest2 {
     /**
      * 内容
      */
+    @Length(max = 32,message = "未找到内容信息")
     private String content;
     /**
      * 博客链接

@@ -18,10 +18,12 @@ import java.util.List;
  * @author xuejiaming
  */
 public class AnonymousTreeCTEQuerySQLExpressionImpl implements AnonymousEntityQuerySQLExpression {
+    private final String cteTableName;
     private final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
     private final EntityQuerySQLExpression querySQLExpression;
 
-    public AnonymousTreeCTEQuerySQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression){
+    public AnonymousTreeCTEQuerySQLExpressionImpl(String cteTableName,EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression){
+        this.cteTableName = cteTableName;
         this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;
 
         this.querySQLExpression = querySQLExpression;
@@ -29,7 +31,8 @@ public class AnonymousTreeCTEQuerySQLExpressionImpl implements AnonymousEntityQu
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
-        StringBuilder sql = new StringBuilder("WITH RECURSIVE as_tree_cte AS (");
+        String quoteCteTableName = EasySQLExpressionUtil.getQuoteName(getRuntimeContext(), this.cteTableName);
+        StringBuilder sql = new StringBuilder("WITH RECURSIVE ").append(quoteCteTableName).append(" AS (");
         String cteSQL = querySQLExpression.toSQL(toSQLContext);
         sql.append(cteSQL).append(") ");
         return sql.toString();
@@ -157,6 +160,6 @@ public class AnonymousTreeCTEQuerySQLExpressionImpl implements AnonymousEntityQu
 
     @Override
     public EntityQuerySQLExpression cloneSQLExpression() {
-        return new AnonymousTreeCTEQuerySQLExpressionImpl(entitySQLExpressionMetadata,querySQLExpression.cloneSQLExpression());
+        return new AnonymousTreeCTEQuerySQLExpressionImpl(this.cteTableName,entitySQLExpressionMetadata,querySQLExpression.cloneSQLExpression());
     }
 }

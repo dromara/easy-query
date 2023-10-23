@@ -11,4 +11,6 @@ public interface TreeCTESelector {
     void setUp(boolean up);
     void setPathSelector(String pathSelector);
     void setPathSeparator(String pathSeparator);
+    void setUnionAll(boolean unionAll);
+    void setCTETableName(String cteTableName);
 }

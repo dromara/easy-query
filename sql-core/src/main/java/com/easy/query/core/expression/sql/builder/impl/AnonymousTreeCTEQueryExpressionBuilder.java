@@ -3,7 +3,6 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.expression.AnonymousEntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousTreeCTEQuerySQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
@@ -16,10 +15,12 @@ import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMet
  */
 public class AnonymousTreeCTEQueryExpressionBuilder extends QueryExpressionBuilder implements SQLAnonymousEntityQueryExpressionBuilder {
 
+    private final String cteTableName;
     private final EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder;
 
-    public AnonymousTreeCTEQueryExpressionBuilder(EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass) {
+    public AnonymousTreeCTEQueryExpressionBuilder(String cteTableName,EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass) {
         super(queryExpressionContext, queryClass);
+        this.cteTableName = cteTableName;
         this.sqlAnonymousUnionEntityQueryExpressionBuilder = sqlAnonymousUnionEntityQueryExpressionBuilder;
     }
 
@@ -33,12 +34,12 @@ public class AnonymousTreeCTEQueryExpressionBuilder extends QueryExpressionBuild
     public EntityQuerySQLExpression toExpression() {
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         EntityQuerySQLExpression entityQuerySQLExpression = sqlAnonymousUnionEntityQueryExpressionBuilder.toExpression();
-        return new AnonymousTreeCTEQuerySQLExpressionImpl(entitySQLExpressionMetadata,entityQuerySQLExpression);
+        return new AnonymousTreeCTEQuerySQLExpressionImpl(this.cteTableName,entitySQLExpressionMetadata,entityQuerySQLExpression);
     }
 
 
     @Override
     public EntityQueryExpressionBuilder cloneEntityExpressionBuilder() {
-        return new AnonymousTreeCTEQueryExpressionBuilder(this.sqlAnonymousUnionEntityQueryExpressionBuilder,expressionContext,queryClass);
+        return new AnonymousTreeCTEQueryExpressionBuilder(this.cteTableName,this.sqlAnonymousUnionEntityQueryExpressionBuilder,expressionContext,queryClass);
     }
 }

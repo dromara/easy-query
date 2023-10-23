@@ -3,6 +3,7 @@ package com.easy.query.processor;
 
 import com.easy.query.core.annotation.ColumnIgnore;
 import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.util.EasyStringUtil;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -92,7 +93,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             "    public SQLColumn<@entityClassProxy,@propertyType> @property(){\n" +
             "        return get(\"@property\");\n" +
             "    }";
-//    private static final String STATIC_FIELD_TEMPLATE = "    @comment\n"
+    //    private static final String STATIC_FIELD_TEMPLATE = "    @comment\n"
 //            + "    public static final PropColumn @property = new SQLPropColumn(\"@property\");";
     private static final String FIELD_DOC_COMMENT_TEMPLATE = "\n" +
             "    /**\n" +
@@ -169,7 +170,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 //                StringBuilder staticFieldContent = new StringBuilder();
                 TypeElement classElement = (TypeElement) entityClassElement;
                 do {
-                    fillPropertyAndColumns(fieldContent,entityClassName, classElement, ignoreProperties);
+                    fillPropertyAndColumns(fieldContent, entityClassName, classElement, ignoreProperties);
                     classElement = (TypeElement) typeUtils.asElement(classElement.getSuperclass());
                 } while (classElement != null);
 
@@ -366,6 +367,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 if (column != null) {
                     continue;
                 }
+                Navigate navigate = fieldElement.getAnnotation(Navigate.class);
+                boolean includeProperty = navigate != null;
 
 
 //                TypeMirror typeMirror = fieldElement.asType();
@@ -377,8 +380,15 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 //                String typeString =typeMirror.toString().trim();
                 TypeMirror type = fieldElement.asType();
                 boolean isGeneric = type.getKind() == TypeKind.TYPEVAR;
-                String fieldGenericType = getGenericTypeString(isGeneric, type);
+                boolean isDeclared = type.getKind() == TypeKind.DECLARED;
+                String fieldGenericType = getGenericTypeString(isGeneric, isDeclared,includeProperty, type);
+                if(fieldGenericType.contains("java.util.List<E>")){
 
+                    Element element = typeUtils.asElement(type);
+                    TypeMirror type1 = element.asType();
+                    ElementKind kind = element.getKind();
+                    System.out.println("1");
+                }
 
                 String docComment = elementUtils.getDocComment(fieldElement);
                 String fieldComment = getFiledComment(docComment);
@@ -410,12 +420,25 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 .replace("@comment", fieldComment.toString());
     }
 
-    private String getGenericTypeString(boolean isGeneric, TypeMirror type) {
+    private String getGenericTypeString(boolean isGeneric, boolean isDeclared,boolean includeProperty, TypeMirror type) {
         if (isGeneric) {
             return "java.lang.Object";
         }
-        String typeString = type.toString();
+        String typeString = defTypeString(isDeclared,includeProperty, type);
+
         return TYPE_MAPPING.getOrDefault(typeString, typeString);
+    }
+
+    private String defTypeString(boolean isDeclared,boolean includeProperty, TypeMirror type) {
+
+        if (includeProperty || !isDeclared) {
+            return type.toString().trim();
+        }
+        Element element = typeUtils.asElement(type);
+        if (element != null) {
+            return element.asType().toString().trim();
+        }
+        return type.toString().trim();
     }
 
 }

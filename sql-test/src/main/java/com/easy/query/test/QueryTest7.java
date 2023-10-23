@@ -3,13 +3,13 @@ package com.easy.query.test;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.test.dto.TopicRequest;
+import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -522,12 +522,28 @@ public class QueryTest7 extends BaseTest{
     }
 
     @Test
-    public void testCTE(){
-        List<Topic> list = easyQueryClient
+    public void testCTE1(){
+        String sql = easyQueryClient
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull("id"))
                 .asTreeCTE("id", "stars")
-                .toList();
-        System.out.println(list);
+                .toSQL();
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`stars` = t3.`id`)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t",sql);
+    }
+    @Test
+    public void testCTE2(){
+        String sql = easyQueryClient
+                .queryable(Topic.class)
+                .where(o -> o.isNotNull("id"))
+                .asTreeCTE("id", "stars")
+                .leftJoin(BlogEntity.class, (t, t1) -> {
+                    t.eq(t1, "id", "id");
+                })
+                .where(t -> t.like("title", "123"))
+                .select(BlogEntity.class, (t, t1) -> {
+                    t.column("id");
+                    t1.column("url");
+                }).toSQL();
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`stars` = t3.`id`)  SELECT t.`id`,t6.`url` FROM `as_tree_cte` t LEFT JOIN `t_blog` t6 ON t6.`deleted` = ? AND t.`id` = t6.`id` WHERE t.`title` LIKE ?",sql);
     }
 }
