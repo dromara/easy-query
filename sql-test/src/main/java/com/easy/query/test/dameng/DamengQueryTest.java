@@ -90,6 +90,15 @@ public class DamengQueryTest extends DamengBaseTest{
             Assert.assertEquals(msSQLMyTopic.getStars(),(Integer)(i+120) );
         }
     }
+    @Test
+    public void query7(){
+        List<DamengMyTopic> list = easyQuery.getEasyQueryClient()
+                .queryable(DamengMyTopic.class)
+                .where(o -> o.eq("id", "1"))
+                .asTreeCTE("id", "title")
+                .toList();
+        Assert.assertNotNull(list);
+    }
 
 //    @Test
 //    public void batchInsert(){

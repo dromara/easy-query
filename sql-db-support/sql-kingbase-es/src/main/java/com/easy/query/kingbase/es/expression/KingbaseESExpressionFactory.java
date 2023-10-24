@@ -13,6 +13,7 @@ import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityQuerySQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousEntityTableSQLExpressionImpl;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousTreeCTEQuerySQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.AnonymousUnionQuerySQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.expression.sql.expression.impl.TableSQLExpressionImpl;
@@ -66,5 +67,10 @@ public class KingbaseESExpressionFactory implements ExpressionFactory {
     @Override
     public AnonymousEntityQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, List<EntityQuerySQLExpression> entityQuerySQLExpressions, SQLUnionEnum sqlUnion) {
         return new AnonymousUnionQuerySQLExpressionImpl(entitySQLExpressionMetadata, new ArrayList<>(entityQuerySQLExpressions), sqlUnion);
+    }
+
+    @Override
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousCTEQuerySQLExpression(String cteTableName, EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression) {
+        return new AnonymousTreeCTEQuerySQLExpressionImpl(cteTableName,entitySQLExpressionMetadata,querySQLExpression);
     }
 }

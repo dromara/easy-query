@@ -32,7 +32,10 @@ import com.easy.query.core.expression.lambda.SQLExpression9;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.scec.expression.ColumnMultiParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.SQLFormatArgument;
@@ -49,6 +52,8 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.AnonymousUnionEntityQuerySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 
@@ -328,6 +333,38 @@ public class EasySQLExpressionUtil {
 
     public static String getQuoteName(QueryRuntimeContext runtimeContext, String value) {
         return runtimeContext.getQueryConfiguration().getDialect().getQuoteName(value);
+    }
+
+    public static String getCTEColumns(QueryRuntimeContext runtimeContext, EntityQuerySQLExpression querySQLExpression){
+
+        boolean unionExpression = querySQLExpression instanceof AnonymousUnionEntityQuerySQLExpression;
+        if (!unionExpression) {
+            throw new EasyQueryInvalidOperationException("querySQLExpression not instanceof AnonymousUnionEntityQuerySQLExpression");
+        }
+        EntityQuerySQLExpression entityQuerySQLExpression = ((AnonymousUnionEntityQuerySQLExpression) querySQLExpression).getEntityQuerySQLExpressions().get(0);
+        SQLBuilderSegment projects = entityQuerySQLExpression.getProjects();
+        if (EasySQLSegmentUtil.isEmpty(projects)) {
+            throw new EasyQueryInvalidOperationException("projects is empty");
+        }
+        StringBuilder columns = new StringBuilder();
+        int i = 0;
+        for (SQLSegment sqlSegment : projects.getSQLSegments()) {
+            if (!(sqlSegment instanceof SQLEntityAliasSegment)) {
+                throw new EasyQueryInvalidOperationException("sqlSegment not instanceof SQLEntityAliasSegment");
+            }
+            SQLEntityAliasSegment sqlEntityAliasSegment = (SQLEntityAliasSegment) sqlSegment;
+            if (i++ != 0) {
+                columns.append(",");
+            }
+            if (sqlEntityAliasSegment.getAlias() != null) {
+                columns.append(EasySQLExpressionUtil.getQuoteName(runtimeContext, sqlEntityAliasSegment.getAlias()));
+            } else if (sqlEntityAliasSegment.getTable() != null && sqlEntityAliasSegment.getPropertyName() != null) {
+                columns.append(EasySQLExpressionUtil.getQuoteName(runtimeContext, sqlEntityAliasSegment.getTable().getColumnName(sqlEntityAliasSegment.getPropertyName())));
+            }else{
+                throw new EasyQueryInvalidOperationException("sqlSegment is SQLEntityAliasSegment,can not get column name");
+            }
+        }
+        return columns.toString();
     }
 
 

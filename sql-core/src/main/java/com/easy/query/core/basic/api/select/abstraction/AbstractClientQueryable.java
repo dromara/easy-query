@@ -53,10 +53,10 @@ import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.FillSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
-import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.impl.FillSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurerImpl;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -72,7 +72,6 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.expression.sql.builder.impl.AnonymousTreeCTEQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
@@ -989,10 +988,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().extract(this.entityQueryExpressionBuilder.getExpressionContext());
         AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) t1ClientQueryable.getSQLEntityExpressionBuilder().getTable(0);
         EntityQueryExpressionBuilder unionAllEntityQueryExpressionBuilder = table.getEntityQueryExpressionBuilder();
-        myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getDeclareExpressions().add(new AnonymousTreeCTEQueryExpressionBuilder(cteTableName, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass()));
+        EntityQueryExpressionBuilder anonymousCTEQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousCTEQueryExpressionBuilder(cteTableName, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass());
+        myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getDeclareExpressions().add(anonymousCTEQueryExpressionBuilder);
         myQueryable.asTable(cteTableName);
         if (limitDeep >= 0) {
-            myQueryable.where(o -> o.sqlNativeSegment("{0} < {1}", c -> {
+            myQueryable.where(o -> o.sqlNativeSegment("{0} <= {1}", c -> {
                 c.columnName(deepColumnName).value(limitDeep);
             }));
         }

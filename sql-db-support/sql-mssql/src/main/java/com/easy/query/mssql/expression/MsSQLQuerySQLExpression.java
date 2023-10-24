@@ -7,7 +7,9 @@ import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentIm
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
+import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.SQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.expression.sql.expression.impl.QuerySQLExpressionImpl;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -17,6 +19,7 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * create time 2023/7/27 17:48
@@ -37,6 +40,22 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         boolean root = EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
+        if(root){
+            if(entitySQLExpressionMetadata.getExpressionContext().hasDeclareExpressions()){
+                StringBuilder sb = new StringBuilder();
+                List<ExpressionBuilder> declareExpressions = entitySQLExpressionMetadata.getExpressionContext().getDeclareExpressions();
+                for (ExpressionBuilder declareExpression : declareExpressions) {
+                    SQLExpression expression = declareExpression.toExpression();
+                    String sql = expression.toSQL(toSQLContext);
+                    sb.append(sql).append(" ");
+                }
+                sb.append(toSQL0(true, toSQLContext));
+                return sb.toString();
+            }
+        }
+        return toSQL0(root, toSQLContext);
+    }
+    protected String toSQL0(boolean root,ToSQLContext toSQLContext){
         StringBuilder sql = new StringBuilder("SELECT ");
         if (this.distinct) {
             sql.append("DISTINCT ");

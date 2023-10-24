@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
 
-    private final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
+    protected final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
     protected SQLBuilderSegment projects;
     protected PredicateSegment where;
     protected PredicateSegment allPredicate;

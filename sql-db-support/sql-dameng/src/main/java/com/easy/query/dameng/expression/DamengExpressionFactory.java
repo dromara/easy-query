@@ -66,4 +66,9 @@ public class DamengExpressionFactory implements ExpressionFactory {
     public AnonymousEntityQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, List<EntityQuerySQLExpression> entityQuerySQLExpressions, SQLUnionEnum sqlUnion) {
         return new AnonymousUnionQuerySQLExpressionImpl(entitySQLExpressionMetadata, new ArrayList<>(entityQuerySQLExpressions), sqlUnion);
     }
+
+    @Override
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousCTEQuerySQLExpression(String cteTableName, EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression) {
+        return new DamengAnonymousTreeCTEQuerySQLExpressionImpl(cteTableName,entitySQLExpressionMetadata,querySQLExpression);
+    }
 }

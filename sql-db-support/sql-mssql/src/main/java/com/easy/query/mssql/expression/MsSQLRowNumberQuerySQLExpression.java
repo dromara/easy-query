@@ -4,12 +4,15 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.KeywordTool;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.SQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * create time 2023/8/1 09:25
@@ -31,6 +34,23 @@ public class MsSQLRowNumberQuerySQLExpression extends MsSQLQuerySQLExpression {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         boolean root = EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
+        if(root){
+            if(entitySQLExpressionMetadata.getExpressionContext().hasDeclareExpressions()){
+                StringBuilder sb = new StringBuilder();
+                List<ExpressionBuilder> declareExpressions = entitySQLExpressionMetadata.getExpressionContext().getDeclareExpressions();
+                for (ExpressionBuilder declareExpression : declareExpressions) {
+                    SQLExpression expression = declareExpression.toExpression();
+                    String sql = expression.toSQL(toSQLContext);
+                    sb.append(sql).append(" ");
+                }
+                sb.append(toSQL0(true, toSQLContext));
+                return sb.toString();
+            }
+        }
+        return toSQL0(root, toSQLContext);
+
+    }
+    protected String toSQL0(boolean root,ToSQLContext toSQLContext){
         StringBuilder sql = new StringBuilder("SELECT ");
         if (this.distinct) {
             sql.append("DISTINCT ");
