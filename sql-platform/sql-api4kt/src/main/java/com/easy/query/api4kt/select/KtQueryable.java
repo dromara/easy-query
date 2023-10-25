@@ -5,14 +5,15 @@ import com.easy.query.api4kt.select.extension.queryable.SQLKtAggregatable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtCountable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtFillable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtFilterable1;
+import com.easy.query.api4kt.select.extension.queryable.SQLKtForEachConfigurable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtGroupable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtHavingable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtIncludeable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtJoinable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtOrderable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtSelectable1;
+import com.easy.query.api4kt.select.extension.queryable.SQLKtTreeable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtUnionable1;
-import com.easy.query.api4kt.select.extension.queryable.SQLKtForEachConfigurable1;
 import com.easy.query.api4kt.sql.SQLKtColumnSelector;
 import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -49,7 +50,8 @@ public interface KtQueryable<T1> extends Query<T1>,
         SQLKtFillable1<T1>,
         SQLKtCountable1<T1>,
         ClientKtQueryableAvailable<T1>,
-        SQLKtForEachConfigurable1<T1> {
+        SQLKtForEachConfigurable1<T1>,
+        SQLKtTreeable1<T1> {
 
     /**
      * 只clone表达式共享上下文

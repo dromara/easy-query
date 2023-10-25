@@ -13,6 +13,7 @@ import com.easy.query.api.proxy.select.extension.queryable.ProxyIncludeable1;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyJoinable1;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyOrderable1;
 import com.easy.query.api.proxy.select.extension.queryable.ProxySelectable1;
+import com.easy.query.api.proxy.select.extension.queryable.ProxyTreeable1;
 import com.easy.query.api.proxy.select.extension.queryable.ProxyUnionable1;
 import com.easy.query.api.proxy.sql.ProxyFilter;
 import com.easy.query.api.proxy.sql.ProxySelector;
@@ -51,6 +52,7 @@ public interface ProxyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
         ProxySelectable1<T1Proxy, T1>,
         ProxyJoinable1<T1Proxy, T1>,
         ProxyFillable1<T1Proxy, T1>,
+        ProxyTreeable1<T1Proxy, T1>,
         ProxyCountable1<T1Proxy, T1>,
         Proxy1Available<T1Proxy,T1>,
         ProxyForEachConfigurable1<T1Proxy,T1> {

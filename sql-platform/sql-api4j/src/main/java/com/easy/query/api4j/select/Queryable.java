@@ -12,6 +12,7 @@ import com.easy.query.api4j.select.extension.queryable.SQLIncludeable1;
 import com.easy.query.api4j.select.extension.queryable.SQLJoinable1;
 import com.easy.query.api4j.select.extension.queryable.SQLOrderable1;
 import com.easy.query.api4j.select.extension.queryable.SQLSelectable1;
+import com.easy.query.api4j.select.extension.queryable.SQLTreeable1;
 import com.easy.query.api4j.select.extension.queryable.SQLUnionable1;
 import com.easy.query.api4j.sql.SQLColumnSelector;
 import com.easy.query.api4j.sql.SQLWherePredicate;
@@ -49,7 +50,8 @@ public interface Queryable<T1> extends Query<T1>,
         SQLFillable1<T1>,
         SQLCountable1<T1>,
         ClientQueryableAvailable<T1>,
-        SQLForEachConfigurable1<T1> {
+        SQLForEachConfigurable1<T1> ,
+        SQLTreeable1<T1> {
 
     /**
      * 只clone表达式共享上下文
