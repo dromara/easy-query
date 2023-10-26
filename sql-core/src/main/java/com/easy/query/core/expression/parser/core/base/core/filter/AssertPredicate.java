@@ -51,4 +51,35 @@ public interface AssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1>, Fi
        }
        return castChain();
    }
+    /**
+     * column is null or empty
+     */
+    default TChain isBank(String property) {
+        return isBank(true, property);
+    }
+
+    /**
+     * column is null or empty
+     *
+     * @param condition 执行条件
+     * @param property  字段
+     * @return children
+     */
+    TChain isBank(boolean condition, String property);
+
+    /**
+     * column is not null and not empty
+     */
+    default TChain isNotBank(String property) {
+        return isNotBank(true, property);
+    }
+
+    /**
+     * column is not null and not empty
+     *
+     * @param condition 执行条件
+     * @param property  字段
+     * @return children
+     */
+    TChain isNotBank(boolean condition, String property);
 }

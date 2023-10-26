@@ -17,6 +17,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLColumn;
 
 /**
  * @author xuejiaming
@@ -97,6 +98,22 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
             getFilter().or(filter -> {
                 proxyFilterExpression.apply(new ProxyFilterImpl(filter));
             });
+        }
+        return this;
+    }
+
+    @Override
+    default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isBank(boolean condition, SQLColumn<TProxy, String> column) {
+        if(condition){
+            getFilter().eq(null,fx().nullDefault(column,""),"");
+        }
+        return this;
+    }
+
+    @Override
+    default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isNotBank(boolean condition, SQLColumn<TProxy, String> column) {
+        if(condition){
+            getFilter().ne(null,fx().nullDefault(column,""),"");
         }
         return this;
     }

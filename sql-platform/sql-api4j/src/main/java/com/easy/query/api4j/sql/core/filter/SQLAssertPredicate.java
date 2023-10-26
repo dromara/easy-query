@@ -52,4 +52,35 @@ public interface SQLAssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
         getWherePredicate().isNotNull(condition, EasyLambdaUtil.getPropertyName(column));
         return castChain();
     }
+    /**
+     * column is null or empty
+     */
+    default TChain isBank(Property<T1, String> column) {
+        return isBank(true, column);
+    }
+
+    /**
+     * column is null or empty
+     *
+     * @param condition 执行条件
+     * @param column  字段
+     * @return children
+     */
+    TChain isBank(boolean condition, Property<T1, String> column);
+
+    /**
+     * column is not null and not empty
+     */
+    default TChain isNotBank(Property<T1, String> column) {
+        return isNotBank(true, column);
+    }
+
+    /**
+     * column is not null and not empty
+     *
+     * @param condition 执行条件
+     * @param column  字段
+     * @return children
+     */
+    TChain isNotBank(boolean condition, Property<T1, String> column);
 }

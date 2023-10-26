@@ -397,7 +397,7 @@ public class QueryTest4 extends BaseTest {
 
             TopicProxy table = TopicProxy.createTable();
             String sql = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), o.fx().valueOrDefault(table.createTime(), "123")))
+                    .where(o -> o.eq(o.fx().nullDefault(table.id(), "123"), o.fx().nullDefault(table.createTime(), "123")))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = IFNULL(`create_time`,?)", sql);
         }
@@ -415,7 +415,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             String sql1 = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
+                    .where(o -> o.eq(o.fx().nullDefault(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = DATE_FORMAT(`create_time`,'%Y/%m/%d %H:%i:%s')", sql1);
 
@@ -424,7 +424,7 @@ public class QueryTest4 extends BaseTest {
 
             TopicProxy table = TopicProxy.createTable();
             Topic topic = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
+                    .where(o -> o.eq(o.fx().nullDefault(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
                     .firstOrNull();
             Assert.assertNull(topic);
         }
@@ -515,7 +515,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             String sql1 = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), "111"))
+                    .where(o -> o.eq(o.fx().nullDefault(table.id(), "123"), "111"))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = ?", sql1);
 
@@ -523,7 +523,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             Topic topic = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), "111"))
+                    .where(o -> o.eq(o.fx().nullDefault(table.id(), "123"), "111"))
                     .firstOrNull();
             Assert.assertNull(topic);
 

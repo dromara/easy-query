@@ -10,6 +10,7 @@ import com.easy.query.api4kt.sql.core.filter.SQLKtSelfPredicate;
 import com.easy.query.api4kt.sql.core.filter.SQLKtSubQueryPredicate;
 import com.easy.query.api4kt.sql.core.filter.SQLKtValuePredicate;
 import com.easy.query.api4kt.sql.core.filter.SQLKtValuesPredicate;
+import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -18,6 +19,7 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import kotlin.reflect.KProperty1;
 
 /**
  * @author xuejiaming
@@ -99,4 +101,16 @@ public interface SQLKtWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLKtL
     }
 
     <T2> SQLKtWherePredicate<T1> or(boolean condition, SQLKtWherePredicate<T2> t2SQLKtWherePredicate, SQLExpression2<SQLKtWherePredicate<T1>, SQLKtWherePredicate<T2>> sqlWherePredicateSQLExpression);
+
+    @Override
+    default SQLKtWherePredicate<T1> isBank(boolean condition, KProperty1<? super T1, String> column) {
+        getWherePredicate().isBank(condition, EasyKtLambdaUtil.getPropertyName(column));
+        return this;
+    }
+
+    @Override
+    default SQLKtWherePredicate<T1> isNotBank(boolean condition, KProperty1<? super T1, String> column) {
+        getWherePredicate().isNotBank(condition, EasyKtLambdaUtil.getPropertyName(column));
+        return this;
+    }
 }

@@ -30,8 +30,8 @@ public interface ProxySQLFunc  extends ProxyAggregateSQLFunc{
      * @param <TProxy> 数据库对象代理对象
      * @param <T> 数据库对象
      */
-    default <TProxy, T> SQLFunction valueOrDefault(SQLColumn<TProxy, T> sqlColumn, Object def) {
-        return valueOrDefault(s -> {
+    default <TProxy, T> SQLFunction nullDefault(SQLColumn<TProxy, T> sqlColumn, Object def) {
+        return nullDefault(s -> {
             s.column(sqlColumn)
                     .value(def);
         });
@@ -42,7 +42,7 @@ public interface ProxySQLFunc  extends ProxyAggregateSQLFunc{
      * @param sqlExpression 列选择表达式
      * @return ifNull函数
      */
-    default SQLFunction valueOrDefault(SQLExpression1<ProxyColumnFuncSelector> sqlExpression) {
+    default SQLFunction nullDefault(SQLExpression1<ProxyColumnFuncSelector> sqlExpression) {
         return getSQLFunc().nullDefault(o->{
             sqlExpression.apply(new ProxyColumnFuncSelectorImpl(o));
         });

@@ -11,9 +11,11 @@ import com.easy.query.api4j.sql.core.filter.SQLSelfPredicate;
 import com.easy.query.api4j.sql.core.filter.SQLSubQueryPredicate;
 import com.easy.query.api4j.sql.core.filter.SQLValuePredicate;
 import com.easy.query.api4j.sql.core.filter.SQLValuesPredicate;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
@@ -104,4 +106,15 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, LambdaSQ
 
     <T2> SQLWherePredicate<T1> or(boolean condition, SQLWherePredicate<T2> t2SQLWherePredicate, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> sqlWherePredicateSQLExpression);
 
+    @Override
+    default SQLWherePredicate<T1> isBank(boolean condition, Property<T1, String> column) {
+        getWherePredicate().isBank(condition, EasyLambdaUtil.getPropertyName(column));
+        return this;
+    }
+
+    @Override
+    default SQLWherePredicate<T1> isNotBank(boolean condition, Property<T1, String> column) {
+        getWherePredicate().isNotBank(condition, EasyLambdaUtil.getPropertyName(column));
+        return this;
+    }
 }

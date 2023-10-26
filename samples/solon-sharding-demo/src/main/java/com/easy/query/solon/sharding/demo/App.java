@@ -1,5 +1,6 @@
 package com.easy.query.solon.sharding.demo;
 
+import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
 import org.noear.solon.Solon;
 
 /**
@@ -10,6 +11,10 @@ import org.noear.solon.Solon;
  */
 public class App {
     public static void main(String[] args) {
-        Solon.start(App.class,args);
+        Solon.start(App.class,args,app->{
+            app.onEvent(EasyQueryBuilderConfiguration.class,e->{
+//                e.replaceService();
+            });
+        });
     }
 }

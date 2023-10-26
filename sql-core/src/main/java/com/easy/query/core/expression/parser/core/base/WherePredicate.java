@@ -84,4 +84,20 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
 
     <T2> WherePredicate<T1> or(boolean condition, WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression);
 
+
+    @Override
+    default WherePredicate<T1> isBank(boolean condition, String property) {
+        if(condition){
+            getFilter().eq(getTable(),fx().nullDefault(property,""),"");
+        }
+        return this;
+    }
+
+    @Override
+    default WherePredicate<T1> isNotBank(boolean condition, String property) {
+        if(condition){
+            getFilter().ne(getTable(),fx().nullDefault(property,""),"");
+        }
+        return this;
+    }
 }
