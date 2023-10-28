@@ -24,6 +24,9 @@ import java.util.function.Predicate;
  * @Date: 2023/2/26 14:07
  */
 public class EasyCollectionUtil {
+    public static <T> List<T> emptyList() {
+        return new ArrayList<>(0);
+    }
     public static String join(int size,String separator,String placeholder){
         if(size <= 0){
             throw new IllegalArgumentException("size <= 0");
@@ -219,7 +222,7 @@ public class EasyCollectionUtil {
 
     public static <TSource> List<TSource> filter(List<TSource> source, java.util.function.Predicate<TSource> predicate) {
         if (isEmpty(source)) {
-            return Collections.emptyList();
+            return EasyCollectionUtil.emptyList();
         }
         ArrayList<TSource> result = new ArrayList<>(source.size());
         for (TSource tSource : source) {
@@ -281,7 +284,7 @@ public class EasyCollectionUtil {
 
     public static <TResult, TSource> List<TResult> map(List<TSource> source, Function<? super TSource, ? extends TResult> mapper) {
         if (isEmpty(source)) {
-            return Collections.emptyList();
+            return EasyCollectionUtil.emptyList();
         }
         ArrayList<TResult> r = new ArrayList<>(source.size());
         for (TSource tSource : source) {

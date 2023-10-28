@@ -309,15 +309,35 @@ class KtTest : BaseKtTest() {
         var sql = easyKtQuery!!.queryable(BlogKtEntity::class.java)
             .where {
                 it.eq(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
-                it.eq(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                it.eq(
+                    false,
+                    it.fx().valueOrDefault(BlogKtEntity::id, ""),
+                    it.fx().valueOrDefault(BlogKtEntity::title, "")
+                );
                 it.ne(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
-                it.ne(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                it.ne(
+                    false,
+                    it.fx().valueOrDefault(BlogKtEntity::id, ""),
+                    it.fx().valueOrDefault(BlogKtEntity::title, "")
+                );
                 it.ge(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
-                it.ge(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                it.ge(
+                    false,
+                    it.fx().valueOrDefault(BlogKtEntity::id, ""),
+                    it.fx().valueOrDefault(BlogKtEntity::title, "")
+                );
                 it.gt(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
-                it.gt(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                it.gt(
+                    false,
+                    it.fx().valueOrDefault(BlogKtEntity::id, ""),
+                    it.fx().valueOrDefault(BlogKtEntity::title, "")
+                );
                 it.le(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
-                it.le(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                it.le(
+                    false,
+                    it.fx().valueOrDefault(BlogKtEntity::id, ""),
+                    it.fx().valueOrDefault(BlogKtEntity::title, "")
+                );
             }
             .orderByAsc {
                 it.column(BlogKtEntity::score)
@@ -343,11 +363,14 @@ class KtTest : BaseKtTest() {
         var firstOrNullException = firstOrNullException()
         Assert.assertNotNull(firstOrNullException);
         Assert.assertTrue(firstOrNullException is EasyQuerySQLCommandException);
-        var easyQuerySQLCommandException =firstOrNullException as EasyQuerySQLCommandException
+        var easyQuerySQLCommandException = firstOrNullException as EasyQuerySQLCommandException
         Assert.assertTrue(easyQuerySQLCommandException.cause is EasyQuerySQLStatementException)
         var sql = (easyQuerySQLCommandException.cause as EasyQuerySQLStatementException)
             .sql
-        Assert.assertEquals("SELECT t.`content`,t.`title`,t.`title` AS `content`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AS `id` FROM `blog_kt_table` t WHERE t.`deleted` = ? AND IFNULL(t.`id`,?) = ? AND IFNULL(t.`id`,?) <> ? AND IFNULL(t.`id`,?) >= ? AND IFNULL(t.`id`,?) > ? AND IFNULL(t.`id`,?) <= ? ORDER BY t.`score` ASC,t.`star` DESC LIMIT 1",sql)
+        Assert.assertEquals(
+            "SELECT t.`content`,t.`title`,t.`title` AS `content`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AS `id` FROM `blog_kt_table` t WHERE t.`deleted` = ? AND IFNULL(t.`id`,?) = ? AND IFNULL(t.`id`,?) <> ? AND IFNULL(t.`id`,?) >= ? AND IFNULL(t.`id`,?) > ? AND IFNULL(t.`id`,?) <= ? ORDER BY t.`score` ASC,t.`star` DESC LIMIT 1",
+            sql
+        )
     }
 
     fun firstOrNullException(): Exception? {
@@ -356,15 +379,35 @@ class KtTest : BaseKtTest() {
                 .asTable("blog_kt_table")
                 .where {
                     it.eq(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
-                    it.eq(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                    it.eq(
+                        false,
+                        it.fx().valueOrDefault(BlogKtEntity::id, ""),
+                        it.fx().valueOrDefault(BlogKtEntity::title, "")
+                    );
                     it.ne(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
-                    it.ne(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                    it.ne(
+                        false,
+                        it.fx().valueOrDefault(BlogKtEntity::id, ""),
+                        it.fx().valueOrDefault(BlogKtEntity::title, "")
+                    );
                     it.ge(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
-                    it.ge(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                    it.ge(
+                        false,
+                        it.fx().valueOrDefault(BlogKtEntity::id, ""),
+                        it.fx().valueOrDefault(BlogKtEntity::title, "")
+                    );
                     it.gt(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
-                    it.gt(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                    it.gt(
+                        false,
+                        it.fx().valueOrDefault(BlogKtEntity::id, ""),
+                        it.fx().valueOrDefault(BlogKtEntity::title, "")
+                    );
                     it.le(it.fx().valueOrDefault(BlogKtEntity::id, ""), "123");
-                    it.le(false, it.fx().valueOrDefault(BlogKtEntity::id, ""), it.fx().valueOrDefault(BlogKtEntity::title, ""));
+                    it.le(
+                        false,
+                        it.fx().valueOrDefault(BlogKtEntity::id, ""),
+                        it.fx().valueOrDefault(BlogKtEntity::title, "")
+                    );
                 }
                 .orderByAsc {
                     it.column(BlogKtEntity::score)
@@ -376,12 +419,45 @@ class KtTest : BaseKtTest() {
                     it.column(BlogKtEntity::content);
                     it.column(BlogKtEntity::title);
                     it.columnAs(BlogKtEntity::title, BlogKtEntity::content);
-                    it.sqlFuncAs(it.fx().dateTimeFormat(BlogKtEntity::createTime,"yyyy-MM-dd"), BlogKtEntity::id)
+                    it.sqlFuncAs(it.fx().dateTimeFormat(BlogKtEntity::createTime, "yyyy-MM-dd"), BlogKtEntity::id)
                 }
                 .firstOrNull()
         } catch (e: Exception) {
             return e;
         }
         return null;
+    }
+
+    @Test
+    fun query12() {
+        var toSQL = easyKtQuery!!.queryable(BlogKtEntity::class.java)
+            .leftJoin(BlogKtEntity::class.java) { t, t1 ->
+                t.eq(t1, BlogKtEntity::id, BlogKtEntity::title);
+            }
+            .where { t, t1 ->
+                t.eq(BlogKtEntity::score, 1)
+            }.toSQL()
+        Assert.assertEquals(
+            "SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`top` FROM `t_blog` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`title` WHERE t.`deleted` = ? AND t.`score` = ?",
+            toSQL
+        );
+    }
+
+    @Test
+    fun query13() {
+        var toSQL = easyKtQuery!!.queryable(BlogKtEntity::class.java)
+            .leftJoin(BlogKtEntity::class.java) { t, t1 ->
+                t.eq(t1, BlogKtEntity::id, BlogKtEntity::title);
+            }
+            .where { t, t1 ->
+                t.eq(BlogKtEntity::score, 1)
+            }.select(BlogKtEntity::class.java) { t, t1 ->
+                    t.column(BlogKtEntity::id);
+                    t1.column(BlogKtEntity::title);
+            }.toSQL()
+        Assert.assertEquals(
+            "SELECT t.`id`,t1.`title` FROM `t_blog` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`title` WHERE t.`deleted` = ? AND t.`score` = ?",
+            toSQL
+        );
     }
 }

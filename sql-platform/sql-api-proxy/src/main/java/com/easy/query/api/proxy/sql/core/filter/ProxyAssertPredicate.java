@@ -88,4 +88,35 @@ public interface ProxyAssertPredicate<TChain> extends FilterAvailable, ChainCast
      * @return children
      */
     <TProxy extends ProxyEntity<TProxy,T>,T> TChain isNotBank(boolean condition, SQLColumn<TProxy,String> column);
+    /**
+     * column is null or empty
+     */
+    default <TProxy extends ProxyEntity<TProxy,T>,T> TChain isEmpty(SQLColumn<TProxy,String> column) {
+        return isEmpty(true, column);
+    }
+
+    /**
+     * column is null or empty
+     *
+     * @param condition 执行条件
+     * @param column  字段
+     * @return children
+     */
+    <TProxy extends ProxyEntity<TProxy,T>,T> TChain isEmpty(boolean condition, SQLColumn<TProxy,String> column);
+
+    /**
+     * column is not null and not empty
+     */
+    default <TProxy extends ProxyEntity<TProxy,T>,T> TChain isNotEmpty(SQLColumn<TProxy,String> column) {
+        return isNotEmpty(true, column);
+    }
+
+    /**
+     * column is not null and not empty
+     *
+     * @param condition 执行条件
+     * @param column  字段
+     * @return children
+     */
+    <TProxy extends ProxyEntity<TProxy,T>,T> TChain isNotEmpty(boolean condition, SQLColumn<TProxy,String> column);
 }

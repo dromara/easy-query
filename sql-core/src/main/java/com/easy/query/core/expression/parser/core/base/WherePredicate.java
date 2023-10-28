@@ -88,7 +88,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
     @Override
     default WherePredicate<T1> isBank(boolean condition, String property) {
         if (condition) {
-            getFilter().eq(getTable(), fx().valueOrDefault(property, ""), "");
+            getFilter().eq(getTable(), fx().bank(property), "");
         }
         return this;
     }
@@ -96,8 +96,24 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
     @Override
     default WherePredicate<T1> isNotBank(boolean condition, String property) {
         if (condition) {
-            getFilter().ne(getTable(), fx().valueOrDefault(property, ""), "");
+            getFilter().ne(getTable(), fx().bank(property), "");
         }
         return this;
     }
+    @Override
+    default WherePredicate<T1> isEmpty(boolean condition, String property) {
+        if (condition) {
+            getFilter().eq(getTable(), fx().empty(property), "");
+        }
+        return this;
+    }
+
+    @Override
+    default WherePredicate<T1> isNotEmpty(boolean condition, String property) {
+        if (condition) {
+            getFilter().ne(getTable(), fx().empty(property), "");
+        }
+        return this;
+    }
+
 }

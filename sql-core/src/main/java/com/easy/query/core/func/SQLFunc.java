@@ -5,6 +5,8 @@ import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
+import com.easy.query.core.func.def.impl.BankSQLFunction;
+import com.easy.query.core.func.def.impl.EmptySQLFunction;
 import com.easy.query.core.util.EasyArrayUtil;
 
 import java.util.ArrayList;
@@ -206,4 +208,12 @@ public interface SQLFunc extends AggregateSQLFunc{
      * @return UTC时间函数
      */
     SQLFunction utcNow();
+
+    default SQLFunction bank(String property){
+        return new BankSQLFunction(property);
+    }
+
+    default SQLFunction empty(String property){
+        return new EmptySQLFunction(property);
+    }
 }

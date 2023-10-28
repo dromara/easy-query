@@ -55,6 +55,37 @@ public interface SQLAssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
     /**
      * column is null or empty
      */
+    default TChain isEmpty(Property<T1, String> column) {
+        return isEmpty(true, column);
+    }
+
+    /**
+     * column is null or empty
+     *
+     * @param condition 执行条件
+     * @param column  字段
+     * @return children
+     */
+    TChain isEmpty(boolean condition, Property<T1, String> column);
+
+    /**
+     * column is not null and not empty
+     */
+    default TChain isNotEmpty(Property<T1, String> column) {
+        return isNotEmpty(true, column);
+    }
+
+    /**
+     * column is not null and not empty
+     *
+     * @param condition 执行条件
+     * @param column  字段
+     * @return children
+     */
+    TChain isNotEmpty(boolean condition, Property<T1, String> column);
+    /**
+     * column is null or empty
+     */
     default TChain isBank(Property<T1, String> column) {
         return isBank(true, column);
     }

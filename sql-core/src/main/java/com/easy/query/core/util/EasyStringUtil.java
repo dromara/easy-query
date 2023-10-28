@@ -2,7 +2,6 @@ package com.easy.query.core.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -585,7 +584,7 @@ public class EasyStringUtil {
 
     public static List<String> splitBase64ByGroupSize(String str, int groupSize) {
         if (str == null || str.length() == 0 || groupSize <= 0) {
-            return Collections.emptyList();
+            return EasyCollectionUtil.emptyList();
         }
         List<String> groups = new ArrayList<>();
         int i = 0;

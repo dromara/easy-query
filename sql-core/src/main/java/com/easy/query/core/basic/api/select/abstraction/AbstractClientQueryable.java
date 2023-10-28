@@ -737,13 +737,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         EasyPageResultProvider easyPageResultProvider = runtimeContext.getEasyPageResultProvider();
         if (total <= offset) {
-            return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, Collections.emptyList());
+            return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, EasyCollectionUtil.emptyList());
         }//获取剩余条数
         long remainingCount = total - offset;
         //当剩余条数小于take数就取remainingCount
         long realTake = Math.min(remainingCount, take);
         if (realTake <= 0) {
-            return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, Collections.emptyList());
+            return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, EasyCollectionUtil.emptyList());
         }
         boolean enableReverseOrder = runtimeContext.getQueryConfiguration().getEasyQueryOption().enableReverseOrder(offset);
         OrderBySQLBuilderSegment order = entityQueryExpressionBuilder.getOrder();
@@ -791,14 +791,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             }
             EasyPageResultProvider easyPageResultProvider = runtimeContext.getEasyPageResultProvider();
             if (total <= offset) {
-                return easyPageResultProvider.createShardingPageResult(pageIndex, pageSize, total, Collections.emptyList(), shardingQueryCountManager.getSequenceCountLine());
+                return easyPageResultProvider.createShardingPageResult(pageIndex, pageSize, total, EasyCollectionUtil.emptyList(), shardingQueryCountManager.getSequenceCountLine());
             }
             //获取剩余条数
             long remainingCount = total - offset;
             //当剩余条数小于take数就取remainingCount
             long realTake = Math.min(remainingCount, take);
             if (realTake <= 0) {
-                return easyPageResultProvider.createShardingPageResult(pageIndex, pageSize, total, Collections.emptyList(), shardingQueryCountManager.getSequenceCountLine());
+                return easyPageResultProvider.createShardingPageResult(pageIndex, pageSize, total, EasyCollectionUtil.emptyList(), shardingQueryCountManager.getSequenceCountLine());
             }
             this.limit(offset, realTake);
             List<TR> data = this.toList(clazz);

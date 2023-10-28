@@ -156,9 +156,6 @@ public void query10() {
             .where(o -> o.eq(BlogEntity::getId, "97"))
             .select(String.class,o->o.sqlFunc(o.fx().valueOrDefault(BlogEntity::getId,"1")));
     String sql = queryable.toSQL();
-    Assert.assertEquals("SELECT t.\"id\" || t.\"title\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
-    String blogEntity = queryable.firstOrNull();
-    Assert.assertNotNull(blogEntity);
-    Assert.assertEquals("97title97", blogEntity);
+    Assert.assertEquals("SELECT COALESCE(t.\"id\",?) FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
 }
 }

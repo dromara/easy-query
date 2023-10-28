@@ -83,4 +83,35 @@ public interface SQLKtAssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1
      * @return children
      */
     TChain isNotBank(boolean condition, KProperty1<? super T1, String> column);
+    /**
+     * column is null or empty
+     */
+    default TChain isEmpty(KProperty1<? super T1, String> column) {
+        return isEmpty(true, column);
+    }
+
+    /**
+     * column is null or empty
+     *
+     * @param condition 执行条件
+     * @param column  字段
+     * @return children
+     */
+    TChain isEmpty(boolean condition, KProperty1<? super T1, String> column);
+
+    /**
+     * column is not null and not empty
+     */
+    default TChain isNotEmpty(KProperty1<? super T1, String> column) {
+        return isNotEmpty(true, column);
+    }
+
+    /**
+     * column is not null and not empty
+     *
+     * @param condition 执行条件
+     * @param column  字段
+     * @return children
+     */
+    TChain isNotEmpty(boolean condition, KProperty1<? super T1, String> column);
 }

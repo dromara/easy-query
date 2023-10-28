@@ -117,4 +117,16 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, LambdaSQ
         getWherePredicate().isNotBank(condition, EasyLambdaUtil.getPropertyName(column));
         return this;
     }
+    @Override
+    default SQLWherePredicate<T1> isEmpty(boolean condition, Property<T1, String> column) {
+        getWherePredicate().isEmpty(condition, EasyLambdaUtil.getPropertyName(column));
+        return this;
+    }
+
+    @Override
+    default SQLWherePredicate<T1> isNotEmpty(boolean condition, Property<T1, String> column) {
+        getWherePredicate().isNotEmpty(condition, EasyLambdaUtil.getPropertyName(column));
+        return this;
+    }
+
 }
