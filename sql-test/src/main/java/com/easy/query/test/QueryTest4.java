@@ -21,6 +21,8 @@ import com.easy.query.test.entity.TopicTypeArrayJson;
 import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
+import com.easy.query.test.provider.MySQLLambdaProviderImpl;
+import com.easy.query.test.provider.MySQLProviderImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -218,7 +220,7 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc1() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().nullDefault("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -226,7 +228,62 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc2() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().nullDefault("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
+        Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
+    }
+    @Test
+    public void testSQLFuncExtension1() {
+        String sql1 = easyQueryClient.queryable(Topic.class)
+                .where(o -> {
+                    o.eq("id", "1");
+                    MySQLProviderImpl<Topic> mySQLProvider = new MySQLProviderImpl<>(o);
+                    mySQLProvider.findInSet(c->c.value("1"),c->c.expression("id"));
+                })
+                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
+        Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ? AND FIND_IN_SET(?,t.`id`)", sql1);
+    }
+    @Test
+    public void testSQLFuncExtension2() {
+        {
+            String sql1 = easyQueryClient.queryable(Topic.class)
+                    .where(o -> {
+                        o.eq("id", "1");
+                        MySQLProviderImpl<Topic> mySQLProvider = new MySQLProviderImpl<>(o);
+                        mySQLProvider.findInSet(c->c.value("1"),c->c.expression("id"));
+                    })
+                    .select(String.class, o -> o.column("id")).toSQL();
+            Assert.assertEquals("SELECT t.`id` FROM `t_topic` t WHERE t.`id` = ? AND FIND_IN_SET(?,t.`id`)", sql1);
+        }
+        {
+            String sql1 = easyQueryClient.queryable(Topic.class)
+                    .where(o -> {
+                        o.eq("id", "1");
+                        o.sqlNativeSegment("FIND_IN_SET({0},{1})",c->{
+                            c.value("1").expression("id");
+                        });
+                    })
+                    .select(String.class, o -> o.column("id")).toSQL();
+            Assert.assertEquals("SELECT t.`id` FROM `t_topic` t WHERE t.`id` = ? AND FIND_IN_SET(?,t.`id`)", sql1);
+        }
+        {
+            String sql1 = easyQuery.queryable(Topic.class)
+                    .where(o -> {
+                        o.eq(Topic::getId, "1");
+                        MySQLLambdaProviderImpl<Topic> mySQLProvider = new MySQLLambdaProviderImpl<>(o);
+                        mySQLProvider.findInSet(c->c.value("1"),c->c.expression(Topic::getId));
+                    })
+                    .select(String.class, o -> o.column(Topic::getId)).toSQL();
+            Assert.assertEquals("SELECT t.`id` FROM `t_topic` t WHERE t.`id` = ? AND FIND_IN_SET(?,t.`id`)", sql1);
+        }
+    }
+
+    @Test
+    public void testSQLFunc2_2() {
+        String sql1 = easyQueryClient.queryable(Topic.class)
+                .where(o -> {
+                    o.eq("id", "1");//.use(new MySQLWherePredicater<>()).findInSet();
+                })
+                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -234,7 +291,7 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc2_1() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().nullDefault(x -> x.column("id").column("title").value("1")))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault(x -> x.column("id").column("title").value("1")))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,t.`title`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -397,7 +454,7 @@ public class QueryTest4 extends BaseTest {
 
             TopicProxy table = TopicProxy.createTable();
             String sql = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().nullDefault(table.id(), "123"), o.fx().nullDefault(table.createTime(), "123")))
+                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), o.fx().valueOrDefault(table.createTime(), "123")))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = IFNULL(`create_time`,?)", sql);
         }
@@ -415,7 +472,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             String sql1 = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().nullDefault(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
+                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = DATE_FORMAT(`create_time`,'%Y/%m/%d %H:%i:%s')", sql1);
 
@@ -424,7 +481,7 @@ public class QueryTest4 extends BaseTest {
 
             TopicProxy table = TopicProxy.createTable();
             Topic topic = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().nullDefault(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
+                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), o.fx().dateTimeFormat(table.createTime(), "yyyy/MM/dd HH:mm:ss")))
                     .firstOrNull();
             Assert.assertNull(topic);
         }
@@ -515,7 +572,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             String sql1 = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().nullDefault(table.id(), "123"), "111"))
+                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), "111"))
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = ?", sql1);
 
@@ -523,7 +580,7 @@ public class QueryTest4 extends BaseTest {
         {
             TopicProxy table = TopicProxy.createTable();
             Topic topic = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(o.fx().nullDefault(table.id(), "123"), "111"))
+                    .where(o -> o.eq(o.fx().valueOrDefault(table.id(), "123"), "111"))
                     .firstOrNull();
             Assert.assertNull(topic);
 

@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class DamengSQLFuncImpl extends SQLFuncImpl {
     @Override
-    public SQLFunction nullDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new DamengNullDefaultSQLFunction(getColumnExpressions(sqlExpression));
     }
 

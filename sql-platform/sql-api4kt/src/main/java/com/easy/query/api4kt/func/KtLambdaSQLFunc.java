@@ -30,7 +30,7 @@ public interface KtLambdaSQLFunc<T> extends KtLambdaAggregateSQLFunc<T> {
      * @return ifNull函数
      */
     default SQLFunction valueOrDefault(KProperty1<? super T, ?> property, Object def) {
-        return getSQLFunc().nullDefault(EasyKtLambdaUtil.getPropertyName(property),def);
+        return getSQLFunc().valueOrDefault(EasyKtLambdaUtil.getPropertyName(property),def);
     }
 
     /**
@@ -40,7 +40,7 @@ public interface KtLambdaSQLFunc<T> extends KtLambdaAggregateSQLFunc<T> {
      * @return ifNull函数
      */
     default SQLFunction valueOrDefault(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
-        return getSQLFunc().nullDefault(o->{
+        return getSQLFunc().valueOrDefault(o->{
             sqlExpression.apply(new SQLKtColumnFuncSelectorImpl<>(o));
         });
     }

@@ -36,7 +36,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
         , SubQueryPredicate<T1, WherePredicate<T1>> {
 
 
-    default QueryRuntimeContext getRuntimeContext(){
+    default QueryRuntimeContext getRuntimeContext() {
         return getFilter().getRuntimeContext();
     }
     default WherePredicate<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
@@ -87,16 +87,16 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
 
     @Override
     default WherePredicate<T1> isBank(boolean condition, String property) {
-        if(condition){
-            getFilter().eq(getTable(),fx().nullDefault(property,""),"");
+        if (condition) {
+            getFilter().eq(getTable(), fx().valueOrDefault(property, ""), "");
         }
         return this;
     }
 
     @Override
     default WherePredicate<T1> isNotBank(boolean condition, String property) {
-        if(condition){
-            getFilter().ne(getTable(),fx().nullDefault(property,""),"");
+        if (condition) {
+            getFilter().ne(getTable(), fx().valueOrDefault(property, ""), "");
         }
         return this;
     }

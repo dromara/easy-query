@@ -150,4 +150,15 @@ public class QueryTest extends PgSQLBaseTest {
 //        Assert.assertNotNull(blogEntity);
 //        Assert.assertEquals("97,title97", blogEntity);
 //    }
+@Test
+public void query10() {
+    Queryable<String> queryable = easyQuery.queryable(BlogEntity.class)
+            .where(o -> o.eq(BlogEntity::getId, "97"))
+            .select(String.class,o->o.sqlFunc(o.fx().valueOrDefault(BlogEntity::getId,"1")));
+    String sql = queryable.toSQL();
+    Assert.assertEquals("SELECT t.\"id\" || t.\"title\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
+    String blogEntity = queryable.firstOrNull();
+    Assert.assertNotNull(blogEntity);
+    Assert.assertEquals("97title97", blogEntity);
+}
 }

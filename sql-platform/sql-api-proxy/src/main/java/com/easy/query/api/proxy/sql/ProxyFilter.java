@@ -105,7 +105,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
     @Override
     default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isBank(boolean condition, SQLColumn<TProxy, String> column) {
         if(condition){
-            getFilter().eq(null,fx().nullDefault(column,""),"");
+            getFilter().eq(null,fx().valueOrDefault(column,""),"");
         }
         return this;
     }
@@ -113,7 +113,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
     @Override
     default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isNotBank(boolean condition, SQLColumn<TProxy, String> column) {
         if(condition){
-            getFilter().ne(null,fx().nullDefault(column,""),"");
+            getFilter().ne(null,fx().valueOrDefault(column,""),"");
         }
         return this;
     }

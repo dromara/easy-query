@@ -9,7 +9,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -18,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author xuejiaming
  */
-public class QueryTest7 extends BaseTest{
+public class QueryTest7 extends BaseTest {
 
 
     @Test
@@ -477,7 +479,7 @@ public class QueryTest7 extends BaseTest{
     }
 
     @Test
-    public void forEachTest1(){
+    public void forEachTest1() {
         {
 
             Topic topic = easyQuery
@@ -501,8 +503,8 @@ public class QueryTest7 extends BaseTest{
                     })
                     .firstOrNull();
             Assert.assertNotNull(topic);
-            Assert.assertEquals("xxxx",topic.getAlias());
-            Assert.assertEquals(1,atomicInteger.intValue());
+            Assert.assertEquals("xxxx", topic.getAlias());
+            Assert.assertEquals(1, atomicInteger.intValue());
         }
         {
             AtomicInteger atomicInteger = new AtomicInteger(0);
@@ -515,23 +517,24 @@ public class QueryTest7 extends BaseTest{
                     })
                     .toPageResult(1, 1);
             Assert.assertNotNull(pageResult);
-            Assert.assertEquals(1,pageResult.getData().size());
-            Assert.assertEquals("xxxx",pageResult.getData().get(0).getAlias());
-            Assert.assertEquals(1,atomicInteger.intValue());
+            Assert.assertEquals(1, pageResult.getData().size());
+            Assert.assertEquals("xxxx", pageResult.getData().get(0).getAlias());
+            Assert.assertEquals(1, atomicInteger.intValue());
         }
     }
 
     @Test
-    public void testCTE1(){
+    public void testCTE1() {
         String sql = easyQueryClient
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull("id"))
                 .asTreeCTE("id", "stars")
                 .toSQL();
-        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t",sql);
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t", sql);
     }
+
     @Test
-    public void testCTE2(){
+    public void testCTE2() {
         String sql = easyQueryClient
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull("id"))
@@ -544,58 +547,78 @@ public class QueryTest7 extends BaseTest{
                     t.column("id");
                     t1.column("url");
                 }).toSQL();
-        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`)  SELECT t.`id`,t6.`url` FROM `as_tree_cte` t LEFT JOIN `t_blog` t6 ON t6.`deleted` = ? AND t.`id` = t6.`id` WHERE t.`title` LIKE ?",sql);
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`)  SELECT t.`id`,t6.`url` FROM `as_tree_cte` t LEFT JOIN `t_blog` t6 ON t6.`deleted` = ? AND t.`id` = t6.`id` WHERE t.`title` LIKE ?", sql);
     }
 
     @Test
-    public void testCTE3(){
+    public void testCTE3() {
         String sql = easyQueryClient
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull("id"))
-                .asTreeCTE("id", "stars",o->{
+                .asTreeCTE("id", "stars", o -> {
                     o.setUp(true);
                 })
                 .toSQL();
-        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`stars` = t3.`id`)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t",sql);
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`stars` = t3.`id`)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t", sql);
     }
 
     @Test
-    public void testCTE4(){
+    public void testCTE4() {
         String sql = easyQueryClient
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull("id"))
-                .asTreeCTE("id", "stars",o->{
+                .asTreeCTE("id", "stars", o -> {
                     o.setLimitDeep(0);
                 })
                 .toSQL();
-        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t WHERE t.`cte_deep` <= ?",sql);
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t WHERE t.`cte_deep` <= ?", sql);
     }
 
     @Test
-    public void testCTE5(){
+    public void testCTE5() {
         String sql = easyQuery
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull(Topic::getId))
-                .asTreeCTE(Topic::getId, Topic::getStars,o->{
+                .asTreeCTE(Topic::getId, Topic::getStars, o -> {
                     o.setLimitDeep(0);
                 })
                 .toSQL();
-        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t WHERE t.`cte_deep` <= ?",sql);
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t WHERE t.`cte_deep` <= ?", sql);
     }
+
     @Test
-    public void testBank1(){
+    public void testBank1() {
         String sql = easyQuery
                 .queryable(Topic.class)
                 .where(o -> o.isNotBank(Topic::getId))
                 .toSQL();
-        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) <> ?",sql);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) <> ?", sql);
     }
+
     @Test
-    public void testBank2(){
+    public void testBank2() {
         String sql = easyQuery
                 .queryable(Topic.class)
                 .where(o -> o.isBank(Topic::getId))
                 .toSQL();
-        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = ?",sql);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = ?", sql);
+    }
+
+    @Test
+    public void testQuery9() {
+        List<String> searchValues = Arrays.asList("1", "小明", "小红");
+        String sql = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.isBank(Topic::getId))
+                .where(o -> {
+                    for (String searchValue : searchValues) {
+                        o.and(x -> {
+                            x.like(Topic::getId, searchValue)
+                                    .or().like(Topic::getTitle, searchValue);
+                        });
+                    }
+                })
+                .toSQL();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = ? AND (`id` LIKE ? OR `title` LIKE ?) AND (`id` LIKE ? OR `title` LIKE ?) AND (`id` LIKE ? OR `title` LIKE ?)", sql);
     }
 }
