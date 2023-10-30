@@ -670,4 +670,125 @@ public class QueryTest7 extends BaseTest {
                 .toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` IS NULL OR `id` = '' OR LTRIM(`id`) = '') = ? AND (`id` LIKE ? OR `title` LIKE ?) AND (`id` LIKE ? OR `title` LIKE ?) AND (`id` LIKE ? OR `title` LIKE ?)", sql);
     }
+
+    @Test
+    public void testQuery10(){
+        String sql = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1) -> t1.column(BlogEntity::getId))
+                .having((t, t1) -> t1.count(BlogEntity::getId, AggregatePredicateCompare.GE, 1))
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeys(0).columnSum(BlogEntity::getScore))
+                .toSQL();
+        Assert.assertEquals("SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` HAVING COUNT(t1.`id`) >= ?",sql);
+    }
+    @Test
+    public void testQuery11(){
+        String sql = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1) -> t1.column(BlogEntity::getId))
+                .having(true,(t, t1) -> t1.count(BlogEntity::getId, AggregatePredicateCompare.GE, 1))
+                .having(false,(t, t1) -> t1.count(BlogEntity::getId, AggregatePredicateCompare.GE, 1))
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeys(0).columnSum(BlogEntity::getScore))
+                .toSQL();
+        Assert.assertEquals("SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` HAVING COUNT(t1.`id`) >= ?",sql);
+    }
+    @Test
+    public void testQuery12(){
+        String sql = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1) -> t1.column(BlogEntity::getId))
+                .having(true,(t, t1) -> t1.avg(BlogEntity::getScore, AggregatePredicateCompare.GE, 1))
+                .having(false,(t, t1) -> t1.avg(BlogEntity::getScore, AggregatePredicateCompare.GE, 1))
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeys(0).columnSum(BlogEntity::getScore))
+                .toSQL();
+        Assert.assertEquals("SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` HAVING AVG(t1.`score`) >= ?",sql);
+    }
+    @Test
+    public void testQuery13(){
+        String sql = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1) -> t1.column(BlogEntity::getId))
+                .having(true,(t, t1) -> t1.avgDistinct(BlogEntity::getScore, AggregatePredicateCompare.GE, 1))
+                .having(false,(t, t1) -> t1.avgDistinct(BlogEntity::getScore, AggregatePredicateCompare.GE, 1))
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeys(0).columnSum(BlogEntity::getScore))
+                .toSQL();
+        Assert.assertEquals("SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` HAVING AVG(DISTINCT t1.`score`) >= ?",sql);
+    }
+    @Test
+    public void testQuery14(){
+        String sql = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1) -> t1.column(BlogEntity::getId))
+                .having(true,(t, t1) -> t1.sum(BlogEntity::getScore, AggregatePredicateCompare.EQ, 1))
+                .having(false,(t, t1) -> t1.sum(BlogEntity::getScore, AggregatePredicateCompare.EQ, 1))
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeys(0).columnSum(BlogEntity::getScore))
+                .toSQL();
+        Assert.assertEquals("SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` HAVING SUM(t1.`score`) = ?",sql);
+    }
+    @Test
+    public void testQuery15(){
+        String sql = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1) -> t1.column(BlogEntity::getId))
+                .having(true,(t, t1) -> t1.sumDistinct(BlogEntity::getScore, AggregatePredicateCompare.EQ, 1))
+                .having(false,(t, t1) -> t1.sumDistinct(BlogEntity::getScore, AggregatePredicateCompare.EQ, 1))
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeys(0).columnSum(BlogEntity::getScore))
+                .toSQL();
+        Assert.assertEquals("SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` HAVING SUM(DISTINCT t1.`score`) = ?",sql);
+    }
+    @Test
+    public void testQuery16(){
+        String sql = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1) -> t1.column(BlogEntity::getId))
+                .having(true,(t, t1) -> t1.countDistinct(BlogEntity::getId, AggregatePredicateCompare.GE, 1))
+                .having(false,(t, t1) -> t1.countDistinct(BlogEntity::getId, AggregatePredicateCompare.GE, 1))
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeys(0).columnSum(BlogEntity::getScore))
+                .toSQL();
+        Assert.assertEquals("SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` HAVING COUNT(DISTINCT t1.`id`) >= ?",sql);
+    }
+    @Test
+    public void testQuery17(){
+        String sql = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1) -> t1.column(BlogEntity::getId))
+                .having(true,(t, t1) -> t1.min(BlogEntity::getId, AggregatePredicateCompare.GE, 1))
+                .having(false,(t, t1) -> t1.min(BlogEntity::getId, AggregatePredicateCompare.GE, 1))
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeys(0).columnSum(BlogEntity::getScore))
+                .toSQL();
+        Assert.assertEquals("SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` HAVING MIN(t1.`id`) >= ?",sql);
+    }
+    @Test
+    public void testQuery18(){
+        String sql = easyQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                .groupBy((t, t1) -> t1.column(BlogEntity::getId))
+                .having(true,(t, t1) -> {
+                    Assert.assertNotNull(t.getTable());
+                    Assert.assertNotNull(t.getRuntimeContext());
+                    t1.max(BlogEntity::getId, AggregatePredicateCompare.GE, 1);
+                })
+                .having(false,(t, t1) -> t1.max(BlogEntity::getId, AggregatePredicateCompare.GE, 1))
+                .select(BlogEntity.class, (t, t1) -> t1.groupKeys(0).columnSum(BlogEntity::getScore))
+                .toSQL();
+        Assert.assertEquals("SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` HAVING MAX(t1.`id`) >= ?",sql);
+    }
 }

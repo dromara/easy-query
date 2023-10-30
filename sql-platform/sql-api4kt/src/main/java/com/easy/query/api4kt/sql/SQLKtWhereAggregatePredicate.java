@@ -76,7 +76,7 @@ public interface SQLKtWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1
     }
 
     default <TProperty> SQLKtWhereAggregatePredicate<T1> sumDistinct(KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
-        return sum(true, column, compare, val);
+        return sumDistinct(true, column, compare, val);
     }
 
     default <TProperty> SQLKtWhereAggregatePredicate<T1> sumDistinct(boolean condition, KProperty1<? super T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {

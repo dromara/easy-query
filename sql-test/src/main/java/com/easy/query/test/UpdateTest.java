@@ -517,9 +517,37 @@ public class UpdateTest extends BaseTest {
             String newTitle = "test123" + new Random().nextInt(100000);
             topic.setTitle(newTitle);
             String sql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
-                    .whereColumns(o -> o.columnKeys().column(Topic::getTitle))
+                    .whereColumns(o ->{
+                        Assert.assertNotNull(o.getTable());
+                        o.columnKeys().column(Topic::getTitle);
+                    })
                     .toSQL(topic);
             Assert.assertEquals("UPDATE `t_topic` SET `title` = ? WHERE `id` = ? AND `title` IS NULL", sql);
+            long l = easyQuery.updatable(topic).executeRows();
+            Assert.assertEquals(0, l);
+        } finally {
+
+            trackManager.release();
+        }
+        Assert.assertFalse(trackManager.currentThreadTracking());
+    }
+    @Test
+    public void updateTest17_2() {
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        try {
+
+            trackManager.begin();
+            Topic topic = new Topic();
+            topic.setId("123xx");
+            easyQuery.addTracking(topic);
+            String newTitle = "test123" + new Random().nextInt(100000);
+            topic.setTitle(newTitle);
+            String sql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
+                    .whereColumns(o ->{
+                        o.columnAll().columnIgnore(Topic::getTitle);
+                    })
+                    .toSQL(topic);
+            Assert.assertEquals("UPDATE `t_topic` SET `title` = ? WHERE `id` = ? AND `stars` IS NULL AND `create_time` IS NULL AND `alias` IS NULL", sql);
             long l = easyQuery.updatable(topic).executeRows();
             Assert.assertEquals(0, l);
         } finally {

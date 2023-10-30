@@ -64,7 +64,7 @@ public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>, SQ
     }
 
     default WhereAggregatePredicate<T1> sumDistinct(String property, AggregatePredicateCompare compare, Object val) {
-        return sum(true, property, compare, val);
+        return sumDistinct(true, property, compare, val);
     }
 
     default WhereAggregatePredicate<T1> sumDistinct(boolean condition, String property, AggregatePredicateCompare compare, Object val) {

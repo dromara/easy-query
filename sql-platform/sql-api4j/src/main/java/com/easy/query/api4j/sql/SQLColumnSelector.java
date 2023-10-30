@@ -43,16 +43,6 @@ public interface SQLColumnSelector<T1> extends EntitySQLTableOwner<T1>, LambdaSQ
         return this;
     }
 
-    /**
-     * 请使用 sqlNativeSegment
-     * @param sqlSegment
-     * @return
-     */
-    @Deprecated
-    default SQLColumnSelector<T1> columnConst(String sqlSegment){
-        return sqlNativeSegment(sqlSegment,c->{});
-    }
-
     default SQLColumnSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
         getColumnSelector().columnFunc(columnPropertyFunction);
         return this;

@@ -604,4 +604,31 @@ public class InsertTest extends BaseTest {
             Assert.assertEquals("INSERT INTO `aaaaa` (`id`,`name`,`name1`,`name2`) VALUES (?,?,?,?)",sql);
         }
     }
+    @Test
+    public void insertTableLinkTest1(){
+        {
+
+            TopicAuto topicAuto = new TopicAuto();
+            topicAuto.setStars(999);
+            topicAuto.setTitle("title" + 999);
+            topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
+            Assert.assertNull(topicAuto.getId());
+            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).asTableLink(o->o+"1").onDuplicateKeyUpdate(t->t.column(TopicAuto::getStars).column(TopicAuto::getTitle));
+            String sql = insertable.toSQL(topicAuto);
+            Assert.assertEquals("INSERT INTO 1`t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`)",sql);
+
+        }
+        {
+
+            TopicAuto topicAuto = new TopicAuto();
+            topicAuto.setStars(999);
+            topicAuto.setTitle("title" + 999);
+            topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
+            Assert.assertNull(topicAuto.getId());
+            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).asTableLink("2").onDuplicateKeyUpdate(t->t.column(TopicAuto::getStars).column(TopicAuto::getTitle));
+            String sql = insertable.toSQL(topicAuto);
+            Assert.assertEquals("INSERT INTO 2`t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`)",sql);
+
+        }
+}
 }

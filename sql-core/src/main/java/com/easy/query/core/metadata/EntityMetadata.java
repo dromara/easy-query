@@ -127,7 +127,7 @@ public class EntityMetadata {
 
     private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
     private final Set<String> dataSources = new CopyOnWriteArraySet<>();
-    private EntityMetadataTypeEnum entityMetadataType = EntityMetadataTypeEnum.BEAN;
+    protected EntityMetadataTypeEnum entityMetadataType = EntityMetadataTypeEnum.BEAN;
     private Supplier<Object> beanConstructorCreator;
 
     private DataReader dataReader;

@@ -66,7 +66,7 @@ public interface ProxyAggregateFilter extends SQLProxyNative<ProxyAggregateFilte
     }
 
     default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Number> ProxyAggregateFilter sumDistinct(SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
-        return sum(true, column, compare, val);
+        return sumDistinct(true, column, compare, val);
     }
 
     default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty extends Number> ProxyAggregateFilter sumDistinct(boolean condition, SQLColumn<TProxy, TProperty> column, AggregatePredicateCompare compare, TProperty val) {

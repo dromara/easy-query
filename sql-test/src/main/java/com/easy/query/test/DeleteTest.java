@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author xuejiaming
@@ -73,6 +74,23 @@ public class DeleteTest extends BaseTest {
         String deleteSql = easyQuery.deletable(topic).toSQL();
         Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?", deleteSql);
         long l = easyQuery.deletable(topic).executeRows();
+        Assert.assertEquals(1, l);
+    }
+    @Test
+    public void deleteTest3_1() {
+        Topic topic = easyQuery.queryable(Topic.class).whereById("997x").firstOrNull();
+        if (topic == null) {
+            topic = new Topic();
+            topic.setId("997x");
+            topic.setTitle("title997");
+            topic.setCreateTime(LocalDateTime.now());
+            topic.setStars(997);
+            long l = easyQuery.insertable(topic).executeRows();
+            Assert.assertEquals(1, l);
+        }
+        String deleteSql = easyQuery.deletable(Collections.singletonList(topic)).toSQL();
+        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?", deleteSql);
+        long l = easyQuery.deletable(Collections.singletonList(topic)).executeRows();
         Assert.assertEquals(1, l);
     }
 

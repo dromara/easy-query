@@ -414,6 +414,20 @@ public class QueryTest3 extends BaseTest {
                     .queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                     .leftJoin(BlogEntity.class, (t, t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
+                    .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
+                    .orderByAsc((t, t1, t2, t3) -> {
+                        Assert.assertNotNull(t.getTable());
+                        Assert.assertNotNull(t.getRuntimeContext());
+                        t1.column(BlogEntity::getOrder).then(t2).column(BlogEntity::getScore);
+                    }).toSQL();
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) ORDER BY t1.`order` ASC,t2.`score` ASC", sql);
+        }
+        {
+            String sql = easyQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .leftJoin(BlogEntity.class, (t, t1, t2) -> t.eq(t2, Topic::getId, BlogEntity::getId))
                     .innerJoin(BlogEntity.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, BlogEntity::getId))
                     .where(o -> o.in(Topic::getId, Arrays.asList("3", "2", "5")))
                     .orderByAsc(false, (t, t1, t2, t3) -> t1.column(BlogEntity::getOrder))
@@ -1161,6 +1175,36 @@ public class QueryTest3 extends BaseTest {
                                             .caseWhen(f -> f.eq(Topic::getTitle, "123"), Topic::getId)
                                             .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
                                             .elseEnd("222")
+                                    , Topic::getTitle)
+                            .column(Topic::getId)
+                    ).toList();
+            Assert.assertEquals(0, list.size());
+        }
+        {
+
+            String sql = easyQuery.queryable(Topic.class)
+                    .leftJoin(Topic.class,(t,t1)->t.eq(t1,Topic::getId,Topic::getId))
+                    .where(t -> t.like(Topic::getTitle, "someTitle"))
+                    .select(Topic.class, (t,t1) -> t
+                            .sqlSegmentAs(
+                                    SQL4JFunc.caseWhenBuilder(t)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "123"),t1, Topic::getId)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
+                                            .elseEnd(Topic::getId)
+                                    , Topic::getTitle)
+                            .column(Topic::getId)
+                    )
+                    .toSQL();
+            Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t1.`id` WHEN t.`title` = ? THEN ? ELSE t.`id` END AS `title`,t.`id` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ?", sql);
+            List<Topic> list =easyQuery.queryable(Topic.class)
+                    .leftJoin(Topic.class,(t,t1)->t.eq(t1,Topic::getId,Topic::getId))
+                    .where(t -> t.like(Topic::getTitle, "someTitle"))
+                    .select(Topic.class, t -> t
+                            .sqlSegmentAs(
+                                    SQL4JFunc.caseWhenBuilder(t)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "123"),t, Topic::getId)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
+                                            .elseEnd(Topic::getId)
                                     , Topic::getTitle)
                             .column(Topic::getId)
                     ).toList();

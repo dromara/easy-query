@@ -14,10 +14,12 @@ import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.func.SQLTestFunc;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,6 +27,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -821,5 +824,55 @@ public class QueryTest5 extends BaseTest {
         Exception exception = x.get();
         Assert.assertNotNull(exception);
         Assert.assertTrue(exception instanceof EasyQuerySingleMoreElementException);
+    }
+    @Test
+    public void joinTestx() {
+        Supplier<Exception> f = () -> {
+            try {
+                Long aLong = easyQuery
+                        .queryable(Topic.class)
+                        .asTable("a123")
+                        .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                        .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                        .groupBy((t, t1) -> t1.columnFunc(SQLTestFunc.ifNULL(BlogEntity::getId)))
+                        .select(BlogEntity.class, (t, t1) -> t1.columnFuncAs(SQLTestFunc.ifNULL(BlogEntity::getId), BlogEntity::getId).columnSum(BlogEntity::getScore))
+                        .distinct()
+                        .select(Long.class, o -> o.columnCount(BlogEntity::getId)).firstOrNull();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("SELECT COUNT(t2.`id`) AS `id` FROM (SELECT DISTINCT IFNULL(t1.`id`,'') AS `id`,SUM(t1.`score`) AS `score` FROM `a123` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY IFNULL(t1.`id`,'')) t2 LIMIT 1",easyQuerySQLStatementException.getSQL());
+    }
+    @Test
+    public void joinTestx1() {
+        Supplier<Exception> f = () -> {
+            try {
+
+                List<BlogEntityTest> list = easyQuery.queryable(BlogEntity.class)
+                        .select(BlogEntityTest.class).toList();
+
+                List<BlogEntityTest> list1 = easyQuery.queryable(BlogEntity.class)
+                        .asTable("a123")
+                        .select(BlogEntityTest.class).toList();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("SELECT t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `a123` t WHERE t.`deleted` = ?",easyQuerySQLStatementException.getSQL());
     }
 }

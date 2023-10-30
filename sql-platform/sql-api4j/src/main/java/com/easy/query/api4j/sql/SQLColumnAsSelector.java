@@ -76,7 +76,7 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, La
     }
 
     default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty) {
-        return columnInclude(true, column, aliasProperty, SQLColumnAsSelector::columnAll);
+        return columnInclude(true, column, aliasProperty);
     }
 
     default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnInclude(boolean condition, Property<T1, TIncludeSource> column, Property<TR, TIncludeResult> aliasProperty) {
@@ -97,7 +97,7 @@ public interface SQLColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, La
     }
 
     default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty) {
-        return columnIncludeMany(true, column, aliasProperty, SQLColumnAsSelector::columnAll);
+        return columnIncludeMany(true, column, aliasProperty);
     }
 
     default <TIncludeSource, TIncludeResult> SQLColumnAsSelector<T1, TR> columnIncludeMany(boolean condition, Property<T1, Collection<TIncludeSource>> column, Property<TR, Collection<TIncludeResult>> aliasProperty) {

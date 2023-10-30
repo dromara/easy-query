@@ -20,28 +20,64 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * create time 2023/2/5 21:27
+ * lambda表达式可查询客户端
+ *
  * @author xuejiaming
- * @FileName: JQDCClient.java
- * @Description: 文件说明
- * @Date: 2023/2/5 21:27
  */
 public interface EasyQuery {
+    /**
+     * 获取属性模式的查询客户端
+     * @return 属性模式查询客户端
+     */
     EasyQueryClient getEasyQueryClient();
 
+    /**
+     * 获取当前easy-query的上下文
+     * @return easy-query的上下文
+     */
     QueryRuntimeContext getRuntimeContext();
 
+    /**
+     * 按sql查询结果映射到 {@param clazz} 对象上
+     * @param sql 查询的sql
+     * @param clazz 返回的结果字节
+     * @return 查询结果集
+     * @param <T> 返回结果类型
+     */
     default <T> List<T> sqlQuery(String sql, Class<T> clazz) {
         return getEasyQueryClient().sqlQuery(sql, clazz);
     }
 
+    /**
+     * 按sql查询结果映射到 {@param clazz} 对象上
+     * @param sql 查询的sql
+     * @param clazz 返回的结果字节
+     * @param parameters sql参数
+     * @return 查询结果集
+     * @param <T> 返回结果类型
+     */
     default <T> List<T> sqlQuery(String sql, Class<T> clazz, List<Object> parameters) {
         return getEasyQueryClient().sqlQuery(sql, clazz, parameters);
     }
 
+    /**
+     * 按sql查询结果映射到 {@param clazz} 对象上
+     * @param sql 查询的sql
+     * @param clazz 返回的结果字节
+     * @param parameters sql参数 easyQuery参数
+     * @return 查询结果集
+     * @param <T> 返回结果类型
+     */
     default <T> List<T> sqlEasyQuery(String sql, Class<T> clazz, List<SQLParameter> parameters) {
         return getEasyQueryClient().sqlEasyQuery(sql, clazz, parameters);
     }
 
+    /**
+     * 按sql查询结果映射到 Map 对象上
+     * @param sql 查询的sql
+     * @return 查询结果集
+     */
     default List<Map<String, Object>> sqlQueryMap(String sql) {
         return getEasyQueryClient().sqlQueryMap(sql);
     }
@@ -58,8 +94,22 @@ public interface EasyQuery {
         return getEasyQueryClient().sqlExecute(sql, parameters);
     }
 
+    /**
+     * 创建一个可查询表达式
+     * @param clazz 被查询的对象字节
+     * @return 可查询的表达式接口
+     * @param <T> 被查询的对象类型
+     */
     <T> Queryable<T> queryable(Class<T> clazz);
 
+    /**
+     * 通过sql语句匿名表模式创建一个可查询表达式
+     * select * from ( {@param sql} ) t
+     * @param sql sql语句
+     * @param clazz 被查询的对象字节
+     * @return 可查询的表达式接口
+     * @param <T> 被查询的对象类型
+     */
     default <T> Queryable<T> queryable(String sql, Class<T> clazz) {
         return queryable(sql, clazz, Collections.emptyList());
     }

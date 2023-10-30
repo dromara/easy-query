@@ -76,7 +76,7 @@ public interface SQLWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>,
     }
 
     default <TProperty> SQLWhereAggregatePredicate<T1> sumDistinct(Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
-        return sum(true, column, compare, val);
+        return sumDistinct(true, column, compare, val);
     }
 
     default <TProperty> SQLWhereAggregatePredicate<T1> sumDistinct(boolean condition, Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
@@ -93,11 +93,11 @@ public interface SQLWhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>,
         return this;
     }
 
-    default <TProperty> SQLWhereAggregatePredicate<T1> count(Property<T1, TProperty> column, AggregatePredicateCompare compare, TProperty val) {
+    default <TProperty extends Comparable<TProperty>> SQLWhereAggregatePredicate<T1> count(Property<T1, ?> column, AggregatePredicateCompare compare, TProperty val) {
         return count(true, column, compare, val);
     }
 
-    default <TProperty> SQLWhereAggregatePredicate<T1> count(boolean condition, Property<T1, TProperty> column, SQLPredicateCompare compare, TProperty val) {
+    default <TProperty extends Comparable<TProperty>> SQLWhereAggregatePredicate<T1> count(boolean condition, Property<T1, ?> column, SQLPredicateCompare compare, TProperty val) {
         getWhereAggregatePredicate().count(condition, EasyLambdaUtil.getPropertyName(column), compare, val);
         return this;
     }

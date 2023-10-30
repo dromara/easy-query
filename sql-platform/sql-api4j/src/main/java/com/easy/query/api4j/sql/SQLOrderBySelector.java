@@ -37,16 +37,6 @@ public interface SQLOrderBySelector<T1> extends EntitySQLTableOwner<T1>, LambdaS
         return this;
     }
 
-    /**
-     * 请使用 sqlNativeSegment
-     * @param columnConst
-     * @return
-     */
-    @Deprecated
-    default SQLOrderBySelector<T1> columnConst(String columnConst){
-        return sqlNativeSegment(columnConst,c->{});
-    }
-
     default <T2> SQLOrderBySelector<T2> then(SQLOrderBySelector<T2> sub) {
         return sub;
     }
