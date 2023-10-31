@@ -106,6 +106,12 @@ public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdata
     }
 
     @Override
+    public ExpressionUpdatable<T> ignoreVersion(boolean ignored) {
+        clientExpressionUpdatable.ignoreVersion(ignored);
+        return this;
+    }
+
+    @Override
     public ExpressionUpdatable<T> batch(boolean use) {
         clientExpressionUpdatable.batch(use);
         return this;

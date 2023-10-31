@@ -209,6 +209,16 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     }
 
     @Override
+    public ClientEntityUpdatable<T> ignoreVersion(boolean ignored) {
+        if(ignored){
+            entityUpdateExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.IGNORE_VERSION);
+        }else{
+            entityUpdateExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.IGNORE_VERSION);
+        }
+        return this;
+    }
+
+    @Override
     public String toSQL(Object entity) {
         return toSQLWithParam(entity, DefaultToSQLContext.defaultToSQLContext(entityUpdateExpressionBuilder.getExpressionContext().getTableContext()));
     }

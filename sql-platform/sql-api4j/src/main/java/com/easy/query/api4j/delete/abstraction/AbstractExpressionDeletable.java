@@ -148,6 +148,11 @@ public abstract class AbstractExpressionDeletable<T> implements ExpressionDeleta
         expressionObjectDeletable.noVersionIgnore();
         return this;
     }
+    @Override
+    public ExpressionDeletable<T> ignoreVersion(boolean ignored) {
+        expressionObjectDeletable.ignoreVersion(ignored);
+        return this;
+    }
 
     @Override
     public void executeRows(long expectRows, String msg, String code) {

@@ -30,7 +30,11 @@ public enum EasyBehaviorEnum {
     /**
      * 更新删除无版本号报错
      */
-    NO_VERSION_ERROR(1<<8);
+    NO_VERSION_ERROR(1<<8),
+    /**
+     * 更新删除忽略版本号
+     */
+    IGNORE_VERSION(1<<9);
 
     private final int code;
 

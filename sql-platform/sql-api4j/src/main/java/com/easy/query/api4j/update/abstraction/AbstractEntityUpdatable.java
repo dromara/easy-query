@@ -105,6 +105,12 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     }
 
     @Override
+    public EntityUpdatable<T> ignoreVersion(boolean ignored) {
+        clientEntityUpdatable.ignoreVersion(ignored);
+        return this;
+    }
+
+    @Override
     public void executeRows(long expectRows, String msg, String code) {
         clientEntityUpdatable.executeRows(expectRows, msg, code);
     }

@@ -122,6 +122,11 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     }
 
     @Override
+    public ClientEntityUpdatable<T> ignoreVersion(boolean ignored) {
+        return this;
+    }
+
+    @Override
     public EntityUpdateExpressionBuilder getUpdateExpressionBuilder() {
         throw new NullPointerException("empty entity can not get EntityUpdateExpressionBuilder");
     }

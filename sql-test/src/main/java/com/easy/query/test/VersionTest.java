@@ -1,12 +1,15 @@
 package com.easy.query.test;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.test.entity.SysUserVersionLong;
 import com.easy.query.test.entity.SysUserVersionLongLogicDel;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/4/8 13:41
@@ -159,5 +162,54 @@ public class VersionTest extends BaseTest {
                 .withVersion(1L)
                 .whereById(id).toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version_del` SET `deleted` = ?,`version` = ? WHERE `deleted` = ? AND `version` = ? AND `id` = ?", sql);
+    }
+    @Test
+    public void test7() {
+
+
+        Supplier<Exception> f = () -> {
+            try {
+                SysUserVersionLongLogicDel sysUserVersionLongLogicDel = new SysUserVersionLongLogicDel();
+                sysUserVersionLongLogicDel.setId("1x1");
+                sysUserVersionLongLogicDel.setUsername("aaaa");
+                easyQuery.updatable(sysUserVersionLongLogicDel)
+                        .asTable("aaa")
+                        .ignoreVersion()
+                        .executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        String sql = easyQuerySQLStatementException.getSQL();
+        Assert.assertEquals("UPDATE `aaa` SET `username` = ?,`phone` = ?,`id_card` = ?,`address` = ?,`create_time` = ? WHERE `deleted` = ? AND `id` = ?",sql);
+
+    }
+    @Test
+    public void test8() {
+
+
+        Supplier<Exception> f = () -> {
+            try {
+                SysUserVersionLongLogicDel sysUserVersionLongLogicDel = new SysUserVersionLongLogicDel();
+                sysUserVersionLongLogicDel.setId("1x1");
+                sysUserVersionLongLogicDel.setUsername("aaaa");
+                easyQuery.updatable(sysUserVersionLongLogicDel)
+                        .executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof NullPointerException);
+
     }
 }

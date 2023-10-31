@@ -107,6 +107,12 @@ public abstract class AbstractProxyEntityDeletable<T> implements ProxyEntityDele
     }
 
     @Override
+    public ProxyEntityDeletable<T> ignoreVersion(boolean ignored) {
+        entityObjectDeletable.ignoreVersion(ignored);
+        return this;
+    }
+
+    @Override
     public void executeRows(long expectRows, String msg, String code) {
         entityObjectDeletable.executeRows(expectRows, msg, code);
     }

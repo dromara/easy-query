@@ -116,6 +116,12 @@ public abstract class AbstractProxyExpressionUpdatable<TProxy extends ProxyEntit
     }
 
     @Override
+    public ProxyExpressionUpdatable<TProxy, T> ignoreVersion(boolean ignored) {
+        clientExpressionUpdatable.ignoreVersion(ignored);
+        return this;
+    }
+
+    @Override
     public ProxyExpressionUpdatable<TProxy, T> batch(boolean use) {
         clientExpressionUpdatable.batch(use);
         return this;

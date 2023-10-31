@@ -60,7 +60,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     public long executeRows() {
         QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityDeleteExpressionBuilder.getExpressionContext(),false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder);
+        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityDeleteExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder);
     }
 
 //    @Override
@@ -97,6 +97,17 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionDeletable<T> noVersionIgnore() {
         entityDeleteExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
+        return this;
+    }
+
+    @Override
+    public ClientExpressionDeletable<T> ignoreVersion(boolean ignored) {
+
+        if (ignored) {
+            entityDeleteExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.IGNORE_VERSION);
+        } else {
+            entityDeleteExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.IGNORE_VERSION);
+        }
         return this;
     }
 
@@ -168,7 +179,8 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     public String toSQL(ToSQLContext toSQLContext) {
         return toSQLWithParam(toSQLContext);
     }
-    private String toSQLWithParam(ToSQLContext toSQLContext){
+
+    private String toSQLWithParam(ToSQLContext toSQLContext) {
         return entityDeleteExpressionBuilder.toExpression().toSQL(toSQLContext);
     }
 }

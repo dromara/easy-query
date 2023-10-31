@@ -57,17 +57,20 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
             }
             if(!isQuery()){
                 if (entityMetadata.hasVersionColumn()) {
-                    VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
-                    if (isExpression()) {
-                        Object version = expressionContext.getVersion();
-                        if (Objects.nonNull(version)) {
-                            sqlPredicate.eq(versionMetadata.getPropertyName(), version);
-                        }else if(expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.NO_VERSION_ERROR)){
-                            throw new EasyQueryInvalidOperationException("entity:"+ EasyClassUtil.getSimpleName(table.getEntityClass())+" has version expression not found version");
+                    boolean ignoreVersion = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.IGNORE_VERSION);
+                    if(!ignoreVersion){
+                        VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+                        if (isExpression()) {
+                            Object version = expressionContext.getVersion();
+                            if (Objects.nonNull(version)) {
+                                sqlPredicate.eq(versionMetadata.getPropertyName(), version);
+                            }else if(expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.NO_VERSION_ERROR)){
+                                throw new EasyQueryInvalidOperationException("entity:"+ EasyClassUtil.getSimpleName(table.getEntityClass())+" has version expression not found version");
+                            }
+                        } else {
+                            AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), this.getRuntimeContext()));
+                            predicateSegment.addPredicateSegment(versionPredicateSegment);
                         }
-                    } else {
-                        AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), this.getRuntimeContext()));
-                        predicateSegment.addPredicateSegment(versionPredicateSegment);
                     }
                 }
             }

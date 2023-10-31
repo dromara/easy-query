@@ -354,9 +354,12 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         }
 
         if (entityMetadata.hasVersionColumn()) {
-            VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
-            VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
-            updateSetSQLBuilderSegment.append(new ColumnVersionPropertySegmentImpl(entityTable, versionMetadata.getPropertyName(), easyVersionStrategy, runtimeContext));
+            boolean ignoreVersion = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.IGNORE_VERSION);
+            if (!ignoreVersion) {
+                VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+                VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
+                updateSetSQLBuilderSegment.append(new ColumnVersionPropertySegmentImpl(entityTable, versionMetadata.getPropertyName(), easyVersionStrategy, runtimeContext));
+            }
         }
         return updateSetSQLBuilderSegment;
     }

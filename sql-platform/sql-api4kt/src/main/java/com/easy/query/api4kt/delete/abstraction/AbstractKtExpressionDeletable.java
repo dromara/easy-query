@@ -150,6 +150,12 @@ public abstract class AbstractKtExpressionDeletable<T> implements KtExpressionDe
     }
 
     @Override
+    public KtExpressionDeletable<T> ignoreVersion(boolean ignored) {
+        expressionObjectDeletable.ignoreVersion(ignored);
+        return this;
+    }
+
+    @Override
     public void executeRows(long expectRows, String msg, String code) {
         expressionObjectDeletable.executeRows(expectRows, msg, code);
     }
