@@ -7,6 +7,8 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
 import com.easy.query.core.func.def.impl.BankSQLFunction;
 import com.easy.query.core.func.def.impl.EmptySQLFunction;
+import com.easy.query.core.func.def.impl.NotBankSQLFunction;
+import com.easy.query.core.func.def.impl.NotEmptySQLFunction;
 import com.easy.query.core.util.EasyArrayUtil;
 
 import java.util.ArrayList;
@@ -212,8 +214,14 @@ public interface SQLFunc extends AggregateSQLFunc{
     default SQLFunction bank(String property){
         return new BankSQLFunction(property);
     }
+    default SQLFunction notBank(String property){
+        return new NotBankSQLFunction(property);
+    }
 
     default SQLFunction empty(String property){
         return new EmptySQLFunction(property);
+    }
+    default SQLFunction notEmpty(String property){
+        return new NotEmptySQLFunction(property);
     }
 }

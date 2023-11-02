@@ -416,6 +416,7 @@ public interface Filter extends SQLNative<Filter> {
 
     Filter funcColumnFilter(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight, SQLPredicateCompare sqlPredicateCompare);
 
+
     //endregion
     Filter and();
 

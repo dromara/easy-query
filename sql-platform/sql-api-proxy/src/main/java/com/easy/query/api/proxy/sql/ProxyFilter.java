@@ -16,6 +16,8 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
@@ -105,7 +107,10 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
     @Override
     default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isBank(boolean condition, SQLColumn<TProxy, String> column) {
         if(condition){
-            getFilter().eq(column.getTable(),fx().getSQLFunc().bank(column.value()),"");
+            SQLFunction bank = fx().getSQLFunc().bank(column.value());
+            getFilter().sqlNativeSegment(bank.sqlSegment(column.getTable()),c->{
+                bank.consume(new SQLNativeChainExpressionContextImpl(column.getTable(),c));
+            });
         }
         return this;
     }
@@ -113,7 +118,10 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
     @Override
     default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isNotBank(boolean condition, SQLColumn<TProxy, String> column) {
         if(condition){
-            getFilter().ne(column.getTable(),fx().getSQLFunc().bank(column.value()),"");
+            SQLFunction bank = fx().getSQLFunc().notBank(column.value());
+            getFilter().sqlNativeSegment(bank.sqlSegment(column.getTable()),c->{
+                bank.consume(new SQLNativeChainExpressionContextImpl(column.getTable(),c));
+            });
         }
         return this;
     }
@@ -121,7 +129,10 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
     @Override
     default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isEmpty(boolean condition, SQLColumn<TProxy, String> column) {
         if(condition){
-            getFilter().eq(column.getTable(),fx().getSQLFunc().empty(column.value()),"");
+            SQLFunction bank = fx().getSQLFunc().empty(column.value());
+            getFilter().sqlNativeSegment(bank.sqlSegment(column.getTable()),c->{
+                bank.consume(new SQLNativeChainExpressionContextImpl(column.getTable(),c));
+            });
         }
         return this;
     }
@@ -129,7 +140,10 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
     @Override
     default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isNotEmpty(boolean condition, SQLColumn<TProxy, String> column) {
         if(condition){
-            getFilter().ne(column.getTable(),fx().getSQLFunc().empty(column.value()),"");
+            SQLFunction bank = fx().getSQLFunc().notEmpty(column.value());
+            getFilter().sqlNativeSegment(bank.sqlSegment(column.getTable()),c->{
+                bank.consume(new SQLNativeChainExpressionContextImpl(column.getTable(),c));
+            });
         }
         return this;
     }

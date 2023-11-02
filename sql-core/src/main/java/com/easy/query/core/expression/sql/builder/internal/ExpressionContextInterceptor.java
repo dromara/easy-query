@@ -54,6 +54,12 @@ public class ExpressionContextInterceptor {
         }
         return useInterceptors.contains(name);
     }
+
+    /**
+     * 不代表不包含,表示不使用的拦截器里面是否包含
+     * @param name
+     * @return
+     */
     public boolean noContains(String name){
         if(noInterceptors==null){
             return false;

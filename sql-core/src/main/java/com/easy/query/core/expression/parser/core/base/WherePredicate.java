@@ -17,6 +17,8 @@ import com.easy.query.core.expression.parser.core.base.core.filter.SelfPredicate
 import com.easy.query.core.expression.parser.core.base.core.filter.SubQueryPredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.ValuePredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.ValuesPredicate;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
+import com.easy.query.core.func.SQLFunction;
 
 /**
  * @author xuejiaming
@@ -88,7 +90,10 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
     @Override
     default WherePredicate<T1> isBank(boolean condition, String property) {
         if (condition) {
-            getFilter().eq(getTable(), fx().bank(property), "");
+            SQLFunction bank = fx().bank(property);
+            getFilter().sqlNativeSegment(bank.sqlSegment(getTable()),c->{
+                bank.consume(new SQLNativeChainExpressionContextImpl(getTable(),c));
+            });
         }
         return this;
     }
@@ -96,14 +101,20 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
     @Override
     default WherePredicate<T1> isNotBank(boolean condition, String property) {
         if (condition) {
-            getFilter().ne(getTable(), fx().bank(property), "");
+            SQLFunction bank = fx().notBank(property);
+            getFilter().sqlNativeSegment(bank.sqlSegment(getTable()),c->{
+                bank.consume(new SQLNativeChainExpressionContextImpl(getTable(),c));
+            });
         }
         return this;
     }
     @Override
     default WherePredicate<T1> isEmpty(boolean condition, String property) {
         if (condition) {
-            getFilter().eq(getTable(), fx().empty(property), "");
+            SQLFunction bank = fx().empty(property);
+            getFilter().sqlNativeSegment(bank.sqlSegment(getTable()),c->{
+                bank.consume(new SQLNativeChainExpressionContextImpl(getTable(),c));
+            });
         }
         return this;
     }
@@ -111,7 +122,10 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
     @Override
     default WherePredicate<T1> isNotEmpty(boolean condition, String property) {
         if (condition) {
-            getFilter().ne(getTable(), fx().empty(property), "");
+            SQLFunction bank = fx().notEmpty(property);
+            getFilter().sqlNativeSegment(bank.sqlSegment(getTable()),c->{
+                bank.consume(new SQLNativeChainExpressionContextImpl(getTable(),c));
+            });
         }
         return this;
     }
