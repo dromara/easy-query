@@ -1,9 +1,9 @@
 package com.easy.query.core.basic.extension.logicdel;
 
 /**
- * @FileName: LogicDeleteStrategyEnum.java
- * @Description: 逻辑删除策略
- * @Date: 2023/3/6 22:36
+ * create time 2023/3/6 22:36
+ * 逻辑删除策略
+ *
  * @author xuejiaming
  */
 public enum LogicDeleteStrategyEnum {

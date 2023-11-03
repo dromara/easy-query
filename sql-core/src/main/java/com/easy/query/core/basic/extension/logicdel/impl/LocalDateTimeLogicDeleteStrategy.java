@@ -13,9 +13,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @FileName: LocalDateTimeGlobalEntityTypeConfiguration.java
- * @Description: 文件说明
- * @Date: 2023/3/6 22:45
+ * create time 2023/3/6 22:45
+ * 时间删除策略
+ *
  * @author xuejiaming
  */
 public class LocalDateTimeLogicDeleteStrategy extends AbstractLogicDeleteStrategy {
