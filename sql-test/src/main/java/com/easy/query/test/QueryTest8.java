@@ -1,13 +1,23 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.api.proxy.select.ProxyQueryable2;
+import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.core.enums.AggregatePredicateCompare;
+import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.TopicRequest;
+import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
+import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * create time 2023/10/31 07:31
@@ -479,5 +489,39 @@ public class QueryTest8 extends BaseTest{
                     o.t().columnCountAs(Topic::getId, Topic::getStars);
                 }).toSQL();
         Assert.assertEquals("SELECT DISTINCT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t RIGHT JOIN `t_topic` t1 ON t.`id` = t1.`id` RIGHT JOIN `t_topic` t2 ON t.`id` = t2.`id` RIGHT JOIN `t_topic` t3 ON t.`id` = t3.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` IN (?) AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+    }
+
+    @Test
+    public void test1(){
+        Queryable<Topic> query = easyQuery.queryable(Topic.class)
+                .limit(100);
+        Queryable2<Topic, BlogEntity> join = query.select(Topic.class, o -> o.column(Topic::getId).column(Topic::getStars))
+                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId));
+        Queryable2<BlogEntityTest, BlogEntity> join2 = join.select(BlogEntityTest.class, (t, t1) -> {
+                    t.columnAs(Topic::getId, BlogEntityTest::getUrl);
+                    t1.column(BlogEntity::getTitle);
+                })
+                .innerJoin(BlogEntity.class, (t, t1) -> {
+                    t.eq(t1, BlogEntityTest::getUrl, BlogEntity::getId);
+                });
+        List<BlogEntity> list = join2.select(BlogEntity.class, (t, t1) -> {
+            t.columnAs(BlogEntityTest::getUrl, BlogEntity::getUrl);
+            t1.columnAs(BlogEntity::getTitle, BlogEntity::getContent);
+        }).toList();
+    }
+    @Test
+    public void test2(){
+        ProxyQueryable<TopicProxy, Topic> query = easyProxyQuery.queryable(TopicProxy.createTable())
+                .limit(100);
+        ProxyQueryable2<TopicProxy, Topic, BlogEntityProxy, BlogEntity> join = query
+                .select(TopicProxy.createTable(), o -> o.columns(o.t().id(), o.t().stars()))
+                .innerJoin(BlogEntityProxy.createTable(), o -> o.eq(o.t().id(), o.t1().id()));
+        BlogEntityTestProxy blogTestVO = BlogEntityTestProxy.createTable();
+        ProxyQueryable2<BlogEntityTestProxy, BlogEntityTest, BlogEntityProxy, BlogEntity> join2 = join.select(blogTestVO, o -> o.columnAs(o.t().id(), o.tr().url())
+                        .column(o.t1().title()))
+                .innerJoin(BlogEntityProxy.createTable(), o -> o.eq(o.t().url(), o.t1().id()));
+        List<BlogEntity> list = join2.select(BlogEntityProxy.createTable(), o -> {
+            o.columnAs(o.t().url(), o.tr().url()).columnAs(o.t1().title(),o.tr().content());
+        }).toList();
     }
 }

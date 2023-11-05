@@ -1,6 +1,8 @@
 package com.easy.query.core.basic.extension.logicdel;
 
 
+import com.easy.query.core.metadata.LogicDeleteMetadata;
+
 import java.util.Set;
 
 /**
@@ -26,5 +28,5 @@ public interface LogicDeleteStrategy {
      * 配置逻辑删除过滤和set
      * @param builder
      */
-    void configure(LogicDeleteBuilder builder);
+    LogicDeleteMetadata configureBuild(LogicDeleteBuilder builder);
 }

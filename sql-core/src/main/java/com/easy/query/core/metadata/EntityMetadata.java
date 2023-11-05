@@ -12,6 +12,7 @@ import com.easy.query.core.annotation.ShardingExtraTableKey;
 import com.easy.query.core.annotation.ShardingTableKey;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.UpdateIgnore;
+import com.easy.query.core.annotation.ValueObject;
 import com.easy.query.core.annotation.Version;
 import com.easy.query.core.basic.extension.complex.ComplexPropType;
 import com.easy.query.core.basic.extension.complex.DefaultComplexPropType;
@@ -85,10 +86,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
+ * create time 2023/2/11 10:17
+ * 对象元信息
+ *
  * @author xuejiaming
- * @FileName: EntityMetadata.java
- * @Description: 文件说明
- * @Date: 2023/2/11 10:17
  */
 public class EntityMetadata {
     private final Class<?> entityClass;
@@ -136,6 +137,7 @@ public class EntityMetadata {
         this.entityClass = entityClass;
     }
 
+
     public void init(ServiceProvider serviceProvider) {
 
         if (Map.class.isAssignableFrom(entityClass)) {
@@ -161,13 +163,11 @@ public class EntityMetadata {
         Collection<Field> allFields = EasyClassUtil.getAllFields(this.entityClass);
         PropertyDescriptor[] ps = EasyClassUtil.propertyDescriptors(entityClass);
         PropertyDescriptorFinder propertyDescriptorFinder = new PropertyDescriptorFinder(ps);
-        int versionCount = 0;
-        int logicDelCount = 0;
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
         boolean tableEntity = EasyStringUtil.isNotBlank(tableName);
         this.dataReader = tableEntity ? EmptyDataReader.EMPTY : null;
-        int columnIndex = 0;
+        ColumnAllIndex columnAllIndex = new ColumnAllIndex();
         for (Field field : allFields) {
             String property = EasyStringUtil.toLowerCaseFirstOne(field.getName());
             if (Modifier.isStatic(field.getModifiers()) || ignoreProperties.contains(property)) {
@@ -186,215 +186,21 @@ public class EntityMetadata {
             }
             Navigate navigate = field.getAnnotation(Navigate.class);
             if (navigate != null) {
-                String selfProperty = tableEntity ? navigate.selfProperty() : null;
-                String targetProperty = tableEntity ? navigate.targetProperty() : null;
-                RelationTypeEnum relationType = navigate.value();
-                Class<?> navigateType = getNavigateType(relationType, field, fastBeanProperty);
-                if (navigateType == null) {
-                    throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");
-                }
-
-                Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
-                PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
-                NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty, beanGetter, beanSetter);
-
-                if (tableEntity) {
-                    if (RelationTypeEnum.ManyToMany == relationType) {
-                        if (Objects.equals(Object.class, navigate.mappingClass())) {
-                            throw new IllegalArgumentException("relation type many to many map class not default");
-                        }
-                        if (EasyStringUtil.isBlank(navigate.selfMappingProperty())) {
-                            throw new IllegalArgumentException("relation type many to many self mapping property is empty");
-                        }
-                        if (EasyStringUtil.isBlank(navigate.targetMappingProperty())) {
-                            throw new IllegalArgumentException("relation type many to many target mapping property is empty");
-                        }
-                        navigateMetadata.setMappingClass(navigate.mappingClass());
-                        navigateMetadata.setSelfMappingProperty(navigate.selfMappingProperty());
-                        navigateMetadata.setTargetMappingProperty(navigate.targetMappingProperty());
-                    }
-                }
-                property2NavigateMap.put(property, navigateMetadata);
+                createNavigateMetadata(tableEntity, navigate, field, fastBean, fastBeanProperty, property);
                 continue;
-            }
+            } else if (tableEntity) {
+                ValueObject valueObject = field.getAnnotation(ValueObject.class);
+                if (valueObject != null) {
+                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager);
 
-            Column column = field.getAnnotation(Column.class);
-            boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
-            boolean autoSelect = column == null || column.autoSelect();
-            String columnName = hasColumnName ? column.value() : nameConversion.convert(property);
-            ColumnOption columnOption = new ColumnOption(this, columnName);
-//            if (column != null) {
-//                columnMetadata.setNullable(column.nullable());
-//            }
-            columnOption.setProperty(propertyDescriptor);
-            columnOption.setAutoSelect(autoSelect);
-
-            Encryption encryption = field.getAnnotation(Encryption.class);
-            if (encryption != null) {
-                Class<? extends EncryptionStrategy> strategy = encryption.strategy();
-                EncryptionStrategy easyEncryptionStrategy = configuration.getEasyEncryptionStrategy(strategy);
-                if (easyEncryptionStrategy == null) {
-                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Encryption strategy unknown");
-                }
-                columnOption.setEncryptionStrategy(easyEncryptionStrategy);
-                columnOption.setSupportQueryLike(encryption.supportQueryLike());
-            }
-            if (column != null) {
-                Class<? extends ValueConverter<?, ?>> conversionClass = column.conversion();
-                if (!Objects.equals(DefaultValueConverter.class, conversionClass)) {
-                    ValueConverter<?, ?> valueConverter = configuration.getValueConverter(conversionClass);
-                    if (valueConverter == null) {
-                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion unknown");
-                    }
-                    columnOption.setValueConverter(valueConverter);
-                }
-                Class<? extends ComplexPropType> complexPropTypeClass = column.complexPropType();
-                if (Objects.equals(DefaultComplexPropType.class, complexPropTypeClass)) {
-                    ComplexPropType complexPropType = new DefaultComplexPropType(fastBeanProperty.getPropertyType());
-                    columnOption.setComplexPropType(complexPropType);
-                } else {
-                    ComplexPropType complexPropType = EasyClassUtil.newInstance(complexPropTypeClass);
-                    columnOption.setComplexPropType(complexPropType);
-                }
-
-            }
-
-            if (tableEntity) {
-
-                if (column != null) {
-                    if (column.primaryKey()) {
-                        keyPropertiesMap.put(property, columnName);
-                    }
-                    columnOption.setPrimary(column.primaryKey());
-                    boolean generatedKey = column.increment() || column.generatedKey();
-                    if (generatedKey) {
-                        generatedKeyColumns.add(columnName);
-                        Class<? extends GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorClass = column.generatedSQLColumnGenerator();
-                        if (!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class, generatedKeySQLColumnGeneratorClass)) {
-                            GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator = configuration.getGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGeneratorClass);
-                            if (generatedKeySQLColumnGenerator == null) {
-                                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown");
-                            }
-                            columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
-                        }
-                        //兼容代码后续版本删除
-                        else {
-                            Class<? extends GeneratedKeySQLColumnGenerator> incrementSQLColumnGeneratorClass = column.incrementSQLColumnGenerator();
-                            if (!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class, incrementSQLColumnGeneratorClass)) {
-                                GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator = configuration.getGeneratedKeySQLColumnGenerator(incrementSQLColumnGeneratorClass);
-                                if (generatedKeySQLColumnGenerator == null) {
-                                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown");
-                                }
-                                columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
-                            }
-                        }
-                    }
-                    columnOption.setGeneratedKey(generatedKey);
-
-                    columnOption.setLarge(column.large());
-//                    columnMetadata.setSelect(column.select());
-//                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
-
-
-                    Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = column.valueUpdateAtomicTrack();
-                    if (!Objects.equals(DefaultValueUpdateAtomicTrack.class, trackValueUpdateClass)) {
-                        ValueUpdateAtomicTrack<?> trackValueUpdate = configuration.getValueUpdateAtomicTrack(trackValueUpdateClass);
-                        if (trackValueUpdate == null) {
-                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown");
-                        }
-                        columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(trackValueUpdate));
-                        columnValueUpdateAtomicTrack = true;
-                    }
-                    Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = column.sqlConversion();
-                    if (!Objects.equals(DefaultColumnValueSQLConverter.class, columnValueSQLConverterClass)) {
-                        //配置列值数据库转换器
-                        ColumnValueSQLConverter columnValueSQLConverter = configuration.getColumnValueSQLConverter(columnValueSQLConverterClass);
-                        if (columnValueSQLConverter == null) {
-                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " column value sql converter unknown");
-                        }
-                        columnOption.setColumnValueSQLConverter(columnValueSQLConverter);
-                    }
-                }
-                InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
-                if (insertIgnore != null) {
-                    columnOption.setInsertIgnore(true);
-                }
-
-                UpdateIgnore updateIgnore = field.getAnnotation(UpdateIgnore.class);
-                if (updateIgnore != null) {
-                    columnOption.setUpdateIgnore(true);
-                    columnOption.setUpdateSetInTrackDiff(updateIgnore.updateSetInTrackDiff());
-                }
-                Version version = field.getAnnotation(Version.class);
-                if (version != null) {
-
-                    Class<? extends VersionStrategy> strategy = version.strategy();
-                    VersionStrategy easyVersionStrategy = configuration.getEasyVersionStrategyOrNull(strategy);
-                    if (easyVersionStrategy == null) {
-                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Version strategy unknown");
-                    }
-                    columnOption.setVersion(true);
-
-                    versionMetadata = new VersionMetadata(property, easyVersionStrategy);
-
-                    versionCount++;
-                }
-                ShardingDataSourceKey shardingDataSourceKey = field.getAnnotation(ShardingDataSourceKey.class);
-                if (shardingDataSourceKey != null) {
-                    this.setShardingDataSourcePropertyName(property);
-                }
-                ShardingExtraDataSourceKey shardingExtraDataSourceKey = field.getAnnotation(ShardingExtraDataSourceKey.class);
-                if (shardingExtraDataSourceKey != null) {
-                    this.addExtraShardingDataSourcePropertyName(property);
-                }
-                ShardingTableKey shardingTableKey = field.getAnnotation(ShardingTableKey.class);
-                if (shardingTableKey != null) {
-                    this.setShardingTablePropertyName(property);
-                }
-                ShardingExtraTableKey shardingExtraTableKey = field.getAnnotation(ShardingExtraTableKey.class);
-                if (shardingExtraTableKey != null) {
-                    this.addExtraShardingTablePropertyName(property);
-                }
-
-                LogicDelete logicDelete = field.getAnnotation(LogicDelete.class);
-                if (logicDelete != null) {
-                    LogicDeleteStrategyEnum strategy = logicDelete.strategy();
-                    if (Objects.equals(LogicDeleteStrategyEnum.CUSTOM, strategy)) {//使用自定义
-                        String strategyName = logicDelete.strategyName();
-                        if (EasyStringUtil.isBlank(strategyName)) {
-                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " logic delete strategy is empty");
-                        }
-                        LogicDeleteStrategy globalLogicDeleteStrategy = configuration.getLogicDeleteStrategyNotNull(strategyName);
-                        LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
-                        globalLogicDeleteStrategy.configure(logicDeleteBuilder);
-                    } else {//使用系统默认的
-                        LogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysLogicDeleteStrategyNotNull(strategy);
-                        LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(this, property, field.getType());
-                        sysGlobalLogicDeleteStrategy.configure(logicDeleteBuilder);
-                    }
-                    logicDelCount++;
+                    parseValueObject(columnOption,configuration,jdbcTypeHandlerManager);
+                    acceptColumnOption(null, columnOption, columnAllIndex);
+                    continue;
                 }
             }
-            Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
-            columnOption.setGetterCaller(beanGetter);
-            PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
-            columnOption.setSetterCaller(beanSetter);
-            JdbcTypeHandler jdbcTypeHandler = jdbcTypeHandlerManager.getHandler(columnOption.getProperty().getPropertyType());
-            columnOption.setJdbcTypeHandler(jdbcTypeHandler);
-            ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
-            property2ColumnMap.put(property, columnMetadata);
-            column2PropertyMap.put(columnName, columnMetadata);
-            if (tableEntity && autoSelect) {
-                dataReader = new BeanDataReader(dataReader, new PropertyDataReader(new EntityResultColumnMetadata(columnIndex, columnMetadata)));
-            }
-            columnIndex++;
-        }
 
-        if (versionCount > 1) {
-            throw new EasyQueryException("multi version not support");
-        }
-        if (logicDelCount > 1) {
-            throw new EasyQueryException("multi logic delete not support");
+            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager);
+            acceptColumnOption(null, columnOption, columnAllIndex);
         }
         //初始化拦截器
         entityGlobalInterceptorConfigurationInit(configuration);
@@ -402,6 +208,281 @@ public class EntityMetadata {
         if (table != null && isSharding()) {
             Class<? extends ShardingInitializer> initializer = table.shardingInitializer();
             initSharding(configuration, initializer);
+        }
+    }
+
+    private void createNavigateMetadata(boolean tableEntity, Navigate navigate, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property) {
+
+        String selfProperty = tableEntity ? navigate.selfProperty() : null;
+        String targetProperty = tableEntity ? navigate.targetProperty() : null;
+        RelationTypeEnum relationType = navigate.value();
+        Class<?> navigateType = getNavigateType(relationType, field, fastBeanProperty);
+        if (navigateType == null) {
+            throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");
+        }
+
+        Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
+        PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
+        NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty, beanGetter, beanSetter);
+
+        if (tableEntity) {
+            if (RelationTypeEnum.ManyToMany == relationType) {
+                if (Objects.equals(Object.class, navigate.mappingClass())) {
+                    throw new IllegalArgumentException("relation type many to many map class not default");
+                }
+                if (EasyStringUtil.isBlank(navigate.selfMappingProperty())) {
+                    throw new IllegalArgumentException("relation type many to many self mapping property is empty");
+                }
+                if (EasyStringUtil.isBlank(navigate.targetMappingProperty())) {
+                    throw new IllegalArgumentException("relation type many to many target mapping property is empty");
+                }
+                navigateMetadata.setMappingClass(navigate.mappingClass());
+                navigateMetadata.setSelfMappingProperty(navigate.selfMappingProperty());
+                navigateMetadata.setTargetMappingProperty(navigate.targetMappingProperty());
+            }
+        }
+        property2NavigateMap.put(property, navigateMetadata);
+    }
+
+    private ColumnMetadata acceptColumnOption(String parentPropertyName, ColumnOption columnOption, ColumnAllIndex columnAllIndex) {
+
+        String propertyName = parentPropertyName == null ? columnOption.getProperty().getName() : parentPropertyName + "." + columnOption.getProperty().getName();
+        columnOption.setFullPropertyName(propertyName);
+        ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
+        ColumnMetadata oldValue = property2ColumnMap.put(propertyName, columnMetadata);
+        if (oldValue != null) {
+            throw new EasyQueryInvalidOperationException("propertyName:" + propertyName + ", repeat.");
+        }
+        if (columnOption.isValueObject()) {
+            for (ColumnOption valueObjectColumnOption : columnOption.getValueObjectColumnOptions()) {
+                ColumnMetadata valueObjectColumnMetadata = acceptColumnOption(propertyName, valueObjectColumnOption, columnAllIndex);
+                columnMetadata.getValueObjectColumnMetadataList().add(valueObjectColumnMetadata);
+            }
+        } else {
+            ColumnMetadata oldColumnName = column2PropertyMap.put(columnOption.getName(), columnMetadata);
+            if (oldColumnName != null) {
+                throw new EasyQueryInvalidOperationException("columnName:" + columnOption.getName() + ", repeat.");
+            }
+            if (columnOption.isTableEntity() && columnOption.isAutoSelect()) {
+                dataReader = new BeanDataReader(dataReader, new PropertyDataReader(new EntityResultColumnMetadata(columnAllIndex.incrementAndGet(), columnMetadata)));
+            }
+        }
+        return columnMetadata;
+    }
+
+
+    private ColumnOption createColumnOption(Field field, PropertyDescriptor propertyDescriptor, boolean tableEntity, FastBeanProperty fastBeanProperty, QueryConfiguration configuration, FastBean fastBean, JdbcTypeHandlerManager jdbcTypeHandlerManager) {
+        NameConversion nameConversion = configuration.getNameConversion();
+        String property = field.getName();
+        Column column = field.getAnnotation(Column.class);
+        boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
+        boolean autoSelect = column == null || column.autoSelect();
+        String columnName = hasColumnName ? column.value() : nameConversion.convert(property);
+        ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName);
+//            if (column != null) {
+//                columnMetadata.setNullable(column.nullable());
+//            }
+        columnOption.setProperty(propertyDescriptor);
+        columnOption.setAutoSelect(autoSelect);
+
+        Encryption encryption = field.getAnnotation(Encryption.class);
+        if (encryption != null) {
+            Class<? extends EncryptionStrategy> strategy = encryption.strategy();
+            EncryptionStrategy easyEncryptionStrategy = configuration.getEasyEncryptionStrategy(strategy);
+            if (easyEncryptionStrategy == null) {
+                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Encryption strategy unknown");
+            }
+            columnOption.setEncryptionStrategy(easyEncryptionStrategy);
+            columnOption.setSupportQueryLike(encryption.supportQueryLike());
+        }
+        if (column != null) {
+            Class<? extends ValueConverter<?, ?>> conversionClass = column.conversion();
+            if (!Objects.equals(DefaultValueConverter.class, conversionClass)) {
+                ValueConverter<?, ?> valueConverter = configuration.getValueConverter(conversionClass);
+                if (valueConverter == null) {
+                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion unknown");
+                }
+                columnOption.setValueConverter(valueConverter);
+            }
+            Class<? extends ComplexPropType> complexPropTypeClass = column.complexPropType();
+            if (Objects.equals(DefaultComplexPropType.class, complexPropTypeClass)) {
+                ComplexPropType complexPropType = new DefaultComplexPropType(fastBeanProperty.getPropertyType());
+                columnOption.setComplexPropType(complexPropType);
+            } else {
+                ComplexPropType complexPropType = EasyClassUtil.newInstance(complexPropTypeClass);
+                columnOption.setComplexPropType(complexPropType);
+            }
+
+        }
+
+        if (tableEntity) {
+
+            if (column != null) {
+                if (column.primaryKey()) {
+                    keyPropertiesMap.put(property, columnName);
+                }
+                columnOption.setPrimary(column.primaryKey());
+                boolean generatedKey = column.increment() || column.generatedKey();
+                if (generatedKey) {
+                    generatedKeyColumns.add(columnName);
+                    Class<? extends GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorClass = column.generatedSQLColumnGenerator();
+                    if (!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class, generatedKeySQLColumnGeneratorClass)) {
+                        GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator = configuration.getGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGeneratorClass);
+                        if (generatedKeySQLColumnGenerator == null) {
+                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown");
+                        }
+                        columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
+                    }
+                    //兼容代码后续版本删除
+                    else {
+                        Class<? extends GeneratedKeySQLColumnGenerator> incrementSQLColumnGeneratorClass = column.incrementSQLColumnGenerator();
+                        if (!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class, incrementSQLColumnGeneratorClass)) {
+                            GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator = configuration.getGeneratedKeySQLColumnGenerator(incrementSQLColumnGeneratorClass);
+                            if (generatedKeySQLColumnGenerator == null) {
+                                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown");
+                            }
+                            columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
+                        }
+                    }
+                }
+                columnOption.setGeneratedKey(generatedKey);
+
+                columnOption.setLarge(column.large());
+//                    columnMetadata.setSelect(column.select());
+//                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
+
+
+                Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = column.valueUpdateAtomicTrack();
+                if (!Objects.equals(DefaultValueUpdateAtomicTrack.class, trackValueUpdateClass)) {
+                    ValueUpdateAtomicTrack<?> trackValueUpdate = configuration.getValueUpdateAtomicTrack(trackValueUpdateClass);
+                    if (trackValueUpdate == null) {
+                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown");
+                    }
+                    columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(trackValueUpdate));
+                    columnValueUpdateAtomicTrack = true;
+                }
+                Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = column.sqlConversion();
+                if (!Objects.equals(DefaultColumnValueSQLConverter.class, columnValueSQLConverterClass)) {
+                    //配置列值数据库转换器
+                    ColumnValueSQLConverter columnValueSQLConverter = configuration.getColumnValueSQLConverter(columnValueSQLConverterClass);
+                    if (columnValueSQLConverter == null) {
+                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " column value sql converter unknown");
+                    }
+                    columnOption.setColumnValueSQLConverter(columnValueSQLConverter);
+                }
+            }
+            InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
+            if (insertIgnore != null) {
+                columnOption.setInsertIgnore(true);
+            }
+
+            UpdateIgnore updateIgnore = field.getAnnotation(UpdateIgnore.class);
+            if (updateIgnore != null) {
+                columnOption.setUpdateIgnore(true);
+                columnOption.setUpdateSetInTrackDiff(updateIgnore.updateSetInTrackDiff());
+            }
+            Version version = field.getAnnotation(Version.class);
+            if (version != null) {
+
+                Class<? extends VersionStrategy> strategy = version.strategy();
+                VersionStrategy easyVersionStrategy = configuration.getEasyVersionStrategyOrNull(strategy);
+                if (easyVersionStrategy == null) {
+                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Version strategy unknown");
+                }
+                columnOption.setVersion(true);
+
+                if (versionMetadata == null) {
+                    versionMetadata = new VersionMetadata(property, easyVersionStrategy);
+                } else {
+                    throw new EasyQueryException("multi version not support");
+                }
+            }
+            ShardingDataSourceKey shardingDataSourceKey = field.getAnnotation(ShardingDataSourceKey.class);
+            if (shardingDataSourceKey != null) {
+                this.setShardingDataSourcePropertyName(property);
+            }
+            ShardingExtraDataSourceKey shardingExtraDataSourceKey = field.getAnnotation(ShardingExtraDataSourceKey.class);
+            if (shardingExtraDataSourceKey != null) {
+                this.addExtraShardingDataSourcePropertyName(property);
+            }
+            ShardingTableKey shardingTableKey = field.getAnnotation(ShardingTableKey.class);
+            if (shardingTableKey != null) {
+                this.setShardingTablePropertyName(property);
+            }
+            ShardingExtraTableKey shardingExtraTableKey = field.getAnnotation(ShardingExtraTableKey.class);
+            if (shardingExtraTableKey != null) {
+                this.addExtraShardingTablePropertyName(property);
+            }
+
+            LogicDelete logicDelete = field.getAnnotation(LogicDelete.class);
+            if (logicDelete != null) {
+                if (this.logicDeleteMetadata != null) {
+                    throw new EasyQueryException("multi logic delete not support");
+                }
+                LogicDeleteStrategyEnum strategy = logicDelete.strategy();
+                if (Objects.equals(LogicDeleteStrategyEnum.CUSTOM, strategy)) {//使用自定义
+                    String strategyName = logicDelete.strategyName();
+                    if (EasyStringUtil.isBlank(strategyName)) {
+                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " logic delete strategy is empty");
+                    }
+                    LogicDeleteStrategy globalLogicDeleteStrategy = configuration.getLogicDeleteStrategyNotNull(strategyName);
+                    LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(entityClass, property, field.getType());
+                    this.logicDeleteMetadata = globalLogicDeleteStrategy.configureBuild(logicDeleteBuilder);
+                } else {//使用系统默认的
+                    LogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysLogicDeleteStrategyNotNull(strategy);
+                    LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(entityClass, property, field.getType());
+                    this.logicDeleteMetadata = sysGlobalLogicDeleteStrategy.configureBuild(logicDeleteBuilder);
+                }
+            }
+        }
+        Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
+        columnOption.setGetterCaller(beanGetter);
+        PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
+        columnOption.setSetterCaller(beanSetter);
+        JdbcTypeHandler jdbcTypeHandler = jdbcTypeHandlerManager.getHandler(columnOption.getProperty().getPropertyType());
+        columnOption.setJdbcTypeHandler(jdbcTypeHandler);
+        return columnOption;
+
+    }
+
+    private void parseValueObject(ColumnOption parentColumnOption, QueryConfiguration configuration, JdbcTypeHandlerManager jdbcTypeHandlerManager) {
+        PropertyDescriptor parentProperty = parentColumnOption.getProperty();
+        Class<?> valueObjectClass = parentProperty.getPropertyType();
+        Collection<Field> allFields = EasyClassUtil.getAllFields(valueObjectClass);
+        PropertyDescriptor[] ps = EasyClassUtil.propertyDescriptors(valueObjectClass);
+        PropertyDescriptorFinder propertyDescriptorFinder = new PropertyDescriptorFinder(ps);
+        FastBean fastBean = EasyBeanUtil.getFastBean(valueObjectClass);
+        for (Field field : allFields) {
+            String property = EasyStringUtil.toLowerCaseFirstOne(field.getName());
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+            //未找到bean属性就直接忽略
+            PropertyDescriptor propertyDescriptor = propertyDescriptorFinder.find(property);
+            if (propertyDescriptor == null) {
+                continue;
+            }
+            Type genericType = field.getGenericType();
+            FastBeanProperty fastBeanProperty = new FastBeanProperty(isGenericType(genericType), propertyDescriptor);
+            ColumnIgnore columnIgnore = field.getAnnotation(ColumnIgnore.class);
+            if (columnIgnore != null) {
+                continue;
+            }
+            Navigate navigate = field.getAnnotation(Navigate.class);
+            if (navigate != null) {
+                createNavigateMetadata(true, navigate, field, fastBean, fastBeanProperty, property);
+                continue;
+            } else {
+                ValueObject valueObject = field.getAnnotation(ValueObject.class);
+                if (valueObject != null) {
+                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager);
+                    parseValueObject(columnOption, configuration, jdbcTypeHandlerManager);
+                    continue;
+                }
+            }
+
+            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager);
+            parentColumnOption.getValueObjectColumnOptions().add(columnOption);
         }
     }
 

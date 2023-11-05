@@ -12,6 +12,8 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * create time 2023/5/20 22:41
@@ -21,6 +23,7 @@ import java.beans.PropertyDescriptor;
  */
 public final class ColumnOption {
 
+    private final boolean tableEntity;
     private final EntityMetadata entityMetadata;
     private final String name;
 
@@ -51,11 +54,19 @@ public final class ColumnOption {
     private Property<Object, ?> getterCaller;
     private JdbcTypeHandler jdbcTypeHandler;
 
-    public ColumnOption(EntityMetadata entityMetadata, String name) {
+    private boolean valueObject;
+    private final List<ColumnOption> valueObjectColumnOptions;
+    private String fullPropertyName;
+
+
+    public ColumnOption(boolean tableEntity,EntityMetadata entityMetadata, String name) {
+        this.tableEntity = tableEntity;
         this.entityMetadata = entityMetadata;
         this.name = name;
         this.valueConverter = DefaultValueConverter.INSTANCE;
         this.valueUpdateAtomicTrack = null;
+        this.valueObject = false;
+        this.valueObjectColumnOptions = new ArrayList<>();
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -220,5 +231,29 @@ public final class ColumnOption {
 
     public void setComplexPropType(ComplexPropType complexPropType) {
         this.complexPropType = complexPropType;
+    }
+
+    public boolean isValueObject() {
+        return valueObject;
+    }
+
+    public void setValueObject(boolean valueObject) {
+        this.valueObject = valueObject;
+    }
+
+    public List<ColumnOption> getValueObjectColumnOptions() {
+        return valueObjectColumnOptions;
+    }
+
+    public boolean isTableEntity() {
+        return tableEntity;
+    }
+
+    public String getFullPropertyName() {
+        return fullPropertyName;
+    }
+
+    public void setFullPropertyName(String fullPropertyName) {
+        this.fullPropertyName = fullPropertyName;
     }
 }

@@ -12,6 +12,8 @@ import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.util.EasyClassUtil;
 
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,30 +50,30 @@ public class ColumnMetadata {
     /**
      * 是否是主键
      */
-    private final  boolean primary;
+    private final boolean primary;
     /**
      * 是否是数据库生成列 比如自增键
      */
-    private final  boolean generatedKey;
+    private final boolean generatedKey;
 
 
 //    private  boolean nullable=true;
     /**
      * 是否是乐观锁版本号
      */
-    private final  boolean version;
+    private final boolean version;
     /**
      * 是否插入时忽略
      */
-    private final  boolean insertIgnore;
+    private final boolean insertIgnore;
     /**
      * 是否更新时忽略
      */
-    private final  boolean updateIgnore ;
+    private final boolean updateIgnore;
     /**
      * 如果更新时忽略当前列存在track的diff中是否也要更新
      */
-    private final  boolean updateSetInTrackDiff ;
+    private final boolean updateSetInTrackDiff;
 
     /**
      * 加密策略
@@ -80,19 +82,19 @@ public class ColumnMetadata {
     /**
      * 加密后查询是否支持like
      */
-    private final  boolean supportQueryLike;
+    private final boolean supportQueryLike;
     /**
      * 是否是大列
      */
-    private final  boolean large;
+    private final boolean large;
     /**
      * 是否自动查询结果
      */
-    private final  boolean autoSelect;
+    private final boolean autoSelect;
     /**
      * 是否是基本类型 int long double 而不是Integer Long...
      */
-    private final  boolean primitive;
+    private final boolean primitive;
 
     /**
      * 数据库和对象值转换器
@@ -117,45 +119,55 @@ public class ColumnMetadata {
     /**
      * 当前对象属性getter调用方法
      */
-    private final Property<Object,?> getterCaller;
+    private final Property<Object, ?> getterCaller;
     /**
      * 当前属性对应的jdbc处理器
      */
     private final JdbcTypeHandler jdbcTypeHandler;
     private final ComplexPropType complexPropType;
+    private final boolean valueObject;
+    private final List<ColumnMetadata> valueObjectColumnMetadataList;
+    private final String fullPropertyName;
 
     public ColumnMetadata(ColumnOption columnOption) {
         this.entityMetadata = columnOption.getEntityMetadata();
         this.name = columnOption.getName();
-        this.property= columnOption.getProperty();
+        this.property = columnOption.getProperty();
         this.propertyType = columnOption.getProperty().getPropertyType();
         this.propertyName = columnOption.getProperty().getName();
         this.primary = columnOption.isPrimary();
         this.generatedKey = columnOption.isGeneratedKey();
-        this.version= columnOption.isVersion();
-        this.insertIgnore= columnOption.isInsertIgnore();
-        this.updateIgnore= columnOption.isUpdateIgnore();
-        this.updateSetInTrackDiff= columnOption.isUpdateSetInTrackDiff();
-        this.encryptionStrategy= columnOption.getEncryptionStrategy();
-        this.supportQueryLike= columnOption.isSupportQueryLike();
-        this.large= columnOption.isLarge();
-        this.autoSelect= columnOption.isAutoSelect();
+        this.version = columnOption.isVersion();
+        this.insertIgnore = columnOption.isInsertIgnore();
+        this.updateIgnore = columnOption.isUpdateIgnore();
+        this.updateSetInTrackDiff = columnOption.isUpdateSetInTrackDiff();
+        this.encryptionStrategy = columnOption.getEncryptionStrategy();
+        this.supportQueryLike = columnOption.isSupportQueryLike();
+        this.large = columnOption.isLarge();
+        this.autoSelect = columnOption.isAutoSelect();
         this.valueConverter = columnOption.getValueConverter();
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
         this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
         this.generatedSQLColumnGenerator = columnOption.getGeneratedKeySQLColumnGenerator();
+        this.fullPropertyName = columnOption.getFullPropertyName();
         this.primitive = propertyType.isPrimitive();
 
-        if(columnOption.getGetterCaller()==null){
-            throw new IllegalArgumentException("not found "+ EasyClassUtil.getSimpleName(columnOption.getEntityMetadata().getEntityClass()) +"."+propertyName+" getter caller");
+        if (columnOption.getGetterCaller() == null) {
+            throw new IllegalArgumentException("not found " + EasyClassUtil.getSimpleName(columnOption.getEntityMetadata().getEntityClass()) + "." + propertyName + " getter caller");
         }
-        if(columnOption.getSetterCaller()==null){
-            throw new IllegalArgumentException("not found "+ EasyClassUtil.getSimpleName(columnOption.getEntityMetadata().getEntityClass()) +"."+propertyName+" setter caller");
+        if (columnOption.getSetterCaller() == null) {
+            throw new IllegalArgumentException("not found " + EasyClassUtil.getSimpleName(columnOption.getEntityMetadata().getEntityClass()) + "." + propertyName + " setter caller");
         }
         this.getterCaller = columnOption.getGetterCaller();
         this.setterCaller = columnOption.getSetterCaller();
-        this.jdbcTypeHandler=columnOption.getJdbcTypeHandler();
-        this.complexPropType =columnOption.getComplexPropType();
+        this.jdbcTypeHandler = columnOption.getJdbcTypeHandler();
+        this.complexPropType = columnOption.getComplexPropType();
+        this.valueObject = columnOption.isValueObject();
+        if(this.valueObject){
+            this.valueObjectColumnMetadataList =new ArrayList<>(columnOption.getValueObjectColumnOptions().size());
+        }else{
+            this.valueObjectColumnMetadataList = Collections.emptyList();
+        }
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -200,7 +212,7 @@ public class ColumnMetadata {
 
 
     public boolean isEncryption() {
-        return encryptionStrategy!=null;
+        return encryptionStrategy != null;
     }
 
     public EncryptionStrategy getEncryptionStrategy() {
@@ -235,7 +247,8 @@ public class ColumnMetadata {
     public String getPropertyName() {
         return propertyName;
     }
-    public boolean isPrimitive(){
+
+    public boolean isPrimitive() {
         return primitive;
     }
 
@@ -251,7 +264,7 @@ public class ColumnMetadata {
         return jdbcTypeHandler;
     }
 
-    public ColumnValueSQLConverter getColumnValueSQLConverter(){
+    public ColumnValueSQLConverter getColumnValueSQLConverter() {
         return columnValueSQLConverter;
     }
 
@@ -263,9 +276,22 @@ public class ColumnMetadata {
      * 表示当前属性的复杂类型
      * 如果当前属性为基本类型那么就是基本类型
      * 如果当前属性是{@link List<Object>} 这种泛型类型通过添加 {@link ComplexPropType}来表示为正确的真实类型
+     *
      * @return
      */
     public ComplexPropType getComplexPropType() {
         return complexPropType;
+    }
+
+    public boolean isValueObject() {
+        return valueObject;
+    }
+
+    public List<ColumnMetadata> getValueObjectColumnMetadataList() {
+        return valueObjectColumnMetadataList;
+    }
+
+    public String getFullPropertyName() {
+        return fullPropertyName;
     }
 }
