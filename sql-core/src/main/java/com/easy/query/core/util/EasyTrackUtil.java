@@ -115,13 +115,12 @@ public class EasyTrackUtil {
         Collection<String> properties = entityMetadata.getProperties();
         for (String propertyName : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-            if (columnMetadata.isPrimary()) {
+            if (columnMetadata.isPrimary() || columnMetadata.isValueObject()) {
                 continue;
             }
-            Property<Object, ?> propertyGetter = columnMetadata.getGetterCaller();
 
-            Object originalPropertyValue = propertyGetter.apply(entityState.getOriginalValue());
-            Object currentPropertyValue = propertyGetter.apply(entityState.getCurrentValue());
+            Object originalPropertyValue =EasyBeanUtil.getPropertyValue(entityState.getOriginalValue(),entityMetadata,columnMetadata);
+            Object currentPropertyValue = EasyBeanUtil.getPropertyValue(entityState.getCurrentValue(),entityMetadata,columnMetadata);
 
 
             if (propertyValueEquals(columnMetadata,originalPropertyValue,currentPropertyValue)) {

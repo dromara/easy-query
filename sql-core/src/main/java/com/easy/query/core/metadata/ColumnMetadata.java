@@ -15,6 +15,7 @@ import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/2/11 18:13
@@ -127,6 +128,7 @@ public class ColumnMetadata {
     private final ComplexPropType complexPropType;
     private final boolean valueObject;
     private final List<ColumnMetadata> valueObjectColumnMetadataList;
+    private final Supplier<Object> beanConstructorCreator;
 
     public ColumnMetadata(ColumnOption columnOption) {
         this.entityMetadata = columnOption.getEntityMetadata();
@@ -161,6 +163,7 @@ public class ColumnMetadata {
         this.jdbcTypeHandler = columnOption.getJdbcTypeHandler();
         this.complexPropType = columnOption.getComplexPropType();
         this.valueObject = columnOption.isValueObject();
+        this.beanConstructorCreator = columnOption.getBeanConstructorCreator();
         if(this.valueObject){
             this.valueObjectColumnMetadataList =new ArrayList<>(columnOption.getValueObjectColumnOptions().size());
         }else{
@@ -287,5 +290,9 @@ public class ColumnMetadata {
 
     public List<ColumnMetadata> getValueObjectColumnMetadataList() {
         return valueObjectColumnMetadataList;
+    }
+
+    public Supplier<Object> getBeanConstructorCreatorOrNull() {
+        return beanConstructorCreator;
     }
 }

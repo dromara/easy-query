@@ -27,6 +27,12 @@ public abstract class AbstractInsertUpdateSetColumnSQLSegmentImpl {
         this.runtimeContext = runtimeContext;
         this.columnMetadata=table.getEntityMetadata().getColumnNotNull(propertyName);
     }
+    public AbstractInsertUpdateSetColumnSQLSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext){
+        this.table = table;
+        this.propertyName = columnMetadata.getPropertyName();
+        this.runtimeContext = runtimeContext;
+        this.columnMetadata=columnMetadata;
+    }
     public String toSQLWithParameter(ToSQLContext toSQLContext, SQLParameter sqlParameter){
 
         ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();

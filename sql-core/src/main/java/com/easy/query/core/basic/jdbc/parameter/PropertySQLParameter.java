@@ -1,10 +1,9 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyBeanUtil;
 
 /**
  * @author xuejiaming
@@ -31,10 +30,12 @@ public final class PropertySQLParameter implements BeanSQLParameter {
         if (bean == null) {
             throw new EasyQueryException("cant get sql parameter value," + table.getEntityMetadata().getEntityClass() + "." + propertyName + ",bean is null");
         }
+
         EntityMetadata entityMetadata = table.getEntityMetadata();
-        ColumnMetadata column = entityMetadata.getColumnNotNull(propertyName);
-        Property<Object, ?> propertyLambda = column.getGetterCaller();
-        return propertyLambda.apply(bean);
+//        ColumnMetadata column = entityMetadata.getColumnNotNull(propertyName);
+//        Property<Object, ?> propertyLambda = column.getGetterCaller();
+        return EasyBeanUtil.getPropertyValue(bean,entityMetadata,propertyName);
+//        return propertyLambda.apply(bean);
     }
 
     @Override

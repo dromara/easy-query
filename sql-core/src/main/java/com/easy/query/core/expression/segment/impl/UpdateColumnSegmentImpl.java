@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -17,6 +18,9 @@ public class UpdateColumnSegmentImpl extends AbstractInsertUpdateSetColumnSQLSeg
 
     public UpdateColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
         super(table,propertyName,runtimeContext);
+    }
+    public UpdateColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext){
+        super(table,columnMetadata,runtimeContext);
     }
 
     @Override

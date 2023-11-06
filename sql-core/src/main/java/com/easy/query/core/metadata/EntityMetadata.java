@@ -113,6 +113,7 @@ public class EntityMetadata {
     private String shardingTablePropertyName;
     private final Set<String> shardingTablePropertyNames = new LinkedHashSet<>();
     private ShardingInitConfig shardingInitConfig;
+    private boolean hasValueObject;
 
     /**
      * 查询过滤器
@@ -191,15 +192,18 @@ public class EntityMetadata {
             } else if (tableEntity) {
                 ValueObject valueObject = field.getAnnotation(ValueObject.class);
                 if (valueObject != null) {
-                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager,true);
+                    hasValueObject = true;
+                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true);
+                    FastBean valueObjectFastBean = EasyBeanUtil.getFastBean(propertyDescriptor.getPropertyType());
                     columnOption.setValueObject(true);
+                    columnOption.setBeanConstructorCreator(valueObjectFastBean.getBeanConstructorCreator());
                     parseValueObject(columnOption, configuration, jdbcTypeHandlerManager);
                     acceptColumnOption(null, columnOption, columnAllIndex);
                     continue;
                 }
             }
 
-            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager,true);
+            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true);
             acceptColumnOption(null, columnOption, columnAllIndex);
         }
         //初始化拦截器
@@ -475,14 +479,16 @@ public class EntityMetadata {
             } else {
                 ValueObject valueObject = field.getAnnotation(ValueObject.class);
                 if (valueObject != null) {
-                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager,parentColumnOption.isAutoSelect());
+                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, parentColumnOption.isAutoSelect());
+                    FastBean valueObjectFastBean = EasyBeanUtil.getFastBean(propertyDescriptor.getPropertyType());
                     columnOption.setValueObject(true);
+                    columnOption.setBeanConstructorCreator(valueObjectFastBean.getBeanConstructorCreator());
                     parseValueObject(columnOption, configuration, jdbcTypeHandlerManager);
                     continue;
                 }
             }
 
-            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager,parentColumnOption.isAutoSelect());
+            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, parentColumnOption.isAutoSelect());
             parentColumnOption.getValueObjectColumnOptions().add(columnOption);
         }
     }
@@ -844,5 +850,9 @@ public class EntityMetadata {
 
     public DataReader getDataReader() {
         return dataReader;
+    }
+
+    public boolean isHasValueObject() {
+        return hasValueObject;
     }
 }

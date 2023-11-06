@@ -14,6 +14,7 @@ import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/5/20 22:41
@@ -55,6 +56,7 @@ public final class ColumnOption {
     private JdbcTypeHandler jdbcTypeHandler;
 
     private boolean valueObject;
+    private Supplier<Object> beanConstructorCreator;
     private final List<ColumnOption> valueObjectColumnOptions;
     private String fullPropertyName;
 
@@ -255,5 +257,13 @@ public final class ColumnOption {
 
     public void setFullPropertyName(String fullPropertyName) {
         this.fullPropertyName = fullPropertyName;
+    }
+
+    public Supplier<Object> getBeanConstructorCreator() {
+        return beanConstructorCreator;
+    }
+
+    public void setBeanConstructorCreator(Supplier<Object> beanConstructorCreator) {
+        this.beanConstructorCreator = beanConstructorCreator;
     }
 }

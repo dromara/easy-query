@@ -15,7 +15,6 @@ import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryColumnValueUpdateAtomicTrackException;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -47,6 +46,7 @@ import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMet
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -316,7 +316,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         for (String property : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
             //(&&!columnMetadata.isLarge())
-            if (columnMetadata.isPrimary() || columnMetadata.isVersion() || (columnMetadata.isUpdateIgnore() && !columnMetadata.isUpdateSetInTrackDiff())) {
+            if (columnMetadata.isPrimary() || columnMetadata.isVersion() || columnMetadata.isValueObject() || (columnMetadata.isUpdateIgnore() && !columnMetadata.isUpdateSetInTrackDiff())) {
                 continue;
             }
             if (entityUpdateSetProcessor.shouldRemove(property)) {
@@ -416,17 +416,19 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
     protected Object getPredicateValue(Object entity, TrackContext trackContext, String propertyName, EntityMetadata entityMetadata) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-        Property<Object, ?> beanGetter = columnMetadata.getGetterCaller();
+//        Property<Object, ?> beanGetter = columnMetadata.getGetterCaller();
         if (trackContext != null) {
             EntityState trackEntityState = trackContext.getTrackEntityState(entity);
             if (trackEntityState != null) {
                 Object originalEntity = trackEntityState.getOriginalValue();
                 if (originalEntity != null) {
-                    return beanGetter.apply(originalEntity);
+                    return EasyBeanUtil.getPropertyValue(originalEntity,entityMetadata,columnMetadata);
+//                    return beanGetter.apply(originalEntity);
                 }
             }
         }
-        return beanGetter.apply(entity);
+        return EasyBeanUtil.getPropertyValue(entity,entityMetadata,columnMetadata);
+//        return beanGetter.apply(entity);
     }
 
     @Override

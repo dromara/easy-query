@@ -13,6 +13,7 @@ import com.easy.query.core.expression.segment.impl.UpdateColumnSegmentImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -54,7 +55,15 @@ public class OnlySelectorImpl implements OnlySelector {
 
     @Override
     public OnlySelector column(TableAvailable table, String property) {
-        sqlSegmentBuilder.append(new UpdateColumnSegmentImpl(table, property, runtimeContext));
+
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        if (columnMetadata.isValueObject()) {
+            for (ColumnMetadata metadata : columnMetadata.getValueObjectColumnMetadataList()) {
+                sqlSegmentBuilder.append(new UpdateColumnSegmentImpl(table, metadata, runtimeContext));
+            }
+        } else {
+            sqlSegmentBuilder.append(new UpdateColumnSegmentImpl(table, property, runtimeContext));
+        }
         return this;
     }
 

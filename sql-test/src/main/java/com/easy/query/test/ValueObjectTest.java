@@ -1,10 +1,13 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.util.EasyLambdaUtil;
+import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.test.entity.Company;
+import com.easy.query.test.entity.CompanyAddress;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -266,6 +269,84 @@ public class ValueObjectTest extends BaseTest{
         String sql = easyQuerySQLStatementException.getSQL();
         Assert.assertEquals("SELECT `province`,`city`,`area` FROM `company_a` WHERE `area` = ? AND `province` = ?",sql);
     }
+    @Test
+    public void voTest11(){
+
+        Supplier<Exception> f = () -> {
+            try {
+                Company company = new Company();
+                company.setId("id");
+                company.setName("name");
+                CompanyAddress companyAddress = new CompanyAddress();
+                companyAddress.setProvince("province");
+                companyAddress.setCity("city");
+                companyAddress.setArea("area");
+                company.setAddress(companyAddress);
+                long l =  easyQuery.insertable(company).asTable("company_a").executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        String sql = easyQuerySQLStatementException.getSQL();
+        Assert.assertEquals("INSERT INTO `company_a` (`id`,`name`,`address`,`province`,`city`,`area`) VALUES (?,?,?,?,?,?)",sql);
+    }
+    @Test
+    public void voTest13(){
+
+        Supplier<Exception> f = () -> {
+            try {
+                Company company = new Company();
+                company.setId("id");
+                company.setName("name");
+                CompanyAddress companyAddress = new CompanyAddress();
+                companyAddress.setProvince("province");
+                companyAddress.setArea("area");
+                company.setAddress(companyAddress);
+                long l =  easyQuery.insertable(company).asTable("company_a").executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        String sql = easyQuerySQLStatementException.getSQL();
+        Assert.assertEquals("INSERT INTO `company_a` (`id`,`name`,`address`,`province`,`area`) VALUES (?,?,?,?,?)",sql);
+    }
+    @Test
+    public void voTest12(){
+
+        Supplier<Exception> f = () -> {
+            try {
+                Company company = new Company();
+                company.setId("id");
+                company.setName("name");
+                long l =  easyQuery.insertable(company).asTable("company_a").executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        String sql = easyQuerySQLStatementException.getSQL();
+        Assert.assertEquals("INSERT INTO `company_a` (`id`,`name`) VALUES (?,?)",sql);
+    }
 
     @Test
     public void voTest8(){
@@ -339,4 +420,134 @@ public class ValueObjectTest extends BaseTest{
 //            e.printStackTrace();
 //        }
 //    }
+
+    @Test
+    public void voTest15(){
+
+        Company company = new Company();
+        company.setId("id");
+        company.setName("name");
+        CompanyAddress companyAddress = new CompanyAddress();
+        companyAddress.setProvince("province");
+        companyAddress.setCity("city");
+        companyAddress.setArea("area");
+        company.setAddress(companyAddress);
+        Supplier<Exception> queryF=()->{
+            try {
+                long l = easyQuery.updatable(company).asTable("company_a").executeRows();
+                System.out.println(l);
+            } catch (Exception ex) {
+                return ex;
+            }
+            return null;
+        };
+
+        Exception ex = queryF.get();
+        Assert.assertNotNull(ex);
+        Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+        Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+        String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+        Assert.assertEquals("UPDATE `company_a` SET `name` = ?,`province` = ?,`city` = ?,`area` = ? WHERE `id` = ?", sql);
+    }
+    @Test
+    public void voTest16(){
+
+        Company company = new Company();
+        company.setId("id");
+        company.setName("name");
+        CompanyAddress companyAddress = new CompanyAddress();
+        companyAddress.setProvince("province");
+        companyAddress.setArea("area");
+        company.setAddress(companyAddress);
+        Supplier<Exception> queryF=()->{
+            try {
+                long l = easyQuery.updatable(company).asTable("company_a").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
+                System.out.println(l);
+            } catch (Exception ex) {
+                return ex;
+            }
+            return null;
+        };
+
+        Exception ex = queryF.get();
+        Assert.assertNotNull(ex);
+        Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+        Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+        String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+        Assert.assertEquals("UPDATE `company_a` SET `name` = ?,`province` = ?,`area` = ? WHERE `id` = ?", sql);
+    }
+    @Test
+    public void voTest17(){
+
+        Company company = new Company();
+        company.setId("id");
+        company.setName("name");
+        CompanyAddress companyAddress = new CompanyAddress();
+        companyAddress.setProvince("province");
+        companyAddress.setArea("area");
+        company.setAddress(companyAddress);
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        Supplier<Exception> queryF=()->{
+            try {
+                trackManager.begin();
+                easyQuery.addTracking(company);
+
+                company.getAddress().setCity("city1");
+
+                long l = easyQuery.updatable(company).asTable("company_a").executeRows();
+                System.out.println(l);
+            } catch (Exception ex) {
+                return ex;
+            }finally {
+                trackManager.release();
+            }
+            return null;
+        };
+
+        Exception ex = queryF.get();
+        Assert.assertNotNull(ex);
+        Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+        Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+        String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+        Assert.assertEquals("UPDATE `company_a` SET `city` = ? WHERE `id` = ?", sql);
+    }
+    @Test
+    public void voTest18(){
+
+        Company company = new Company();
+        company.setId("id");
+        company.setName("name");
+        CompanyAddress companyAddress = new CompanyAddress();
+        companyAddress.setProvince("province");
+        companyAddress.setArea("area");
+        company.setAddress(companyAddress);
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        Supplier<Exception> queryF=()->{
+            try {
+                trackManager.begin();
+                easyQuery.addTracking(company);
+
+                company.getAddress().setCity("city1");
+
+                long l = easyQuery.updatable(company).asTable("company_a").whereColumns(o->o.columnKeys().column(Company::getAddress)).executeRows();
+                System.out.println(l);
+            } catch (Exception ex) {
+                return ex;
+            }finally {
+                trackManager.release();
+            }
+            return null;
+        };
+
+        Exception ex = queryF.get();
+        Assert.assertNotNull(ex);
+        Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
+        Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
+        String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
+        Assert.assertEquals("UPDATE `company_a` SET `city` = ? WHERE `id` = ? AND `province` = ? AND `city` IS NULL AND `area` = ?", sql);
+    }
 }
