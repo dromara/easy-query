@@ -3,11 +3,14 @@ package com.easy.query.test.kt
 import com.easy.query.core.enums.SQLRangeEnum
 import com.easy.query.core.exception.EasyQuerySQLCommandException
 import com.easy.query.core.exception.EasyQuerySQLStatementException
+import com.easy.query.core.expression.lambda.Property
 import org.junit.Assert
 import org.junit.Test
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.Exception
+import kotlin.reflect.KProperty1
+import kotlin.reflect.KProperty2
 
 class KtTest : BaseKtTest() {
 
@@ -445,6 +448,7 @@ class KtTest : BaseKtTest() {
 
     @Test
     fun query13() {
+
         var toSQL = easyKtQuery!!.queryable(BlogKtEntity::class.java)
             .leftJoin(BlogKtEntity::class.java) { t, t1 ->
                 t.eq(t1, BlogKtEntity::id, BlogKtEntity::title);
@@ -452,8 +456,8 @@ class KtTest : BaseKtTest() {
             .where { t, t1 ->
                 t.eq(BlogKtEntity::score, 1)
             }.select(BlogKtEntity::class.java) { t, t1 ->
-                    t.column(BlogKtEntity::id);
-                    t1.column(BlogKtEntity::title);
+                t.column(BlogKtEntity::id);
+                t1.column(BlogKtEntity::title);
             }.toSQL()
         Assert.assertEquals(
             "SELECT t.`id`,t1.`title` FROM `t_blog` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`title` WHERE t.`deleted` = ? AND t.`score` = ?",

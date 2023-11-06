@@ -66,8 +66,14 @@ public abstract class AbstractSelector<TChain> {
     }
 
     public TChain column(TableAvailable table, String property) {
-        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, runtimeContext, null);
-        sqlBuilderSegment.append(columnSegment);
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        if (columnMetadata.isValueObject()) {
+            for (ColumnMetadata metadata : columnMetadata.getValueObjectColumnMetadataList()) {
+                appendColumnMetadata(table, metadata, true, false);
+            }
+        } else {
+            appendColumnMetadata(table, columnMetadata, true, false);
+        }
         return castChain();
     }
 
@@ -82,7 +88,12 @@ public abstract class AbstractSelector<TChain> {
         sqlBuilderSegment.getSQLSegments().removeIf(sqlSegment -> {
             if (sqlSegment instanceof SQLEntitySegment) {
                 SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
-                return Objects.equals(sqlEntitySegment.getTable(), table) && Objects.equals(sqlEntitySegment.getPropertyName(), property);
+                return Objects.equals(sqlEntitySegment.getTable(), table) &&
+                        (
+                                Objects.equals(sqlEntitySegment.getPropertyName(), property)
+                                        ||
+                                        (sqlEntitySegment.getPropertyName().contains(".") && sqlEntitySegment.getPropertyName().startsWith(property + "."))
+                        );
             }
             return false;
         });
@@ -104,17 +115,40 @@ public abstract class AbstractSelector<TChain> {
             EntityMetadata entityMetadata = table.getEntityMetadata();
             Collection<ColumnMetadata> columns = entityMetadata.getColumns();
             for (ColumnMetadata columnMetadata : columns) {
-                if (!columnMetadata.isAutoSelect()) {
-                    continue;
-                }
-                if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
-                    continue;
-                }
-                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, runtimeContext, null);
-                sqlBuilderSegment.append(columnSegment);
+                appendColumnMetadata(table, columnMetadata, queryLargeColumn, true);
+//                if (!columnMetadata.isAutoSelect()) {
+//                    continue;
+//                }
+//                if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
+//                    continue;
+//                }
+//                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, runtimeContext, null);
+//                sqlBuilderSegment.append(columnSegment);
             }
         }
         return castChain();
+    }
+
+    /**
+     *
+     * @param table
+     * @param columnMetadata
+     * @param queryLargeColumn
+     * @param checkAutoSelect 是否需要检查
+     */
+    protected void appendColumnMetadata(TableAvailable table, ColumnMetadata columnMetadata, boolean queryLargeColumn, boolean checkAutoSelect) {
+
+        if (columnMetadata.isValueObject()) {
+            return;
+        }
+        if (checkAutoSelect && !columnMetadata.isAutoSelect()) {
+            return;
+        }
+        if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
+            return;
+        }
+        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, runtimeContext, null);
+        sqlBuilderSegment.append(columnSegment);
     }
 
     private EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {

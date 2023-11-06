@@ -127,14 +127,13 @@ public class ColumnMetadata {
     private final ComplexPropType complexPropType;
     private final boolean valueObject;
     private final List<ColumnMetadata> valueObjectColumnMetadataList;
-    private final String fullPropertyName;
 
     public ColumnMetadata(ColumnOption columnOption) {
         this.entityMetadata = columnOption.getEntityMetadata();
         this.name = columnOption.getName();
         this.property = columnOption.getProperty();
         this.propertyType = columnOption.getProperty().getPropertyType();
-        this.propertyName = columnOption.getProperty().getName();
+        this.propertyName = columnOption.getFullPropertyName();
         this.primary = columnOption.isPrimary();
         this.generatedKey = columnOption.isGeneratedKey();
         this.version = columnOption.isVersion();
@@ -149,7 +148,6 @@ public class ColumnMetadata {
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
         this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
         this.generatedSQLColumnGenerator = columnOption.getGeneratedKeySQLColumnGenerator();
-        this.fullPropertyName = columnOption.getFullPropertyName();
         this.primitive = propertyType.isPrimitive();
 
         if (columnOption.getGetterCaller() == null) {
@@ -289,9 +287,5 @@ public class ColumnMetadata {
 
     public List<ColumnMetadata> getValueObjectColumnMetadataList() {
         return valueObjectColumnMetadataList;
-    }
-
-    public String getFullPropertyName() {
-        return fullPropertyName;
     }
 }

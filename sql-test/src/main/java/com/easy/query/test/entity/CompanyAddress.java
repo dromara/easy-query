@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 public class CompanyAddress {
-    private String province;//company.province
+    private String province;
     private String city;
     private String area;
 }
