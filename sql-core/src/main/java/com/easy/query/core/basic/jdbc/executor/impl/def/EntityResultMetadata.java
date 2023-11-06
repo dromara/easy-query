@@ -29,6 +29,11 @@ public class EntityResultMetadata<TR> implements ResultMetadata<TR> {
     }
 
     @Override
+    public EntityMetadata getEntityMetadata() {
+        return entityMetadata;
+    }
+
+    @Override
     public Class<TR> getResultClass() {
         return EasyObjectUtil.typeCastNullable(entityMetadata.getEntityClass());
     }
@@ -49,19 +54,19 @@ public class EntityResultMetadata<TR> implements ResultMetadata<TR> {
     }
 
     @Override
-    public ResultColumnMetadata getResultColumnOrNullByColumnName(int index,String columnName) {
+    public ResultColumnMetadata getResultColumnOrNullByColumnName(int index, String columnName) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnMetadataOrNull(columnName);
         if (columnMetadata != null) {
-            return new EntityResultColumnMetadata(index,columnMetadata);
+            return new EntityResultColumnMetadata(index, entityMetadata, columnMetadata);
         }
         return null;
     }
 
     @Override
-    public ResultColumnMetadata getResultColumnOrNullByPropertyName(int index,String propertyName) {
+    public ResultColumnMetadata getResultColumnOrNullByPropertyName(int index, String propertyName) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(propertyName);
         if (columnMetadata != null) {
-            return new EntityResultColumnMetadata(index,columnMetadata);
+            return new EntityResultColumnMetadata(index, entityMetadata, columnMetadata);
         }
         return null;
     }

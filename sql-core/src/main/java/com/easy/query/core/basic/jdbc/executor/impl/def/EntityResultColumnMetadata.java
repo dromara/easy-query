@@ -6,7 +6,10 @@ import com.easy.query.core.basic.jdbc.executor.internal.props.ColumnJdbcProperty
 import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyBeanUtil;
 
 /**
  * create time 2023/6/30 22:03
@@ -15,10 +18,12 @@ import com.easy.query.core.metadata.ColumnMetadata;
  * @author xuejiaming
  */
 public class EntityResultColumnMetadata implements ResultColumnMetadata {
+    private final EntityMetadata entityMetadata;
     private final ColumnMetadata columnMetadata;
     private final JdbcProperty dataReader;
 
-    public EntityResultColumnMetadata(int index,ColumnMetadata columnMetadata){
+    public EntityResultColumnMetadata(int index, EntityMetadata entityMetadata, ColumnMetadata columnMetadata){
+        this.entityMetadata = entityMetadata;
 
         this.columnMetadata = columnMetadata;
         this.dataReader=new ColumnJdbcProperty(index,columnMetadata);
@@ -66,11 +71,16 @@ public class EntityResultColumnMetadata implements ResultColumnMetadata {
 
     @Override
     public void setValue(Object bean, Object value) {
-        columnMetadata.getSetterCaller().call(bean,value);
+        if(entityMetadata.isHasValueObject()&&columnMetadata.getPropertyName().contains(".")){
+            EasyBeanUtil.setPropertyValueByQuery(bean,entityMetadata,columnMetadata,value);
+        }else{
+            EasyBeanUtil.setPropertyValue(bean,columnMetadata,value);
+        }
     }
+
 
     @Override
     public Object getValue(Object bean) {
-        return columnMetadata.getGetterCaller().apply(bean);
+        return EasyBeanUtil.getPropertyValue(bean,entityMetadata,columnMetadata);
     }
 }

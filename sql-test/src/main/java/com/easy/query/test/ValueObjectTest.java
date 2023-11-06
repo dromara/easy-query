@@ -295,7 +295,7 @@ public class ValueObjectTest extends BaseTest{
         Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
         EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
         String sql = easyQuerySQLStatementException.getSQL();
-        Assert.assertEquals("INSERT INTO `company_a` (`id`,`name`,`address`,`province`,`city`,`area`) VALUES (?,?,?,?,?,?)",sql);
+        Assert.assertEquals("INSERT INTO `company_a` (`id`,`name`,`province`,`city`,`area`) VALUES (?,?,?,?,?)",sql);
     }
     @Test
     public void voTest13(){
@@ -322,7 +322,7 @@ public class ValueObjectTest extends BaseTest{
         Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
         EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
         String sql = easyQuerySQLStatementException.getSQL();
-        Assert.assertEquals("INSERT INTO `company_a` (`id`,`name`,`address`,`province`,`area`) VALUES (?,?,?,?,?)",sql);
+        Assert.assertEquals("INSERT INTO `company_a` (`id`,`name`,`province`,`area`) VALUES (?,?,?,?)",sql);
     }
     @Test
     public void voTest12(){
@@ -549,5 +549,46 @@ public class ValueObjectTest extends BaseTest{
         Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
         String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
         Assert.assertEquals("UPDATE `company_a` SET `city` = ? WHERE `id` = ? AND `province` = ? AND `city` IS NULL AND `area` = ?", sql);
+    }
+
+    @Test
+    public void voTest19(){
+
+        easyQuery.deletable(Company.class)
+                .whereById("123").executeRows();
+        Company company = new Company();
+        company.setId("123");
+        company.setName("name");
+        CompanyAddress companyAddress = new CompanyAddress();
+        companyAddress.setProvince("province");
+        companyAddress.setArea("area");
+        company.setAddress(companyAddress);
+        long l = easyQuery.insertable(company).executeRows();
+        Assert.assertEquals(1,l);
+        Company company1 = easyQuery.queryable(Company.class)
+                .firstOrNull();
+        Assert.assertNotNull(company1);
+        Assert.assertNull(company1.getAddress().getCity());
+        company1.getAddress().setCity("city123");
+        long l1 = easyQuery.updatable(company1).executeRows();
+        Assert.assertEquals(1,l1);
+
+        Company company2 = easyQuery.queryable(Company.class)
+                .firstOrNull();
+        Assert.assertNotNull(company2);
+        Assert.assertNotNull(company2.getAddress().getCity());
+        Assert.assertEquals("city123",company2.getAddress().getCity());
+        long l2 = easyQuery.updatable(Company.class)
+                .set(o -> o.getAddress().getCity(), "city456")
+                .whereById("123")
+                .executeRows();
+        Assert.assertEquals(1,l2);
+
+
+        Company company3 = easyQuery.queryable(Company.class)
+                .firstOrNull();
+        Assert.assertNotNull(company3);
+        Assert.assertNotNull(company3.getAddress().getCity());
+        Assert.assertEquals("city456",company3.getAddress().getCity());
     }
 }

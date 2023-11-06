@@ -53,11 +53,14 @@ public class EasyBeanUtil {
             if (valueObject == null) {
                 return null;
             }
-            Property<Object, ?> propertyGetter = columnMetadata.getGetterCaller();
-            return propertyGetter.apply(valueObject);
+            return getPropertyValue(valueObject,columnMetadata);
         }
-        Property<Object, ?> propertyGetter = columnMetadata.getGetterCaller();
 
+        return getPropertyValue(entity,columnMetadata);
+    }
+
+    public static Object getPropertyValue(Object entity,ColumnMetadata columnMetadata){
+        Property<Object, ?> propertyGetter = columnMetadata.getGetterCaller();
         return propertyGetter.apply(entity);
     }
 
@@ -67,9 +70,25 @@ public class EasyBeanUtil {
     }
 
     public static void setPropertyValue(Object entity, EntityMetadata entityMetadata, ColumnMetadata columnMetadata, Object value) {
-        String propertyName = columnMetadata.getPropertyName();
-        if (entityMetadata.isHasValueObject() && propertyName.contains(".")) {
+
+        if (entityMetadata.isHasValueObject() && columnMetadata.getPropertyName().contains(".")) {
+            String propertyName = columnMetadata.getPropertyName();
             Object valueObject = getPropertyValue(entity, entityMetadata, propertyName.substring(0, propertyName.indexOf(".")));
+            setPropertyValue(valueObject, entityMetadata.getColumnNotNull(propertyName), value);
+            return;
+        }
+        setPropertyValue(entity, columnMetadata, value);
+    }
+    public static void setPropertyValueByQuery(Object entity, EntityMetadata entityMetadata, ColumnMetadata columnMetadata, Object value) {
+
+        if (entityMetadata.isHasValueObject() && columnMetadata.getPropertyName().contains(".")) {
+            String propertyName = columnMetadata.getPropertyName();
+            ColumnMetadata valueObjectColumnMetadata = entityMetadata.getColumnNotNull(propertyName.substring(0, propertyName.indexOf(".")));
+            Object valueObject = getPropertyValue(entity, entityMetadata, valueObjectColumnMetadata);
+            if(valueObject==null){//只判断一级
+                valueObject = valueObjectColumnMetadata.getBeanConstructorCreatorOrNull().get();
+                setPropertyValue(entity, valueObjectColumnMetadata, valueObject);
+            }
             setPropertyValue(valueObject, entityMetadata.getColumnNotNull(propertyName), value);
             return;
         }

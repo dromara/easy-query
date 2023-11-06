@@ -66,8 +66,8 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public InsertUpdateSetColumnSQLSegment createInsertColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext) {
-        return new InsertColumnSegmentImpl(table, propertyName, runtimeContext);
+    public InsertUpdateSetColumnSQLSegment createInsertColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext) {
+        return new InsertColumnSegmentImpl(table, columnMetadata, runtimeContext);
     }
 
     @Override

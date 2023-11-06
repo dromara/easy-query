@@ -7,6 +7,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -17,8 +18,8 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  */
 public class InsertColumnSegmentImpl extends AbstractInsertUpdateSetColumnSQLSegmentImpl implements InsertUpdateSetColumnSQLSegment {
 
-    public InsertColumnSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
-        super(table,propertyName,runtimeContext);
+    public InsertColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext){
+        super(table,columnMetadata,runtimeContext);
     }
     @Override
     public String getColumnNameWithOwner(ToSQLContext toSQLContext) {
@@ -27,7 +28,7 @@ public class InsertColumnSegmentImpl extends AbstractInsertUpdateSetColumnSQLSeg
 
     @Override
     public InsertUpdateSetColumnSQLSegment cloneSQLColumnSegment() {
-        return new InsertColumnSegmentImpl(table,propertyName,runtimeContext);
+        return new InsertColumnSegmentImpl(table,columnMetadata,runtimeContext);
     }
 
     @Override

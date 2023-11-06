@@ -1,5 +1,14 @@
 
 CREATE DATABASE IF NOT EXISTS easy-query-test CHARACTER SET 'utf8mb4';
+
+create table t_company
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    name varchar(32)  null comment '名称',
+    province varchar(32)  null comment '省',
+    city varchar(32)  null comment '市',
+    area varchar(32)  null comment '区'
+)comment '公司表';
 create table t_blog
 (
     id varchar(32) not null comment '主键ID'primary key,

@@ -268,7 +268,7 @@ public class EntityMetadata {
                 throw new EasyQueryInvalidOperationException("columnName:" + columnOption.getName() + ", repeat.");
             }
             if (columnOption.isTableEntity() && columnOption.isAutoSelect()) {
-                dataReader = new BeanDataReader(dataReader, new PropertyDataReader(new EntityResultColumnMetadata(columnAllIndex.incrementAndGet(), columnMetadata)));
+                dataReader = new BeanDataReader(dataReader, new PropertyDataReader(new EntityResultColumnMetadata(columnAllIndex.incrementAndGet(), this,columnMetadata)));
             }
         }
         return columnMetadata;
