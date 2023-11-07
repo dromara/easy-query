@@ -57,21 +57,27 @@ public class OnlySelectorImpl implements OnlySelector {
     public OnlySelector column(TableAvailable table, String property) {
 
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        if (columnMetadata.isValueObject()) {
-            for (ColumnMetadata metadata : columnMetadata.getValueObjectColumnMetadataList()) {
-                sqlSegmentBuilder.append(new UpdateColumnSegmentImpl(table, metadata, runtimeContext));
-            }
-        } else {
-            sqlSegmentBuilder.append(new UpdateColumnSegmentImpl(table, property, runtimeContext));
-        }
+        appendColumnSet(table,columnMetadata,false);
         return this;
+    }
+    protected void appendColumnSet(TableAvailable table, ColumnMetadata columnMetadata, boolean ignoreValueObject) {
+
+        if (columnMetadata.isValueObject()) {
+            if (!ignoreValueObject) {
+                for (ColumnMetadata metadata : columnMetadata.getValueObjectColumnMetadataList()) {
+                    appendColumnSet(table, metadata, false);
+                }
+            }
+            return;
+        }
+        sqlSegmentBuilder.append(new UpdateColumnSegmentImpl(table, columnMetadata, runtimeContext));
     }
 
     @Override
     public OnlySelector columnAll(TableAvailable table) {
-        Collection<String> properties = table.getEntityMetadata().getProperties();
-        for (String property : properties) {
-            column(table,property);
+        Collection<ColumnMetadata> columns = table.getEntityMetadata().getColumns();
+        for (ColumnMetadata columnMetadata : columns) {
+            appendColumnSet(table,columnMetadata,true);
         }
         return this;
     }

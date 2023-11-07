@@ -7,6 +7,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasySQLUtil;
 
 /**
@@ -22,12 +23,12 @@ public abstract class AbstractInsertUpdateSetColumnSQLSegmentImpl {
     protected final ColumnMetadata columnMetadata;
 
     public AbstractInsertUpdateSetColumnSQLSegmentImpl(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext){
-        this.table = table;
-        this.propertyName = propertyName;
-        this.runtimeContext = runtimeContext;
-        this.columnMetadata=table.getEntityMetadata().getColumnNotNull(propertyName);
+        this(table,table.getEntityMetadata().getColumnNotNull(propertyName),runtimeContext);
     }
     public AbstractInsertUpdateSetColumnSQLSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext){
+        if(columnMetadata.isValueObject()){
+            throw new IllegalArgumentException("entity:["+ EasyClassUtil.getSimpleName(table.getEntityClass())+"."+columnMetadata.getPropertyName()+"] is value object");
+        }
         this.table = table;
         this.propertyName = columnMetadata.getPropertyName();
         this.runtimeContext = runtimeContext;

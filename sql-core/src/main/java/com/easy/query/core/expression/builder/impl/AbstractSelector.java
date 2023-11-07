@@ -67,13 +67,7 @@ public abstract class AbstractSelector<TChain> {
 
     public TChain column(TableAvailable table, String property) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        if (columnMetadata.isValueObject()) {
-            for (ColumnMetadata metadata : columnMetadata.getValueObjectColumnMetadataList()) {
-                appendColumnMetadata(table, metadata, true, false);
-            }
-        } else {
-            appendColumnMetadata(table, columnMetadata, true, false);
-        }
+        appendColumnMetadata(table, columnMetadata, true, false,false);
         return castChain();
     }
 
@@ -115,7 +109,7 @@ public abstract class AbstractSelector<TChain> {
             EntityMetadata entityMetadata = table.getEntityMetadata();
             Collection<ColumnMetadata> columns = entityMetadata.getColumns();
             for (ColumnMetadata columnMetadata : columns) {
-                appendColumnMetadata(table, columnMetadata, queryLargeColumn, true);
+                appendColumnMetadata(table, columnMetadata, queryLargeColumn, true, true);
 //                if (!columnMetadata.isAutoSelect()) {
 //                    continue;
 //                }
@@ -130,15 +124,20 @@ public abstract class AbstractSelector<TChain> {
     }
 
     /**
-     *
      * @param table
      * @param columnMetadata
      * @param queryLargeColumn
-     * @param checkAutoSelect 是否需要检查
+     * @param checkAutoSelect   是否需要检查
+     * @param ignoreValueObject 是否忽略valueObject
      */
-    protected void appendColumnMetadata(TableAvailable table, ColumnMetadata columnMetadata, boolean queryLargeColumn, boolean checkAutoSelect) {
+    protected void appendColumnMetadata(TableAvailable table, ColumnMetadata columnMetadata, boolean queryLargeColumn, boolean checkAutoSelect, boolean ignoreValueObject) {
 
         if (columnMetadata.isValueObject()) {
+            if (!ignoreValueObject) {
+                for (ColumnMetadata metadata : columnMetadata.getValueObjectColumnMetadataList()) {
+                    appendColumnMetadata(table, metadata, queryLargeColumn, checkAutoSelect, false);
+                }
+            }
             return;
         }
         if (checkAutoSelect && !columnMetadata.isAutoSelect()) {

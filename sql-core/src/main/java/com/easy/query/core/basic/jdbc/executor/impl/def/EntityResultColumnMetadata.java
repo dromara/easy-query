@@ -6,7 +6,6 @@ import com.easy.query.core.basic.jdbc.executor.internal.props.ColumnJdbcProperty
 import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyBeanUtil;
@@ -71,10 +70,10 @@ public class EntityResultColumnMetadata implements ResultColumnMetadata {
 
     @Override
     public void setValue(Object bean, Object value) {
-        if(entityMetadata.isHasValueObject()&&columnMetadata.getPropertyName().contains(".")){
-            EasyBeanUtil.setPropertyValueByQuery(bean,entityMetadata,columnMetadata,value);
-        }else{
-            EasyBeanUtil.setPropertyValue(bean,columnMetadata,value);
+        if (entityMetadata.isHasValueObject() && columnMetadata.getPropertyName().contains(".")) {
+            EasyBeanUtil.setPropertyValue(bean, entityMetadata, columnMetadata, value, true);
+        } else {
+            EasyBeanUtil.setCurrentPropertyValue(bean, columnMetadata, value);
         }
     }
 

@@ -483,6 +483,7 @@ public class EntityMetadata {
                     FastBean valueObjectFastBean = EasyBeanUtil.getFastBean(propertyDescriptor.getPropertyType());
                     columnOption.setValueObject(true);
                     columnOption.setBeanConstructorCreator(valueObjectFastBean.getBeanConstructorCreator());
+                    parentColumnOption.getValueObjectColumnOptions().add(columnOption);
                     parseValueObject(columnOption, configuration, jdbcTypeHandlerManager);
                     continue;
                 }

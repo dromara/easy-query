@@ -8,6 +8,7 @@ import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.test.entity.Company;
 import com.easy.query.test.entity.CompanyAddress;
+import com.easy.query.test.entity.CompanyCity;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -279,7 +280,9 @@ public class ValueObjectTest extends BaseTest{
                 company.setName("name");
                 CompanyAddress companyAddress = new CompanyAddress();
                 companyAddress.setProvince("province");
-                companyAddress.setCity("city");
+                CompanyCity companyCity = new CompanyCity();
+                companyCity.setCity("city");
+                companyAddress.setCity(companyCity);
                 companyAddress.setArea("area");
                 company.setAddress(companyAddress);
                 long l =  easyQuery.insertable(company).asTable("company_a").executeRows();
@@ -429,7 +432,10 @@ public class ValueObjectTest extends BaseTest{
         company.setName("name");
         CompanyAddress companyAddress = new CompanyAddress();
         companyAddress.setProvince("province");
-        companyAddress.setCity("city");
+
+        CompanyCity companyCity = new CompanyCity();
+        companyCity.setCity("city");
+        companyAddress.setCity(companyCity);
         companyAddress.setArea("area");
         company.setAddress(companyAddress);
         Supplier<Exception> queryF=()->{
@@ -493,8 +499,9 @@ public class ValueObjectTest extends BaseTest{
             try {
                 trackManager.begin();
                 easyQuery.addTracking(company);
-
-                company.getAddress().setCity("city1");
+                CompanyCity companyCity = new CompanyCity();
+                companyCity.setCity("city1");
+                company.getAddress().setCity(companyCity);
 
                 long l = easyQuery.updatable(company).asTable("company_a").executeRows();
                 System.out.println(l);
@@ -530,7 +537,9 @@ public class ValueObjectTest extends BaseTest{
                 trackManager.begin();
                 easyQuery.addTracking(company);
 
-                company.getAddress().setCity("city1");
+                CompanyCity companyCity = new CompanyCity();
+                companyCity.setCity("city1");
+                company.getAddress().setCity(companyCity);
 
                 long l = easyQuery.updatable(company).asTable("company_a").whereColumns(o->o.columnKeys().column(Company::getAddress)).executeRows();
                 System.out.println(l);
@@ -568,8 +577,11 @@ public class ValueObjectTest extends BaseTest{
         Company company1 = easyQuery.queryable(Company.class)
                 .firstOrNull();
         Assert.assertNotNull(company1);
-        Assert.assertNull(company1.getAddress().getCity());
-        company1.getAddress().setCity("city123");
+        Assert.assertNotNull(company1.getAddress().getCity());
+        Assert.assertNull(company1.getAddress().getCity().getCity());
+        CompanyCity companyCity1 = new CompanyCity();
+        companyCity1.setCity("city123");
+        company1.getAddress().setCity(companyCity1);
         long l1 = easyQuery.updatable(company1).executeRows();
         Assert.assertEquals(1,l1);
 
@@ -577,9 +589,10 @@ public class ValueObjectTest extends BaseTest{
                 .firstOrNull();
         Assert.assertNotNull(company2);
         Assert.assertNotNull(company2.getAddress().getCity());
-        Assert.assertEquals("city123",company2.getAddress().getCity());
+        Assert.assertNotNull(company2.getAddress().getCity().getCity());
+        Assert.assertEquals("city123",company2.getAddress().getCity().getCity());
         long l2 = easyQuery.updatable(Company.class)
-                .set(o -> o.getAddress().getCity(), "city456")
+                .set(o -> o.getAddress().getCity().getCity(), "city456")
                 .whereById("123")
                 .executeRows();
         Assert.assertEquals(1,l2);
@@ -589,6 +602,7 @@ public class ValueObjectTest extends BaseTest{
                 .firstOrNull();
         Assert.assertNotNull(company3);
         Assert.assertNotNull(company3.getAddress().getCity());
-        Assert.assertEquals("city456",company3.getAddress().getCity());
+        Assert.assertNotNull(company3.getAddress().getCity().getCity());
+        Assert.assertEquals("city456",company3.getAddress().getCity().getCity());
     }
 }

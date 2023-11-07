@@ -155,7 +155,7 @@ public class DefaultTrackContext implements TrackContext {
 //            Object value = beanGetter.apply(entity);
             if (EasyClassUtil.isBasicType(propertyType) || EasyClassUtil.isEnumType(propertyType)) {
                 Object value = EasyBeanUtil.getPropertyValue(entity, entityMetadata, columnMetadata);
-                EasyBeanUtil.setPropertyValue(original,entityMetadata,columnMetadata,value);
+                EasyBeanUtil.setPropertyValue(original,entityMetadata,columnMetadata,value,false);
 //                beanSetter.call(original, value);
             } else {
                 Object value = columnMetadata.isValueObject()?columnMetadata.getBeanConstructorCreatorOrNull().get(): EasyBeanUtil.getPropertyValue(entity, entityMetadata, columnMetadata);
@@ -163,7 +163,7 @@ public class DefaultTrackContext implements TrackContext {
                 Object serializeValue = valueConverter.serialize(EasyObjectUtil.typeCastNullable(value),columnMetadata);
                 Object deserialize = valueConverter.deserialize(EasyObjectUtil.typeCastNullable(serializeValue),columnMetadata);
 
-                EasyBeanUtil.setPropertyValue(original,entityMetadata,columnMetadata,deserialize);
+                EasyBeanUtil.setPropertyValue(original,entityMetadata,columnMetadata,deserialize,false);
 //                PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
 //                beanSetter.call(original, deserialize);
             }

@@ -1,5 +1,6 @@
 package com.easy.query.test.entity;
 
+import com.easy.query.core.annotation.ValueObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,6 +14,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class CompanyAddress {
     private String province;
-    private String city;
+    @ValueObject
+    private CompanyCity city;
     private String area;
 }
