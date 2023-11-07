@@ -5,7 +5,7 @@
     <parent>
         <artifactId>easy-query-all</artifactId>
         <groupId>com.easy-query</groupId>
-        <version>1.7.0</version>
+        <version>1.7.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-api4kt</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.1</version>
             <scope>compile</scope>
         </dependency>
         <!-- mysql驱动 -->
@@ -151,7 +151,7 @@
             <version>1.8.0</version>
             <scope>test</scope>
         </dependency>
-
+        <!--选择自己合适的版本即可-->
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
@@ -163,7 +163,6 @@
             <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
 
 
         <dependency>

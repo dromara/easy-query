@@ -56,7 +56,7 @@ public class MyLambdaParser implements LambdaParser {
         String className = serializedLambda.getImplClass();
         String classFilePath = classFilePath(className);
         StringBuilder methodBody = new StringBuilder();
-        ExpressionClassVisitor expressionClassVisitor = new ExpressionClassVisitor(methodBody, classLoader, serializedDescriptor);
+        ExpressionClassVisitor expressionClassVisitor = new ExpressionClassVisitor(methodBody, serializedDescriptor);
         try (InputStream classStream = getResourceAsStream(classLoader, classFilePath)) {
             ClassReader reader = new ClassReader(classStream);
             reader.accept(expressionClassVisitor, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);

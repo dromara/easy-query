@@ -15,8 +15,14 @@ import java.util.Objects;
 public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ProxyEntity<TProxy,TEntity> {
 
     protected TableAvailable table;
-    public <TProperty> SQLColumn<TProxy,TProperty> get(String property){
+    protected <TProperty> SQLColumn<TProxy,TProperty> get(String property){
         return new SQLColumnImpl<>(table,property);
+    }
+    protected <TPropertyProxy extends SQLColumn<TProxy,TProperty>,TProperty> TPropertyProxy getValueObject(TPropertyProxy propertyProxy){
+        return propertyProxy;
+    }
+    protected String getValueProperty(String property){
+        return property;
     }
 
     @Override
