@@ -1,9 +1,9 @@
-package com.easy.query.api4j.util;
+package com.easy.query.test.parser;
 
 import com.easy.query.api4j.lambda.SerializedDescriptor;
-import jdk.internal.org.objectweb.asm.ClassVisitor;
-import jdk.internal.org.objectweb.asm.MethodVisitor;
-import jdk.internal.org.objectweb.asm.Opcodes;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.springframework.asm.Opcodes;
 
 /**
  * create time 2023/11/6 12:20
@@ -19,7 +19,7 @@ public class ExpressionClassVisitor extends ClassVisitor {
     private Class<?> _type;
 
     public ExpressionClassVisitor(StringBuilder methodBody,ClassLoader loader, SerializedDescriptor serializedDescriptor) {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM9);
         this._methodBody = methodBody;
         this._loader = loader;
         this._method = serializedDescriptor.getImplMethodName();

@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
 import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
@@ -38,6 +39,7 @@ import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.interceptor.Topic1Interceptor;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
+import com.easy.query.test.parser.MyLambdaParser;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
 import com.easy.query.test.sharding.DataSourceShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingDataSourceRoute;
@@ -79,6 +81,7 @@ public abstract class BaseTest {
 
 
     public static void init() {
+        EasyLambdaUtil.replaceParser(new MyLambdaParser());
         initDatasource();
         initEasyQuery();
         initData();

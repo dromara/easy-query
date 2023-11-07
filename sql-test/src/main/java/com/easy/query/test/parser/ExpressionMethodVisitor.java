@@ -1,8 +1,8 @@
-package com.easy.query.api4j.util;
+package com.easy.query.test.parser;
 
 import com.easy.query.core.util.EasyStringUtil;
-import jdk.internal.org.objectweb.asm.MethodVisitor;
-import jdk.internal.org.objectweb.asm.Opcodes;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 /**
  * create time 2023/11/6 11:26
@@ -14,7 +14,7 @@ public class ExpressionMethodVisitor extends MethodVisitor {
     private final StringBuilder _methodBody;
 
     public ExpressionMethodVisitor(StringBuilder methodBody) {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM9);
         this._methodBody=methodBody;
     }
 
