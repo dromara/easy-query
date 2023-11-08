@@ -5,11 +5,15 @@ import com.easy.query.api.proxy.select.ProxyQueryable2;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.core.enums.AggregatePredicateCompare;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.company.ValueCompany;
+import com.easy.query.test.entity.company.ValueCompanyDTO;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import org.junit.Assert;
@@ -18,6 +22,7 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/10/31 07:31
@@ -524,4 +529,51 @@ public class QueryTest8 extends BaseTest{
             o.columnAs(o.t().url(), o.tr().url()).columnAs(o.t1().title(),o.tr().content());
         }).toList();
     }
+
+    @Test
+     public void test3(){
+        ValueCompanyDTO companyDTO = easyQuery.queryable(ValueCompany.class)
+                 .select(ValueCompanyDTO.class,o->o.columnAll())
+                 .firstOrNull();
+        Assert.assertNotNull(companyDTO.getName());
+        Assert.assertNotNull(companyDTO.getLicense());
+        Assert.assertNotNull(companyDTO.getLicense().getLicenseNo());
+        Assert.assertNotNull(companyDTO.getLicense().getExtra());
+        Assert.assertNotNull(companyDTO.getLicense().getLicenseDeadline());
+        Assert.assertNotNull(companyDTO.getLicense().getExtra().getLicenseContent());
+        Assert.assertNotNull(companyDTO.getLicense().getExtra().getLicenseImage());
+        Assert.assertNotNull(companyDTO.getAddress());
+        Assert.assertNotNull(companyDTO.getAddress().getProvince());
+        Assert.assertNotNull(companyDTO.getAddress().getArea());
+
+        ValueCompanyDTO companyDTO1 = easyQuery.queryable(ValueCompany.class)
+                .select(ValueCompanyDTO.class, o -> o.columnAs(x -> x.getAddress().getProvince(), x -> x.getLicense().getExtra().getLicenseContent()))
+                .firstOrNull();
+        Assert.assertNotNull(companyDTO1);
+        Assert.assertEquals(companyDTO.getAddress().getProvince(),companyDTO1.getLicense().getExtra().getLicenseContent());
+    }
+    @Test
+     public void test4(){
+
+        Supplier<Exception> f = () -> {
+            try {
+                ValueCompanyDTO companyDTO = easyQuery.queryable(ValueCompany.class)
+                        .asTable("COMPANY_A")
+                        .select(ValueCompanyDTO.class,o->o.columnAll())
+//                 .select(BlogEntity.class, o -> o.column(BlogEntity::getId).columnCountAs(BlogEntity::getId, BlogEntity::getStar))
+                        .firstOrNull();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("SELECT t.`name`,t.`province`,t.`area`,t.`license_no`,t.`license_deadline`,t.`license_image`,t.`license_content` FROM `COMPANY_A` t LIMIT 1",easyQuerySQLStatementException.getSQL());
+
+     }
 }

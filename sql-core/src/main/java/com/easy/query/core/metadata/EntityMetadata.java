@@ -189,7 +189,7 @@ public class EntityMetadata {
             if (navigate != null) {
                 createNavigateMetadata(tableEntity, navigate, field, fastBean, fastBeanProperty, property);
                 continue;
-            } else if (tableEntity) {
+            } else {
                 ValueObject valueObject = field.getAnnotation(ValueObject.class);
                 if (valueObject != null) {
                     hasValueObject = true;
