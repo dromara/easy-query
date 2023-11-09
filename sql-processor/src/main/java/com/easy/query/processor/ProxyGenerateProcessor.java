@@ -64,12 +64,12 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
     private static final String FIELD_DOC_COMMENT_TEMPLATE = "\n" +
             "    /**\n" +
-            "     * {@link @entityClass#@property}\n" +
-            "     @comment\n" +
+            "     * {@link @{entityClass}#@{property}}\n" +
+            "     @{comment}\n" +
             "     */";
     private static final String FIELD_EMPTY_DOC_COMMENT_TEMPLATE = "\n" +
             "    /**\n" +
-            "     * {@link @entityClass#@property}\n" +
+            "     * {@link @{entityClass}#@{property}}\n" +
             "     */";
     private Filer filer;
     private Elements elementUtils;
@@ -334,10 +334,10 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean isDeclared = type.getKind() == TypeKind.DECLARED;
                 String fieldGenericType = getGenericTypeString(isGeneric, isDeclared, includeProperty, type);
                 String docComment = elementUtils.getDocComment(fieldElement);
-                String fieldComment = getFiledComment(docComment);
                 ValueObject valueObject = fieldElement.getAnnotation(ValueObject.class);
                 boolean isValueObject = valueObject != null;
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) :entityName;
+                String fieldComment = getFiledComment(docComment,fieldName,propertyName);
                 aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, fieldGenericType, fieldComment, fieldName, isValueObject));
 
                 if (valueObject != null) {
@@ -383,10 +383,10 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean isDeclared = type.getKind() == TypeKind.DECLARED;
                 String fieldGenericType = getGenericTypeString(isGeneric, isDeclared, includeProperty, type);
                 String docComment = elementUtils.getDocComment(fieldElement);
-                String fieldComment = getFiledComment(docComment);
                 ValueObject valueObject = fieldElement.getAnnotation(ValueObject.class);
                 boolean isValueObject = valueObject != null;
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : aptFileCompiler.getEntityClassName();
+                String fieldComment = getFiledComment(docComment,fieldName,propertyName);
                 aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, fieldGenericType, fieldComment, fieldName, isValueObject));
 
                 if (valueObject != null) {
@@ -402,9 +402,11 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         }
     }
 
-    private String getFiledComment(String docComment) {
+    private String getFiledComment(String docComment,String className,String propertyName) {
         if (docComment == null) {
-            return FIELD_EMPTY_DOC_COMMENT_TEMPLATE;
+            return FIELD_EMPTY_DOC_COMMENT_TEMPLATE
+                    .replace("@{entityClass}", className)
+                    .replace("@{property}", propertyName);
         }
         String[] commentLines = docComment.trim().split("\n");
         StringBuilder fieldComment = new StringBuilder();
@@ -413,7 +415,9 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             fieldComment.append("\n     *").append(commentLines[i]);
         }
         return FIELD_DOC_COMMENT_TEMPLATE
-                .replace("@comment", fieldComment.toString());
+                .replace("@{comment}", fieldComment.toString())
+                .replace("@{entityClass}", className)
+                .replace("@{property}", propertyName);
     }
 
     private String getGenericTypeString(boolean isGeneric, boolean isDeclared, boolean includeProperty, TypeMirror type) {
