@@ -20,14 +20,14 @@ public class AptConstant {
             " *\n" +
             " * @author xuejiaming\n" +
             " */\n" +
-            "public class @{entityClass}Proxy extends AbstractProxyEntity<@{entityClass}Proxy, @{entityClass}> {\n" +
+            "public class @{entityClassProxy} extends AbstractProxyEntity<@{entityClassProxy}, @{entityClass}> {\n" +
             "\n" +
             "    private static final Class<@{entityClass}> entityClass = @{entityClass}.class;\n" +
-            "    public static @{entityClass}Proxy createTable() {\n" +
-            "        return new @{entityClass}Proxy();\n" +
+            "    public static @{entityClassProxy} createTable() {\n" +
+            "        return new @{entityClassProxy}();\n" +
             "    }\n" +
             "\n" +
-            "    private @{entityClass}Proxy() {\n" +
+            "    private @{entityClassProxy}() {\n" +
             "    }\n" +
             "\n" +
             "    @{fieldContent}" +
@@ -45,7 +45,7 @@ public class AptConstant {
 
     public static final String FIELD_TEMPLATE = "\n" +
             "    @{comment}\n" +
-            "    public SQLColumn<@{entityClass}Proxy,@{propertyType}> @{property}(){\n" +
+            "    public SQLColumn<@{entityClassProxy},@{propertyType}> @{property}(){\n" +
             "        return get(\"@{property}\");\n" +
             "    }";
     public static final String FIELD_VALUE_OBJECT_TEMPLATE = "\n" +
@@ -56,7 +56,7 @@ public class AptConstant {
 
 
     public static final String FIELD_VALUE_OBJECT_CLASS_TEMPLATE = "\n" +
-            "    public static class @{entityClass}Proxy extends AbstractValueObjectProxyEntity<@{mainEntityClass}Proxy, @{entityClass}> {\n" +
+            "    public static class @{entityClass}Proxy extends AbstractValueObjectProxyEntity<@{mainEntityClassProxy}, @{entityClass}> {\n" +
             "\n" +
             "        private @{entityClass}Proxy(TableAvailable table, String propertyName) {\n" +
             "            super(table, propertyName);\n" +

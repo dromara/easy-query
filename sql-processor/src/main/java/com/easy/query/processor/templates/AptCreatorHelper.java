@@ -15,6 +15,7 @@ public class AptCreatorHelper {
                  .replace("@{package}", aptFileCompiler.getPackageName())
                  .replace("@{imports}", String.join("\n", aptFileCompiler.getImports()))
                  .replace("@{entityClass}", aptFileCompiler.getEntityClassName())
+                 .replace("@{entityClassProxy}", aptFileCompiler.getEntityClassProxyName())
                  .replace("@{fieldContent}", propertyContent)
                  .replace("@{valueObjectContext}", valueObjectContent);
          return proxyTemplate;
@@ -32,7 +33,7 @@ public class AptCreatorHelper {
                  filedContent.append(fieldString);
              }else{
                  String fieldString = AptConstant.FIELD_TEMPLATE
-                         .replace("@{entityClass}", aptFileCompiler.getEntityClassName())
+                         .replace("@{entityClassProxy}", aptFileCompiler.getEntityClassProxyName())
                          .replace("@{comment}", property.getComment())
                          .replace("@{propertyType}", property.getPropertyType())
                          .replace("@{property}", property.getPropertyName());
@@ -49,7 +50,7 @@ public class AptCreatorHelper {
              String vc = renderValueObjectUI(aptFileCompiler,valueObject);
              String valueObjectContent = AptConstant.FIELD_VALUE_OBJECT_CLASS_TEMPLATE
                      .replace("@{entityClass}", valueObject.getEntityName())
-                     .replace("@{mainEntityClass}", aptFileCompiler.getEntityClassName())
+                     .replace("@{mainEntityClassProxy}", aptFileCompiler.getEntityClassProxyName())
                      .replace("@{fieldContent}", propertyContent)
                      .replace("@{valueObjectContext}", vc);
              valueObjectContentBuilder.append(valueObjectContent);

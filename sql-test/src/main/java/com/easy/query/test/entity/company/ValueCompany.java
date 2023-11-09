@@ -16,7 +16,7 @@ import lombok.ToString;
 @Table("my_company")
 @Data
 @ToString
-@EntityProxy
+@EntityProxy(value = "VCTable")
 public class ValueCompany {
     @Column(primaryKey = true)
     private String id;

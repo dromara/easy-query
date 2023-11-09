@@ -5,6 +5,7 @@ import com.easy.query.core.annotation.ColumnIgnore;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.ValueObject;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.processor.templates.AptCreatorHelper;
 import com.easy.query.processor.templates.AptFileCompiler;
 import com.easy.query.processor.templates.AptPropertyInfo;
@@ -97,43 +98,43 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 //            String proxyNameStyle = props.getProperties().getProperty("processor.proxyInstanceNameStyle", "upperCase");
 
             //代理类后缀
-            String proxyClassSuffix = props.getProperties().getProperty("processor.proxyClassSuffix", "Proxy");
+//            String proxyClassSuffix = props.getProperties().getProperty("processor.proxyClassSuffix", "Proxy");
 //            String defaultProxyInstanceName = props.getProperties().getProperty("processor.proxyInstanceName", "DEFAULT");
 
-            //待忽略对象后缀
-            String[] entityIgnoreSuffixes = props.getProperties().getProperty("processor.entity.ignoreSuffixes", "").split(",");
+//            //待忽略对象后缀
+//            String[] entityIgnoreSuffixes = props.getProperties().getProperty("processor.entity.ignoreSuffixes", "").split(",");
 
             AtomicReference<String> entityClassNameReference = new AtomicReference<>();
 
 //            StringBuilder tablesContent = new StringBuilder();
             roundEnv.getElementsAnnotatedWith(EntityProxy.class).forEach((Consumer<Element>) entityClassElement -> {
 
-                String proxyEntityName = entityClassElement.getSimpleName().toString();
+//                String proxyEntityName = entityClassElement.getSimpleName().toString();
 
-                for (String entityIgnoreSuffix : entityIgnoreSuffixes) {
-                    if (proxyEntityName.endsWith(entityIgnoreSuffix.trim())) {
-                        proxyEntityName = proxyEntityName.substring(0, proxyEntityName.length() - entityIgnoreSuffix.length());
-                        break;
-                    }
-                }
+//                for (String entityIgnoreSuffix : entityIgnoreSuffixes) {
+//                    if (proxyEntityName.endsWith(entityIgnoreSuffix.trim())) {
+//                        proxyEntityName = proxyEntityName.substring(0, proxyEntityName.length() - entityIgnoreSuffix.length());
+//                        break;
+//                    }
+//                }
                 EntityProxy entityProxy = entityClassElement.getAnnotation(EntityProxy.class);
 
                 entityClassNameReference.set(entityClassElement.toString());
-
-//                String proxyInstanceName = EasyStringUtil.isBlank(entityProxy.value()) ? defaultProxyInstanceName : entityProxy.value();
-//                if (EasyStringUtil.isBlank(proxyInstanceName)) {
-////                    proxyInstanceName = buildName(entityClassNameReference + "Proxy", "upperCase");
-//                }
-                HashSet<String> ignoreProperties = new HashSet<>(Arrays.asList(entityProxy.ignoreProperties()));
-
 
                 //每一个 entity 生成一个独立的文件
 
                 String entityFullName = entityClassNameReference.get();
                 String realGenPackage = guessTablesPackage(entityFullName);
                 String entityClassName = entityClassElement.getSimpleName().toString();
+                String proxyInstanceName = EasyStringUtil.isBlank(entityProxy.value()) ? entityClassName+ "Proxy" : entityProxy.value();
+//                if (EasyStringUtil.isBlank(proxyInstanceName)) {
+//                    proxyInstanceName = buildName(entityClassNameReference + "Proxy", "upperCase");
+//                }
+                HashSet<String> ignoreProperties = new HashSet<>(Arrays.asList(entityProxy.ignoreProperties()));
+
+
                 TypeElement classElement = (TypeElement) entityClassElement;
-                AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage,entityClassName);
+                AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage,entityClassName,proxyInstanceName);
                 AptValueObjectInfo aptValueObjectInfo = new AptValueObjectInfo(entityClassName);
                 aptFileCompiler.addImports(entityFullName);
                 do {
@@ -142,7 +143,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 } while (classElement != null);
 
                 String content = buildTablesClass(aptFileCompiler,aptValueObjectInfo);
-                genClass(basePath, realGenPackage, proxyEntityName + proxyClassSuffix, content);
+                genClass(basePath, realGenPackage, proxyInstanceName, content);
 
             });
         }
@@ -305,7 +306,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         return guessPackage.toString();
     }
 
-    private void fillValueObject(AptValueObjectInfo aptValueObjectInfo, Element fieldClassElement, AptFileCompiler aptFileCompiler,Set<String> ignoreProperties) {
+    private void fillValueObject(String parentProperty,AptValueObjectInfo aptValueObjectInfo, Element fieldClassElement, AptFileCompiler aptFileCompiler,Set<String> ignoreProperties) {
         String entityName = aptValueObjectInfo.getEntityName();
         for (Element fieldElement : fieldClassElement.getEnclosedElements()) {
             if (ElementKind.FIELD == fieldElement.getKind()) {
@@ -317,7 +318,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
 
                 String propertyName = fieldElement.toString();
-                if (ignoreProperties.contains(propertyName)) {
+                if (!ignoreProperties.isEmpty()&&ignoreProperties.contains(parentProperty+"."+propertyName)) {
                     continue;
                 }
                 ColumnIgnore column = fieldElement.getAnnotation(ColumnIgnore.class);
@@ -345,7 +346,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     Element fieldClass = ((DeclaredType) type).asElement();
                     AptValueObjectInfo fieldAptValueObjectInfo = new AptValueObjectInfo(valueObjectClassName);
                     aptValueObjectInfo.getChildren().add(fieldAptValueObjectInfo);
-                    fillValueObject(fieldAptValueObjectInfo, fieldClass, aptFileCompiler,ignoreProperties);
+                    fillValueObject(parentProperty+"."+propertyName,fieldAptValueObjectInfo, fieldClass, aptFileCompiler,ignoreProperties);
                 }
             }
         }
@@ -366,7 +367,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
 
                 String propertyName = fieldElement.toString();
-                if (ignoreProperties.contains(propertyName)) {
+                if (!ignoreProperties.isEmpty()&&ignoreProperties.contains(propertyName)) {
                     continue;
                 }
                 ColumnIgnore column = fieldElement.getAnnotation(ColumnIgnore.class);
@@ -395,7 +396,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     Element fieldClass = ((DeclaredType) type).asElement();
                     AptValueObjectInfo fieldAptValueObjectInfo = new AptValueObjectInfo(valueObjectClassName);
                     aptValueObjectInfo.getChildren().add(fieldAptValueObjectInfo);
-                    fillValueObject(fieldAptValueObjectInfo, fieldClass, aptFileCompiler,ignoreProperties);
+                    fillValueObject(propertyName,fieldAptValueObjectInfo, fieldClass, aptFileCompiler,ignoreProperties);
                 }
             }
         }

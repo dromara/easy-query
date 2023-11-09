@@ -14,7 +14,7 @@ import com.easy.query.test.entity.company.ValueCompany1Proxy;
 import com.easy.query.test.entity.company.ValueCompanyAddress;
 import com.easy.query.test.entity.company.ValueCompanyLicense;
 import com.easy.query.test.entity.company.ValueCompanyLicenseExtra;
-import com.easy.query.test.entity.company.proxy.ValueCompanyProxy;
+import com.easy.query.test.entity.company.proxy.VCTable;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -743,14 +743,14 @@ public class ValueObjectTest extends BaseTest {
 
         {
 
-            ValueCompany province12 = easyProxyQuery.queryable(ValueCompanyProxy.createTable())
+            ValueCompany province12 = easyProxyQuery.queryable(VCTable.createTable())
                     .where(o -> o.eq(o.t().address().province(), "province1"))
                     .firstOrNull();
             Assert.assertNotNull(province12);
         }
         {
 
-            ValueCompanyProxy table = ValueCompanyProxy.createTable();
+            VCTable table = VCTable.createTable();
             ValueCompany province12 = easyProxyQuery.queryable(table)
                     .where(o -> o.eq(table.address().province(), "province1"))
                     .firstOrNull();
@@ -758,7 +758,7 @@ public class ValueObjectTest extends BaseTest {
         }
         {
 
-            ValueCompany province12 = easyProxyQuery.queryable(ValueCompanyProxy.createTable())
+            ValueCompany province12 = easyProxyQuery.queryable(VCTable.createTable())
                     .where(o -> o.eq(o.t().address().province(), "province1"))
                     .select(o->o.column(o.t().address()).column(o.t().license().extra().licenseImage()))
                     .firstOrNull();
@@ -766,7 +766,7 @@ public class ValueObjectTest extends BaseTest {
         }
         {
 
-            ValueCompany province12 = easyProxyQuery.queryable(ValueCompanyProxy.createTable())
+            ValueCompany province12 = easyProxyQuery.queryable(VCTable.createTable())
                     .where(o -> o.eq(o.t().address().province(), "province1"))
                     .select(o->o.column(o.t().address()).column(o.t().license().extra()))
                     .firstOrNull();
