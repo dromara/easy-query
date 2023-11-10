@@ -2,6 +2,9 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.extension.listener.JdbcListenAfterArg;
+import com.easy.query.core.basic.extension.listener.JdbcListenBeforeArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -129,7 +132,7 @@ public class EasyJdbcExecutorUtil {
         }
     }
 
-    public static <T> List<SQLParameter> extractParameters(T entity, List<SQLParameter> sqlParameters,boolean printSql,EasyConnection easyConnection,boolean shardingPrint,boolean replicaPrint) {
+    public static <T> List<SQLParameter> extractParameters(T entity, List<SQLParameter> sqlParameters, boolean printSql, EasyConnection easyConnection, boolean shardingPrint, boolean replicaPrint) {
         if (EasyCollectionUtil.isNotEmpty(sqlParameters)) {
 
             List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
@@ -160,16 +163,26 @@ public class EasyJdbcExecutorUtil {
     }
 
     public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters, boolean shardingPrint, boolean replicaPrint) throws SQLException {
+
+        QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+        JdbcExecutorListener jdbcExecutorListener = runtimeContext.getJdbcExecutorListener();
+        JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
         boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
-        QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
-        JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
-
+        boolean listen = jdbcExecutorListener.enable();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<SQLParameter> parameters = extractParameters(null, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
+        List<SQLParameter> parameters = extractParameters(null, sqlParameters, printSql, easyConnection, shardingPrint, replicaPrint);
+
+        JdbcListenBeforeArg jdbcListenBeforeArg = null;
         StreamResultSet sr = null;
+        Exception exception = null;
         try {
+            if (listen) {
+                String traceId = jdbcExecutorListener.createTraceId();
+                jdbcListenBeforeArg = new JdbcListenBeforeArg(traceId, sql, Collections.singletonList(sqlParameters));
+                jdbcExecutorListener.listenBefore(jdbcListenBeforeArg);
+            }
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
 
             long start = printSql ? System.currentTimeMillis() : 0L;
@@ -186,29 +199,51 @@ public class EasyJdbcExecutorUtil {
                 sr = new EasyStreamResultSet(rs, ps);
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            exception = e;
             log.error(sql, e);
-            throw new EasyQuerySQLStatementException(sql, e);
+            if (e instanceof SQLException) {
+                throw new EasyQuerySQLStatementException(sql, e);
+            } else {
+                throw e;
+            }
+        } finally {
+            if (listen) {
+                jdbcExecutorListener.listenAfter(new JdbcListenAfterArg(jdbcListenBeforeArg, 0, exception));
+            }
         }
         return sr;
     }
 
     public static <T> int insert(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean fillAutoIncrement, boolean shardingPrint, boolean replicaPrint) throws SQLException {
+
+        QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+        JdbcExecutorListener jdbcExecutorListener = runtimeContext.getJdbcExecutorListener();
+        boolean listen = jdbcExecutorListener.enable();
         boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
-        QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
         Class<?> entityClass = entities.get(0).getClass();
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
         List<String> generatedKeyColumns = fillAutoIncrement ? entityMetadata.getGeneratedKeyColumns() : null;
         PreparedStatement ps = null;
+        Exception exception = null;
+        JdbcListenBeforeArg jdbcListenBeforeArg = null;
         int r = 0;
         try {
+            if (listen) {
+                String traceId = jdbcExecutorListener.createTraceId();
+                jdbcListenBeforeArg = new JdbcListenBeforeArg(traceId, sql, new ArrayList<>(entities.size()));
+                jdbcExecutorListener.listenBefore(jdbcListenBeforeArg);
+            }
             int batchSize = 0;
             for (T entity : entities) {
                 batchSize++;
-                List<SQLParameter> parameters = extractParameters(entity, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
-
+                List<SQLParameter> parameters = extractParameters(entity, sqlParameters, printSql, easyConnection, shardingPrint, replicaPrint);
+                if (listen) {
+                    jdbcListenBeforeArg.getSqlParameters().add(parameters);
+                }
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler, generatedKeyColumns);
                 } else {
@@ -228,7 +263,6 @@ public class EasyJdbcExecutorUtil {
                 r += EasyCollectionUtil.sum(ints);
                 ps.clearBatch();
             }
-            logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
             //如果需要自动填充并且存在自动填充列
             if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(generatedKeyColumns)) {
                 assert ps != null;
@@ -256,11 +290,20 @@ public class EasyJdbcExecutorUtil {
                     index++;
                 }
             }
-        } catch (SQLException e) {
+            logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
+        } catch (Exception e) {
+            exception = e;
             log.error(sql, e);
-            throw new EasyQuerySQLStatementException(sql, e);
+            if (e instanceof SQLException) {
+                throw new EasyQuerySQLStatementException(sql, e);
+            } else {
+                throw e;
+            }
         } finally {
             clear(ps);
+            if (listen) {
+                jdbcExecutorListener.listenAfter(new JdbcListenAfterArg(jdbcListenBeforeArg, r, exception));
+            }
         }
         return r;
 
@@ -279,15 +322,26 @@ public class EasyJdbcExecutorUtil {
         boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
+        JdbcExecutorListener jdbcExecutorListener = runtimeContext.getJdbcExecutorListener();
+        boolean listen = jdbcExecutorListener.enable();
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
         PreparedStatement ps = null;
+        Exception exception = null;
+        JdbcListenBeforeArg jdbcListenBeforeArg = null;
         int r = 0;
         try {
+            if (listen) {
+                String traceId = jdbcExecutorListener.createTraceId();
+                jdbcListenBeforeArg = new JdbcListenBeforeArg(traceId, sql, new ArrayList<>(entities.size()));
+                jdbcExecutorListener.listenBefore(jdbcListenBeforeArg);
+            }
             int batchSize = 0;
             for (T entity : entities) {
                 batchSize++;
-                List<SQLParameter> parameters = extractParameters(entity, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
-
+                List<SQLParameter> parameters = extractParameters(entity, sqlParameters, printSql, easyConnection, shardingPrint, replicaPrint);
+                if (listen) {
+                    jdbcListenBeforeArg.getSqlParameters().add(parameters);
+                }
                 if (ps == null) {
                     ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
                 } else {
@@ -306,21 +360,29 @@ public class EasyJdbcExecutorUtil {
                 ps.clearBatch();
             }
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            exception = e;
             log.error(sql, e);
-            throw new EasyQuerySQLStatementException(sql, e);
+            if (e instanceof SQLException) {
+                throw new EasyQuerySQLStatementException(sql, e);
+            } else {
+                throw e;
+            }
         } finally {
             clear(ps);
+            if (listen) {
+                jdbcExecutorListener.listenAfter(new JdbcListenAfterArg(jdbcListenBeforeArg, r, exception));
+            }
 
-            if(EasyCollectionUtil.isNotEmpty(entities)){
+            if (EasyCollectionUtil.isNotEmpty(entities)) {
                 Class<?> entityClass = entities.get(0).getClass();
 
                 boolean trackBean = EasyTrackUtil.trackBean(executorContext, entityClass);
-                if(trackBean){
+                if (trackBean) {
 
                     TrackManager trackManager = executorContext.getRuntimeContext().getTrackManager();
                     boolean hasTracked = trackManager.getCurrentTrackContext().hasTracked(entityClass);
-                    if(hasTracked){
+                    if (hasTracked) {
                         for (T entity : entities) {
                             trackManager.getCurrentTrackContext().removeTracking(entity);
                         }
@@ -336,24 +398,40 @@ public class EasyJdbcExecutorUtil {
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
+
+        List<SQLParameter> parameters = extractParameters(null, sqlParameters, printSql, easyConnection, shardingPrint, replicaPrint);
+
+        JdbcExecutorListener jdbcExecutorListener = runtimeContext.getJdbcExecutorListener();
+        boolean listen = jdbcExecutorListener.enable();
+        JdbcListenBeforeArg jdbcListenBeforeArg = null;
         PreparedStatement ps = null;
+        Exception exception = null;
         int r = 0;
-
-        List<SQLParameter> parameters = extractParameters(null, sqlParameters,printSql,easyConnection,shardingPrint,replicaPrint);
-
         try {
+            if (listen) {
+                String traceId = jdbcExecutorListener.createTraceId();
+                jdbcListenBeforeArg = new JdbcListenBeforeArg(traceId, sql, Collections.singletonList(parameters));
+                jdbcExecutorListener.listenBefore(jdbcListenBeforeArg);
+            }
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
             r = ps.executeUpdate();
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            exception = e;
             log.error(sql, e);
-            throw new EasyQuerySQLStatementException(sql, e);
+            if (e instanceof SQLException) {
+                throw new EasyQuerySQLStatementException(sql, e);
+            } else {
+                throw e;
+            }
         } finally {
             clear(ps);
+            if (listen) {
+                jdbcExecutorListener.listenAfter(new JdbcListenAfterArg(jdbcListenBeforeArg, r, exception));
+            }
         }
         return r;
     }
-
 
     private static PreparedStatement createPreparedStatement(Connection connection, String sql, List<SQLParameter> sqlParameters, JdbcTypeHandlerManager easyJdbcTypeHandlerManager) throws SQLException {
         return createPreparedStatement(connection, sql, sqlParameters, easyJdbcTypeHandlerManager, null);
@@ -379,8 +457,6 @@ public class EasyJdbcExecutorUtil {
     }
 
 
-
-
     /**
      * 如果当前value存在加密字段那么会自动解密
      * 数据库转属性
@@ -392,7 +468,7 @@ public class EasyJdbcExecutorUtil {
     public static Object fromValue(ResultColumnMetadata resultColumnMetadata, Object value) {
         Class<?> entityClass = resultColumnMetadata.getEntityClass();
         Object fromValue = fromValue0(entityClass, resultColumnMetadata, value);
-        return resultColumnMetadata.getValueConverter().deserialize(EasyObjectUtil.typeCast(fromValue),resultColumnMetadata.getColumnMetadata());
+        return resultColumnMetadata.getValueConverter().deserialize(EasyObjectUtil.typeCast(fromValue), resultColumnMetadata.getColumnMetadata());
     }
 
     private static Object fromValue0(Class<?> entityClass, ResultColumnMetadata resultColumnMetadata, Object value) {
@@ -412,9 +488,9 @@ public class EasyJdbcExecutorUtil {
                 ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
                 if (value != null) {
                     Object toValue = toValue(columnMetadata, sqlParameter, value, entityMetadata.getEntityClass(), propertyName);
-                    return valueConverter.serialize(EasyObjectUtil.typeCast(toValue),columnMetadata);
+                    return valueConverter.serialize(EasyObjectUtil.typeCast(toValue), columnMetadata);
                 }
-                return valueConverter.serialize(null,columnMetadata);
+                return valueConverter.serialize(null, columnMetadata);
             }
         }
         return value;

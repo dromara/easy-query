@@ -8,6 +8,8 @@ import com.easy.query.core.api.dynamic.executor.query.DefaultWhereObjectQueryExe
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.DefaultObjectSortQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
+import com.easy.query.core.basic.extension.listener.EmptyJdbcExecutorListener;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.track.DefaultTrackManager;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
@@ -161,6 +163,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(IncludeParserEngine.class, DefaultIncludeParserEngine.class)
                 .replaceService(WhereObjectQueryExecutor.class, DefaultWhereObjectQueryExecutor.class)
                 .replaceService(ObjectSortQueryExecutor.class, DefaultObjectSortQueryExecutor.class)
+                .replaceService(JdbcExecutorListener.class, EmptyJdbcExecutorListener.class)
                 .replaceService(SQLFunc.class, SQLFuncImpl.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

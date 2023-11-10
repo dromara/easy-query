@@ -36,4 +36,12 @@ public enum TopicTypeEnum implements IEnum<TopicTypeEnum> {
         }
         throw new UnsupportedOperationException();
     }
+    public static TopicTypeEnum enumOf(Integer enumValue) {
+        switch (enumValue){
+            case 1:return TopicTypeEnum.STUDENT;
+            case 3:return TopicTypeEnum.TEACHER;
+            case 9:return TopicTypeEnum.CLASSER;
+        }
+        throw new UnsupportedOperationException();
+    }
 }

@@ -5,6 +5,7 @@ package com.easy.query.core.context;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -67,6 +68,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final IncludeParserEngine includeParserEngine;
     private final WhereObjectQueryExecutor whereObjectQueryExecutor;
     private final ObjectSortQueryExecutor objectSortQueryExecutor;
+    private final JdbcExecutorListener jdbcExecutorListener;
     private final SQLFunc sqlFunc;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
@@ -97,6 +99,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           IncludeParserEngine includeParserEngine,
                                           WhereObjectQueryExecutor whereObjectQueryExecutor,
                                           ObjectSortQueryExecutor objectSortQueryExecutor,
+                                          JdbcExecutorListener jdbcExecutorListener,
                                           SQLFunc sqlFunc) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
@@ -126,6 +129,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.includeParserEngine = includeParserEngine;
         this.whereObjectQueryExecutor = whereObjectQueryExecutor;
         this.objectSortQueryExecutor = objectSortQueryExecutor;
+        this.jdbcExecutorListener = jdbcExecutorListener;
         this.sqlFunc = sqlFunc;
     }
 
@@ -273,5 +277,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public SQLFunc fx() {
         return sqlFunc;
+    }
+
+    @Override
+    public JdbcExecutorListener getJdbcExecutorListener() {
+        return jdbcExecutorListener;
     }
 }
