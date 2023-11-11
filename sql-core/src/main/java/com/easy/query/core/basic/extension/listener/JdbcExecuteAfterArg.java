@@ -6,13 +6,25 @@ package com.easy.query.core.basic.extension.listener;
  *
  * @author xuejiaming
  */
-public class JdbcListenAfterArg {
-    private final JdbcListenBeforeArg beforeArg;
+public class JdbcExecuteAfterArg {
+    /**
+     * 执行前的参数信息
+     */
+    private final JdbcExecuteBeforeArg beforeArg;
+    /**
+     * 受影响行数当为查询时为0
+     */
     private final int rows;
+    /**
+     * 错误异常
+     */
     private final Exception exception;
+    /**
+     * 执行结束时间毫秒
+     */
     private final long end;
 
-    public JdbcListenAfterArg(JdbcListenBeforeArg beforeArg, int rows, Exception exception){
+    public JdbcExecuteAfterArg(JdbcExecuteBeforeArg beforeArg, int rows, Exception exception){
 
         this.beforeArg = beforeArg;
         this.rows = rows;
@@ -20,7 +32,7 @@ public class JdbcListenAfterArg {
         this.end = System.currentTimeMillis();
     }
 
-    public JdbcListenBeforeArg getBeforeArg() {
+    public JdbcExecuteBeforeArg getBeforeArg() {
         return beforeArg;
     }
 

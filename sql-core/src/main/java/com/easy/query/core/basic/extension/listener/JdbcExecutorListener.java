@@ -9,12 +9,16 @@ import java.util.UUID;
  * @author xuejiaming
  */
 public interface JdbcExecutorListener {
+    /**
+     * 是否启用监听
+     * @return
+     */
     boolean enable();
     default String createTraceId(){
         return UUID.randomUUID().toString();
     }
-    void listenBefore(JdbcListenBeforeArg arg);
+    void onExecuteBefore(JdbcExecuteBeforeArg arg);
 
-    void listenAfter(JdbcListenAfterArg afterArg);
+    void onExecuteAfter(JdbcExecuteAfterArg afterArg);
 
 }

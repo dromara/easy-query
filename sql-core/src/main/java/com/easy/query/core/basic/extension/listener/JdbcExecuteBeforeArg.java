@@ -11,14 +11,29 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class JdbcListenBeforeArg {
+public class JdbcExecuteBeforeArg {
+    /**
+     * 执行追踪id
+     */
     private final String traceId;
+    /**
+     * 执行sql
+     */
     private final String sql;
+    /**
+     * batch下改参数集合可能会大于2,非batch下长度小于等于1
+     */
     private final List<List<SQLParameter>> sqlParameters;
+    /**
+     * 开始时间毫秒
+     */
     private final long start;
+    /**
+     * 自行传递的参数
+     */
     private Map<String,Object> state;
 
-    public JdbcListenBeforeArg(String traceId, String sql, List<List<SQLParameter>> sqlParameters){
+    public JdbcExecuteBeforeArg(String traceId, String sql, List<List<SQLParameter>> sqlParameters){
 
         this.traceId = traceId;
         this.sql = sql;

@@ -13,12 +13,12 @@ public class EmptyJdbcExecutorListener implements JdbcExecutorListener{
     }
 
     @Override
-    public void listenBefore(JdbcListenBeforeArg arg) {
+    public void onExecuteBefore(JdbcExecuteBeforeArg arg) {
 
     }
 
     @Override
-    public void listenAfter(JdbcListenAfterArg afterArg) {
+    public void onExecuteAfter(JdbcExecuteAfterArg afterArg) {
 
     }
 }

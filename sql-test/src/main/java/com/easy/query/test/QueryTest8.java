@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.ProxyQueryable2;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable2;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
@@ -16,6 +17,7 @@ import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.entity.company.ValueCompanyDTO;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
+import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -574,6 +576,21 @@ public class QueryTest8 extends BaseTest{
         Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
         EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
         Assert.assertEquals("SELECT t.`name`,t.`province`,t.`area`,t.`license_no`,t.`license_deadline`,t.`license_image`,t.`license_content` FROM `COMPANY_A` t LIMIT 1",easyQuerySQLStatementException.getSQL());
+
+     }
+
+
+     @Test
+     public void test1x(){
+         ListenerContext listenerContext = new ListenerContext();
+         listenerContextManager.startListen(listenerContext);
+         Topic topic = easyProxyQuery.queryable(TopicProxy.createTable())
+                 .where(o -> o.eq(o.t().id(), "123"))
+                 .firstOrNull();
+         Assert.assertNull(topic);
+         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? LIMIT 1",jdbcExecuteAfterArg.getBeforeArg().getSql());
 
      }
 }

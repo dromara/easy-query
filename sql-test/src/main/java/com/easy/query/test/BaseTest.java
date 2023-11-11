@@ -6,6 +6,7 @@ import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -38,6 +39,8 @@ import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.interceptor.Topic1Interceptor;
+import com.easy.query.test.listener.ListenerContextManager;
+import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
 import com.easy.query.test.parser.MyLambdaParser;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
@@ -73,6 +76,7 @@ public abstract class BaseTest {
     public static EasyQueryClient easyQueryClient;
     public static EasyQuery easyQuery;
     public static EasyProxyQuery easyProxyQuery;
+    public static ListenerContextManager listenerContextManager;
 
     static {
         LogFactory.useStdOutLogging();
@@ -127,6 +131,8 @@ public abstract class BaseTest {
     }
 
     public static void initEasyQuery() {
+        listenerContextManager=new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
         easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
@@ -143,6 +149,7 @@ public abstract class BaseTest {
                     op.setReverseOffsetThreshold(10);
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);
