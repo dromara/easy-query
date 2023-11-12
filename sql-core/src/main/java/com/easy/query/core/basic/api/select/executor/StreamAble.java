@@ -44,6 +44,12 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      */
     JdbcStreamResult<T> toStreamResult();
 
+    /**
+     * 直接拉取数据
+     * @param fetcher 如何消费拉取的数据
+     * @return
+     * @param <TR>
+     */
     default <TR> TR fetch(Function<Stream<T>,TR> fetcher){
         try(JdbcStreamResult<T> streamResult = toStreamResult()){
             StreamIterable<T> streamIterable = streamResult.getStreamIterable();
