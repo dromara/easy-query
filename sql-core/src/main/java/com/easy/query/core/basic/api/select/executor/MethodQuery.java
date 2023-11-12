@@ -4,7 +4,7 @@ import com.easy.query.core.basic.api.select.QueryAvailable;
 
 /**
  * create time 2023/10/21 09:40
- * 文件说明
+ * 获取当前类的方法结果
  *
  * @author xuejiaming
  */

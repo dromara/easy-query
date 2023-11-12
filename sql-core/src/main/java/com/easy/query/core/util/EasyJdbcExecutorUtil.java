@@ -132,6 +132,17 @@ public class EasyJdbcExecutorUtil {
         }
     }
 
+    /**
+     * 解压执行参数
+     * @param entity
+     * @param sqlParameters
+     * @param printSql
+     * @param easyConnection
+     * @param shardingPrint
+     * @param replicaPrint
+     * @return
+     * @param <T>
+     */
     public static <T> List<SQLParameter> extractParameters(T entity, List<SQLParameter> sqlParameters, boolean printSql, EasyConnection easyConnection, boolean shardingPrint, boolean replicaPrint) {
         if (EasyCollectionUtil.isNotEmpty(sqlParameters)) {
 

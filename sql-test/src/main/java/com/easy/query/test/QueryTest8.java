@@ -24,7 +24,11 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * create time 2023/10/31 07:31
@@ -592,5 +596,38 @@ public class QueryTest8 extends BaseTest{
          JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
          Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? LIMIT 1",jdbcExecuteAfterArg.getBeforeArg().getSql());
 
+     }
+     @Test
+     public void test2x(){
+         String traceId = UUID.randomUUID().toString();
+         ListenerContext listenerContext = new ListenerContext();
+         listenerContextManager.startListen(listenerContext);
+         Set<Topic> traceId1 = easyProxyQuery.queryable(TopicProxy.createTable())
+                 .where(o -> o.eq(o.t().id(), "1"))
+                 .fetch(o -> {
+                     return o.peek(x -> x.setTitle(traceId)).collect(Collectors.toSet());
+                 });
+         Assert.assertEquals(1,traceId1.size());
+         Topic topic = traceId1.stream().findFirst().orElse(null);
+         Assert.assertNotNull(topic);
+         Assert.assertEquals(traceId,topic.getTitle());
+         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ?",jdbcExecuteAfterArg.getBeforeArg().getSql());
+     }
+     @Test
+     public void test3x(){
+         String traceId = UUID.randomUUID().toString();
+         ListenerContext listenerContext = new ListenerContext();
+         listenerContextManager.startListen(listenerContext);
+         Optional<Topic> traceId1 = easyProxyQuery.queryable(TopicProxy.createTable())
+                 .where(o -> o.eq(o.t().id(), "1"))
+                 .fetch(o -> {
+                     return o.findFirst();
+                 });
+         Assert.assertTrue(traceId1.isPresent());
+         Topic topic = traceId1.get();
+         Assert.assertNotNull(topic);
+         Assert.assertEquals("1",topic.getId());
      }
 }

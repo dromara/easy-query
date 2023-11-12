@@ -2,6 +2,13 @@ package com.easy.query.core.basic.api.select.executor;
 
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterable;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
+
+import java.sql.SQLException;
+import java.util.function.Function;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * create time 2023/10/20 23:07
@@ -36,5 +43,15 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * @return
      */
     JdbcStreamResult<T> toStreamResult();
+
+    default <TR> TR fetch(Function<Stream<T>,TR> fetcher){
+        try(JdbcStreamResult<T> streamResult = toStreamResult()){
+            StreamIterable<T> streamIterable = streamResult.getStreamIterable();
+            Stream<T> stream = StreamSupport.stream(streamIterable.spliterator(), false);
+            return fetcher.apply(stream);
+        }catch (SQLException sqlException){
+            throw new EasyQuerySQLCommandException(sqlException);
+        }
+    }
 
 }
