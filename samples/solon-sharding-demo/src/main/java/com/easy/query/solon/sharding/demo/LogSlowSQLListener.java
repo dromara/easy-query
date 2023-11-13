@@ -3,11 +3,8 @@ package com.easy.query.solon.sharding.demo;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteBeforeArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.inject.ServiceProvider;
 import org.noear.solon.core.AppContext;
-
-import java.util.List;
 
 /**
  * create time 2023/11/12 00:24
@@ -49,8 +46,12 @@ public class LogSlowSQLListener implements JdbcExecutorListener {
         if(elapsed>=3*1000){
             //发送http请求
 
-            String sql = beforeArg.getSql();
-            List<List<SQLParameter>> sqlParameters = beforeArg.getSqlParameters();
+//            String sql = beforeArg.getSql();
+//            List<List<SQLParameter>> sqlParameters = beforeArg.getSqlParameters();
+//            if(sqlParameters.size()>=1){
+//                String params = sqlParameters.stream().map(EasySQLUtil::sqlParameterToString).collect(Collectors.joining(","));
+//            }
+
         }
     }
 }
