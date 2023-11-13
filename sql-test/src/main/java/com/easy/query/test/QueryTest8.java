@@ -24,6 +24,7 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -629,5 +630,15 @@ public class QueryTest8 extends BaseTest{
          Topic topic = traceId1.get();
          Assert.assertNotNull(topic);
          Assert.assertEquals("1",topic.getId());
+     }
+
+     @Test
+     public void test4x(){
+
+         List<Map<String, Object>> maps = easyQuery.sqlQueryMap("SHOW TABLES");
+         System.out.println(maps);
+         List<String> tables = maps.stream().flatMap(o -> o.values().stream()).map(o -> o.toString()).collect(Collectors.toList());
+
+         System.out.println(tables);
      }
 }

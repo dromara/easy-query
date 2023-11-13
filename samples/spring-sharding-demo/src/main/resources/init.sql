@@ -407,3 +407,12 @@ create table t_order_202312
     user_id       varchar(128)          not null,
     create_time   datetime not null
 );
+
+--
+-- create table order_test_
+-- (
+--     id        varchar(128) not null
+--         primary key,
+--     name       varchar(128)          not null,
+--     create_time   datetime not null
+-- );
