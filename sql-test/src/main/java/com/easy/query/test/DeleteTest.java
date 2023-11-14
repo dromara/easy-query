@@ -57,6 +57,7 @@ public class DeleteTest extends BaseTest {
         Assert.assertEquals("DELETE FROM `t_topic` WHERE `title` = ?", deleteSql);
         long l = easyQuery.deletable(Topic.class).where(o -> o.eq(Topic::getTitle, "title998")).executeRows();
         Assert.assertEquals(1, l);
+
     }
 
     @Test

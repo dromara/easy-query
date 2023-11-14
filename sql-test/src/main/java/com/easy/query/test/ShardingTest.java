@@ -953,7 +953,7 @@ Assert.assertEquals(99,list.size());
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,(SELECT COUNT(t1.`id`) AS `id` FROM `t_topic_sharding_time` t1 WHERE t1.`create_time` >= ? AND t1.`create_time` <= ? AND t1.`stars` = t.`stars`) AS `blog_count` FROM `t_topic` t WHERE t.`title` IS NOT NULL", sql);
         //sharding 需要聚合
         List<TopicSubQueryBlog> list = select.toList();
-Assert.assertEquals(99,list.size());
+        Assert.assertEquals(99,list.size());
 
         Duration between = Duration.between(beginTime, endTime);
         long days = between.toDays();

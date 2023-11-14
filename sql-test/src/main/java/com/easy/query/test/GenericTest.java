@@ -207,7 +207,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("INSERT INTO `query_large_column_test` (`id`) VALUES (?)", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -225,7 +225,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("INSERT INTO `query_large_column_test` (`id`) VALUES (?)", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -243,7 +243,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("INSERT INTO `query_large_column_test` (`id`,`name`,`content`) VALUES (?,?,?)", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -261,7 +261,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("INSERT INTO `query_large_column_test` (`name`,`content`) VALUES (?,?)", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -279,7 +279,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("UPDATE `query_large_column_test` SET `name` = ?,`content` = ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -306,7 +306,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("UPDATE `query_large_column_test` SET `name` = ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -325,7 +325,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("UPDATE `query_large_column_test` SET `content` = ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -352,7 +352,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("DELETE FROM `query_large_column_test` WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -369,7 +369,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("DELETE FROM `aaa` WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'easy-query-test.aaa' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.aaa' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -386,7 +386,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("DELETE FROM `xxx`.`query_large_column_testaaa` WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'xxx.query_large_column_testaaa' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'xxx.query_large_column_testaaa' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -403,7 +403,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("DELETE FROM `xxx`.`query_large_column_testaaa` WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'xxx.query_large_column_testaaa' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'xxx.query_large_column_testaaa' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -455,7 +455,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("UPDATE `xxx`.`abc` SET `content` = ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'xxx.abc' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'xxx.abc' doesn't exist", ex1.getMessage());
         }
     }
 
@@ -476,7 +476,7 @@ public class GenericTest extends BaseTest {
             Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
             Assert.assertEquals("UPDATE `xcv`.`query_large_column_testabc` SET `content` = ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.BatchUpdateException: Table 'xcv.query_large_column_testabc' doesn't exist", ex1.getMessage());
+            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'xcv.query_large_column_testabc' doesn't exist", ex1.getMessage());
         }
     }
 

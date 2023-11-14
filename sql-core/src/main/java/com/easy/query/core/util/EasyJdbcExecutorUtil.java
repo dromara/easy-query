@@ -46,6 +46,7 @@ import java.util.List;
 public class EasyJdbcExecutorUtil {
 
     private static final int BATCH_GROUP_COUNT = 1000;
+    private static final int EXECUTE_DEFAULT_EFFECT=0;
     private static final Log log = LogFactory.getLog(EasyJdbcExecutorUtil.class);
 
     private static void printShardingSQLFormat(final StringBuilder printSQL, final EasyConnection easyConnection) {
@@ -260,20 +261,9 @@ public class EasyJdbcExecutorUtil {
                 } else {
                     setPreparedStatement(ps, parameters, easyJdbcTypeHandler);
                 }
-                ps.addBatch();
-                if ((batchSize % BATCH_GROUP_COUNT) == 0) {
-                    int[] ints = ps.executeBatch();
-//                    r += ints.length;
-                    r += EasyCollectionUtil.sum(ints);
-                    ps.clearBatch();
-                }
+                r += execute(entities.size()>1,batchSize,ps);
             }
-            if ((batchSize % BATCH_GROUP_COUNT) != 0) {
-                int[] ints = ps.executeBatch();
-//                r += ints.length;
-                r += EasyCollectionUtil.sum(ints);
-                ps.clearBatch();
-            }
+            r += executeEnd(entities.size()>1,batchSize,ps);
             //如果需要自动填充并且存在自动填充列
             if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(generatedKeyColumns)) {
                 assert ps != null;
@@ -358,18 +348,9 @@ public class EasyJdbcExecutorUtil {
                 } else {
                     setPreparedStatement(ps, parameters, easyJdbcTypeHandlerManager);
                 }
-                ps.addBatch();
-                if ((batchSize % BATCH_GROUP_COUNT) == 0) {
-                    int[] ints = ps.executeBatch();
-                    r += EasyCollectionUtil.sum(ints);
-                    ps.clearBatch();
-                }
+                r += execute(entities.size()>1,batchSize,ps);
             }
-            if ((batchSize % BATCH_GROUP_COUNT) != 0) {
-                int[] ints = ps.executeBatch();
-                r += EasyCollectionUtil.sum(ints);
-                ps.clearBatch();
-            }
+            r += executeEnd(entities.size()>1,batchSize,ps);
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
         } catch (Exception e) {
             exception = e;
@@ -523,5 +504,29 @@ public class EasyJdbcExecutorUtil {
             }
         }
         return value;
+    }
+
+    private static int execute(boolean batch,int batchSize,PreparedStatement ps) throws SQLException {
+        if(batch){
+            ps.addBatch();
+            if ((batchSize % BATCH_GROUP_COUNT) == 0) {
+                int[] ints = ps.executeBatch();
+                ps.clearBatch();
+                return EasyCollectionUtil.sum(ints);
+            }
+            return EXECUTE_DEFAULT_EFFECT;
+        }else{
+            return ps.executeUpdate();
+        }
+    }
+    private static int executeEnd(boolean batch,int batchSize,PreparedStatement ps) throws SQLException {
+        if(batch){
+            if ((batchSize % BATCH_GROUP_COUNT) != 0) {
+                int[] ints = ps.executeBatch();
+                ps.clearBatch();
+                return EasyCollectionUtil.sum(ints);
+            }
+        }
+        return EXECUTE_DEFAULT_EFFECT;
     }
 }
