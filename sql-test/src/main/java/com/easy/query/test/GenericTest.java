@@ -768,9 +768,9 @@ public class GenericTest extends BaseTest {
                 .setDefaultDataSource(dataSource)
                 .build();
         QueryConfiguration queryConfiguration = easyQueryClient1.getRuntimeContext().getQueryConfiguration();
-        queryConfiguration.applyIncrementSQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
+        queryConfiguration.applyGeneratedKeySQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
         try {
-            queryConfiguration.applyIncrementSQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
+            queryConfiguration.applyGeneratedKeySQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
         }catch (Exception ex){
             Assert.assertTrue(ex instanceof EasyQueryException);
             String message = ex.getMessage();

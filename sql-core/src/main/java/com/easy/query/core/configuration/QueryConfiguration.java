@@ -265,15 +265,6 @@ public class QueryConfiguration {
     public ColumnValueSQLConverter getColumnValueSQLConverter(Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass) {
         return columnValueSQLConverterMap.get(columnValueSQLConverterClass);
     }
-
-    /**
-     * 请使用 {@link  QueryConfiguration#applyGeneratedKeySQLColumnGenerator}
-     * @param generatedKeySQLColumnGenerator
-     */
-    @Deprecated
-    public void applyIncrementSQLColumnGenerator(GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator) {
-        applyGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
-    }
     public void applyGeneratedKeySQLColumnGenerator(GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator) {
         Class<? extends GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorClass = generatedKeySQLColumnGenerator.getClass();
         if (generatedSQLColumnGeneratorMap.containsKey(generatedKeySQLColumnGeneratorClass)) {

@@ -8,6 +8,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
+import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
@@ -622,6 +623,7 @@ public class QueryTest8 extends BaseTest{
          ListenerContext listenerContext = new ListenerContext();
          listenerContextManager.startListen(listenerContext);
          Optional<Topic> traceId1 = easyProxyQuery.queryable(TopicProxy.createTable())
+                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
                  .where(o -> o.eq(o.t().id(), "1"))
                  .fetch(o -> {
                      return o.findFirst();

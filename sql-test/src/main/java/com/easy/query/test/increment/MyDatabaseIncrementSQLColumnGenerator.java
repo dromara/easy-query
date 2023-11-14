@@ -1,7 +1,7 @@
 package com.easy.query.test.increment;
 
 import com.easy.query.core.basic.extension.conversion.SQLPropertyConverter;
-import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -12,7 +12,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
  *
  * @author xuejiaming
  */
-public class MyDatabaseIncrementSQLColumnGenerator implements IncrementSQLColumnGenerator {
+public class MyDatabaseIncrementSQLColumnGenerator implements GeneratedKeySQLColumnGenerator {
     @Override
     public void configure(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         sqlPropertyConverter.sqlNativeSegment("mysqlNextId()");

@@ -3,7 +3,7 @@ package com.easy.query.sql.starter.config;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.extension.increment.IncrementSQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
@@ -34,7 +34,7 @@ public final class EasyQueryInitializeOption {
     private final Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap;
     private final Map<String, JdbcTypeHandler> jdbcTypeHandlerMap;
     private final Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap;
-    private final Map<String, IncrementSQLColumnGenerator> incrementSQLColumnGeneratorMap;
+    private final Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap;
 
     public Map<String, Interceptor> getInterceptorMap() {
         return interceptorMap;
@@ -80,8 +80,8 @@ public final class EasyQueryInitializeOption {
         return columnValueSQLConverterMap;
     }
 
-    public Map<String, IncrementSQLColumnGenerator> getIncrementSQLColumnGeneratorMap() {
-        return incrementSQLColumnGeneratorMap;
+    public Map<String, GeneratedKeySQLColumnGenerator> getGeneratedKeySQLColumnGeneratorMap() {
+        return generatedKeySQLColumnGeneratorMap;
     }
 
     public EasyQueryInitializeOption(Map<String, Interceptor> interceptorMap, Map<String, VersionStrategy> versionStrategyMap, Map<String, LogicDeleteStrategy> logicDeleteStrategyMap, Map<String, ShardingInitializer> shardingInitializerMap, Map<String, EncryptionStrategy> encryptionStrategyMap, Map<String, ValueConverter<?, ?>> valueConverterMap,
@@ -90,7 +90,7 @@ public final class EasyQueryInitializeOption {
                                      Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap,
                                      Map<String, JdbcTypeHandler> jdbcTypeHandlerMap,
                                      Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap,
-                                     Map<String, IncrementSQLColumnGenerator> incrementSQLColumnGeneratorMap) {
+                                     Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap) {
 
         this.interceptorMap = interceptorMap;
         this.versionStrategyMap = versionStrategyMap;
@@ -103,7 +103,7 @@ public final class EasyQueryInitializeOption {
         this.valueUpdateAtomicTrackMap = valueUpdateAtomicTrackMap;
         this.jdbcTypeHandlerMap = jdbcTypeHandlerMap;
         this.columnValueSQLConverterMap = columnValueSQLConverterMap;
-        this.incrementSQLColumnGeneratorMap = incrementSQLColumnGeneratorMap;
+        this.generatedKeySQLColumnGeneratorMap = generatedKeySQLColumnGeneratorMap;
     }
 
 }
