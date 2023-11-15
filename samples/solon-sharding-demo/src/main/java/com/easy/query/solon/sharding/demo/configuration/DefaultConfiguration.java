@@ -28,4 +28,13 @@ public class DefaultConfiguration {
         configuration.applyEncryptionStrategy(new JavaEncryptionStrategy());
         configuration.applyColumnValueSQLConverter(new MySQLAESColumnValueSQLConverter());
     }
+//        /**
+//     * 添加分表或者分库的路由,分库数据源
+//     * @param runtimeContext
+//     */
+//    @Bean
+//    public void db1QueryRuntimeContext(@Db("db1") QueryRuntimeContext runtimeContext,@Db("db1") EasyQuery easyQuery){
+//        TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
+//        tableRouteManager.addRoute(new OrderTestTableRoute(easyQuery));
+//    }
 }
