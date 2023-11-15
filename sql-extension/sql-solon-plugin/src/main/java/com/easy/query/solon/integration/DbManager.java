@@ -145,6 +145,8 @@ public class DbManager {
         EventBus.publish(easyQueryBuilderConfiguration);
 
         EasyQueryClient easyQueryClient =easyQueryBuilderConfiguration.build();
+        //扩展
+        EventBus.publish(easyQueryClient.getRuntimeContext());
         DefaultEasyQuery easyQuery = new DefaultEasyQuery(easyQueryClient);
         DefaultEasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
         EasyKtQuery easyKtQuery = new DefaultEasyKtQuery(easyQueryClient);

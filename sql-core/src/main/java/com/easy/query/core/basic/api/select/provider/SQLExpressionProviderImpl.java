@@ -41,12 +41,6 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
 
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final TableAvailable table;
-    private ColumnGroupSelectorImpl<TEntity> group;
-    private ColumnOrderSelectorImpl<TEntity> order;
-    private WherePredicateImpl<TEntity> where;
-    private WherePredicateImpl<TEntity> allPredicate;
-    private WhereAggregatePredicateImpl<TEntity> having;
-    private WherePredicateImpl<TEntity> on;
 
     public SQLExpressionProviderImpl(int index, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         EntityTableExpressionBuilder tableExpressionBuilder = entityQueryExpressionBuilder.getTable(index);
@@ -56,56 +50,39 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
 
     @Override
     public ColumnGroupSelector<TEntity> getGroupColumnSelector() {
-        if (group == null) {
-            group = new ColumnGroupSelectorImpl<>(table, new GroupSelectorImpl(entityQueryExpressionBuilder));
-        }
-        return group;
+        return new ColumnGroupSelectorImpl<>(table, new GroupSelectorImpl(entityQueryExpressionBuilder));
     }
 
     @Override
     public ColumnOrderSelectorImpl<TEntity> getOrderColumnSelector(boolean asc) {
-        if (order == null) {
-            order = new ColumnOrderSelectorImpl<>(table, new OrderSelectorImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getOrder()));
-        }
+        ColumnOrderSelectorImpl<TEntity> order = new ColumnOrderSelectorImpl<>(table, new OrderSelectorImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getOrder()));
         order.setAsc(asc);
         return order;
     }
 
     @Override
     public WherePredicate<TEntity> getWherePredicate() {
-        if (where == null) {
-            where = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false,entityQueryExpressionBuilder.getExpressionContext().getValueFilter()));
-        }
-        return where;
+        return new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false, entityQueryExpressionBuilder.getExpressionContext().getValueFilter()));
     }
 
     @Override
     public <TR> NavigateInclude<TEntity> getNavigateInclude(IncludeNavigateParams includeNavigateParams) {
-        return new NavigateIncludeImpl<>(table,entityQueryExpressionBuilder.getRuntimeContext(),includeNavigateParams);
+        return new NavigateIncludeImpl<>(table, entityQueryExpressionBuilder.getRuntimeContext(), includeNavigateParams);
     }
 
     @Override
     public WherePredicate<TEntity> getAllWherePredicate() {
-        if (allPredicate == null) {
-            allPredicate = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getAllPredicate(), true, AnyValueFilter.DEFAULT));
-        }
-        return allPredicate;
+        return new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getAllPredicate(), true, AnyValueFilter.DEFAULT));
     }
 
     @Override
     public WhereAggregatePredicate<TEntity> getAggregatePredicate() {
-        if (having == null) {
-            having = new WhereAggregatePredicateImpl<>(table, new AggregateFilterImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getHaving()));
-        }
-        return having;
+        return new WhereAggregatePredicateImpl<>(table, new AggregateFilterImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getHaving()));
     }
 
     @Override
     public WherePredicate<TEntity> getOnPredicate() {
-        if (on == null) {
-            on = new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), EasyUtil.getCurrentPredicateTable(entityQueryExpressionBuilder).getOn(), false, AnyValueFilter.DEFAULT));
-        }
-        return on;
+        return new WherePredicateImpl<>(table, new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), EasyUtil.getCurrentPredicateTable(entityQueryExpressionBuilder).getOn(), false, AnyValueFilter.DEFAULT));
     }
 
     @Override

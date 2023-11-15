@@ -643,4 +643,14 @@ public class QueryTest8 extends BaseTest{
 
          System.out.println(tables);
      }
+     @Test
+     public void test5x(){
+         BlogEntityProxy table = BlogEntityProxy.createTable();
+         String sql = easyProxyQuery.queryable(table)
+                 .where(o -> o.like(table.content(), (String) "1"))
+                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                 .where(o -> o.like(table.url(), (String) null))
+                 .toSQL();
+         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ?",sql);
+     }
 }
