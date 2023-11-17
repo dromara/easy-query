@@ -1,6 +1,10 @@
 package com.easy.query.springshardingdemo.controller;
 
 import com.easy.query.api.proxy.client.EasyProxyQuery;
+import com.easy.query.core.metadata.ActualTable;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.springshardingdemo.domain.OrderEntity;
 import com.easy.query.springshardingdemo.domain.OrderTest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -28,6 +33,10 @@ public class OrderTestController {
 
     @GetMapping("/init")
     public Object init() {
+        EntityMetadataManager entityMetadataManager = easyProxyQuery.getRuntimeContext().getEntityMetadataManager();
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(OrderEntity.class);
+        Collection<ActualTable> actualTables = entityMetadata.getActualTables();
+
 
         long start = System.currentTimeMillis();
         LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 0, 0, 0);

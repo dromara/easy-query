@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  *
  * @author xuejiaming
  */
-public class QueryTest8 extends BaseTest{
+public class QueryTest8 extends BaseTest {
 
     @Test
     public void joinTest1_1() {
@@ -109,6 +109,7 @@ public class QueryTest8 extends BaseTest{
                 }).toSQL();
         Assert.assertEquals("SELECT DISTINCT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t RIGHT JOIN `t_topic` t1 ON t.`id` = t1.`id` RIGHT JOIN `t_topic` t2 ON t.`id` = t2.`id` RIGHT JOIN `t_topic` t3 ON t.`id` = t3.`id` RIGHT JOIN `t_topic` t4 ON t.`id` = t4.`id` RIGHT JOIN `t_topic` t5 ON t.`id` = t5.`id` RIGHT JOIN `t_topic` t6 ON t.`id` = t6.`id` RIGHT JOIN `t_topic` t7 ON t.`id` = t7.`id` RIGHT JOIN `t_topic` t8 ON t.`id` = t8.`id` RIGHT JOIN `t_topic` t9 ON t.`id` = t9.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` IN (?) AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
+
     @Test
     public void joinTest2_1() {
         TopicRequest topicRequest = new TopicRequest();
@@ -177,6 +178,7 @@ public class QueryTest8 extends BaseTest{
                 }).toSQL();
         Assert.assertEquals("SELECT DISTINCT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t RIGHT JOIN `t_topic` t1 ON t.`id` = t1.`id` RIGHT JOIN `t_topic` t2 ON t.`id` = t2.`id` RIGHT JOIN `t_topic` t3 ON t.`id` = t3.`id` RIGHT JOIN `t_topic` t4 ON t.`id` = t4.`id` RIGHT JOIN `t_topic` t5 ON t.`id` = t5.`id` RIGHT JOIN `t_topic` t6 ON t.`id` = t6.`id` RIGHT JOIN `t_topic` t7 ON t.`id` = t7.`id` RIGHT JOIN `t_topic` t8 ON t.`id` = t8.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` IN (?) AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
+
     @Test
     public void joinTest3_1() {
         TopicRequest topicRequest = new TopicRequest();
@@ -244,6 +246,7 @@ public class QueryTest8 extends BaseTest{
                 }).toSQL();
         Assert.assertEquals("SELECT DISTINCT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t RIGHT JOIN `t_topic` t1 ON t.`id` = t1.`id` RIGHT JOIN `t_topic` t2 ON t.`id` = t2.`id` RIGHT JOIN `t_topic` t3 ON t.`id` = t3.`id` RIGHT JOIN `t_topic` t4 ON t.`id` = t4.`id` RIGHT JOIN `t_topic` t5 ON t.`id` = t5.`id` RIGHT JOIN `t_topic` t6 ON t.`id` = t6.`id` RIGHT JOIN `t_topic` t7 ON t.`id` = t7.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` IN (?) AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
+
     @Test
     public void joinTest4_1() {
         TopicRequest topicRequest = new TopicRequest();
@@ -376,6 +379,7 @@ public class QueryTest8 extends BaseTest{
                 }).toSQL();
         Assert.assertEquals("SELECT DISTINCT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t RIGHT JOIN `t_topic` t1 ON t.`id` = t1.`id` RIGHT JOIN `t_topic` t2 ON t.`id` = t2.`id` RIGHT JOIN `t_topic` t3 ON t.`id` = t3.`id` RIGHT JOIN `t_topic` t4 ON t.`id` = t4.`id` RIGHT JOIN `t_topic` t5 ON t.`id` = t5.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` IN (?) AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
+
     @Test
     public void joinTest6_1() {
         TopicRequest topicRequest = new TopicRequest();
@@ -440,6 +444,7 @@ public class QueryTest8 extends BaseTest{
                 }).toSQL();
         Assert.assertEquals("SELECT DISTINCT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t RIGHT JOIN `t_topic` t1 ON t.`id` = t1.`id` RIGHT JOIN `t_topic` t2 ON t.`id` = t2.`id` RIGHT JOIN `t_topic` t3 ON t.`id` = t3.`id` RIGHT JOIN `t_topic` t4 ON t.`id` = t4.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` IN (?) AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
+
     @Test
     public void joinTest7_1() {
         TopicRequest topicRequest = new TopicRequest();
@@ -505,7 +510,7 @@ public class QueryTest8 extends BaseTest{
     }
 
     @Test
-    public void test1(){
+    public void test1() {
         Queryable<Topic> query = easyQuery.queryable(Topic.class)
                 .limit(100);
         Queryable2<Topic, BlogEntity> join = query.select(Topic.class, o -> o.column(Topic::getId).column(Topic::getStars))
@@ -522,8 +527,9 @@ public class QueryTest8 extends BaseTest{
             t1.columnAs(BlogEntity::getTitle, BlogEntity::getContent);
         }).toList();
     }
+
     @Test
-    public void test2(){
+    public void test2() {
         ProxyQueryable<TopicProxy, Topic> query = easyProxyQuery.queryable(TopicProxy.createTable())
                 .limit(100);
         ProxyQueryable2<TopicProxy, Topic, BlogEntityProxy, BlogEntity> join = query
@@ -534,15 +540,15 @@ public class QueryTest8 extends BaseTest{
                         .column(o.t1().title()))
                 .innerJoin(BlogEntityProxy.createTable(), o -> o.eq(o.t().url(), o.t1().id()));
         List<BlogEntity> list = join2.select(BlogEntityProxy.createTable(), o -> {
-            o.columnAs(o.t().url(), o.tr().url()).columnAs(o.t1().title(),o.tr().content());
+            o.columnAs(o.t().url(), o.tr().url()).columnAs(o.t1().title(), o.tr().content());
         }).toList();
     }
 
     @Test
-     public void test3(){
+    public void test3() {
         ValueCompanyDTO companyDTO = easyQuery.queryable(ValueCompany.class)
-                 .select(ValueCompanyDTO.class,o->o.columnAll())
-                 .firstOrNull();
+                .select(ValueCompanyDTO.class, o -> o.columnAll())
+                .firstOrNull();
         Assert.assertNotNull(companyDTO.getName());
         Assert.assertNotNull(companyDTO.getLicense());
         Assert.assertNotNull(companyDTO.getLicense().getLicenseNo());
@@ -558,19 +564,20 @@ public class QueryTest8 extends BaseTest{
                 .select(ValueCompanyDTO.class, o -> o.columnAs(x -> x.getAddress().getProvince(), x -> x.getLicense().getExtra().getLicenseContent()))
                 .firstOrNull();
         Assert.assertNotNull(companyDTO1);
-        Assert.assertEquals(companyDTO.getAddress().getProvince(),companyDTO1.getLicense().getExtra().getLicenseContent());
+        Assert.assertEquals(companyDTO.getAddress().getProvince(), companyDTO1.getLicense().getExtra().getLicenseContent());
     }
+
     @Test
-     public void test4(){
+    public void test4() {
 
         Supplier<Exception> f = () -> {
             try {
                 ValueCompanyDTO companyDTO = easyQuery.queryable(ValueCompany.class)
                         .asTable("COMPANY_A")
-                        .select(ValueCompanyDTO.class,o->o.columnAll())
+                        .select(ValueCompanyDTO.class, o -> o.columnAll())
 //                 .select(BlogEntity.class, o -> o.column(BlogEntity::getId).columnCountAs(BlogEntity::getId, BlogEntity::getStar))
                         .firstOrNull();
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 return ex;
             }
             return null;
@@ -581,76 +588,160 @@ public class QueryTest8 extends BaseTest{
         EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
         Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
         EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-        Assert.assertEquals("SELECT t.`name`,t.`province`,t.`area`,t.`license_no`,t.`license_deadline`,t.`license_image`,t.`license_content` FROM `COMPANY_A` t LIMIT 1",easyQuerySQLStatementException.getSQL());
+        Assert.assertEquals("SELECT t.`name`,t.`province`,t.`area`,t.`license_no`,t.`license_deadline`,t.`license_image`,t.`license_content` FROM `COMPANY_A` t LIMIT 1", easyQuerySQLStatementException.getSQL());
 
-     }
+    }
 
 
-     @Test
-     public void test1x(){
-         ListenerContext listenerContext = new ListenerContext();
-         listenerContextManager.startListen(listenerContext);
-         Topic topic = easyProxyQuery.queryable(TopicProxy.createTable())
-                 .where(o -> o.eq(o.t().id(), "123"))
-                 .firstOrNull();
-         Assert.assertNull(topic);
-         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? LIMIT 1",jdbcExecuteAfterArg.getBeforeArg().getSql());
+    @Test
+    public void test1x() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Topic topic = easyProxyQuery.queryable(TopicProxy.createTable())
+                .where(o -> o.eq(o.t().id(), "123"))
+                .firstOrNull();
+        Assert.assertNull(topic);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
-     }
-     @Test
-     public void test2x(){
-         String traceId = UUID.randomUUID().toString();
-         ListenerContext listenerContext = new ListenerContext();
-         listenerContextManager.startListen(listenerContext);
-         Set<Topic> traceId1 = easyProxyQuery.queryable(TopicProxy.createTable())
-                 .where(o -> o.eq(o.t().id(), "1"))
-                 .fetch(o -> {
-                     return o.peek(x -> x.setTitle(traceId)).collect(Collectors.toSet());
-                 });
-         Assert.assertEquals(1,traceId1.size());
-         Topic topic = traceId1.stream().findFirst().orElse(null);
-         Assert.assertNotNull(topic);
-         Assert.assertEquals(traceId,topic.getTitle());
-         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ?",jdbcExecuteAfterArg.getBeforeArg().getSql());
-     }
-     @Test
-     public void test3x(){
-         String traceId = UUID.randomUUID().toString();
-         ListenerContext listenerContext = new ListenerContext();
-         listenerContextManager.startListen(listenerContext);
-         Optional<Topic> traceId1 = easyProxyQuery.queryable(TopicProxy.createTable())
-                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                 .where(o -> o.eq(o.t().id(), "1"))
-                 .fetch(o -> {
-                     return o.findFirst();
-                 });
-         Assert.assertTrue(traceId1.isPresent());
-         Topic topic = traceId1.get();
-         Assert.assertNotNull(topic);
-         Assert.assertEquals("1",topic.getId());
-     }
+    }
 
-     @Test
-     public void test4x(){
+    @Test
+    public void test2x() {
+        String traceId = UUID.randomUUID().toString();
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Set<Topic> traceId1 = easyProxyQuery.queryable(TopicProxy.createTable())
+                .where(o -> o.eq(o.t().id(), "1"))
+                .fetch(o -> {
+                    return o.peek(x -> x.setTitle(traceId)).collect(Collectors.toSet());
+                });
+        Assert.assertEquals(1, traceId1.size());
+        Topic topic = traceId1.stream().findFirst().orElse(null);
+        Assert.assertNotNull(topic);
+        Assert.assertEquals(traceId, topic.getTitle());
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+    }
 
-         List<Map<String, Object>> maps = easyQuery.sqlQueryMap("SHOW TABLES");
-         System.out.println(maps);
-         List<String> tables = maps.stream().flatMap(o -> o.values().stream()).map(o -> o.toString()).collect(Collectors.toList());
+    @Test
+    public void test3x() {
+        String traceId = UUID.randomUUID().toString();
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Optional<Topic> traceId1 = easyProxyQuery.queryable(TopicProxy.createTable())
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(o -> o.eq(o.t().id(), "1"))
+                .fetch(o -> {
+                    return o.findFirst();
+                });
+        Assert.assertTrue(traceId1.isPresent());
+        Topic topic = traceId1.get();
+        Assert.assertNotNull(topic);
+        Assert.assertEquals("1", topic.getId());
+    }
 
-         System.out.println(tables);
-     }
-     @Test
-     public void test5x(){
-         BlogEntityProxy table = BlogEntityProxy.createTable();
-         String sql = easyProxyQuery.queryable(table)
-                 .where(o -> o.like(table.content(), (String) "1"))
-                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                 .where(o -> o.like(table.url(), (String) null))
-                 .toSQL();
-         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ?",sql);
-     }
+    @Test
+    public void test4x() {
+
+        List<Map<String, Object>> maps = easyQuery.sqlQueryMap("SHOW TABLES");
+        System.out.println(maps);
+        List<String> tables = maps.stream().flatMap(o -> o.values().stream()).map(o -> o.toString()).collect(Collectors.toList());
+
+        System.out.println(tables);
+    }
+
+    @Test
+    public void test5x() {
+        BlogEntityProxy table = BlogEntityProxy.createTable();
+        String sql = easyProxyQuery.queryable(table)
+                .where(o -> o.like(table.content(), (String) "1"))
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(o -> o.like(table.url(), (String) null))
+                .toSQL();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ?", sql);
+    }
+
+
+//    @Test
+//    public void upd1(){
+//        //EntityMetadata
+//
+//        QueryConfiguration queryConfiguration = easyQuery.getRuntimeContext().getQueryConfiguration();
+//
+////
+//        easyQuery.updatable(Topic.class)
+//                .asTable("xxxa")
+//                .set(Topic::getTitle,123)
+//                .where(o->{
+//                    Queryable<String> idQuery = easyQuery.queryable(Topic.class)
+//                            .where(x -> x.ge(Topic::getStars, 1).eq(o,Topic::getTitle,Topic::getStars))
+//                            .select(String.class, x -> x.column(Topic::getId)).limit(10);
+//
+//
+//                    o.in(Topic::getId,idQuery);
+//                }).executeRows();
+//    }
+
+    @Test
+    public void testLimitPage() {
+        {
+
+
+            Supplier<Exception> f = () -> {
+                try {
+                    TopicProxy table = TopicProxy.createTable();
+                    long count = easyProxyQuery.queryable(table)
+                            .asTable("AAA")
+                            //.where(o -> o.eq(table.id(), "1"))
+                            .select(TopicProxy.createTable(), o -> o.column(table.id()))
+                            .where(o -> o.isNotNull(o.t().id()))
+                            .orderByAsc(o -> o.column(o.t().id()))
+                            .limit(1)
+                            .count();
+                }catch (Exception ex){
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+            Assert.assertEquals("SELECT COUNT(*) FROM (SELECT t.`id` FROM `AAA` t) t1 WHERE t1.`id` IS NOT NULL",easyQuerySQLStatementException.getSQL());
+
+        }
+        {
+
+
+            Supplier<Exception> f = () -> {
+                try {
+                    TopicProxy table = TopicProxy.createTable();
+                    List<Topic> list = easyProxyQuery.queryable(table)
+                            .asTable("AAA")
+                            //.where(o -> o.eq(table.id(), "1"))
+                            .select(TopicProxy.createTable(), o -> o.column(table.id()))
+                            .where(o -> o.isNotNull(o.t().id()))
+                            .orderByAsc(o -> o.column(o.t().id()))
+                            .limit(1)
+                            .limit(1, 2).toList();
+                }catch (Exception ex){
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+            Assert.assertEquals("SELECT t1.`id` FROM (SELECT t.`id` FROM `AAA` t) t1 WHERE t1.`id` IS NOT NULL ORDER BY t1.`id` ASC LIMIT 2 OFFSET 1",easyQuerySQLStatementException.getSQL());
+
+        }
+    }
 }

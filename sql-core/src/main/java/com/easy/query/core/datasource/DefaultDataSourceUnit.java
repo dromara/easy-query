@@ -1,10 +1,10 @@
 package com.easy.query.core.datasource;
 
+import com.easy.query.core.common.ErrorCodeEnum;
+import com.easy.query.core.common.SemaphoreReleaseOnlyOnce;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLException;
-import com.easy.query.core.common.SemaphoreReleaseOnlyOnce;
-import com.easy.query.core.expression.lambda.SQLSupplier;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 
@@ -56,7 +56,7 @@ public class DefaultDataSourceUnit implements DataSourceUnit {
         }
 
         if (semaphore == null) {
-            throw new EasyQueryInvalidOperationException("sharding table should set dataSourceName:[" + dataSourceName + "] dataSourcePool,current value <= 0.");
+            throw new EasyQueryInvalidOperationException(ErrorCodeEnum.E1001,"sharding table should set dataSourceName:[" + dataSourceName + "] dataSourcePool,current value <= 0.");
         }
         return getMergeConnections(count, timeout, unit);
     }
@@ -75,7 +75,7 @@ public class DefaultDataSourceUnit implements DataSourceUnit {
         SemaphoreReleaseOnlyOnce semaphoreReleaseOnlyOnce = tryAcquire(count, timeout, unit);
 
         if (semaphoreReleaseOnlyOnce == null) {
-            throw new EasyQuerySQLException("dataSourceName:" + dataSourceName + " get connections:" + 1 + " busy.");
+            throw new EasyQuerySQLException(ErrorCodeEnum.E1002,"dataSourceName:" + dataSourceName + " get connections:" + 1 + " busy.");
         }
         try {
             ArrayList<Connection> result = new ArrayList<>(count);

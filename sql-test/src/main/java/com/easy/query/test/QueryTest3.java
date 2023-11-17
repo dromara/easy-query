@@ -755,30 +755,30 @@ public class QueryTest3 extends BaseTest {
     public void testProperty3_1() {
         SQLFunc sqlFunc = easyQueryClient.getRuntimeContext().fx();
         Topic topic = easyQueryClient.queryable(Topic.class)
-                .where(t -> t.eq(sqlFunc.valueOrDefault("id","1"), sqlFunc.valueOrDefault("stars","3")).or().like("title", "你好"))
+                .where(t -> t.eq(sqlFunc.valueOrDefault("id", "1"), sqlFunc.valueOrDefault("stars", "3")).or().like("title", "你好"))
                 .firstOrNull();
         Assert.assertNotNull(topic);
         String sql = easyQueryClient.queryable(Topic.class)
                 .where(t -> t.eq(sqlFunc.valueOrDefault("id", "1"), sqlFunc.valueOrDefault("stars", "3")).or().like("title", "你好"))
                 .toSQL();
-        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (IFNULL(`id`,?) = IFNULL(`stars`,?) OR `title` LIKE ?)",sql);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (IFNULL(`id`,?) = IFNULL(`stars`,?) OR `title` LIKE ?)", sql);
 
         String sql1 = easyQueryClient.queryable(Topic.class)
-                .where(t -> t.eq(sqlFunc.valueOrDefault("id", "1"), sqlFunc.valueOrDefault(x->x.column("stars").column("id").value("3"))).or().like("title", "你好"))
+                .where(t -> t.eq(sqlFunc.valueOrDefault("id", "1"), sqlFunc.valueOrDefault(x -> x.column("stars").column("id").value("3"))).or().like("title", "你好"))
                 .toSQL();
-        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (IFNULL(`id`,?) = IFNULL(`stars`,`id`,?) OR `title` LIKE ?)",sql1);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (IFNULL(`id`,?) = IFNULL(`stars`,`id`,?) OR `title` LIKE ?)", sql1);
 
 
         String sql2 = easyQueryClient.queryable(Topic.class)
                 .where(t -> {
                     t.eq(
                             sqlFunc.valueOrDefault("id", "1"),
-                            sqlFunc.valueOrDefault(x->x.column("stars").column("id").value("3"))
+                            sqlFunc.valueOrDefault(x -> x.column("stars").column("id").value("3"))
                     );
                     t.or().like("title", "你好");
                 })
                 .toSQL();
-        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (IFNULL(`id`,?) = IFNULL(`stars`,`id`,?) OR `title` LIKE ?)",sql1);
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (IFNULL(`id`,?) = IFNULL(`stars`,`id`,?) OR `title` LIKE ?)", sql1);
 
     }
 
@@ -1036,6 +1036,7 @@ public class QueryTest3 extends BaseTest {
                 ).toList();
         Assert.assertEquals(0, list.size());
     }
+
     @Test
     public void proxyCaseWhen2() {
         TopicProxy table = TopicProxy.createTable();
@@ -1150,6 +1151,7 @@ public class QueryTest3 extends BaseTest {
             Assert.assertEquals(0, list.size());
         }
     }
+
     @Test
     public void lambdaCaseWhen1() {
         {
@@ -1183,12 +1185,12 @@ public class QueryTest3 extends BaseTest {
         {
 
             String sql = easyQuery.queryable(Topic.class)
-                    .leftJoin(Topic.class,(t,t1)->t.eq(t1,Topic::getId,Topic::getId))
+                    .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
                     .where(t -> t.like(Topic::getTitle, "someTitle"))
-                    .select(Topic.class, (t,t1) -> t
+                    .select(Topic.class, (t, t1) -> t
                             .sqlSegmentAs(
                                     SQL4JFunc.caseWhenBuilder(t)
-                                            .caseWhen(f -> f.eq(Topic::getTitle, "123"),t1, Topic::getId)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "123"), t1, Topic::getId)
                                             .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
                                             .elseEnd(Topic::getId)
                                     , Topic::getTitle)
@@ -1196,13 +1198,13 @@ public class QueryTest3 extends BaseTest {
                     )
                     .toSQL();
             Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t1.`id` WHEN t.`title` = ? THEN ? ELSE t.`id` END AS `title`,t.`id` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ?", sql);
-            List<Topic> list =easyQuery.queryable(Topic.class)
-                    .leftJoin(Topic.class,(t,t1)->t.eq(t1,Topic::getId,Topic::getId))
+            List<Topic> list = easyQuery.queryable(Topic.class)
+                    .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
                     .where(t -> t.like(Topic::getTitle, "someTitle"))
                     .select(Topic.class, t -> t
                             .sqlSegmentAs(
                                     SQL4JFunc.caseWhenBuilder(t)
-                                            .caseWhen(f -> f.eq(Topic::getTitle, "123"),t, Topic::getId)
+                                            .caseWhen(f -> f.eq(Topic::getTitle, "123"), t, Topic::getId)
                                             .caseWhen(f -> f.eq(Topic::getTitle, "456"), "222")
                                             .elseEnd(Topic::getId)
                                     , Topic::getTitle)
@@ -1218,7 +1220,7 @@ public class QueryTest3 extends BaseTest {
                     .select(Topic.class, (t, t1) -> t
                             .sqlSegmentAs(
                                     SQL4JFunc.caseWhenBuilder(t, t1)
-                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar, 100),t1, BlogEntity::getId)
+                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar, 100), t1, BlogEntity::getId)
                                             .caseWhen((f, f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar, 200), "222")
                                             .elseEnd(t1, BlogEntity::getOrder)
                                     , Topic::getTitle)
@@ -1232,7 +1234,7 @@ public class QueryTest3 extends BaseTest {
                     .select(Topic.class, (t, t1) -> t
                             .sqlSegmentAs(
                                     SQL4JFunc.caseWhenBuilder(t, t1)
-                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar, 100),t1, BlogEntity::getId)
+                                            .caseWhen((f, f1) -> f.eq(Topic::getTitle, "123").then(f1).le(BlogEntity::getStar, 100), t1, BlogEntity::getId)
                                             .caseWhen((f, f1) -> f.eq(Topic::getTitle, "456").then(f1).ge(BlogEntity::getStar, 200), "222")
                                             .elseEnd(t1, BlogEntity::getOrder)
                                     , Topic::getTitle)
@@ -2011,8 +2013,6 @@ public class QueryTest3 extends BaseTest {
                 .leftJoin(TopicAuto.class, (t, t1) -> t.eq(t1, Topic::getId, TopicAuto::getTitle))
                 .where((t, t1) -> {
 
-// t.`id` = ? AND t1.`stars` = ? AND (t1.`title` = t1.`title` AND (t1.`title` = t1.`title` OR t1.`stars` = ? AND t1.`title` = t1.`title`))
-
 
                     t.eq(Topic::getId, "123")
                             .and(t1, (x1, x2) -> {
@@ -2027,10 +2027,52 @@ public class QueryTest3 extends BaseTest {
                             });
 
 
+                    t.eq(Topic::getId, "123");
+
+                    t.and(t1, (a, b) -> {
+                                a.eq(Topic::getTitle, 1).or();
+
+                                b.eq(TopicAuto::getStars, 1);
+                            });
+
                 })
                 .toSQL();
-        //SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND t1.`stars` = ? AND (t1.`title` = t1.`title` AND (t1.`title` = t1.`title` OR t1.`stars` = ? AND t1.`title` = t1.`title`)) ORDER BY t.`id` ASC
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND ((t.`title` = ? AND t1.`id` = ?) OR (t.`title` = ? AND t1.`id` = ?))", sqlz1);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND ((t.`title` = ? AND t1.`id` = ?) OR (t.`title` = ? AND t1.`id` = ?)) AND t.`id` = ? AND (t.`title` = ? OR t1.`stars` = ?)", sqlz1);
+    }
+
+    @Test
+    public void newPredicateTest6() {
+        TopicProxy table1 = TopicProxy.createTable();
+        TopicAutoProxy table2 = TopicAutoProxy.createTable();
+        String sql = easyProxyQuery.queryable(table1)
+                .leftJoin(table2, o -> o.eq(table1.id(), table2.title()))
+                .where(o -> {
+                    o.eq(table1.id(), "1");
+
+                    o.and(x -> {
+                        x.eq(table1.title(), "123")
+                                .or().eq(table2.stars(), 1);
+                    });
+
+                })
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND (t.`title` = ? OR t1.`stars` = ?)", sql);
+    }
+    @Test
+    public void newPredicateTest7() {
+        String sql = easyProxyQuery.queryable(TopicProxy.createTable())
+                .leftJoin(TopicAutoProxy.createTable(), o -> o.eq(o.t().id(), o.t1().title()))
+                .where(o -> {
+                    o.eq(o.t().id(), "1");
+
+                    o.and(x -> {
+                        x.eq(o.t().title(), "123")
+                                .or().eq(o.t1().stars(), 1);
+                    });
+
+                })
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND (t.`title` = ? OR t1.`stars` = ?)", sql);
     }
 
 //    @Test

@@ -1,5 +1,7 @@
 package com.easy.query.core.exception;
 
+import com.easy.query.core.common.ErrorCode;
+
 import java.sql.SQLException;
 
 /**
@@ -19,6 +21,9 @@ public class EasyQuerySQLException extends SQLException {
 
     public EasyQuerySQLException(String reason) {
         super(reason);
+    }
+    public EasyQuerySQLException(ErrorCode errorCode, String reason) {
+        super(errorCode.errorMsg(reason));
     }
 
     public EasyQuerySQLException() {

@@ -248,6 +248,10 @@ public class EasySQLExpressionUtil {
         if (entityQueryExpressionBuilder.hasOrder()) {
             entityQueryExpressionBuilder.getOrder().clear();
         }
+        if (entityQueryExpressionBuilder.hasLimit()) {
+            entityQueryExpressionBuilder.setOffset(0);
+            entityQueryExpressionBuilder.setRows(0);
+        }
         if (EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpressionBuilder)) {
             return null;
         }
@@ -255,15 +259,17 @@ public class EasySQLExpressionUtil {
             return null;
         }
 
-        //如果他只是匿名表那么就使用匿名表的内部表
-        if (!EasySQLExpressionUtil.moreTableExpressionOrNoAnonymous(entityQueryExpressionBuilder)) {
-            AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) entityQueryExpressionBuilder.getTable(0);
-            EntityQueryExpressionBuilder entityQueryExpression = table.getEntityQueryExpressionBuilder().cloneEntityExpressionBuilder();
-            //存在操作那么就返回父类
-            if (!EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpression)) {
-                EntityQueryExpressionBuilder countEntityQueryExpression = getCountEntityQueryExpression(entityQueryExpression);
-                if (countEntityQueryExpression != null) {
-                    return countEntityQueryExpression;
+        if(!entityQueryExpressionBuilder.hasWhere()){
+            //如果他只是匿名表那么就使用匿名表的内部表
+            if (!EasySQLExpressionUtil.moreTableExpressionOrNoAnonymous(entityQueryExpressionBuilder)) {
+                AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) entityQueryExpressionBuilder.getTable(0);
+                EntityQueryExpressionBuilder entityQueryExpression = table.getEntityQueryExpressionBuilder().cloneEntityExpressionBuilder();
+                //存在操作那么就返回父类
+                if (!EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpression)) {
+                    EntityQueryExpressionBuilder countEntityQueryExpression = getCountEntityQueryExpression(entityQueryExpression);
+                    if (countEntityQueryExpression != null) {
+                        return countEntityQueryExpression;
+                    }
                 }
             }
         }

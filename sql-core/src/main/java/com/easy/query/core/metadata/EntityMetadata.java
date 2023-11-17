@@ -802,6 +802,11 @@ public class EntityMetadata {
         return Collections.unmodifiableCollection(actualTables);
     }
 
+    /**
+     * 添加实际表和表所在的数据源
+     * @param dataSource
+     * @param actualTableName
+     */
     public void addActualTableWithDataSource(String dataSource, String actualTableName) {
         if (EasyStringUtil.isBlank(dataSource)) {
             throw new IllegalArgumentException("data source");
