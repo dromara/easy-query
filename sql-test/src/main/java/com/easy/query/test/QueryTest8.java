@@ -5,10 +5,13 @@ import com.easy.query.api.proxy.select.ProxyQueryable2;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
@@ -743,5 +746,136 @@ public class QueryTest8 extends BaseTest {
             Assert.assertEquals("SELECT t1.`id` FROM (SELECT t.`id` FROM `AAA` t) t1 WHERE t1.`id` IS NOT NULL ORDER BY t1.`id` ASC LIMIT 2 OFFSET 1",easyQuerySQLStatementException.getSQL());
 
         }
+        {
+
+
+            Supplier<Exception> f = () -> {
+                try {
+                    TopicProxy table = TopicProxy.createTable();
+                    long count = easyProxyQuery.queryable(table)
+                            .asTable("AAA")
+                            .limit(1)
+                            .select(TopicProxy.createTable(), o -> o.column(table.id()))
+                            .count();
+                }catch (Exception ex){
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+            Assert.assertEquals("SELECT COUNT(*) FROM (SELECT t.`id` FROM `AAA` t LIMIT 1) t1",easyQuerySQLStatementException.getSQL());
+
+        }
+        {
+
+
+            Supplier<Exception> f = () -> {
+                try {
+                    TopicProxy table = TopicProxy.createTable();
+                    List<Topic> list = easyProxyQuery.queryable(table)
+                            .asTable("AAA")
+                            .limit(1)
+                            .select(TopicProxy.createTable(), o -> o.column(table.id()))
+                            .limit(1, 2).toList();
+                }catch (Exception ex){
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+            Assert.assertEquals("SELECT t.`id` FROM `AAA` t LIMIT 2 OFFSET 1",easyQuerySQLStatementException.getSQL());
+
+        }
     }
+    @Test
+    public void test111(){
+
+        {
+
+
+            Supplier<Exception> f = () -> {
+                try {
+                    TopicProxy table = TopicProxy.createTable();
+                    long count = easyProxyQuery.queryable(table)
+                            .asTable("AAA")
+                            .limit(1)
+                            .select(TopicProxy.createTable(), o -> o.column(table.id())).distinct()
+                            .count();
+                }catch (Exception ex){
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+            Assert.assertEquals("SELECT COUNT(*) FROM (SELECT DISTINCT t.`id` FROM `AAA` t LIMIT 1) t1",easyQuerySQLStatementException.getSQL());
+
+        }
+    }
+    @Test
+    public void test112(){
+
+        {
+
+
+            Supplier<Exception> f = () -> {
+                try {
+                    TopicProxy table = TopicProxy.createTable();
+                    long count = easyProxyQuery.queryable(table)
+                            .asTable("AAA").where(o -> o.eq(table.id(), "1"))
+                            .select(TopicProxy.createTable(), o -> o.columns(table.id(),table.stars())).distinct()
+                            .count();
+                }catch (Exception ex){
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+            Assert.assertEquals("SELECT COUNT(DISTINCT t.`id`,t.`stars`) FROM `AAA` t WHERE t.`id` = ?",easyQuerySQLStatementException.getSQL());
+
+        }
+    }
+
+
+
+
+
+    @Test
+    public void query40() {
+        TopicProxy topicTable = TopicProxy.createTable();
+        BlogEntityProxy blogTable = BlogEntityProxy.createTable();
+
+        ProxyQueryable<BlogEntityProxy, BlogEntity> distinct = easyProxyQuery.queryable(topicTable)
+                .innerJoin(blogTable, o -> o.eq(topicTable.id(), blogTable.id()))
+                .where(o -> o.isNotNull(blogTable.title()))
+                .orderByDesc(o -> o.column(blogTable.publishTime()))
+                .select(BlogEntityProxy.createTable(), o -> o.columns(o.t1().publishTime(), o.t1().id(), o.t1().score()))
+                .distinct();
+        EntityQueryExpressionBuilder countEntityQueryExpression = EasySQLExpressionUtil.getCountEntityQueryExpression(distinct.getSQLEntityExpressionBuilder().cloneEntityExpressionBuilder(),false);
+        Assert.assertNotNull(countEntityQueryExpression);
+        String s = countEntityQueryExpression.toExpression().toSQL(DefaultToSQLContext.defaultToSQLContext(distinct.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext()));
+        Assert.assertEquals("SELECT COUNT(DISTINCT t1.`publish_time`,t1.`id`,t1.`score`) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL", s);
+        String s1 = distinct.limit(0, 20).toSQL();
+        Assert.assertEquals("SELECT DISTINCT t1.`publish_time`,t1.`id`,t1.`score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL ORDER BY t1.`publish_time` DESC LIMIT 20", s1);
+    }
+
 }

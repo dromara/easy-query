@@ -34,16 +34,15 @@ import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.scec.expression.ColumnMultiParamExpression;
-import com.easy.query.core.expression.segment.scec.expression.SQLFormatArgument;
 import com.easy.query.core.expression.segment.scec.expression.ColumnParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyAsAliasParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.FormatValueParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.SQLFormatArgument;
 import com.easy.query.core.expression.segment.scec.expression.SQLSegmentParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.SubQueryParamExpression;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
@@ -148,6 +147,12 @@ public class EasySQLExpressionUtil {
     public static boolean hasAnyOperateWithoutWhereAndOrder(EntityQueryExpressionBuilder sqlEntityExpression) {
         return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasHaving() || sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
     }
+    public static boolean hasAnyOperateWithoutWhereAndOrderAndDistinct(EntityQueryExpressionBuilder sqlEntityExpression) {
+        return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasHaving() || sqlEntityExpression.hasGroup();
+    }
+    public static boolean hasOnlyOperateWithDistinct(EntityQueryExpressionBuilder sqlEntityExpression) {
+        return !sqlEntityExpression.hasLimit() && !sqlEntityExpression.hasHaving() && sqlEntityExpression.isDistinct() && !sqlEntityExpression.hasGroup();
+    }
 
     public static <T1, T2> ClientQueryable2<T1, T2> executeJoinOn(ClientQueryable2<T1, T2> queryable, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> on) {
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate();
@@ -244,14 +249,8 @@ public class EasySQLExpressionUtil {
     }
 
 
-    public static EntityQueryExpressionBuilder getCountEntityQueryExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        if (entityQueryExpressionBuilder.hasOrder()) {
-            entityQueryExpressionBuilder.getOrder().clear();
-        }
-        if (entityQueryExpressionBuilder.hasLimit()) {
-            entityQueryExpressionBuilder.setOffset(0);
-            entityQueryExpressionBuilder.setRows(0);
-        }
+    public static EntityQueryExpressionBuilder getCountEntityQueryExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder,boolean isDistinct) {
+        processRemoveOrderAndLimit(entityQueryExpressionBuilder);
         if (EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpressionBuilder)) {
             return null;
         }
@@ -266,17 +265,51 @@ public class EasySQLExpressionUtil {
                 EntityQueryExpressionBuilder entityQueryExpression = table.getEntityQueryExpressionBuilder().cloneEntityExpressionBuilder();
                 //存在操作那么就返回父类
                 if (!EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpression)) {
-                    EntityQueryExpressionBuilder countEntityQueryExpression = getCountEntityQueryExpression(entityQueryExpression);
+                    EntityQueryExpressionBuilder countEntityQueryExpression = getCountEntityQueryExpression(entityQueryExpression,isDistinct||entityQueryExpression.isDistinct());
                     if (countEntityQueryExpression != null) {
                         return countEntityQueryExpression;
+                    }
+                }else{
+                    if (EasySQLExpressionUtil.hasOnlyOperateWithDistinct(entityQueryExpression)) {
+
+                        processRemoveOrderAndLimit(entityQueryExpression);
+                        return processSelectCountProject(entityQueryExpression,isDistinct||entityQueryExpression.isDistinct());
                     }
                 }
             }
         }
-        entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
+        return processSelectCountProject(entityQueryExpressionBuilder,isDistinct);
+    }
+
+    private static void processRemoveOrderAndLimit(EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+        if (entityQueryExpressionBuilder.hasOrder()) {
+            entityQueryExpressionBuilder.getOrder().clear();
+        }
+        if (entityQueryExpressionBuilder.hasLimit()) {
+            entityQueryExpressionBuilder.setOffset(0);
+            entityQueryExpressionBuilder.setRows(0);
+        }
+    }
+    /**
+     * 如果是distinct 的count需要做特殊处理
+     * @param entityQueryExpressionBuilder
+     * @param isDistinct
+     * @return
+     */
+    private static EntityQueryExpressionBuilder processSelectCountProject(EntityQueryExpressionBuilder entityQueryExpressionBuilder,boolean isDistinct){
         SQLSegmentFactory sqlSegmentFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
-        SelectConstSegment selectCountSegment = sqlSegmentFactory.createSelectConstSegment("COUNT(*)");
-        entityQueryExpressionBuilder.getProjects().append(selectCountSegment);
+        if(isDistinct){
+            SQLBuilderSegment sqlBuilderSegment = entityQueryExpressionBuilder.getProjects().cloneSQLBuilder();
+            entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
+            SQLSegment sqlSegment = sqlSegmentFactory.createSelectCountDistinctSegment(sqlBuilderSegment.getSQLSegments());
+            entityQueryExpressionBuilder.getProjects().append(sqlSegment);
+            entityQueryExpressionBuilder.setDistinct(false);
+
+        }else{
+            entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
+            SQLSegment sqlSegment = sqlSegmentFactory.createSelectConstSegment("COUNT(*)");
+            entityQueryExpressionBuilder.getProjects().append(sqlSegment);
+        }
         return entityQueryExpressionBuilder;
     }
 

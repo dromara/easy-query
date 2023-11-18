@@ -12,7 +12,9 @@ import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
+import com.easy.query.core.expression.segment.SelectCountDistinctSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.impl.AnonymousColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
@@ -28,10 +30,13 @@ import com.easy.query.core.expression.segment.impl.OrderFuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
+import com.easy.query.core.expression.segment.impl.SelectCountDistinctSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SubQueryColumnSegmentImpl;
-import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
+
+import java.util.Collection;
 
 /**
  * create time 2023/5/30 12:18
@@ -43,6 +48,11 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     @Override
     public SelectConstSegment createSelectConstSegment(String projects) {
         return new SelectConstSegmentImpl(projects);
+    }
+
+    @Override
+    public SelectCountDistinctSegment createSelectCountDistinctSegment(Collection<SQLSegment> sqlSegments) {
+        return new SelectCountDistinctSegmentImpl(sqlSegments);
     }
 
     @Override

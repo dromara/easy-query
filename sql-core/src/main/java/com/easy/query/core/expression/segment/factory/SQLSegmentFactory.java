@@ -12,11 +12,15 @@ import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
+import com.easy.query.core.expression.segment.SelectCountDistinctSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
+
+import java.util.Collection;
 
 /**
  * create time 2023/5/28 22:26
@@ -26,6 +30,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
  */
 public interface SQLSegmentFactory {
     SelectConstSegment createSelectConstSegment(String projects);
+    SelectCountDistinctSegment createSelectCountDistinctSegment(Collection<SQLSegment> sqlSegments);
 //    ColumnSegment createColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String alias);
     default ColumnSegment createColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String alias){
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);

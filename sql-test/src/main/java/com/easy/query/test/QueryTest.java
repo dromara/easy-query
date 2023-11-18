@@ -1021,16 +1021,12 @@ public class QueryTest extends BaseTest {
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
                 .orderByDesc((t, t1) -> t1.column(BlogEntity::getPublishTime))
                 .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getPublishTime).column(BlogEntity::getId).column(BlogEntity::getScore));
-        EntityQueryExpressionBuilder countEntityQueryExpression = EasySQLExpressionUtil.getCountEntityQueryExpression(select.getSQLEntityExpressionBuilder().cloneEntityExpressionBuilder());
+        EntityQueryExpressionBuilder countEntityQueryExpression = EasySQLExpressionUtil.getCountEntityQueryExpression(select.getSQLEntityExpressionBuilder().cloneEntityExpressionBuilder(),false);
         Assert.assertNotNull(countEntityQueryExpression);
         String s = countEntityQueryExpression.toExpression().toSQL(DefaultToSQLContext.defaultToSQLContext(select.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext()));
         Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL", s);
         String s1 = select.limit(0, 20).toSQL();
         Assert.assertEquals("SELECT t1.`publish_time`,t1.`id`,t1.`score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL ORDER BY t1.`publish_time` DESC LIMIT 20", s1);
-
-
-//        Assert.assertEquals(100,page.getTotal());
-//        Assert.assertEquals(20,page.getData().size());
     }
 
     @Test
@@ -1041,7 +1037,7 @@ public class QueryTest extends BaseTest {
                 .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
                 .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getPublishTime).column(BlogEntity::getId).column(BlogEntity::getScore))
                 .orderByDesc(t1 -> t1.column(BlogEntity::getPublishTime));
-        EntityQueryExpressionBuilder countEntityQueryExpression = EasySQLExpressionUtil.getCountEntityQueryExpression(blogEntityQueryable.getSQLEntityExpressionBuilder().cloneEntityExpressionBuilder());
+        EntityQueryExpressionBuilder countEntityQueryExpression = EasySQLExpressionUtil.getCountEntityQueryExpression(blogEntityQueryable.getSQLEntityExpressionBuilder().cloneEntityExpressionBuilder(),false);
         Assert.assertNotNull(countEntityQueryExpression);
         String s = countEntityQueryExpression.toExpression().toSQL(DefaultToSQLContext.defaultToSQLContext(blogEntityQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext()));
         Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL", s);
@@ -1879,7 +1875,7 @@ public class QueryTest extends BaseTest {
             EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
             Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
             String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
-            Assert.assertEquals("SELECT COUNT(*) FROM (SELECT DISTINCT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_12345` t WHERE t.`deleted` = ? AND t.`id` = ?) t1", sql);
+            Assert.assertEquals("SELECT COUNT(DISTINCT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`) FROM `t_12345` t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
         }
     }
 
