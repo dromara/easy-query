@@ -19,10 +19,12 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
+import com.easy.query.core.exception.EasyQueryUnexpectedException;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.util.EasyAesUtil;
 import com.easy.query.core.util.EasyBase64Util;
 import com.easy.query.core.util.EasyBitwiseUtil;
+import com.easy.query.core.util.EasyCheck;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -1207,5 +1209,67 @@ public class GenericTest extends BaseTest {
         Integer e5 = enumValueConverter.serialize(MyEnum.BJ, null);
         Assert.assertEquals(MyEnum.BJ.getCode(),e5);
 
+    }
+
+    @Test
+    public void check(){
+        {
+
+            Supplier<Exception> f = () -> {
+                try {
+                    Object obj=null;
+                    EasyCheck.assertElse(obj!=null,"obj is null");
+                }catch (Exception ex){
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQueryUnexpectedException);
+        }
+        {
+
+            Supplier<Exception> f = () -> {
+                try {
+                    Object obj=null;
+                    EasyCheck.assertElse(obj==null,"obj is not null");
+                }catch (Exception ex){
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNull(exception);
+        }
+        {
+
+            Supplier<Exception> f = () -> {
+                try {
+                    Object obj=null;
+                    EasyCheck.assertArgumentElse(obj!=null);
+                }catch (Exception ex){
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof IllegalArgumentException);
+        }
+        {
+
+            Supplier<Exception> f = () -> {
+                try {
+                    Object obj=null;
+                    EasyCheck.assertArgumentElse(obj==null);
+                }catch (Exception ex){
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNull(exception);
+        }
     }
 }

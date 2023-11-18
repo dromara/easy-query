@@ -1,10 +1,7 @@
 package com.easy.query.core.util;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 /**
  * @author xuejiaming
@@ -12,12 +9,12 @@ import java.util.function.Function;
 public class EasyStringUtil {
     public static final String EMPTY = "";
 
-    public static final int INDEX_NOT_FOUND = -1;
+//    public static final int INDEX_NOT_FOUND = -1;
+//
+//    public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-    public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-
-    static String lineSeparator = System.getProperty("line.separator", "\n");
+//    static String lineSeparator = System.getProperty("line.separator", "\n");
 
 
     // 首字母转小写
@@ -111,16 +108,16 @@ public class EasyStringUtil {
         return sb.toString();
     }
 
-    public static String substringBeforeLast(String str, String separator) {
-        if (isEmpty(str) || isEmpty(separator)) {
-            return str;
-        }
-        int pos = str.lastIndexOf(separator);
-        if (pos == INDEX_NOT_FOUND) {
-            return str;
-        }
-        return str.substring(0, pos);
-    }
+//    public static String substringBeforeLast(String str, String separator) {
+//        if (isEmpty(str) || isEmpty(separator)) {
+//            return str;
+//        }
+//        int pos = str.lastIndexOf(separator);
+//        if (pos == INDEX_NOT_FOUND) {
+//            return str;
+//        }
+//        return str.substring(0, pos);
+//    }
 
     public static String defaultIfBank(String value,String def){
         if(EasyStringUtil.isBlank(value)){
@@ -203,222 +200,222 @@ public class EasyStringUtil {
         }
         return def;
     }
-
-    public static String substringAfter(String str, String separator) {
-        if (isEmpty(str)) {
-            return str;
-        }
-        if (separator == null) {
-            return EMPTY;
-        }
-        int pos = str.indexOf(separator);
-        if (pos == INDEX_NOT_FOUND) {
-            return EMPTY;
-        }
-        return str.substring(pos + separator.length());
-    }
-
-
-    public static boolean isBlank(final CharSequence cs) {
-        int strLen;
-        if (cs == null || (strLen = cs.length()) == 0) {
-            return true;
-        }
-        for (int i = 0; i < strLen; i++) {
-            if (Character.isWhitespace(cs.charAt(i)) == false) {
-                return false;
-            }
-        }
-        return true;
-    }
+//
+//    public static String substringAfter(String str, String separator) {
+//        if (isEmpty(str)) {
+//            return str;
+//        }
+//        if (separator == null) {
+//            return EMPTY;
+//        }
+//        int pos = str.indexOf(separator);
+//        if (pos == INDEX_NOT_FOUND) {
+//            return EMPTY;
+//        }
+//        return str.substring(pos + separator.length());
+//    }
 
 
-    /**
-     * 判断一个 Object 是否为空，不包含集合对象的判断
-     *
-     * @param obj need to determine the object
-     * @return
-     * @author larrykoo
-     */
-    public static boolean isNullOrEmpty(Object obj) {
-        if (obj == null) {
-            return true;
-        }
-        if (obj instanceof CharSequence) {
-            return ((CharSequence) obj).length() == 0;
-        }
-        return false;
-    }
+//    public static boolean isBlank(final CharSequence cs) {
+//        int strLen;
+//        if (cs == null || (strLen = cs.length()) == 0) {
+//            return true;
+//        }
+//        for (int i = 0; i < strLen; i++) {
+//            if (Character.isWhitespace(cs.charAt(i)) == false) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
-    /**
-     * 严格判断一个 Object 是否为空，包括对象为 null，字符串长度为0，集合类，Map 为 empty 的情况
-     *
-     * @param obj
-     * @return
-     * @author larrykoo
-     */
-    public static boolean isNullOrEmptyObject(Object obj) {
-        if (obj == null) {
-            return true;
-        }
-        if (obj instanceof CharSequence) {
-            return ((CharSequence) obj).length() == 0;
-        }
+//
+//    /**
+//     * 判断一个 Object 是否为空，不包含集合对象的判断
+//     *
+//     * @param obj need to determine the object
+//     * @return
+//     * @author larrykoo
+//     */
+//    public static boolean isNullOrEmpty(Object obj) {
+//        if (obj == null) {
+//            return true;
+//        }
+//        if (obj instanceof CharSequence) {
+//            return ((CharSequence) obj).length() == 0;
+//        }
+//        return false;
+//    }
 
-        if (obj instanceof Collection) {
-            return ((Collection) obj).isEmpty();
-        }
-        if (obj instanceof Map) {
-            return ((Map) obj).isEmpty();
-        }
-        if (obj instanceof Object[]) {
-            Object[] object = (Object[]) obj;
-            if (object.length == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    /**
+//     * 严格判断一个 Object 是否为空，包括对象为 null，字符串长度为0，集合类，Map 为 empty 的情况
+//     *
+//     * @param obj
+//     * @return
+//     * @author larrykoo
+//     */
+//    public static boolean isNullOrEmptyObject(Object obj) {
+//        if (obj == null) {
+//            return true;
+//        }
+//        if (obj instanceof CharSequence) {
+//            return ((CharSequence) obj).length() == 0;
+//        }
+//
+//        if (obj instanceof Collection) {
+//            return ((Collection) obj).isEmpty();
+//        }
+//        if (obj instanceof Map) {
+//            return ((Map) obj).isEmpty();
+//        }
+//        if (obj instanceof Object[]) {
+//            Object[] object = (Object[]) obj;
+//            if (object.length == 0) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     public static boolean isEmpty(String str) {
         return str == null || str.length() == 0;
     }
 
-    public static String trim(String str) {
-        return str == null ? null : str.trim();
-    }
+//    public static String trim(String str) {
+//        return str == null ? null : str.trim();
+//    }
 
-    public static String[] split(String str, char separatorChar) {
-        return splitWorker(str, separatorChar, false);
-    }
+//    public static String[] split(String str, char separatorChar) {
+//        return splitWorker(str, separatorChar, false);
+//    }
 
-    public static String beforeLast(String str, char separatorChar) {
-        int pos = str.lastIndexOf((int) separatorChar);
-        return pos == -1 ? "" : str.substring(0, pos);
-    }
+//    public static String beforeLast(String str, char separatorChar) {
+//        int pos = str.lastIndexOf((int) separatorChar);
+//        return pos == -1 ? "" : str.substring(0, pos);
+//    }
 
-    public static <T> String join(Collection<T> strs, Function<T,String> format, String separator) {
-        StringBuilder sb = new StringBuilder();
-        for (T str : strs) {
-            String s = format.apply(str);
-            sb.append(s).append(separator);
-        }
-        sb.setLength(sb.length() - 1);
-        return sb.toString();
-    }
+//    public static <T> String join(Collection<T> strs, Function<T,String> format, String separator) {
+//        StringBuilder sb = new StringBuilder();
+//        for (T str : strs) {
+//            String s = format.apply(str);
+//            sb.append(s).append(separator);
+//        }
+//        sb.setLength(sb.length() - 1);
+//        return sb.toString();
+//    }
 
-    private static String[] splitWorker(String str, char separatorChar, boolean preserveAllTokens) {
-        // Performance tuned for 2.0 (JDK1.4)
+//    private static String[] splitWorker(String str, char separatorChar, boolean preserveAllTokens) {
+//        // Performance tuned for 2.0 (JDK1.4)
+//
+//        if (str == null) {
+//            return null;
+//        }
+//        int len = str.length();
+//        if (len == 0) {
+//            return EMPTY_STRING_ARRAY;
+//        }
+//        List list = new ArrayList();
+//        int i = 0, start = 0;
+//        boolean match = false;
+//        boolean lastMatch = false;
+//        while (i < len) {
+//            if (str.charAt(i) == separatorChar) {
+//                if (match || preserveAllTokens) {
+//                    list.add(str.substring(start, i));
+//                    match = false;
+//                    lastMatch = true;
+//                }
+//                start = ++i;
+//                continue;
+//            }
+//            lastMatch = false;
+//            match = true;
+//            i++;
+//        }
+//        if (match || (preserveAllTokens && lastMatch)) {
+//            list.add(str.substring(start, i));
+//        }
+//        return (String[]) list.toArray(new String[list.size()]);
+//    }
 
-        if (str == null) {
-            return null;
-        }
-        int len = str.length();
-        if (len == 0) {
-            return EMPTY_STRING_ARRAY;
-        }
-        List list = new ArrayList();
-        int i = 0, start = 0;
-        boolean match = false;
-        boolean lastMatch = false;
-        while (i < len) {
-            if (str.charAt(i) == separatorChar) {
-                if (match || preserveAllTokens) {
-                    list.add(str.substring(start, i));
-                    match = false;
-                    lastMatch = true;
-                }
-                start = ++i;
-                continue;
-            }
-            lastMatch = false;
-            match = true;
-            i++;
-        }
-        if (match || (preserveAllTokens && lastMatch)) {
-            list.add(str.substring(start, i));
-        }
-        return (String[]) list.toArray(new String[list.size()]);
-    }
+//    public static String addEscape(String name, char escape) {
+//        return addEscape(name, escape, escape);
+//    }
 
-    public static String addEscape(String name, char escape) {
-        return addEscape(name, escape, escape);
-    }
+//    public static String addEscape(String name, char leftEscape, char rightEscape) {
+//        int index = name.indexOf('.');
+//        if (index == -1) {
+//            return new StringBuilder(name.length() + 2).append(leftEscape).append(name).append(rightEscape).toString();
+//        } else {
+//            String schema = name.substring(0, index);
+//            String table = name.substring(index + 1);
+//            StringBuilder sb = new StringBuilder(name.length() + 4);
+//            sb.append(leftEscape).append(schema).append(rightEscape).append('.').append(leftEscape).append(table).append(rightEscape);
+//            return sb.toString();
+//
+//        }
+//    }
 
-    public static String addEscape(String name, char leftEscape, char rightEscape) {
-        int index = name.indexOf('.');
-        if (index == -1) {
-            return new StringBuilder(name.length() + 2).append(leftEscape).append(name).append(rightEscape).toString();
-        } else {
-            String schema = name.substring(0, index);
-            String table = name.substring(index + 1);
-            StringBuilder sb = new StringBuilder(name.length() + 4);
-            sb.append(leftEscape).append(schema).append(rightEscape).append('.').append(leftEscape).append(table).append(rightEscape);
-            return sb.toString();
+//    /**
+//     * @param str
+//     * @param maxLen 英文字符最大长度
+//     * @return
+//     */
+//    public static List<String> getStringSegments(String str, int maxLen) {
+//        List<String> segments = new ArrayList<>();
+//        if (str == null || str.isEmpty()) {
+//            return segments;
+//        }
+//        int len = 0;
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < str.length(); i++) {
+//            char c = str.charAt(i);
+//            if (c >= 0x4e00 && c <= 0x9fa5) { // 中文字符
+//                len += 2;
+//                if (len > maxLen) {
+//                    segments.add(sb.toString());
+//                    sb = new StringBuilder();
+//                    len = 2;
+//                }
+//                sb.append(c);
+//            } else { // 英文字符
+//                len += 1;
+//                if (len > maxLen) {
+//                    segments.add(sb.toString());
+//                    sb = new StringBuilder();
+//                    len = 1;
+//                }
+//                sb.append(c);
+//            }
+//        }
+//        segments.add(sb.toString());
+//        return segments;
+//    }
 
-        }
-    }
-
-    /**
-     * @param str
-     * @param maxLen 英文字符最大长度
-     * @return
-     */
-    public static List<String> getStringSegments(String str, int maxLen) {
-        List<String> segments = new ArrayList<>();
-        if (str == null || str.isEmpty()) {
-            return segments;
-        }
-        int len = 0;
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (c >= 0x4e00 && c <= 0x9fa5) { // 中文字符
-                len += 2;
-                if (len > maxLen) {
-                    segments.add(sb.toString());
-                    sb = new StringBuilder();
-                    len = 2;
-                }
-                sb.append(c);
-            } else { // 英文字符
-                len += 1;
-                if (len > maxLen) {
-                    segments.add(sb.toString());
-                    sb = new StringBuilder();
-                    len = 1;
-                }
-                sb.append(c);
-            }
-        }
-        segments.add(sb.toString());
-        return segments;
-    }
-
-    public static String getCharString(String str, int maxLen) {
-        if (str == null || str.isEmpty()) {
-            return "";
-        }
-        int len = 0;
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (c >= 0x4e00 && c <= 0x9fa5) { // 中文字符
-                len += 2;
-                if (len > maxLen) {
-                    break;
-                }
-                sb.append(c);
-            } else { // 英文字符
-                len += 1;
-                if (len > maxLen) {
-                    break;
-                }
-                sb.append(c);
-            }
-        }
-        return sb.toString();
-    }
+//    public static String getCharString(String str, int maxLen) {
+//        if (str == null || str.isEmpty()) {
+//            return "";
+//        }
+//        int len = 0;
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < str.length(); i++) {
+//            char c = str.charAt(i);
+//            if (c >= 0x4e00 && c <= 0x9fa5) { // 中文字符
+//                len += 2;
+//                if (len > maxLen) {
+//                    break;
+//                }
+//                sb.append(c);
+//            } else { // 英文字符
+//                len += 1;
+//                if (len > maxLen) {
+//                    break;
+//                }
+//                sb.append(c);
+//            }
+//        }
+//        return sb.toString();
+//    }
 
 //    public static boolean isChineseChar(char c) {
 //        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
@@ -516,7 +513,6 @@ public class EasyStringUtil {
         int[] codePoints = input.codePoints().toArray();
 
         StringBuilder currentSubstring = new StringBuilder();
-        int currentIndex = 0;
         if(codePoints.length==0){
             return EasyStringUtil.EMPTY;
         }
@@ -600,17 +596,6 @@ public class EasyStringUtil {
             i = j;
         }
         return groups;
-    }
-
-    /**
-     * 请使用 splitBase64String 方法这个方法会有歧义不支持中文
-     * @param str
-     * @param groupSize
-     * @return
-     */
-    @Deprecated
-    public static List<String> splitString(String str, int groupSize) {
-        return splitBase64ByGroupSize(str,groupSize);
     }
     public static String leftPad(String input, int totalWidth, char paddingChar) {
         if (input.length() >= totalWidth) {

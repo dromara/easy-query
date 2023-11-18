@@ -51,9 +51,9 @@ public class EasyUtil {
         return getPredicateTableByOffset(sqlEntityExpression, 0);
     }
 
-    public static EntityTableExpressionBuilder getPreviewPredicateTable(EntityQueryExpressionBuilder sqlEntityExpression) {
-        return getPredicateTableByOffset(sqlEntityExpression, 1);
-    }
+//    public static EntityTableExpressionBuilder getPreviewPredicateTable(EntityQueryExpressionBuilder sqlEntityExpression) {
+//        return getPredicateTableByOffset(sqlEntityExpression, 1);
+//    }
 
     public static int getNextTableIndex(EntityQueryExpressionBuilder sqlEntityExpression) {
         return sqlEntityExpression.getTables().size();
