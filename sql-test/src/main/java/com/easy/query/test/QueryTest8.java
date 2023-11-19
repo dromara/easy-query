@@ -854,6 +854,34 @@ public class QueryTest8 extends BaseTest {
 
         }
     }
+//    @Test
+//    public void test113(){
+//
+//        {
+//
+//
+//            Supplier<Exception> f = () -> {
+//                try {
+//                    TopicProxy table = TopicProxy.createTable();
+//                    EasyPageResult<Topic> pageResult = easyProxyQuery.queryable(table)
+//                            .where(o -> o.eq(table.id(), "1"))
+//                            .select(TopicProxy.createTable(), o -> o.columns(table.id(), table.stars())).distinct()
+//                            .toPageResult(1, 10);
+//                }catch (Exception ex){
+//                    return ex;
+//                }
+//                return null;
+//            };
+//            Exception exception = f.get();
+//            Assert.assertNotNull(exception);
+//            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+//            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+//            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+//            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+//            Assert.assertEquals("SELECT COUNT(DISTINCT t.`id`,t.`stars`) FROM `AAA` t WHERE t.`id` = ?",easyQuerySQLStatementException.getSQL());
+//
+//        }
+//    }
 
 
 
@@ -877,5 +905,100 @@ public class QueryTest8 extends BaseTest {
         String s1 = distinct.limit(0, 20).toSQL();
         Assert.assertEquals("SELECT DISTINCT t1.`publish_time`,t1.`id`,t1.`score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL ORDER BY t1.`publish_time` DESC LIMIT 20", s1);
     }
+
+
+    @Test
+     public void testJoin5(){
+         String sql = easyQuery.queryable(Topic.class)
+                 .leftJoin(Topic.class, (t1, t2) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(BlogEntity.class, (t1, t2, t3, t4, t5) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .where((t1, t2, t3, t4, t5) -> {
+                     t1.eq(Topic::getStars, 1);
+                     t5.eq(BlogEntity::getOrder, "1");
+                 }).toSQL();
+         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t1.`id` LEFT JOIN `t_blog` t4 ON t4.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`stars` = ? AND t4.`order` = ?",sql);
+     }
+    @Test
+     public void testJoin6(){
+         String sql = easyQuery.queryable(Topic.class)
+                 .leftJoin(Topic.class, (t1, t2) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(BlogEntity.class, (t1, t2, t3, t4, t5,t6) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .where((t1, t2, t3, t4, t5,t6) -> {
+                     t1.eq(Topic::getStars, 1);
+                     t6.eq(BlogEntity::getOrder, "1");
+                 }).toSQL();
+         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t1.`id` LEFT JOIN `t_blog` t5 ON t5.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`stars` = ? AND t5.`order` = ?",sql);
+     }
+    @Test
+     public void testJoin7(){
+         String sql = easyQuery.queryable(Topic.class)
+                 .leftJoin(Topic.class, (t1, t2) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5,t6) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(BlogEntity.class, (t1, t2, t3, t4, t5,t6,t7) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .where((t1, t2, t3, t4, t5,t6,t7) -> {
+                     t1.eq(Topic::getStars, 1);
+                     t7.eq(BlogEntity::getOrder, "1");
+                 }).toSQL();
+         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t1.`id` LEFT JOIN `t_blog` t6 ON t6.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`stars` = ? AND t6.`order` = ?",sql);
+     }
+    @Test
+     public void testJoin8(){
+         String sql = easyQuery.queryable(Topic.class)
+                 .leftJoin(Topic.class, (t1, t2) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5,t6) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5,t6,t7) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(BlogEntity.class, (t1, t2, t3, t4, t5,t6,t7,t8) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .where((t1, t2, t3, t4, t5,t6,t7,t8) -> {
+                     t1.eq(Topic::getStars, 1);
+                     t8.eq(BlogEntity::getOrder, "1");
+                 }).toSQL();
+         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t1.`id` LEFT JOIN `t_blog` t7 ON t7.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`stars` = ? AND t7.`order` = ?",sql);
+     }
+    @Test
+     public void testJoin9(){
+         String sql = easyQuery.queryable(Topic.class)
+                 .leftJoin(Topic.class, (t1, t2) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5,t6) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5,t6,t7) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5,t6,t7,t8) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(BlogEntity.class, (t1, t2, t3, t4, t5,t6,t7,t8,t9) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .where((t1, t2, t3, t4, t5,t6,t7,t8,t9) -> {
+                     t1.eq(Topic::getStars, 1);
+                     t9.eq(BlogEntity::getOrder, "1");
+                 }).toSQL();
+         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t1.`id` LEFT JOIN `t_blog` t8 ON t8.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`stars` = ? AND t8.`order` = ?",sql);
+     }
+    @Test
+     public void testJoin10(){
+         String sql = easyQuery.queryable(Topic.class)
+                 .leftJoin(Topic.class, (t1, t2) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5,t6) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5,t6,t7) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5,t6,t7,t8) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(Topic.class, (t1, t2, t3, t4, t5,t6,t7,t8,t9) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .leftJoin(BlogEntity.class, (t1, t2, t3, t4, t5,t6,t7,t8,t9,t10) -> t1.eq(t2, Topic::getId, Topic::getId))
+                 .where((t1, t2, t3, t4, t5,t6,t7,t8,t9,t10) -> {
+                     t1.eq(Topic::getStars, 1);
+                     t10.eq(BlogEntity::getOrder, "1");
+                 }).toSQL();
+         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t1.`id` LEFT JOIN `t_blog` t9 ON t9.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`stars` = ? AND t9.`order` = ?",sql);
+     }
 
 }
