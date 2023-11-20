@@ -13,6 +13,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReade
 import com.easy.query.core.common.KeywordTool;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyTrackUtil;
 
@@ -75,6 +76,7 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
 
     private DataReader getColumnDataReader(ResultSetMetaData rsmd) throws SQLException {
         boolean mapToBeanStrict = context.isMapToBeanStrict();
+
         //需要返回的结果集映射到bean实体上
         //int[] 索引代表数据库返回的索引，数组索引所在的值代表属性数组的对应属性
         int columnCount = rsmd.getColumnCount();//有多少列
@@ -86,6 +88,9 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
             }
             ResultColumnMetadata resultColumnMetadata = getMapColumnMetadata(i, colName, mapToBeanStrict);
             if (resultColumnMetadata == null) {
+                if(easyQueryOption.isWarningColumnMiss()){
+                    log.warn("sql result column name:["+colName+"] mapping miss in class:["+ EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) +"]");
+                }
                 continue;
             }
             dataReader = new BeanDataReader(dataReader, new PropertyDataReader(resultColumnMetadata));

@@ -122,12 +122,16 @@ public class EasyQueryOption {
      * 小于等于0表示不启用
      */
     private final long reverseOffsetThreshold;
+    /**
+     * 属性映射丢失警告
+     */
+    private final boolean warningColumnMiss;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql, boolean startTimeJob, boolean defaultTrack,
-                           int relationGroupSize,boolean noVersionError,boolean keepNativeStyle,long reverseOffsetThreshold) {
+                           int relationGroupSize,boolean noVersionError,boolean keepNativeStyle,long reverseOffsetThreshold,boolean warningColumnMiss) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -192,6 +196,7 @@ public class EasyQueryOption {
         this.noVersionError = noVersionError;
         this.keepNativeStyle = keepNativeStyle;
         this.reverseOffsetThreshold = reverseOffsetThreshold;
+        this.warningColumnMiss = warningColumnMiss;
     }
 
     public int getMaxShardingRouteCount() {
@@ -305,4 +310,7 @@ public class EasyQueryOption {
         return offset>=this.reverseOffsetThreshold;
     }
 
+    public boolean isWarningColumnMiss() {
+        return warningColumnMiss;
+    }
 }

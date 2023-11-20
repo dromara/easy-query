@@ -127,6 +127,7 @@ public class DbManager {
                     builder.setDefaultTrack(solonEasyQueryProperties.isDefaultTrack());
                     builder.setRelationGroupSize(solonEasyQueryProperties.getRelationGroupSize());
                     builder.setKeepNativeStyle(solonEasyQueryProperties.isKeepNativeStyle());
+                    builder.setWarningColumnMiss(solonEasyQueryProperties.isWarningColumnMiss());
                     builder.setConnectionMode(solonEasyQueryProperties.getConnectionMode());
                     builder.setNoVersionError(solonEasyQueryProperties.isNoVersionError());
                     builder.setReverseOffsetThreshold(solonEasyQueryProperties.getReverseOffsetThreshold());

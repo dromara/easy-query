@@ -139,7 +139,10 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
         return this;
     }
 
-
+    @Override
+    public <T2> WherePredicate<T2> withOther(WherePredicate<T2> wherePredicate) {
+        return new WherePredicateImpl<>(wherePredicate.getTable(),filter);
+    }
 
     @Override
     public <T> SQLNative<T> getSQLNative() {

@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.ProxyQueryable2;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable2;
+import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
@@ -25,6 +26,7 @@ import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -921,6 +923,19 @@ public class QueryTest8 extends BaseTest {
          Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t1.`id` LEFT JOIN `t_blog` t4 ON t4.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`stars` = ? AND t4.`order` = ?",sql);
      }
     @Test
+     public void testJoin5_1(){
+        String sql = easyProxyQuery.queryable(TopicProxy.createTable())
+                .leftJoin(TopicProxy.createTable(), o -> o.eq(o.t().id(), o.t1().id()))
+                .leftJoin(TopicProxy.createTable(), o -> o.eq(o.t().id(), o.t1().id()))
+                .leftJoin(TopicProxy.createTable(), o -> o.eq(o.t().id(), o.t1().id()))
+                .leftJoin(BlogEntityProxy.createTable(), o -> o.eq(o.t().id(), o.t1().id()))
+                .where(o -> {
+                    o.eq(o.t().stars(), 1);
+                    o.eq(o.t4().order(), BigDecimal.ZERO);
+                }).toSQL();
+         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t1.`id` LEFT JOIN `t_blog` t4 ON t4.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`stars` = ? AND t4.`order` = ?",sql);
+     }
+    @Test
      public void testJoin6(){
          String sql = easyQuery.queryable(Topic.class)
                  .leftJoin(Topic.class, (t1, t2) -> t1.eq(t2, Topic::getId, Topic::getId))
@@ -1000,5 +1015,30 @@ public class QueryTest8 extends BaseTest {
                  }).toSQL();
          Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t1.`id` LEFT JOIN `t_blog` t9 ON t9.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`stars` = ? AND t9.`order` = ?",sql);
      }
+    @Test
+     public void testNest1(){
+         String sql = easyQuery.queryable(Topic.class)
+                 .leftJoin(BlogEntity.class, (t1, t2) -> t1.eq(t2, Topic::getId, BlogEntity::getId))
+                 .where((t1, t2) -> {
+                     t1.and(x->{
+                         SQLWherePredicate<BlogEntity> y = x.withOther(t2);
+                         x.eq(Topic::getStars, 1);
+                         y.eq(BlogEntity::getOrder, "1");
+                     });
+                 }).select(x->x.column(Topic::getId)).toSQL();
+         Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE (t.`stars` = ? AND t1.`order` = ?)",sql);
+     }
+//    @Test
+//     public void testColumnMiss(){
+//        List<TopicMisDTO> list = easyProxyQuery.queryable(TopicProxy.createTable())
+//                .select(TopicMisDTOProxy.createTable(), o -> o.column(o.t().id()).column(o.t().stars()).column(o.t().title()).column(o.t().createTime()))
+//                .toList();
+//    }
+//    @Test
+//     public void testColumnMiss1(){
+//        List<TopicMisDTO> list = easyProxyQuery.queryable(TopicProxy.createTable())
+//                .select(TopicMisDTOProxy.createTable(), o -> o.column(o.t().id()).column(o.t().stars()).columnAs(o.t().title(),o.tr().title1()).column(o.t().createTime()))
+//                .toList();
+//    }
 
 }

@@ -11,6 +11,7 @@ import com.easy.query.api4j.sql.core.filter.SQLSelfPredicate;
 import com.easy.query.api4j.sql.core.filter.SQLSubQueryPredicate;
 import com.easy.query.api4j.sql.core.filter.SQLValuePredicate;
 import com.easy.query.api4j.sql.core.filter.SQLValuesPredicate;
+import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
@@ -79,10 +80,41 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, LambdaSQ
 
     SQLWherePredicate<T1> and(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression);
 
+    /**
+     * 采用单参数withOther语法在and内部创建需要的表
+     * .where((t1, t2) -> {
+     *                      t1.and(x->{
+     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
+     *                          x.eq(Topic::getStars, 1);
+     *                          y.eq(BlogEntity::getOrder, "1");
+     *                      });
+     *                  })
+     * @param t2SQLWherePredicate
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     * @param <T2>
+     */
+    @Deprecated
     default <T2> SQLWherePredicate<T1> and(SQLWherePredicate<T2> t2SQLWherePredicate, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> sqlWherePredicateSQLExpression) {
         return and(true, t2SQLWherePredicate, sqlWherePredicateSQLExpression);
     }
 
+    /**
+     * 采用单参数withOther语法在and内部创建需要的表
+     * .where((t1, t2) -> {
+     *                      t1.and(x->{
+     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
+     *                          x.eq(Topic::getStars, 1);
+     *                          y.eq(BlogEntity::getOrder, "1");
+     *                      });
+     *                  })
+     * @param condition
+     * @param t2SQLWherePredicate
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     * @param <T2>
+     */
+    @Deprecated
     <T2> SQLWherePredicate<T1> and(boolean condition, SQLWherePredicate<T2> t2SQLWherePredicate, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> sqlWherePredicateSQLExpression);
 
     default SQLWherePredicate<T1> or() {
@@ -100,11 +132,45 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, LambdaSQ
 
     SQLWherePredicate<T1> or(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression);
 
+    /**
+     * .where((t1, t2) -> {
+     *                      t1.or(x->{
+     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
+     *                          x.eq(Topic::getStars, 1);
+     *                          y.eq(BlogEntity::getOrder, "1");
+     *                      });
+     *                  })
+     * @param t2SQLWherePredicate
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     * @param <T2>
+     */
+    @Deprecated
     default <T2> SQLWherePredicate<T1> or(SQLWherePredicate<T2> t2SQLWherePredicate, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> sqlWherePredicateSQLExpression) {
         return or(true, t2SQLWherePredicate, sqlWherePredicateSQLExpression);
     }
 
+    /**
+     * .where((t1, t2) -> {
+     *                      t1.or(x->{
+     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
+     *                          x.eq(Topic::getStars, 1);
+     *                          y.eq(BlogEntity::getOrder, "1");
+     *                      });
+     *                  })
+     * @param condition
+     * @param t2SQLWherePredicate
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     * @param <T2>
+     */
+    @Deprecated
     <T2> SQLWherePredicate<T1> or(boolean condition, SQLWherePredicate<T2> t2SQLWherePredicate, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> sqlWherePredicateSQLExpression);
+
+    default <T2> SQLWherePredicate<T2> withOther(SQLWherePredicate<T2> wherePredicate){
+        WherePredicate<T2> with = getWherePredicate().withOther(wherePredicate.getWherePredicate());
+        return new SQLWherePredicateImpl<>(with);
+    }
 
     @Override
     default SQLWherePredicate<T1> isBank(boolean condition, Property<T1, String> column) {

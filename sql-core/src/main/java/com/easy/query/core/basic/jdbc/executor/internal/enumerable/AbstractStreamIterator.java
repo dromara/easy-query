@@ -3,6 +3,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.util.EasyStringUtil;
 
@@ -21,6 +22,7 @@ public abstract class AbstractStreamIterator<T> implements StreamIterator<T> {
     protected final ExecutorContext context;
     protected final StreamResultSet streamResultSet;
     protected final ResultMetadata<T> resultMetadata;
+    protected final EasyQueryOption easyQueryOption;
     protected boolean hasNext;
     private boolean isEnd = false;
 
@@ -28,6 +30,7 @@ public abstract class AbstractStreamIterator<T> implements StreamIterator<T> {
         this.context = context;
         this.streamResultSet = streamResult;
         this.resultMetadata = resultMetadata;
+        this.easyQueryOption = context.getEasyQueryOption();
         init();
     }
 

@@ -62,10 +62,41 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
 
     WherePredicate<T1> and(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression);
 
+    /**
+     * 采用单参数withOther语法在and内部创建需要的表
+     * .where((t1, t2) -> {
+     *                      t1.and(x->{
+     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
+     *                          x.eq(Topic::getStars, 1);
+     *                          y.eq(BlogEntity::getOrder, "1");
+     *                      });
+     *                  })
+     * @param t2WherePredicate
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     * @param <T2>
+     */
+    @Deprecated
     default <T2> WherePredicate<T1> and(WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
         return and(true, t2WherePredicate, sqlWherePredicateSQLExpression);
     }
 
+    /**
+     * 采用单参数withOther语法在and内部创建需要的表
+     * .where((t1, t2) -> {
+     *                      t1.and(x->{
+     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
+     *                          x.eq(Topic::getStars, 1);
+     *                          y.eq(BlogEntity::getOrder, "1");
+     *                      });
+     *                  })
+     * @param condition
+     * @param t2WherePredicate
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     * @param <T2>
+     */
+    @Deprecated
     <T2> WherePredicate<T1> and(boolean condition, WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression);
 
     default WherePredicate<T1> or() {
@@ -80,12 +111,41 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
 
     WherePredicate<T1> or(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression);
 
+    /**
+     * .where((t1, t2) -> {
+     *                      t1.or(x->{
+     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
+     *                          x.eq(Topic::getStars, 1);
+     *                          y.eq(BlogEntity::getOrder, "1");
+     *                      });
+     *                  })
+     * @param t2WherePredicate
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     * @param <T2>
+     */
+    @Deprecated
     default <T2> WherePredicate<T1> or(WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
         return or(true, t2WherePredicate, sqlWherePredicateSQLExpression);
     }
 
+    /**
+     * .where((t1, t2) -> {
+     *                      t1.or(x->{
+     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
+     *                          x.eq(Topic::getStars, 1);
+     *                          y.eq(BlogEntity::getOrder, "1");
+     *                      });
+     *                  })
+     * @param condition
+     * @param t2WherePredicate
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     * @param <T2>
+     */
+    @Deprecated
     <T2> WherePredicate<T1> or(boolean condition, WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression);
-
+    <T2> WherePredicate<T2> withOther(WherePredicate<T2> wherePredicate);
 
     @Override
     default WherePredicate<T1> isBank(boolean condition, String property) {

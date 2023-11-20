@@ -113,6 +113,10 @@ public class EasyQueryProperties {
      */
     private boolean keepNativeStyle = false;
     /**
+     * 参数映射丢失警告
+     */
+    private boolean warningColumnMiss = true;
+    /**
      * 启用反向排序的偏移量阈值
      * 小于等于0表示不启用
      */
@@ -352,6 +356,14 @@ public class EasyQueryProperties {
 
     public void setReverseOffsetThreshold(long reverseOffsetThreshold) {
         this.reverseOffsetThreshold = reverseOffsetThreshold;
+    }
+
+    public boolean isWarningColumnMiss() {
+        return warningColumnMiss;
+    }
+
+    public void setWarningColumnMiss(boolean warningColumnMiss) {
+        this.warningColumnMiss = warningColumnMiss;
     }
 
     public EasyQueryProperties() {

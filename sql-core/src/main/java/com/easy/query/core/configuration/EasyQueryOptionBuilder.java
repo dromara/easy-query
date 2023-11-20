@@ -70,6 +70,10 @@ public class EasyQueryOptionBuilder {
      * 小于等于0表示不启用
      */
     private long reverseOffsetThreshold;
+    /**
+     *
+     */
+    private boolean warningColumnMiss;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -97,6 +101,7 @@ public class EasyQueryOptionBuilder {
         this.noVersionError = true;
         this.keepNativeStyle = false;
         this.reverseOffsetThreshold = 0;
+        this.warningColumnMiss = true;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -220,6 +225,10 @@ public class EasyQueryOptionBuilder {
         this.reverseOffsetThreshold = reverseOffsetThreshold;
     }
 
+    public void setWarningColumnMiss(boolean warningColumnMiss) {
+        this.warningColumnMiss = warningColumnMiss;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -247,6 +256,7 @@ public class EasyQueryOptionBuilder {
                 this.relationGroupSize,
                 this.noVersionError,
                 this.keepNativeStyle,
-                this.reverseOffsetThreshold);
+                this.reverseOffsetThreshold,
+                this.warningColumnMiss);
     }
 }

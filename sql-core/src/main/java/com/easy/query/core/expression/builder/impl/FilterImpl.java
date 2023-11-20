@@ -375,7 +375,7 @@ public class FilterImpl implements Filter {
     @Override
     public Filter and(SQLExpression1<Filter> sqlWherePredicateSQLExpression) {
         and0();
-        FilterImpl filter = new FilterImpl(runtimeContext, expressionContext, this.nextPredicateSegment, reverse, this.conditionAcceptAssert);
+        Filter filter = create();
         sqlWherePredicateSQLExpression.apply(filter);
         next();
         return this;
@@ -398,9 +398,13 @@ public class FilterImpl implements Filter {
     @Override
     public Filter or(SQLExpression1<Filter> sqlWherePredicateSQLExpression) {
         or0();
-        FilterImpl filter = new FilterImpl(runtimeContext, expressionContext, this.nextPredicateSegment, reverse, this.conditionAcceptAssert);
+        Filter filter = create();
         sqlWherePredicateSQLExpression.apply(filter);
         next();
         return this;
+    }
+
+    public Filter create() {
+        return new FilterImpl(runtimeContext, expressionContext, this.nextPredicateSegment, reverse, this.conditionAcceptAssert);
     }
 }
