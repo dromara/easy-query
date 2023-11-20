@@ -14,8 +14,10 @@ import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.test.dto.BlogEntityTest;
+import com.easy.query.test.dto.TopicMisDTO;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
+import com.easy.query.test.dto.proxy.TopicMisDTOProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.company.ValueCompany;
@@ -1028,17 +1030,17 @@ public class QueryTest8 extends BaseTest {
                  }).select(x->x.column(Topic::getId)).toSQL();
          Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE (t.`stars` = ? AND t1.`order` = ?)",sql);
      }
-//    @Test
-//     public void testColumnMiss(){
-//        List<TopicMisDTO> list = easyProxyQuery.queryable(TopicProxy.createTable())
-//                .select(TopicMisDTOProxy.createTable(), o -> o.column(o.t().id()).column(o.t().stars()).column(o.t().title()).column(o.t().createTime()))
-//                .toList();
-//    }
-//    @Test
-//     public void testColumnMiss1(){
-//        List<TopicMisDTO> list = easyProxyQuery.queryable(TopicProxy.createTable())
-//                .select(TopicMisDTOProxy.createTable(), o -> o.column(o.t().id()).column(o.t().stars()).columnAs(o.t().title(),o.tr().title1()).column(o.t().createTime()))
-//                .toList();
-//    }
+    @Test
+     public void testColumnMiss(){
+        List<TopicMisDTO> list = easyProxyQuery.queryable(TopicProxy.createTable())
+                .select(TopicMisDTOProxy.createTable(), o -> o.column(o.t().id()).column(o.t().stars()).column(o.t().title()).column(o.t().createTime()))
+                .toList();
+    }
+    @Test
+     public void testColumnMiss1(){
+        List<TopicMisDTO> list = easyProxyQuery.queryable(TopicProxy.createTable())
+                .select(TopicMisDTOProxy.createTable(), o -> o.column(o.t().id()).column(o.t().stars()).columnAs(o.t().title(),o.tr().title1()).column(o.t().createTime()))
+                .toList();
+    }
 
 }
