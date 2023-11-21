@@ -247,12 +247,12 @@ public class FilterImpl implements Filter {
         next();
     }
 
-    private <T2> void subQueryExists(TableAvailable table, Query<T2> subQuery, SQLPredicateCompareEnum sqlPredicateCompare) {
+    private <T2> void subQueryExists(Query<T2> subQuery, SQLPredicateCompareEnum sqlPredicateCompare) {
 
         extract(subQuery);
         Query<T2> existsQuery = subQuery.cloneQueryable().select("1");
 
-        nextPredicateSegment.setPredicate(new ColumnExistsSubQueryPredicate(table, existsQuery, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
+        nextPredicateSegment.setPredicate(new ColumnExistsSubQueryPredicate(existsQuery, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
         next();
     }
 
@@ -287,14 +287,14 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public <T2> Filter exists(TableAvailable table, Query<T2> subQuery) {
-        subQueryExists(table, subQuery, SQLPredicateCompareEnum.EXISTS);
+    public <T2> Filter exists(Query<T2> subQuery) {
+        subQueryExists(subQuery, SQLPredicateCompareEnum.EXISTS);
         return this;
     }
 
     @Override
-    public <T2> Filter notExists(TableAvailable table, Query<T2> subQuery) {
-        subQueryExists(table, subQuery, SQLPredicateCompareEnum.NOT_EXISTS);
+    public <T2> Filter notExists(Query<T2> subQuery) {
+        subQueryExists(subQuery, SQLPredicateCompareEnum.NOT_EXISTS);
         return this;
     }
 

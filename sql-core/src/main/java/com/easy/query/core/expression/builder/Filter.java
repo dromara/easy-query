@@ -130,10 +130,10 @@ public interface Filter extends SQLNative<Filter> {
 
     <TProperty> Filter notIn(TableAvailable table, String property, Query<TProperty> subQuery);
 
-    <T2> Filter exists(TableAvailable table, Query<T2> subQuery);
+    <T2> Filter exists(Query<T2> subQuery);
 
 
-    <T2> Filter notExists(TableAvailable table, Query<T2> subQuery);
+    <T2> Filter notExists(Query<T2> subQuery);
 
     /**
      * 自定义范围

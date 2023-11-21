@@ -106,7 +106,7 @@ public interface SubQueryPredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
 
    default  <T2> TChain exists(boolean condition, Query<T2> subQuery){
        if (condition) {
-           getFilter().exists(getTable(), subQuery);
+           getFilter().exists(subQuery);
        }
        return castChain();
    }
@@ -117,7 +117,7 @@ public interface SubQueryPredicate<T1, TChain> extends EntitySQLTableOwner<T1>, 
 
     default <T2> TChain notExists(boolean condition, Query<T2> subQuery){
         if (condition) {
-            getFilter().notExists(getTable(), subQuery);
+            getFilter().notExists(subQuery);
         }
         return castChain();
     }

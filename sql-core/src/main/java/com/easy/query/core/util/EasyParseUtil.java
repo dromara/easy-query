@@ -27,12 +27,11 @@ public class EasyParseUtil {
         if (EasySQLSegmentUtil.isNotEmpty(predicateSegment)) {
             HashSet<TableAvailable> relateTables = new HashSet<>();
             predicateSegment.forEach(predicate -> {
-                if(predicate instanceof SubQueryPredicate){
+                if (predicate instanceof SubQueryPredicate) {
                     SubQueryPredicate subQueryPredicate = (SubQueryPredicate) predicate;
                     EntityQuerySQLExpression entityQuerySQLExpression = subQueryPredicate.getSubQuery().getSQLEntityExpressionBuilder().toExpression();
-                    parseTablePredicateParseDescriptor(entityQuerySQLExpression,tablePredicateParseDescriptor);
-                }
-                if (tablePredicateParseDescriptor.isShardingTable(predicate.getTable())) {
+                    parseTablePredicateParseDescriptor(entityQuerySQLExpression, tablePredicateParseDescriptor);
+                } else if (tablePredicateParseDescriptor.isShardingTable(predicate.getTable())) {
                     relateTables.add(predicate.getTable());
                 }
 
@@ -43,29 +42,31 @@ public class EasyParseUtil {
             }
         }
     }
+
     private static void parseTableBySelectSegment(EntityQuerySQLExpression entityQuerySQLExpression, TablePredicateParseDescriptor tablePredicateParseDescriptor) {
 
         SQLBuilderSegment projects = entityQuerySQLExpression.getProjects();
         if (EasySQLSegmentUtil.isNotEmpty(projects)) {
             for (SQLSegment sqlSegment : projects.getSQLSegments()) {
-                if(sqlSegment instanceof SubQueryColumnSegment){
+                if (sqlSegment instanceof SubQueryColumnSegment) {
                     SubQueryColumnSegment subQueryColumnSegment = (SubQueryColumnSegment) sqlSegment;
                     EntityQuerySQLExpression subEntityQuerySQLExpression = subQueryColumnSegment.getSubQuery().getSQLEntityExpressionBuilder().toExpression();
-                    parseTablePredicateParseDescriptor(subEntityQuerySQLExpression,tablePredicateParseDescriptor);
+                    parseTablePredicateParseDescriptor(subEntityQuerySQLExpression, tablePredicateParseDescriptor);
                 }
             }
         }
     }
 
     public static void getTableQueryParseDescriptor(EntityQuerySQLExpression entityQuerySQLExpression, TablePredicateParseDescriptor tablePredicateParseDescriptor) {
-        parseTablePredicateParseDescriptor(entityQuerySQLExpression,tablePredicateParseDescriptor);
-        parseTableBySelectSegment(entityQuerySQLExpression,tablePredicateParseDescriptor);
+        parseTablePredicateParseDescriptor(entityQuerySQLExpression, tablePredicateParseDescriptor);
+        parseTableBySelectSegment(entityQuerySQLExpression, tablePredicateParseDescriptor);
     }
+
     public static void parseTablePredicateParseDescriptor(EntityPredicateSQLExpression entityPredicateSQLExpression, TablePredicateParseDescriptor tablePredicateParseDescriptor) {
         for (EntityTableSQLExpression table : entityPredicateSQLExpression.getTables()) {
             parseTableAndPredicates(tablePredicateParseDescriptor, table);
         }
-        parseTableByPredicateSegment(entityPredicateSQLExpression.getWhere(),tablePredicateParseDescriptor);
+        parseTableByPredicateSegment(entityPredicateSQLExpression.getWhere(), tablePredicateParseDescriptor);
     }
 
     private static void parseTableAndPredicates(TablePredicateParseDescriptor tablePredicateParseDescriptor, EntityTableSQLExpression table) {
@@ -76,18 +77,18 @@ public class EasyParseUtil {
             if (!table.tableNameIsAs() && table.getEntityMetadata().isSharding()) {
                 tablePredicateParseDescriptor.addTable(table.getEntityTable());
             }
-            parseTableByPredicateSegment(table.getOn(),tablePredicateParseDescriptor);
+            parseTableByPredicateSegment(table.getOn(), tablePredicateParseDescriptor);
         }
     }
 
     private static void getAnonymousTable(TablePredicateParseDescriptor tablePredicateParseDescriptor, AnonymousEntityTableSQLExpression anonymousEntityTableSQLExpression) {
         EntityQuerySQLExpression entityQuerySQLExpression = anonymousEntityTableSQLExpression.getEntityQuerySQLExpression();
-        if(entityQuerySQLExpression instanceof AnonymousUnionEntityQuerySQLExpression){
+        if (entityQuerySQLExpression instanceof AnonymousUnionEntityQuerySQLExpression) {
             AnonymousUnionEntityQuerySQLExpression anonymousUnionEntityQuerySQLExpression = (AnonymousUnionEntityQuerySQLExpression) entityQuerySQLExpression;
             for (EntityQuerySQLExpression querySQLExpression : anonymousUnionEntityQuerySQLExpression.getEntityQuerySQLExpressions()) {
-                parseTablePredicateParseDescriptor(querySQLExpression,tablePredicateParseDescriptor);
+                parseTablePredicateParseDescriptor(querySQLExpression, tablePredicateParseDescriptor);
             }
-        }else{
+        } else {
             for (EntityTableSQLExpression table : entityQuerySQLExpression.getTables()) {
                 parseTableAndPredicates(tablePredicateParseDescriptor, table);
             }

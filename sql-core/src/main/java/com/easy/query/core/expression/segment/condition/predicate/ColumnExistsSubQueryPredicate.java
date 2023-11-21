@@ -15,11 +15,9 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
     private final SQLPredicateCompare sqlPredicateCompare;
     private final QueryRuntimeContext runtimeContext;
-    private final TableAvailable table;
     private final Query<?> subQuery;
 
-    public ColumnExistsSubQueryPredicate(TableAvailable table, Query<?> subQuery, SQLPredicateCompare sqlPredicateCompare, QueryRuntimeContext runtimeContext) {
-        this.table = table;
+    public ColumnExistsSubQueryPredicate( Query<?> subQuery, SQLPredicateCompare sqlPredicateCompare, QueryRuntimeContext runtimeContext) {
         this.subQuery = subQuery;
         this.sqlPredicateCompare = sqlPredicateCompare;
         this.runtimeContext = runtimeContext;
@@ -27,7 +25,7 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
 
     @Override
     public TableAvailable getTable() {
-        return table;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -63,6 +61,6 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
     @Override
     public SubQueryPredicate cloneSubQueryPredicate() {
 
-        return new ColumnExistsSubQueryPredicate(table, subQuery.cloneQueryable(), sqlPredicateCompare, runtimeContext);
+        return new ColumnExistsSubQueryPredicate(subQuery.cloneQueryable(), sqlPredicateCompare, runtimeContext);
     }
 }
