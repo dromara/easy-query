@@ -55,6 +55,7 @@ import com.easy.query.core.expression.parser.core.base.FillSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.parser.core.base.impl.FillSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurerImpl;
@@ -215,7 +216,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ClientQueryable<T1> cloneQueryable = cloneQueryable();
         EntityQueryExpressionBuilder cloneSQLEntityQueryExpressionBuilder1 = cloneQueryable.getSQLEntityExpressionBuilder();
         SQLExpressionProvider<T1> sqlExpressionProvider = runtimeContext.getSQLExpressionInvokeFactory().createSQLExpressionProvider(0, cloneSQLEntityQueryExpressionBuilder1);
-        WherePredicate<T1> sqlAllPredicate = sqlExpressionProvider.getAllWherePredicate();
+        FilterContext allWhereFilterContext = sqlExpressionProvider.getAllWhereFilterContext();
+        WherePredicate<T1> sqlAllPredicate = sqlExpressionProvider.getAllWherePredicate(allWhereFilterContext);
         whereExpression.apply(sqlAllPredicate);
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = cloneQueryable.select(" 1 ").getSQLEntityExpressionBuilder();
         List<Long> result = toInternalListByExpression(sqlEntityExpressionBuilder, Long.class, false);
@@ -600,7 +602,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public ClientQueryable<T1> where(boolean condition, SQLExpression1<WherePredicate<T1>> whereExpression) {
         if (condition) {
-            WherePredicate<T1> sqlPredicate = getSQLExpressionProvider1().getWherePredicate();
+            FilterContext whereFilterContext = getSQLExpressionProvider1().getWhereFilterContext();
+            WherePredicate<T1> sqlPredicate = getSQLExpressionProvider1().getWherePredicate(whereFilterContext);
             whereExpression.apply(sqlPredicate);
         }
         return this;

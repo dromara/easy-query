@@ -3,6 +3,7 @@ package com.easy.query.core.extension.client;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.extension.casewhen.CaseWhenBuilder;
@@ -26,7 +27,8 @@ public class CaseWhenClientBuilder2<T1, T2, TR> {
 
     public CaseWhenClientBuilder2<T1, T2, TR> caseWhen(SQLExpression2<WherePredicate<T1>,WherePredicate<T2>> predicateExpression, Object then) {
         caseWhenBuilder.caseWhen(filter -> {
-            predicateExpression.apply(new WherePredicateImpl<>(columnAsSelector1.getTable(), filter),new WherePredicateImpl<>(columnAsSelector2.getTable(), filter));
+            FilterContext filterContext = new FilterContext(filter);
+            predicateExpression.apply(new WherePredicateImpl<>(columnAsSelector1.getTable(), filterContext),new WherePredicateImpl<>(columnAsSelector2.getTable(), filterContext));
         }, then);
         return this;
     }

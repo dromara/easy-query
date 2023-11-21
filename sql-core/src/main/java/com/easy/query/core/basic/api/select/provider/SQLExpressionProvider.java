@@ -8,6 +8,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 
@@ -22,15 +23,18 @@ public interface SQLExpressionProvider<TEntity> {
 
     ColumnOrderSelector<TEntity> getOrderColumnSelector(boolean asc);
 
-    WherePredicate<TEntity> getWherePredicate();
+    WherePredicate<TEntity> getWherePredicate(FilterContext filterContext);
+    FilterContext getWhereFilterContext();
 
    <TR> NavigateInclude<TEntity> getNavigateInclude(IncludeNavigateParams includeNavigateParams);
 
-    WherePredicate<TEntity> getAllWherePredicate();
+    WherePredicate<TEntity> getAllWherePredicate(FilterContext filterContext);
+    FilterContext getAllWhereFilterContext();
 
     WhereAggregatePredicate<TEntity> getAggregatePredicate();
 
-    WherePredicate<TEntity> getOnPredicate();
+    WherePredicate<TEntity> getOnPredicate(FilterContext filterContext);
+    FilterContext getOnWhereFilterContext();
 
     ColumnSelector<TEntity> getColumnSelector(SQLBuilderSegment sqlSegment0Builder);
 

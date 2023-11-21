@@ -6,6 +6,7 @@ import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
 import com.easy.query.api4kt.util.EasyKtLambdaUtil;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.extension.casewhen.CaseWhenBuilder;
@@ -27,19 +28,19 @@ public class CaseWhen4KtBuilder<T1,TR> {
     }
     public CaseWhen4KtBuilder<T1,TR> caseWhen(SQLExpression1<SQLKtWherePredicate<T1>> predicateExpression, Object then){
         caseWhenBuilder.caseWhen(filter->{
-            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),filter)));
+            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),new FilterContext(filter))));
         },then);
         return this;
     }
     public CaseWhen4KtBuilder<T1,TR> caseWhen(SQLExpression1<SQLKtWherePredicate<T1>> predicateExpression, KProperty1<? super T1,?> thenProperty){
         caseWhenBuilder.caseWhenColumn(filter->{
-            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),filter)));
+            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),new FilterContext(filter))));
         },sqlColumnAsSelector.getTable(), EasyKtLambdaUtil.getPropertyName(thenProperty));
         return this;
     }
     public <T2> CaseWhen4KtBuilder<T1,TR> caseWhen(SQLExpression1<SQLKtWherePredicate<T1>> predicateExpression, EntitySQLTableOwner<T2> sqlTableOwner, KProperty1<? super T2,?> thenProperty){
         caseWhenBuilder.caseWhenColumn(filter->{
-            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),filter)));
+            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),new FilterContext(filter))));
         },sqlTableOwner.getTable(), EasyKtLambdaUtil.getPropertyName(thenProperty));
         return this;
     }

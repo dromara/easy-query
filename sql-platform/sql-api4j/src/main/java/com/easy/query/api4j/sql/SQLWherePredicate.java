@@ -17,6 +17,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
@@ -74,21 +75,139 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, LambdaSQ
         return this;
     }
 
+    /**
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     */
+    @Deprecated
     default SQLWherePredicate<T1> and(SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression) {
         return and(true, sqlWherePredicateSQLExpression);
     }
 
+    /**
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
+     * @param condition
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     */
+    @Deprecated
     SQLWherePredicate<T1> and(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression);
 
     /**
-     * 采用单参数withOther语法在and内部创建需要的表
-     * .where((t1, t2) -> {
-     *                      t1.and(x->{
-     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
-     *                          x.eq(Topic::getStars, 1);
-     *                          y.eq(BlogEntity::getOrder, "1");
-     *                      });
-     *                  })
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     */
+    default SQLWherePredicate<T1> and(SQLActionExpression sqlWherePredicateSQLExpression) {
+        return and(true, sqlWherePredicateSQLExpression);
+    }
+
+    /**
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
+     * @param condition
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     */
+   default SQLWherePredicate<T1> and(boolean condition, SQLActionExpression sqlWherePredicateSQLExpression){
+        if(condition){
+            getWherePredicate().and(sqlWherePredicateSQLExpression);
+        }
+        return this;
+   }
+
+    /**
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
      * @param t2SQLWherePredicate
      * @param sqlWherePredicateSQLExpression
      * @return
@@ -100,14 +219,25 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, LambdaSQ
     }
 
     /**
-     * 采用单参数withOther语法在and内部创建需要的表
-     * .where((t1, t2) -> {
-     *                      t1.and(x->{
-     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
-     *                          x.eq(Topic::getStars, 1);
-     *                          y.eq(BlogEntity::getOrder, "1");
-     *                      });
-     *                  })
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
      * @param condition
      * @param t2SQLWherePredicate
      * @param sqlWherePredicateSQLExpression
@@ -126,20 +256,138 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, LambdaSQ
         return this;
     }
 
+    /**
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     */
+    @Deprecated
     default SQLWherePredicate<T1> or(SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression) {
         return or(true, sqlWherePredicateSQLExpression);
     }
 
+    /**
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
+     * @param condition
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     */
+    @Deprecated
     SQLWherePredicate<T1> or(boolean condition, SQLExpression1<SQLWherePredicate<T1>> sqlWherePredicateSQLExpression);
 
     /**
-     * .where((t1, t2) -> {
-     *                      t1.or(x->{
-     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
-     *                          x.eq(Topic::getStars, 1);
-     *                          y.eq(BlogEntity::getOrder, "1");
-     *                      });
-     *                  })
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     */
+    default SQLWherePredicate<T1> or(SQLActionExpression sqlWherePredicateSQLExpression) {
+        return or(true, sqlWherePredicateSQLExpression);
+    }
+
+    /**
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
+     * @param condition
+     * @param sqlWherePredicateSQLExpression
+     * @return
+     */
+    default SQLWherePredicate<T1> or(boolean condition, SQLActionExpression sqlWherePredicateSQLExpression){
+        if(condition){
+            getWherePredicate().or(sqlWherePredicateSQLExpression);
+        }
+        return this;
+    }
+    /**
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
      * @param t2SQLWherePredicate
      * @param sqlWherePredicateSQLExpression
      * @return
@@ -151,13 +399,25 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, LambdaSQ
     }
 
     /**
-     * .where((t1, t2) -> {
-     *                      t1.or(x->{
-     *                          SQLWherePredicate<BlogEntity> y = x.withOther(t2);
-     *                          x.eq(Topic::getStars, 1);
-     *                          y.eq(BlogEntity::getOrder, "1");
-     *                      });
-     *                  })
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
      * @param condition
      * @param t2SQLWherePredicate
      * @param sqlWherePredicateSQLExpression
@@ -167,6 +427,31 @@ public interface SQLWherePredicate<T1> extends EntitySQLTableOwner<T1>, LambdaSQ
     @Deprecated
     <T2> SQLWherePredicate<T1> or(boolean condition, SQLWherePredicate<T2> t2SQLWherePredicate, SQLExpression2<SQLWherePredicate<T1>, SQLWherePredicate<T2>> sqlWherePredicateSQLExpression);
 
+    /**
+     * 采用无参数and or处理括号和多表问题
+     * (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     * <blockquote><pre>
+     * {@code
+     *   .where((t1, t2) -> {
+     *                        t1.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or();
+     *                            t2.eq(BlogEntity::getOrder, "1");
+     *                        }); //(t.`stars` = ? OR t1.`order` = ?)
+     *                        t2.eq(BlogEntity::getId,1);//t1.`id` = ?
+     *                        t2.and(()->{
+     *                            t1.eq(Topic::getStars, 1).or(()->{ //使用or表示or内部是括号括号和外面是or链接
+     *                                t1.eq(Topic::getCreateTime,LocalDateTime.now())
+     *                                        .or();
+     *                                t2.like(BlogEntity::getContent,"111");
+     *                            });
+     *                        });//(t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))
+     *                    })}
+     * </pre></blockquote>
+     * @param wherePredicate
+     * @return
+     * @param <T2>
+     */
+    @Deprecated
     default <T2> SQLWherePredicate<T2> withOther(SQLWherePredicate<T2> wherePredicate){
         WherePredicate<T2> with = getWherePredicate().withOther(wherePredicate.getWherePredicate());
         return new SQLWherePredicateImpl<>(with);

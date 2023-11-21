@@ -5,11 +5,13 @@ import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
+import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.util.EasyObjectUtil;
 
 /**
@@ -18,18 +20,18 @@ import com.easy.query.core.util.EasyObjectUtil;
  * @Date: 2023/2/7 06:58
  */
 public class WherePredicateImpl<T1> implements WherePredicate<T1> {
-    private final Filter filter;
+    private final FilterContext filterContext;
     private final TableAvailable table;
 
-    public WherePredicateImpl(TableAvailable table, Filter filter) {
-        this.filter = filter;
+    public WherePredicateImpl(TableAvailable table, FilterContext filterContext) {
+        this.filterContext = filterContext;
         this.table = table;
 
     }
 
     @Override
     public Filter getFilter() {
-        return filter;
+        return filterContext.getFilter();
     }
 
     @Override
@@ -39,7 +41,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
         if (condition) {
-            filter.columnFunc(table, columnPropertyFunction, sqlPredicateCompare, val);
+            getFilter().columnFunc(table, columnPropertyFunction, sqlPredicateCompare, val);
         }
         return this;
     }
@@ -48,7 +50,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     public <T2> WherePredicate<T1> compareSelf(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2, SQLPredicateCompare sqlPredicateCompare) {
         if (condition) {
             TableAvailable rightTable = sub.getTable();
-            filter.compareSelf(table, property1, rightTable, property2, sqlPredicateCompare);
+            getFilter().compareSelf(table, property1, rightTable, property2, sqlPredicateCompare);
         }
         return castChain();
     }
@@ -86,7 +88,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> and(boolean condition) {
         if (condition) {
-            filter.and();
+            getFilter().and();
         }
         return this;
     }
@@ -94,8 +96,24 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> and(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
-            filter.and(f -> {
-                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, f));
+            getFilter().and(f -> {
+                Filter filter = filterContext.getFilter();
+                filterContext.setFilter(f);
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, filterContext));
+                filterContext.setFilter(filter);
+            });
+        }
+        return this;
+    }
+
+    @Override
+    public WherePredicate<T1> and(boolean condition, SQLActionExpression sqlWherePredicateSQLExpression) {
+        if (condition) {
+            getFilter().and(f -> {
+                Filter filter = filterContext.getFilter();
+                filterContext.setFilter(f);
+                sqlWherePredicateSQLExpression.apply();
+                filterContext.setFilter(filter);
             });
         }
         return this;
@@ -104,8 +122,11 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public <T2> WherePredicate<T1> and(boolean condition, WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
         if (condition) {
-            filter.and(f -> {
-                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, f),new WherePredicateImpl<>(t2WherePredicate.getTable(), f));
+            getFilter().and(f -> {
+                Filter filter = filterContext.getFilter();
+                filterContext.setFilter(f);
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, filterContext),new WherePredicateImpl<>(t2WherePredicate.getTable(), filterContext));
+                filterContext.setFilter(filter);
             });
         }
         return this;
@@ -114,7 +135,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> or(boolean condition) {
         if (condition) {
-            filter.or();
+            getFilter().or();
         }
         return this;
     }
@@ -122,8 +143,24 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> or(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
-            filter.or(f -> {
-                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, f));
+            getFilter().or(f -> {
+                Filter filter = filterContext.getFilter();
+                filterContext.setFilter(f);
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, filterContext));
+                filterContext.setFilter(filter);
+            });
+        }
+        return this;
+    }
+
+    @Override
+    public WherePredicate<T1> or(boolean condition, SQLActionExpression sqlWherePredicateSQLExpression) {
+        if (condition) {
+            getFilter().or(f -> {
+                Filter filter = filterContext.getFilter();
+                filterContext.setFilter(f);
+                sqlWherePredicateSQLExpression.apply();
+                filterContext.setFilter(filter);
             });
         }
         return this;
@@ -132,8 +169,11 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public <T2> WherePredicate<T1> or(boolean condition, WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
         if (condition) {
-            filter.or(f -> {
-                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, f),new WherePredicateImpl<>(t2WherePredicate.getTable(), f));
+            getFilter().or(f -> {
+                Filter filter = filterContext.getFilter();
+                filterContext.setFilter(f);
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, filterContext),new WherePredicateImpl<>(t2WherePredicate.getTable(), filterContext));
+                filterContext.setFilter(filter);
             });
         }
         return this;
@@ -141,12 +181,12 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
 
     @Override
     public <T2> WherePredicate<T2> withOther(WherePredicate<T2> wherePredicate) {
-        return new WherePredicateImpl<>(wherePredicate.getTable(),filter);
+        return new WherePredicateImpl<>(wherePredicate.getTable(),filterContext);
     }
 
     @Override
     public <T> SQLNative<T> getSQLNative() {
-        return EasyObjectUtil.typeCastNullable(filter);
+        return EasyObjectUtil.typeCastNullable(getFilter());
     }
 
     @Override

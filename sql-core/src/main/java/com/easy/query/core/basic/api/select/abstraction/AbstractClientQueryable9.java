@@ -17,6 +17,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
@@ -104,15 +105,16 @@ public abstract class AbstractClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T
     @Override
     public ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> where(boolean condition, SQLExpression9<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>> whereExpression) {
         if (condition) {
-            WherePredicate<T1> sqlWherePredicate1 = getSQLExpressionProvider1().getWherePredicate();
-            WherePredicate<T2> sqlWherePredicate2 = getSQLExpressionProvider2().getWherePredicate();
-            WherePredicate<T3> sqlWherePredicate3 = getSQLExpressionProvider3().getWherePredicate();
-            WherePredicate<T4> sqlWherePredicate4 = getSQLExpressionProvider4().getWherePredicate();
-            WherePredicate<T5> sqlWherePredicate5 = getSQLExpressionProvider5().getWherePredicate();
-            WherePredicate<T6> sqlWherePredicate6 = getSQLExpressionProvider6().getWherePredicate();
-            WherePredicate<T7> sqlWherePredicate7 = getSQLExpressionProvider7().getWherePredicate();
-            WherePredicate<T8> sqlWherePredicate8 = getSQLExpressionProvider8().getWherePredicate();
-            WherePredicate<T9> sqlWherePredicate9 = getSQLExpressionProvider9().getWherePredicate();
+            FilterContext whereFilterContext = getSQLExpressionProvider1().getWhereFilterContext();
+            WherePredicate<T1> sqlWherePredicate1 = getSQLExpressionProvider1().getWherePredicate(whereFilterContext);
+            WherePredicate<T2> sqlWherePredicate2 = getSQLExpressionProvider2().getWherePredicate(whereFilterContext);
+            WherePredicate<T3> sqlWherePredicate3 = getSQLExpressionProvider3().getWherePredicate(whereFilterContext);
+            WherePredicate<T4> sqlWherePredicate4 = getSQLExpressionProvider4().getWherePredicate(whereFilterContext);
+            WherePredicate<T5> sqlWherePredicate5 = getSQLExpressionProvider5().getWherePredicate(whereFilterContext);
+            WherePredicate<T6> sqlWherePredicate6 = getSQLExpressionProvider6().getWherePredicate(whereFilterContext);
+            WherePredicate<T7> sqlWherePredicate7 = getSQLExpressionProvider7().getWherePredicate(whereFilterContext);
+            WherePredicate<T8> sqlWherePredicate8 = getSQLExpressionProvider8().getWherePredicate(whereFilterContext);
+            WherePredicate<T9> sqlWherePredicate9 = getSQLExpressionProvider9().getWherePredicate(whereFilterContext);
             whereExpression.apply(sqlWherePredicate1, sqlWherePredicate2, sqlWherePredicate3, sqlWherePredicate4, sqlWherePredicate5, sqlWherePredicate6, sqlWherePredicate7, sqlWherePredicate8, sqlWherePredicate9);
         }
         return this;

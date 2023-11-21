@@ -1031,6 +1031,38 @@ public class QueryTest8 extends BaseTest {
          Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE (t.`stars` = ? AND t1.`order` = ?)",sql);
      }
     @Test
+     public void testNest2(){
+         String sql = easyQuery.queryable(Topic.class)
+                 .leftJoin(BlogEntity.class, (t1, t2) -> t1.eq(t2, Topic::getId, BlogEntity::getId))
+                 .where((t1, t2) -> {
+                     t1.and(()->{
+                         t1.eq(Topic::getStars, 1).or();
+                         t2.eq(BlogEntity::getOrder, "1");
+                     });
+                 }).select(x->x.column(Topic::getId)).toSQL();
+         Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE (t.`stars` = ? OR t1.`order` = ?)",sql);
+     }
+    @Test
+     public void testNest3(){
+         String sql = easyQuery.queryable(Topic.class)
+                 .leftJoin(BlogEntity.class, (t1, t2) -> t1.eq(t2, Topic::getId, BlogEntity::getId))
+                 .where((t1, t2) -> {
+                     t1.and(()->{
+                         t1.eq(Topic::getStars, 1).or();
+                         t2.eq(BlogEntity::getOrder, "1");
+                     });
+                     t2.eq(BlogEntity::getId,1);
+                     t2.and(()->{
+                         t1.eq(Topic::getStars, 1).or(()->{
+                             t1.eq(Topic::getCreateTime,LocalDateTime.now())
+                                     .or();
+                             t2.like(BlogEntity::getContent,"111");
+                         });
+                     });
+                 }).select(x->x.column(Topic::getId)).toSQL();
+         Assert.assertEquals("SELECT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE (t.`stars` = ? OR t1.`order` = ?) AND t1.`id` = ? AND (t.`stars` = ? OR (t.`create_time` = ? OR t1.`content` LIKE ?))",sql);
+     }
+    @Test
      public void testColumnMiss(){
         List<TopicMisDTO> list = easyProxyQuery.queryable(TopicProxy.createTable())
                 .select(TopicMisDTOProxy.createTable(), o -> o.column(o.t().id()).column(o.t().stars()).column(o.t().title()).column(o.t().createTime()))

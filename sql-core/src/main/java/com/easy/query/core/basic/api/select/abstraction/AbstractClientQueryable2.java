@@ -17,6 +17,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -100,8 +101,9 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
     @Override
     public ClientQueryable2<T1, T2> where(boolean condition, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> whereExpression) {
         if (condition) {
-            WherePredicate<T1> sqlWherePredicate1 = getSQLExpressionProvider1().getWherePredicate();
-            WherePredicate<T2> sqlWherePredicate2 = getSQLExpressionProvider2().getWherePredicate();
+            FilterContext whereFilterContext = getSQLExpressionProvider1().getWhereFilterContext();
+            WherePredicate<T1> sqlWherePredicate1 = getSQLExpressionProvider1().getWherePredicate(whereFilterContext);
+            WherePredicate<T2> sqlWherePredicate2 = getSQLExpressionProvider2().getWherePredicate(whereFilterContext);
             whereExpression.apply(sqlWherePredicate1, sqlWherePredicate2);
         }
         return this;

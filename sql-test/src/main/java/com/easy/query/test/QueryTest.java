@@ -402,15 +402,40 @@ public class QueryTest extends BaseTest {
                 .where((a, b) -> {
                     a.isNotNull(BlogEntity::getId);
                     b.eq(Topic::getId, "3");
-                    a.and(x->{
+                    a.and(()->{
                         for (String title : titles) {
-                            x.like(BlogEntity::getTitle,title).or();
+                            a.like(BlogEntity::getTitle,title).or();
                         }
                     });// where t.id is not null and t1.id=3 and(t.title like ? or t.title like ? or t.title like ? ....)
                 })
                 .toList();
         Assert.assertNotNull(topics);
         Assert.assertEquals(1, topics.size());
+    }
+    @Test
+    public void query11_11() {
+        Queryable<Topic> sql = easyQuery
+                .queryable(Topic.class)
+                .where(o -> o.eq(Topic::getId, "3"));
+        Assert.assertNotNull(sql);
+        List<String> titles = Arrays.asList("1","2","3");
+        String sql1 = easyQuery
+                .queryable(BlogEntity.class)
+                .leftJoin(sql, (a, b) -> a.eq(b, BlogEntity::getId, Topic::getId))
+                .where(o -> o.isNotNull(BlogEntity::getId).eq(BlogEntity::getId, "3"))
+                .where((a, b) -> a.isNotNull(BlogEntity::getId).eq(BlogEntity::getId, "3"))
+                .where((a, b) -> a.isNotNull(BlogEntity::getId).then(b).eq(Topic::getId, "3"))
+                .where((a, b) -> {
+                    a.isNotNull(BlogEntity::getId);
+                    b.eq(Topic::getId, "3");
+                    a.and(x -> {
+                        for (String title : titles) {
+                            x.like(BlogEntity::getTitle, title).or();
+                        }
+                    });// where t.id is not null and t1.id=3 and(t.title like ? or t.title like ? or t.title like ? ....)
+                })
+                .toSQL();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?) t2 ON t.`id` = t2.`id` WHERE t.`deleted` = ? AND t.`id` IS NOT NULL AND t.`id` = ? AND t.`id` IS NOT NULL AND t.`id` = ? AND t.`id` IS NOT NULL AND t2.`id` = ? AND t.`id` IS NOT NULL AND t2.`id` = ? AND (t.`title` LIKE ? OR t.`title` LIKE ? OR t.`title` LIKE ?)", sql1);
     }
     @Test
     public void query11_2() {
