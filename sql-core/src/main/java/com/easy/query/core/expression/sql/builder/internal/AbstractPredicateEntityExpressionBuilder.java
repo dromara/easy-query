@@ -64,7 +64,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                             Object version = expressionContext.getVersion();
                             if (Objects.nonNull(version)) {
                                 sqlPredicate.eq(versionMetadata.getPropertyName(), version);
-                            }else if(expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.NO_VERSION_ERROR)){
+                            }else {
                                 throw new EasyQueryInvalidOperationException("entity:"+ EasyClassUtil.getSimpleName(table.getEntityClass())+" has version expression not found version");
                             }
                         } else {

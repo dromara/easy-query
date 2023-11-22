@@ -94,18 +94,6 @@ public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdata
     }
 
     @Override
-    public ExpressionUpdatable<T> noVersionError() {
-        clientExpressionUpdatable.noVersionError();
-        return this;
-    }
-
-    @Override
-    public ExpressionUpdatable<T> noVersionIgnore() {
-        clientExpressionUpdatable.noVersionIgnore();
-        return this;
-    }
-
-    @Override
     public ExpressionUpdatable<T> ignoreVersion(boolean ignored) {
         clientExpressionUpdatable.ignoreVersion(ignored);
         return this;

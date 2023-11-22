@@ -107,7 +107,6 @@ public class EasyQueryProperties {
      * 关联查询每组多少关联id
      */
     private int relationGroupSize = 512;
-    private boolean noVersionError = true;
     /**
      * sqlNativeSegment保持输入风格单引号自动改为双引号
      */
@@ -332,14 +331,6 @@ public class EasyQueryProperties {
 
     public void setRelationGroupSize(int relationGroupSize) {
         this.relationGroupSize = relationGroupSize;
-    }
-
-    public boolean isNoVersionError() {
-        return noVersionError;
-    }
-
-    public void setNoVersionError(boolean noVersionError) {
-        this.noVersionError = noVersionError;
     }
 
     public boolean isKeepNativeStyle() {

@@ -30,6 +30,7 @@ public enum EasyBehaviorEnum {
     /**
      * 更新删除无版本号报错
      */
+    @Deprecated
     NO_VERSION_ERROR(1<<8),
     /**
      * 更新删除忽略版本号

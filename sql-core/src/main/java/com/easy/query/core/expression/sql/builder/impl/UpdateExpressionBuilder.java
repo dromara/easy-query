@@ -202,15 +202,18 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             }
         }
         if (entityMetadata.hasVersionColumn()) {
-            Object version = expressionContext.getVersion();
-            if (Objects.nonNull(version)) {
-                VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
-                String propertyName = versionMetadata.getPropertyName();
-                VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
-                Object newVersionValue = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
-                sqlColumnSetter.set(propertyName, newVersionValue);
-            } else if (expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.NO_VERSION_ERROR)) {
-                throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getSimpleName(table.getEntityClass()) + " has version expression not found version");
+            boolean ignoreVersion = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.IGNORE_VERSION);
+            if(!ignoreVersion){
+                Object version = expressionContext.getVersion();
+                if (Objects.nonNull(version)) {
+                    VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+                    String propertyName = versionMetadata.getPropertyName();
+                    VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
+                    Object newVersionValue = easyVersionStrategy.nextVersion(entityMetadata, propertyName, version);
+                    sqlColumnSetter.set(propertyName, newVersionValue);
+                } else {
+                    throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getSimpleName(table.getEntityClass()) + " has version expression not found version");
+                }
             }
         }
         return updateSet;

@@ -129,7 +129,6 @@ public class DbManager {
                     builder.setKeepNativeStyle(solonEasyQueryProperties.isKeepNativeStyle());
                     builder.setWarningColumnMiss(solonEasyQueryProperties.isWarningColumnMiss());
                     builder.setConnectionMode(solonEasyQueryProperties.getConnectionMode());
-                    builder.setNoVersionError(solonEasyQueryProperties.isNoVersionError());
                     builder.setReverseOffsetThreshold(solonEasyQueryProperties.getReverseOffsetThreshold());
                 });
         DatabaseConfiguration databaseConfigure = getDatabaseConfigure(solonEasyQueryProperties);

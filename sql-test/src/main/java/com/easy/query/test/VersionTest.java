@@ -22,7 +22,7 @@ public class VersionTest extends BaseTest {
     public void test1() {
         String id = "1";
         long l1 = easyQuery.deletable(SysUserVersionLong.class)
-                .whereById(id).noVersionIgnore().executeRows();
+                .whereById(id).ignoreVersion().executeRows();
         SysUserVersionLong sysUserVersionLong = new SysUserVersionLong();
         sysUserVersionLong.setId(id);
         sysUserVersionLong.setCreateTime(LocalDateTime.now());
@@ -44,7 +44,7 @@ public class VersionTest extends BaseTest {
     public void test2() {
         String id = "2";
         long l1 = easyQuery.deletable(SysUserVersionLong.class)
-                .whereById(id).noVersionIgnore().executeRows();
+                .whereById(id).ignoreVersion().executeRows();
         SysUserVersionLong sysUserVersionLong = new SysUserVersionLong();
         sysUserVersionLong.setId(id);
         sysUserVersionLong.setCreateTime(LocalDateTime.now());
@@ -73,7 +73,7 @@ public class VersionTest extends BaseTest {
             long l2 = easyQuery.updatable(SysUserVersionLong.class)
                     .set(SysUserVersionLong::getPhone, "123")
                     .whereById(id)
-                    .noVersionIgnore()
+                    .ignoreVersion()
                     .executeRows();
             Assert.assertEquals(1, l2);
         }
@@ -96,17 +96,17 @@ public class VersionTest extends BaseTest {
         String id = "2";
         String s = easyQuery.updatable(SysUserVersionLong.class)
                 .set(SysUserVersionLong::getPhone, "123")
-                .whereById(id).noVersionIgnore()
+                .whereById(id).ignoreVersion()
                 .toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ? WHERE `id` = ?", s);
         String s1 = easyQuery.updatable(SysUserVersionLong.class)
-                .set(SysUserVersionLong::getPhone, "123").noVersionIgnore()
+                .set(SysUserVersionLong::getPhone, "123").ignoreVersion()
                 .where(o -> o.eq(SysUserVersionLong::getId, id)).toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ? WHERE `id` = ?", s1);
         String s2 = easyQuery.updatable(SysUserVersionLong.class)
                 .set(SysUserVersionLong::getPhone, "123")
                 .withVersion(1L)
-                .noVersionError()
+                .ignoreVersion(false)
                 .where(o -> o.eq(SysUserVersionLong::getId, id))
                 .toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ?,`version` = ? WHERE `version` = ? AND `id` = ?", s2);
@@ -116,7 +116,7 @@ public class VersionTest extends BaseTest {
     public void test4() {
         String id = "4";
         long l1 = easyQuery.deletable(SysUserVersionLongLogicDel.class)
-                .whereById(id).noVersionIgnore().disableLogicDelete().executeRows();
+                .whereById(id).ignoreVersion().disableLogicDelete().executeRows();
         SysUserVersionLongLogicDel sysUserVersionLongLogicDel = new SysUserVersionLongLogicDel();
         sysUserVersionLongLogicDel.setId(id);
         sysUserVersionLongLogicDel.setCreateTime(LocalDateTime.now());
@@ -136,7 +136,7 @@ public class VersionTest extends BaseTest {
     public void test5() {
         String id = "5";
         long l1 = easyQuery.deletable(SysUserVersionLongLogicDel.class)
-                .whereById(id).noVersionIgnore().disableLogicDelete().executeRows();
+                .whereById(id).ignoreVersion().disableLogicDelete().executeRows();
         SysUserVersionLongLogicDel sysUserVersionLongLogicDel = new SysUserVersionLongLogicDel();
         sysUserVersionLongLogicDel.setId(id);
         sysUserVersionLongLogicDel.setCreateTime(LocalDateTime.now());
@@ -149,7 +149,7 @@ public class VersionTest extends BaseTest {
         long l = easyQuery.insertable(sysUserVersionLongLogicDel).executeRows();
         Assert.assertEquals(1, l);
         long l2 = easyQuery.deletable(SysUserVersionLongLogicDel.class)
-                .noVersionError()
+                .ignoreVersion(false)
                 .withVersion(1L)
                 .whereById(id).executeRows();
         Assert.assertEquals(1, l2);

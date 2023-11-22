@@ -112,16 +112,6 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     }
 
     @Override
-    public ClientEntityUpdatable<T> noVersionError() {
-        return this;
-    }
-
-    @Override
-    public ClientEntityUpdatable<T> noVersionIgnore() {
-        return this;
-    }
-
-    @Override
     public ClientEntityUpdatable<T> ignoreVersion(boolean ignored) {
         return this;
     }

@@ -96,18 +96,6 @@ public abstract class AbstractKtEntityDeletable<T> implements KtEntityDeletable<
     }
 
     @Override
-    public KtEntityDeletable<T> noVersionError() {
-        clientEntityDeletable.noVersionError();
-        return this;
-    }
-
-    @Override
-    public KtEntityDeletable<T> noVersionIgnore() {
-        clientEntityDeletable.noVersionIgnore();
-        return this;
-    }
-
-    @Override
     public KtEntityDeletable<T> ignoreVersion(boolean ignored) {
         clientEntityDeletable.ignoreVersion(ignored);
         return this;

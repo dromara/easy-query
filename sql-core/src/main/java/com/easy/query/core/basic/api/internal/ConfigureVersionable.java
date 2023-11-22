@@ -9,22 +9,6 @@ package com.easy.query.core.basic.api.internal;
 public interface ConfigureVersionable<TChain> {
 
     /**
-     * 无版本号报错,请使用{@link #ignoreVersion}
-     *
-     * @return
-     */
-    @Deprecated
-    TChain noVersionError();
-
-    /**
-     * 无版本号忽略不报错,请使用{@link #ignoreVersion}
-     *
-     * @return
-     */
-    @Deprecated
-    TChain noVersionIgnore();
-
-    /**
      * 忽略版本号
      *
      * @return

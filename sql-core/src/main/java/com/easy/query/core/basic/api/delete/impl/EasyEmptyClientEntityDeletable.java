@@ -93,16 +93,6 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
     }
 
     @Override
-    public ClientEntityDeletable<T> noVersionError() {
-        return this;
-    }
-
-    @Override
-    public ClientEntityDeletable<T> noVersionIgnore() {
-        return this;
-    }
-
-    @Override
     public ClientEntityDeletable<T> ignoreVersion(boolean ignored) {
         return this;
     }

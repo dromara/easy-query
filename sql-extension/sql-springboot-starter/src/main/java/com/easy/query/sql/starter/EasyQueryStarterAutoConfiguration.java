@@ -240,7 +240,6 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setRelationGroupSize(easyQueryProperties.getRelationGroupSize());
                     builder.setKeepNativeStyle(easyQueryProperties.isKeepNativeStyle());
                     builder.setWarningColumnMiss(easyQueryProperties.isWarningColumnMiss());
-                    builder.setNoVersionError(easyQueryProperties.isNoVersionError());
                     builder.setReverseOffsetThreshold(easyQueryProperties.getReverseOffsetThreshold());
                 })
                 .useDatabaseConfigure(databaseConfiguration)

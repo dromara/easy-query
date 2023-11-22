@@ -93,18 +93,6 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     }
 
     @Override
-    public EntityUpdatable<T> noVersionError() {
-        clientEntityUpdatable.noVersionError();
-        return this;
-    }
-
-    @Override
-    public EntityUpdatable<T> noVersionIgnore() {
-        clientEntityUpdatable.noVersionIgnore();
-        return this;
-    }
-
-    @Override
     public EntityUpdatable<T> ignoreVersion(boolean ignored) {
         clientEntityUpdatable.ignoreVersion(ignored);
         return this;

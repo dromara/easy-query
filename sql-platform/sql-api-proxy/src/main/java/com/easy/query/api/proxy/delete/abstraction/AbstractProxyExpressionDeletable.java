@@ -146,18 +146,6 @@ public abstract class AbstractProxyExpressionDeletable<TProxy extends ProxyEntit
     }
 
     @Override
-    public ProxyExpressionDeletable<TProxy, T> noVersionError() {
-        expressionObjectDeletable.noVersionError();
-        return this;
-    }
-
-    @Override
-    public ProxyExpressionDeletable<TProxy, T> noVersionIgnore() {
-        expressionObjectDeletable.noVersionIgnore();
-        return this;
-    }
-
-    @Override
     public ProxyExpressionDeletable<TProxy, T> ignoreVersion(boolean ignored) {
         expressionObjectDeletable.ignoreVersion(ignored);
         return this;

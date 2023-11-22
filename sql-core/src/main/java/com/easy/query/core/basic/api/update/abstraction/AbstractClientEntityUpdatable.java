@@ -197,18 +197,6 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     }
 
     @Override
-    public ClientEntityUpdatable<T> noVersionError() {
-        entityUpdateExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
-        return this;
-    }
-
-    @Override
-    public ClientEntityUpdatable<T> noVersionIgnore() {
-        entityUpdateExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
-        return this;
-    }
-
-    @Override
     public ClientEntityUpdatable<T> ignoreVersion(boolean ignored) {
         if(ignored){
             entityUpdateExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.IGNORE_VERSION);

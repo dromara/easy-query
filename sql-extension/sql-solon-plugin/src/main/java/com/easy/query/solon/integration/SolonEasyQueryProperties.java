@@ -106,10 +106,6 @@ public class SolonEasyQueryProperties {
      * 关联查询每组多少关联id
      */
     private final static int relationGroupSize = 512;
-    /**
-     * 无版本号时更新删除报错
-     */
-    private final static boolean noVersionError = true;
     private final static boolean keepNativeStyle = false;
     private final static boolean warningColumnMiss = true;
     private final static long reverseOffsetThreshold = 0;
@@ -213,10 +209,6 @@ public class SolonEasyQueryProperties {
             return null;
         });
     }
-    public boolean isNoVersionError(){
-        return this.props.getBool("no-version-error",noVersionError);
-    }
-
 
     public int getMaxShardingQueryLimit() {
         return this.props.getInt("max-sharding-query-limit",maxShardingQueryLimit);

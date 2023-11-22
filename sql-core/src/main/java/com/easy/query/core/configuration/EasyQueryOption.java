@@ -108,11 +108,6 @@ public class EasyQueryOption {
      * 如果超出部分则另起一个查询
      */
     private final int relationGroupSize;
-
-    /**
-     * 无版本号报错
-     */
-    private final boolean noVersionError;
     /**
      * 使用sqlNativeSegment时如果使用单引号默认改为双引号
      */
@@ -131,7 +126,7 @@ public class EasyQueryOption {
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql, boolean startTimeJob, boolean defaultTrack,
-                           int relationGroupSize,boolean noVersionError,boolean keepNativeStyle,long reverseOffsetThreshold,boolean warningColumnMiss) {
+                           int relationGroupSize,boolean keepNativeStyle,long reverseOffsetThreshold,boolean warningColumnMiss) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -193,7 +188,6 @@ public class EasyQueryOption {
         this.startTimeJob = startTimeJob;
         this.defaultTrack = defaultTrack;
         this.relationGroupSize = relationGroupSize;
-        this.noVersionError = noVersionError;
         this.keepNativeStyle = keepNativeStyle;
         this.reverseOffsetThreshold = reverseOffsetThreshold;
         this.warningColumnMiss = warningColumnMiss;
@@ -293,10 +287,6 @@ public class EasyQueryOption {
 
     public int getRelationGroupSize() {
         return relationGroupSize;
-    }
-
-    public boolean isNoVersionError() {
-        return noVersionError;
     }
 
     public boolean isKeepNativeStyle() {

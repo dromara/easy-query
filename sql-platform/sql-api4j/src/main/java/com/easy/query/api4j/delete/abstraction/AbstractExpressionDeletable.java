@@ -136,18 +136,6 @@ public abstract class AbstractExpressionDeletable<T> implements ExpressionDeleta
         expressionObjectDeletable.useInterceptor();
         return this;
     }
-
-    @Override
-    public ExpressionDeletable<T> noVersionError() {
-        expressionObjectDeletable.noVersionError();
-        return this;
-    }
-
-    @Override
-    public ExpressionDeletable<T> noVersionIgnore() {
-        expressionObjectDeletable.noVersionIgnore();
-        return this;
-    }
     @Override
     public ExpressionDeletable<T> ignoreVersion(boolean ignored) {
         expressionObjectDeletable.ignoreVersion(ignored);

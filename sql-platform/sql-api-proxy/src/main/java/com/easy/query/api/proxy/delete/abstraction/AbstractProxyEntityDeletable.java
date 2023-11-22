@@ -95,18 +95,6 @@ public abstract class AbstractProxyEntityDeletable<T> implements ProxyEntityDele
     }
 
     @Override
-    public ProxyEntityDeletable<T> noVersionError() {
-        entityObjectDeletable.noVersionError();
-        return this;
-    }
-
-    @Override
-    public ProxyEntityDeletable<T> noVersionIgnore() {
-        entityObjectDeletable.noVersionIgnore();
-        return this;
-    }
-
-    @Override
     public ProxyEntityDeletable<T> ignoreVersion(boolean ignored) {
         entityObjectDeletable.ignoreVersion(ignored);
         return this;

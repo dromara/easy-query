@@ -90,18 +90,6 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     }
 
     @Override
-    public ClientExpressionDeletable<T> noVersionError() {
-        entityDeleteExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
-        return this;
-    }
-
-    @Override
-    public ClientExpressionDeletable<T> noVersionIgnore() {
-        entityDeleteExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.NO_VERSION_ERROR);
-        return this;
-    }
-
-    @Override
     public ClientExpressionDeletable<T> ignoreVersion(boolean ignored) {
 
         if (ignored) {
