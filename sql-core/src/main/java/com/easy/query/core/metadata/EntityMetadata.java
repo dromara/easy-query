@@ -20,6 +20,7 @@ import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.conversion.EnumValueAutoConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.DefaultGeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
@@ -275,6 +276,18 @@ public class EntityMetadata {
     }
 
 
+    private void processEnumValueConverter(ColumnOption columnOption,Class<?> propertyType,QueryConfiguration configuration){
+            //如果是默认的那么就通过自动关联的值转换处进行寻找
+            if(Enum.class.isAssignableFrom(propertyType)){
+                List<EnumValueAutoConverter<?, ?>> enumValueAutoConverters = configuration.getEnumValueAutoConverters();
+                for (EnumValueAutoConverter<?, ?> enumValueAutoConverter : enumValueAutoConverters) {
+                    if(enumValueAutoConverter.apply(entityClass,EasyObjectUtil.typeCastNullable(propertyType))){
+                        columnOption.setValueConverter(enumValueAutoConverter);
+                        break;
+                    }
+                }
+            }
+    }
     private ColumnOption createColumnOption(Field field, PropertyDescriptor propertyDescriptor, boolean tableEntity, FastBeanProperty fastBeanProperty, QueryConfiguration configuration, FastBean fastBean, JdbcTypeHandlerManager jdbcTypeHandlerManager, boolean defaultAutoSelect) {
         NameConversion nameConversion = configuration.getNameConversion();
         String property = field.getName();
@@ -300,13 +313,18 @@ public class EntityMetadata {
             columnOption.setSupportQueryLike(encryption.supportQueryLike());
         }
         if (column != null) {
+            //获取默认的属性值转换
             Class<? extends ValueConverter<?, ?>> conversionClass = column.conversion();
+            //如果不是默认的就代表添加了
             if (!Objects.equals(DefaultValueConverter.class, conversionClass)) {
                 ValueConverter<?, ?> valueConverter = configuration.getValueConverter(conversionClass);
                 if (valueConverter == null) {
                     throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion unknown");
                 }
                 columnOption.setValueConverter(valueConverter);
+            }else{
+                //如果是默认的那么就通过自动关联的值转换处进行寻找
+                processEnumValueConverter(columnOption,propertyDescriptor.getPropertyType(),configuration);
             }
             Class<? extends ComplexPropType> complexPropTypeClass = column.complexPropType();
             if (Objects.equals(DefaultComplexPropType.class, complexPropTypeClass)) {
@@ -317,6 +335,9 @@ public class EntityMetadata {
                 columnOption.setComplexPropType(complexPropType);
             }
 
+        }else{
+            //如果是默认的那么就通过自动关联的值转换处进行寻找
+            processEnumValueConverter(columnOption,propertyDescriptor.getPropertyType(),configuration);
         }
 
         if (tableEntity) {

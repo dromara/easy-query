@@ -2,7 +2,6 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Table;
-import com.easy.query.test.conversion.EnumValueConverter;
 import com.easy.query.test.enums.TopicTypeEnum;
 import lombok.Data;
 import lombok.ToString;
@@ -24,7 +23,7 @@ public class TopicTypeTest2 {
     private String id;
     private Integer stars;
     private String title;
-    @Column(value = "topic_type",conversion = EnumValueConverter.class)
+//    @Column(value = "topic_type",conversion = EnumValueConverter.class)
     private TopicTypeEnum topicType;
     private LocalDateTime createTime;
 }

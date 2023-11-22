@@ -2,6 +2,7 @@ package com.easy.query.core.configuration;
 
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.conversion.EnumValueAutoConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
@@ -31,9 +32,11 @@ import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author xuejiaming
@@ -60,6 +63,7 @@ public class QueryConfiguration {
     private Map<Class<? extends VersionStrategy>, VersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ShardingInitializer>, ShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ValueConverter<?, ?>>, ValueConverter<?, ?>> valueConverterMap = new ConcurrentHashMap<>();
+    private List<EnumValueAutoConverter<?, ?>> enumValueAutoConverters = new CopyOnWriteArrayList<>();
     private Map<Class<? extends ValueUpdateAtomicTrack<?>>, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ColumnValueSQLConverter>, ColumnValueSQLConverter> columnValueSQLConverterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends GeneratedKeySQLColumnGenerator>, GeneratedKeySQLColumnGenerator> generatedSQLColumnGeneratorMap = new ConcurrentHashMap<>();
@@ -234,19 +238,25 @@ public class QueryConfiguration {
     public void applyValueConverter(ValueConverter<?, ?> valueConverter) {
         Class<? extends ValueConverter<?, ?>> converterClass = EasyObjectUtil.typeCastNullable(valueConverter.getClass());
         if (valueConverterMap.containsKey(converterClass)) {
-            throw new EasyQueryException("value converter:" + EasyClassUtil.getSimpleName(converterClass) + ",repeat");
+            throw new EasyQueryException("ValueConverter:" + EasyClassUtil.getSimpleName(converterClass) + ",repeat");
         }
         valueConverterMap.put(converterClass, valueConverter);
+        if(EnumValueAutoConverter.class.isAssignableFrom(converterClass)){
+            EnumValueAutoConverter<?, ?> enumValueAutoConverter=EasyObjectUtil.typeCastNullable(valueConverter);
+            enumValueAutoConverters.add(enumValueAutoConverter);
+        }
+    }
+    public List<EnumValueAutoConverter<?, ?>> getEnumValueAutoConverters(){
+        return enumValueAutoConverters;
     }
 
     public ValueConverter<?, ?> getValueConverter(Class<? extends ValueConverter<?, ?>> converterClass) {
         return valueConverterMap.get(converterClass);
     }
-
     public void applyValueUpdateAtomicTrack(ValueUpdateAtomicTrack<?> trackValueUpdate) {
         Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = EasyObjectUtil.typeCastNullable(trackValueUpdate.getClass());
         if (valueUpdateAtomicTrackMap.containsKey(trackValueUpdateClass)) {
-            throw new EasyQueryException("track value update:" + EasyClassUtil.getSimpleName(trackValueUpdateClass) + ",repeat");
+            throw new EasyQueryException("ValueUpdateAtomicTrack:" + EasyClassUtil.getSimpleName(trackValueUpdateClass) + ",repeat");
         }
         valueUpdateAtomicTrackMap.put(trackValueUpdateClass, trackValueUpdate);
     }
