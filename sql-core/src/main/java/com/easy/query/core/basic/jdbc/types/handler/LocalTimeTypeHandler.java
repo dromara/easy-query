@@ -16,8 +16,8 @@ import java.time.LocalTime;
  */
 public class LocalTimeTypeHandler implements JdbcTypeHandler {
     @Override
-    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
-        Time time = streamResultSet.getTime(dataReader.getJdbcIndex());
+    public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
+        Time time = streamResultSet.getTime(jdbcProperty.getJdbcIndex());
         if (time != null) {
             return time.toLocalTime();
         }

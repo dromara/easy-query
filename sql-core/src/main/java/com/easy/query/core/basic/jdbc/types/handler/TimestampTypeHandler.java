@@ -15,8 +15,8 @@ import java.sql.Timestamp;
  */
 public class TimestampTypeHandler implements JdbcTypeHandler {
     @Override
-    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
-        return streamResultSet.getTimestamp(dataReader.getJdbcIndex());
+    public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
+        return streamResultSet.getTimestamp(jdbcProperty.getJdbcIndex());
     }
 
     @Override

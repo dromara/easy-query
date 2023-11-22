@@ -15,8 +15,8 @@ import java.sql.SQLException;
  */
 public class CLobTypeHandler implements JdbcTypeHandler {
     @Override
-    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
-        return streamResultSet.getClob(dataReader.getJdbcIndex());
+    public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
+        return streamResultSet.getClob(jdbcProperty.getJdbcIndex());
     }
 
     @Override

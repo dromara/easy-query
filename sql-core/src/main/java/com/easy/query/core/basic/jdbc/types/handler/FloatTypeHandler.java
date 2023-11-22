@@ -15,14 +15,14 @@ import java.sql.SQLException;
 public class FloatTypeHandler implements JdbcTypeHandler {
     private static final float DEFAULT=0f;
     @Override
-    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
+    public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
 
-        float r = streamResultSet.getFloat(dataReader.getJdbcIndex());
+        float r = streamResultSet.getFloat(jdbcProperty.getJdbcIndex());
         if(r!=DEFAULT){
             return r;
         }
         if(streamResultSet.wasNull()){//判断当前读取的列是否可以为null，因为基本类型存在默认值而包装类型存在null值
-            if(dataReader.isPrimitive()){
+            if(jdbcProperty.isPrimitive()){
                 return DEFAULT;
             }else{
                 return null;

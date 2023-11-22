@@ -13,8 +13,8 @@ import java.sql.SQLException;
  */
 public class SQLDateTypeHandler implements JdbcTypeHandler {
     @Override
-    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
-        return streamResultSet.getDate(dataReader.getJdbcIndex());
+    public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
+        return streamResultSet.getDate(jdbcProperty.getJdbcIndex());
     }
 
     @Override

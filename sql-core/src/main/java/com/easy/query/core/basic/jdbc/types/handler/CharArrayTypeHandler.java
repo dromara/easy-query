@@ -14,8 +14,8 @@ import java.sql.SQLException;
  */
 public class CharArrayTypeHandler implements JdbcTypeHandler {
     @Override
-    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
-        return streamResultSet.getString(dataReader.getJdbcIndex()).toCharArray();
+    public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
+        return streamResultSet.getString(jdbcProperty.getJdbcIndex()).toCharArray();
     }
 
     @Override

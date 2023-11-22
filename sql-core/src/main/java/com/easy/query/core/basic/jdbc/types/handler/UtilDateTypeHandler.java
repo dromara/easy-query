@@ -15,9 +15,9 @@ import java.sql.Timestamp;
  */
 public class UtilDateTypeHandler implements JdbcTypeHandler {
     @Override
-    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
+    public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
 
-        Timestamp timestamp = streamResultSet.getTimestamp(dataReader.getJdbcIndex());
+        Timestamp timestamp = streamResultSet.getTimestamp(jdbcProperty.getJdbcIndex());
         if(timestamp!=null){
             return new java.util.Date(timestamp.getTime());
         }

@@ -17,8 +17,8 @@ import java.time.ZoneId;
  */
 public class LocalDateTypeHandler implements JdbcTypeHandler {
     @Override
-    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
-        Timestamp timestamp = streamResultSet.getTimestamp(dataReader.getJdbcIndex());
+    public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
+        Timestamp timestamp = streamResultSet.getTimestamp(jdbcProperty.getJdbcIndex());
         if(timestamp!=null){
             return timestamp.toLocalDateTime().toLocalDate();
         }

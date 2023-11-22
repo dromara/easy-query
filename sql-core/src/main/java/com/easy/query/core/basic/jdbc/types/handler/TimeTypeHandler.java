@@ -15,8 +15,8 @@ import java.sql.Time;
  */
 public class TimeTypeHandler implements JdbcTypeHandler {
     @Override
-    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
-        return streamResultSet.getTime(dataReader.getJdbcIndex());
+    public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
+        return streamResultSet.getTime(jdbcProperty.getJdbcIndex());
     }
 
     @Override

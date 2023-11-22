@@ -14,8 +14,8 @@ import java.sql.SQLException;
  */
 public class ObjectTypeHandler implements JdbcTypeHandler {
     @Override
-    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
-        return streamResultSet.getObject(dataReader.getJdbcIndex());
+    public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
+        return streamResultSet.getObject(jdbcProperty.getJdbcIndex());
     }
 
     @Override

@@ -42,7 +42,7 @@ public class EntityUpdateSetProcessor {
     private void initIgnoreProperties() {
         if (entity != null) {
             //优先级是用户设置、追踪、默认配置
-            if (!Objects.equals(SQLExecuteStrategyEnum.DEFAULT, expressionUpdateStrategy)) {
+            if (SQLExecuteStrategyEnum.DEFAULT != expressionUpdateStrategy) {
                 entityUpdateType = EntityUpdateTypeEnum.CUSTOM;
                 getCustomIgnoreProperties(expressionUpdateStrategy, runtimeContext.getEntityMetadataManager());
             } else {
@@ -56,12 +56,12 @@ public class EntityUpdateSetProcessor {
                         entityUpdateType = EntityUpdateTypeEnum.TRACK;
                         this.entityTrackProperty = EasyTrackUtil.getTrackDiffProperty(runtimeContext.getEntityMetadataManager(), trackEntityState);
                         entityPropertiesIgnore.addAll(entityTrackProperty.getSameProperties());
+                        return;
                     }
-                } else {
-                    entityUpdateType = EntityUpdateTypeEnum.GLOBAL_CUSTOM;
-                    SQLExecuteStrategyEnum globalUpdateStrategy = runtimeContext.getQueryConfiguration().getEasyQueryOption().getUpdateStrategy();
-                    getCustomIgnoreProperties(globalUpdateStrategy, runtimeContext.getEntityMetadataManager());
                 }
+                entityUpdateType = EntityUpdateTypeEnum.GLOBAL_CUSTOM;
+                SQLExecuteStrategyEnum globalUpdateStrategy = runtimeContext.getQueryConfiguration().getEasyQueryOption().getUpdateStrategy();
+                getCustomIgnoreProperties(globalUpdateStrategy, runtimeContext.getEntityMetadataManager());
             }
         }
     }

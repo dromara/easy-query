@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.jdbc.types.handler;
 
-import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 
 import java.sql.SQLException;
@@ -15,8 +15,8 @@ import java.sql.SQLException;
 public class StringTypeHandler implements JdbcTypeHandler {
     public static final StringTypeHandler INSTANCE=new StringTypeHandler();
     @Override
-    public Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException {
-        return streamResultSet.getString(dataReader.getJdbcIndex());
+    public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
+        return streamResultSet.getString(jdbcProperty.getJdbcIndex());
     }
 
     @Override

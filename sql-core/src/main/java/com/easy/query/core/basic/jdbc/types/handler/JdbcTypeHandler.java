@@ -12,6 +12,6 @@ import java.sql.SQLException;
  * @author xuejiaming
  */
 public interface JdbcTypeHandler {
-    Object getValue(JdbcProperty dataReader, StreamResultSet streamResultSet) throws SQLException;
+    Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException;
     void setParameter(EasyParameter parameter) throws SQLException;
 }

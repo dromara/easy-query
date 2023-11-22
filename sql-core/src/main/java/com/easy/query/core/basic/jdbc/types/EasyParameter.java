@@ -29,7 +29,10 @@ public class EasyParameter {
         return index+1;
     }
     public Object getValue(){
-        return sqlParameters.get(index).getValue();
+        return getSQLParameter().getValue();
+    }
+    public SQLParameter getSQLParameter(){
+        return sqlParameters.get(index);
     }
 
     /**
