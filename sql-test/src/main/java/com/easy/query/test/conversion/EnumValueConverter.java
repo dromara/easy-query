@@ -13,11 +13,17 @@ import com.easy.query.core.util.EasyObjectUtil;
 public class EnumValueConverter implements EnumValueAutoConverter<Enum<?>,Integer> {
     @Override
     public Integer serialize(Enum<?> enumValue, ColumnMetadata columnMetadata) {
+        if(enumValue==null){
+            return null;
+        }
         return (Integer) EnumValueDeserializer.serialize(enumValue);
     }
 
     @Override
     public Enum<?> deserialize(Integer integer, ColumnMetadata columnMetadata) {
+        if(integer==null){
+            return null;
+        }
         return EnumValueDeserializer.deserialize(EasyObjectUtil.typeCast(columnMetadata.getPropertyType()),integer);
     }
 
