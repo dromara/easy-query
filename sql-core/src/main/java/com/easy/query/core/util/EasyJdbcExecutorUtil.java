@@ -184,7 +184,7 @@ public class EasyJdbcExecutorUtil {
         boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
         boolean listen = jdbcExecutorListener.enable();
-        SQLConsumer<Statement> configurer = executorContext.getConfigurer();
+        SQLConsumer<Statement> configurer = executorContext.getConfigurer(shardingPrint);
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<SQLParameter> parameters = extractParameters(null, sqlParameters, printSql, easyConnection, shardingPrint, replicaPrint);

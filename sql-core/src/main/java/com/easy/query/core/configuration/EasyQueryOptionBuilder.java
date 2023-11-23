@@ -70,6 +70,10 @@ public class EasyQueryOptionBuilder {
      *
      */
     private boolean warningColumnMiss;
+    /**
+     * 分片下默认拉取size大小
+     */
+    private int shardingFetchSize;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -97,6 +101,7 @@ public class EasyQueryOptionBuilder {
         this.keepNativeStyle = false;
         this.reverseOffsetThreshold = 0;
         this.warningColumnMiss = true;
+        this.shardingFetchSize = 1000;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -219,6 +224,10 @@ public class EasyQueryOptionBuilder {
         this.warningColumnMiss = warningColumnMiss;
     }
 
+    public void setShardingFetchSize(int shardingFetchSize) {
+        this.shardingFetchSize = shardingFetchSize;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -246,6 +255,7 @@ public class EasyQueryOptionBuilder {
                 this.relationGroupSize,
                 this.keepNativeStyle,
                 this.reverseOffsetThreshold,
-                this.warningColumnMiss);
+                this.warningColumnMiss,
+                this.shardingFetchSize);
     }
 }

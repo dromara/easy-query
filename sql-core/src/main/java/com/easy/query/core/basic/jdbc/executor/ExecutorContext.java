@@ -90,4 +90,19 @@ public class ExecutorContext {
     public void setConfigurer(SQLConsumer<Statement> configurer) {
         this.configurer = configurer;
     }
+
+    public SQLConsumer<Statement> getConfigurer(boolean isSharding){
+        if(isSharding){
+            int shardingFetchSize = easyQueryOption.getShardingFetchSize();
+            if(this.configurer==null){
+                return statement -> statement.setFetchSize(shardingFetchSize);
+            }else{
+                return statement -> {
+                    statement.setFetchSize(shardingFetchSize);
+                    configurer.accept(statement);
+                };
+            }
+        }
+        return configurer;
+    }
 }

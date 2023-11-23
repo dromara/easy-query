@@ -128,6 +128,7 @@ public class DbManager {
                     builder.setRelationGroupSize(solonEasyQueryProperties.getRelationGroupSize());
                     builder.setKeepNativeStyle(solonEasyQueryProperties.isKeepNativeStyle());
                     builder.setWarningColumnMiss(solonEasyQueryProperties.isWarningColumnMiss());
+                    builder.setShardingFetchSize(solonEasyQueryProperties.getShardingFetchSize());
                     builder.setConnectionMode(solonEasyQueryProperties.getConnectionMode());
                     builder.setReverseOffsetThreshold(solonEasyQueryProperties.getReverseOffsetThreshold());
                 });

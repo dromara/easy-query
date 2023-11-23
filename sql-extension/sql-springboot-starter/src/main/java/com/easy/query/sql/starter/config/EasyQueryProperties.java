@@ -116,6 +116,10 @@ public class EasyQueryProperties {
      */
     private boolean warningColumnMiss = true;
     /**
+     * 分配下拉取大小
+     */
+    private int shardingFetchSize = 1000;
+    /**
      * 启用反向排序的偏移量阈值
      * 小于等于0表示不启用
      */
@@ -355,6 +359,14 @@ public class EasyQueryProperties {
 
     public void setWarningColumnMiss(boolean warningColumnMiss) {
         this.warningColumnMiss = warningColumnMiss;
+    }
+
+    public int getShardingFetchSize() {
+        return shardingFetchSize;
+    }
+
+    public void setShardingFetchSize(int shardingFetchSize) {
+        this.shardingFetchSize = shardingFetchSize;
     }
 
     public EasyQueryProperties() {
