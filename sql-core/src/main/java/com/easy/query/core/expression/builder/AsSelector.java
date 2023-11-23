@@ -29,7 +29,20 @@ public interface AsSelector extends SQLAsNative<AsSelector> {
     EntityQueryExpressionBuilder getEntityQueryExpressionBuilder();
 
     AsSelector column(TableAvailable table, String property);
+
+    /**
+     * 快速选择之前group的列,不需要重新再写一遍
+     * @param index
+     * @return
+     */
      AsSelector groupKeys(int index);
+
+    /**
+     * 快速选择之前group的列,不需要重新再写一遍
+     * @param index
+     * @param alias
+     * @return
+     */
      AsSelector groupKeysAs(int index, String alias);
 
     /**

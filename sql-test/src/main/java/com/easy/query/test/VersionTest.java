@@ -1,10 +1,13 @@
 package com.easy.query.test;
 
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.SysUserVersionLong;
 import com.easy.query.test.entity.SysUserVersionLongLogicDel;
+import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -211,5 +214,72 @@ public class VersionTest extends BaseTest {
         Assert.assertNotNull(exception);
         Assert.assertTrue(exception instanceof NullPointerException);
 
+    }
+    @Test
+    public void test9() {
+
+
+        Supplier<Exception> f = () -> {
+            try {
+                SysUserVersionLongLogicDel sysUserVersionLongLogicDel = new SysUserVersionLongLogicDel();
+                sysUserVersionLongLogicDel.setId("1x1");
+                sysUserVersionLongLogicDel.setUsername("aaaa");
+                sysUserVersionLongLogicDel.setVersion(1L);
+                easyQuery.updatable(sysUserVersionLongLogicDel)
+                        .setColumns(o->{
+                            o.column(SysUserVersionLongLogicDel::getUsername);
+                        })
+                        .asTable("AXX")
+                        .executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        String sql = easyQuerySQLStatementException.getSQL();
+        Assert.assertEquals("UPDATE `AXX` SET `username` = ?,`version` = ? WHERE `deleted` = ? AND `version` = ? AND `id` = ?",sql);
+    }
+    @Test
+    public void test10() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Supplier<Exception> f = () -> {
+            try {
+                SysUserVersionLongLogicDel sysUserVersionLongLogicDel = new SysUserVersionLongLogicDel();
+                sysUserVersionLongLogicDel.setId("1x1");
+                sysUserVersionLongLogicDel.setUsername("aaaa");
+                sysUserVersionLongLogicDel.setVersion(1L);
+                easyQuery.updatable(sysUserVersionLongLogicDel)
+                        .setColumns(o->{
+                            o.column(SysUserVersionLongLogicDel::getUsername);
+                        })
+                        .asTable("AXX")
+                        .executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        String sql = easyQuerySQLStatementException.getSQL();
+        Assert.assertEquals("UPDATE `AXX` SET `username` = ?,`version` = ? WHERE `deleted` = ? AND `version` = ? AND `id` = ?",sql);
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `AXX` SET `username` = ?,`version` = ? WHERE `deleted` = ? AND `version` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(1,jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
+        Assert.assertEquals("aaaa(String),2(Long),false(Boolean),1(Long),1x1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 }

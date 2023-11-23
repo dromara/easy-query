@@ -298,10 +298,35 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                     }
                 }
             }
-            return setColumns.cloneSQLBuilder();
+            //如果存在版本号需要关联
+            SQLBuilderSegment sqlSetBuilderSegment = setColumns.cloneSQLBuilder();
+            TableAvailable entityTable = tableExpressionBuilder.getEntityTable();
+//            EntityMetadata entityMetadata = entityTable.getEntityMetadata();
+//            if (entityMetadata.hasVersionColumn()) {
+//                boolean ignoreVersion = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.IGNORE_VERSION);
+//                if (!ignoreVersion) {
+//                    VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+//                    VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
+//                    sqlSetBuilderSegment.append(new ColumnVersionPropertySegmentImpl(entityTable, versionMetadata.getPropertyName(), easyVersionStrategy, runtimeContext));
+//                }
+//            }
+            return processVersionColumn(sqlSetBuilderSegment,entityTable);
         } else {
             return buildUpdateSetByWhere(sqlWhere, entity, tableExpressionBuilder, entityUpdateSetProcessor);
         }
+    }
+
+    protected SQLBuilderSegment processVersionColumn(SQLBuilderSegment sqlSetBuilderSegment,TableAvailable entityTable){
+        EntityMetadata entityMetadata = entityTable.getEntityMetadata();
+        if (entityMetadata.hasVersionColumn()) {
+            boolean ignoreVersion = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.IGNORE_VERSION);
+            if (!ignoreVersion) {
+                VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+                VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
+                sqlSetBuilderSegment.append(new ColumnVersionPropertySegmentImpl(entityTable, versionMetadata.getPropertyName(), easyVersionStrategy, runtimeContext));
+            }
+        }
+        return sqlSetBuilderSegment;
     }
 
     protected SQLBuilderSegment buildUpdateSetByWhere(PredicateSegment sqlWhere, Object entity, EntityTableExpressionBuilder tableExpressionBuilder, EntityUpdateSetProcessor entityUpdateSetProcessor) {
@@ -356,15 +381,16 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
         }
 
-        if (entityMetadata.hasVersionColumn()) {
-            boolean ignoreVersion = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.IGNORE_VERSION);
-            if (!ignoreVersion) {
-                VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
-                VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
-                updateSetSQLBuilderSegment.append(new ColumnVersionPropertySegmentImpl(entityTable, versionMetadata.getPropertyName(), easyVersionStrategy, runtimeContext));
-            }
-        }
-        return updateSetSQLBuilderSegment;
+//        if (entityMetadata.hasVersionColumn()) {
+//            boolean ignoreVersion = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.IGNORE_VERSION);
+//            if (!ignoreVersion) {
+//                VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
+//                VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
+//                updateSetSQLBuilderSegment.append(new ColumnVersionPropertySegmentImpl(entityTable, versionMetadata.getPropertyName(), easyVersionStrategy, runtimeContext));
+//            }
+//        }
+//        return updateSetSQLBuilderSegment;
+        return processVersionColumn(updateSetSQLBuilderSegment,entityTable);
     }
 
     /**
