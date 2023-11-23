@@ -4,8 +4,10 @@ import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterable;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.expression.lambda.SQLConsumer;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -40,9 +42,17 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      *         }
      * </pre></blockquote>
      *
+     * @param fetchSize null表示不设置
      * @return
      */
-    JdbcStreamResult<T> toStreamResult();
+   default JdbcStreamResult<T> toStreamResult(Integer fetchSize){
+       return toStreamResult(s->{
+           if(fetchSize!=null){
+               s.setFetchSize(fetchSize);
+           }
+       });
+   }
+    JdbcStreamResult<T> toStreamResult(SQLConsumer<Statement> configurer);
 
     /**
      * 直接拉取数据
@@ -51,7 +61,16 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * @param <TR>
      */
     default <TR> TR fetch(Function<Stream<T>,TR> fetcher){
-        try(JdbcStreamResult<T> streamResult = toStreamResult()){
+       return fetch(fetcher,null);
+    }
+    /**
+     * 直接拉取数据
+     * @param fetcher 如何消费拉取的数据
+     * @return
+     * @param <TR>
+     */
+    default <TR> TR fetch(Function<Stream<T>,TR> fetcher,Integer fetchSize){
+        try(JdbcStreamResult<T> streamResult = toStreamResult(fetchSize)){
             StreamIterable<T> streamIterable = streamResult.getStreamIterable();
             Stream<T> stream = StreamSupport.stream(streamIterable.spliterator(), false);
             return fetcher.apply(stream);

@@ -1634,7 +1634,38 @@ public class QueryTest3 extends BaseTest {
 
     @Test
     public void query9() {
-        try (JdbcStreamResult<BlogEntity> streamResult = easyQuery.queryable(BlogEntity.class).where(o -> o.le(BlogEntity::getStar, 100)).orderByAsc(o -> o.column(BlogEntity::getCreateTime)).toStreamResult()) {
+        try (JdbcStreamResult<BlogEntity> streamResult = easyQuery.queryable(BlogEntity.class).where(o -> o.le(BlogEntity::getStar, 100)).orderByAsc(o -> o.column(BlogEntity::getCreateTime)).toStreamResult(100)) {
+
+            LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
+            int i = 0;
+            for (BlogEntity blog : streamResult.getStreamIterable()) {
+                String indexStr = String.valueOf(i);
+                Assert.assertEquals(indexStr, blog.getId());
+                Assert.assertEquals(indexStr, blog.getCreateBy());
+                Assert.assertEquals(begin.plusDays(i), blog.getCreateTime());
+                Assert.assertEquals(indexStr, blog.getUpdateBy());
+                Assert.assertEquals(begin.plusDays(i), blog.getUpdateTime());
+                Assert.assertEquals("title" + indexStr, blog.getTitle());
+//            Assert.assertEquals("content" + indexStr, blog.getContent());
+                Assert.assertEquals("http://blog.easy-query.com/" + indexStr, blog.getUrl());
+                Assert.assertEquals(i, (int) blog.getStar());
+                Assert.assertEquals(0, new BigDecimal("1.2").compareTo(blog.getScore()));
+                Assert.assertEquals(i % 3 == 0 ? 0 : 1, (int) blog.getStatus());
+                Assert.assertEquals(0, new BigDecimal("1.2").multiply(BigDecimal.valueOf(i)).compareTo(blog.getOrder()));
+                Assert.assertEquals(i % 2 == 0, blog.getIsTop());
+                Assert.assertEquals(i % 2 == 0, blog.getTop());
+                Assert.assertEquals(false, blog.getDeleted());
+                i++;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Test
+    public void query9_x() {
+        try (JdbcStreamResult<BlogEntity> streamResult = easyQuery.queryable(BlogEntity.class).where(o -> o.le(BlogEntity::getStar, 100)).orderByAsc(o -> o.column(BlogEntity::getCreateTime)).toStreamResult(x->{
+            x.setFetchSize(1000);
+        })) {
 
             LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
             int i = 0;
@@ -1662,10 +1693,26 @@ public class QueryTest3 extends BaseTest {
         }
     }
 
+    public void process(List<BlogEntity> blogs){
+
+    }
     @Test
     public void query9_1() {
         try (JdbcStreamResult<BlogEntity> streamResult = easyProxyQuery.queryable(BlogEntityProxy.createTable()).where(o -> o.le(o.t().star(), 100))
-                .orderByAsc(o -> o.column(o.t().createTime())).toStreamResult()) {
+                .orderByAsc(o -> o.column(o.t().createTime())).toStreamResult(100)) {
+//            StreamIterable<BlogEntity> streamIterable = streamResult.getStreamIterable();
+//            Iterator<BlogEntity> iterator = streamIterable.iterator();
+//            int fetchSize=10;
+//            ArrayList<BlogEntity> blogEntities = new ArrayList<>(fetchSize);
+//            while(iterator.hasNext()){
+//                fetchSize--;
+//                blogEntities.add(iterator.next());
+//                if(fetchSize==0){
+//                    process(blogEntities);
+//                    blogEntities.clear();
+//                    fetchSize=10;
+//                }
+//            }
 
             LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
             int i = 0;

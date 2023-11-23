@@ -3,7 +3,10 @@ package com.easy.query.core.basic.jdbc.executor;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+
+import java.sql.Statement;
 
 /**
  * @author xuejiaming
@@ -18,6 +21,7 @@ public class ExecutorContext {
     private final ExecuteMethodEnum executeMethod;
     private final boolean tracking;
     private final EasyQueryOption easyQueryOption;
+    private SQLConsumer<Statement> configurer;
 
     public ExecutorContext(ExpressionContext expressionContext, boolean isQuery, ExecuteMethodEnum executeMethod) {
         this(expressionContext, isQuery, executeMethod, false);
@@ -73,5 +77,17 @@ public class ExecutorContext {
 
     public void setMapToBeanStrict(boolean mapToBeanStrict) {
         this.mapToBeanStrict = mapToBeanStrict;
+    }
+
+    /**
+     * 可为空
+     * @return
+     */
+    public SQLConsumer<Statement> getConfigurer() {
+        return configurer;
+    }
+
+    public void setConfigurer(SQLConsumer<Statement> configurer) {
+        this.configurer = configurer;
     }
 }

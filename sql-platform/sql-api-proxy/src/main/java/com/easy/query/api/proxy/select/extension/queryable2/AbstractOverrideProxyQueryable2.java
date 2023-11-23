@@ -10,22 +10,22 @@ import com.easy.query.api.proxy.sql.impl.ProxySelectorImpl;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
-import com.easy.query.core.basic.api.select.executor.QueryExecutable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
+import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -139,8 +139,8 @@ public abstract class AbstractOverrideProxyQueryable2<T1Proxy extends ProxyEntit
     }
 
     @Override
-    public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass) {
-        return entityQueryable.toStreamResult(resultClass);
+    public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
+        return entityQueryable.toStreamResult(resultClass,configurer);
     }
 
     @Override

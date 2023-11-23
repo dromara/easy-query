@@ -2,6 +2,9 @@ package com.easy.query.core.basic.api.select.executor;
 
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
+import com.easy.query.core.expression.lambda.SQLConsumer;
+
+import java.sql.Statement;
 
 /**
  * create time 2023/10/20 23:07
@@ -36,5 +39,12 @@ public interface StreamResultAble<T> extends QueryAvailable<T> {
      * @param <TR>
      * @return 可迭代的流式结果
      */
-    <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass);
+    <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer);
+    default <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass,Integer fetchSize){
+        return toStreamResult(resultClass,statement -> {
+            if(fetchSize!=null){
+                statement.setFetchSize(fetchSize);
+            }
+        });
+    }
 }

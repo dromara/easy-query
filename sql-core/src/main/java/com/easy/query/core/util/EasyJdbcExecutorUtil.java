@@ -24,6 +24,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
+import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -33,6 +34,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -182,6 +184,7 @@ public class EasyJdbcExecutorUtil {
         boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
         boolean listen = jdbcExecutorListener.enable();
+        SQLConsumer<Statement> configurer = executorContext.getConfigurer();
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<SQLParameter> parameters = extractParameters(null, sqlParameters, printSql, easyConnection, shardingPrint, replicaPrint);
@@ -198,6 +201,9 @@ public class EasyJdbcExecutorUtil {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
 
             long start = printSql ? System.currentTimeMillis() : 0L;
+            if(configurer!=null){
+                configurer.accept(ps);
+            }
             rs = ps.executeQuery();
             long end = printSql ? System.currentTimeMillis() : 0L;
             if (printSql) {

@@ -9,9 +9,11 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleOrNotNullException;
+import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
+import java.sql.Statement;
 import java.util.List;
 
 /**
@@ -184,8 +186,8 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      *
      * @return
      */
-    default JdbcStreamResult<T> toStreamResult() {
-        return toStreamResult(queryClass());
+    default JdbcStreamResult<T> toStreamResult(SQLConsumer<Statement> configurer) {
+        return toStreamResult(queryClass(),configurer);
     }
     /**
      * 去重
