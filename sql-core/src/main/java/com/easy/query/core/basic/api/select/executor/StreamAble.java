@@ -60,8 +60,8 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * @return
      * @param <TR>
      */
-    default <TR> TR fetch(Function<Stream<T>,TR> fetcher){
-       return fetch(fetcher,null);
+    default <TR> TR fetch(Function<Stream<T>,TR> fetcher,Integer fetchSize){
+       return fetch(fetcher,statement -> {statement.setFetchSize(fetchSize);});
     }
     /**
      * 直接拉取数据
@@ -69,8 +69,8 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * @return
      * @param <TR>
      */
-    default <TR> TR fetch(Function<Stream<T>,TR> fetcher,Integer fetchSize){
-        try(JdbcStreamResult<T> streamResult = toStreamResult(fetchSize)){
+    default <TR> TR fetch(Function<Stream<T>,TR> fetcher, SQLConsumer<Statement> configurer){
+        try(JdbcStreamResult<T> streamResult = toStreamResult(configurer)){
             StreamIterable<T> streamIterable = streamResult.getStreamIterable();
             Stream<T> stream = StreamSupport.stream(streamIterable.spliterator(), false);
             return fetcher.apply(stream);

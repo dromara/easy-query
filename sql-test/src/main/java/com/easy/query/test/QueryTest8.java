@@ -623,7 +623,7 @@ public class QueryTest8 extends BaseTest {
                 .where(o -> o.eq(o.t().id(), "1"))
                 .fetch(o -> {
                     return o.peek(x -> x.setTitle(traceId)).collect(Collectors.toSet());
-                });
+                },100);
         Assert.assertEquals(1, traceId1.size());
         Topic topic = traceId1.stream().findFirst().orElse(null);
         Assert.assertNotNull(topic);
@@ -643,7 +643,7 @@ public class QueryTest8 extends BaseTest {
                 .where(o -> o.eq(o.t().id(), "1"))
                 .fetch(o -> {
                     return o.findFirst();
-                });
+                },1);
         Assert.assertTrue(traceId1.isPresent());
         Topic topic = traceId1.get();
         Assert.assertNotNull(topic);

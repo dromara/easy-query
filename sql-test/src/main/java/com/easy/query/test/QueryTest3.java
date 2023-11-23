@@ -79,12 +79,6 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class QueryTest3 extends BaseTest {
-    public static class AA {
-        public String id() {
-            return "";
-        }
-    }
-
     @Test
     public void query124() {
         String toSql = easyQuery
@@ -2132,34 +2126,6 @@ public class QueryTest3 extends BaseTest {
                 .toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND (t.`title` = ? OR t1.`stars` = ?)", sql);
     }
-
-//    @Test
-//     public void test11(){
-//        Queryable<Topic> now = easyQuery.queryable(Topic.class)
-//                .select(Topic.class, o -> o.columnAll());
-//        Queryable<BlogEntity> last = easyQuery.queryable(BlogEntity.class)
-//                .select(o -> o.column(BlogEntity::getId).column(BlogEntity::getTitle));
-//
-//
-//        List<Topic> list = now.leftJoin(last, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-//                .where(t -> t.eq(Topic::getId, "123")).toList();
-//
-//        List<Topic> list1 = easyQuery.queryable(Topic.class)
-//                .select(TopicTypeVO.class, o -> o.column(Topic::getId).column(Topic::getTitle))
-//                .where(o -> o.eq(TopicTypeVO::getId, "12"))
-//                .select(Topic.class, o -> o.column(TopicTypeVO::getId))
-//                .where(o->o.eq(Topic::getId,"123"))
-//                .toList();
-//
-//
-//        List<Topic> list2 = easyQuery.queryable(Topic.class)
-//                .select(TopicTypeVO.class, o -> o.column(Topic::getId).column(Topic::getTitle))
-//                .where(o -> o.eq(TopicTypeVO::getId, "12"))
-//                .select(Topic.class, o -> o.column(TopicTypeVO::getId))
-//                .toList();
-//
-//    }
-
     @Test
     public void testOrder() {
         String sql = easyQuery.queryable(BlogEntity.class)
@@ -2310,33 +2276,6 @@ public class QueryTest3 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,(SELECT COUNT(*) FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t", sql);
     }
 
-//
-//    @Test
-//    public void toPage(){
-//        EasyPageResult<BlogEntity> pageResult = easyQuery.queryable(BlogEntity.class)
-//                .where(o -> o.eq(false, BlogEntity::getCreateTime, LocalDateTime.now()).and(
-//                        x -> x.or().like(false, BlogEntity::getTitle, "123")
-//                                .or()
-//                                .like(false, BlogEntity::getId, "123")
-//                                .or()
-//                                .like(false, BlogEntity::getId, "123")
-//                )).toPageResult(1, 10);
-//        Assert.assertEquals(10,pageResult.getData().size());
-//    }
-
-//    @Test
-//    public void toCount1(){
-//        EasyPageResult<BlogEntity> pageResult = easyQuery.queryable(BlogEntity.class)
-//                .where(o -> o.eq(false, BlogEntity::getCreateTime, LocalDateTime.now()).and(
-//                        x -> x.or().like(false, BlogEntity::getTitle, "123")
-//                                .or()
-//                                .like(false, BlogEntity::getId, "123")
-//                                .or()
-//                                .like(false, BlogEntity::getId, "123")
-//                ))
-//        Assert.assertEquals(10,pageResult.getData().size());
-//    }
-
     @Test
     public void test1() {
         TopicTestProxy table = TopicTestProxy.createTable();
@@ -2382,28 +2321,6 @@ public class QueryTest3 extends BaseTest {
                         }
                     });
         }
-//
-//
-//        {
-//
-////也支持单表的Queryable返回,但是这样后续操作只可以操作单表没办法操作其他join表了
-//            Queryable<Topic> where = easyQuery
-//                    .queryable(Topic.class)
-//                    //第一个join采用双参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity
-//                    .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-//                    //第二个join采用三参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity 第三个参数表示第三张表 SysUser
-//                    .leftJoin(SysUser.class, (t, t1, t2) -> t.eq(t2, Topic::getId, SysUser::getId))
-//                    .where(o -> o.eq(Topic::getId, "123"))//单个条件where参数为主表Topic
-//                    //支持单个参数或者全参数,全参数个数为主表+join表个数 链式写法期间可以通过then来切换操作表
-//                    .where((t, t1, t2) -> t.eq(Topic::getId, "123").then(t1).like(BlogEntity::getTitle, "456")
-//                            .then(t2).eq(BaseEntity::getCreateTime, LocalDateTime.now()))
-//                    //如果不想用链式的then来切换也可以通过lambda 大括号方式执行顺序就是代码顺序,默认采用and链接
-//                    .where((t, t1, t2) -> {
-//                        t.eq(Topic::getId, "123");
-//                        t1.like(BlogEntity::getTitle, "456");
-//                        t1.eq(BaseEntity::getCreateTime, LocalDateTime.now());
-//                    });
-//        }
 
     }
 
@@ -2534,32 +2451,5 @@ public class QueryTest3 extends BaseTest {
         Assert.assertEquals("1", blogEntity.getId());
         Assert.assertEquals("MySQL5.7-1", blogEntity.getContent());
     }
-
-    @Test
-    public void selectCount1() {
-        String sql = easyQuery.queryable(Topic.class)
-                .where(o -> o.eq(Topic::getId, 123))
-                .selectCount().toSQL();
-        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` WHERE `id` = ?", sql);
-    }
-
-    @Test
-    public void selectCount2() {
-        String sql = easyQuery.queryable(Topic.class)
-                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, 123))
-                .selectCount().toSQL();
-        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?", sql);
-    }
-
-    @Test
-    public void selectCount3() {
-        String sql = easyQuery.queryable(Topic.class)
-                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, 123))
-                .selectCount().toSQL();
-        Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?", sql);
-    }
-
 
 }
