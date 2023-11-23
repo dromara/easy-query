@@ -1,14 +1,10 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.basic.extension.track.TrackManager;
-import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
-import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLLikeEnum;
-import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.List;
 
@@ -40,7 +36,7 @@ public class EasySQLUtil {
         StringBuilder builder = new StringBuilder();
         int i = 0;
         for (SQLParameter sqlParameter : sqlParameters) {
-            if (sqlParameter instanceof EasyConstSQLParameter) {
+            if (sqlParameter instanceof ConstSQLParameter) {
                 Object param = sqlParameter.getValue();
                 if (i++ != 0) {
                     builder.append(",");

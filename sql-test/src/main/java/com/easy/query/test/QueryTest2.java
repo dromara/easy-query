@@ -3,14 +3,15 @@ package com.easy.query.test;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.AggregatePredicateCompare;
-import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dto.BlogEntityGroup;
 import com.easy.query.test.dto.BlogQueryRequest;
 import com.easy.query.test.dto.BlogSortJoinRequest;
@@ -22,6 +23,7 @@ import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicY;
 import com.easy.query.test.entity.Topicx;
+import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,7 +33,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * create time 2023/6/8 21:38
@@ -53,6 +54,27 @@ public class QueryTest2 extends BaseTest {
                     });
                 }).toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` = (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1)",sql);
+    }
+    @Test
+    public void query1231_1(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Topic> list = easyQueryClient.queryable(Topic.class)
+                .where(o -> {
+                    o.sqlNativeSegment("{0} = ({1})", c -> {
+                        ClientQueryable<LocalDateTime> maxCreateTimeQuery = easyQueryClient.queryable(Topic.class)
+                                .select(LocalDateTime.class, x -> x.columnMax("createTime" ));
+                        c.expression(o, "createTime" )
+                                .expression(maxCreateTimeQuery);
+                    });
+                }).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` = (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(1,jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
+        Assert.assertEquals("", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
     @Test
     public void query1232(){

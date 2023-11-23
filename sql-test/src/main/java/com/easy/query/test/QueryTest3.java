@@ -11,6 +11,7 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.dynamic.sort.ObjectSortBuilder;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
@@ -33,6 +34,7 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.common.MyPager;
 import com.easy.query.test.common.PageResult;
@@ -55,6 +57,7 @@ import com.easy.query.test.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.solon.EqUser;
+import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1023,6 +1026,8 @@ public class QueryTest3 extends BaseTest {
                 .toSQL();
         Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?", sql);
 
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
         List<Topic> list = easyProxyQuery.queryable(TopicProxy.createTable())
                 .where(o -> o.like(o.t().title(), "someTitle"))
                 .select(TopicProxy.createTable(), o -> o
@@ -1035,6 +1040,12 @@ public class QueryTest3 extends BaseTest {
                         .column(o.t().id())
                 ).toList();
         Assert.assertEquals(0, list.size());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(1,jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
+        Assert.assertEquals("123(String),456(String),222(String),222(String),%someTitle%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
     @Test
