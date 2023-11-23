@@ -255,6 +255,7 @@ public class VersionTest extends BaseTest {
                 SysUserVersionLongLogicDel sysUserVersionLongLogicDel = new SysUserVersionLongLogicDel();
                 sysUserVersionLongLogicDel.setId("1x1");
                 sysUserVersionLongLogicDel.setUsername("aaaa");
+                sysUserVersionLongLogicDel.setPhone("1333");
                 sysUserVersionLongLogicDel.setVersion(1L);
                 easyQuery.updatable(sysUserVersionLongLogicDel)
                         .setColumns(o->{
