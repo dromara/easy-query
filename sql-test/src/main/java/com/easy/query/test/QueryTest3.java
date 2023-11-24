@@ -1659,6 +1659,8 @@ public class QueryTest3 extends BaseTest {
     public void query9_x() {
         try (JdbcStreamResult<BlogEntity> streamResult = easyQuery.queryable(BlogEntity.class).where(o -> o.le(BlogEntity::getStar, 100)).orderByAsc(o -> o.column(BlogEntity::getCreateTime)).toStreamResult(x->{
             x.setFetchSize(1000);
+//            StatementImpl x1 = (StatementImpl) x;
+//            x1.enableStreamingResults();
         })) {
 
             LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);

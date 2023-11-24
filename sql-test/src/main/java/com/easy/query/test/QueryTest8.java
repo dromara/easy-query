@@ -13,6 +13,7 @@ import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.TopicMisDTO;
 import com.easy.query.test.dto.TopicRequest;
@@ -635,7 +636,6 @@ public class QueryTest8 extends BaseTest {
 
     @Test
     public void test3x() {
-        String traceId = UUID.randomUUID().toString();
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         Optional<Topic> traceId1 = easyProxyQuery.queryable(TopicProxy.createTable())
@@ -648,6 +648,11 @@ public class QueryTest8 extends BaseTest {
         Topic topic = traceId1.get();
         Assert.assertNotNull(topic);
         Assert.assertEquals("1", topic.getId());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(1, jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 
     @Test

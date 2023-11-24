@@ -2,6 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.api4j.update.impl.EasyEntityUpdatable;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -23,12 +24,16 @@ import com.easy.query.test.entity.TopicValueUpdateAtomicTrack;
 import com.easy.query.test.entity.TopicValueUpdateAtomicTrackIgnore;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
+import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -922,6 +927,82 @@ public class UpdateTest extends BaseTest {
             EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
             String sql = cause1.getSQL();
             Assert.assertEquals("UPDATE `aaa` SET `name` = ?,`name1` = ? WHERE `id` = ?", sql);
+        }
+    }
+
+    @Test
+    public void mapUpdateTest4(){
+
+        long rows = easyQuery.updatable(Topic.class)
+                .set(Topic::getStars, 12)
+                .where(o -> o.eq(Topic::getId, "2"))
+                .executeRows();
+        Assert.assertEquals(1, rows);
+        List<Map<String, Object>> updates = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("id","2");
+        updateMap.put("stars",12);
+        updates.add(updateMap);
+        HashMap<String, Object> update1Map = new HashMap<>();
+        update1Map.put("id","2");
+        update1Map.put("stars",12);
+        updates.add(update1Map);
+        easyQuery.mapUpdatable(updates)
+                .asTable("t_topic")
+                .whereColumns("id")
+                .batch()
+                .executeRows();
+    }
+    @Test
+    public void mapUpdateTest5(){
+
+
+        Supplier<Exception> f = () -> {
+            try {
+                List<Map<String, Object>> updates = new ArrayList<>();
+                HashMap<String, Object> updateMap = new HashMap<>();
+                updateMap.put("id","2");
+                updateMap.put("stars",null);
+                updates.add(updateMap);
+                easyQuery.mapUpdatable(updates)
+                        .asTable("t_topic")
+                        .whereColumns("id")
+                        .batch()
+                        .executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `id` = ?",easyQuerySQLStatementException.getSQL());
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Map<String, Object>> updates = new ArrayList<>();
+            HashMap<String, Object> updateMap = new HashMap<>();
+            updateMap.put("id","2");
+            updateMap.put("stars",12);
+            updates.add(updateMap);
+            easyQuery.mapUpdatable(updates)
+                    .asTable("t_topic")
+                    .whereColumns("id")
+                    .batch()
+                    .executeRows();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals(1,jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
+            Assert.assertEquals("12(Integer),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
 }

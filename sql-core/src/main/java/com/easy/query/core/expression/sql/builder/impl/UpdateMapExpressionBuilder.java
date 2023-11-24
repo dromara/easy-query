@@ -180,13 +180,13 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
         if (map != null) {
             //以下应该二选一
             //todo 获取更新策略按需更新
-            SQLExecuteStrategyEnum insertStrategy = expressionContext.getSQLStrategy();
-            if (Objects.equals(SQLExecuteStrategyEnum.DEFAULT, insertStrategy)) {
-                SQLExecuteStrategyEnum globalInsertStrategy = runtimeContext.getQueryConfiguration().getEasyQueryOption().getInsertStrategy();
-                getCustomIgnoreProperties(ignorePropertySet, globalInsertStrategy, runtimeContext.getEntityMetadataManager(), map);
+            SQLExecuteStrategyEnum sqlStrategy = expressionContext.getSQLStrategy();
+            if (SQLExecuteStrategyEnum.DEFAULT== sqlStrategy) {
+                SQLExecuteStrategyEnum globalSQLStrategy = runtimeContext.getQueryConfiguration().getEasyQueryOption().getUpdateStrategy();
+                getCustomIgnoreProperties(ignorePropertySet, globalSQLStrategy, runtimeContext.getEntityMetadataManager(), map);
                 return true;
             } else {
-                getCustomIgnoreProperties(ignorePropertySet, insertStrategy, runtimeContext.getEntityMetadataManager(), map);
+                getCustomIgnoreProperties(ignorePropertySet, sqlStrategy, runtimeContext.getEntityMetadataManager(), map);
                 return true;
             }
         }
