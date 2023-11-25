@@ -5,6 +5,8 @@ import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.UpdateIgnore;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -18,7 +20,7 @@ import java.time.LocalDateTime;
 @Data
 @Table("t_topic")
 @EntityProxy //添加这个属性那么Topic对象会代理生成TopicProxy (需要idea build一下当前项目)
-public class Topic {
+public class Topic implements ProxyEntityAvailable<Topic, TopicProxy> {
 
     @Column(primaryKey = true)
     private String id;
@@ -30,4 +32,9 @@ public class Topic {
     @InsertIgnore
     @UpdateIgnore
     private String alias;
+
+    @Override
+    public TopicProxy createProxyTable() {
+        return TopicProxy.createTable();
+    }
 }

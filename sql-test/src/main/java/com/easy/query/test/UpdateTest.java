@@ -334,6 +334,14 @@ public class UpdateTest extends BaseTest {
                 .whereColumns(o -> o.columnKeys().column(o.t().stars())).toSQL(topic);
         Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?",sql);
     }
+    @Test
+    public void updateTest12_2() {
+        Topic topic = easyQuery.queryable(Topic.class).whereById("15").firstOrNull();
+        Assert.assertNotNull(topic);
+        String sql = easyProxyQuery.updatableProxy(topic)
+                .whereColumns(o -> o.columnKeys().column(o.t().stars())).toSQL(topic);
+        Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?",sql);
+    }
 
 
     @Test
