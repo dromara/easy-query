@@ -8,6 +8,7 @@ import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.update.ProxyEntityUpdatable;
 import com.easy.query.api.proxy.update.ProxyExpressionUpdatable;
 import com.easy.query.api.proxy.update.ProxyOnlyEntityUpdatable;
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
@@ -95,9 +96,9 @@ public interface EasyProxyQuery {
     <T> ProxyOnlyEntityUpdatable<T> updatable(T entity);
 
     <T> ProxyOnlyEntityUpdatable<T> updatable(Collection<T> entities);
-    <T extends ProxyEntityAvailable<T,TProxy>,TProxy extends ProxyEntity<TProxy,T>> ProxyEntityUpdatable<TProxy,T> updatableProxy(T entity);
+    <T extends ProxyEntityAvailable<T,TProxy>,TProxy extends ProxyEntity<TProxy,T>> @NotNull ProxyEntityUpdatable<TProxy,T> updatableProxy(@NotNull T entity);
 
-    <T extends ProxyEntityAvailable<T,TProxy>,TProxy extends ProxyEntity<TProxy,T>> ProxyEntityUpdatable<TProxy,T> updatableProxy(Collection<T> entities);
+    <T extends ProxyEntityAvailable<T,TProxy>,TProxy extends ProxyEntity<TProxy,T>> @NotNull ProxyEntityUpdatable<TProxy,T> updatableProxy(@NotNull Collection<T> entities);
 
     <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy, T> updatable(T entity, TProxy proxy);
 

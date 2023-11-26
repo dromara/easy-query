@@ -11,6 +11,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 public class DefaultValueConverter implements ValueConverter<Object,Object> {
     public static final ValueConverter<?,?> INSTANCE=new DefaultValueConverter();
 
+
     @Override
     public Object serialize(Object o, ColumnMetadata columnMetadata) {
         return o;

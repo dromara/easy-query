@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.extension.conversion;
 
+import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
@@ -19,7 +21,7 @@ public interface ValueConverter<TProperty, TProvider> {
      * @param columnMetadata 对应的列
      * @return
      */
-    TProvider serialize(TProperty property, ColumnMetadata columnMetadata);
+    @Nullable TProvider serialize(@Nullable TProperty property,@NotNull ColumnMetadata columnMetadata);
 
 
     /**
@@ -29,5 +31,5 @@ public interface ValueConverter<TProperty, TProvider> {
      * @param columnMetadata
      * @return
      */
-    TProperty deserialize(TProvider provider, ColumnMetadata columnMetadata);
+    @Nullable TProperty deserialize(@Nullable TProvider provider,@NotNull ColumnMetadata columnMetadata);
 }

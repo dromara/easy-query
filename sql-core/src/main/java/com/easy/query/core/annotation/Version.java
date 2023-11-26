@@ -10,6 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * 乐观锁,一个对象只能有一个乐观锁
+ * 更新时会将version作为条件和下次设置的值
  * @author xuejiaming
  */
 @Documented
@@ -18,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Version {
     /**
      * 版本号策略
-     * @return
+     * @return 所使用的版本号策略
      */
     Class<? extends VersionStrategy> strategy();
 }
