@@ -745,5 +745,25 @@ public class InsertTest extends BaseTest {
                 Assert.assertEquals(i+100+1191+2991+2999+1,(int)testInc.getId());
             }
         }
+        {
+
+            ArrayList<TestInc> testInc1s = new ArrayList<>(10000);
+            for (int i = 0; i < 10000; i++) {
+                TestInc testInc = new TestInc();
+                testInc.setCreateTime(LocalDateTime.now());
+                testInc.setStars(1);
+                testInc.setTitle("");
+                testInc1s.add(testInc);
+            }
+            long begin = System.currentTimeMillis();
+            long l1 = easyQuery.insertable(testInc1s).batch().executeRows(true);
+            long end = System.currentTimeMillis();
+            long times = end - begin;
+            System.out.println("耗时:"+times);
+            for (int i = 0; i < 10000; i++) {
+                TestInc testInc = testInc1s.get(i);
+                Assert.assertEquals(i+100+1191+2991+2999+1000+1,(int)testInc.getId());
+            }
+        }
     }
 }
