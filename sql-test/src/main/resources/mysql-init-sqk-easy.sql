@@ -163,3 +163,12 @@ create table t_sys_user_sql_encryption
     address text null comment '地址',
     create_time datetime not null comment '创建时间'
 )comment '用户加密表 ';
+
+
+create table t_test_inc
+(
+    id int  not null comment '主键ID'primary key auto_increment,
+    stars int not null comment '点赞数',
+    title varchar(50) not null comment '标题',
+    create_time datetime not null comment '创建时间'
+)comment '主题表id自增';

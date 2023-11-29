@@ -1,10 +1,11 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteBeforeArg;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -48,7 +49,7 @@ import java.util.List;
 public class EasyJdbcExecutorUtil {
 
     private static final int BATCH_GROUP_COUNT = 1000;
-    private static final int EXECUTE_DEFAULT_EFFECT=0;
+    private static final int EXECUTE_DEFAULT_EFFECT = 0;
     private static final Log log = LogFactory.getLog(EasyJdbcExecutorUtil.class);
 
     private static void printShardingSQLFormat(final StringBuilder printSQL, final EasyConnection easyConnection) {
@@ -137,14 +138,15 @@ public class EasyJdbcExecutorUtil {
 
     /**
      * 解压执行参数
+     *
      * @param entity
      * @param sqlParameters
      * @param printSql
      * @param easyConnection
      * @param shardingPrint
      * @param replicaPrint
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> List<SQLParameter> extractParameters(T entity, List<SQLParameter> sqlParameters, boolean printSql, EasyConnection easyConnection, boolean shardingPrint, boolean replicaPrint) {
         if (EasyCollectionUtil.isNotEmpty(sqlParameters)) {
@@ -201,7 +203,7 @@ public class EasyJdbcExecutorUtil {
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
 
             long start = printSql ? System.currentTimeMillis() : 0L;
-            if(configurer!=null){
+            if (configurer != null) {
                 configurer.accept(ps);
             }
             rs = ps.executeQuery();
@@ -267,36 +269,40 @@ public class EasyJdbcExecutorUtil {
                 } else {
                     setPreparedStatement(ps, parameters, easyJdbcTypeHandler);
                 }
-                r += execute(entities.size()>1,batchSize,ps);
+                r += execute(entities.size() > 1, batchSize, ps, (params) -> {
+                    incrementBackFill(fillAutoIncrement, params.getAlreadyCommitSize(), generatedKeyColumns, params.getPs(), entities, entityMetadata);
+                });
             }
-            r += executeEnd(entities.size()>1,batchSize,ps);
-            //如果需要自动填充并且存在自动填充列
-            if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(generatedKeyColumns)) {
-                assert ps != null;
-                ResultSet keysSet = ps.getGeneratedKeys();
-                int index = 0;
-                ColumnMetadata[] columnMetadatas = new ColumnMetadata[generatedKeyColumns.size()];
-                while (keysSet.next()) {
-                    T entity = entities.get(index);
-                    for (int i = 0; i < generatedKeyColumns.size(); i++) {
-                        ColumnMetadata columnMetadata = columnMetadatas[i];
-                        if (columnMetadata == null) {
-                            String columnName = generatedKeyColumns.get(i);
-                            String propertyName = entityMetadata.getPropertyNameNotNull(columnName);
-                            columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                            columnMetadatas[i] = columnMetadata;
-                        }
-
-                        Object value = keysSet.getObject(i + 1);
-                        Object newValue = EasyClassUtil.convertValueToRequiredType(value, columnMetadata.getPropertyType());
-                        PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
-                        beanSetter.call(entity, newValue);
-//                        Method setter = getSetter(property, entityClass);
-//                        callSetter(entity,setter, property, newValue);
-                    }
-                    index++;
-                }
-            }
+            r += executeEnd(entities.size() > 1, batchSize, ps, (params) -> {
+                incrementBackFill(fillAutoIncrement, params.getAlreadyCommitSize(), generatedKeyColumns, params.getPs(), entities, entityMetadata);
+            });
+//            //如果需要自动填充并且存在自动填充列
+//            if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(generatedKeyColumns)) {
+//                assert ps != null;
+//                ResultSet keysSet = ps.getGeneratedKeys();
+//                int index = 0;
+//                ColumnMetadata[] columnMetadatas = new ColumnMetadata[generatedKeyColumns.size()];
+//                while (keysSet.next()) {
+//                    T entity = entities.get(index);
+//                    for (int i = 0; i < generatedKeyColumns.size(); i++) {
+//                        ColumnMetadata columnMetadata = columnMetadatas[i];
+//                        if (columnMetadata == null) {
+//                            String columnName = generatedKeyColumns.get(i);
+//                            String propertyName = entityMetadata.getPropertyNameNotNull(columnName);
+//                            columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+//                            columnMetadatas[i] = columnMetadata;
+//                        }
+//
+//                        Object value = keysSet.getObject(i + 1);
+//                        Object newValue = EasyClassUtil.convertValueToRequiredType(value, columnMetadata.getPropertyType());
+//                        PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
+//                        beanSetter.call(entity, newValue);
+////                        Method setter = getSetter(property, entityClass);
+////                        callSetter(entity,setter, property, newValue);
+//                    }
+//                    index++;
+//                }
+//            }
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
         } catch (Exception e) {
             exception = e;
@@ -354,9 +360,9 @@ public class EasyJdbcExecutorUtil {
                 } else {
                     setPreparedStatement(ps, parameters, easyJdbcTypeHandlerManager);
                 }
-                r += execute(entities.size()>1,batchSize,ps);
+                r += execute(entities.size() > 1, batchSize, ps, null);
             }
-            r += executeEnd(entities.size()>1,batchSize,ps);
+            r += executeEnd(entities.size() > 1, batchSize, ps, null);
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
         } catch (Exception e) {
             exception = e;
@@ -512,27 +518,85 @@ public class EasyJdbcExecutorUtil {
         return value;
     }
 
-    private static int execute(boolean batch,int batchSize,PreparedStatement ps) throws SQLException {
-        if(batch){
+    private static int execute(boolean batch, int batchSize, PreparedStatement ps, @Nullable SQLConsumer<InsertBackFillParams> consumer) throws SQLException {
+        if (batch) {
             ps.addBatch();
             if ((batchSize % BATCH_GROUP_COUNT) == 0) {
                 int[] ints = ps.executeBatch();
                 ps.clearBatch();
+                if (consumer != null) {
+                    consumer.accept(new InsertBackFillParams(batchSize, ps));
+                }
                 return EasyCollectionUtil.sum(ints);
             }
             return EXECUTE_DEFAULT_EFFECT;
-        }else{
+        } else {
             return ps.executeUpdate();
         }
     }
-    private static int executeEnd(boolean batch,int batchSize,PreparedStatement ps) throws SQLException {
-        if(batch){
+
+    private static int executeEnd(boolean batch, int batchSize, PreparedStatement ps, @Nullable SQLConsumer<InsertBackFillParams> consumer) throws SQLException {
+        if (batch) {
             if ((batchSize % BATCH_GROUP_COUNT) != 0) {
                 int[] ints = ps.executeBatch();
                 ps.clearBatch();
+                if (consumer != null) {
+                    consumer.accept(new InsertBackFillParams(batchSize, ps));
+                }
                 return EasyCollectionUtil.sum(ints);
             }
         }
         return EXECUTE_DEFAULT_EFFECT;
+    }
+
+
+    private static <T> void incrementBackFill(boolean fillAutoIncrement, int alreadyCommitSize, List<String> generatedKeyColumns, PreparedStatement ps, List<T> entities, EntityMetadata entityMetadata) throws SQLException {
+        if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(generatedKeyColumns)) {
+            assert ps != null;
+            ResultSet keysSet = ps.getGeneratedKeys();
+            //未提交数量
+            int unCommitSize = alreadyCommitSize % BATCH_GROUP_COUNT;
+            int index = unCommitSize == 0 ? alreadyCommitSize - BATCH_GROUP_COUNT : alreadyCommitSize - unCommitSize;
+            ColumnMetadata[] columnMetadatas = new ColumnMetadata[generatedKeyColumns.size()];
+            while (keysSet.next()) {
+                T entity = entities.get(index);
+                for (int i = 0; i < generatedKeyColumns.size(); i++) {
+                    ColumnMetadata columnMetadata = columnMetadatas[i];
+                    if (columnMetadata == null) {
+                        String columnName = generatedKeyColumns.get(i);
+                        String propertyName = entityMetadata.getPropertyNameNotNull(columnName);
+                        columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+                        columnMetadatas[i] = columnMetadata;
+                    }
+
+                    Object value = keysSet.getObject(i + 1);
+                    Object newValue = EasyClassUtil.convertValueToRequiredType(value, columnMetadata.getPropertyType());
+                    PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
+                    beanSetter.call(entity, newValue);
+//                        Method setter = getSetter(property, entityClass);
+//                        callSetter(entity,setter, property, newValue);
+                }
+                index++;
+            }
+        }
+    }
+
+    public static class InsertBackFillParams {
+        private final int alreadyCommitSize;
+        private final PreparedStatement ps;
+
+        public InsertBackFillParams(int alreadyCommitSize, PreparedStatement ps) {
+
+            this.alreadyCommitSize = alreadyCommitSize;
+            this.ps = ps;
+        }
+
+        public int getAlreadyCommitSize() {
+            return alreadyCommitSize;
+        }
+
+        public PreparedStatement getPs() {
+            return ps;
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteBeforeArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.solon.sharding.demo.configuration.DataSourceNamed;
 import org.noear.solon.core.AppContext;
 
 /**
@@ -15,10 +16,12 @@ import org.noear.solon.core.AppContext;
 public class LogSlowSQLListener implements JdbcExecutorListener {
 
     private final ServiceProvider serviceProvider;
+    private final DataSourceNamed dataSourceNamed;
 
     public LogSlowSQLListener(ServiceProvider serviceProvider){
 
         this.serviceProvider = serviceProvider;
+        this.dataSourceNamed = serviceProvider.getService(DataSourceNamed.class);
     }
     @Override
     public boolean enable() {

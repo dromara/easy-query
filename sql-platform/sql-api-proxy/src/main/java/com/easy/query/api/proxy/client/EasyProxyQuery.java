@@ -100,9 +100,9 @@ public interface EasyProxyQuery {
 
     <T extends ProxyEntityAvailable<T,TProxy>,TProxy extends ProxyEntity<TProxy,T>> @NotNull ProxyEntityUpdatable<TProxy,T> updatableProxy(@NotNull Collection<T> entities);
 
-    <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy, T> updatable(T entity, TProxy proxy);
+    <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy, T> updatable(@NotNull T entity,@NotNull TProxy proxy);
 
-    <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy, T> updatable(Collection<T> entities, TProxy proxy);
+    <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy, T> updatable(@NotNull Collection<T> entities,@NotNull TProxy proxy);
 
     <T> ProxyEntityDeletable<T> deletable(T entity);
 

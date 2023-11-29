@@ -63,8 +63,9 @@ public class Main {
     private static EasyProxyQuery easyProxyQuery;
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        LocalDateTime localDateTime1 = LocalDateTime.of(1900, 1, 1, 0, 0).plusDays(45245);
 
-
+        int ixx=1- 1 % 1000;
         StringBuilder sqlx=new StringBuilder();
         for (int i = 10000; i < 20000; i++) {
             sqlx.append("\n insert into  sys_user values (").append(i).append(",'用户三');");
