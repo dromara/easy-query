@@ -282,5 +282,6 @@ public class VersionTest extends BaseTest {
         Assert.assertEquals("UPDATE `AXX` SET `username` = ?,`version` = ? WHERE `deleted` = ? AND `version` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals(1,jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
         Assert.assertEquals("aaaa(String),2(Long),false(Boolean),1(Long),1x1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }

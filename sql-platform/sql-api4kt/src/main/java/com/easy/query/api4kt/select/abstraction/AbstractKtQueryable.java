@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author xuejiaming
@@ -120,6 +121,16 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code) {
         return entityQueryable.singleNotNull(resultClass, msg, code);
+    }
+
+    @Override
+    public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
+        return entityQueryable.firstNotNull(resultClass, throwFunc);
+    }
+
+    @Override
+    public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
+        return entityQueryable.singleNotNull(resultClass, throwFunc);
     }
 
     @Override

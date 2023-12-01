@@ -2,7 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
+import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQueryInjectCurrentlyInCreationException;
 import com.easy.query.core.exception.EasyQueryRouteNotMatchException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
@@ -31,10 +31,10 @@ public class SkipTest {
         EasyQueryException easyQueryException = new EasyQueryException(a);
         EasyQueryInjectCurrentlyInCreationException easyQueryInjectCurrentlyInCreationException = new EasyQueryInjectCurrentlyInCreationException(a);
         EasyQueryInjectCurrentlyInCreationException easyQueryInjectCurrentlyInCreationException1 = new EasyQueryInjectCurrentlyInCreationException("1", a);
-        EasyQueryFirstOrNotNullException easyQueryNotFoundException = new EasyQueryFirstOrNotNullException("");
-        EasyQueryFirstOrNotNullException easyQueryNotFoundException1 = new EasyQueryFirstOrNotNullException("1", "1");
-        EasyQueryFirstOrNotNullException easyQueryNotFoundException2 = new EasyQueryFirstOrNotNullException(a);
-        EasyQueryFirstOrNotNullException easyQueryNotFoundException3 = new EasyQueryFirstOrNotNullException("1", "1", a);
+        EasyQueryFirstNotNullException easyQueryNotFoundException = new EasyQueryFirstNotNullException("");
+        EasyQueryFirstNotNullException easyQueryNotFoundException1 = new EasyQueryFirstNotNullException("1", "1");
+        EasyQueryFirstNotNullException easyQueryNotFoundException2 = new EasyQueryFirstNotNullException(a);
+        EasyQueryFirstNotNullException easyQueryNotFoundException3 = new EasyQueryFirstNotNullException("1", "1", a);
         Assert.assertEquals("1",easyQueryNotFoundException3.getCode());
 
 

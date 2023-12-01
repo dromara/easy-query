@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @EntityProxy
 public class TopicAuto {
 
-    @Column(primaryKey = true,increment = true)
+    @Column(primaryKey = true,generatedKey = true)
     private Integer id;
     private Integer stars;
     private String title;

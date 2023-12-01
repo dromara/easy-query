@@ -12,7 +12,9 @@ import java.util.function.Function;
  */
 public interface TableCreator<TEntity> {
 //    void createTables(Class<?> entityClass);
-    TableCreator<TEntity> asTable(String tableName);
+    default TableCreator<TEntity> asTable(String tableName){
+        return asTable(o->tableName);
+    }
     TableCreator<TEntity> asTable(Function<String,String> tableNameAs);
     TableCreator<TEntity> columnsConfigure();
     boolean migrate(@Nullable String fromMigration,@Nullable String toMigration);

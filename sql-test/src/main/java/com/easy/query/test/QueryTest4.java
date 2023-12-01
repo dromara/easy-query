@@ -7,10 +7,10 @@ import com.easy.query.core.common.anonymous.AnonymousType2;
 import com.easy.query.core.common.anonymous.AnonymousType3;
 import com.easy.query.core.common.anonymous.AnonymousType4;
 import com.easy.query.core.enums.AggregatePredicateCompare;
-import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
+import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
-import com.easy.query.core.exception.EasyQuerySingleOrNotNullException;
+import com.easy.query.core.exception.EasyQuerySingleNotNullException;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyTypeUtil;
 import com.easy.query.test.dto.TopicRequest;
@@ -726,13 +726,13 @@ public class QueryTest4 extends BaseTest {
         {
             Exception exception = firstNotNull1();
             Assert.assertNotNull(exception);
-            Assert.assertTrue(exception instanceof EasyQueryFirstOrNotNullException);
+            Assert.assertTrue(exception instanceof EasyQueryFirstNotNullException);
 
         }
         {
             Exception exception = singleNotNull("123");
             Assert.assertNotNull(exception);
-            Assert.assertTrue(exception instanceof EasyQuerySingleOrNotNullException);
+            Assert.assertTrue(exception instanceof EasyQuerySingleNotNullException);
         }
         {
             Exception exception = singleNotNull("1");

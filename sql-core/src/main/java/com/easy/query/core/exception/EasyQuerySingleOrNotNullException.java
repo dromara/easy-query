@@ -1,34 +1,27 @@
 package com.easy.query.core.exception;
 
 /**
- * @FileName: EasyQueryNotFoundException.java
- * @Description: 文件说明
- * @Date: 2023/3/7 12:38
+ * create time 2023/12/1 13:24
+ * 请使用 {@link EasyQuerySingleNotNullException}
+ *
  * @author xuejiaming
  */
-public class EasyQuerySingleOrNotNullException extends EasyQueryException {
+@Deprecated
+public class EasyQuerySingleOrNotNullException extends EasyQuerySingleNotNullException{
     private static final long serialVersionUID = 4426844319659828849L;
-
-    private final String code;
-
     public EasyQuerySingleOrNotNullException(String msg) {
-        this(msg, null, null);
+        super(msg);
     }
 
     public EasyQuerySingleOrNotNullException(String msg, String code) {
-        this(msg, code, null);
+        super(msg, code);
     }
 
     public EasyQuerySingleOrNotNullException(Throwable e) {
-        this(null, null, e);
+        super(e);
     }
 
     public EasyQuerySingleOrNotNullException(String msg, String code, Throwable e) {
-        super(msg, e);
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
+        super(msg, code, e);
     }
 }

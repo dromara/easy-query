@@ -1,7 +1,9 @@
 package com.easy.query.core.basic.api.select.executor;
 
 import com.easy.query.core.basic.api.select.QueryAvailable;
-import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
+import com.easy.query.core.exception.EasyQueryFirstNotNullException;
+
+import java.util.function.Supplier;
 
 /**
  * create time 2023/10/21 09:37
@@ -23,7 +25,7 @@ public interface FirstResultAble<T> extends QueryAvailable<T> {
     <TR> TR firstOrNull(Class<TR> resultClass);
 
     /**
-     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
+     * 当未查询到结果 将会抛出 {@link EasyQueryFirstNotNullException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
      *
      * @param resultClass
@@ -37,7 +39,7 @@ public interface FirstResultAble<T> extends QueryAvailable<T> {
     }
 
     /**
-     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
+     * 当未查询到结果 将会抛出 {@link EasyQueryFirstNotNullException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
      *
      * @param resultClass 返回结果
@@ -47,4 +49,5 @@ public interface FirstResultAble<T> extends QueryAvailable<T> {
      * @return
      */
     <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code);
+    <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc);
 }

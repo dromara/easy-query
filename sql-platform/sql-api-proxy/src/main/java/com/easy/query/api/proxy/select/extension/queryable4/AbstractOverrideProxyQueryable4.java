@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/9/10 14:18
@@ -102,6 +103,15 @@ public abstract class AbstractOverrideProxyQueryable4<T1Proxy extends ProxyEntit
         return entityQueryable.singleNotNull(resultClass, msg, code);
     }
 
+    @Override
+    public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
+        return entityQueryable.firstNotNull(resultClass,throwFunc);
+    }
+
+    @Override
+    public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
+        return entityQueryable.singleNotNull(resultClass,throwFunc);
+    }
     @Override
     public Map<String, Object> toMap() {
         return entityQueryable.toMap();

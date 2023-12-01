@@ -15,6 +15,7 @@ import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
+import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
@@ -69,6 +70,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final WhereObjectQueryExecutor whereObjectQueryExecutor;
     private final ObjectSortQueryExecutor objectSortQueryExecutor;
     private final JdbcExecutorListener jdbcExecutorListener;
+    private final AssertExceptionFactory assertExceptionFactory;
     private final SQLFunc sqlFunc;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
@@ -100,6 +102,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           WhereObjectQueryExecutor whereObjectQueryExecutor,
                                           ObjectSortQueryExecutor objectSortQueryExecutor,
                                           JdbcExecutorListener jdbcExecutorListener,
+                                          AssertExceptionFactory assertExceptionFactory,
                                           SQLFunc sqlFunc) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
@@ -130,6 +133,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.whereObjectQueryExecutor = whereObjectQueryExecutor;
         this.objectSortQueryExecutor = objectSortQueryExecutor;
         this.jdbcExecutorListener = jdbcExecutorListener;
+        this.assertExceptionFactory = assertExceptionFactory;
         this.sqlFunc = sqlFunc;
     }
 
@@ -282,5 +286,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public JdbcExecutorListener getJdbcExecutorListener() {
         return jdbcExecutorListener;
+    }
+
+    @Override
+    public AssertExceptionFactory getAssertExceptionFactory() {
+        return assertExceptionFactory;
     }
 }

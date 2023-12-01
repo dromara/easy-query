@@ -40,6 +40,8 @@ import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.datasource.DefaultDataSourceManager;
 import com.easy.query.core.datasource.DefaultDataSourceUnitFactory;
 import com.easy.query.core.datasource.replica.DefaultReplicaDataSourceManager;
+import com.easy.query.core.exception.AssertExceptionFactory;
+import com.easy.query.core.exception.DefaultAssertExceptionFactory;
 import com.easy.query.core.expression.executor.parser.DefaultEasyPrepareParser;
 import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
 import com.easy.query.core.expression.executor.query.DefaultExecutionContextFactory;
@@ -58,8 +60,8 @@ import com.easy.query.core.expression.sql.expression.factory.DefaultEasyExpressi
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.DefaultIncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
-import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.inject.impl.ServiceCollectionImpl;
@@ -164,6 +166,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(WhereObjectQueryExecutor.class, DefaultWhereObjectQueryExecutor.class)
                 .replaceService(ObjectSortQueryExecutor.class, DefaultObjectSortQueryExecutor.class)
                 .replaceService(JdbcExecutorListener.class, EmptyJdbcExecutorListener.class)
+                .replaceService(AssertExceptionFactory.class, DefaultAssertExceptionFactory.class)
                 .replaceService(SQLFunc.class, SQLFuncImpl.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

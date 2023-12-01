@@ -6,15 +6,16 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamRes
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.exception.EasyQueryFirstOrNotNullException;
+import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
-import com.easy.query.core.exception.EasyQuerySingleOrNotNullException;
+import com.easy.query.core.exception.EasyQuerySingleNotNullException;
 import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 import java.sql.Statement;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * @author xuejiaming
@@ -110,7 +111,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
     boolean any();
 
     /**
-     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
+     * 当未查询到结果返回null
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
      * @return
      */
@@ -119,7 +120,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
     }
 
     /**
-     * 当未查询到结果 将会抛出 {@link EasyQueryFirstOrNotNullException}
+     * 当未查询到结果 将会抛出 {@link EasyQueryFirstNotNullException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
      *
      * @param msg
@@ -129,7 +130,12 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
     default T firstNotNull(String msg, String code) {
         return firstNotNull(queryClass(), msg, code);
     }
-
+    default <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code){
+        return firstNotNull(resultClass,()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createFirstNotNullException(msg,code));
+    }
+    default T firstNotNull(Supplier<RuntimeException> throwFunc){
+        return firstNotNull(queryClass(),throwFunc);
+    }
     /**
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
      * @return
@@ -147,12 +153,18 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      * @param code
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
-     * @throws EasyQuerySingleOrNotNullException 如果查询不到数据
+     * @throws EasyQuerySingleNotNullException 如果查询不到数据
      */
     default T singleNotNull(String msg, String code) {
         return singleNotNull(queryClass(), msg, code);
     }
 
+    default <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code){
+        return singleNotNull(resultClass,()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createFirstNotNullException(msg,code));
+    }
+    default T singleNotNull(Supplier<RuntimeException> throwFunc){
+        return singleNotNull(queryClass(),throwFunc);
+    }
     /**
      * 返回所有的查询结果集
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]

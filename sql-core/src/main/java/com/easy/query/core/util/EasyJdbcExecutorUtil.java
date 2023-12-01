@@ -545,6 +545,10 @@ public class EasyJdbcExecutorUtil {
                 }
                 return EasyCollectionUtil.sum(ints);
             }
+        }else {
+            if (consumer != null) {
+                consumer.accept(new InsertBackFillParams(1, ps));
+            }
         }
         return EXECUTE_DEFAULT_EFFECT;
     }

@@ -375,7 +375,7 @@ public class UpdateTest extends BaseTest {
         Assert.assertEquals("UPDATE `aaa` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals(1,jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
         Assert.assertEquals("2123(String),2023-06-08T10:48:05(LocalDateTime),15(String),115(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-
+        listenerContextManager.clear();
     }
 
 
@@ -1046,6 +1046,7 @@ public class UpdateTest extends BaseTest {
             Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals(1,jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
             Assert.assertEquals("12(Integer),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
         }
     }
 }
