@@ -131,7 +131,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
         return firstNotNull(queryClass(), msg, code);
     }
     default <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code){
-        return firstNotNull(resultClass,()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createFirstNotNullException(msg,code));
+        return firstNotNull(resultClass,()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createFirstNotNullException(this,msg,code));
     }
     default T firstNotNull(Supplier<RuntimeException> throwFunc){
         return firstNotNull(queryClass(),throwFunc);
@@ -160,7 +160,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
     }
 
     default <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code){
-        return singleNotNull(resultClass,()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createSingleNotNullException(msg,code));
+        return singleNotNull(resultClass,()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createSingleNotNullException(this,msg,code));
     }
     default T singleNotNull(Supplier<RuntimeException> throwFunc){
         return singleNotNull(queryClass(),throwFunc);

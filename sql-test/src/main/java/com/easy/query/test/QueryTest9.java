@@ -2,6 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
+import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
@@ -141,6 +142,26 @@ public class QueryTest9 extends BaseTest{
         Exception exception = f.get();
         Assert.assertNotNull(exception);
         Assert.assertTrue(exception instanceof EasyQueryFirstNotNullException);
+    }
+    @Test
+    public void selectThrow7() {
+        ListenerContext listenerContext = new ListenerContext();
+        Supplier<Exception> f = () -> {
+            try {
+                listenerContextManager.startListen(listenerContext);
+                Topic topic = easyQuery.queryable(Topic.class)
+                        .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                        .singleOrNull();
+            }catch (Exception ex){
+                return ex;
+            }finally {
+                listenerContextManager.clear();
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySingleMoreElementException);
     }
 
 }

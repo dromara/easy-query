@@ -339,7 +339,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                    throw new EasyQuerySingleMoreElementException("single query has more element in result set.");
 //                }
                 if (i >= 1) {
-                    RuntimeException singleMoreElementException = runtimeContext.getAssertExceptionFactory().createSingleMoreElementException(queryClass());
+                    RuntimeException singleMoreElementException = runtimeContext.getAssertExceptionFactory().createSingleMoreElementException(this);
                     assert singleMoreElementException != null;
                     throw singleMoreElementException;
                 }

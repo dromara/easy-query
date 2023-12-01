@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select.executor;
 
 import com.easy.query.core.basic.api.select.QueryAvailable;
+import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 
 import java.util.function.Supplier;
@@ -32,6 +33,7 @@ public interface FirstResultAble<T> extends QueryAvailable<T> {
      * @param msg
      * @param <TR>
      * @return
+     * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(String, String)} 自定义
      */
 
     default <TR> TR firstNotNull(Class<TR> resultClass, String msg) {
@@ -47,6 +49,7 @@ public interface FirstResultAble<T> extends QueryAvailable<T> {
      * @param code
      * @param <TR>
      * @return
+     * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(String, String)} 自定义
      */
     <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code);
     <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc);

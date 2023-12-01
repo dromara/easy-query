@@ -1,6 +1,7 @@
 package com.easy.query.core.exception;
 
 import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.basic.api.select.Query;
 
 /**
  * create time 2023/12/1 13:13
@@ -10,8 +11,9 @@ import com.easy.query.core.annotation.NotNull;
  */
 public interface AssertExceptionFactory {
     @NotNull
-    RuntimeException createFirstNotNullException(String msg,String code);
+    <T> RuntimeException createFirstNotNullException(Query<T> query, String msg, String code);
     @NotNull
-    RuntimeException createSingleNotNullException(String msg, String code);
-    @NotNull RuntimeException createSingleMoreElementException(Class<?> queryClass);
+    <T> RuntimeException createSingleNotNullException(Query<T> query,String msg, String code);
+    @NotNull
+    <T> RuntimeException createSingleMoreElementException(Query<T> query);
 }

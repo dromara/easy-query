@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select.executor;
 
 import com.easy.query.core.basic.api.select.QueryAvailable;
+import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
 
@@ -17,7 +18,7 @@ public interface SingleAble<T> extends QueryAvailable<T> {
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
      *
      * @return
-     * @throws EasyQuerySingleMoreElementException 如果大于一条数据
+     * @throws EasyQuerySingleMoreElementException  如果大于一条数据
      */
     T singleOrNull();
 
@@ -28,8 +29,8 @@ public interface SingleAble<T> extends QueryAvailable<T> {
      *
      * @param msg
      * @return
-     * @throws EasyQuerySingleMoreElementException 如果大于一条数据
-     * @throws EasyQuerySingleNotNullException     如果查询不到数据
+     * @throws EasyQuerySingleMoreElementException 如果大于一条数据 可以通过
+     * @throws EasyQuerySingleNotNullException     如果查询不到数据 可以通过 {@link AssertExceptionFactory#createSingleNotNullException(String, String)} 自定义
      */
     default T singleNotNull(String msg) {
         return singleNotNull(msg, null);
@@ -43,7 +44,7 @@ public interface SingleAble<T> extends QueryAvailable<T> {
      * @param code
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
-     * @throws EasyQuerySingleNotNullException     如果查询不到数据
+     * @throws EasyQuerySingleNotNullException     如果查询不到数据 可以通过 {@link AssertExceptionFactory#createSingleNotNullException(String, String)} 自定义
      */
     T singleNotNull(String msg, String code);
 
