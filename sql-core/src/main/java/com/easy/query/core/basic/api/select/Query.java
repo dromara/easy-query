@@ -160,7 +160,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
     }
 
     default <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code){
-        return singleNotNull(resultClass,()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createFirstNotNullException(msg,code));
+        return singleNotNull(resultClass,()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createSingleNotNullException(msg,code));
     }
     default T singleNotNull(Supplier<RuntimeException> throwFunc){
         return singleNotNull(queryClass(),throwFunc);
