@@ -33,6 +33,11 @@ public class SelectorImpl extends AbstractSelector<Selector> implements Selector
     }
 
     @Override
+    protected String getResultColumnName(String propertyAlias) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Selector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction) {
         String propertyName = columnPropertyFunction.getPropertyName();
         ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();

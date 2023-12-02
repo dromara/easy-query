@@ -7,6 +7,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -65,6 +66,34 @@ public abstract class AbstractSelector<TChain> {
         return entityQueryExpressionBuilder;
     }
 
+    public TChain groupKeys(int index) {
+        return groupKeysAs(index,null);
+    }
+
+    public TChain groupKeysAs(int index, String alias) {
+        if(EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getGroup())){
+            throw new EasyQueryInvalidOperationException("not found group in current expression builder");
+        }
+        List<SQLSegment> sqlSegments = entityQueryExpressionBuilder.getGroup().getSQLSegments();
+        if(sqlSegments.size()<=index){
+            throw new EasyQueryInvalidOperationException("current expression builder group keys size:["+sqlSegments.size()+"],not found keys index:["+index+"]");
+        }
+        SQLSegment sqlSegment = sqlSegments.get(index);
+        if(sqlSegment instanceof CloneableSQLSegment){
+            CloneableSQLSegment cloneableSQLSegment = ((CloneableSQLSegment) sqlSegment).cloneSQLColumnSegment();
+            if(alias!=null){
+                String aliasColumnName = getResultColumnName(alias);
+                CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(cloneableSQLSegment, aliasColumnName, this.runtimeContext);
+                sqlBuilderSegment.append(sqlColumnAsSegment);
+            }else{
+                sqlBuilderSegment.append(cloneableSQLSegment);
+            }
+        }else{
+            throw new EasyQueryInvalidOperationException("group key not instanceof CloneableSQLSegment not support key quick select");
+        }
+        return castChain();
+    }
+    protected abstract String getResultColumnName(String propertyAlias);
     public TChain column(TableAvailable table, String property) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         appendColumnMetadata(table, columnMetadata, true, false,false);

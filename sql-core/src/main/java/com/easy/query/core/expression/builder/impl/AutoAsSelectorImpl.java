@@ -58,6 +58,11 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
     }
 
     @Override
+    protected String getResultColumnName(String propertyAlias) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public AsSelector columnAs(TableAvailable table, String property, String propertyAlias) {
         throw new UnsupportedOperationException();
     }

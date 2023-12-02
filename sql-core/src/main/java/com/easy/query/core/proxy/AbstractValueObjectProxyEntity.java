@@ -39,4 +39,5 @@ public abstract class AbstractValueObjectProxyEntity<TProxy, TProperty> implemen
     protected String getValueProperty(String property){
         return parentProperty + "." + property;
     }
+
 }

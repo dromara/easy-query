@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.sql.core;
 
-import com.easy.query.api.proxy.sql.scec.SQLAliasNativeProxyExpressionContext;
-import com.easy.query.api.proxy.sql.scec.SQLAliasNativeProxyExpressionContextImpl;
+import com.easy.query.core.proxy.sql.scec.SQLAliasNativeProxyExpressionContext;
+import com.easy.query.core.proxy.sql.scec.SQLAliasNativeProxyExpressionContextImpl;
 import com.easy.query.core.expression.builder.core.SQLAsNative;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.ChainCast;

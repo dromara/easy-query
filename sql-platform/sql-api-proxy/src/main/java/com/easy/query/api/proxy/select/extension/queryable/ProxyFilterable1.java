@@ -8,6 +8,9 @@ import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLPredicate;
+import com.easy.query.core.proxy.sql.PredicateExpression;
+import com.easy.query.core.util.EasyArrayUtil;
 
 import java.util.Collection;
 
@@ -18,6 +21,37 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface ProxyFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientProxyQueryableAvailable<T1>,ProxyQueryableAvailable<T1Proxy,T1>{
+
+
+    /**
+     * 构建where条件
+     * where(table.id().eq(...),table.name().eq(...))
+     * @param sqlPredicates where表达式
+     * @return 返回当前查询queryable
+     */
+    default ProxyQueryable<T1Proxy, T1> where(SQLPredicate... sqlPredicates) {
+        return where(true, sqlPredicates);
+    }
+    /**
+     * 构建where条件
+     * where(table.id().eq(...),table.name().eq(...))
+     * @param condition 是否要添加后续的表达式,true:表示要添加,false表示不添加
+     * @param sqlPredicates where表达式
+     * @return 返回当前查询queryable
+     */
+    default ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLPredicate... sqlPredicates){
+        if (condition) {
+            if(EasyArrayUtil.isNotEmpty(sqlPredicates)){
+                getClientQueryable().where(wherePredicate -> {
+                    SQLPredicate predicate = PredicateExpression.and(sqlPredicates);
+                    predicate.accept(wherePredicate.getFilter());
+                });
+            }
+        }
+        return getQueryable();
+    }
+
+
 
     /**
      * 构建where条件

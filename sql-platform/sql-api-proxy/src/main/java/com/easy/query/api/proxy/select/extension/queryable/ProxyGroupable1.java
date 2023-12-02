@@ -5,6 +5,8 @@ import com.easy.query.api.proxy.select.extension.queryable.sql.MultiProxyGroupSe
 import com.easy.query.api.proxy.select.extension.queryable.sql.impl.MultiProxyGroupSelector1Impl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLGroupSelect;
+import com.easy.query.core.util.EasyArrayUtil;
 
 /**
  * create time 2023/8/16 08:49
@@ -14,6 +16,21 @@ import com.easy.query.core.proxy.ProxyEntity;
  */
 public interface ProxyGroupable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientProxyQueryableAvailable<T1>,ProxyQueryableAvailable<T1Proxy,T1>{
 
+    default ProxyQueryable<T1Proxy, T1> groupBy(SQLGroupSelect... propColumns) {
+        return groupBy(true, propColumns);
+    }
+    default ProxyQueryable<T1Proxy, T1> groupBy(boolean condition, SQLGroupSelect... propColumns) {
+        if(condition){
+            if(EasyArrayUtil.isNotEmpty(propColumns)){
+                for (SQLGroupSelect propColumn : propColumns) {
+                    getClientQueryable().groupBy(groupBySelector -> {
+                        propColumn.accept(groupBySelector.getGroupSelector());
+                    });
+                }
+            }
+        }
+        return getQueryable();
+    }
     default ProxyQueryable<T1Proxy, T1> groupBy(SQLExpression1<MultiProxyGroupSelector1<T1Proxy>> selectExpression) {
         return groupBy(true, selectExpression);
     }

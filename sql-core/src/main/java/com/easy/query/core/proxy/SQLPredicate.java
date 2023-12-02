@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
 /**
  * create time 2023/7/12 21:42
@@ -12,6 +13,8 @@ public interface SQLPredicate {
     SQLPredicate and(SQLPredicate predicate);
     SQLPredicate or(SQLPredicate predicate);
     void accept(Filter f);
+
+    SQLPredicate empty=new SQLPredicateImpl(f->{});
 
 //    static SQLPredicate and() {
 //

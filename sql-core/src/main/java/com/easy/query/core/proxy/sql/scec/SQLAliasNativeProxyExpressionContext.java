@@ -1,6 +1,5 @@
-package com.easy.query.api.proxy.sql.scec;
+package com.easy.query.core.proxy.sql.scec;
 
-import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 

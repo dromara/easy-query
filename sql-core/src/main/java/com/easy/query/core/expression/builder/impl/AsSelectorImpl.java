@@ -29,10 +29,8 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -53,6 +51,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
         this.resultEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(resultClass);
     }
 
+    @Override
     protected String getResultColumnName(String propertyAlias) {
         switch (resultEntityMetadata.getEntityMetadataType()){
             case MAP:
@@ -71,30 +70,6 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
         return groupKeysAs(index,null);
     }
 
-    @Override
-    public AsSelector groupKeysAs(int index, String alias) {
-        if(EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getGroup())){
-            throw new EasyQueryInvalidOperationException("not found group in current expression builder");
-        }
-        List<SQLSegment> sqlSegments = entityQueryExpressionBuilder.getGroup().getSQLSegments();
-        if(sqlSegments.size()<=index){
-            throw new EasyQueryInvalidOperationException("current expression builder group keys size:["+sqlSegments.size()+"],not found keys index:["+index+"]");
-        }
-        SQLSegment sqlSegment = sqlSegments.get(index);
-        if(sqlSegment instanceof CloneableSQLSegment){
-            CloneableSQLSegment cloneableSQLSegment = ((CloneableSQLSegment) sqlSegment).cloneSQLColumnSegment();
-            if(alias!=null){
-                String aliasColumnName = getResultColumnName(alias);
-                CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(cloneableSQLSegment, aliasColumnName, this.runtimeContext);
-                sqlBuilderSegment.append(sqlColumnAsSegment);
-            }else{
-                sqlBuilderSegment.append(cloneableSQLSegment);
-            }
-        }else{
-            throw new EasyQueryInvalidOperationException("group key not instanceof CloneableSQLSegment not support key quick select");
-        }
-        return this;
-    }
 
     @Override
     public AsSelector columnAs(TableAvailable table, String property, String propertyAlias) {

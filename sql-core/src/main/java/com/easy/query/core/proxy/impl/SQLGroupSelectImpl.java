@@ -1,0 +1,35 @@
+package com.easy.query.core.proxy.impl;
+
+import com.easy.query.core.expression.builder.GroupSelector;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.proxy.SQLGroupSelect;
+
+import java.util.function.Consumer;
+
+/**
+ * create time 2023/12/1 23:09
+ * 文件说明
+ *
+ * @author xuejiaming
+ */
+public class SQLGroupSelectImpl implements SQLGroupSelect {
+    private final Consumer<GroupSelector> groupConsumer;
+
+    public SQLGroupSelectImpl(Consumer<GroupSelector> groupConsumer) {
+        this.groupConsumer = groupConsumer;
+    }
+    @Override
+    public void accept(GroupSelector s) {
+        groupConsumer.accept(s);
+    }
+
+    @Override
+    public String value() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TableAvailable getTable() {
+        throw new UnsupportedOperationException();
+    }
+}

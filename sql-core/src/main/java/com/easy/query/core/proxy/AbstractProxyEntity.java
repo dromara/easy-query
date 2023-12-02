@@ -2,6 +2,7 @@ package com.easy.query.core.proxy;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
+import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Objects;
@@ -35,4 +36,11 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         this.table=table;
         return EasyObjectUtil.typeCastNullable(this);
     }
+    public SQLSelectAs allColumns(){
+        return new SQLSelectAllImpl(table,new TablePropColumn[0]);
+    }
+    public SQLSelectAs allColumnsExclude(TablePropColumn... ignorePropColumns){
+        return new SQLSelectAllImpl(table,ignorePropColumns);
+    }
+
 }

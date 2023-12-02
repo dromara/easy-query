@@ -1,6 +1,6 @@
-package com.easy.query.api.proxy.sql.scec;
+package com.easy.query.core.proxy.sql.scec;
 
-import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -40,8 +40,8 @@ public class SQLAliasNativeProxyExpressionContextImpl<TRProxy extends ProxyEntit
     }
 
     @Override
-    public <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expression(ProxyQueryable<TEntityProxy, TEntity> subQuery) {
-        sqlNativeExpressionContext.expression(subQuery.getClientQueryable());
+    public <TEntity> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expression(Query<TEntity> subQuery) {
+        sqlNativeExpressionContext.expression(subQuery);
         return this;
     }
 

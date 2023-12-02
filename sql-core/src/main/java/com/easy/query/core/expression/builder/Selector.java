@@ -13,6 +13,12 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  */
 public interface Selector extends SQLNative<Selector>, RuntimeContextAvailable {
 
+    /**
+     * 快速选择之前group的列,不需要重新再写一遍
+     * @param index
+     * @return
+     */
+    Selector groupKeys(int index);
     Selector column(TableAvailable table, String property);
 
     Selector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction);

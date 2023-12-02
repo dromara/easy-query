@@ -1,6 +1,6 @@
-package com.easy.query.api.proxy.sql.scec;
+package com.easy.query.core.proxy.sql.scec;
 
-import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
@@ -16,7 +16,7 @@ import java.util.Collection;
 public interface SQLNativeProxyExpressionChain<TChain> {
     <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> TChain expression(SQLColumn<TEntityProxy, TProperty> sqlColumn);
 
-    <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity> TChain expression(ProxyQueryable<TEntityProxy, TEntity> subQuery);
+    <TEntity> TChain expression(Query<TEntity> subQuery);
 
     <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> TChain columnName(SQLColumn<TEntityProxy, TProperty> sqlColumn,String columnName);
 
