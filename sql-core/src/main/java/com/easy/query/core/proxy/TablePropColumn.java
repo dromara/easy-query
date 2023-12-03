@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**

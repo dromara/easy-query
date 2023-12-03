@@ -17,7 +17,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     protected TableAvailable table;
     protected <TProperty> SQLColumn<TProxy,TProperty> get(String property){
-        return new SQLColumnImpl<>(table,property);
+        return new SQLColumnImpl<>(table, property);
     }
     protected <TPropertyProxy extends SQLColumn<TProxy,TProperty>,TProperty> TPropertyProxy getValueObject(TPropertyProxy propertyProxy){
         return propertyProxy;
@@ -31,11 +31,13 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         Objects.requireNonNull(table,"cant found table in sql context");
         return table;
     }
+
     @Override
     public TProxy create(TableAvailable table) {
         this.table=table;
         return EasyObjectUtil.typeCastNullable(this);
     }
+
     public SQLSelectAs allColumns(){
         return new SQLSelectAllImpl(table,new TablePropColumn[0]);
     }

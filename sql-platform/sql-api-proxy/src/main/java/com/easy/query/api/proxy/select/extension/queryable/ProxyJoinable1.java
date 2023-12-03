@@ -2,12 +2,18 @@ package com.easy.query.api.proxy.select.extension.queryable;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.ProxyQueryable2;
+import com.easy.query.api.proxy.select.extension.queryable.join.EasyProxyJoinOnQueryable2;
+import com.easy.query.api.proxy.select.extension.queryable.join.ProxyJoinOnQueryable2;
 import com.easy.query.api.proxy.select.extension.queryable2.sql.MultiProxyFilter2;
 import com.easy.query.api.proxy.select.extension.queryable2.sql.impl.MultiProxyFilter2Impl;
 import com.easy.query.api.proxy.select.impl.EasyProxyQueryable2;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
+import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * create time 2023/8/17 11:19
@@ -17,6 +23,59 @@ import com.easy.query.core.proxy.ProxyEntity;
  */
 public interface ProxyJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientProxyQueryableAvailable<T1>,ProxyQueryableAvailable<T1Proxy,T1>{
 
+    default  <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyJoinOnQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy joinProxy){
+        T1Proxy proxy = get1Proxy();
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = getClientQueryable().getSQLEntityExpressionBuilder();
+        ClientQueryable2<T1, T2> queryable = sqlEntityExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(proxy.getEntityClass(), joinProxy.getEntityClass(), MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpressionBuilder);
+        return new EasyProxyJoinOnQueryable2<>(proxy,joinProxy,queryable);
+    }
+
+    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyJoinOnQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(ProxyQueryable<T2Proxy, T2> joinQueryable){
+
+        ClientQueryable<T2> joinClientQueryable = joinQueryable.getClientQueryable();
+        ClientQueryable<T2> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinClientQueryable);
+        T1Proxy proxy = get1Proxy();
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = getClientQueryable().getSQLEntityExpressionBuilder();
+        sqlEntityExpressionBuilder.getExpressionContext().extract(selectAllTQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
+        ClientQueryable2<T1, T2> queryable = sqlEntityExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(proxy.getEntityClass(), selectAllTQueryable, MultiTableTypeEnum.LEFT_JOIN, sqlEntityExpressionBuilder);
+        return new EasyProxyJoinOnQueryable2<>(proxy,joinQueryable.get1Proxy(),queryable);
+    }
+
+    default  <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyJoinOnQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(T2Proxy joinProxy){
+        T1Proxy proxy = get1Proxy();
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = getClientQueryable().getSQLEntityExpressionBuilder();
+        ClientQueryable2<T1, T2> queryable = sqlEntityExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(proxy.getEntityClass(), joinProxy.getEntityClass(), MultiTableTypeEnum.INNER_JOIN, sqlEntityExpressionBuilder);
+        return new EasyProxyJoinOnQueryable2<>(proxy,joinProxy,queryable);
+    }
+
+    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyJoinOnQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(ProxyQueryable<T2Proxy, T2> joinQueryable){
+
+        ClientQueryable<T2> joinClientQueryable = joinQueryable.getClientQueryable();
+        ClientQueryable<T2> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinClientQueryable);
+        T1Proxy proxy = get1Proxy();
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = getClientQueryable().getSQLEntityExpressionBuilder();
+        sqlEntityExpressionBuilder.getExpressionContext().extract(selectAllTQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
+        ClientQueryable2<T1, T2> queryable = sqlEntityExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(proxy.getEntityClass(), selectAllTQueryable, MultiTableTypeEnum.INNER_JOIN, sqlEntityExpressionBuilder);
+        return new EasyProxyJoinOnQueryable2<>(proxy,joinQueryable.get1Proxy(),queryable);
+    }
+
+    default  <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyJoinOnQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(T2Proxy joinProxy){
+        T1Proxy proxy = get1Proxy();
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = getClientQueryable().getSQLEntityExpressionBuilder();
+        ClientQueryable2<T1, T2> queryable = sqlEntityExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(proxy.getEntityClass(), joinProxy.getEntityClass(), MultiTableTypeEnum.RIGHT_JOIN, sqlEntityExpressionBuilder);
+        return new EasyProxyJoinOnQueryable2<>(proxy,joinProxy,queryable);
+    }
+
+    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyJoinOnQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(ProxyQueryable<T2Proxy, T2> joinQueryable){
+
+        ClientQueryable<T2> joinClientQueryable = joinQueryable.getClientQueryable();
+        ClientQueryable<T2> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinClientQueryable);
+        T1Proxy proxy = get1Proxy();
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = getClientQueryable().getSQLEntityExpressionBuilder();
+        sqlEntityExpressionBuilder.getExpressionContext().extract(selectAllTQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
+        ClientQueryable2<T1, T2> queryable = sqlEntityExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(proxy.getEntityClass(), selectAllTQueryable, MultiTableTypeEnum.RIGHT_JOIN, sqlEntityExpressionBuilder);
+        return new EasyProxyJoinOnQueryable2<>(proxy,joinQueryable.get1Proxy(),queryable);
+    }
 
    default  <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy joinProxy, SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> on){
        ClientQueryable2<T1, T2> entityQueryable2 = getClientQueryable().leftJoin(joinProxy.getEntityClass(), (t, t1) -> {

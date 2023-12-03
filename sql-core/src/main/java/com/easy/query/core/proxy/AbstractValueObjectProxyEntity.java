@@ -29,15 +29,15 @@ public abstract class AbstractValueObjectProxyEntity<TProxy, TProperty> implemen
         return parentProperty;
     }
 
-    protected <TPropertyProxy extends SQLColumn<TProxy,TVProperty>,TVProperty> TPropertyProxy getValueObject(TPropertyProxy propertyProxy){
+    protected <TPropertyProxy extends SQLColumn<TProxy, TVProperty>, TVProperty> TPropertyProxy getValueObject(TPropertyProxy propertyProxy) {
         return propertyProxy;
     }
 
     protected <TVProperty> SQLColumn<TProxy, TVProperty> get(String property) {
         return new SQLColumnImpl<>(table, getValueProperty(property));
     }
-    protected String getValueProperty(String property){
+
+    protected String getValueProperty(String property) {
         return parentProperty + "." + property;
     }
-
 }

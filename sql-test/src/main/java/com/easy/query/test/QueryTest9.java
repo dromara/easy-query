@@ -183,13 +183,13 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         TopicTestProxy topicTable = TopicTestProxy.createTable();
         BlogEntityProxy blogTable = BlogEntityProxy.createTable();
-        String xq="123";
+        String xq = "123";
         List<BlogEntity> list = easyProxyQuery.queryable(topicTable)
                 .where(topicTable.id().eq(xq),
                         PredicateExpression.or(
                                 topicTable.title().ge("11")
                                 , topicTable.id().le("11")
-                                , topicTable.createTime().lt(LocalDateTime.of(2023,1,1,1,1))
+                                , topicTable.createTime().lt(LocalDateTime.of(2023, 1, 1, 1, 1))
                         )
                         , topicTable.id().like("11"))
                 .orderBy(topicTable.id().asc(false)
@@ -220,13 +220,13 @@ public class QueryTest9 extends BaseTest {
         ProxyQueryable<StringProxy, String> idQueryable = easyProxyQuery.queryable(subBlogTable)
                 .where(subBlogTable.title().like("你好"))
                 .select(StringProxy.createTable(), subBlogTable.id());
-        String xq="123";
+        String xq = "123";
         List<BlogEntity> list = easyProxyQuery.queryable(topicTable)
                 .where(topicTable.id().eq(xq),
                         PredicateExpression.or(
                                 topicTable.title().ge("11")
                                 , topicTable.id().le("11")
-                                , topicTable.createTime().lt(LocalDateTime.of(2023,1,1,1,1))
+                                , topicTable.createTime().lt(LocalDateTime.of(2023, 1, 1, 1, 1))
                         )
                         , topicTable.id().in(idQueryable))
                 .orderBy(topicTable.id().asc(false)
@@ -245,6 +245,7 @@ public class QueryTest9 extends BaseTest {
         Assert.assertEquals("123(String),11(String),11(String),2023-01-01T01:01(LocalDateTime),false(Boolean),%你好%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testQuery3() {
         ListenerContext listenerContext = new ListenerContext();
@@ -254,15 +255,15 @@ public class QueryTest9 extends BaseTest {
 
         BlogEntityProxy subBlogTable = BlogEntityProxy.createTable();
 
-        String xq="123";
+        String xq = "123";
         List<BlogEntity> list = easyProxyQuery.queryable(topicTable)
                 .where(topicTable.id().eq(xq),
                         PredicateExpression.or(
                                 topicTable.title().ge("11")
                                 , topicTable.id().le("11")
-                                , topicTable.createTime().lt(LocalDateTime.of(2023,1,1,1,1))
+                                , topicTable.createTime().lt(LocalDateTime.of(2023, 1, 1, 1, 1))
                         )
-                        , topicTable.exists(()->{
+                        , topicTable.exists(() -> {
                             return easyProxyQuery.queryable(subBlogTable)
                                     .where(subBlogTable.title().like("你好"),
                                             subBlogTable.id().eq(topicTable.id()));
@@ -284,6 +285,7 @@ public class QueryTest9 extends BaseTest {
         Assert.assertEquals("123(String),11(String),11(String),2023-01-01T01:01(LocalDateTime),false(Boolean),%你好%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testQuery4() {
         ListenerContext listenerContext = new ListenerContext();
@@ -293,20 +295,20 @@ public class QueryTest9 extends BaseTest {
 
         BlogEntityProxy subBlogTable = BlogEntityProxy.createTable();
 
-        String xq="123";
+        String xq = "123";
         List<BlogEntity> list = easyProxyQuery.queryable(topicTable)
                 .where(topicTable.id().eq(xq),
                         PredicateExpression.or(
                                 topicTable.title().ge("11")
                                 , topicTable.id().le("11")
-                                , topicTable.createTime().lt(LocalDateTime.of(2023,1,1,1,1))
+                                , topicTable.createTime().lt(LocalDateTime.of(2023, 1, 1, 1, 1))
                         )
-                        , topicTable.exists(()->{
+                        , topicTable.exists(() -> {
                             return easyProxyQuery.queryable(subBlogTable)
                                     .where(subBlogTable.title().like("你好"),
                                             subBlogTable.id().eq(topicTable.id()));
                         }),
-                        PredicateExpression.sql("IFNULL({0},'') = ''", c->{
+                        PredicateExpression.sql("IFNULL({0},'') = ''", c -> {
                             c.keepStyle();
                             c.expression(topicTable.title());
                         }))
@@ -319,7 +321,7 @@ public class QueryTest9 extends BaseTest {
 //                        , topicTable.stars().as(topicTable.stars())
                         , topicTable.createTime()
 //                        ,SelectExpression.groupKeys(0).as()
-                        , SelectExpression.sqlAlias(blogTable,"1", c->{
+                        , SelectExpression.sqlAlias(blogTable, "1", c -> {
                             c.setPropertyAlias(blogTable.order());
                         })
                 )
@@ -331,6 +333,7 @@ public class QueryTest9 extends BaseTest {
         Assert.assertEquals("123(String),11(String),11(String),2023-01-01T01:01(LocalDateTime),false(Boolean),%你好%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testQuery5() {
         ListenerContext listenerContext = new ListenerContext();
@@ -338,10 +341,10 @@ public class QueryTest9 extends BaseTest {
         TopicTestProxy topicTable = TopicTestProxy.createTable();
         BlogEntityProxy blogTable = BlogEntityProxy.createTable();
 
-        String xq="123";
+        String xq = "123";
         List<BlogEntity> list = easyProxyQuery.queryable(topicTable)
                 .where(topicTable.id().eq(xq))
-                .groupBy(o->o.column(topicTable.id()))
+                .groupBy(o -> o.column(topicTable.id()))
                 .select(blogTable, SelectExpression.groupKeys(0).as(blogTable.star()))
                 .toList();
 
@@ -350,6 +353,7 @@ public class QueryTest9 extends BaseTest {
         Assert.assertEquals("SELECT t.`id` AS `star` FROM `t_topic` t WHERE t.`id` = ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testQuery6() {
         ListenerContext listenerContext = new ListenerContext();
@@ -357,7 +361,7 @@ public class QueryTest9 extends BaseTest {
         TopicTestProxy topicTable = TopicTestProxy.createTable();
         BlogEntityProxy blogTable = BlogEntityProxy.createTable();
 
-        String xq="123";
+        String xq = "123";
         List<Topic> list = easyProxyQuery.queryable(topicTable)
                 .where(topicTable.id().eq(xq))
                 .groupBy(topicTable.id())
@@ -368,6 +372,80 @@ public class QueryTest9 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT `id` FROM `t_topic` WHERE `id` = ? GROUP BY `id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+    @Test
+    public void testQuery7() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        TopicTestProxy topicTable = TopicTestProxy.createTable();
+        TopicTestProxy topicTable1 = TopicTestProxy.createTable();
+
+        String xq = "123";
+        List<Topic> list = easyProxyQuery.queryable(topicTable)
+                .where(topicTable.id().eq(xq))
+                .groupBy(topicTable.id())
+                .select(topicTable1,
+                        SelectExpression.groupKeys(0).as(topicTable1.id())
+                        , topicTable.stars().count().as(topicTable1.title()))
+                .toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`stars`) AS `title` FROM `t_topic` t WHERE t.`id` = ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+    @Test
+    public void testQuery8() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        TopicTestProxy topicTable = TopicTestProxy.createTable();
+        TopicTestProxy topicTable1 = TopicTestProxy.createTable();
+
+        String xq = "123";
+        List<Topic> list = easyProxyQuery.queryable(topicTable)
+                .where(
+                        topicTable.id().eq(xq),
+                        topicTable.stars().le(1),
+                        topicTable.stars().le(2),
+                        PredicateExpression.or(
+                                topicTable.id().like("111"),
+                                topicTable.id().eq("1")
+                        )
+                        , topicTable.stars().le(1)
+                )
+                .groupBy(topicTable.id())
+                .having(topicTable.id().count().eq(1))
+                .select(topicTable1,
+                        SelectExpression.groupKeys(0).as(topicTable1.id())
+                        , topicTable.stars().count().as(topicTable1.title()))
+                .toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`stars`) AS `title` FROM `t_topic` t WHERE t.`id` = ? AND t.`stars` <= ? AND t.`stars` <= ? AND (t.`id` LIKE ? OR t.`id` = ?) AND t.`stars` <= ? GROUP BY t.`id` HAVING COUNT(t.`id`) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),2(Integer),%111%(String),1(String),1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+    @Test
+    public void testQuery9() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        TopicTestProxy topicTable = TopicTestProxy.createTable();
+        BlogEntityProxy blogTable = BlogEntityProxy.createTable();
+        TopicTestProxy topicTable1 = TopicTestProxy.createTable();
+
+        String xq = "123";
+        List<Topic> list = easyProxyQuery.queryable(topicTable)
+                .leftJoin(blogTable).on(topicTable.id().eq(blogTable.id()))
+                .where(topicTable.id().eq(xq), topicTable.stars().le(1))
+                .toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ? AND t.`stars` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
 }

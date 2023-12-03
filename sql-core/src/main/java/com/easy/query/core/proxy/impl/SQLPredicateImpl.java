@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class SQLPredicateImpl implements SQLPredicate {
 
 
-    private final Consumer<Filter> filterConsumer;
+    protected final Consumer<Filter> filterConsumer;
 
     public SQLPredicateImpl(Consumer<Filter> filterConsumer){
         this.filterConsumer = filterConsumer;

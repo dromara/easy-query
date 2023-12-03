@@ -22,6 +22,7 @@ public interface Selector extends SQLNative<Selector>, RuntimeContextAvailable {
     Selector column(TableAvailable table, String property);
 
     Selector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction);
+//    Selector columnFunc(TableAvailable table, SQLFunction sqlFunction);
 
     Selector columnIgnore(TableAvailable table, String property);
 

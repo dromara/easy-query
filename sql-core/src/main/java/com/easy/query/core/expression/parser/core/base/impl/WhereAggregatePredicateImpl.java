@@ -1,6 +1,5 @@
 package com.easy.query.core.expression.parser.core.base.impl;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.core.SQLNative;
@@ -37,7 +36,7 @@ public class WhereAggregatePredicateImpl<T1> implements WhereAggregatePredicate<
     @Override
     public WhereAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, String property, SQLPredicateCompare compare, Object val) {
         if (condition) {
-            aggregateFilter.func(table,columnFunction,property,compare,val);
+            aggregateFilter.func0(table,columnFunction,property,compare,val);
         }
         return this;
     }

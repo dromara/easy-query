@@ -1,5 +1,6 @@
-package com.easy.query.core.proxy;
+package com.easy.query.core.proxy.extension;
 
+import com.easy.query.core.proxy.SQLSelectAs;
 import com.easy.query.core.proxy.predicate.DSLAssertPredicate;
 import com.easy.query.core.proxy.predicate.DSLLikePredicate;
 import com.easy.query.core.proxy.predicate.DSLOtherPredicate;

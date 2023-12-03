@@ -543,7 +543,12 @@ public class QueryTest4 extends BaseTest {
 
             TopicProxy table = TopicProxy.createTable();
             String topic = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(table.id(), "1"))
+                    .where(o -> {
+                        o.eq(table.id(), "1");
+                        o.like(table.id(), "1");
+                        o.ge(table.id(), "1");
+
+                    })
                     .select(StringProxy.createTable(), o -> o.sqlFunc(o.fx().dateTimeFormat(table.createTime(), "yyyy")))
                     .firstOrNull();
             Assert.assertEquals("2023", topic);
