@@ -11,6 +11,12 @@ import com.easy.query.core.proxy.impl.SQLGroupSelectImpl;
  */
 public interface SQLGroupSelect extends TablePropColumn {
 
+    default SQLGroupSelect then(SQLGroupSelect sqlGroupSelect){
+        return new SQLGroupSelectImpl(x->{
+            accept(x);
+            sqlGroupSelect.accept(x);
+        });
+    }
     default void accept(GroupSelector s) {
         s.column(this.getTable(), this.value());
     }

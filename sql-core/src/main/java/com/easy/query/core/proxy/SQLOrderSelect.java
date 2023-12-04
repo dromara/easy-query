@@ -11,6 +11,13 @@ import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
  */
 public interface SQLOrderSelect {
 
+    default SQLOrderSelect then(SQLOrderSelect sqlOrderSelect) {
+        return new SQLOrderSelectImpl(x -> {
+            accept(x);
+            sqlOrderSelect.accept(x);
+        });
+    }
+
     void accept(OrderSelector s);
 
     SQLOrderSelect empty = new SQLOrderSelectImpl(s -> {

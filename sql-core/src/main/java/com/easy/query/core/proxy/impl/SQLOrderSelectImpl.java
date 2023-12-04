@@ -17,6 +17,8 @@ public class SQLOrderSelectImpl implements SQLOrderSelect {
     public SQLOrderSelectImpl(Consumer<OrderSelector> orderConsumer) {
         this.orderConsumer = orderConsumer;
     }
+
+
     @Override
     public void accept(OrderSelector s) {
         orderConsumer.accept(s);

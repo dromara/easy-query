@@ -37,4 +37,9 @@ public class Topic implements ProxyEntityAvailable<Topic, TopicProxy> {
     public TopicProxy createProxyTable() {
         return TopicProxy.createTable();
     }
+
+    @Override
+    public Class<TopicProxy> proxyTableClass() {
+        return TopicProxy.class;
+    }
 }
