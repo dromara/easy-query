@@ -7,6 +7,8 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLOrderSelect;
+import com.easy.query.core.util.EasyArrayUtil;
 
 /**
  * create time 2023/8/16 08:50
@@ -16,6 +18,22 @@ import com.easy.query.core.proxy.ProxyEntity;
  */
 public interface ProxyOrderable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> extends ClientProxyQueryable2Available<T1, T2>, ProxyQueryable2Available<T1Proxy, T1, T2Proxy, T2> {
+
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(SQLOrderSelect... propColumns) {
+        return orderBy(true, propColumns);
+    }
+    default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(boolean condition, SQLOrderSelect... propColumns){
+        if (condition) {
+            if(EasyArrayUtil.isNotEmpty(propColumns)){
+                for (SQLOrderSelect propColumn : propColumns) {
+                    getClientQueryable2().orderBy(columnSelector -> {
+                        propColumn.accept(columnSelector.getOrderSelector());
+                    }, true);
+                }
+            }
+        }
+        return getQueryable2();
+    }
 
     default ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> orderByAsc(SQLExpression1<MultiProxyOrderSelector2<T1Proxy, T2Proxy>> selectExpression) {
         return orderByAsc(true, selectExpression);

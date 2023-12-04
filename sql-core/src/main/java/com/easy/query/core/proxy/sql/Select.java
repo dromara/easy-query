@@ -18,7 +18,7 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
  *
  * @author xuejiaming
  */
-public class SelectExpression {
+public class Select {
 
 
     public static SQLSelect groupKeys(int index) {

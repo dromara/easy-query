@@ -6,7 +6,7 @@ import com.easy.query.api.proxy.select.extension.queryable.sql.impl.MultiProxyAg
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLAggregatePredicate;
-import com.easy.query.core.proxy.sql.HavingExpression;
+import com.easy.query.core.proxy.sql.Predicate;
 import com.easy.query.core.util.EasyArrayUtil;
 
 /**
@@ -24,7 +24,7 @@ public interface ProxyHavingable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
 
         if (condition) {
             if(EasyArrayUtil.isNotEmpty(sqlAggregatePredicates)){
-                SQLAggregatePredicate sqlAggregatePredicate = HavingExpression.and(sqlAggregatePredicates);
+                SQLAggregatePredicate sqlAggregatePredicate = Predicate.and(sqlAggregatePredicates);
                 getClientQueryable().having(whereAggregatePredicate -> {
                     sqlAggregatePredicate.accept(whereAggregatePredicate.getAggregateFilter());
                 });

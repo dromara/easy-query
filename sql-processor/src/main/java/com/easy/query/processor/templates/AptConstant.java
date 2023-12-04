@@ -27,7 +27,7 @@ public class AptConstant {
             "        return new @{entityClassProxy}();\n" +
             "    }\n" +
             "\n" +
-            "    private @{entityClassProxy}() {\n" +
+            "    public @{entityClassProxy}() {\n" +
             "    }\n" +
             "\n" +
             "    @{fieldContent}" +

@@ -9,7 +9,7 @@ import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLPredicate;
-import com.easy.query.core.proxy.sql.PredicateExpression;
+import com.easy.query.core.proxy.sql.Predicate;
 import com.easy.query.core.util.EasyArrayUtil;
 
 import java.util.Collection;
@@ -43,7 +43,7 @@ public interface ProxyFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         if (condition) {
             if(EasyArrayUtil.isNotEmpty(sqlPredicates)){
                 getClientQueryable2().where((wherePredicate1, wherePredicate2) -> {
-                    SQLPredicate predicate = PredicateExpression.and(sqlPredicates);
+                    SQLPredicate predicate = Predicate.and(sqlPredicates);
                     predicate.accept(wherePredicate1.getFilter());
                 });
             }

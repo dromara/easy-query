@@ -5,6 +5,9 @@ import com.easy.query.api.proxy.select.extension.queryable8.sql.MultiProxyAggreg
 import com.easy.query.api.proxy.select.extension.queryable8.sql.impl.MultiProxyAggregateFilter8Impl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLAggregatePredicate;
+import com.easy.query.core.proxy.sql.Predicate;
+import com.easy.query.core.util.EasyArrayUtil;
 
 /**
  * create time 2023/8/16 08:49
@@ -21,6 +24,21 @@ public interface ProxyHavingable8<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T7Proxy extends ProxyEntity<T7Proxy, T7>, T7,
         T8Proxy extends ProxyEntity<T8Proxy, T8>, T8> extends ClientProxyQueryable8Available<T1, T2, T3, T4, T5, T6, T7, T8>, ProxyQueryable8Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> {
 
+    default ProxyQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> having(SQLAggregatePredicate... sqlAggregatePredicates) {
+        return having(true, sqlAggregatePredicates);
+    }
+    default ProxyQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> having(boolean condition,SQLAggregatePredicate... sqlAggregatePredicates) {
+
+        if (condition) {
+            if(EasyArrayUtil.isNotEmpty(sqlAggregatePredicates)){
+                SQLAggregatePredicate sqlAggregatePredicate = Predicate.and(sqlAggregatePredicates);
+                getClientQueryable8().having(whereAggregatePredicate -> {
+                    sqlAggregatePredicate.accept(whereAggregatePredicate.getAggregateFilter());
+                });
+            }
+        }
+        return getQueryable8();
+    }
     default ProxyQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> having(SQLExpression1<MultiProxyAggregateFilter8<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy>> predicateExpression) {
         return having(true, predicateExpression);
     }

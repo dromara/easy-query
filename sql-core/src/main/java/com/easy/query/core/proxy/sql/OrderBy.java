@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
  *
  * @author xuejiaming
  */
-public class OrderByExpression {
+public class OrderBy {
     public static SQLOrderSelect sql(String sqlSegment) {
         return sql(true, sqlSegment, f -> {
         });

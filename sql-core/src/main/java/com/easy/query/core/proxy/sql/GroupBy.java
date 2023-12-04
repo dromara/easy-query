@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
  *
  * @author xuejiaming
  */
-public class GroupByExpression {
+public class GroupBy {
     public static SQLGroupSelect sql(String sqlSegment) {
         return sql(true, sqlSegment, f -> {
         });

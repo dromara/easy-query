@@ -21,7 +21,7 @@ public class TopicTestProxy extends AbstractProxyEntity<TopicTestProxy, Topic> {
 //    public static final PropColumn id = new SQLPropColumn("id");
 //    public static final PropColumn title = new SQLPropColumn("title");
 
-    private TopicTestProxy() {
+    public TopicTestProxy() {
 
     }
 

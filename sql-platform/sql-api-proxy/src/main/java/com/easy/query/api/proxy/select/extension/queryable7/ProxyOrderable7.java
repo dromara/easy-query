@@ -7,6 +7,8 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLOrderSelect;
+import com.easy.query.core.util.EasyArrayUtil;
 
 /**
  * create time 2023/8/16 08:50
@@ -22,6 +24,21 @@ public interface ProxyOrderable7<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T6Proxy extends ProxyEntity<T6Proxy, T6>, T6,
         T7Proxy extends ProxyEntity<T7Proxy, T7>, T7> extends ClientProxyQueryable7Available<T1, T2, T3, T4, T5, T6, T7>, ProxyQueryable7Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> {
 
+    default ProxyQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> orderBy(SQLOrderSelect... propColumns) {
+        return orderBy(true, propColumns);
+    }
+    default ProxyQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> orderBy(boolean condition, SQLOrderSelect... propColumns){
+        if (condition) {
+            if(EasyArrayUtil.isNotEmpty(propColumns)){
+                for (SQLOrderSelect propColumn : propColumns) {
+                    getClientQueryable7().orderBy(columnSelector -> {
+                        propColumn.accept(columnSelector.getOrderSelector());
+                    }, true);
+                }
+            }
+        }
+        return getQueryable7();
+    }
     default ProxyQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> orderByAsc(SQLExpression1<MultiProxyOrderSelector7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
