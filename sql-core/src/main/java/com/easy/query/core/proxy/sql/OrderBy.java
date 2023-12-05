@@ -5,6 +5,7 @@ import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
+import com.easy.query.core.util.EasyArrayUtil;
 
 /**
  * create time 2023/12/2 17:02
@@ -13,6 +14,16 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
  * @author xuejiaming
  */
 public class OrderBy {
+    public static SQLOrderByExpression of(SQLOrderByExpression... orderByExpressions){
+        if(EasyArrayUtil.isNotEmpty(orderByExpressions)){
+            SQLOrderByExpression firstOrderByExpression = orderByExpressions[0];
+            for (int i = 1; i < orderByExpressions.length; i++) {
+                firstOrderByExpression = firstOrderByExpression.thenBy(orderByExpressions[i]);
+            }
+            return firstOrderByExpression;
+        }
+        return SQLOrderByExpression.empty;
+    }
     public static SQLOrderByExpression sql(String sqlSegment) {
         return sql(true, sqlSegment, f -> {
         });

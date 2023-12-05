@@ -34,11 +34,6 @@ public class Topic implements ProxyEntityAvailable<Topic, TopicProxy> {
     private String alias;
 
     @Override
-    public TopicProxy createProxyTable() {
-        return TopicProxy.createTable();
-    }
-
-    @Override
     public Class<TopicProxy> proxyTableClass() {
         return TopicProxy.class;
     }

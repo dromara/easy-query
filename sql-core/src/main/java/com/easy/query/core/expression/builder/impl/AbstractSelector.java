@@ -67,36 +67,45 @@ public abstract class AbstractSelector<TChain> {
     }
 
     public TChain groupKeys(int index) {
-        return groupKeysAs(index,null);
+        return groupKeysAs(index, null);
     }
 
     public TChain groupKeysAs(int index, String alias) {
-        if(EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getGroup())){
-            throw new EasyQueryInvalidOperationException("not found group in current expression builder");
+        if (EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getGroup())) {
+            throw new EasyQueryInvalidOperationException("not found group in current expression builder" );
         }
         List<SQLSegment> sqlSegments = entityQueryExpressionBuilder.getGroup().getSQLSegments();
-        if(sqlSegments.size()<=index){
-            throw new EasyQueryInvalidOperationException("current expression builder group keys size:["+sqlSegments.size()+"],not found keys index:["+index+"]");
+        if (sqlSegments.size() <= index) {
+            throw new EasyQueryInvalidOperationException("current expression builder group keys size:[" + sqlSegments.size() + "],not found keys index:[" + index + "]" );
         }
         SQLSegment sqlSegment = sqlSegments.get(index);
-        if(sqlSegment instanceof CloneableSQLSegment){
+        if (sqlSegment instanceof CloneableSQLSegment) {
             CloneableSQLSegment cloneableSQLSegment = ((CloneableSQLSegment) sqlSegment).cloneSQLColumnSegment();
-            if(alias!=null){
+            if (alias != null) {
                 String aliasColumnName = getResultColumnName(alias);
                 CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(cloneableSQLSegment, aliasColumnName, this.runtimeContext);
                 sqlBuilderSegment.append(sqlColumnAsSegment);
-            }else{
+            } else {
                 sqlBuilderSegment.append(cloneableSQLSegment);
             }
-        }else{
-            throw new EasyQueryInvalidOperationException("group key not instanceof CloneableSQLSegment not support key quick select");
+        } else {
+            throw new EasyQueryInvalidOperationException("group key not instanceof CloneableSQLSegment not support key quick select" );
         }
         return castChain();
     }
+
     protected abstract String getResultColumnName(String propertyAlias);
+
     public TChain column(TableAvailable table, String property) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        appendColumnMetadata(table, columnMetadata, true, false,false);
+        appendColumnMetadata(table, columnMetadata, true, false, false, null);
+        return castChain();
+    }
+
+    public TChain columnAs(TableAvailable table, String property, String propertyAlias) {
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        String alias = propertyAlias == null ? null : table.getEntityMetadata().getColumnNotNull(propertyAlias).getName();
+        appendColumnMetadata(table, columnMetadata, true, false, false, alias);
         return castChain();
     }
 
@@ -115,7 +124,7 @@ public abstract class AbstractSelector<TChain> {
                         (
                                 Objects.equals(sqlEntitySegment.getPropertyName(), property)
                                         ||
-                                        (sqlEntitySegment.getPropertyName().contains(".") && sqlEntitySegment.getPropertyName().startsWith(property + "."))
+                                        (sqlEntitySegment.getPropertyName().contains("." ) && sqlEntitySegment.getPropertyName().startsWith(property + "." ))
                         );
             }
             return false;
@@ -138,7 +147,7 @@ public abstract class AbstractSelector<TChain> {
             EntityMetadata entityMetadata = table.getEntityMetadata();
             Collection<ColumnMetadata> columns = entityMetadata.getColumns();
             for (ColumnMetadata columnMetadata : columns) {
-                appendColumnMetadata(table, columnMetadata, queryLargeColumn, true, true);
+                appendColumnMetadata(table, columnMetadata, queryLargeColumn, true, true, null);
 //                if (!columnMetadata.isAutoSelect()) {
 //                    continue;
 //                }
@@ -159,12 +168,12 @@ public abstract class AbstractSelector<TChain> {
      * @param checkAutoSelect   是否需要检查
      * @param ignoreValueObject 是否忽略valueObject
      */
-    protected void appendColumnMetadata(TableAvailable table, ColumnMetadata columnMetadata, boolean queryLargeColumn, boolean checkAutoSelect, boolean ignoreValueObject) {
+    protected void appendColumnMetadata(TableAvailable table, ColumnMetadata columnMetadata, boolean queryLargeColumn, boolean checkAutoSelect, boolean ignoreValueObject, String alias) {
 
         if (columnMetadata.isValueObject()) {
             if (!ignoreValueObject) {
                 for (ColumnMetadata metadata : columnMetadata.getValueObjectColumnMetadataList()) {
-                    appendColumnMetadata(table, metadata, queryLargeColumn, checkAutoSelect, false);
+                    appendColumnMetadata(table, metadata, queryLargeColumn, checkAutoSelect, false, alias);
                 }
             }
             return;
@@ -175,7 +184,7 @@ public abstract class AbstractSelector<TChain> {
         if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
             return;
         }
-        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, runtimeContext, null);
+        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, runtimeContext, alias);
         sqlBuilderSegment.append(columnSegment);
     }
 

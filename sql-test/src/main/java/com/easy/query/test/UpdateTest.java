@@ -335,49 +335,49 @@ public class UpdateTest extends BaseTest {
                 .whereColumns(o -> o.columnKeys().column(o.t().stars())).toSQL(topic);
         Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?",sql);
     }
-    @Test
-    public void updateTest12_2() {
-        Topic topic = easyQuery.queryable(Topic.class).whereById("15").firstOrNull();
-        Assert.assertNotNull(topic);
-        String sql = easyProxyQuery.updatableProxy(topic)
-                .whereColumns(o -> o.columnKeys().column(o.t().stars())).toSQL(topic);
-        Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?",sql);
-    }
-
-    @Test
-    public void updateTest12_3() {
-        Topic topic = easyQuery.queryable(Topic.class).whereById("15").firstOrNull();
-        Assert.assertNotNull(topic);
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-
-        Supplier<Exception> f = () -> {
-            try {
-                easyProxyQuery.updatableProxy(topic)
-                        .asTable("aaa")
-                        .whereColumns(o -> o.columnKeys().column(o.t().stars()))
-                        .executeRows();
-            }catch (Exception ex){
-                return ex;
-            }
-            return null;
-        };
-        Exception exception = f.get();
-        Assert.assertNotNull(exception);
-        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
-        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
-        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
-        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-        Assert.assertEquals("UPDATE `aaa` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?",easyQuerySQLStatementException.getSQL());
-
-
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("UPDATE `aaa` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals(1,jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
-        Assert.assertEquals("2123(String),2023-06-08T10:48:05(LocalDateTime),15(String),115(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-        listenerContextManager.clear();
-    }
+//    @Test
+//    public void updateTest12_2() {
+//        Topic topic = easyQuery.queryable(Topic.class).whereById("15").firstOrNull();
+//        Assert.assertNotNull(topic);
+//        String sql = easyProxyQuery.updatableProxy(topic)
+//                .whereColumns(o -> o.columnKeys().column(o.t().stars())).toSQL(topic);
+//        Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?",sql);
+//    }
+//
+//    @Test
+//    public void updateTest12_3() {
+//        Topic topic = easyQuery.queryable(Topic.class).whereById("15").firstOrNull();
+//        Assert.assertNotNull(topic);
+//        ListenerContext listenerContext = new ListenerContext();
+//        listenerContextManager.startListen(listenerContext);
+//
+//        Supplier<Exception> f = () -> {
+//            try {
+//                easyProxyQuery.updatableProxy(topic)
+//                        .asTable("aaa")
+//                        .whereColumns(o -> o.columnKeys().column(o.t().stars()))
+//                        .executeRows();
+//            }catch (Exception ex){
+//                return ex;
+//            }
+//            return null;
+//        };
+//        Exception exception = f.get();
+//        Assert.assertNotNull(exception);
+//        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+//        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+//        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+//        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+//        Assert.assertEquals("UPDATE `aaa` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?",easyQuerySQLStatementException.getSQL());
+//
+//
+//        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//        Assert.assertEquals("UPDATE `aaa` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals(1,jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
+//        Assert.assertEquals("2123(String),2023-06-08T10:48:05(LocalDateTime),15(String),115(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//        listenerContextManager.clear();
+//    }
 
 
     @Test
@@ -1103,6 +1103,34 @@ public class UpdateTest extends BaseTest {
         int i=0;
         for (List<SQLParameter> sqlParameter : jdbcExecuteAfterArg.getBeforeArg().getSqlParameters()) {
             Assert.assertEquals("1(Integer),1234567890x"+i+"(String)",EasySQLUtil.sqlParameterToString(sqlParameter));
+            i++;
+        }
+    }
+    @Test
+    public void updateTestBatch2(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        ArrayList<Topic> topics = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+
+            Topic topic = new Topic();
+            topic.setId("1234567890x"+i);
+            topic.setStars(1);
+            topic.setTitle("1234567890x"+i);
+            topic.setCreateTime(null);
+            topics.add(topic);
+        }
+        long l = easyQuery.updatable(topics)
+                .setColumns(o->o.column(Topic::getTitle))
+                .batch()
+                .ignoreVersion()
+                .executeRows();
+        System.out.println(l);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        int i=0;
+        for (List<SQLParameter> sqlParameter : jdbcExecuteAfterArg.getBeforeArg().getSqlParameters()) {
+            Assert.assertEquals("1234567890x"+i+"(String),1234567890x"+i+"(String)",EasySQLUtil.sqlParameterToString(sqlParameter));
             i++;
         }
     }

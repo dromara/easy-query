@@ -7,6 +7,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
+import com.easy.query.core.proxy.sql.GroupBy;
 import com.easy.query.core.proxy.sql.Predicate;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -67,7 +68,7 @@ public class QueryTest9 extends BaseTest {
                 Topic topic = easyQuery.queryable(Topic.class)
                         .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                         .where(o -> o.eq(Topic::getId, UUID.randomUUID()))
-                        .firstNotNull(() -> new MyAppException("asv"));
+                        .firstNotNull(() -> new MyAppException("asv" ));
             } catch (Exception ex) {
                 return ex;
             } finally {
@@ -95,7 +96,7 @@ public class QueryTest9 extends BaseTest {
                 Topic topic = easyQuery.queryable(Topic.class)
                         .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                         .where(o -> o.eq(Topic::getId, UUID.randomUUID()))
-                        .singleNotNull(() -> new MyAppException("asv"));
+                        .singleNotNull(() -> new MyAppException("asv" ));
             } catch (Exception ex) {
                 return ex;
             } finally {
@@ -122,7 +123,7 @@ public class QueryTest9 extends BaseTest {
                 Topic topic = easyQuery.queryable(Topic.class)
                         .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                         .where(o -> o.eq(Topic::getId, UUID.randomUUID()))
-                        .singleNotNull("1");
+                        .singleNotNull("1" );
             } catch (Exception ex) {
                 return ex;
             } finally {
@@ -144,7 +145,7 @@ public class QueryTest9 extends BaseTest {
                 Topic topic = easyQuery.queryable(Topic.class)
                         .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                         .where(o -> o.eq(Topic::getId, UUID.randomUUID()))
-                        .firstNotNull("1");
+                        .firstNotNull("1" );
             } catch (Exception ex) {
                 return ex;
             } finally {
@@ -188,11 +189,11 @@ public class QueryTest9 extends BaseTest {
         List<BlogEntity> list = easyProxyQuery.queryable(topicTable)
                 .where(topicTable.id().eq(xq),
                         Predicate.or(
-                                topicTable.title().ge("11")
-                                , topicTable.id().le("11")
+                                topicTable.title().ge("11" )
+                                , topicTable.id().le("11" )
                                 , topicTable.createTime().lt(LocalDateTime.of(2023, 1, 1, 1, 1))
                         )
-                        , topicTable.id().like("11"))
+                        , topicTable.id().like("11" ))
                 .orderBy(topicTable.id().asc(false)
                         , topicTable.title().desc()
                         , topicTable.title().asc())
@@ -219,14 +220,14 @@ public class QueryTest9 extends BaseTest {
 
         BlogEntityProxy subBlogTable = BlogEntityProxy.createTable();
         ProxyQueryable<StringProxy, String> idQueryable = easyProxyQuery.queryable(subBlogTable)
-                .where(subBlogTable.title().like("你好"))
+                .where(subBlogTable.title().like("你好" ))
                 .select(StringProxy.createTable(), subBlogTable.id());
         String xq = "123";
         List<BlogEntity> list = easyProxyQuery.queryable(topicTable)
                 .where(topicTable.id().eq(xq),
                         Predicate.or(
-                                topicTable.title().ge("11")
-                                , topicTable.id().le("11")
+                                topicTable.title().ge("11" )
+                                , topicTable.id().le("11" )
                                 , topicTable.createTime().lt(LocalDateTime.of(2023, 1, 1, 1, 1))
                         )
                         , topicTable.id().in(idQueryable))
@@ -261,13 +262,13 @@ public class QueryTest9 extends BaseTest {
         List<BlogEntity> list = easyProxyQuery.queryable(topicTable)
                 .where(topicTable.id().eq(xq),
                         Predicate.or(
-                                topicTable.title().ge("11")
-                                , topicTable.id().le("11")
+                                topicTable.title().ge("11" )
+                                , topicTable.id().le("11" )
                                 , topicTable.createTime().lt(LocalDateTime.of(2023, 1, 1, 1, 1))
                         )
                         , topicTable.exists(() -> {
                             return easyProxyQuery.queryable(subBlogTable)
-                                    .where(subBlogTable.title().like("你好"),
+                                    .where(subBlogTable.title().like("你好" ),
                                             subBlogTable.id().eq(topicTable.id()));
                         }))
                 .orderBy(topicTable.id().asc(false)
@@ -302,13 +303,13 @@ public class QueryTest9 extends BaseTest {
         List<BlogEntity> list = easyProxyQuery.queryable(topicTable)
                 .where(topicTable.id().eq(xq),
                         Predicate.or(
-                                topicTable.title().ge("11")
-                                , topicTable.id().le("11")
+                                topicTable.title().ge("11" )
+                                , topicTable.id().le("11" )
                                 , topicTable.createTime().lt(LocalDateTime.of(2023, 1, 1, 1, 1))
                         )
                         , topicTable.exists(() -> {
                             return easyProxyQuery.queryable(subBlogTable)
-                                    .where(subBlogTable.title().like("你好"),
+                                    .where(subBlogTable.title().like("你好" ),
                                             subBlogTable.id().eq(topicTable.id()));
                         }),
                         Predicate.sql("IFNULL({0},'') = ''", c -> {
@@ -417,8 +418,8 @@ public class QueryTest9 extends BaseTest {
                         topicTable.stars().le(1),
                         topicTable.stars().le(2),
                         Predicate.or(
-                                topicTable.id().like("111"),
-                                topicTable.id().eq("1")
+                                topicTable.id().like("111" ),
+                                topicTable.id().eq("1" )
                         )
                         , topicTable.stars().le(1)
                 )
@@ -472,8 +473,8 @@ public class QueryTest9 extends BaseTest {
                         topicTable.stars().le(1),
                         topicTable.stars().le(2),
                         Predicate.or(
-                                topicTable.id().like("111"),
-                                topicTable.id().eq("1")
+                                topicTable.id().like("111" ),
+                                topicTable.id().eq("1" )
                         )
                         , topicTable.stars().le(1)
                 )
@@ -506,8 +507,8 @@ public class QueryTest9 extends BaseTest {
                         topicTable.stars().le(1),
                         topicTable.stars().le(2),
                         Predicate.or(
-                                topicTable.id().like("111"),
-                                topicTable.id().eq("1")
+                                topicTable.id().like("111" ),
+                                topicTable.id().eq("1" )
                         )
                         , topicTable.stars().le(1)
                 )
@@ -533,44 +534,55 @@ public class QueryTest9 extends BaseTest {
 
         DefaultEntityQuery entityQuery = new DefaultEntityQuery(easyQueryClient);
         List<Topic> list = entityQuery.queryable(Topic.class)
-                .where(o -> o.id().eq("1").and(o.title().like("xxx")))
+                .where(o -> o.id().eq("1" ).and(o.title().like("xxx" )))
                 .where(o -> {
-                    return o.id().eq("1")
-                            .and(o.title().like("xxx"))
+                    return o.id().eq("1" )
+                            .and(o.title().like("xxx" ))
                             .and(o.createTime().ge(LocalDateTime.now()));
                 })
                 .where(o ->
                         Predicate.and(
-                                o.id().eq("1"),
-                                o.title().like("xxx"),
+                                o.id().eq("1" ),
+                                o.title().like("xxx" ),
                                 o.createTime().ge(LocalDateTime.now())
                         )
                 ).toList();
 
         Topic topic = entityQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (a, b) -> a.id().eq(b.id()))
-                .where((a, b) -> a.title().eq("1").and(b.createTime().ge(LocalDateTime.of(2021, 1, 1, 1, 1))))
+                .where((a, b) -> a.title().eq("1" ).and(b.createTime().ge(LocalDateTime.of(2021, 1, 1, 1, 1))))
                 .orderBy((a, b) -> a.title().asc().thenBy(a.id().desc()))
                 .firstOrNull();
 
         Topic topic2 = entityQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (a, b) -> a.id().eq(b.id()))
                 .where((a, b) -> Predicate.and(
-                        a.title().eq("1"),
+                        a.title().eq("1" ),
                         b.createTime().ge(LocalDateTime.of(2021, 1, 1, 1, 1))
                 ))
                 .orderBy((a, b) -> a.title().asc())
-                .select(o->o.selector().id().createTime().stars().title())
+                .select(o -> o.cols().id().createTime().stars().title().as(o.createTime()))
                 .firstOrNull();
         List<Topic> list1 = entityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("title" ).and(o.id().eq("1" )))
-                .groupBy(o -> o.selector().title())
-                .select(Topic.class,(o,tr) -> Select.of(
+                .groupBy(o -> o.cols().title())
+                .select(Topic.class, (o, tr) -> Select.of(
                         o.title()
                         , o.id().count().as(tr.stars())
                 ))
                 .toList();
-
+        List<Topic> list2 = entityQuery.queryable(Topic.class)
+                .where(o -> o.title().eq("title" ).and(o.id().eq("1" )))
+                .groupBy(o -> GroupBy.of(
+                        o.title(),
+                        o.id()
+                ))
+                .select(Topic.class, (o, tr) -> Select.of(
+                        o.title(),
+                        o.id(),
+                        o.id().count().as(tr.stars())
+                ))
+                .toList();
     }
 
 }

@@ -17,7 +17,8 @@ public interface ColumnFuncComparable<T> extends ColumnComparable<T>,
     @Override
     default SQLSelectAsExpression as(TablePropColumn propColumn) {
         return new SQLSelectAsImpl(s->{
-            throw new UnsupportedOperationException();
+            SQLFunc fx = s.getRuntimeContext().fx();
+            s.columnFunc(this.getTable(),func().apply(fx),propColumn.getValue());
         },s -> {
             SQLFunc fx = s.getRuntimeContext().fx();
             s.columnFunc(this.getTable(), this.getValue(),func().apply(fx),propColumn.getValue(),()->{});

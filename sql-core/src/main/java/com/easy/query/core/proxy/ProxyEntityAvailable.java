@@ -7,6 +7,5 @@ package com.easy.query.core.proxy;
  * @author xuejiaming
  */
 public interface ProxyEntityAvailable<TEntity,TProxy extends ProxyEntity<TProxy, TEntity>> {
-    TProxy createProxyTable();
     Class<TProxy> proxyTableClass();
 }

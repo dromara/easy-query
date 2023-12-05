@@ -18,50 +18,53 @@ public interface SQLSelectExpression extends TablePropColumn {
         return asc(true);
     }
 
-   default SQLOrderByExpression asc(boolean condition){
-       if (condition) {
-           return new SQLOrderSelectImpl(s -> {
-               s.setAsc(true);
-               s.column(this.getTable(), this.getValue());
-           });
-       }
-       return SQLOrderByExpression.empty;
-   }
+    default SQLOrderByExpression asc(boolean condition) {
+        if (condition) {
+            return new SQLOrderSelectImpl(s -> {
+                s.setAsc(true);
+                s.column(this.getTable(), this.getValue());
+            });
+        }
+        return SQLOrderByExpression.empty;
+    }
 
     default SQLOrderByExpression desc() {
         return desc(true);
     }
 
-   default SQLOrderByExpression desc(boolean condition){
-       if (condition) {
-           return new SQLOrderSelectImpl(s -> {
-               s.setAsc(false);
-               s.column(this.getTable(), this.getValue());
-           });
-       }
-       return SQLOrderByExpression.empty;
-   }
+    default SQLOrderByExpression desc(boolean condition) {
+        if (condition) {
+            return new SQLOrderSelectImpl(s -> {
+                s.setAsc(false);
+                s.column(this.getTable(), this.getValue());
+            });
+        }
+        return SQLOrderByExpression.empty;
+    }
 
-    default SQLSelectAsExpression as(TablePropColumn propColumn){
-        return new SQLSelectAsImpl(s->{
-            throw new UnsupportedOperationException();
-        },s -> {
+    default SQLSelectAsExpression as(TablePropColumn propColumn) {
+        return new SQLSelectAsImpl(s -> {
+            s.columnAs(this.getTable(), this.getValue(), propColumn.getValue());
+        }, s -> {
             s.columnAs(this.getTable(), this.getValue(), propColumn.getValue());
         });
     }
 
-    default SQLSelectExpression concat(SQLSelectExpression select){
+    default SQLSelectExpression concat(SQLSelectExpression select) {
         return new SQLSelectImpl(x -> {
             accept(x);
             select.accept(x);
         });
     }
-    default void accept(Selector f){
+
+    default void accept(Selector f) {
         TableAvailable table = this.getTable();
         String value = this.getValue();
-        if(table!=null&&value!=null){
+        if (table != null && value != null) {
             f.column(table, value);
         }
     }
-    SQLSelectExpression empty=new SQLSelectImpl(x->{});
+
+    SQLSelectExpression empty = new SQLSelectImpl(x -> {
+    });
 }

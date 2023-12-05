@@ -5,6 +5,7 @@ import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.proxy.impl.SQLGroupSelectImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
+import com.easy.query.core.util.EasyArrayUtil;
 
 /**
  * create time 2023/12/2 17:02
@@ -13,6 +14,16 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
  * @author xuejiaming
  */
 public class GroupBy {
+    public static SQLGroupByExpression of(SQLGroupByExpression... groupByExpressions){
+        if(EasyArrayUtil.isNotEmpty(groupByExpressions)){
+            SQLGroupByExpression firstGroupByExpression = groupByExpressions[0];
+            for (int i = 1; i < groupByExpressions.length; i++) {
+                firstGroupByExpression = firstGroupByExpression.then(groupByExpressions[i]);
+            }
+            return firstGroupByExpression;
+        }
+        return SQLGroupByExpression.empty;
+    }
     public static SQLGroupByExpression sql(String sqlSegment) {
         return sql(true, sqlSegment, f -> {
         });

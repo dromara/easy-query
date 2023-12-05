@@ -16,7 +16,6 @@ import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
@@ -96,9 +95,9 @@ public interface EasyProxyQuery {
     <T> ProxyOnlyEntityUpdatable<T> updatable(T entity);
 
     <T> ProxyOnlyEntityUpdatable<T> updatable(Collection<T> entities);
-    <T extends ProxyEntityAvailable<T,TProxy>,TProxy extends ProxyEntity<TProxy,T>> @NotNull ProxyEntityUpdatable<TProxy,T> updatableProxy(@NotNull T entity);
-
-    <T extends ProxyEntityAvailable<T,TProxy>,TProxy extends ProxyEntity<TProxy,T>> @NotNull ProxyEntityUpdatable<TProxy,T> updatableProxy(@NotNull Collection<T> entities);
+//    <T extends ProxyEntityAvailable<T,TProxy>,TProxy extends ProxyEntity<TProxy,T>> @NotNull ProxyEntityUpdatable<TProxy,T> updatableProxy(@NotNull T entity);
+//
+//    <T extends ProxyEntityAvailable<T,TProxy>,TProxy extends ProxyEntity<TProxy,T>> @NotNull ProxyEntityUpdatable<TProxy,T> updatableProxy(@NotNull Collection<T> entities);
 
     <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy, T> updatable(@NotNull T entity,@NotNull TProxy proxy);
 
