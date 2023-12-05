@@ -98,7 +98,7 @@ public interface ProxyLikePredicate<TChain> extends FilterAvailable, ChainCast<T
      */
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain like(boolean condition, SQLColumn<TProxy, TProperty> column, TProperty val, SQLLikeEnum sqlLike) {
         if (condition) {
-            getFilter().like(column.getTable(), column.value(), val, sqlLike);
+            getFilter().like(column.getTable(), column.getValue(), val, sqlLike);
         }
         return castChain();
     }
@@ -170,7 +170,7 @@ public interface ProxyLikePredicate<TChain> extends FilterAvailable, ChainCast<T
 
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain notLike(boolean condition, SQLColumn<TProxy, TProperty> column, TProperty val, SQLLikeEnum sqlLike) {
         if (condition) {
-            getFilter().notLike(column.getTable(), column.value(), val, sqlLike);
+            getFilter().notLike(column.getTable(), column.getValue(), val, sqlLike);
         }
         return castChain();
     }

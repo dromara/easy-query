@@ -28,7 +28,7 @@ public class SQLColumnFunctionComparableImpl<TProperty> implements ColumnFuncCom
     }
 
     @Override
-    public String value() {
+    public String getValue() {
         return property;
     }
 

@@ -20,7 +20,7 @@ public interface ColumnFuncComparable<T> extends ColumnComparable<T>,
             throw new UnsupportedOperationException();
         },s -> {
             SQLFunc fx = s.getRuntimeContext().fx();
-            s.columnFunc(this.getTable(), this.value(),func().apply(fx),propColumn.value(),()->{});
+            s.columnFunc(this.getTable(), this.getValue(),func().apply(fx),propColumn.getValue(),()->{});
         });
     }
 }

@@ -29,7 +29,7 @@ public class SQLSelectAsImpl extends SQLSelectImpl implements SQLSelectAsExpress
     }
 
     @Override
-    public String value() {
+    public String getValue() {
         throw new UnsupportedOperationException();
     }
 
@@ -38,7 +38,7 @@ public class SQLSelectAsImpl extends SQLSelectImpl implements SQLSelectAsExpress
         return new SQLSelectAsImpl(s->{
             throw new UnsupportedOperationException();
         },s -> {
-            s.columnAs(this.getTable(), this.value(), propColumn.value());
+            s.columnAs(this.getTable(), this.getValue(), propColumn.getValue());
         });
     }
 

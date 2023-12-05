@@ -22,7 +22,7 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
     }
 
     default void accept(AsSelector f) {
-        f.column(this.getTable(), this.value());
+        f.column(this.getTable(), this.getValue());
     }
 
     SQLSelectAsExpression empty = new SQLSelectAsImpl(s -> {
@@ -41,14 +41,14 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
     @SuppressWarnings("varargs")
     static <TProxy> SQLSelectAsExpression createColumnExclude(SQLColumn<TProxy, ?> column, SQLColumn<TProxy, ?>... ignoreColumns) {
         return new SQLSelectAsImpl(x -> {
-            x.column(column.getTable(), column.value());
+            x.column(column.getTable(), column.getValue());
             for (SQLColumn<TProxy, ?> ignoreColumn : ignoreColumns) {
-                x.columnIgnore(ignoreColumn.getTable(), ignoreColumn.value());
+                x.columnIgnore(ignoreColumn.getTable(), ignoreColumn.getValue());
             }
         }, x -> {
-            x.column(column.getTable(), column.value());
+            x.column(column.getTable(), column.getValue());
             for (SQLColumn<TProxy, ?> ignoreColumn : ignoreColumns) {
-                x.columnIgnore(ignoreColumn.getTable(), ignoreColumn.value());
+                x.columnIgnore(ignoreColumn.getTable(), ignoreColumn.getValue());
             }
         });
     }

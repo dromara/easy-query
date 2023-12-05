@@ -22,14 +22,14 @@ public interface ProxyGroupSelector extends SQLProxyNative<ProxyGroupSelector> ,
     default ProxyGroupSelector columns(SQLColumn<?,?>... columns) {
         if (columns != null) {
             for (SQLColumn<?,?> sqlColumn : columns) {
-                getGroupSelector().column(sqlColumn.getTable(), sqlColumn.value());
+                getGroupSelector().column(sqlColumn.getTable(), sqlColumn.getValue());
             }
         }
         return this;
     }
 
     default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> ProxyGroupSelector column(SQLColumn<TProxy,TProperty> column) {
-        getGroupSelector().column(column.getTable(), column.value());
+        getGroupSelector().column(column.getTable(), column.getValue());
         return this;
     }
 

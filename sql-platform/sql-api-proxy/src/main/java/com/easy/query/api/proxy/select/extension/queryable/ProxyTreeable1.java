@@ -22,7 +22,7 @@ public interface ProxyTreeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
     }
 
     default ProxyQueryable<T1Proxy, T1> asTreeCTE(SQLColumn<T1Proxy, ?> codeProperty, SQLColumn<T1Proxy, ?> parentCodeProperty, SQLExpression1<TreeCTEConfigurer> treeExpression) {
-        ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(codeProperty.value(), parentCodeProperty.value(), treeExpression);
+        ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(codeProperty.getValue(), parentCodeProperty.getValue(), treeExpression);
         return new EasyProxyQueryable<>(get1Proxy(), clientQueryable);
     }
 }

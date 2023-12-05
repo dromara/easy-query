@@ -90,7 +90,7 @@ public interface SQLAsProxyNative<TRProxy extends ProxyEntity<TRProxy, TR>, TR, 
             String sqlSegment = sqlFunction.sqlSegment(null);
             getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
                 SQLNativeChainExpressionContext sqlNativeChainExpressionContext = new SQLNativeChainExpressionContextImpl(null,context);
-                sqlNativeChainExpressionContext.setPropertyAlias(sqlColumn.value());
+                sqlNativeChainExpressionContext.setPropertyAlias(sqlColumn.getValue());
                 sqlFunction.consume(sqlNativeChainExpressionContext);
             });
         }

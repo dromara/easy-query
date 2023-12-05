@@ -16,21 +16,21 @@ import java.util.function.Consumer;
  */
 public interface ColumnAggregatable<TProperty> extends SQLSelectAsExpression {
     default <T extends Number> ColumnFuncComparable<T> count(){
-        return new SQLColumnFunctionComparableImpl<T>(this.getTable(),this.value(),fx->{
-            return fx.count(this.value());
+        return new SQLColumnFunctionComparableImpl<T>(this.getTable(),this.getValue(), fx->{
+            return fx.count(this.getValue());
         });
     }
     default <T extends Number> ColumnFuncComparable<T> count(Consumer<ACSSelector> setting){
-        return new SQLColumnFunctionComparableImpl<T>(this.getTable(),this.value(),fx->{
-            DistinctDefaultSQLFunction count = fx.count(this.value());
+        return new SQLColumnFunctionComparableImpl<T>(this.getTable(),this.getValue(), fx->{
+            DistinctDefaultSQLFunction count = fx.count(this.getValue());
             DistinctDefaultSettingImpl distinctDefaultSetting = new DistinctDefaultSettingImpl(count);
             setting.accept(distinctDefaultSetting);
             return count;
         });
     }
     default <T extends Number> ColumnFuncComparable<T> avg(){
-        return new SQLColumnFunctionComparableImpl<T>(this.getTable(),this.value(),fx->{
-            return fx.avg(this.value());
+        return new SQLColumnFunctionComparableImpl<T>(this.getTable(),this.getValue(), fx->{
+            return fx.avg(this.getValue());
         });
     }
 }

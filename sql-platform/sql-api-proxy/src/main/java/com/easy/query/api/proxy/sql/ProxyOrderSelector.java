@@ -23,7 +23,7 @@ public interface ProxyOrderSelector extends SQLProxyNative<ProxyOrderSelector>, 
     default ProxyOrderSelector columns(SQLColumn<?,?>... columns) {
         if (columns != null) {
             for (SQLColumn<?,?> sqlColumn : columns) {
-                getOrderSelector().column(sqlColumn.getTable(), sqlColumn.value());
+                getOrderSelector().column(sqlColumn.getTable(), sqlColumn.getValue());
             }
         }
         return this;
@@ -31,7 +31,7 @@ public interface ProxyOrderSelector extends SQLProxyNative<ProxyOrderSelector>, 
 
 
    default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> ProxyOrderSelector column(SQLColumn<TProxy,TProperty> column){
-       getOrderSelector().column(column.getTable(), column.value());
+       getOrderSelector().column(column.getTable(), column.getValue());
        return this;
    }
 

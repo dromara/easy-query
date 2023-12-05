@@ -16,7 +16,7 @@ public class SQLPropColumn implements PropColumn {
         this.prop = prop;
     }
     @Override
-    public String value() {
+    public String getValue() {
         return prop;
     }
 }

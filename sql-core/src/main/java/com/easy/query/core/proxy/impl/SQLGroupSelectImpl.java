@@ -24,7 +24,7 @@ public class SQLGroupSelectImpl implements SQLGroupByExpression {
     }
 
     @Override
-    public String value() {
+    public String getValue() {
         throw new UnsupportedOperationException();
     }
 

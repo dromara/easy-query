@@ -30,7 +30,7 @@ public interface ProxyAssertPredicate<TChain> extends FilterAvailable, ChainCast
      */
     default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> TChain isNull(boolean condition, SQLColumn<TProxy,TProperty> column) {
         if (condition) {
-            getFilter().isNull(column.getTable(), column.value());
+            getFilter().isNull(column.getTable(), column.getValue());
         }
         return castChain();
     }
@@ -51,7 +51,7 @@ public interface ProxyAssertPredicate<TChain> extends FilterAvailable, ChainCast
      */
     default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> TChain isNotNull(boolean condition, SQLColumn<TProxy,TProperty> column) {
         if (condition) {
-            getFilter().isNotNull(column.getTable(), column.value());
+            getFilter().isNotNull(column.getTable(), column.getValue());
         }
         return castChain();
     }

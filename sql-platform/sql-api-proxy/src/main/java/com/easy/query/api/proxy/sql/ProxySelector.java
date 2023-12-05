@@ -22,14 +22,14 @@ public interface ProxySelector extends SQLProxyNative<ProxySelector>, ProxySQLFu
     default ProxySelector columns(SQLColumn<?, ?>... columns) {
         if (columns != null) {
             for (SQLColumn<?, ?> sqlColumn : columns) {
-                getSelector().column(sqlColumn.getTable(), sqlColumn.value());
+                getSelector().column(sqlColumn.getTable(), sqlColumn.getValue());
             }
         }
         return this;
     }
 
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> ProxySelector column(SQLColumn<TProxy, TProperty> column) {
-        getSelector().column(column.getTable(), column.value());
+        getSelector().column(column.getTable(), column.getValue());
         return this;
     }
 
@@ -39,7 +39,7 @@ public interface ProxySelector extends SQLProxyNative<ProxySelector>, ProxySQLFu
     }
 
     default <TProxy extends ProxyEntity<TProxy, T>, T> ProxySelector columnIgnore(SQLColumn<TProxy, ?> column) {
-        getSelector().columnIgnore(column.getTable(), column.value());
+        getSelector().columnIgnore(column.getTable(), column.getValue());
         return this;
     }
 

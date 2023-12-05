@@ -11,5 +11,5 @@ public interface PropColumn {
      * 属性名
      * @return
      */
-    String value();
+    String getValue();
 }

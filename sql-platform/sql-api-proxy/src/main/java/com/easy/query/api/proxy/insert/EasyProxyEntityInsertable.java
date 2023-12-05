@@ -30,13 +30,13 @@ public class EasyProxyEntityInsertable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
 
     @Override
     public ProxyEntityInsertable<T1Proxy, T1> onConflictDoUpdate(SQLColumn<T1Proxy, ?> constraintProperty) {
-        clientInsertable.onConflictDoUpdate(constraintProperty.value());
+        clientInsertable.onConflictDoUpdate(constraintProperty.getValue());
         return this;
     }
 
     @Override
     public ProxyEntityInsertable<T1Proxy, T1> onConflictDoUpdate(SQLColumn<T1Proxy, ?> constraintProperty, SQLExpression1<MultiColumnOnlySelectorImpl<T1Proxy, T1>> columnOnlySelector) {
-        clientInsertable.onConflictDoUpdate(constraintProperty.value(), selector -> {
+        clientInsertable.onConflictDoUpdate(constraintProperty.getValue(), selector -> {
             columnOnlySelector.apply(new MultiColumnOnlySelectorImpl<>(tProxy, selector.getOnlySelector()));
         });
         return this;

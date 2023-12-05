@@ -18,7 +18,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression ge(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.ge(this.getTable(), this.value(), subQuery));
+            return new SQLPredicateImpl(f -> f.ge(this.getTable(), this.getValue(), subQuery));
         }
         return SQLPredicateExpression.empty;
     }
@@ -28,7 +28,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression gt(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.gt(this.getTable(), this.value(), subQuery));
+            return new SQLPredicateImpl(f -> f.gt(this.getTable(), this.getValue(), subQuery));
         }
         return SQLPredicateExpression.empty;
     }
@@ -38,7 +38,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression eq(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.eq(this.getTable(), this.value(), subQuery));
+            return new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), subQuery));
         }
         return SQLPredicateExpression.empty;
     }
@@ -48,7 +48,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression ne(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.ne(this.getTable(), this.value(), subQuery));
+            return new SQLPredicateImpl(f -> f.ne(this.getTable(), this.getValue(), subQuery));
         }
         return SQLPredicateExpression.empty;
     }
@@ -58,7 +58,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression le(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.le(this.getTable(), this.value(), subQuery));
+            return new SQLPredicateImpl(f -> f.le(this.getTable(), this.getValue(), subQuery));
         }
         return SQLPredicateExpression.empty;
     }
@@ -68,7 +68,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression lt(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.lt(this.getTable(), this.value(), subQuery));
+            return new SQLPredicateImpl(f -> f.lt(this.getTable(), this.getValue(), subQuery));
         }
         return SQLPredicateExpression.empty;
     }
@@ -78,7 +78,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression in(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.in(this.getTable(), this.value(), subQuery));
+            return new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), subQuery));
         }
         return SQLPredicateExpression.empty;
     }
@@ -88,7 +88,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression notIn(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.value(), subQuery));
+            return new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), subQuery));
         }
         return SQLPredicateExpression.empty;
     }

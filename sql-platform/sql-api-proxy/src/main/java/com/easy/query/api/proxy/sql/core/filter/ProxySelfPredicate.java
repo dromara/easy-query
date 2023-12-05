@@ -36,7 +36,7 @@ public interface ProxySelfPredicate<TChain> extends FilterAvailable,ChainCast<TC
      */
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2, TProperty> TChain gt(boolean condition, SQLColumn<T1Proxy, TProperty> column1, SQLColumn<T2Proxy, TProperty> column2) {
         if (condition) {
-            getFilter().gt(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+            getFilter().gt(column1.getTable(), column1.getValue(), column2.getTable(), column2.getValue());
         }
         return castChain();
     }
@@ -64,7 +64,7 @@ public interface ProxySelfPredicate<TChain> extends FilterAvailable,ChainCast<TC
      */
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2, TProperty> TChain ge(boolean condition, SQLColumn<T1Proxy, TProperty> column1, SQLColumn<T2Proxy, TProperty> column2) {
         if (condition) {
-            getFilter().ge(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+            getFilter().ge(column1.getTable(), column1.getValue(), column2.getTable(), column2.getValue());
         }
         return castChain();
     }
@@ -92,7 +92,7 @@ public interface ProxySelfPredicate<TChain> extends FilterAvailable,ChainCast<TC
      */
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2, TProperty> TChain eq(boolean condition, SQLColumn<T1Proxy, TProperty> column1, SQLColumn<T2Proxy, TProperty> column2) {
         if (condition) {
-            getFilter().eq(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+            getFilter().eq(column1.getTable(), column1.getValue(), column2.getTable(), column2.getValue());
         }
         return castChain();
     }
@@ -120,7 +120,7 @@ public interface ProxySelfPredicate<TChain> extends FilterAvailable,ChainCast<TC
      */
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2, TProperty> TChain ne(boolean condition, SQLColumn<T1Proxy, TProperty> column1, SQLColumn<T2Proxy, TProperty> column2) {
         if (condition) {
-            getFilter().ne(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+            getFilter().ne(column1.getTable(), column1.getValue(), column2.getTable(), column2.getValue());
         }
         return castChain();
     }
@@ -148,7 +148,7 @@ public interface ProxySelfPredicate<TChain> extends FilterAvailable,ChainCast<TC
      */
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2, TProperty> TChain le(boolean condition, SQLColumn<T1Proxy, TProperty> column1, SQLColumn<T2Proxy, TProperty> column2) {
         if (condition) {
-            getFilter().le(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+            getFilter().le(column1.getTable(), column1.getValue(), column2.getTable(), column2.getValue());
         }
         return castChain();
     }
@@ -176,7 +176,7 @@ public interface ProxySelfPredicate<TChain> extends FilterAvailable,ChainCast<TC
      */
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, T2>, T2, TProperty> TChain lt(boolean condition, SQLColumn<T1Proxy, TProperty> column1, SQLColumn<T2Proxy, TProperty> column2) {
         if (condition) {
-            getFilter().lt(column1.getTable(), column1.value(), column2.getTable(), column2.value());
+            getFilter().lt(column1.getTable(), column1.getValue(), column2.getTable(), column2.getValue());
         }
         return castChain();
     }

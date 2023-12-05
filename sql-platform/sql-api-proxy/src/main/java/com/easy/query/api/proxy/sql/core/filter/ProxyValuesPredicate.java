@@ -29,7 +29,7 @@ public interface ProxyValuesPredicate<TChain> extends FilterAvailable, ChainCast
      */
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain in(boolean condition, SQLColumn<TProxy, TProperty> column, Collection<TProperty> collection) {
         if (condition) {
-            getFilter().in(column.getTable(), column.value(), collection);
+            getFilter().in(column.getTable(), column.getValue(), collection);
         }
         return castChain();
     }
@@ -59,7 +59,7 @@ public interface ProxyValuesPredicate<TChain> extends FilterAvailable, ChainCast
      */
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain in(boolean condition, SQLColumn<TProxy, TProperty> column, TProperty[] collection) {
         if (condition) {
-            getFilter().in(column.getTable(), column.value(), collection);
+            getFilter().in(column.getTable(), column.getValue(), collection);
         }
         return castChain();
     }
@@ -89,7 +89,7 @@ public interface ProxyValuesPredicate<TChain> extends FilterAvailable, ChainCast
      */
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain notIn(boolean condition, SQLColumn<TProxy, TProperty> column, Collection<TProperty> collection) {
         if (condition) {
-            getFilter().notIn(column.getTable(), column.value(), collection);
+            getFilter().notIn(column.getTable(), column.getValue(), collection);
         }
         return castChain();
     }
@@ -100,7 +100,7 @@ public interface ProxyValuesPredicate<TChain> extends FilterAvailable, ChainCast
 
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain notIn(boolean condition, SQLColumn<TProxy, TProperty> column, TProperty[] collection) {
         if (condition) {
-            getFilter().notIn(column.getTable(), column.value(), collection);
+            getFilter().notIn(column.getTable(), column.getValue(), collection);
         }
         return castChain();
     }

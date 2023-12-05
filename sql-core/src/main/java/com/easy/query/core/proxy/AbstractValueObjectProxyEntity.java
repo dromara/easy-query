@@ -25,7 +25,7 @@ public abstract class AbstractValueObjectProxyEntity<TProxy, TProperty> implemen
     }
 
     @Override
-    public String value() {
+    public String getValue() {
         return parentProperty;
     }
 

@@ -27,7 +27,7 @@ public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProp
     }
 
     @Override
-    public String value() {
+    public String getValue() {
         return property;
     }
 }

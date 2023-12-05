@@ -22,7 +22,7 @@ public interface SQLSelectExpression extends TablePropColumn {
        if (condition) {
            return new SQLOrderSelectImpl(s -> {
                s.setAsc(true);
-               s.column(this.getTable(), this.value());
+               s.column(this.getTable(), this.getValue());
            });
        }
        return SQLOrderByExpression.empty;
@@ -36,7 +36,7 @@ public interface SQLSelectExpression extends TablePropColumn {
        if (condition) {
            return new SQLOrderSelectImpl(s -> {
                s.setAsc(false);
-               s.column(this.getTable(), this.value());
+               s.column(this.getTable(), this.getValue());
            });
        }
        return SQLOrderByExpression.empty;
@@ -46,7 +46,7 @@ public interface SQLSelectExpression extends TablePropColumn {
         return new SQLSelectAsImpl(s->{
             throw new UnsupportedOperationException();
         },s -> {
-            s.columnAs(this.getTable(), this.value(), propColumn.value());
+            s.columnAs(this.getTable(), this.getValue(), propColumn.getValue());
         });
     }
 
@@ -58,7 +58,7 @@ public interface SQLSelectExpression extends TablePropColumn {
     }
     default void accept(Selector f){
         TableAvailable table = this.getTable();
-        String value = this.value();
+        String value = this.getValue();
         if(table!=null&&value!=null){
             f.column(table, value);
         }

@@ -14,13 +14,13 @@ import com.easy.query.core.util.EasyArrayUtil;
 public interface ProxyColumnFuncSelector {
     ColumnFuncSelector getColumnConcatSelector();
    default <TProxy,T> ProxyColumnFuncSelector column(SQLColumn<TProxy, T> sqlColumn){
-       getColumnConcatSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.value());
+       getColumnConcatSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
        return this;
    }
    default ProxyColumnFuncSelector columns(SQLColumn<?, ?>... sqlColumns){
        if(EasyArrayUtil.isNotEmpty(sqlColumns)){
            for (SQLColumn<?, ?> sqlColumn : sqlColumns) {
-               getColumnConcatSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.value());
+               getColumnConcatSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
            }
        }
        return this;

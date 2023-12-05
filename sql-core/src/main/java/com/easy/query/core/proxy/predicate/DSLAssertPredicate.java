@@ -17,7 +17,7 @@ public interface DSLAssertPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression isNull(boolean condition){
         if(condition){
-            return new SQLPredicateImpl(f -> f.isNull(this.getTable(), this.value()));
+            return new SQLPredicateImpl(f -> f.isNull(this.getTable(), this.getValue()));
         }
         return SQLPredicateExpression.empty;
     }
@@ -27,7 +27,7 @@ public interface DSLAssertPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression isNotNull(boolean condition){
         if(condition){
-            return new SQLPredicateImpl(f -> f.isNotNull(this.getTable(), this.value()));
+            return new SQLPredicateImpl(f -> f.isNotNull(this.getTable(), this.getValue()));
         }
         return SQLPredicateExpression.empty;
     }

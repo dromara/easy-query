@@ -17,7 +17,7 @@ public interface DSLOtherPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression ge(boolean condition, DSLOtherPredicate<TProperty> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.ge(this.getTable(), this.value(), column.getTable(), column.value()));
+            return new SQLPredicateImpl(f -> f.ge(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }
         return SQLPredicateExpression.empty;
     }
@@ -27,7 +27,7 @@ public interface DSLOtherPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression gt(boolean condition, DSLOtherPredicate<TProperty> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.gt(this.getTable(), this.value(), column.getTable(), column.value()));
+            return new SQLPredicateImpl(f -> f.gt(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }
         return SQLPredicateExpression.empty;
     }
@@ -39,7 +39,7 @@ public interface DSLOtherPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression eq(boolean condition, DSLOtherPredicate<TProperty> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.eq(this.getTable(), this.value(), column.getTable(), column.value()));
+            return new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }
         return SQLPredicateExpression.empty;
     }
@@ -52,7 +52,7 @@ public interface DSLOtherPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression ne(boolean condition, DSLOtherPredicate<TProperty> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.ne(this.getTable(), this.value(), column.getTable(), column.value()));
+            return new SQLPredicateImpl(f -> f.ne(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }
         return SQLPredicateExpression.empty;
     }
@@ -63,7 +63,7 @@ public interface DSLOtherPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression le(boolean condition, DSLOtherPredicate<TProperty> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.le(this.getTable(), this.value(), column.getTable(), column.value()));
+            return new SQLPredicateImpl(f -> f.le(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }
         return SQLPredicateExpression.empty;
     }
@@ -74,7 +74,7 @@ public interface DSLOtherPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression lt(boolean condition, DSLOtherPredicate<TProperty> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.lt(this.getTable(), this.value(), column.getTable(), column.value()));
+            return new SQLPredicateImpl(f -> f.lt(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }
         return SQLPredicateExpression.empty;
     }

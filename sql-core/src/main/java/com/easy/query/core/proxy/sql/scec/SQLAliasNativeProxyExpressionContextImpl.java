@@ -23,19 +23,19 @@ public class SQLAliasNativeProxyExpressionContextImpl<TRProxy extends ProxyEntit
 
     @Override
     public <TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expressionAlias(SQLColumn<TRProxy, TProperty> sqlColumn) {
-        sqlNativeExpressionContext.expressionAlias(sqlColumn.value());
+        sqlNativeExpressionContext.expressionAlias(sqlColumn.getValue());
         return this;
     }
 
     @Override
     public <TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> setPropertyAlias(SQLColumn<TRProxy, TProperty> sqlColumn) {
-        sqlNativeExpressionContext.setPropertyAlias(sqlColumn.value());
+        sqlNativeExpressionContext.setPropertyAlias(sqlColumn.getValue());
         return this;
     }
 
     @Override
     public <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> SQLAliasNativeProxyExpressionContext<TRProxy, TR> expression(SQLColumn<TEntityProxy, TProperty> sqlColumn) {
-        sqlNativeExpressionContext.expression(sqlColumn.getTable(),sqlColumn.value());
+        sqlNativeExpressionContext.expression(sqlColumn.getTable(),sqlColumn.getValue());
         return this;
     }
 

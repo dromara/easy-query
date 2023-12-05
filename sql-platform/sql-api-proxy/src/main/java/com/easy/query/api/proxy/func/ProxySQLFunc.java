@@ -55,7 +55,7 @@ public interface ProxySQLFunc  extends ProxyAggregateSQLFunc{
      * @return 绝对值函数
      */
     default <TProxy, T> SQLFunction abs(SQLColumn<TProxy, T> sqlColumn) {
-        return getSQLFunc().abs(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.value());
+        return getSQLFunc().abs(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.getValue());
     }
 
     /**
@@ -68,7 +68,7 @@ public interface ProxySQLFunc  extends ProxyAggregateSQLFunc{
      * @param <T> 数据库对象
      */
     default <TProxy, T> SQLFunction round(SQLColumn<TProxy, T> sqlColumn, int scale) {
-        return getSQLFunc().round(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.value(), scale);
+        return getSQLFunc().round(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.getValue(), scale);
     }
 
     /**
@@ -80,7 +80,7 @@ public interface ProxySQLFunc  extends ProxyAggregateSQLFunc{
      * @param <T> 数据库对象
      */
     default <TProxy, T> SQLFunction dateTimeFormat(SQLColumn<TProxy, T> sqlColumn) {
-        return getSQLFunc().dateTimeFormat(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.value(), null);
+        return getSQLFunc().dateTimeFormat(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.getValue(), null);
     }
 
     /**
@@ -94,7 +94,7 @@ public interface ProxySQLFunc  extends ProxyAggregateSQLFunc{
      * @param <T> 数据库对象
      */
     default <TProxy, T> SQLFunction dateTimeFormat(SQLColumn<TProxy, T> sqlColumn, String javaFormat) {
-        return getSQLFunc().dateTimeFormat(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.value(), javaFormat);
+        return getSQLFunc().dateTimeFormat(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.getValue(), javaFormat);
     }
 
     /**
@@ -107,7 +107,7 @@ public interface ProxySQLFunc  extends ProxyAggregateSQLFunc{
      * @param <T> 数据库对象
      */
     default <TProxy, T> SQLFunction dateTimeSQLFormat(SQLColumn<TProxy, T> sqlColumn, String format) {
-        return getSQLFunc().dateTimeSQLFormat(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.value(), format);
+        return getSQLFunc().dateTimeSQLFormat(new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.getValue(), format);
     }
 
     /**

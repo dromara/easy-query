@@ -21,7 +21,7 @@ public class SQLSelectGroupKeyAsImpl implements SQLSelectAsExpression {
     }
 
     @Override
-    public String value() {
+    public String getValue() {
         throw new UnsupportedOperationException();
     }
 
@@ -45,7 +45,7 @@ public class SQLSelectGroupKeyAsImpl implements SQLSelectAsExpression {
         return new SQLSelectAsImpl(f->{
             f.groupKeys(index);
         },f -> {
-            f.groupKeysAs(index, propColumn.value());
+            f.groupKeysAs(index, propColumn.getValue());
         });
     }
 }

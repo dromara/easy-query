@@ -28,14 +28,14 @@ public interface ProxyFillable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <TRProxyEntity extends ProxyEntity<TRProxyEntity, TREntity>, TREntity,TProperty> ProxyQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> fillMany(SQLFuncExpression1<ProxyFill, ProxyQueryable<TRProxyEntity, TREntity>> fillSetterExpression, SQLColumn<TRProxyEntity,TProperty> targetProperty, Property<T1, TProperty> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
         getClientQueryable5().fillMany(fillSelector -> {
             return fillSetterExpression.apply(new ProxyFillImp(fillSelector)).getClientQueryable();
-        }, targetProperty.value(), selfProperty, produce);
+        }, targetProperty.getValue(), selfProperty, produce);
         return getQueryable5();
     }
 
     default <TRProxyEntity extends ProxyEntity<TRProxyEntity, TREntity>, TREntity,TProperty> ProxyQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> fillOne(SQLFuncExpression1<ProxyFill, ProxyQueryable<TRProxyEntity, TREntity>> fillSetterExpression, SQLColumn<TRProxyEntity,TProperty> targetProperty, Property<T1, TProperty> selfProperty, BiConsumer<T1, TREntity> produce) {
         getClientQueryable5().fillOne(fillSelector -> {
             return fillSetterExpression.apply(new ProxyFillImp(fillSelector)).getClientQueryable();
-        }, targetProperty.value(), selfProperty, produce);
+        }, targetProperty.getValue(), selfProperty, produce);
         return getQueryable5();
     }
 }

@@ -31,12 +31,12 @@ public interface ProxyColumnOnlySelector<TProxy extends ProxyEntity<TProxy,T>,T>
         return this;
     }
     default ProxyColumnOnlySelector<TProxy,T> column(SQLColumn<TProxy,?> column){
-        getOnlySelector().column(column.getTable(),column.value());
+        getOnlySelector().column(column.getTable(),column.getValue());
         return this;
     }
 
     default ProxyColumnOnlySelector<TProxy,T> columnIgnore(SQLColumn<TProxy,?> column){
-        getOnlySelector().columnIgnore(column.getTable(),column.value());
+        getOnlySelector().columnIgnore(column.getTable(),column.getValue());
         return this;
     }
 

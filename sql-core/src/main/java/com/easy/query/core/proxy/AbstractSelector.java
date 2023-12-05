@@ -33,7 +33,7 @@ public abstract class AbstractSelector<TProxy extends AbstractProxyEntity<TProxy
         return EasyObjectUtil.typeCastNullable(this);
     }
     protected TChain add(PropColumn column){
-        selects.add(SQLSelectAsExpression.createDefault(getProxy().getTable(),column.value()));
+        selects.add(SQLSelectAsExpression.createDefault(getProxy().getTable(),column.getValue()));
         return EasyObjectUtil.typeCastNullable(this);
     }
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> TChain as(SQLColumn<TRProxy,?> column) {
@@ -79,7 +79,7 @@ public abstract class AbstractSelector<TProxy extends AbstractProxyEntity<TProxy
 //    }
 
     @Override
-    public String value() {
+    public String getValue() {
         throw new UnsupportedOperationException();
     }
 

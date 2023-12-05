@@ -21,14 +21,14 @@ public interface ProxyNavigateInclude<T1> {
        return  one(navigate,tPropertyProxy,null);
    }
    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty,T1Proxy extends ProxyEntity<T1Proxy,T1>> ProxyQueryable<TPropertyProxy,TProperty> one(SQLColumn<T1Proxy,TProperty> navigate,TPropertyProxy tPropertyProxy,Integer groupSize){
-       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().with(navigate.value(),groupSize);
+       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().with(navigate.getValue(),groupSize);
        return new EasyProxyQueryable<>(tPropertyProxy,clientQueryable);
    }
    default  <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> many(SQLColumn<TPropertyProxy,Collection<TProperty>> navigate,TPropertyProxy tPropertyProxy){
        return many(navigate,tPropertyProxy,null);
    }
    default  <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> ProxyQueryable<TPropertyProxy,TProperty> many(SQLColumn<TPropertyProxy,Collection<TProperty>> navigate,TPropertyProxy tPropertyProxy,Integer groupSize){
-       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(navigate.value(), groupSize);
+       ClientQueryable<TProperty> clientQueryable = getNavigateInclude().<TProperty>with(navigate.getValue(), groupSize);
        return new EasyProxyQueryable<>(tPropertyProxy,clientQueryable);
    }
 }

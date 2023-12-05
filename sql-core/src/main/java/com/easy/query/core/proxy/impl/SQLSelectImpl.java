@@ -19,7 +19,7 @@ public class SQLSelectImpl implements SQLSelectExpression {
         this.selectorConsumer = selectorConsumer;
     }
     @Override
-    public String value() {
+    public String getValue() {
         throw new UnsupportedOperationException();
     }
 

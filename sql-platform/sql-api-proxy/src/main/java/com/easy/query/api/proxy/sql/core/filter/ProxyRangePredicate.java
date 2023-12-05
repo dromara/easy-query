@@ -204,7 +204,7 @@ public interface ProxyRangePredicate<TChain> extends FilterAvailable, ChainCast<
      */
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain range(boolean condition, SQLColumn<TProxy, TProperty> column, boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight, SQLRangeEnum sqlRange) {
         if (condition) {
-            getFilter().range(column.getTable(), column.value(), conditionLeft, valLeft, conditionRight, valRight, sqlRange);
+            getFilter().range(column.getTable(), column.getValue(), conditionLeft, valLeft, conditionRight, valRight, sqlRange);
         }
         return castChain();
     }

@@ -30,13 +30,13 @@ public class CaseWhenProxyBuilder<TRProxy extends ProxyEntity<TRProxy, TR>, TR> 
     public CaseWhenProxyBuilder<TRProxy,TR> caseWhen(SQLExpression1<ProxyFilter> predicateExpression, SQLColumn<?,?> thenSQLColumn){
         caseWhenBuilder.caseWhenColumn(filter->{
             predicateExpression.apply(new ProxyFilterImpl(filter));
-        },thenSQLColumn.getTable(),thenSQLColumn.value());
+        },thenSQLColumn.getTable(),thenSQLColumn.getValue());
         return this;
     }
     public CloneableSQLSegment elseEnd(Object elseValue){
         return caseWhenBuilder.elseEnd(elseValue);
     }
     public CloneableSQLSegment elseEnd(SQLColumn<?, ?> elseSQLColumn){
-        return caseWhenBuilder.elseEndColumn(elseSQLColumn.getTable(),elseSQLColumn.value());
+        return caseWhenBuilder.elseEndColumn(elseSQLColumn.getTable(),elseSQLColumn.getValue());
     }
 }

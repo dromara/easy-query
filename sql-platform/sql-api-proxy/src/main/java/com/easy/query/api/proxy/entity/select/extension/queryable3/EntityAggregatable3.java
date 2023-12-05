@@ -37,7 +37,7 @@ public interface EntityAggregatable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     default <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLColumn<?,TMember>> columnSelectorExpression, BigDecimal def) {
         SQLColumn<?,TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
         ColumnFunction sumFunction = getRuntimeContext().getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = getClientQueryable3().selectAggregateList(memberSQLColumn.getTable(), sumFunction, memberSQLColumn.value(), null);
+        List<TMember> result = getClientQueryable3().selectAggregateList(memberSQLColumn.getTable(), sumFunction, memberSQLColumn.getValue(), null);
         TMember resultMember = EasyCollectionUtil.firstOrNull(result);
         if (resultMember == null) {
             return def;
@@ -53,7 +53,7 @@ public interface EntityAggregatable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
 
         SQLColumn<?,TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
         ColumnFunction sumFunction = getRuntimeContext().getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = getClientQueryable3().selectAggregateList(memberSQLColumn.getTable(), sumFunction, memberSQLColumn.value(), null);
+        List<TMember> result = getClientQueryable3().selectAggregateList(memberSQLColumn.getTable(), sumFunction, memberSQLColumn.getValue(), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
@@ -64,7 +64,7 @@ public interface EntityAggregatable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     default <TMember> TMember maxOrDefault(SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLColumn<?,TMember>> columnSelectorExpression, TMember def) {
         SQLColumn<?,TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
         ColumnFunction maxFunction = getRuntimeContext().getColumnFunctionFactory().createMaxFunction();
-        List<TMember> result = getClientQueryable3().selectAggregateList(memberSQLColumn.getTable(), maxFunction, memberSQLColumn.value(), null);
+        List<TMember> result = getClientQueryable3().selectAggregateList(memberSQLColumn.getTable(), maxFunction, memberSQLColumn.getValue(), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
@@ -76,7 +76,7 @@ public interface EntityAggregatable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
 
         SQLColumn<?,TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
         ColumnFunction minFunction = getRuntimeContext().getColumnFunctionFactory().createMinFunction();
-        List<TMember> result = getClientQueryable3().selectAggregateList(memberSQLColumn.getTable(), minFunction, memberSQLColumn.value(), null);
+        List<TMember> result = getClientQueryable3().selectAggregateList(memberSQLColumn.getTable(), minFunction, memberSQLColumn.getValue(), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
@@ -108,7 +108,7 @@ public interface EntityAggregatable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
 
         SQLColumn<?,TMember> memberSQLColumn = columnSelectorExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
         ColumnFunction avgFunction = getRuntimeContext().getColumnFunctionFactory().createAvgFunction(false);
-        List<TResult> result = getClientQueryable3().selectAggregateList(memberSQLColumn.getTable(), avgFunction, memberSQLColumn.value(), resultClass);
+        List<TResult> result = getClientQueryable3().selectAggregateList(memberSQLColumn.getTable(), avgFunction, memberSQLColumn.getValue(), resultClass);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 

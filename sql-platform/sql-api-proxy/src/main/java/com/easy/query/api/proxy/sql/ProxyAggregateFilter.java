@@ -91,7 +91,7 @@ public interface ProxyAggregateFilter extends SQLProxyNative<ProxyAggregateFilte
 
     default <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TProperty> ProxyAggregateFilter func(boolean condition, ColumnFunction columnFunction, SQLColumn<TProxy, TProperty> column, SQLPredicateCompare compare, TProperty val) {
         if (condition) {
-            getAggregateFilter().func0(column.getTable(), columnFunction, column.value(), compare, val);
+            getAggregateFilter().func0(column.getTable(), columnFunction, column.getValue(), compare, val);
         }
         return this;
     }

@@ -107,7 +107,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
     @Override
     default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isBank(boolean condition, SQLColumn<TProxy, String> column) {
         if(condition){
-            SQLFunction bank = fx().getSQLFunc().bank(column.value());
+            SQLFunction bank = fx().getSQLFunc().bank(column.getValue());
             getFilter().sqlNativeSegment(bank.sqlSegment(column.getTable()),c->{
                 bank.consume(new SQLNativeChainExpressionContextImpl(column.getTable(),c));
             });
@@ -118,7 +118,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
     @Override
     default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isNotBank(boolean condition, SQLColumn<TProxy, String> column) {
         if(condition){
-            SQLFunction bank = fx().getSQLFunc().notBank(column.value());
+            SQLFunction bank = fx().getSQLFunc().notBank(column.getValue());
             getFilter().sqlNativeSegment(bank.sqlSegment(column.getTable()),c->{
                 bank.consume(new SQLNativeChainExpressionContextImpl(column.getTable(),c));
             });
@@ -129,7 +129,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
     @Override
     default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isEmpty(boolean condition, SQLColumn<TProxy, String> column) {
         if(condition){
-            SQLFunction bank = fx().getSQLFunc().empty(column.value());
+            SQLFunction bank = fx().getSQLFunc().empty(column.getValue());
             getFilter().sqlNativeSegment(bank.sqlSegment(column.getTable()),c->{
                 bank.consume(new SQLNativeChainExpressionContextImpl(column.getTable(),c));
             });
@@ -140,7 +140,7 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
     @Override
     default <TProxy extends ProxyEntity<TProxy, T>, T> ProxyFilter isNotEmpty(boolean condition, SQLColumn<TProxy, String> column) {
         if(condition){
-            SQLFunction bank = fx().getSQLFunc().notEmpty(column.value());
+            SQLFunction bank = fx().getSQLFunc().notEmpty(column.getValue());
             getFilter().sqlNativeSegment(bank.sqlSegment(column.getTable()),c->{
                 bank.consume(new SQLNativeChainExpressionContextImpl(column.getTable(),c));
             });

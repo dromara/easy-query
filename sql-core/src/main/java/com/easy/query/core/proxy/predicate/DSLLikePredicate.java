@@ -18,7 +18,7 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression likeMatchLeft(boolean condition, TProperty val) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.like(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT));
+            return new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT));
         }
         return SQLPredicateExpression.empty;
     }
@@ -28,7 +28,7 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression likeMatchRight(boolean condition, TProperty val) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.like(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_LEFT));
+            return new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_LEFT));
         }
         return SQLPredicateExpression.empty;
     }
@@ -38,7 +38,7 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression like(boolean condition, TProperty val) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.like(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_ALL));
+            return new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL));
         }
         return SQLPredicateExpression.empty;
     }
@@ -48,7 +48,7 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression notLikeMatchLeft(boolean condition, TProperty val) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT));
+            return new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT));
         }
         return SQLPredicateExpression.empty;
     }
@@ -58,7 +58,7 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression notLikeMatchRight(boolean condition, TProperty val) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_LEFT));
+            return new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_LEFT));
         }
         return SQLPredicateExpression.empty;
     }
@@ -68,7 +68,7 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression notLike(boolean condition, TProperty val) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_ALL));
+            return new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL));
         }
         return SQLPredicateExpression.empty;
     }

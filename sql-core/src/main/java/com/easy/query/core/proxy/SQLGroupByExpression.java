@@ -18,7 +18,7 @@ public interface SQLGroupByExpression extends TablePropColumn {
         });
     }
     default void accept(GroupSelector s) {
-        s.column(this.getTable(), this.value());
+        s.column(this.getTable(), this.getValue());
     }
 
     SQLGroupByExpression empty = new SQLGroupSelectImpl(s -> {

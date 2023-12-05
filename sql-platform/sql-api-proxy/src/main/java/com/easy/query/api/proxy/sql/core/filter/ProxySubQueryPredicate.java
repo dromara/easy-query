@@ -19,7 +19,7 @@ public interface ProxySubQueryPredicate<TChain> extends FilterAvailable, ChainCa
 
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, TProperty>, TProperty> TChain gt(boolean condition, SQLColumn<T1Proxy,TProperty> column, ProxyQueryable<T2Proxy,TProperty> subQuery) {
         if (condition) {
-            getFilter().gt(column.getTable(),column.value(), subQuery);
+            getFilter().gt(column.getTable(),column.getValue(), subQuery);
         }
         return castChain();
     }
@@ -29,7 +29,7 @@ public interface ProxySubQueryPredicate<TChain> extends FilterAvailable, ChainCa
 
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, TProperty>, TProperty> TChain ge(boolean condition, SQLColumn<T1Proxy,TProperty> column, ProxyQueryable<T2Proxy,TProperty> subQuery) {
         if (condition) {
-            getFilter().ge(column.getTable(),column.value(), subQuery);
+            getFilter().ge(column.getTable(),column.getValue(), subQuery);
         }
         return castChain();
     }
@@ -39,7 +39,7 @@ public interface ProxySubQueryPredicate<TChain> extends FilterAvailable, ChainCa
 
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, TProperty>, TProperty> TChain eq(boolean condition, SQLColumn<T1Proxy,TProperty> column, ProxyQueryable<T2Proxy,TProperty> subQuery) {
         if (condition) {
-            getFilter().eq(column.getTable(),column.value(), subQuery);
+            getFilter().eq(column.getTable(),column.getValue(), subQuery);
         }
         return castChain();
     }
@@ -49,7 +49,7 @@ public interface ProxySubQueryPredicate<TChain> extends FilterAvailable, ChainCa
 
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, TProperty>, TProperty> TChain ne(boolean condition, SQLColumn<T1Proxy,TProperty> column, ProxyQueryable<T2Proxy,TProperty> subQuery) {
         if (condition) {
-            getFilter().ne(column.getTable(),column.value(), subQuery);
+            getFilter().ne(column.getTable(),column.getValue(), subQuery);
         }
         return castChain();
     }
@@ -59,7 +59,7 @@ public interface ProxySubQueryPredicate<TChain> extends FilterAvailable, ChainCa
 
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, TProperty>, TProperty> TChain le(boolean condition, SQLColumn<T1Proxy,TProperty> column, ProxyQueryable<T2Proxy,TProperty> subQuery) {
         if (condition) {
-            getFilter().le(column.getTable(),column.value(), subQuery);
+            getFilter().le(column.getTable(),column.getValue(), subQuery);
         }
         return castChain();
     }
@@ -70,7 +70,7 @@ public interface ProxySubQueryPredicate<TChain> extends FilterAvailable, ChainCa
 
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, TProperty>, TProperty> TChain lt(boolean condition, SQLColumn<T1Proxy,TProperty> column, ProxyQueryable<T2Proxy,TProperty> subQuery) {
         if (condition) {
-            getFilter().lt(column.getTable(),column.value(), subQuery);
+            getFilter().lt(column.getTable(),column.getValue(), subQuery);
         }
         return castChain();
     }
@@ -102,7 +102,7 @@ public interface ProxySubQueryPredicate<TChain> extends FilterAvailable, ChainCa
      */
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, TProperty>, TProperty> TChain in(boolean condition, SQLColumn<T1Proxy, TProperty> column, ProxyQueryable<T2Proxy, TProperty> subQueryable) {
         if (condition) {
-            getFilter().in(column.getTable(), column.value(), subQueryable);
+            getFilter().in(column.getTable(), column.getValue(), subQueryable);
         }
         return castChain();
     }
@@ -112,7 +112,7 @@ public interface ProxySubQueryPredicate<TChain> extends FilterAvailable, ChainCa
 
     default <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1, T2Proxy extends ProxyEntity<T2Proxy, TProperty>, TProperty> TChain notIn(boolean condition, SQLColumn<T1Proxy, TProperty> column, ProxyQueryable<T2Proxy, TProperty> subQueryable) {
         if (condition) {
-            getFilter().notIn(column.getTable(), column.value(), subQueryable);
+            getFilter().notIn(column.getTable(), column.getValue(), subQueryable);
         }
         return castChain();
     }

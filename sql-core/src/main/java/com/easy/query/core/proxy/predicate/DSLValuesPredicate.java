@@ -19,7 +19,7 @@ public interface DSLValuesPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression in(boolean condition, Collection<? extends TProperty> collection){
         if(condition){
-            return new SQLPredicateImpl(f -> f.in(this.getTable(), this.value(), collection));
+            return new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), collection));
         }
         return SQLPredicateExpression.empty;
     }
@@ -29,7 +29,7 @@ public interface DSLValuesPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression in(boolean condition, TProperty[] array){
         if(condition){
-            return new SQLPredicateImpl(f -> f.in(this.getTable(), this.value(), array));
+            return new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), array));
         }
         return SQLPredicateExpression.empty;
     }
@@ -39,7 +39,7 @@ public interface DSLValuesPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression notIn(boolean condition, Collection<? extends TProperty> collection){
         if(condition){
-            return new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.value(), collection));
+            return new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), collection));
         }
         return SQLPredicateExpression.empty;
     }
@@ -49,7 +49,7 @@ public interface DSLValuesPredicate<TProperty> extends TablePropColumn {
 
     default SQLPredicateExpression notIn(boolean condition, TProperty[] array){
         if(condition){
-            return new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.value(), array));
+            return new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), array));
         }
         return SQLPredicateExpression.empty;
     }

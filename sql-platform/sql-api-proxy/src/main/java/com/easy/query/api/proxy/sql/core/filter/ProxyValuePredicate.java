@@ -31,7 +31,7 @@ public interface ProxyValuePredicate<TChain> extends FilterAvailable, ChainCast<
      */
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain gt(boolean condition, SQLColumn<TProxy, TProperty> column, TProperty val) {
         if (condition) {
-            getFilter().gt(column.getTable(), column.value(), val);
+            getFilter().gt(column.getTable(), column.getValue(), val);
         }
         return castChain();
     }
@@ -53,7 +53,7 @@ public interface ProxyValuePredicate<TChain> extends FilterAvailable, ChainCast<
      */
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain ge(boolean condition, SQLColumn<TProxy, TProperty> column, TProperty val) {
         if (condition) {
-            getFilter().ge(column.getTable(), column.value(), val);
+            getFilter().ge(column.getTable(), column.getValue(), val);
         }
         return castChain();
     }
@@ -75,7 +75,7 @@ public interface ProxyValuePredicate<TChain> extends FilterAvailable, ChainCast<
      */
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain eq(boolean condition, SQLColumn<TProxy, TProperty> column, TProperty val) {
         if (condition) {
-            getFilter().eq(column.getTable(), column.value(), val);
+            getFilter().eq(column.getTable(), column.getValue(), val);
         }
         return castChain();
     }
@@ -97,7 +97,7 @@ public interface ProxyValuePredicate<TChain> extends FilterAvailable, ChainCast<
      */
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain ne(boolean condition, SQLColumn<TProxy, TProperty> column, TProperty val) {
         if (condition) {
-            getFilter().ne(column.getTable(), column.value(), val);
+            getFilter().ne(column.getTable(), column.getValue(), val);
         }
         return castChain();
     }
@@ -119,7 +119,7 @@ public interface ProxyValuePredicate<TChain> extends FilterAvailable, ChainCast<
      */
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain le(boolean condition, SQLColumn<TProxy, TProperty> column, TProperty val) {
         if (condition) {
-            getFilter().le(column.getTable(), column.value(), val);
+            getFilter().le(column.getTable(), column.getValue(), val);
         }
         return castChain();
     }
@@ -141,7 +141,7 @@ public interface ProxyValuePredicate<TChain> extends FilterAvailable, ChainCast<
      */
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> TChain lt(boolean condition, SQLColumn<TProxy, TProperty> column, TProperty val) {
         if (condition) {
-            getFilter().lt(column.getTable(), column.value(), val);
+            getFilter().lt(column.getTable(), column.getValue(), val);
         }
         return castChain();
     }

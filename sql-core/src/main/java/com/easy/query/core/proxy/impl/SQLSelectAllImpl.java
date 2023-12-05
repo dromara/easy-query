@@ -26,7 +26,7 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
     }
 
     @Override
-    public String value() {
+    public String getValue() {
         throw new UnsupportedOperationException();
     }
 
@@ -40,7 +40,7 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
         f.columnAll(table);
         if (EasyArrayUtil.isNotEmpty(ignoreProps)) {
             for (PropColumn ignoreProp : ignoreProps) {
-                f.columnIgnore(table, ignoreProp.value());
+                f.columnIgnore(table, ignoreProp.getValue());
             }
         }
     }
@@ -60,7 +60,7 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
         f.columnAll(table);
         if (EasyArrayUtil.isNotEmpty(ignoreProps)) {
             for (PropColumn ignoreProp : ignoreProps) {
-                f.columnIgnore(table, ignoreProp.value());
+                f.columnIgnore(table, ignoreProp.getValue());
             }
         }
     }

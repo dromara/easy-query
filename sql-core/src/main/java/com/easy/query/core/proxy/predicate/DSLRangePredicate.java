@@ -38,7 +38,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn {
     default SQLPredicateExpression rangeOpenClosed(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         if (!conditionLeft || !conditionRight) {
             return new SQLPredicateImpl(f -> {
-                f.range(this.getTable(), this.value(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN_CLOSED);
+                f.range(this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN_CLOSED);
             });
         }
         return SQLPredicateExpression.empty;
@@ -69,7 +69,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn {
     default SQLPredicateExpression rangeOpen(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         if (!conditionLeft || !conditionRight) {
             return new SQLPredicateImpl(f -> {
-                f.range(this.getTable(), this.value(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN);
+                f.range(this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN);
             });
         }
         return SQLPredicateExpression.empty;
@@ -100,7 +100,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn {
     default SQLPredicateExpression rangeClosedOpen(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         if (!conditionLeft || !conditionRight) {
             return new SQLPredicateImpl(f -> {
-                f.range(this.getTable(), this.value(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED_OPEN);
+                f.range(this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED_OPEN);
             });
         }
         return SQLPredicateExpression.empty;
@@ -131,7 +131,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn {
     default SQLPredicateExpression rangeClosed(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
         if (!conditionLeft || !conditionRight) {
             return new SQLPredicateImpl(f -> {
-                f.range(this.getTable(), this.value(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED);
+                f.range(this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED);
             });
         }
         return SQLPredicateExpression.empty;

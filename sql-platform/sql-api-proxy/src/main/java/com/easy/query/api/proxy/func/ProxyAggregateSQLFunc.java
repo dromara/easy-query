@@ -23,7 +23,7 @@ public interface ProxyAggregateSQLFunc extends SQLFuncAvailable {
      */
     default <TProxy, T> DistinctDefaultSQLFunction sum(SQLColumn<TProxy, T> sqlColumn){
         return getSQLFunc().sum(o->{
-            o.column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.value());
+            o.column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
         });
     }
     /**
@@ -53,7 +53,7 @@ public interface ProxyAggregateSQLFunc extends SQLFuncAvailable {
      */
     default <TProxy, T> DistinctDefaultSQLFunction count(SQLColumn<TProxy, T> sqlColumn){
         return getSQLFunc().count(o->{
-            o.column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.value());
+            o.column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
         });
     }
     /**
@@ -85,7 +85,7 @@ public interface ProxyAggregateSQLFunc extends SQLFuncAvailable {
      */
     default <TProxy, T> SQLFunction max(SQLColumn<TProxy, T> sqlColumn){
         return getSQLFunc().max(o->{
-            o.column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.value());
+            o.column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
         });
     }
     /**
@@ -116,7 +116,7 @@ public interface ProxyAggregateSQLFunc extends SQLFuncAvailable {
      */
     default <TProxy, T> SQLFunction min(SQLColumn<TProxy, T> sqlColumn){
         return getSQLFunc().min(o->{
-            o.column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.value());
+            o.column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
         });
     }
     /**
@@ -148,7 +148,7 @@ public interface ProxyAggregateSQLFunc extends SQLFuncAvailable {
      */
     default <TProxy, T> DistinctDefaultSQLFunction avg(SQLColumn<TProxy, T> sqlColumn){
         return getSQLFunc().avg(o->{
-            o.column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.value());
+            o.column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
         });
     }
     /**
