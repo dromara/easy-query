@@ -11,7 +11,7 @@ import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
  * @author xuejiaming
  */
 public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByExpression {
-    default SQLSelectAsExpression then(SQLSelectAsExpression sqlSelectAs) {
+    default SQLSelectAsExpression concat(SQLSelectAsExpression sqlSelectAs) {
         return new SQLSelectAsImpl(x -> {
             accept(x);
             sqlSelectAs.accept(x);

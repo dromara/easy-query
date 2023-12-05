@@ -50,7 +50,7 @@ public interface SQLSelectExpression extends TablePropColumn {
         });
     }
 
-    default SQLSelectExpression then(SQLSelectExpression select){
+    default SQLSelectExpression concat(SQLSelectExpression select){
         return new SQLSelectImpl(x -> {
             accept(x);
             select.accept(x);

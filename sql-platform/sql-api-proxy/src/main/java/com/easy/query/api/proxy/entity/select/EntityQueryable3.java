@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.entity.select.extension.queryable3.EntityAggrega
 import com.easy.query.api.proxy.entity.select.extension.queryable3.EntityFilterable3;
 import com.easy.query.api.proxy.entity.select.extension.queryable3.EntityGroupable3;
 import com.easy.query.api.proxy.entity.select.extension.queryable3.EntityHavingable3;
+import com.easy.query.api.proxy.entity.select.extension.queryable3.EntityJoinable3;
 import com.easy.query.api.proxy.entity.select.extension.queryable3.EntityOrderable3;
 import com.easy.query.api.proxy.entity.select.extension.queryable3.EntitySelectable3;
 import com.easy.query.api.proxy.entity.select.extension.queryable3.override.OverrideEntityQueryable3;
@@ -24,7 +25,7 @@ public interface EntityQueryable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         EntityAggregatable3<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3>,
         EntityGroupable3<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3>,
         EntityHavingable3<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3>,
-//        EntityJoinable3<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3>,
+        EntityJoinable3<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3>,
         EntityOrderable3<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3> {
 
 }

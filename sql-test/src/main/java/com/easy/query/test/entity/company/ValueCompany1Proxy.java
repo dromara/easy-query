@@ -100,24 +100,24 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
     }
 
 
-    public ValueCompany1Selector selector() {
-        return new ValueCompany1Selector(this);
+    public ValueCompany1ProxySelector selector() {
+        return new ValueCompany1ProxySelector(this);
     }
 
-    public static class ValueCompany1Selector extends AbstractSelector<ValueCompany1Proxy,ValueCompany, ValueCompany1Selector> {
+    public static class ValueCompany1ProxySelector extends AbstractSelector<ValueCompany1Proxy,ValueCompany, ValueCompany1ProxySelector> {
 
-        public ValueCompany1Selector(ValueCompany1Proxy proxy) {
+        public ValueCompany1ProxySelector(ValueCompany1Proxy proxy) {
             super(proxy);
         }
 
-        public ValueCompany1Selector id() {
+        public ValueCompany1ProxySelector id() {
             return add(getProxy().id());
         }
 
-        public ValueCompany1Selector name() {
+        public ValueCompany1ProxySelector name() {
             return add(getProxy().name());
         }
-        public ValueCompany1Selector address() {
+        public ValueCompany1ProxySelector address() {
             return add(getProxy().address());
         }
     }

@@ -25,7 +25,7 @@ public class Select {
         if (EasyArrayUtil.isNotEmpty(selects)) {
             SQLSelectExpression firstSQLSelectAs = selects[0];
             for (int i = 1; i < selects.length; i++) {
-                firstSQLSelectAs = firstSQLSelectAs.then(selects[i]);
+                firstSQLSelectAs = firstSQLSelectAs.concat(selects[i]);
             }
             return firstSQLSelectAs;
         }
@@ -36,7 +36,7 @@ public class Select {
         if (EasyArrayUtil.isNotEmpty(selectAss)) {
             SQLSelectAsExpression firstSQLSelectAs = selectAss[0];
             for (int i = 1; i < selectAss.length; i++) {
-                firstSQLSelectAs = firstSQLSelectAs.then(selectAss[i]);
+                firstSQLSelectAs = firstSQLSelectAs.concat(selectAss[i]);
             }
             return firstSQLSelectAs;
         }
