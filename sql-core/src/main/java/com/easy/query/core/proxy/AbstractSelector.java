@@ -80,7 +80,7 @@ public abstract class AbstractSelector<TProxy extends AbstractProxyEntity<TProxy
 
     @Override
     public String value() {
-        throw  new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

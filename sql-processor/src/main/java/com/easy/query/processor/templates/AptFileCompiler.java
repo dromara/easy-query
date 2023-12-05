@@ -12,13 +12,15 @@ import java.util.Set;
 public class AptFileCompiler {
     private final String entityClassName;
     private final String entityClassProxyName;
+    private final AptSelectorInfo selectorInfo;
     private final String packageName;
     private Set<String> imports;
 
-    public AptFileCompiler(String packageName,String entityClassName,String entityClassProxyName) {
+    public AptFileCompiler(String packageName,String entityClassName,String entityClassProxyName,AptSelectorInfo selectorInfo) {
         this.packageName = packageName;
         this.entityClassName = entityClassName;
         this.entityClassProxyName = entityClassProxyName;
+        this.selectorInfo = selectorInfo;
         this.imports = new LinkedHashSet<>();
     }
 
@@ -42,4 +44,7 @@ public class AptFileCompiler {
         imports.add("import " + fullClassPackageName + ";");
     }
 
+    public AptSelectorInfo getSelectorInfo() {
+        return selectorInfo;
+    }
 }

@@ -9,6 +9,7 @@ package com.easy.query.processor.templates;
 public class AptCreatorHelper {
      public static String createProxy(AptFileCompiler aptFileCompiler,AptValueObjectInfo aptValueObjectInfo){
 
+         String selectorContent = renderSelectorUI(aptFileCompiler);
          String propertyContent = renderPropertyUI(aptFileCompiler, aptValueObjectInfo);
          String valueObjectContent = renderValueObjectUI(aptFileCompiler, aptValueObjectInfo);
          String proxyTemplate = AptConstant.PROXY_TEMPLATE
@@ -17,7 +18,8 @@ public class AptCreatorHelper {
                  .replace("@{entityClass}", aptFileCompiler.getEntityClassName())
                  .replace("@{entityClassProxy}", aptFileCompiler.getEntityClassProxyName())
                  .replace("@{fieldContent}", propertyContent)
-                 .replace("@{valueObjectContext}", valueObjectContent);
+                 .replace("@{valueObjectContext}", valueObjectContent)
+                 .replace("@{selectorContext}", selectorContent);
          return proxyTemplate;
      }
      private static String renderPropertyUI(AptFileCompiler aptFileCompiler,AptValueObjectInfo aptValueObjectInfo){
@@ -39,6 +41,29 @@ public class AptCreatorHelper {
                          .replace("@{property}", property.getPropertyName());
                  filedContent.append(fieldString);
              }
+         }
+         return filedContent.toString();
+     }
+     private static String renderSelectorUI(AptFileCompiler aptFileCompiler){
+         String fieldSelectorContent = renderSelectorPropertyUI(aptFileCompiler);
+         AptSelectorInfo selectorInfo = aptFileCompiler.getSelectorInfo();
+         return AptConstant.PROXY_SELECTOR_TEMPLATE
+                 .replace("@{entityClass}",aptFileCompiler.getEntityClassName())
+                 .replace("@{selectorName}",selectorInfo.getName())
+                 .replace("@{entityClassProxy}",aptFileCompiler.getEntityClassProxyName())
+                 .replace("@{fieldSelectorContent}",fieldSelectorContent);
+     }
+     private static String renderSelectorPropertyUI(AptFileCompiler aptFileCompiler){
+         AptSelectorInfo selectorInfo = aptFileCompiler.getSelectorInfo();
+         StringBuilder filedContent = new StringBuilder();
+         for (AptSelectPropertyInfo property : selectorInfo.getProperties()) {
+
+                 String fieldString = AptConstant.FIELD_SELECTOR_PROPERTY_TEMPLATE
+                         .replace("@{selectorName}", selectorInfo.getName())
+                         .replace("@{comment}", property.getComment())
+                         .replace("@{property}", property.getPropertyName());
+                 filedContent.append(fieldString);
+
          }
          return filedContent.toString();
      }

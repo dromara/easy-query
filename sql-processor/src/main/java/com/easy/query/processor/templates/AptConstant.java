@@ -38,6 +38,8 @@ public class AptConstant {
             "    }\n" +
             "\n" +
             "    @{valueObjectContext}\n" +
+            "\n" +
+            "    @{selectorContext}\n" +
             "}";
 
 
@@ -65,5 +67,25 @@ public class AptConstant {
             "        @{fieldContent}" +
             "\n" +
             "        @{valueObjectContext}" +
+            "    }";
+
+
+    public static final String PROXY_SELECTOR_TEMPLATE =
+            "    public @{selectorName} selector() {\n" +
+            "        return new @{selectorName}(this);\n" +
+            "    }\n" +
+            "\n" +
+            "    public static class @{selectorName} extends AbstractSelector<@{entityClassProxy},@{entityClass}, @{selectorName}> {\n" +
+            "\n" +
+            "        public @{selectorName}(@{entityClassProxy} proxy) {\n" +
+            "            super(proxy);\n" +
+            "        }\n" +
+            "\n" +
+            "        @{fieldSelectorContent}" +
+            "    }";
+    public static final String FIELD_SELECTOR_PROPERTY_TEMPLATE = "\n" +
+            "    @{comment}\n" +
+            "    public @{selectorName} @{property}() {\n" +
+            "            return add(getProxy().@{property}());\n" +
             "    }";
 }

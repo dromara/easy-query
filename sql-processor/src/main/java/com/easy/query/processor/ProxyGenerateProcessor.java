@@ -9,6 +9,8 @@ import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.processor.templates.AptCreatorHelper;
 import com.easy.query.processor.templates.AptFileCompiler;
 import com.easy.query.processor.templates.AptPropertyInfo;
+import com.easy.query.processor.templates.AptSelectPropertyInfo;
+import com.easy.query.processor.templates.AptSelectorInfo;
 import com.easy.query.processor.templates.AptValueObjectInfo;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -134,7 +136,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
 
                 TypeElement classElement = (TypeElement) entityClassElement;
-                AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage,entityClassName,proxyInstanceName);
+                AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage,entityClassName,proxyInstanceName,new AptSelectorInfo(proxyInstanceName+"Selector"));
+                aptFileCompiler.addImports("com.easy.query.core.proxy.AbstractSelector");
                 AptValueObjectInfo aptValueObjectInfo = new AptValueObjectInfo(entityClassName);
                 aptFileCompiler.addImports(entityFullName);
                 do {
@@ -388,6 +391,9 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : aptFileCompiler.getEntityClassName();
                 String fieldComment = getFiledComment(docComment,fieldName,propertyName);
                 aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, fieldGenericType, fieldComment, fieldName, isValueObject));
+                aptFileCompiler.getSelectorInfo().getProperties().add(new AptSelectPropertyInfo(propertyName,fieldComment));
+
+
 
                 if (valueObject != null) {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.AbstractValueObjectProxyEntity");
