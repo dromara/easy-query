@@ -73,7 +73,6 @@ public class AptConstant {
 
     public static final String PROXY_SELECTOR_TEMPLATE =
             "\n" +
-            "\n" +
             "/**\n" +
             "* 数据库列的简单获取\n" +
             "* @return\n" +
