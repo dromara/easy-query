@@ -40,6 +40,7 @@ public class AptConstant {
             "    @{valueObjectContext}\n" +
             "\n" +
             "    @{selectorContext}\n" +
+            "\n" +
             "}";
 
 
@@ -82,6 +83,7 @@ public class AptConstant {
             "        }\n" +
             "\n" +
             "        @{fieldSelectorContent}" +
+                    "\n" +
             "    }";
     public static final String FIELD_SELECTOR_PROPERTY_TEMPLATE = "\n" +
             "    @{comment}\n" +

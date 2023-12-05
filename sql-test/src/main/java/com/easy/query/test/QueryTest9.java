@@ -560,8 +560,16 @@ public class QueryTest9 extends BaseTest {
                         b.createTime().ge(LocalDateTime.of(2021, 1, 1, 1, 1))
                 ))
                 .orderBy((a, b) -> a.title().asc())
-                .select(o->o.allFieldsExclude(o.id()))
+                .select(o->o.selector().id().createTime().stars().title())
                 .firstOrNull();
+        List<Topic> list1 = entityQuery.queryable(Topic.class)
+                .where(o -> o.title().eq("title" ).and(o.id().eq("1" )))
+                .groupBy(o -> o.selector().title())
+                .select(Topic.class,(o,tr) -> Select.of(
+                        o.title()
+                        , o.id().count().as(tr.stars())
+                ))
+                .toList();
 
     }
 

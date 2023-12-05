@@ -5,6 +5,7 @@ import com.easy.query.api4j.update.impl.EasyEntityUpdatable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryColumnValueUpdateAtomicTrackException;
@@ -1047,6 +1048,62 @@ public class UpdateTest extends BaseTest {
             Assert.assertEquals(1,jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
             Assert.assertEquals("12(Integer),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
+        }
+    }
+
+    @Test
+    public void updateTestBatch(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        ArrayList<Topic> topics = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+
+            Topic topic = new Topic();
+            topic.setId("1234567890x"+i);
+            topic.setStars(1);
+            topic.setTitle("1234567890x");
+            topic.setCreateTime(null);
+            topics.add(topic);
+        }
+        long l = easyQuery.updatable(topics)
+                .batch()
+                .ignoreVersion()
+                .executeRows();
+        System.out.println(l);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        int i=0;
+        for (List<SQLParameter> sqlParameter : jdbcExecuteAfterArg.getBeforeArg().getSqlParameters()) {
+            Assert.assertEquals("1(Integer),1234567890x(String),null(null),1234567890x"+i+"(String)",EasySQLUtil.sqlParameterToString(sqlParameter));
+            i++;
+        }
+    }
+    @Test
+    public void updateTestBatch1(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        ArrayList<Topic> topics = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+
+            Topic topic = new Topic();
+            topic.setId("1234567890x"+i);
+            topic.setStars(1);
+            topic.setTitle("1234567890x");
+            topic.setCreateTime(null);
+            topics.add(topic);
+        }
+        long l = easyQuery.updatable(topics)
+                .setColumns(o->o.column(Topic::getStars))
+                .batch()
+                .ignoreVersion()
+                .executeRows();
+        System.out.println(l);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        int i=0;
+        for (List<SQLParameter> sqlParameter : jdbcExecuteAfterArg.getBeforeArg().getSqlParameters()) {
+            Assert.assertEquals("1(Integer),1234567890x"+i+"(String)",EasySQLUtil.sqlParameterToString(sqlParameter));
+            i++;
         }
     }
 }

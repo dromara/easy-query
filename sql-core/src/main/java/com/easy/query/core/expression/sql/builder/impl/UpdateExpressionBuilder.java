@@ -29,7 +29,6 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsPropertyPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnNullAssertPredicate;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.impl.ColumnVersionPropertySegmentImpl;
 import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
 import com.easy.query.core.expression.segment.impl.UpdateColumnSegmentImpl;
@@ -432,8 +431,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPredicate);
                 where.addPredicateSegment(andPredicateSegment);
             } else {
-                ColumnValuePredicate columnValuePredicate = new ColumnValuePredicate(tableExpressionBuilder.getEntityTable(), propertyName, predicateValue, SQLPredicateCompareEnum.EQ, runtimeContext);
-                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnValuePredicate);
+                ColumnEqualsPropertyPredicate columnPropertyPredicate = new ColumnEqualsPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, runtimeContext);
+                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPropertyPredicate);
                 where.addPredicateSegment(andPredicateSegment);
             }
         } else {
