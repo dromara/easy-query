@@ -38,11 +38,13 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return EasyObjectUtil.typeCastNullable(this);
     }
 
-    public SQLSelectAs allColumns(){
-        return new SQLSelectAllImpl(table,new TablePropColumn[0]);
+    public SQLSelectAsExpression allFields(){
+        return new SQLSelectAllImpl(getTable(),new TablePropColumn[0]);
     }
-    public SQLSelectAs allColumnsExclude(TablePropColumn... ignorePropColumns){
-        return new SQLSelectAllImpl(table,ignorePropColumns);
+    @SafeVarargs
+    @SuppressWarnings("varargs")
+    public final SQLSelectAsExpression allFieldsExclude(SQLColumn<TProxy,?>... ignorePropColumns){
+        return new SQLSelectAllImpl(getTable(),ignorePropColumns);
     }
 
 }

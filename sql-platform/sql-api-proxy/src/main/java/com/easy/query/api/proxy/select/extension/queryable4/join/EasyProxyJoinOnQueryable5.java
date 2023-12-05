@@ -5,7 +5,7 @@ import com.easy.query.api.proxy.select.impl.EasyProxyQueryable5;
 import com.easy.query.core.basic.api.select.ClientQueryable5;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLPredicate;
+import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.sql.Predicate;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -40,12 +40,12 @@ public class EasyProxyJoinOnQueryable5<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     }
 
     @Override
-    public ProxyQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> on(SQLPredicate... onSQLPredicates) {
+    public ProxyQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> on(SQLPredicateExpression... onSQLPredicates) {
         ClientQueryable5<T1, T2, T3, T4, T5> joinedQueryable = EasySQLExpressionUtil.executeJoinOn(clientQueryable, (t, t1, t2, t3, t4) -> {
             if (EasyArrayUtil.isEmpty(onSQLPredicates)) {
                 throw new EasyQueryInvalidOperationException("left join on sql predicates is empty");
             }
-            SQLPredicate sqlPredicate = Predicate.and(onSQLPredicates);
+            SQLPredicateExpression sqlPredicate = Predicate.and(onSQLPredicates);
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyProxyQueryable5<>(t1Proxy, t2Proxy, t3Proxy, t4Proxy, t5Proxy, joinedQueryable);

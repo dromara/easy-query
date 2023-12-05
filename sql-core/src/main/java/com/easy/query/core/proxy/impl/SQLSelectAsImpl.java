@@ -1,8 +1,9 @@
 package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.expression.builder.AsSelector;
+import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.SQLSelectAs;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 
 import java.util.function.Consumer;
@@ -13,11 +14,12 @@ import java.util.function.Consumer;
  *
  * @author xuejiaming
  */
-public class SQLSelectAsImpl implements SQLSelectAs {
+public class SQLSelectAsImpl extends SQLSelectImpl implements SQLSelectAsExpression {
 
     private final Consumer<AsSelector> asSelectConsumer;
 
-    public SQLSelectAsImpl(Consumer<AsSelector> asSelectConsumer){
+    public SQLSelectAsImpl(Consumer<Selector> selectorConsumer,Consumer<AsSelector> asSelectConsumer){
+        super(selectorConsumer);
         this.asSelectConsumer = asSelectConsumer;
     }
 
@@ -32,8 +34,10 @@ public class SQLSelectAsImpl implements SQLSelectAs {
     }
 
     @Override
-    public SQLSelectAs as(TablePropColumn propColumn) {
-        return new SQLSelectAsImpl(s -> {
+    public SQLSelectAsExpression as(TablePropColumn propColumn) {
+        return new SQLSelectAsImpl(s->{
+            throw new UnsupportedOperationException();
+        },s -> {
             s.columnAs(this.getTable(), this.value(), propColumn.value());
         });
     }

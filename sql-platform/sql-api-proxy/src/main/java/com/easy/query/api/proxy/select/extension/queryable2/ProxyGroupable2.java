@@ -5,7 +5,7 @@ import com.easy.query.api.proxy.select.extension.queryable2.sql.MultiProxyGroupS
 import com.easy.query.api.proxy.select.extension.queryable2.sql.impl.MultiProxyGroupSelector2Impl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLGroupSelect;
+import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.util.EasyArrayUtil;
 
 /**
@@ -17,13 +17,13 @@ import com.easy.query.core.util.EasyArrayUtil;
 public interface ProxyGroupable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> extends ClientProxyQueryable2Available<T1,T2>, ProxyQueryable2Available<T1Proxy,T1,T2Proxy,T2> {
 
-    default ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> groupBy(SQLGroupSelect... propColumns) {
+    default ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> groupBy(SQLGroupByExpression... propColumns) {
         return groupBy(true, propColumns);
     }
-    default ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> groupBy(boolean condition, SQLGroupSelect... propColumns) {
+    default ProxyQueryable2<T1Proxy,T1,T2Proxy,T2> groupBy(boolean condition, SQLGroupByExpression... propColumns) {
         if(condition){
             if(EasyArrayUtil.isNotEmpty(propColumns)){
-                for (SQLGroupSelect propColumn : propColumns) {
+                for (SQLGroupByExpression propColumn : propColumns) {
                     getClientQueryable2().groupBy(groupBySelector -> {
                         propColumn.accept(groupBySelector.getGroupSelector());
                     });

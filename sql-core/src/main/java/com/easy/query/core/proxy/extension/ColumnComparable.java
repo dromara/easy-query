@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.extension;
 
-import com.easy.query.core.proxy.SQLSelectAs;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.predicate.DSLAssertPredicate;
 import com.easy.query.core.proxy.predicate.DSLLikePredicate;
 import com.easy.query.core.proxy.predicate.DSLOtherPredicate;
@@ -15,7 +15,7 @@ import com.easy.query.core.proxy.predicate.DSLValuesPredicate;
  *
  * @author xuejiaming
  */
-public interface ColumnComparable<T> extends SQLSelectAs
+public interface ColumnComparable<T> extends SQLSelectAsExpression
         , DSLValuePredicate<T>
         , DSLAssertPredicate<T>
         , DSLLikePredicate<T>

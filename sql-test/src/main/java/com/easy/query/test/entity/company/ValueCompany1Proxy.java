@@ -2,6 +2,7 @@ package com.easy.query.test.entity.company;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.AbstractSelector;
 import com.easy.query.core.proxy.AbstractValueObjectProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
@@ -95,6 +96,29 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
             public SQLColumn<ValueCompany1Proxy, String> licenseImage() {
                 return get("licenseImage");
             }
+        }
+    }
+
+
+    public ValueCompany1Selector selector() {
+        return new ValueCompany1Selector(this);
+    }
+
+    public static class ValueCompany1Selector extends AbstractSelector<ValueCompany1Proxy,ValueCompany, ValueCompany1Selector> {
+
+        public ValueCompany1Selector(ValueCompany1Proxy proxy) {
+            super(proxy);
+        }
+
+        public ValueCompany1Selector id() {
+            return add(getProxy().id());
+        }
+
+        public ValueCompany1Selector name() {
+            return add(getProxy().name());
+        }
+        public ValueCompany1Selector address() {
+            return add(getProxy().address());
         }
     }
 }

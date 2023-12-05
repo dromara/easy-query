@@ -12,10 +12,10 @@ import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLAggregatePredicate;
-import com.easy.query.core.proxy.SQLGroupSelect;
-import com.easy.query.core.proxy.SQLOrderSelect;
-import com.easy.query.core.proxy.SQLPredicate;
+import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
+import com.easy.query.core.proxy.SQLGroupByExpression;
+import com.easy.query.core.proxy.SQLOrderByExpression;
+import com.easy.query.core.proxy.SQLPredicateExpression;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -36,7 +36,7 @@ public abstract class AbstractOverrideEntityQueryable2<T1Proxy extends ProxyEnti
     }
 
     @Override
-    public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLOrderSelect> selectExpression) {
+    public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression) {
         super.orderBy(condition, selectExpression);
         return getQueryable2();
     }
@@ -66,19 +66,19 @@ public abstract class AbstractOverrideEntityQueryable2<T1Proxy extends ProxyEnti
     }
 
     @Override
-    public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLFuncExpression1<T1Proxy, SQLPredicate> whereExpression) {
+    public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLFuncExpression1<T1Proxy, SQLPredicateExpression> whereExpression) {
         super.where(condition, whereExpression);
         return getQueryable2();
     }
 
     @Override
-    public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupSelect> selectExpression) {
+    public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
         super.groupBy(condition, selectExpression);
         return getQueryable2();
     }
 
     @Override
-    public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLFuncExpression1<T1Proxy, SQLAggregatePredicate> predicateExpression) {
+    public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLFuncExpression1<T1Proxy, SQLAggregatePredicateExpression> predicateExpression) {
         super.having(condition, predicateExpression);
         return getQueryable2();
     }

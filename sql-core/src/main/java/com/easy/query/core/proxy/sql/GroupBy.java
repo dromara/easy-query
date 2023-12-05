@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.sql;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.proxy.SQLGroupSelect;
+import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.proxy.impl.SQLGroupSelectImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
@@ -13,25 +13,25 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
  * @author xuejiaming
  */
 public class GroupBy {
-    public static SQLGroupSelect sql(String sqlSegment) {
+    public static SQLGroupByExpression sql(String sqlSegment) {
         return sql(true, sqlSegment, f -> {
         });
     }
 
 
-    public static SQLGroupSelect sql(boolean condition, String sqlSegment) {
+    public static SQLGroupByExpression sql(boolean condition, String sqlSegment) {
         if (condition) {
             return sql(true, sqlSegment, f -> {
             });
         }
-        return SQLGroupSelect.empty;
+        return SQLGroupByExpression.empty;
     }
 
-    public static SQLGroupSelect sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    public static SQLGroupByExpression sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         return sql(true,sqlSegment,contextConsume);
     }
 
-    public static SQLGroupSelect sql(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    public static SQLGroupByExpression sql(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         if (condition) {
             return new SQLGroupSelectImpl(f -> {
                 f.sqlNativeSegment(sqlSegment, c -> {
@@ -39,6 +39,6 @@ public class GroupBy {
                 });
             });
         }
-        return SQLGroupSelect.empty;
+        return SQLGroupByExpression.empty;
     }
 }

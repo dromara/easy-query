@@ -1,9 +1,11 @@
 package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.expression.builder.AsSelector;
+import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.SQLSelectAs;
+import com.easy.query.core.proxy.PropColumn;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.util.EasyArrayUtil;
 
@@ -13,11 +15,11 @@ import com.easy.query.core.util.EasyArrayUtil;
  *
  * @author xuejiaming
  */
-public class SQLSelectAllImpl implements SQLSelectAs {
+public class SQLSelectAllImpl implements SQLSelectAsExpression {
     private final TableAvailable table;
-    private final TablePropColumn[] ignoreProps;
+    private final PropColumn[] ignoreProps;
 
-    public SQLSelectAllImpl(TableAvailable table, TablePropColumn[] ignoreProps) {
+    public SQLSelectAllImpl(TableAvailable table, PropColumn[] ignoreProps) {
 
         this.table = table;
         this.ignoreProps = ignoreProps;
@@ -29,7 +31,7 @@ public class SQLSelectAllImpl implements SQLSelectAs {
     }
 
     @Override
-    public SQLSelectAs as(TablePropColumn propColumn) {
+    public SQLSelectAsExpression as(TablePropColumn propColumn) {
         throw new UnsupportedOperationException();
     }
 
@@ -37,10 +39,15 @@ public class SQLSelectAllImpl implements SQLSelectAs {
     public void accept(Selector f) {
         f.columnAll(table);
         if (EasyArrayUtil.isNotEmpty(ignoreProps)) {
-            for (TablePropColumn ignoreProp : ignoreProps) {
-                f.columnIgnore(ignoreProp.getTable(), ignoreProp.value());
+            for (PropColumn ignoreProp : ignoreProps) {
+                f.columnIgnore(table, ignoreProp.value());
             }
         }
+    }
+
+    @Override
+    public void accept(GroupSelector s) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -52,8 +59,8 @@ public class SQLSelectAllImpl implements SQLSelectAs {
     public void accept(AsSelector f) {
         f.columnAll(table);
         if (EasyArrayUtil.isNotEmpty(ignoreProps)) {
-            for (TablePropColumn ignoreProp : ignoreProps) {
-                f.columnIgnore(ignoreProp.getTable(), ignoreProp.value());
+            for (PropColumn ignoreProp : ignoreProps) {
+                f.columnIgnore(table, ignoreProp.value());
             }
         }
     }

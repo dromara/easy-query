@@ -6,8 +6,8 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.core.proxy.SQLSelect;
-import com.easy.query.core.proxy.SQLSelectAs;
+import com.easy.query.core.proxy.SQLSelectExpression;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +29,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @param selectExpression
      * @return
      */
-    EntityQueryable<T1Proxy, T1> select(SQLFuncExpression1<T1Proxy, SQLSelect> selectExpression);
+    EntityQueryable<T1Proxy, T1> select(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression);
 
     /**
      * 将当前T1对象转成TR对象，select会将T1属性所对应的列名映射到TR对象的列名上(忽略大小写)
@@ -54,7 +54,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @param <TRProxy>
      * @param <TR>
      */
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR,TRProxy>> EntityQueryable<TRProxy, TR> select(Class<TR> resultEntityClass, SQLFuncExpression2<T1Proxy,TRProxy, SQLSelectAs> selectExpression);
+    <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR,TRProxy>> EntityQueryable<TRProxy, TR> select(Class<TR> resultEntityClass, SQLFuncExpression2<T1Proxy,TRProxy, SQLSelectAsExpression> selectExpression);
 
     default EntityQueryable<T1Proxy, T1> select(ColumnSegment columnSegment, boolean clearAll) {
         return select(Collections.singletonList(columnSegment), clearAll);

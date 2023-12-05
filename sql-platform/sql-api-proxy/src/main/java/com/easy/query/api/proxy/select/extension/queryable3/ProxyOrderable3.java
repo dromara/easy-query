@@ -7,7 +7,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLOrderSelect;
+import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.util.EasyArrayUtil;
 
 /**
@@ -20,13 +20,13 @@ public interface ProxyOrderable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T2Proxy extends ProxyEntity<T2Proxy, T2>, T2,
         T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> extends ClientProxyQueryable3Available<T1, T2, T3>, ProxyQueryable3Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> {
 
-    default ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> orderBy(SQLOrderSelect... propColumns) {
+    default ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> orderBy(SQLOrderByExpression... propColumns) {
         return orderBy(true, propColumns);
     }
-    default ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> orderBy(boolean condition, SQLOrderSelect... propColumns){
+    default ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> orderBy(boolean condition, SQLOrderByExpression... propColumns){
         if (condition) {
             if(EasyArrayUtil.isNotEmpty(propColumns)){
-                for (SQLOrderSelect propColumn : propColumns) {
+                for (SQLOrderByExpression propColumn : propColumns) {
                     getClientQueryable3().orderBy(columnSelector -> {
                         propColumn.accept(columnSelector.getOrderSelector());
                     }, true);

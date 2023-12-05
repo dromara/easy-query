@@ -8,4 +8,5 @@ package com.easy.query.core.proxy;
  */
 public interface ProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity>
         extends TableProxy<TProxy, TEntity> {
+
 }

@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.expression.builder.OrderSelector;
-import com.easy.query.core.proxy.SQLOrderSelect;
+import com.easy.query.core.proxy.SQLOrderByExpression;
 
 import java.util.function.Consumer;
 
@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  *
  * @author xuejiaming
  */
-public class SQLOrderSelectImpl implements SQLOrderSelect {
+public class SQLOrderSelectImpl implements SQLOrderByExpression {
     private final Consumer<OrderSelector> orderConsumer;
 
     public SQLOrderSelectImpl(Consumer<OrderSelector> orderConsumer) {

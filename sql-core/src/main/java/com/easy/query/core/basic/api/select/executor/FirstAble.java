@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.executor;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
@@ -26,7 +27,7 @@ public interface FirstAble<T> extends QueryAvailable<T> {
      *
      * @param msg
      * @return
-     * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(String, String)} 自定义
+     * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(Query, String, String)} 自定义
      */
     default T firstNotNull(String msg) {
         return firstNotNull(msg, null);
@@ -39,7 +40,7 @@ public interface FirstAble<T> extends QueryAvailable<T> {
      * @param msg
      * @param code
      * @return
-     * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(String, String)} 自定义
+     * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(Query, String, String)} 自定义
      */
     T firstNotNull(String msg, String code);
     T firstNotNull(Supplier<RuntimeException> throwFunc);

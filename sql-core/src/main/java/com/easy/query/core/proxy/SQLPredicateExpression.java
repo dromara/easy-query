@@ -9,12 +9,12 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
  *
  * @author xuejiaming
  */
-public interface SQLPredicate {
-    SQLPredicate and(SQLPredicate predicate);
-    SQLPredicate or(SQLPredicate predicate);
+public interface SQLPredicateExpression {
+    SQLPredicateExpression and(SQLPredicateExpression predicate);
+    SQLPredicateExpression or(SQLPredicateExpression predicate);
     void accept(Filter f);
 
-    SQLPredicate empty=new SQLPredicateImpl(f->{});
+    SQLPredicateExpression empty=new SQLPredicateImpl(f->{});
 
 //    static SQLPredicate and() {
 //

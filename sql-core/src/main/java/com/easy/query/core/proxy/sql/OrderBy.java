@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.sql;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.proxy.SQLOrderSelect;
+import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
@@ -13,25 +13,25 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
  * @author xuejiaming
  */
 public class OrderBy {
-    public static SQLOrderSelect sql(String sqlSegment) {
+    public static SQLOrderByExpression sql(String sqlSegment) {
         return sql(true, sqlSegment, f -> {
         });
     }
 
 
-    public static SQLOrderSelect sql(boolean condition, String sqlSegment) {
+    public static SQLOrderByExpression sql(boolean condition, String sqlSegment) {
         if (condition) {
             return sql(true, sqlSegment, f -> {
             });
         }
-        return SQLOrderSelect.empty;
+        return SQLOrderByExpression.empty;
     }
 
-    public static SQLOrderSelect sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    public static SQLOrderByExpression sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         return sql(true,sqlSegment,contextConsume);
     }
 
-    public static SQLOrderSelect sql(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    public static SQLOrderByExpression sql(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         if (condition) {
             return new SQLOrderSelectImpl(f -> {
                 f.sqlNativeSegment(sqlSegment, c -> {
@@ -39,6 +39,6 @@ public class OrderBy {
                 });
             });
         }
-        return SQLOrderSelect.empty;
+        return SQLOrderByExpression.empty;
     }
 }

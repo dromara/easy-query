@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.predicate;
 
-import com.easy.query.core.proxy.SQLPredicate;
+import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
@@ -11,24 +11,24 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
  * @author xuejiaming
  */
 public interface DSLAssertPredicate<TProperty> extends TablePropColumn {
-    default SQLPredicate isNull() {
+    default SQLPredicateExpression isNull() {
         return isNull(true);
     }
 
-    default SQLPredicate isNull(boolean condition){
+    default SQLPredicateExpression isNull(boolean condition){
         if(condition){
             return new SQLPredicateImpl(f -> f.isNull(this.getTable(), this.value()));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
-    default SQLPredicate isNotNull() {
+    default SQLPredicateExpression isNotNull() {
         return isNotNull(true);
     }
 
-    default SQLPredicate isNotNull(boolean condition){
+    default SQLPredicateExpression isNotNull(boolean condition){
         if(condition){
             return new SQLPredicateImpl(f -> f.isNotNull(this.getTable(), this.value()));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
 }

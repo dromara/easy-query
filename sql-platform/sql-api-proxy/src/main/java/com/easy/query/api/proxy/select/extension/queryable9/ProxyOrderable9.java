@@ -7,7 +7,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLOrderSelect;
+import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.util.EasyArrayUtil;
 
 /**
@@ -26,13 +26,13 @@ public interface ProxyOrderable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T8Proxy extends ProxyEntity<T8Proxy, T8>, T8,
         T9Proxy extends ProxyEntity<T9Proxy, T9>, T9> extends ClientProxyQueryable9Available<T1, T2, T3, T4, T5, T6, T7, T8, T9>, ProxyQueryable9Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> {
 
-    default ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> orderBy(SQLOrderSelect... propColumns) {
+    default ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> orderBy(SQLOrderByExpression... propColumns) {
         return orderBy(true, propColumns);
     }
-    default ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> orderBy(boolean condition, SQLOrderSelect... propColumns){
+    default ProxyQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> orderBy(boolean condition, SQLOrderByExpression... propColumns){
         if (condition) {
             if(EasyArrayUtil.isNotEmpty(propColumns)){
-                for (SQLOrderSelect propColumn : propColumns) {
+                for (SQLOrderByExpression propColumn : propColumns) {
                     getClientQueryable9().orderBy(columnSelector -> {
                         propColumn.accept(columnSelector.getOrderSelector());
                     }, true);

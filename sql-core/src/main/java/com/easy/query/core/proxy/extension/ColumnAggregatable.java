@@ -3,7 +3,7 @@ package com.easy.query.core.proxy.extension;
 import com.easy.query.core.func.ACSSelector;
 import com.easy.query.core.func.DistinctDefaultSettingImpl;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
-import com.easy.query.core.proxy.SQLSelectAs;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableImpl;
 
 import java.util.function.Consumer;
@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  *
  * @author xuejiaming
  */
-public interface ColumnAggregatable<TProperty> extends SQLSelectAs {
+public interface ColumnAggregatable<TProperty> extends SQLSelectAsExpression {
     default <T extends Number> ColumnFuncComparable<T> count(){
         return new SQLColumnFunctionComparableImpl<T>(this.getTable(),this.value(),fx->{
             return fx.count(this.value());

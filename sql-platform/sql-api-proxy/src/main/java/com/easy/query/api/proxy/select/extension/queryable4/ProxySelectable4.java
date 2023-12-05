@@ -10,8 +10,8 @@ import com.easy.query.api.proxy.select.impl.EasyProxyQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLSelect;
-import com.easy.query.core.proxy.SQLSelectAs;
+import com.easy.query.core.proxy.SQLSelectExpression;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.util.EasyArrayUtil;
 
 /**
@@ -32,11 +32,11 @@ public interface ProxySelectable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param sqlSelects
      * @return
      */
-    default ProxyQueryable<T1Proxy, T1> select(SQLSelect... sqlSelects){
+    default ProxyQueryable<T1Proxy, T1> select(SQLSelectExpression... sqlSelects){
 
         ClientQueryable<T1> select = getClientQueryable4().select(columnSelector -> {
             if(EasyArrayUtil.isNotEmpty(sqlSelects)){
-                for (SQLSelect sqlSelect : sqlSelects) {
+                for (SQLSelectExpression sqlSelect : sqlSelects) {
                     sqlSelect.accept(columnSelector.getSelector());
                 }
             }
@@ -44,11 +44,11 @@ public interface ProxySelectable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return new EasyProxyQueryable<>(get1Proxy(), select);
     }
 
-    default  <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLSelectAs... sqlSelectAs){
+    default  <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLSelectAsExpression... sqlSelectAs){
 
         ClientQueryable<TR> select = getClientQueryable4().select(trProxy.getEntityClass(), columnAsSelector -> {
             if(EasyArrayUtil.isNotEmpty(sqlSelectAs)){
-                for (SQLSelectAs sqlAsSelect : sqlSelectAs) {
+                for (SQLSelectAsExpression sqlAsSelect : sqlSelectAs) {
                     sqlAsSelect.accept(columnAsSelector.getAsSelector());
                 }
             }

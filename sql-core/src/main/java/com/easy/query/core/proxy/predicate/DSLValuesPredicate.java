@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.predicate;
 
-import com.easy.query.core.proxy.SQLPredicate;
+import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
@@ -13,44 +13,44 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface DSLValuesPredicate<TProperty> extends TablePropColumn {
-    default SQLPredicate in(Collection<? extends TProperty> collection) {
+    default SQLPredicateExpression in(Collection<? extends TProperty> collection) {
         return in(true, collection);
     }
 
-    default SQLPredicate in(boolean condition, Collection<? extends TProperty> collection){
+    default SQLPredicateExpression in(boolean condition, Collection<? extends TProperty> collection){
         if(condition){
             return new SQLPredicateImpl(f -> f.in(this.getTable(), this.value(), collection));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
-    default SQLPredicate in(TProperty[] array) {
+    default SQLPredicateExpression in(TProperty[] array) {
         return in(true, array);
     }
 
-    default SQLPredicate in(boolean condition, TProperty[] array){
+    default SQLPredicateExpression in(boolean condition, TProperty[] array){
         if(condition){
             return new SQLPredicateImpl(f -> f.in(this.getTable(), this.value(), array));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
-    default SQLPredicate notIn(Collection<? extends TProperty> collection) {
+    default SQLPredicateExpression notIn(Collection<? extends TProperty> collection) {
         return notIn(true, collection);
     }
 
-    default SQLPredicate notIn(boolean condition, Collection<? extends TProperty> collection){
+    default SQLPredicateExpression notIn(boolean condition, Collection<? extends TProperty> collection){
         if(condition){
             return new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.value(), collection));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
-    default SQLPredicate notIn(TProperty[] array) {
+    default SQLPredicateExpression notIn(TProperty[] array) {
         return notIn(true, array);
     }
 
-    default SQLPredicate notIn(boolean condition, TProperty[] array){
+    default SQLPredicateExpression notIn(boolean condition, TProperty[] array){
         if(condition){
             return new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.value(), array));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
 }

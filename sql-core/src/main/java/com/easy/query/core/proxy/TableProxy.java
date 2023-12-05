@@ -30,24 +30,24 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
 //        return null;
 //    }
 
-    default SQLPredicate exists(Supplier<Query<?>> subQueryFunc) {
+    default SQLPredicateExpression exists(Supplier<Query<?>> subQueryFunc) {
         return exists(true, subQueryFunc);
     }
 
-    default SQLPredicate exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
+    default SQLPredicateExpression exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.exists(subQueryFunc.get()));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
-    default SQLPredicate notExists(Supplier<Query<?>> subQueryFunc) {
+    default SQLPredicateExpression notExists(Supplier<Query<?>> subQueryFunc) {
         return notExists(true, subQueryFunc);
     }
 
-    default SQLPredicate notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
+    default SQLPredicateExpression notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get()));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
 }

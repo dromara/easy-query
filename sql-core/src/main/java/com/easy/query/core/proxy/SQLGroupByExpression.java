@@ -9,9 +9,9 @@ import com.easy.query.core.proxy.impl.SQLGroupSelectImpl;
  *
  * @author xuejiaming
  */
-public interface SQLGroupSelect extends TablePropColumn {
+public interface SQLGroupByExpression extends TablePropColumn {
 
-    default SQLGroupSelect then(SQLGroupSelect sqlGroupSelect){
+    default SQLGroupByExpression then(SQLGroupByExpression sqlGroupSelect){
         return new SQLGroupSelectImpl(x->{
             accept(x);
             sqlGroupSelect.accept(x);
@@ -21,6 +21,6 @@ public interface SQLGroupSelect extends TablePropColumn {
         s.column(this.getTable(), this.value());
     }
 
-    SQLGroupSelect empty = new SQLGroupSelectImpl(s -> {
+    SQLGroupByExpression empty = new SQLGroupSelectImpl(s -> {
     });
 }

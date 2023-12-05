@@ -5,7 +5,7 @@ import com.easy.query.api.proxy.select.extension.queryable.sql.MultiProxyAggrega
 import com.easy.query.api.proxy.select.extension.queryable.sql.impl.MultiProxyAggregateFilter1Impl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLAggregatePredicate;
+import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.sql.Predicate;
 import com.easy.query.core.util.EasyArrayUtil;
 
@@ -17,14 +17,14 @@ import com.easy.query.core.util.EasyArrayUtil;
  */
 public interface ProxyHavingable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientProxyQueryableAvailable<T1>,ProxyQueryableAvailable<T1Proxy,T1>{
 
-    default ProxyQueryable<T1Proxy, T1> having(SQLAggregatePredicate... sqlAggregatePredicates) {
+    default ProxyQueryable<T1Proxy, T1> having(SQLAggregatePredicateExpression... sqlAggregatePredicates) {
         return having(true, sqlAggregatePredicates);
     }
-    default ProxyQueryable<T1Proxy, T1> having(boolean condition,SQLAggregatePredicate... sqlAggregatePredicates) {
+    default ProxyQueryable<T1Proxy, T1> having(boolean condition, SQLAggregatePredicateExpression... sqlAggregatePredicates) {
 
         if (condition) {
             if(EasyArrayUtil.isNotEmpty(sqlAggregatePredicates)){
-                SQLAggregatePredicate sqlAggregatePredicate = Predicate.and(sqlAggregatePredicates);
+                SQLAggregatePredicateExpression sqlAggregatePredicate = Predicate.and(sqlAggregatePredicates);
                 getClientQueryable().having(whereAggregatePredicate -> {
                     sqlAggregatePredicate.accept(whereAggregatePredicate.getAggregateFilter());
                 });

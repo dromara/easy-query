@@ -26,12 +26,12 @@ import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.core.proxy.SQLAggregatePredicate;
-import com.easy.query.core.proxy.SQLGroupSelect;
-import com.easy.query.core.proxy.SQLOrderSelect;
-import com.easy.query.core.proxy.SQLPredicate;
-import com.easy.query.core.proxy.SQLSelect;
-import com.easy.query.core.proxy.SQLSelectAs;
+import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
+import com.easy.query.core.proxy.SQLGroupByExpression;
+import com.easy.query.core.proxy.SQLOrderByExpression;
+import com.easy.query.core.proxy.SQLPredicateExpression;
+import com.easy.query.core.proxy.SQLSelectExpression;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.Statement;
@@ -166,9 +166,9 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> select(SQLFuncExpression1<T1Proxy, SQLSelect> selectExpression) {
+    public EntityQueryable<T1Proxy, T1> select(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression) {
         ClientQueryable<T1> select = entityQueryable.select(columnSelector -> {
-            SQLSelect sqlSelect = selectExpression.apply(t1Proxy);
+            SQLSelectExpression sqlSelect = selectExpression.apply(t1Proxy);
             sqlSelect.accept(columnSelector.getSelector());
         });
         return new EasyEntityQueryable<>(t1Proxy, select);
@@ -190,10 +190,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> select(Class<TR> resultEntityClass, SQLFuncExpression2<T1Proxy, TRProxy, SQLSelectAs> selectExpression) {
+    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> select(Class<TR> resultEntityClass, SQLFuncExpression2<T1Proxy, TRProxy, SQLSelectAsExpression> selectExpression) {
         TRProxy trProxy = EntityQueryProxyManager.create(resultEntityClass);
         ClientQueryable<TR> select = entityQueryable.select(resultEntityClass, columnAsSelector -> {
-            SQLSelectAs sqlSelectAs = selectExpression.apply(t1Proxy, trProxy);
+            SQLSelectAsExpression sqlSelectAs = selectExpression.apply(t1Proxy, trProxy);
             sqlSelectAs.accept(columnAsSelector.getAsSelector());
         });
         return new EasyEntityQueryable<>(trProxy, select);
@@ -223,10 +223,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //    }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> where(boolean condition, SQLFuncExpression1<T1Proxy, SQLPredicate> whereExpression) {
+    public EntityQueryable<T1Proxy, T1> where(boolean condition, SQLFuncExpression1<T1Proxy, SQLPredicateExpression> whereExpression) {
         if (condition) {
             entityQueryable.where(wherePredicate -> {
-                SQLPredicate sqlPredicate = whereExpression.apply(t1Proxy);
+                SQLPredicateExpression sqlPredicate = whereExpression.apply(t1Proxy);
                 sqlPredicate.accept(wherePredicate.getFilter());
             });
         }
@@ -269,10 +269,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //    }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> groupBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupSelect> selectExpression) {
+    public EntityQueryable<T1Proxy, T1> groupBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
         if (condition) {
             entityQueryable.groupBy(groupBySelector -> {
-                SQLGroupSelect groupSelect = selectExpression.apply(t1Proxy);
+                SQLGroupByExpression groupSelect = selectExpression.apply(t1Proxy);
                 groupSelect.accept(groupBySelector.getGroupSelector());
             });
         }
@@ -292,10 +292,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
 
     @Override
-    public EntityQueryable<T1Proxy, T1> having(boolean condition, SQLFuncExpression1<T1Proxy, SQLAggregatePredicate> aggregateFilterSQLExpression) {
+    public EntityQueryable<T1Proxy, T1> having(boolean condition, SQLFuncExpression1<T1Proxy, SQLAggregatePredicateExpression> aggregateFilterSQLExpression) {
         if (condition) {
             entityQueryable.having(whereAggregatePredicate -> {
-                SQLAggregatePredicate sqlAggregatePredicate = aggregateFilterSQLExpression.apply(t1Proxy);
+                SQLAggregatePredicateExpression sqlAggregatePredicate = aggregateFilterSQLExpression.apply(t1Proxy);
                 sqlAggregatePredicate.accept(whereAggregatePredicate.getAggregateFilter());
 
             });
@@ -304,10 +304,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> orderBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLOrderSelect> selectExpression) {
+    public EntityQueryable<T1Proxy, T1> orderBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression) {
         if (condition) {
             entityQueryable.orderBy(columnSelector -> {
-                SQLOrderSelect sqlOrderSelect = selectExpression.apply(t1Proxy);
+                SQLOrderByExpression sqlOrderSelect = selectExpression.apply(t1Proxy);
                 sqlOrderSelect.accept(columnSelector.getOrderSelector());
             }, false);
         }
@@ -404,60 +404,60 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(Class<T2> joinClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicate> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(Class<T2> joinClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicateExpression> on) {
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.leftJoin(joinClass, (t, t1) -> {
-            SQLPredicate sqlPredicate = on.apply(t1Proxy, t2Proxy.create(t1.getTable()));
+            SQLPredicateExpression sqlPredicate = on.apply(t1Proxy, t2Proxy.create(t1.getTable()));
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable2<>(t1Proxy, t2Proxy, entityQueryable2);
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicate> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicateExpression> on) {
         ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.leftJoin(clientQueryable, (t, t1) -> {
-            SQLPredicate sqlPredicate = on.apply(t1Proxy, joinQueryable.get1Proxy());
+            SQLPredicateExpression sqlPredicate = on.apply(t1Proxy, joinQueryable.get1Proxy());
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(Class<T2> joinClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicate> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(Class<T2> joinClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicateExpression> on) {
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.rightJoin(joinClass, (t, t1) -> {
-            SQLPredicate sqlPredicate = on.apply(t1Proxy, t2Proxy.create(t1.getTable()));
+            SQLPredicateExpression sqlPredicate = on.apply(t1Proxy, t2Proxy.create(t1.getTable()));
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable2<>(t1Proxy, t2Proxy, entityQueryable2);
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicate> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicateExpression> on) {
         ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.rightJoin(clientQueryable, (t, t1) -> {
-            SQLPredicate sqlPredicate = on.apply(t1Proxy, joinQueryable.get1Proxy());
+            SQLPredicateExpression sqlPredicate = on.apply(t1Proxy, joinQueryable.get1Proxy());
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(Class<T2> joinClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicate> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(Class<T2> joinClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicateExpression> on) {
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.innerJoin(joinClass, (t, t1) -> {
-            SQLPredicate sqlPredicate = on.apply(t1Proxy, t2Proxy.create(t1.getTable()));
+            SQLPredicateExpression sqlPredicate = on.apply(t1Proxy, t2Proxy.create(t1.getTable()));
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable2<>(t1Proxy, t2Proxy, entityQueryable2);
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicate> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLFuncExpression2<T1Proxy, T2Proxy, SQLPredicateExpression> on) {
         ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.innerJoin(clientQueryable, (t, t1) -> {
-            SQLPredicate sqlPredicate = on.apply(t1Proxy, joinQueryable.get1Proxy());
+            SQLPredicateExpression sqlPredicate = on.apply(t1Proxy, joinQueryable.get1Proxy());
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);

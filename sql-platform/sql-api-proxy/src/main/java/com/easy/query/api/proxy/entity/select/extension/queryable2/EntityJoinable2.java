@@ -10,7 +10,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression3;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.core.proxy.SQLPredicate;
+import com.easy.query.core.proxy.SQLPredicateExpression;
 
 /**
  * create time 2023/8/16 09:11
@@ -33,56 +33,56 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @return 返回可查询的表达式支持3表参数
      */
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(Class<T3> joinClass, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(Class<T3> joinClass, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicateExpression> on) {
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().leftJoin(joinClass, (t, t1, t2) -> {
-            SQLPredicate sqlPredicate = on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable()));
+            SQLPredicateExpression sqlPredicate = on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable()));
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), t3Proxy, entityQueryable3);
     }
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  leftJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  leftJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicateExpression> on) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().leftJoin(joinQueryable.getClientQueryable(), (t, t1, t2) -> {
-            SQLPredicate sqlPredicate = on.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy());
+            SQLPredicateExpression sqlPredicate = on.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy());
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy(), entityQueryable3);
 
     }
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoin(Class<T3> joinClass, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoin(Class<T3> joinClass, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicateExpression> on) {
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().rightJoin(joinClass, (t, t1, t2) -> {
-            SQLPredicate sqlPredicate = on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable()));
+            SQLPredicateExpression sqlPredicate = on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable()));
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), t3Proxy, entityQueryable3);
 
     }
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicateExpression> on) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().rightJoin(joinQueryable.getClientQueryable(), (t, t1, t2) -> {
-            SQLPredicate sqlPredicate = on.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy());
+            SQLPredicateExpression sqlPredicate = on.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy());
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy(), entityQueryable3);
 
     }
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoin(Class<T3> joinClass, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoin(Class<T3> joinClass, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicateExpression> on) {
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().innerJoin(joinClass, (t, t1, t2) -> {
-            SQLPredicate sqlPredicate = on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable()));
+            SQLPredicateExpression sqlPredicate = on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable()));
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), t3Proxy, entityQueryable3);
 
     }
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLPredicateExpression> on) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().innerJoin(joinQueryable.getClientQueryable(), (t, t1, t2) -> {
-            SQLPredicate sqlPredicate = on.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy());
+            SQLPredicateExpression sqlPredicate = on.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy());
             sqlPredicate.accept(t.getFilter());
         });
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy(), entityQueryable3);
@@ -90,37 +90,37 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     }
 
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  leftJoinMerge(Class<T3> joinClass, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>,SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  leftJoinMerge(Class<T3> joinClass, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>, SQLPredicateExpression> on) {
         return leftJoin(joinClass, (t1, t2, t3) -> {
             return on.apply(new Tuple3<>(t1, t2, t3));
         });
     }
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  leftJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>,SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  leftJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>, SQLPredicateExpression> on) {
         return leftJoin(joinQueryable, (t1, t2, t3) -> {
             return on.apply(new Tuple3<>(t1, t2, t3));
         });
     }
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoinMerge(Class<T3> joinClass, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>,SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoinMerge(Class<T3> joinClass, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>, SQLPredicateExpression> on) {
         return rightJoin(joinClass, (t1, t2, t3) -> {
             return on.apply(new Tuple3<>(t1, t2, t3));
         });
     }
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>,SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>, SQLPredicateExpression> on) {
         return rightJoin(joinQueryable, (t1, t2, t3) -> {
             return on.apply(new Tuple3<>(t1, t2, t3));
         });
     }
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoinMerge(Class<T3> joinClass, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>,SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoinMerge(Class<T3> joinClass, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>, SQLPredicateExpression> on) {
         return innerJoin(joinClass, (t1, t2, t3) -> {
             return on.apply( new Tuple3<>(t1, t2, t3));
         });
     }
 
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>,SQLPredicate> on) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>, SQLPredicateExpression> on) {
         return innerJoin(joinQueryable, (t1, t2, t3) -> {
             return on.apply(new Tuple3<>(t1, t2, t3));
         });

@@ -3,7 +3,7 @@ package com.easy.query.core.proxy.impl;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.SQLSelectAs;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 
 /**
@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.TablePropColumn;
  *
  * @author xuejiaming
  */
-public class SQLSelectGroupKeyAsImpl implements SQLSelectAs {
+public class SQLSelectGroupKeyAsImpl implements SQLSelectAsExpression {
     private final int index;
 
     public SQLSelectGroupKeyAsImpl(int index) {
@@ -41,8 +41,10 @@ public class SQLSelectGroupKeyAsImpl implements SQLSelectAs {
     }
 
     @Override
-    public SQLSelectAs as(TablePropColumn propColumn) {
-        return new SQLSelectAsImpl(f -> {
+    public SQLSelectAsExpression as(TablePropColumn propColumn) {
+        return new SQLSelectAsImpl(f->{
+            f.groupKeys(index);
+        },f -> {
             f.groupKeysAs(index, propColumn.value());
         });
     }

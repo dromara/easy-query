@@ -5,7 +5,7 @@ import com.easy.query.api.proxy.select.extension.queryable10.sql.MultiProxyGroup
 import com.easy.query.api.proxy.select.extension.queryable10.sql.impl.MultiProxyGroupSelector10Impl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLGroupSelect;
+import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.util.EasyArrayUtil;
 
 /**
@@ -25,13 +25,13 @@ public interface ProxyGroupable10<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T9Proxy extends ProxyEntity<T9Proxy, T9>, T9,
         T10Proxy extends ProxyEntity<T10Proxy, T10>, T10> extends ClientProxyQueryable10Available<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10>, ProxyQueryable10Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9,T10Proxy,T10> {
 
-    default ProxyQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> groupBy(SQLGroupSelect... propColumns) {
+    default ProxyQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> groupBy(SQLGroupByExpression... propColumns) {
         return groupBy(true, propColumns);
     }
-    default ProxyQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> groupBy(boolean condition, SQLGroupSelect... propColumns) {
+    default ProxyQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> groupBy(boolean condition, SQLGroupByExpression... propColumns) {
         if(condition){
             if(EasyArrayUtil.isNotEmpty(propColumns)){
-                for (SQLGroupSelect propColumn : propColumns) {
+                for (SQLGroupByExpression propColumn : propColumns) {
                     getClientQueryable10().groupBy(groupBySelector -> {
                         propColumn.accept(groupBySelector.getGroupSelector());
                     });

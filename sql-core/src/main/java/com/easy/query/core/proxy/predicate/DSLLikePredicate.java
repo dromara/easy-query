@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.predicate;
 
 import com.easy.query.core.enums.SQLLikeEnum;
-import com.easy.query.core.proxy.SQLPredicate;
+import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
@@ -12,64 +12,64 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
  * @author xuejiaming
  */
 public interface DSLLikePredicate<TProperty> extends TablePropColumn {
-    default SQLPredicate likeMatchLeft(TProperty val) {
+    default SQLPredicateExpression likeMatchLeft(TProperty val) {
         return likeMatchLeft(true, val);
     }
 
-    default SQLPredicate likeMatchLeft(boolean condition, TProperty val) {
+    default SQLPredicateExpression likeMatchLeft(boolean condition, TProperty val) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.like(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
-    default SQLPredicate likeMatchRight(TProperty val) {
+    default SQLPredicateExpression likeMatchRight(TProperty val) {
         return likeMatchLeft(true, val);
     }
 
-    default SQLPredicate likeMatchRight(boolean condition, TProperty val) {
+    default SQLPredicateExpression likeMatchRight(boolean condition, TProperty val) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.like(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_LEFT));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
-    default SQLPredicate like(TProperty val) {
+    default SQLPredicateExpression like(TProperty val) {
         return like(true, val);
     }
 
-    default SQLPredicate like(boolean condition, TProperty val) {
+    default SQLPredicateExpression like(boolean condition, TProperty val) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.like(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_ALL));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
-    default SQLPredicate notLikeMatchLeft(TProperty val) {
+    default SQLPredicateExpression notLikeMatchLeft(TProperty val) {
         return notLikeMatchLeft(true, val);
     }
 
-    default SQLPredicate notLikeMatchLeft(boolean condition, TProperty val) {
+    default SQLPredicateExpression notLikeMatchLeft(boolean condition, TProperty val) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
-    default SQLPredicate notLikeMatchRight(TProperty val) {
+    default SQLPredicateExpression notLikeMatchRight(TProperty val) {
         return notLikeMatchRight(true, val);
     }
 
-    default SQLPredicate notLikeMatchRight(boolean condition, TProperty val) {
+    default SQLPredicateExpression notLikeMatchRight(boolean condition, TProperty val) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_LEFT));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
-    default SQLPredicate notLike(TProperty val) {
+    default SQLPredicateExpression notLike(TProperty val) {
         return notLike(true, val);
     }
 
-    default SQLPredicate notLike(boolean condition, TProperty val) {
+    default SQLPredicateExpression notLike(boolean condition, TProperty val) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.value(), val, SQLLikeEnum.LIKE_PERCENT_ALL));
         }
-        return SQLPredicate.empty;
+        return SQLPredicateExpression.empty;
     }
 }

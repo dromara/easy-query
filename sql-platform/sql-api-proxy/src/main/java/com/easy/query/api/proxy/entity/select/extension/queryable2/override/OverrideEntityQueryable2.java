@@ -10,10 +10,10 @@ import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLAggregatePredicate;
-import com.easy.query.core.proxy.SQLGroupSelect;
-import com.easy.query.core.proxy.SQLOrderSelect;
-import com.easy.query.core.proxy.SQLPredicate;
+import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
+import com.easy.query.core.proxy.SQLGroupByExpression;
+import com.easy.query.core.proxy.SQLOrderByExpression;
+import com.easy.query.core.proxy.SQLPredicateExpression;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -63,36 +63,36 @@ public interface OverrideEntityQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T
 
 
     @Override
-    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLFuncExpression1<T1Proxy, SQLPredicate> whereExpression) {
+    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLFuncExpression1<T1Proxy, SQLPredicateExpression> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    EntityQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLFuncExpression1<T1Proxy, SQLPredicate> whereExpression);
+    EntityQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLFuncExpression1<T1Proxy, SQLPredicateExpression> whereExpression);
 
     @Override
-    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(SQLFuncExpression1<T1Proxy, SQLGroupSelect> selectExpression) {
+    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
     @Override
-    EntityQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupSelect> selectExpression);
+    EntityQueryable2<T1Proxy, T1, T2Proxy, T2> groupBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression);
 
     @Override
-    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> having(SQLFuncExpression1<T1Proxy, SQLAggregatePredicate> predicateExpression) {
+    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> having(SQLFuncExpression1<T1Proxy, SQLAggregatePredicateExpression> predicateExpression) {
         return having(true, predicateExpression);
     }
 
     @Override
-    EntityQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLFuncExpression1<T1Proxy, SQLAggregatePredicate> predicateExpression);
+    EntityQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLFuncExpression1<T1Proxy, SQLAggregatePredicateExpression> predicateExpression);
 
     @Override
-    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(SQLFuncExpression1<T1Proxy, SQLOrderSelect> selectExpression) {
+    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression) {
         return orderBy(true, selectExpression);
     }
 
     @Override
-    EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(boolean condition,SQLFuncExpression1<T1Proxy, SQLOrderSelect> selectExpression);
+    EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(boolean condition,SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression);
 
     @Override
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> include(SQLFuncExpression2<ProxyNavigateInclude<T1>,T1Proxy, EntityQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {

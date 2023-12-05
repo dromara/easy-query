@@ -2,7 +2,6 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.client.DefaultEntityQuery;
-import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
@@ -15,7 +14,6 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.TopicTestProxy;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
-import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -199,7 +197,7 @@ public class QueryTest9 extends BaseTest {
                         , topicTable.title().desc()
                         , topicTable.title().asc())
                 .select(blogTable
-                        , topicTable.allColumnsExclude(topicTable.stars())
+                        , topicTable.allFieldsExclude(topicTable.stars())
                         , topicTable.stars().as(blogTable.star())
                         , topicTable.createTime()
                 )
@@ -236,7 +234,7 @@ public class QueryTest9 extends BaseTest {
                         , topicTable.title().desc()
                         , topicTable.title().asc())
                 .select(blogTable
-                        , topicTable.allColumnsExclude(topicTable.stars())
+                        , topicTable.allFieldsExclude(topicTable.stars())
                         , topicTable.stars().as(blogTable.star())
                         , topicTable.createTime()
                 )
@@ -276,7 +274,7 @@ public class QueryTest9 extends BaseTest {
                         , topicTable.title().desc()
                         , topicTable.title().asc())
                 .select(blogTable
-                        , topicTable.allColumnsExclude(topicTable.stars())
+                        , topicTable.allFieldsExclude(topicTable.stars())
                         , topicTable.stars().as(blogTable.star())
 //                        , topicTable.stars().as(topicTable.stars())
                         , topicTable.createTime()
@@ -321,7 +319,7 @@ public class QueryTest9 extends BaseTest {
                         , topicTable.title().desc()
                         , topicTable.title().asc())
                 .select(blogTable
-                        , topicTable.allColumnsExclude(topicTable.stars())
+                        , topicTable.allFieldsExclude(topicTable.stars())
                         , topicTable.stars().as(blogTable.star())
 //                        , topicTable.stars().as(topicTable.stars())
                         , topicTable.createTime()
@@ -513,7 +511,7 @@ public class QueryTest9 extends BaseTest {
                         )
                         , topicTable.stars().le(1)
                 )
-                .orderBy(topicTable.id().asc().then(topicTable.title().desc()))
+                .orderBy(topicTable.id().asc().thenBy(topicTable.title().desc()))
                 .toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -526,8 +524,12 @@ public class QueryTest9 extends BaseTest {
     @Test
     public void entityQuery1() {
 
-        TopicProxy topicProxy = EntityQueryProxyManager.create(Topic.class);
-        TopicProxy topicProxy1 = EntityQueryProxyManager.create(Topic.class);
+        TopicTestProxy table = TopicTestProxy.createTable();
+        BlogEntityProxy table1 = BlogEntityProxy.createTable();
+//        TopicTestProxy.TopicTestSelector title = table.selector().id().title();
+//        TopicTestProxy.TopicTestSelector blogEntityProxyTopicTestFetcher = table.selector().id().title().as(table1.createTime()).columns(table.id());
+//        TopicProxy topicProxy = EntityQueryProxyManager.create(Topic.class);
+//        TopicProxy topicProxy1 = EntityQueryProxyManager.create(Topic.class);
 
         DefaultEntityQuery entityQuery = new DefaultEntityQuery(easyQueryClient);
         List<Topic> list = entityQuery.queryable(Topic.class)
@@ -548,7 +550,17 @@ public class QueryTest9 extends BaseTest {
         Topic topic = entityQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (a, b) -> a.id().eq(b.id()))
                 .where((a, b) -> a.title().eq("1").and(b.createTime().ge(LocalDateTime.of(2021, 1, 1, 1, 1))))
+                .orderBy((a, b) -> a.title().asc().thenBy(a.id().desc()))
+                .firstOrNull();
+
+        Topic topic2 = entityQuery.queryable(Topic.class)
+                .leftJoin(Topic.class, (a, b) -> a.id().eq(b.id()))
+                .where((a, b) -> Predicate.and(
+                        a.title().eq("1"),
+                        b.createTime().ge(LocalDateTime.of(2021, 1, 1, 1, 1))
+                ))
                 .orderBy((a, b) -> a.title().asc())
+                .select(o->o.allFieldsExclude(o.id()))
                 .firstOrNull();
 
     }

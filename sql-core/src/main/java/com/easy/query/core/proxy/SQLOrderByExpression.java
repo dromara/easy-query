@@ -9,9 +9,9 @@ import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
  *
  * @author xuejiaming
  */
-public interface SQLOrderSelect {
+public interface SQLOrderByExpression {
 
-    default SQLOrderSelect then(SQLOrderSelect sqlOrderSelect) {
+    default SQLOrderByExpression thenBy(SQLOrderByExpression sqlOrderSelect) {
         return new SQLOrderSelectImpl(x -> {
             accept(x);
             sqlOrderSelect.accept(x);
@@ -20,6 +20,6 @@ public interface SQLOrderSelect {
 
     void accept(OrderSelector s);
 
-    SQLOrderSelect empty = new SQLOrderSelectImpl(s -> {
+    SQLOrderByExpression empty = new SQLOrderSelectImpl(s -> {
     });
 }

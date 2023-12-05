@@ -48,6 +48,11 @@ public class EasyCollectionUtil {
         return list.get(list.size()-1);
     }
 
+    public static <TElement> void replaceLast(List<TElement> list,TElement replaceElement){
+        list.remove(list.size()-1);
+        list.add(replaceElement);
+    }
+
     public static <TR> List<TR> newArrayList(Iterable<TR> iterable) {
         Iterator<TR> iterator = iterable.iterator();
         boolean firstHasNext = iterator.hasNext();

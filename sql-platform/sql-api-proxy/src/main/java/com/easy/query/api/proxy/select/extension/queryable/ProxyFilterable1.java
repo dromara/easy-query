@@ -8,7 +8,7 @@ import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLPredicate;
+import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.sql.Predicate;
 import com.easy.query.core.util.EasyArrayUtil;
 
@@ -29,7 +29,7 @@ public interface ProxyFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
      * @param sqlPredicates where表达式
      * @return 返回当前查询queryable
      */
-    default ProxyQueryable<T1Proxy, T1> where(SQLPredicate... sqlPredicates) {
+    default ProxyQueryable<T1Proxy, T1> where(SQLPredicateExpression... sqlPredicates) {
         return where(true, sqlPredicates);
     }
     /**
@@ -39,11 +39,11 @@ public interface ProxyFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
      * @param sqlPredicates where表达式
      * @return 返回当前查询queryable
      */
-    default ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLPredicate... sqlPredicates){
+    default ProxyQueryable<T1Proxy, T1> where(boolean condition, SQLPredicateExpression... sqlPredicates){
         if (condition) {
             if(EasyArrayUtil.isNotEmpty(sqlPredicates)){
                 getClientQueryable().where(wherePredicate -> {
-                    SQLPredicate predicate = Predicate.and(sqlPredicates);
+                    SQLPredicateExpression predicate = Predicate.and(sqlPredicates);
                     predicate.accept(wherePredicate.getFilter());
                 });
             }

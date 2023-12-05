@@ -6,7 +6,7 @@ import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLPredicate;
+import com.easy.query.core.proxy.SQLPredicateExpression;
 
 import java.util.Collection;
 
@@ -23,7 +23,7 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @param whereExpression where表达式
      * @return 返回当前查询queryable
      */
-    default EntityQueryable<T1Proxy, T1> where(SQLFuncExpression1<T1Proxy, SQLPredicate> whereExpression) {
+    default EntityQueryable<T1Proxy, T1> where(SQLFuncExpression1<T1Proxy, SQLPredicateExpression> whereExpression) {
         return where(true, whereExpression);
     }
 
@@ -34,7 +34,7 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @param whereExpression where表达式
      * @return 返回当前查询queryable
      */
-    EntityQueryable<T1Proxy, T1> where(boolean condition, SQLFuncExpression1<T1Proxy, SQLPredicate> whereExpression);
+    EntityQueryable<T1Proxy, T1> where(boolean condition, SQLFuncExpression1<T1Proxy, SQLPredicateExpression> whereExpression);
 
 
     /**

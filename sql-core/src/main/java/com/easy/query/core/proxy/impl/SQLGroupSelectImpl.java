@@ -2,7 +2,7 @@ package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.SQLGroupSelect;
+import com.easy.query.core.proxy.SQLGroupByExpression;
 
 import java.util.function.Consumer;
 
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  *
  * @author xuejiaming
  */
-public class SQLGroupSelectImpl implements SQLGroupSelect {
+public class SQLGroupSelectImpl implements SQLGroupByExpression {
     private final Consumer<GroupSelector> groupConsumer;
 
     public SQLGroupSelectImpl(Consumer<GroupSelector> groupConsumer) {

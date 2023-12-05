@@ -2,7 +2,7 @@ package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.proxy.SQLAggregatePredicate;
+import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 
 import java.util.function.Consumer;
 
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  *
  * @author xuejiaming
  */
-public class SQLAggregatePredicateImpl extends SQLPredicateImpl implements SQLAggregatePredicate {
+public class SQLAggregatePredicateImpl extends SQLPredicateImpl implements SQLAggregatePredicateExpression {
     private final Consumer<AggregateFilter> aggregateFilterConsumer;
 
     public SQLAggregatePredicateImpl(Consumer<Filter> filterConsumer, Consumer<AggregateFilter> aggregateFilterConsumer) {
@@ -21,7 +21,7 @@ public class SQLAggregatePredicateImpl extends SQLPredicateImpl implements SQLAg
     }
 
     @Override
-    public SQLAggregatePredicate and(SQLAggregatePredicate predicate) {
+    public SQLAggregatePredicateExpression and(SQLAggregatePredicateExpression predicate) {
         Consumer<Filter> f1 = f -> f.and(predicate::accept);
         Consumer<AggregateFilter> f2 = f -> f.and(predicate::accept);
         return new SQLAggregatePredicateImpl(x -> {
@@ -34,7 +34,7 @@ public class SQLAggregatePredicateImpl extends SQLPredicateImpl implements SQLAg
     }
 
     @Override
-    public SQLAggregatePredicate or(SQLAggregatePredicate predicate) {
+    public SQLAggregatePredicateExpression or(SQLAggregatePredicateExpression predicate) {
         Consumer<Filter> f1 = f -> f.or(predicate::accept);
         Consumer<AggregateFilter> f2 = f -> f.or(predicate::accept);
         return new SQLAggregatePredicateImpl(x -> {

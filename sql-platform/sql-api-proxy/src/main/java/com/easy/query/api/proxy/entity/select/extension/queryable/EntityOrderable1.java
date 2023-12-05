@@ -5,7 +5,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLOrderSelect;
+import com.easy.query.core.proxy.SQLOrderByExpression;
 
 /**
  * create time 2023/8/16 08:50
@@ -16,11 +16,11 @@ import com.easy.query.core.proxy.SQLOrderSelect;
 public interface EntityOrderable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 
 
-    default EntityQueryable<T1Proxy, T1> orderBy(SQLFuncExpression1<T1Proxy, SQLOrderSelect> selectExpression) {
+    default EntityQueryable<T1Proxy, T1> orderBy(SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression) {
         return orderBy(true, selectExpression);
     }
 
-    EntityQueryable<T1Proxy, T1> orderBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLOrderSelect> selectExpression);
+    EntityQueryable<T1Proxy, T1> orderBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression);
 
     /**
      * @param objectSort
