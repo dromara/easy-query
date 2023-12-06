@@ -1,14 +1,13 @@
 package com.easy.query.core.proxy;
 
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,18 +35,18 @@ public abstract class AbstractSelector<TProxy extends AbstractProxyEntity<TProxy
         selects.add(SQLSelectAsExpression.createDefault(getProxy().getTable(),column.getValue()));
         return EasyObjectUtil.typeCastNullable(this);
     }
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> TChain as(SQLColumn<TRProxy,?> column) {
-        SQLSelectAsExpression sqlSelectAs = EasyCollectionUtil.getLastOrNull(selects);
-        if(sqlSelectAs!=null){
-            if(SQLColumn.class.isAssignableFrom(sqlSelectAs.getClass())){
-                SQLSelectAsExpression sqlSelectNewAs = sqlSelectAs.as(column);
-                EasyCollectionUtil.replaceLast(selects,sqlSelectNewAs);
-            }else {
-                throw new EasyQueryInvalidOperationException("[as] preview is not SQLColumn");
-            }
-        }
-        return EasyObjectUtil.typeCastNullable(this);
-    }
+//    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> TChain as(SQLColumn<TRProxy,?> column) {
+//        SQLSelectAsExpression sqlSelectAs = EasyCollectionUtil.getLastOrNull(selects);
+//        if(sqlSelectAs!=null){
+//            if(SQLColumn.class.isAssignableFrom(sqlSelectAs.getClass())){
+//                SQLSelectAsExpression sqlSelectNewAs = sqlSelectAs.as(column);
+//                EasyCollectionUtil.replaceLast(selects,sqlSelectNewAs);
+//            }else {
+//                throw new EasyQueryInvalidOperationException("[as] preview is not SQLColumn");
+//            }
+//        }
+//        return EasyObjectUtil.typeCastNullable(this);
+//    }
 
     public TChain allFields(){
         selects.add(proxy.allFields());
@@ -70,7 +69,7 @@ public abstract class AbstractSelector<TProxy extends AbstractProxyEntity<TProxy
     @SafeVarargs
     @SuppressWarnings("varargs")
     public final TChain columnExclude(SQLColumn<TProxy,?> column, SQLColumn<TProxy,?>... ignoreColumns){
-        SQLSelectAsExpression columnWithout = SQLSelectAsExpression.createColumnExclude(column, ignoreColumns);
+        SQLSelectAsExpression columnWithout = SQLSelectAsExpression.createColumnExclude(column, Arrays.asList(ignoreColumns));
         return add(columnWithout);
     }
 //

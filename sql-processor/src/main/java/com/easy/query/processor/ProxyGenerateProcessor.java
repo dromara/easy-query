@@ -136,8 +136,9 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
 
                 TypeElement classElement = (TypeElement) entityClassElement;
-                AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage,entityClassName,proxyInstanceName,new AptSelectorInfo(proxyInstanceName+"Selector"));
-                aptFileCompiler.addImports("com.easy.query.core.proxy.AbstractSelector");
+                AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage,entityClassName,proxyInstanceName,new AptSelectorInfo(proxyInstanceName+"Fetcher"));
+                aptFileCompiler.addImports("com.easy.query.core.proxy.fetcher.AbstractFetcher");
+                aptFileCompiler.addImports("com.easy.query.core.proxy.SQLSelectAsExpression");
                 AptValueObjectInfo aptValueObjectInfo = new AptValueObjectInfo(entityClassName);
                 aptFileCompiler.addImports(entityFullName);
                 do {

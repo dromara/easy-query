@@ -2,9 +2,10 @@ package com.easy.query.test.entity.company;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
-import com.easy.query.core.proxy.AbstractSelector;
 import com.easy.query.core.proxy.AbstractValueObjectProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 
 /**
  * create time 2023/11/7 19:55
@@ -100,25 +101,30 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
     }
 
 
-    public ValueCompany1ProxySelector cols() {
-        return new ValueCompany1ProxySelector(this);
-    }
+    public ValueCompany1ProxyFetcher FETCHER =new ValueCompany1ProxyFetcher(this,null,SQLSelectAsExpression.empty);
 
-    public static class ValueCompany1ProxySelector extends AbstractSelector<ValueCompany1Proxy,ValueCompany, ValueCompany1ProxySelector> {
 
-        public ValueCompany1ProxySelector(ValueCompany1Proxy proxy) {
-            super(proxy);
+    public static class ValueCompany1ProxyFetcher extends AbstractFetcher<ValueCompany1Proxy,ValueCompany, ValueCompany1ProxyFetcher> {
+
+
+        public ValueCompany1ProxyFetcher(ValueCompany1Proxy proxy, ValueCompany1ProxyFetcher prev, SQLSelectAsExpression sqlSelectAsExpression) {
+            super(proxy, prev, sqlSelectAsExpression);
         }
 
-        public ValueCompany1ProxySelector id() {
+        public ValueCompany1ProxyFetcher id() {
             return add(getProxy().id());
         }
 
-        public ValueCompany1ProxySelector name() {
+        public ValueCompany1ProxyFetcher name() {
             return add(getProxy().name());
         }
-        public ValueCompany1ProxySelector address() {
+        public ValueCompany1ProxyFetcher address() {
             return add(getProxy().address());
+        }
+
+        @Override
+        protected ValueCompany1ProxyFetcher createFetcher(ValueCompany1Proxy valueCompany1Proxy, AbstractFetcher<ValueCompany1Proxy, ValueCompany, ValueCompany1ProxyFetcher> prev, SQLSelectAsExpression sqlSelectExpression) {
+            return new ValueCompany1ProxyFetcher(valueCompany1Proxy, this, sqlSelectExpression);
         }
     }
 }

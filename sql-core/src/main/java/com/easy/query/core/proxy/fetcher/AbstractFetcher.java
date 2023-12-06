@@ -1,0 +1,106 @@
+package com.easy.query.core.proxy.fetcher;
+
+import com.easy.query.core.expression.builder.AsSelector;
+import com.easy.query.core.expression.builder.GroupSelector;
+import com.easy.query.core.expression.builder.Selector;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
+
+import java.util.Collection;
+
+/**
+ * create time 2023/12/6 23:18
+ * 文件说明
+ *
+ * @author xuejiaming
+ */
+public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy, TEntity>, TEntity, TChain extends AbstractFetcher<TProxy, TEntity, TChain>> implements Fetcher<TProxy, TEntity, TChain> {
+
+
+    private final TProxy tProxy;
+    private final AbstractFetcher<TProxy, TEntity, TChain> prev;
+    private final SQLSelectAsExpression sqlSelectAsExpression;
+
+    public AbstractFetcher(TProxy tProxy, AbstractFetcher<TProxy, TEntity, TChain> prev, SQLSelectAsExpression sqlSelectAsExpression) {
+
+        this.tProxy = tProxy;
+        this.prev = prev;
+        this.sqlSelectAsExpression = sqlSelectAsExpression;
+    }
+
+    @Override
+    public TProxy getProxy() {
+        return tProxy;
+    }
+
+    @Override
+    public TableAvailable getTable() {
+        return tProxy.getTable();
+    }
+
+    @Override
+    public String getValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TChain allFields() {
+        SQLSelectAsExpression sqlSelectAsExpression = tProxy.allFields();
+        return createFetcher(tProxy, this, sqlSelectAsExpression);
+    }
+
+
+    @Override
+    public TChain allFieldsExclude(Collection<SQLColumn<TProxy, ?>> ignoreColumns) {
+
+        SQLSelectAsExpression sqlSelectAsExpression = tProxy.allFieldsExclude(ignoreColumns.stream().toArray(SQLColumn[]::new));
+        return createFetcher(tProxy, this, sqlSelectAsExpression);
+    }
+
+    @Override
+    public TChain valueObjectColumnExclude(SQLColumn<TProxy, ?> column, Collection<SQLColumn<TProxy, ?>> ignoreColumns) {
+        SQLSelectAsExpression columnWithout = SQLSelectAsExpression.createColumnExclude(column, ignoreColumns);
+        return createFetcher(tProxy, this, columnWithout);
+    }
+
+    protected abstract TChain createFetcher(TProxy tProxy, AbstractFetcher<TProxy, TEntity, TChain> prev, SQLSelectAsExpression sqlSelectExpression);
+
+    protected TChain add(SQLColumn<TProxy,?> sqlColumn){
+        SQLSelectAsExpression selectAsExpression = SQLSelectAsExpression.createDefault(getProxy().getTable(), sqlColumn.getValue());
+        return createFetcher(tProxy, this, selectAsExpression);
+    }
+    @Override
+    public void accept(AsSelector s) {
+        acceptAsSelector(s);
+    }
+    protected void acceptAsSelector(AsSelector s){
+        if(prev!=null){
+            prev.acceptAsSelector(s);
+        }
+        sqlSelectAsExpression.accept(s);
+    }
+
+    @Override
+    public void accept(Selector s) {
+        acceptSelector(s);
+    }
+    protected void acceptSelector(Selector s){
+        if(prev!=null){
+            prev.acceptSelector(s);
+        }
+        sqlSelectAsExpression.accept(s);
+    }
+
+    @Override
+    public void accept(GroupSelector s) {
+        acceptGroupSelector(s);
+    }
+    protected void acceptGroupSelector(GroupSelector s){
+        if(prev!=null){
+            prev.acceptGroupSelector(s);
+        }
+        sqlSelectAsExpression.accept(s);
+    }
+}

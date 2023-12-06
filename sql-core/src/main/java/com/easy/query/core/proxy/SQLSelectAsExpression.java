@@ -4,6 +4,8 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 
+import java.util.Collection;
+
 /**
  * create time 2023/12/1 22:56
  * 文件说明
@@ -27,8 +29,8 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
         return SQLSelectAsExpression.empty;
     }
 
-    default void accept(AsSelector f) {
-        f.column(this.getTable(), this.getValue());
+    default void accept(AsSelector s) {
+        s.column(this.getTable(), this.getValue());
     }
 
     SQLSelectAsExpression empty = new SQLSelectAsImpl(s -> {
@@ -43,9 +45,7 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
         });
     }
 
-    @SafeVarargs
-    @SuppressWarnings("varargs")
-    static <TProxy> SQLSelectAsExpression createColumnExclude(SQLColumn<TProxy, ?> column, SQLColumn<TProxy, ?>... ignoreColumns) {
+    static <TProxy> SQLSelectAsExpression createColumnExclude(SQLColumn<TProxy, ?> column, Collection<SQLColumn<TProxy, ?>> ignoreColumns) {
         return new SQLSelectAsImpl(x -> {
             x.column(column.getTable(), column.getValue());
             for (SQLColumn<TProxy, ?> ignoreColumn : ignoreColumns) {

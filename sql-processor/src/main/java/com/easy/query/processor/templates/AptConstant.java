@@ -77,18 +77,21 @@ public class AptConstant {
             "* 数据库列的简单获取\n" +
             "* @return\n" +
             "*/\n"+
-            "public @{selectorName} cols() {\n" +
-            "        return new @{selectorName}(this);\n" +
-            "    }\n" +
+            "public @{selectorName} FETCHER =new @{selectorName}(this,null,SQLSelectAsExpression.empty);\n"+
             "\n" +
-            "    public static class @{selectorName} extends AbstractSelector<@{entityClassProxy},@{entityClass}, @{selectorName}> {\n" +
+            "    public static class @{selectorName} extends AbstractFetcher<@{entityClassProxy},@{entityClass}, @{selectorName}> {\n" +
             "\n" +
-            "        public @{selectorName}(@{entityClassProxy} proxy) {\n" +
-            "            super(proxy);\n" +
+            " public @{selectorName}(@{entityClassProxy} proxy, @{selectorName} prev, SQLSelectAsExpression sqlSelectAsExpression) {\n" +
+            "            super(proxy, prev, sqlSelectAsExpression);\n" +
             "        }\n" +
             "\n" +
             "        @{fieldSelectorContent}" +
-                    "\n" +
+            "\n" +
+            "        @Override\n" +
+            "        protected @{selectorName} createFetcher(@{entityClassProxy} cp, AbstractFetcher<@{entityClassProxy}, @{entityClass}, @{selectorName}> prev, SQLSelectAsExpression sqlSelectExpression) {\n" +
+            "            return new @{selectorName}(cp, this, sqlSelectExpression);\n" +
+            "        }"+
+            "\n" +
             "    }";
     public static final String FIELD_SELECTOR_PROPERTY_TEMPLATE = "\n" +
             "    @{comment}\n" +

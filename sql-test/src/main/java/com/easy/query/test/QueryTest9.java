@@ -529,6 +529,8 @@ public class QueryTest9 extends BaseTest {
 //        TopicTestProxy.TopicTestSelector blogEntityProxyTopicTestFetcher = table.selector().id().title().as(table1.createTime()).columns(table.id());
 //        TopicProxy topicProxy = EntityQueryProxyManager.create(Topic.class);
 //        TopicProxy topicProxy1 = EntityQueryProxyManager.create(Topic.class);
+//        ValueCompany1Proxy table2 = ValueCompany1Proxy.createTable();
+//        table2.FETCHER.address().name().id()
 
         List<Topic> list = entityQuery.queryable(Topic.class)
                 .where(o -> o.id().eq("1").and(o.title().like("xxx")))
@@ -558,11 +560,11 @@ public class QueryTest9 extends BaseTest {
                         b.createTime().ge(LocalDateTime.of(2021, 1, 1, 1, 1))
                 ))
                 .orderBy((a, b) -> a.title().asc())
-                .select(o -> o.cols().title().stars())
+                .select(o -> o.FETCHER.title().stars())
                 .firstOrNull();
         List<Topic> list1 = entityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("title").and(o.id().eq("1")))
-                .groupBy(o -> o.cols().title())
+                .groupBy(o -> o.title())
                 .select(Topic.class, (o, tr) -> Select.of(
                         o.title()
                         , o.id().count().as(tr.stars())
