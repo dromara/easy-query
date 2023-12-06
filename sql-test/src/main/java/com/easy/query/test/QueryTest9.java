@@ -558,7 +558,7 @@ public class QueryTest9 extends BaseTest {
                         b.createTime().ge(LocalDateTime.of(2021, 1, 1, 1, 1))
                 ))
                 .orderBy((a, b) -> a.title().asc())
-                .select(o -> o.cols().id().createTime().stars().title().as(o.createTime()))
+                .select(o -> o.cols().title().stars())
                 .firstOrNull();
         List<Topic> list1 = entityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("title").and(o.id().eq("1")))
@@ -879,5 +879,29 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.clear();
         }
     }
+    @Test
+     public void dslTest6(){
+
+         {
+
+             ListenerContext listenerContext = new ListenerContext();
+             listenerContextManager.startListen(listenerContext);
+
+             List<String> list2 = entityQuery.queryable(Topic.class)
+                     .where(o -> Predicate.and(
+                             o.createTime().le(o.createTime().nullDefault(LocalDateTime.of(2022,1,1,1,1))),
+                             o.id().nullDefault("1").isNull(),
+                             o.id().nullDefault("2").eq(o.title().nullDefault(c->c.column(o.id()))),
+                             o.title().isEmpty()
+                     ))
+                     .selectProxy(StringProxy.createTable(),(a, b)->a.title())
+                     .toList();
+             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+             Assert.assertEquals("SELECT t.`title` FROM `t_topic` t WHERE  t.`create_time` <= IFNULL(t.`create_time`,?) AND IFNULL(t.`id`,?) IS NULL AND IFNULL(t.`id`,?) = IFNULL(t.`title`,t.`id`) AND (t.`title` IS NULL OR t.`title` = '')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+             Assert.assertEquals("2022-01-01T01:01(LocalDateTime),1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+             listenerContextManager.clear();
+         }
+     }
 
 }

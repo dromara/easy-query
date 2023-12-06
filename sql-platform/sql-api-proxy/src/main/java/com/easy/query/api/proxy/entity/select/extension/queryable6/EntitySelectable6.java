@@ -38,4 +38,17 @@ public interface EntitySelectable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
             return selectExpression.apply(new Tuple7<>(t, t1, t2, t3, t4, t5, tr));
         });
     }
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxy(TRProxy trProxy, SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy,TRProxy, SQLSelectAsExpression> selectExpression) {
+        ClientQueryable<TR> select = getClientQueryable6().select(trProxy.getEntityClass(), (t, t1, t2, t3, t4, t5) -> {
+            SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), trProxy);
+            sqlSelectAsExpression.accept(t.getAsSelector());
+        });
+        return new EasyEntityQueryable<>(trProxy, select);
+    }
+
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxyMerge(TRProxy trProxy, SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy,TRProxy>,SQLSelectAsExpression> selectExpression) {
+        return selectProxy(trProxy, (t, t1, t2, t3, t4, t5, tr) -> {
+            return selectExpression.apply(new Tuple7<>(t, t1, t2, t3, t4, t5, tr));
+        });
+    }
 }

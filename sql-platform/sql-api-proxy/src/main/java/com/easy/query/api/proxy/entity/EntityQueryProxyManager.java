@@ -18,6 +18,59 @@ import java.util.function.Supplier;
  */
 public class EntityQueryProxyManager {
     private static final Cache<Class<?>, Supplier<Object>> proxyConstructorCache = new DefaultMemoryCache<>();
+//    static {
+//        proxyConstructorCache.computeIfAbsent(BigDecimal.class, key -> {
+//            return BigDecimalProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(Boolean.class, key -> {
+//            return BooleanProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(Byte[].class, key -> {
+//            return ByteArrayProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(Byte.class, key -> {
+//            return ByteProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(Double.class, key -> {
+//            return DoubleProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(Float.class, key -> {
+//            return FloatProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(Integer.class, key -> {
+//            return IntegerProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(LocalDate.class, key -> {
+//            return LocalDateProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(LocalDateTime.class, key -> {
+//            return LocalDateTimeProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(Long.class, key -> {
+//            return LongProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(Map.class, key -> {
+//            return MapProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(Short.class, key -> {
+//            return ShortProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(java.sql.Date.class, key -> {
+//            return SQLDateProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(String.class, key -> {
+//            return StringProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(Time.class, key -> {
+//            return TimeProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(Timestamp.class, key -> {
+//            return TimestampProxy::createTable;
+//        });
+//        proxyConstructorCache.computeIfAbsent(java.util.Date.class, key -> {
+//            return UtilDateProxy::createTable;
+//        });
+//    }
 
     public static <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity extends ProxyEntityAvailable<TEntity, TEntityProxy>> TEntityProxy create(Class<TEntity> entityClass) {
 //        EntityMetadataManager
@@ -40,4 +93,5 @@ public class EntityQueryProxyManager {
         Object proxy = objectSupplier.get();
         return EasyObjectUtil.typeCast(proxy);
     }
+
 }
