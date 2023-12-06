@@ -1,4 +1,4 @@
-package com.easy.query.api.proxy.func.column;
+package com.easy.query.core.proxy.func.column;
 
 import com.easy.query.core.func.column.ColumnFuncSelector;
 

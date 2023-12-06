@@ -1,7 +1,6 @@
 package com.easy.query.core.proxy;
 
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.SQLTableOwner;
 
 /**
  * create time 2023/7/11 22:05
@@ -9,6 +8,5 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public interface TablePropColumn extends PropColumn {
-    TableAvailable getTable();
+public interface TablePropColumn extends PropColumn, SQLTableOwner {
 }

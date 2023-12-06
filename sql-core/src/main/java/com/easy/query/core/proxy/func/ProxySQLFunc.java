@@ -1,7 +1,7 @@
-package com.easy.query.api.proxy.func;
+package com.easy.query.core.proxy.func;
 
-import com.easy.query.api.proxy.func.column.ProxyColumnFuncSelector;
-import com.easy.query.api.proxy.func.column.ProxyColumnFuncSelectorImpl;
+import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
+import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.SimpleSQLTableOwner;
 import com.easy.query.core.func.SQLFunction;

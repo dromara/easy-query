@@ -100,7 +100,7 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
     }
 
 
-    public ValueCompany1ProxySelector selector() {
+    public ValueCompany1ProxySelector cols() {
         return new ValueCompany1ProxySelector(this);
     }
 

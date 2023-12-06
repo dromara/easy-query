@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy.sql;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -56,6 +57,23 @@ public class Select {
     public static SQLSelectExpression sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         return new SQLSelectImpl(f -> {
             f.sqlNativeSegment(sqlSegment, c -> {
+                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
+            });
+        });
+    }
+    public static SQLSelectAsExpression sql(String sqlSegment, PropColumn sqlColumnAlias) {
+        return sql(sqlSegment, f -> {
+        },sqlColumnAlias);
+    }
+
+    public static SQLSelectAsExpression sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume, PropColumn sqlColumnAlias) {
+        return new SQLSelectAsImpl(f->{
+            f.sqlNativeSegment(sqlSegment, c -> {
+                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
+            });
+        },f -> {
+            f.sqlNativeSegment(sqlSegment, c -> {
+                c.setPropertyAlias(sqlColumnAlias.getValue());
                 contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
             });
         });

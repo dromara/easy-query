@@ -12,10 +12,16 @@ import com.easy.query.core.proxy.impl.SQLGroupSelectImpl;
 public interface SQLGroupByExpression extends TablePropColumn {
 
     default SQLGroupByExpression then(SQLGroupByExpression sqlGroupSelect){
-        return new SQLGroupSelectImpl(x->{
-            accept(x);
-            sqlGroupSelect.accept(x);
-        });
+        return then(true,sqlGroupSelect);
+    }
+    default SQLGroupByExpression then(boolean condition,SQLGroupByExpression sqlGroupSelect){
+        if(condition){
+            return new SQLGroupSelectImpl(x->{
+                accept(x);
+                sqlGroupSelect.accept(x);
+            });
+        }
+        return SQLGroupByExpression.empty;
     }
     default void accept(GroupSelector s) {
         s.column(this.getTable(), this.getValue());

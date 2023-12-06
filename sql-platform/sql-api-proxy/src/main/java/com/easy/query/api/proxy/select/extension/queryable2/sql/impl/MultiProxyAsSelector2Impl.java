@@ -3,7 +3,7 @@ package com.easy.query.api.proxy.select.extension.queryable2.sql.impl;
 import com.easy.query.api.proxy.select.extension.queryable2.sql.MultiProxyAsSelector2;
 import com.easy.query.api.proxy.sql.ProxyAsSelector;
 import com.easy.query.core.expression.builder.AsSelector;
-import com.easy.query.core.expression.builder.core.SQLAsNative;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -50,7 +50,7 @@ public class MultiProxyAsSelector2Impl<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     }
 
     @Override
-    public <T> SQLAsNative<T> getSQLAsNative() {
+    public <T> SQLNative<T> getSQLNative() {
         return EasyObjectUtil.typeCastNullable(asSelector);
     }
 

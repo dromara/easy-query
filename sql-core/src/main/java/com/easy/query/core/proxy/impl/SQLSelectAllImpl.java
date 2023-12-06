@@ -36,11 +36,11 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
     }
 
     @Override
-    public void accept(Selector f) {
-        f.columnAll(table);
+    public void accept(Selector s) {
+        s.columnAll(table);
         if (EasyArrayUtil.isNotEmpty(ignoreProps)) {
             for (PropColumn ignoreProp : ignoreProps) {
-                f.columnIgnore(table, ignoreProp.getValue());
+                s.columnIgnore(table, ignoreProp.getValue());
             }
         }
     }

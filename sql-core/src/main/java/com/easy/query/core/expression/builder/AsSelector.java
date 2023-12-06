@@ -2,13 +2,14 @@ package com.easy.query.core.expression.builder;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.builder.core.SQLAsNative;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -24,8 +25,7 @@ import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
  *
  * @author xuejiaming
  */
-public interface AsSelector extends SQLAsNative<AsSelector> {
-    QueryRuntimeContext getRuntimeContext();
+public interface AsSelector extends SQLNative<AsSelector>, RuntimeContextAvailable {
 
     ExpressionContext getExpressionContext();
 

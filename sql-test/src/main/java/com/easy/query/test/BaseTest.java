@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
+import com.easy.query.api.proxy.client.DefaultEntityQuery;
 import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
@@ -76,6 +77,7 @@ public abstract class BaseTest {
     public static EasyQueryClient easyQueryClient;
     public static EasyQuery easyQuery;
     public static EasyProxyQuery easyProxyQuery;
+    public static DefaultEntityQuery entityQuery;
     public static ListenerContextManager listenerContextManager;
 
     static {
@@ -154,6 +156,7 @@ public abstract class BaseTest {
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);
         easyProxyQuery=new DefaultEasyProxyQuery(easyQueryClient);
+        entityQuery = new DefaultEntityQuery(easyQueryClient);
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());

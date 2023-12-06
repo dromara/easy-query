@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.core.base.core;
 
-import com.easy.query.core.expression.builder.core.SQLAsNative;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
@@ -16,7 +16,7 @@ import com.easy.query.core.func.SQLFunction;
  * @author xuejiaming
  */
 public interface SQLAsPropertyNative<TChain> extends SQLTableOwner, ChainCast<TChain> {
-    <T> SQLAsNative<T> getSQLAsNative();
+    <T> SQLNative<T> getSQLNative();
     /**
      * 参数格式化 占位符 {0} {1}
      * @param sqlSegment
@@ -46,7 +46,7 @@ public interface SQLAsPropertyNative<TChain> extends SQLTableOwner, ChainCast<TC
 
     default TChain sqlNativeSegment(boolean condition,String sqlSegment, SQLExpression1<SQLAliasNativePropertyExpressionContext> contextConsume){
         if(condition){
-            getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
+            getSQLNative().sqlNativeSegment(sqlSegment, context->{
                 contextConsume.apply(new SQLAliasNativePropertyExpressionContextImpl(getTable(),context));
             });
         }
@@ -59,7 +59,7 @@ public interface SQLAsPropertyNative<TChain> extends SQLTableOwner, ChainCast<TC
     default TChain sqlFunc(boolean condition, SQLFunction sqlFunction){
         if(condition){
             String sqlSegment = sqlFunction.sqlSegment(getTable());
-            getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
+            getSQLNative().sqlNativeSegment(sqlSegment, context->{
                 sqlFunction.consume(new SQLNativeChainExpressionContextImpl(getTable(),context));
             });
         }
@@ -72,7 +72,7 @@ public interface SQLAsPropertyNative<TChain> extends SQLTableOwner, ChainCast<TC
     default TChain sqlFuncAs(boolean condition, SQLFunction sqlFunction, String propertyAlias){
         if(condition){
             String sqlSegment = sqlFunction.sqlSegment(getTable());
-            getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
+            getSQLNative().sqlNativeSegment(sqlSegment, context->{
                 SQLNativeChainExpressionContextImpl sqlNativeChainExpressionContext = new SQLNativeChainExpressionContextImpl(getTable(), context);
                 sqlNativeChainExpressionContext.setPropertyAlias(propertyAlias);
                 sqlFunction.consume(sqlNativeChainExpressionContext);

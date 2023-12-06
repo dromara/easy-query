@@ -57,11 +57,11 @@ public interface SQLSelectExpression extends TablePropColumn {
         });
     }
 
-    default void accept(Selector f) {
+    default void accept(Selector s) {
         TableAvailable table = this.getTable();
         String value = this.getValue();
         if (table != null && value != null) {
-            f.column(table, value);
+            s.column(table, value);
         }
     }
 

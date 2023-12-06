@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.predicate;
 
+import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -11,21 +12,21 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
  * @author xuejiaming
  */
 public interface DSLOtherPredicate<TProperty> extends TablePropColumn {
-    default SQLPredicateExpression ge(DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression ge(SQLColumn<TProxy,TProp> column) {
         return ge(true, column);
     }
 
-    default SQLPredicateExpression ge(boolean condition, DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression ge(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.ge(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }
         return SQLPredicateExpression.empty;
     }
-    default SQLPredicateExpression gt(DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression gt(SQLColumn<TProxy,TProp> column) {
         return gt(true, column);
     }
 
-    default SQLPredicateExpression gt(boolean condition, DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression gt(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.gt(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }
@@ -33,11 +34,11 @@ public interface DSLOtherPredicate<TProperty> extends TablePropColumn {
     }
 
 
-    default SQLPredicateExpression eq(DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression eq(SQLColumn<TProxy,TProp> column) {
         return eq(true, column);
     }
 
-    default SQLPredicateExpression eq(boolean condition, DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression eq(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }
@@ -46,33 +47,33 @@ public interface DSLOtherPredicate<TProperty> extends TablePropColumn {
 
 
 
-    default SQLPredicateExpression ne(DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression ne(SQLColumn<TProxy,TProp> column) {
         return ne(true, column);
     }
 
-    default SQLPredicateExpression ne(boolean condition, DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression ne(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.ne(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }
         return SQLPredicateExpression.empty;
     }
 
-    default SQLPredicateExpression le(DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression le(SQLColumn<TProxy,TProp> column) {
         return le(true, column);
     }
 
-    default SQLPredicateExpression le(boolean condition, DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression le(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.le(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }
         return SQLPredicateExpression.empty;
     }
 
-    default SQLPredicateExpression lt(DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression lt(SQLColumn<TProxy,TProp> column) {
         return lt(true, column);
     }
 
-    default SQLPredicateExpression lt(boolean condition, DSLOtherPredicate<TProperty> column) {
+    default <TProxy,TProp> SQLPredicateExpression lt(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
             return new SQLPredicateImpl(f -> f.lt(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
         }

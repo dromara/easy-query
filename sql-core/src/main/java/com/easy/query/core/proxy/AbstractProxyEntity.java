@@ -1,6 +1,9 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
+import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -45,6 +48,13 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     @SuppressWarnings("varargs")
     public final SQLSelectAsExpression allFieldsExclude(SQLColumn<TProxy,?>... ignorePropColumns){
         return new SQLSelectAllImpl(getTable(),ignorePropColumns);
+    }
+
+    public <T> ColumnFuncComparableExpression<T> _now(){
+        return new SQLColumnFunctionComparableExpressionImpl<T>(this.getTable(),null, SQLFunc::now);
+    }
+    public <T> ColumnFuncComparableExpression<T> _utcNow(){
+        return new SQLColumnFunctionComparableExpressionImpl<T>(this.getTable(),null, SQLFunc::utcNow);
     }
 
 }

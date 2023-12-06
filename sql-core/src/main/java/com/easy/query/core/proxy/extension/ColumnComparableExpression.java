@@ -2,6 +2,7 @@ package com.easy.query.core.proxy.extension;
 
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.predicate.DSLAssertPredicate;
+import com.easy.query.core.proxy.predicate.DSLFunctionPredicate;
 import com.easy.query.core.proxy.predicate.DSLLikePredicate;
 import com.easy.query.core.proxy.predicate.DSLOtherPredicate;
 import com.easy.query.core.proxy.predicate.DSLRangePredicate;
@@ -15,12 +16,13 @@ import com.easy.query.core.proxy.predicate.DSLValuesPredicate;
  *
  * @author xuejiaming
  */
-public interface ColumnComparable<T> extends SQLSelectAsExpression
+public interface ColumnComparableExpression<T> extends SQLSelectAsExpression
         , DSLValuePredicate<T>
         , DSLAssertPredicate<T>
         , DSLLikePredicate<T>
         , DSLValuesPredicate<T>
         , DSLSubQueryPredicate<T>
         , DSLRangePredicate<T>
-        , DSLOtherPredicate<T> {
+        , DSLOtherPredicate<T>
+        , DSLFunctionPredicate<T> {
 }

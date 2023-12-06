@@ -1,8 +1,6 @@
 package com.easy.query.api.proxy.sql.core;
 
-import com.easy.query.core.proxy.sql.scec.SQLAliasNativeProxyExpressionContext;
-import com.easy.query.core.proxy.sql.scec.SQLAliasNativeProxyExpressionContextImpl;
-import com.easy.query.core.expression.builder.core.SQLAsNative;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
@@ -10,6 +8,8 @@ import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainE
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.sql.scec.SQLAliasNativeProxyExpressionContext;
+import com.easy.query.core.proxy.sql.scec.SQLAliasNativeProxyExpressionContextImpl;
 
 /**
  * create time 2023/7/31 14:35
@@ -18,7 +18,7 @@ import com.easy.query.core.proxy.SQLColumn;
  * @author xuejiaming
  */
 public interface SQLAsProxyNative<TRProxy extends ProxyEntity<TRProxy, TR>, TR, TChain> extends ChainCast<TChain> {
-    <T> SQLAsNative<T> getSQLAsNative();
+    <T> SQLNative<T> getSQLNative();
 
     /**
      * 参数格式化 占位符 {0} {1}
@@ -61,7 +61,7 @@ public interface SQLAsProxyNative<TRProxy extends ProxyEntity<TRProxy, TR>, TR, 
      */
     default TChain sqlNativeSegment(boolean condition, String sqlSegment, SQLExpression1<SQLAliasNativeProxyExpressionContext<TRProxy, TR>> contextConsume) {
         if (condition) {
-            getSQLAsNative().sqlNativeSegment(sqlSegment, context -> {
+            getSQLNative().sqlNativeSegment(sqlSegment, context -> {
                 contextConsume.apply(new SQLAliasNativeProxyExpressionContextImpl<>(context));
             });
         }
@@ -75,7 +75,7 @@ public interface SQLAsProxyNative<TRProxy extends ProxyEntity<TRProxy, TR>, TR, 
     default TChain sqlFunc(boolean condition, SQLFunction sqlFunction){
         if(condition){
             String sqlSegment = sqlFunction.sqlSegment(null);
-            getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
+            getSQLNative().sqlNativeSegment(sqlSegment, context->{
                 sqlFunction.consume(new SQLNativeChainExpressionContextImpl(null,context));
             });
         }
@@ -88,7 +88,7 @@ public interface SQLAsProxyNative<TRProxy extends ProxyEntity<TRProxy, TR>, TR, 
     default TChain sqlFuncAs(boolean condition, SQLFunction sqlFunction, SQLColumn<TRProxy,TR> sqlColumn){
         if(condition){
             String sqlSegment = sqlFunction.sqlSegment(null);
-            getSQLAsNative().sqlNativeSegment(sqlSegment,context->{
+            getSQLNative().sqlNativeSegment(sqlSegment, context->{
                 SQLNativeChainExpressionContext sqlNativeChainExpressionContext = new SQLNativeChainExpressionContextImpl(null,context);
                 sqlNativeChainExpressionContext.setPropertyAlias(sqlColumn.getValue());
                 sqlFunction.consume(sqlNativeChainExpressionContext);

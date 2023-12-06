@@ -1,4 +1,4 @@
-package com.easy.query.api.proxy.func;
+package com.easy.query.core.proxy.func;
 
 import com.easy.query.core.func.SQLFunc;
 

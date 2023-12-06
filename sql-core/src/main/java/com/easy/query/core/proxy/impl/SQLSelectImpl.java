@@ -29,7 +29,7 @@ public class SQLSelectImpl implements SQLSelectExpression {
     }
 
     @Override
-    public void accept(Selector f) {
-        selectorConsumer.accept(f);
+    public void accept(Selector s) {
+        selectorConsumer.accept(s);
     }
 }

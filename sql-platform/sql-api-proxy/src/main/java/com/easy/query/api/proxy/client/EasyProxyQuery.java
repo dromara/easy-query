@@ -2,7 +2,7 @@ package com.easy.query.api.proxy.client;
 
 import com.easy.query.api.proxy.delete.ProxyEntityDeletable;
 import com.easy.query.api.proxy.delete.ProxyExpressionDeletable;
-import com.easy.query.api.proxy.func.ProxySQLFunc;
+import com.easy.query.core.proxy.func.ProxySQLFunc;
 import com.easy.query.api.proxy.insert.ProxyOnyEntityInsertable;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.update.ProxyEntityUpdatable;

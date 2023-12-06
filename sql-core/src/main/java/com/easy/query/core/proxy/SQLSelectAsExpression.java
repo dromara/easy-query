@@ -12,13 +12,19 @@ import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
  */
 public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByExpression {
     default SQLSelectAsExpression concat(SQLSelectAsExpression sqlSelectAs) {
-        return new SQLSelectAsImpl(x -> {
-            accept(x);
-            sqlSelectAs.accept(x);
-        }, x -> {
-            accept(x);
-            sqlSelectAs.accept(x);
-        });
+        return concat(true,sqlSelectAs);
+    }
+    default SQLSelectAsExpression concat(boolean condition,SQLSelectAsExpression sqlSelectAs) {
+        if(condition){
+            return new SQLSelectAsImpl(x -> {
+                accept(x);
+                sqlSelectAs.accept(x);
+            }, x -> {
+                accept(x);
+                sqlSelectAs.accept(x);
+            });
+        }
+        return SQLSelectAsExpression.empty;
     }
 
     default void accept(AsSelector f) {

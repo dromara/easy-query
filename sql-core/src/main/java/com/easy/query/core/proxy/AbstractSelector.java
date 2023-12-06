@@ -96,9 +96,9 @@ public abstract class AbstractSelector<TProxy extends AbstractProxyEntity<TProxy
     }
 
     @Override
-    public void accept(Selector f) {
+    public void accept(Selector s) {
         for (SQLSelectAsExpression select : selects) {
-            select.accept(f);
+            select.accept(s);
         }
     }
 

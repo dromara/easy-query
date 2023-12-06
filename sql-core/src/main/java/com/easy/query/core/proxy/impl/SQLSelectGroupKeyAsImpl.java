@@ -36,8 +36,8 @@ public class SQLSelectGroupKeyAsImpl implements SQLSelectAsExpression {
     }
 
     @Override
-    public void accept(Selector f) {
-        f.groupKeys(index);
+    public void accept(Selector s) {
+        s.groupKeys(index);
     }
 
     @Override

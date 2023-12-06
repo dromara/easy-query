@@ -17,6 +17,15 @@ public interface SQLOrderByExpression {
             sqlOrderSelect.accept(x);
         });
     }
+    default SQLOrderByExpression thenBy(boolean condition,SQLOrderByExpression sqlOrderSelect) {
+        if (condition) {
+            return new SQLOrderSelectImpl(x -> {
+                accept(x);
+                sqlOrderSelect.accept(x);
+            });
+        }
+        return SQLOrderByExpression.empty;
+    }
 
     void accept(OrderSelector s);
 

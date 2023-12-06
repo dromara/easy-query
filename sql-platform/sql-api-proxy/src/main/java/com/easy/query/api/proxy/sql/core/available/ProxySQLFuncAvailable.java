@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.sql.core.available;
 
-import com.easy.query.api.proxy.func.ProxySQLFuncImpl;
-import com.easy.query.api.proxy.func.ProxySQLFunc;
+import com.easy.query.core.proxy.func.ProxySQLFuncImpl;
+import com.easy.query.core.proxy.func.ProxySQLFunc;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 
 /**
