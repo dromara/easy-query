@@ -73,9 +73,9 @@ public interface Fetcher<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, T
     TChain valueObjectColumnExclude(SQLColumn<TProxy, ?> column, Collection<SQLColumn<TProxy, ?>> ignoreColumns);
 
     @Override
-   default TChain setAlias(TablePropColumn propColumn){
-        return setAlias(propColumn.getValue());
+   default TChain _alias(TablePropColumn propColumn){
+        return _alias(propColumn.getValue());
     }
     @Override
-    TChain setAlias(String propertyAlias);
+    TChain _alias(String propertyAlias);
 }

@@ -1,14 +1,14 @@
 package com.easy.query.api.proxy.client;
 
-import com.easy.query.api.proxy.delete.ProxyEntityDeletable;
-import com.easy.query.api.proxy.delete.ProxyExpressionDeletable;
+import com.easy.query.api.proxy.entity.delete.EntityDeletable;
+import com.easy.query.api.proxy.entity.delete.ExpressionDeletable;
+import com.easy.query.api.proxy.entity.insert.EntityInsertable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.api.proxy.insert.ProxyOnyEntityInsertable;
-import com.easy.query.api.proxy.select.ProxyQueryable;
-import com.easy.query.api.proxy.update.ProxyEntityUpdatable;
-import com.easy.query.api.proxy.update.ProxyExpressionUpdatable;
-import com.easy.query.api.proxy.update.ProxyOnlyEntityUpdatable;
+import com.easy.query.api.proxy.entity.update.EntityUpdatable;
+import com.easy.query.api.proxy.entity.update.ExpressionUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
+import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -57,10 +57,9 @@ public interface EntityQuery {
     default long sqlExecute(String sql, List<Object> parameters){
         return getEasyQueryClient().sqlExecute(sql,parameters);
     }
-    <TProxy extends ProxyEntity<TProxy, T>, T> ProxyQueryable<TProxy, T> queryable(TProxy table);
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityQueryable<TProxy, T> queryable(Class<T> entityClass);
 
-    <TProxy extends ProxyEntity<TProxy, T>, T> ProxyQueryable<TProxy, T> queryable(String sql, TProxy table);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityQueryable<TProxy, T> queryable(String sql, Class<T> entityClass);
 
     default Transaction beginTransaction() {
         return beginTransaction(null);
@@ -78,25 +77,21 @@ public interface EntityQuery {
      */
     Transaction beginTransaction(Integer isolationLevel);
 
-    <T> ProxyOnyEntityInsertable<T> insertable(T entity);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityInsertable<TProxy,T> insertable(T entity);
 
-    <T> ProxyOnyEntityInsertable<T> insertable(Collection<T> entities);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityInsertable<TProxy,T> insertable(Collection<T> entities);
 
-    <TProxy extends ProxyEntity<TProxy, T>, T> ProxyExpressionUpdatable<TProxy,T> updatable(TProxy proxy);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> ExpressionUpdatable<TProxy,T> updatable(Class<T> entityClass);
 
-    <T> ProxyOnlyEntityUpdatable<T> updatable(T entity);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityUpdatable<TProxy,T> updatable(T entity);
 
-    <T> ProxyOnlyEntityUpdatable<T> updatable(Collection<T> entities);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityUpdatable<TProxy,T> updatable(Collection<T> entities);
 
-    <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy,T> updatable(T entity, TProxy proxy);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityDeletable<TProxy,T> deletable(T entity);
 
-    <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy,T> updatable(Collection<T> entities,TProxy proxy);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityDeletable<TProxy,T> deletable(Collection<T> entities);
 
-    <T> ProxyEntityDeletable<T> deletable(T entity);
-
-    <T> ProxyEntityDeletable<T> deletable(Collection<T> entities);
-
-    <TProxy extends ProxyEntity<TProxy, T>, T> ProxyExpressionDeletable<TProxy,T> deletable(TProxy proxy);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> ExpressionDeletable<TProxy,T> deletable(Class<T> entityClass);
 
     /**
      * 添加到当前环境的追踪里面
@@ -109,4 +104,19 @@ public interface EntityQuery {
     boolean addTracking(Object entity);
     boolean removeTracking(Object entity);
     EntityState getTrackEntityStateNotNull(Object entity);
+
+    default MapClientInsertable<Map<String, Object>> mapInsertable(Map<String, Object> map) {
+        return getEasyQueryClient().mapInsertable(map);
+    }
+
+    default MapClientInsertable<Map<String, Object>> mapInsertable(Collection<Map<String, Object>> maps) {
+        return getEasyQueryClient().mapInsertable(maps);
+    }
+    default MapClientUpdatable<Map<String, Object>> mapUpdatable(Map<String, Object> map) {
+        return getEasyQueryClient().mapUpdatable(map);
+    }
+
+    default MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
+        return getEasyQueryClient().mapUpdatable(maps);
+    }
 }

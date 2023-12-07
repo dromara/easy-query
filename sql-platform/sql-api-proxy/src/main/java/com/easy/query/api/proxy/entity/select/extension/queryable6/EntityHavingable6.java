@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable6;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable6;
-import com.easy.query.core.common.tuple.Tuple6;
+import com.easy.query.core.common.tuple.MergeTuple6;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression6;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -34,13 +34,13 @@ public interface EntityHavingable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable6();
     }
 
-    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> havingMerge(SQLFuncExpression1<Tuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>,SQLAggregatePredicateExpression> predicateExpression) {
+    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> havingMerge(SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>,SQLAggregatePredicateExpression> predicateExpression) {
         return havingMerge(true, predicateExpression);
     }
 
-    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> havingMerge(boolean condition, SQLFuncExpression1<Tuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>,SQLAggregatePredicateExpression> predicateExpression) {
+    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> havingMerge(boolean condition, SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>,SQLAggregatePredicateExpression> predicateExpression) {
         return having(condition, (t, t1, t2, t3, t4,t5) -> {
-            return predicateExpression.apply(new Tuple6<>(t, t1, t2, t3, t4,t5));
+            return predicateExpression.apply(new MergeTuple6<>(t, t1, t2, t3, t4,t5));
         });
     }
 

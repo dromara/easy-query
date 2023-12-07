@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable7;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable7;
-import com.easy.query.core.common.tuple.Tuple7;
+import com.easy.query.core.common.tuple.MergeTuple7;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression7;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -35,13 +35,13 @@ public interface EntityFilterable7<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable7();
     }
 
-    default EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> whereMerge(SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>,SQLPredicateExpression> whereExpression) {
+    default EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> whereMerge(SQLFuncExpression1<MergeTuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>,SQLPredicateExpression> whereExpression) {
         return whereMerge(true, whereExpression);
     }
 
-    default EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> whereMerge(boolean condition, SQLFuncExpression1<Tuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>,SQLPredicateExpression> whereExpression) {
+    default EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> whereMerge(boolean condition, SQLFuncExpression1<MergeTuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>,SQLPredicateExpression> whereExpression) {
         return where(condition, (t, t1, t2, t3, t4, t5, t6) -> {
-            return whereExpression.apply(new Tuple7<>(t, t1, t2, t3, t4, t5, t6));
+            return whereExpression.apply(new MergeTuple7<>(t, t1, t2, t3, t4, t5, t6));
         });
     }
 }

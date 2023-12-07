@@ -3,6 +3,7 @@ package com.easy.query.core.proxy;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
+import com.easy.query.core.proxy.sql.Select;
 
 import java.util.Collection;
 
@@ -13,20 +14,22 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByExpression {
-    default SQLSelectAsExpression concat(SQLSelectAsExpression sqlSelectAs) {
-        return concat(true,sqlSelectAs);
+    default SQLSelectAsExpression _concat(SQLSelectAsExpression... sqlSelectAses) {
+        return _concat(true,sqlSelectAses);
     }
-    default SQLSelectAsExpression concat(boolean condition,SQLSelectAsExpression sqlSelectAs) {
+    default SQLSelectAsExpression _concat(boolean condition, SQLSelectAsExpression... sqlSelectAs) {
         if(condition){
+
+            SQLSelectAsExpression expression = Select.of(sqlSelectAs);
             return new SQLSelectAsImpl(x -> {
                 accept(x);
-                sqlSelectAs.accept(x);
+                expression.accept(x);
             }, x -> {
                 accept(x);
-                sqlSelectAs.accept(x);
+                expression.accept(x);
             },x->{
                 accept(x);
-                sqlSelectAs.accept(x);
+                expression.accept(x);
             });
         }
         return SQLSelectAsExpression.empty;

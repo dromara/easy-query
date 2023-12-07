@@ -2,6 +2,7 @@ package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
+import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropColumn;
@@ -31,12 +32,22 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
     }
 
     @Override
-    public SQLSelectAsExpression setAlias(TablePropColumn propColumn) {
+    public SQLSelectAsExpression _alias(TablePropColumn propColumn) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void accept(Selector s) {
+        s.columnAll(table);
+        if (EasyArrayUtil.isNotEmpty(ignoreProps)) {
+            for (PropColumn ignoreProp : ignoreProps) {
+                s.columnIgnore(table, ignoreProp.getValue());
+            }
+        }
+    }
+
+    @Override
+    public void accept(OnlySelector s) {
         s.columnAll(table);
         if (EasyArrayUtil.isNotEmpty(ignoreProps)) {
             for (PropColumn ignoreProp : ignoreProps) {

@@ -13,6 +13,7 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQueryTableNotInSQLContextException;
+import com.easy.query.core.proxy.sql.Predicate;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUserSQLEncryption;
@@ -49,11 +50,54 @@ public class UpdateTest extends BaseTest {
 
     @Test
     public void updateTest1() {
-        long rows = easyQuery.updatable(Topic.class)
-                .set(Topic::getStars, 12)
-                .where(o -> o.eq(Topic::getId, "2"))
-                .executeRows();
-        Assert.assertEquals(1, rows);
+        {
+
+            long rows = easyQuery.updatable(Topic.class)
+                    .set(Topic::getStars, 12)
+                    .where(o -> o.eq(Topic::getId, "2"))
+                    .executeRows();
+            Assert.assertEquals(1, rows);
+        }
+        {
+
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            long rows = entityQuery.updatable(Topic.class)
+                    .set(o->o.stars(), 12)
+                    .where(o -> o.id().eq("2"))
+                    .where(o -> o.title().eq("2c"))
+                    .executeRows();
+            Assert.assertEquals(0, rows);
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("12(Integer),2(String),2c(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            long rows = entityQuery.updatable(Topic.class)
+                    .set(o->o.stars(), 12)
+                    .where(o-> Predicate.and(
+                            o.id().eq("2"),
+                            o.title().eq("2c")
+                    ))
+                    .executeRows();
+            Assert.assertEquals(0, rows);
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("12(Integer),2(String),2c(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
     }
 
     @Test
@@ -627,6 +671,27 @@ public class UpdateTest extends BaseTest {
             Assert.assertEquals("UPDATE `xxxxx` SET `stars` = ifnull(`stars`,0)+? WHERE `id` = ?", sql);
         }
     }
+    @Test
+    public void updateTest18_1() {
+        try {
+
+            long rows = entityQuery.updatable(Topic.class)
+                    .asTable("xxxxx")
+                    .setSQLSegment(o->o.stars(), "ifnull({0},0)+{1}", (t,context) -> {
+                        context.expression(t.stars())
+                                .value(1);
+                    })
+                    .where(o -> o.id().eq("2"))
+                    .executeRows();
+            Assert.assertEquals(1, rows);
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `xxxxx` SET `stars` = ifnull(`stars`,0)+? WHERE `id` = ?", sql);
+        }
+    }
 
     @Test
     public void updateTest19() {
@@ -636,6 +701,26 @@ public class UpdateTest extends BaseTest {
                     .asTable("xxxxx")
                     .columnConfigure(o -> o.column(Topic::getStars, "ifnull({0},0)+{1}", (context, sqlParameter) -> {
                         context.expression(Topic::getStars)
+                                .value(sqlParameter);
+                    }))
+                    .executeRows();
+            Assert.assertEquals(1, rows);
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `xxxxx` SET `stars` = ifnull(`stars`,0)+?,`title` = ?,`create_time` = ? WHERE `id` = ?", sql);
+        }
+    }
+    @Test
+    public void updateTest19_1() {
+        try {
+            Topic topic = new Topic();
+            long rows = entityQuery.updatable(topic)
+                    .asTable("xxxxx")
+                    .columnConfigure((t,o) -> o.column(t.stars(), "ifnull({0},0)+{1}", (context, sqlParameter) -> {
+                        context.expression(t.stars())
                                 .value(sqlParameter);
                     }))
                     .executeRows();
@@ -702,6 +787,34 @@ public class UpdateTest extends BaseTest {
         }
         Assert.assertFalse(trackManager.currentThreadTracking());
     }
+    @Test
+    public void updateTest21_1() {
+        TrackManager trackManager = entityQuery.getRuntimeContext().getTrackManager();
+        try {
+
+            trackManager.begin();
+            Topic topic = entityQuery.queryable(Topic.class)
+                    .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
+            boolean b = entityQuery.addTracking(topic);
+            Assert.assertTrue(b);
+            String newTitle = "test123" + new Random().nextInt(100);
+            topic.setTitle(newTitle);
+            entityQuery.updatable(topic)
+                    .asTable("x1234")
+                    .whereColumns(o -> o.FETCHER.id().title())
+                    .executeRows();
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `x1234` SET `title` = ? WHERE `id` = ? AND `title` = ?", sql);
+        } finally {
+
+            trackManager.release();
+        }
+        Assert.assertFalse(trackManager.currentThreadTracking());
+    }
 
     @Test
     public void updateTest22() {
@@ -718,6 +831,34 @@ public class UpdateTest extends BaseTest {
             ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
                     .asTable("x123")
                     .whereColumns(o -> o.column(Topic::getId))
+                    .executeRows();
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `x123` SET `title` = ? WHERE `id` = ?", sql);
+        } finally {
+
+            trackManager.release();
+        }
+        Assert.assertFalse(trackManager.currentThreadTracking());
+    }
+    @Test
+    public void updateTest22_1() {
+        TrackManager trackManager = entityQuery.getRuntimeContext().getTrackManager();
+        try {
+
+            trackManager.begin();
+            Topic topic = entityQuery.queryable(Topic.class)
+                    .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
+            boolean b = easyQuery.addTracking(topic);
+            Assert.assertTrue(b);
+            String newTitle = "test123" + new Random().nextInt(100);
+            topic.setTitle(newTitle);
+            entityQuery.updatable(topic)
+                    .asTable("x123")
+                    .whereColumns(o -> o.id())
                     .executeRows();
         } catch (Exception ex) {
             Throwable cause = ex.getCause();
@@ -760,6 +901,34 @@ public class UpdateTest extends BaseTest {
         }
         Assert.assertFalse(trackManager.currentThreadTracking());
     }
+    @Test
+    public void updateTest23_1() {
+        TrackManager trackManager = entityQuery.getRuntimeContext().getTrackManager();
+        try {
+
+            trackManager.begin();
+            Topic topic = entityQuery.queryable(Topic.class)
+                    .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
+            boolean b = entityQuery.addTracking(topic);
+            Assert.assertTrue(b);
+            String newTitle = "test123" + new Random().nextInt(100);
+            topic.setTitle(newTitle);
+            ( entityQuery.updatable(topic))
+                    .asTable("x123")
+                    .whereColumns(o -> o.title())
+                    .executeRows();
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `x123` SET `title` = ? WHERE `title` = ?", sql);
+        } finally {
+
+            trackManager.release();
+        }
+        Assert.assertFalse(trackManager.currentThreadTracking());
+    }
 
     @Test
     public void updateTest24() {
@@ -774,6 +943,28 @@ public class UpdateTest extends BaseTest {
             ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
                     .asTable("x123")
                     .whereColumns(o -> o.column(Topic::getTitle))
+                    .executeRows();
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `x123` SET `stars` = ?,`create_time` = ? WHERE `title` = ?", sql);
+        }
+    }
+    @Test
+    public void updateTest24_1() {
+        try {
+
+            Topic topic = entityQuery.queryable(Topic.class)
+                    .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
+            boolean b = easyQuery.addTracking(topic);
+            Assert.assertFalse(b);
+            String newTitle = "test123" + new Random().nextInt(100);
+            topic.setTitle(newTitle);
+            (entityQuery.updatable(topic))
+                    .asTable("x123")
+                    .whereColumns(o -> o.title())
                     .executeRows();
         } catch (Exception ex) {
             Throwable cause = ex.getCause();
@@ -806,6 +997,28 @@ public class UpdateTest extends BaseTest {
             Assert.assertEquals("UPDATE `xxxxx` SET `username` = ?,`phone` = to_base64(AES_ENCRYPT(?,?)),`id_card` = ?,`address` = ?,`create_time` = ? WHERE `id` = ?", sql);
         }
     }
+    @Test
+    public void updateTest25_1() {
+        try {
+            SysUserSQLEncryption user = new SysUserSQLEncryption();
+            user.setId("123");
+            user.setUsername("username");
+            user.setPhone("13232456789");
+            user.setIdCard("12345678");
+            user.setAddress("xxxxxxx");
+            user.setCreateTime(LocalDateTime.now());
+            long rows = entityQuery.updatable(user)
+                    .asTable("xxxxx")
+                    .executeRows();
+            Assert.assertEquals(1, rows);
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `xxxxx` SET `username` = ?,`phone` = to_base64(AES_ENCRYPT(?,?)),`id_card` = ?,`address` = ?,`create_time` = ? WHERE `id` = ?", sql);
+        }
+    }
 
     @Test
     public void updateTest26() {
@@ -814,6 +1027,21 @@ public class UpdateTest extends BaseTest {
             SysUserSQLEncryption topic = easyQuery.queryable(SysUserSQLEncryption.class)
                     .asTable("x123")
                     .where(o -> o.eq(SysUserSQLEncryption::getId, "7")).firstNotNull("未找到对应的数据");
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("SELECT `id`,`username`,AES_DECRYPT(from_base64(`phone`),?) AS `phone`,`id_card`,`address`,`create_time` FROM `x123` WHERE `id` = ? LIMIT 1", sql);
+        }
+    }
+    @Test
+    public void updateTest26_1() {
+        try {
+
+            SysUserSQLEncryption topic = entityQuery.queryable(SysUserSQLEncryption.class)
+                    .asTable("x123")
+                    .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
         } catch (Exception ex) {
             Throwable cause = ex.getCause();
             Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
@@ -831,6 +1059,22 @@ public class UpdateTest extends BaseTest {
                     .asTable("x123")
                     .set(SysUserSQLEncryption::getPhone, "123123")
                     .where(o -> o.eq(SysUserSQLEncryption::getId, "7")).executeRows();
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `x123` SET `phone` = to_base64(AES_ENCRYPT(?,?)) WHERE `id` = ?", sql);
+        }
+    }
+    @Test
+    public void updateTest27_1() {
+        try {
+
+            entityQuery.updatable(SysUserSQLEncryption.class)
+                    .asTable("x123")
+                    .set(o->o.phone(), "123123")
+                    .where(o -> o.id().eq("7")).executeRows();
         } catch (Exception ex) {
             Throwable cause = ex.getCause();
             Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
@@ -867,6 +1111,32 @@ public class UpdateTest extends BaseTest {
         }
         Assert.assertFalse(trackManager.currentThreadTracking());
     }
+    @Test
+    public void updateTest28_1() {
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        try {
+
+            trackManager.begin();
+            TopicLarge topicLarge = new TopicLarge();
+            topicLarge.setId("1");
+            topicLarge.setStars(1);
+            topicLarge.setTitle("1");
+            topicLarge.setTitle1("2");
+            topicLarge.setCreateTime(LocalDateTime.now());
+            entityQuery.addTracking(topicLarge);
+            topicLarge.setTitle("xx");
+//            String newTitle = "test123" + new Random().nextInt(100000);
+//            topic.setTitle(newTitle);
+            String sql = (entityQuery.updatable(topicLarge))
+                    .toSQL(topicLarge);
+            Assert.assertEquals("UPDATE `t_topic` SET `title` = ? WHERE `id` = ?", sql);
+
+        } finally {
+
+            trackManager.release();
+        }
+        Assert.assertFalse(trackManager.currentThreadTracking());
+    }
 
     @Test
     public void updateTest29() {
@@ -880,6 +1150,21 @@ public class UpdateTest extends BaseTest {
 //            String newTitle = "test123" + new Random().nextInt(100000);
 //            topic.setTitle(newTitle);
         String sql = ((EasyEntityUpdatable<TopicLarge>) easyQuery.updatable(topicLarge))
+                .toSQL(topicLarge);
+        Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`create_time` = ? WHERE `id` = ?", sql);
+    }
+    @Test
+    public void updateTest29_1() {
+        TopicLarge topicLarge = new TopicLarge();
+        topicLarge.setId("1");
+        topicLarge.setStars(1);
+        topicLarge.setTitle("1");
+        topicLarge.setTitle1("2");
+        topicLarge.setCreateTime(LocalDateTime.now());
+        topicLarge.setTitle("xx");
+//            String newTitle = "test123" + new Random().nextInt(100000);
+//            topic.setTitle(newTitle);
+        String sql = (entityQuery.updatable(topicLarge))
                 .toSQL(topicLarge);
         Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`create_time` = ? WHERE `id` = ?", sql);
     }
@@ -900,6 +1185,37 @@ public class UpdateTest extends BaseTest {
             blogEntity.setContent("111");
             blogEntity.setScore(new BigDecimal("1"));//1.0和1一样
             ((EasyEntityUpdatable<BlogEntity>) easyQuery.updatable(blogEntity))
+                    .asTable("x1234")
+                    .executeRows();
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `x1234` SET `content` = ? WHERE `deleted` = ? AND `id` = ?", sql);
+        } finally {
+
+            trackManager.release();
+        }
+        Assert.assertFalse(trackManager.currentThreadTracking());
+    }
+    @Test
+    public void updateTest31() {
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        try {
+            BlogEntity blogEntity = new BlogEntity();
+            blogEntity.setId("123123123x");
+            blogEntity.setContent("123");
+            blogEntity.setScore(new BigDecimal("1.0"));
+
+            trackManager.begin();
+
+            boolean b = entityQuery.addTracking(blogEntity);
+            Assert.assertTrue(b);
+            String newTitle = "test123" + new Random().nextInt(100);
+            blogEntity.setContent("111");
+            blogEntity.setScore(new BigDecimal("1"));//1.0和1一样
+            entityQuery.updatable(blogEntity)
                     .asTable("x1234")
                     .executeRows();
         } catch (Exception ex) {
@@ -1108,30 +1424,60 @@ public class UpdateTest extends BaseTest {
     }
     @Test
     public void updateTestBatch2(){
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-        ArrayList<Topic> topics = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        {
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            ArrayList<Topic> topics = new ArrayList<>();
+            for (int i = 0; i < 100; i++) {
 
-            Topic topic = new Topic();
-            topic.setId("1234567890x"+i);
-            topic.setStars(1);
-            topic.setTitle("1234567890x"+i);
-            topic.setCreateTime(null);
-            topics.add(topic);
+                Topic topic = new Topic();
+                topic.setId("1234567890x"+i);
+                topic.setStars(1);
+                topic.setTitle("1234567890x"+i);
+                topic.setCreateTime(null);
+                topics.add(topic);
+            }
+            long l = easyQuery.updatable(topics)
+                    .setColumns(o->o.column(Topic::getTitle))
+                    .batch()
+                    .ignoreVersion()
+                    .executeRows();
+            System.out.println(l);
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            int i=0;
+            for (List<SQLParameter> sqlParameter : jdbcExecuteAfterArg.getBeforeArg().getSqlParameters()) {
+                Assert.assertEquals("1234567890x"+i+"(String),1234567890x"+i+"(String)",EasySQLUtil.sqlParameterToString(sqlParameter));
+                i++;
+            }
         }
-        long l = easyQuery.updatable(topics)
-                .setColumns(o->o.column(Topic::getTitle))
-                .batch()
-                .ignoreVersion()
-                .executeRows();
-        System.out.println(l);
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        int i=0;
-        for (List<SQLParameter> sqlParameter : jdbcExecuteAfterArg.getBeforeArg().getSqlParameters()) {
-            Assert.assertEquals("1234567890x"+i+"(String),1234567890x"+i+"(String)",EasySQLUtil.sqlParameterToString(sqlParameter));
-            i++;
+
+        {
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            ArrayList<Topic> topics = new ArrayList<>();
+            for (int i = 0; i < 100; i++) {
+
+                Topic topic = new Topic();
+                topic.setId("1234567890x"+i);
+                topic.setStars(1);
+                topic.setTitle("1234567890x"+i);
+                topic.setCreateTime(null);
+                topics.add(topic);
+            }
+            long l = entityQuery.updatable(topics)
+                    .setColumns(o->o.FETCHER.title())
+                    .batch()
+                    .ignoreVersion()
+                    .executeRows();
+            System.out.println(l);
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            int i=0;
+            for (List<SQLParameter> sqlParameter : jdbcExecuteAfterArg.getBeforeArg().getSqlParameters()) {
+                Assert.assertEquals("1234567890x"+i+"(String),1234567890x"+i+"(String)",EasySQLUtil.sqlParameterToString(sqlParameter));
+                i++;
+            }
         }
     }
 }

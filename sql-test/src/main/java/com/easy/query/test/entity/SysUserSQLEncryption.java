@@ -1,8 +1,11 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.conversion.MySQLAesEncryptColumnValueSQLConverter;
+import com.easy.query.test.entity.proxy.SysUserSQLEncryptionProxy;
 import lombok.Data;
 import lombok.ToString;
 
@@ -17,7 +20,8 @@ import java.time.LocalDateTime;
 @Data
 @Table("t_sys_user_sql_encryption")
 @ToString
-public class SysUserSQLEncryption {
+@EntityProxy
+public class SysUserSQLEncryption implements ProxyEntityAvailable<SysUserSQLEncryption , SysUserSQLEncryptionProxy> {
     @Column(primaryKey = true)
     private String id;
     private String username;
@@ -26,4 +30,9 @@ public class SysUserSQLEncryption {
     private String idCard;
     private String address;
     private LocalDateTime createTime;
+
+    @Override
+    public Class<SysUserSQLEncryptionProxy> proxyTableClass() {
+        return SysUserSQLEncryptionProxy.class;
+    }
 }

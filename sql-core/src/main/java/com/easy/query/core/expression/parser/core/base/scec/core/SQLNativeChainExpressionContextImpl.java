@@ -26,6 +26,11 @@ public class SQLNativeChainExpressionContextImpl implements SQLNativeChainExpres
     }
 
     @Override
+    public SQLNativeExpressionContext getSQLNativeExpressionContext() {
+        return sqlNativeExpressionContext;
+    }
+
+    @Override
     public ExpressionContext getExpressionContext() {
         return sqlNativeExpressionContext.getExpressionContext();
     }

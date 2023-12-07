@@ -200,7 +200,7 @@ public class QueryTest9 extends BaseTest {
                         , topicTable.title().asc())
                 .select(blogTable
                         , topicTable.allFieldsExclude(topicTable.stars())
-                        , topicTable.stars().setAlias(blogTable.star())
+                        , topicTable.stars()._alias(blogTable.star())
                         , topicTable.createTime()
                 )
                 .toList();
@@ -237,7 +237,7 @@ public class QueryTest9 extends BaseTest {
                         , topicTable.title().asc())
                 .select(blogTable
                         , topicTable.allFieldsExclude(topicTable.stars())
-                        , topicTable.stars().setAlias(blogTable.star())
+                        , topicTable.stars()._alias(blogTable.star())
                         , topicTable.createTime()
                 )
                 .toList();
@@ -277,7 +277,7 @@ public class QueryTest9 extends BaseTest {
                         , topicTable.title().asc())
                 .select(blogTable
                         , topicTable.allFieldsExclude(topicTable.stars())
-                        , topicTable.stars().setAlias(blogTable.star())
+                        , topicTable.stars()._alias(blogTable.star())
 //                        , topicTable.stars().as(topicTable.stars())
                         , topicTable.createTime()
                 )
@@ -322,7 +322,7 @@ public class QueryTest9 extends BaseTest {
                         , topicTable.title().asc())
                 .select(blogTable
                         , topicTable.allFieldsExclude(topicTable.stars())
-                        , topicTable.stars().setAlias(blogTable.star())
+                        , topicTable.stars()._alias(blogTable.star())
 //                        , topicTable.stars().as(topicTable.stars())
                         , topicTable.createTime()
 //                        ,SelectExpression.groupKeys(0).as()
@@ -351,7 +351,7 @@ public class QueryTest9 extends BaseTest {
         List<BlogEntity> list = easyProxyQuery.queryable(topicTable)
                 .where(topicTable.id().eq(xq))
                 .groupBy(o -> o.column(topicTable.id()))
-                .select(blogTable, Select.groupKeys(0).setAlias(blogTable.star()))
+                .select(blogTable, Select.groupKeys(0)._alias(blogTable.star()))
                 .toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -394,8 +394,8 @@ public class QueryTest9 extends BaseTest {
                 .where(topicTable.id().eq(xq))
                 .groupBy(topicTable.id())
                 .select(topicTable1,
-                        Select.groupKeys(0).setAlias(topicTable1.id())
-                        , topicTable.stars().count().setAlias(topicTable1.title()))
+                        Select.groupKeys(0)._alias(topicTable1.id())
+                        , topicTable.stars().count()._alias(topicTable1.title()))
                 .toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -427,8 +427,8 @@ public class QueryTest9 extends BaseTest {
                 .groupBy(topicTable.id())
                 .having(topicTable.id().count().eq(1))
                 .select(topicTable1,
-                        Select.groupKeys(0).setAlias(topicTable1.id())
-                        , topicTable.stars().count().setAlias(topicTable1.title())
+                        Select.groupKeys(0)._alias(topicTable1.id())
+                        , topicTable.stars().count()._alias(topicTable1.title())
                 )
                 .toList();
 
@@ -482,8 +482,8 @@ public class QueryTest9 extends BaseTest {
                 .groupBy(topicTable.id())
                 .having(topicTable.id().count().eq(1))
                 .select(topicTable1,
-                        Select.groupKeys(0).setAlias(topicTable1.id())
-                        , topicTable.stars().count(c -> c.distinct(true).nullDefault(1)).setAlias(topicTable1.title())
+                        Select.groupKeys(0)._alias(topicTable1.id())
+                        , topicTable.stars().count(c -> c.distinct(true).nullDefault(1))._alias(topicTable1.title())
                 )
                 .toList();
 
@@ -570,7 +570,7 @@ public class QueryTest9 extends BaseTest {
                 .groupBy(o -> o.title())
                 .select(Topic.class, (o, tr) -> Select.of(
                         o.title()
-                        , o.id().count().setAlias(tr.stars())
+                        , o.id().count()._alias(tr.stars())
                 ))
                 .toList();
     }
@@ -628,8 +628,8 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
                     .groupBy(o -> o.createTime().dateTimeFormat("yyyy/MM/dd"))
                     .select(Topic.class, (o, tr) -> Select.of(
-                            o.id().count().setAlias(tr.stars()),
-                            o.createTime().dateTimeFormat("yyyy/MM/dd").setAlias(tr.title())
+                            o.id().count()._alias(tr.stars()),
+                            o.createTime().dateTimeFormat("yyyy/MM/dd")._alias(tr.title())
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -647,9 +647,9 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
                     .groupBy(o -> o.createTime().dateTimeFormat("yyyy/MM/dd"))
                     .select(Topic.class, (o, tr) -> Select.of(
-                            o.id().count().setAlias(tr.stars()),
-                            o.createTime().dateTimeFormat("yyyy/MM/dd").setAlias(tr.title()),
-                            Select.groupKeys(0).setAlias(tr.id())
+                            o.id().count()._alias(tr.stars()),
+                            o.createTime().dateTimeFormat("yyyy/MM/dd")._alias(tr.title()),
+                            Select.groupKeys(0)._alias(tr.id())
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -670,7 +670,7 @@ public class QueryTest9 extends BaseTest {
             List<Topic> list2 = entityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
                     .select(Topic.class, (o, tr) -> Select.of(
-                            o.stars().nullDefault(0).setAlias(tr.title()),
+                            o.stars().nullDefault(0)._alias(tr.title()),
                             Select.sql("IFNULL({0},'')", c -> {
                                 c.keepStyle();
                                 c.expression(o.id());
@@ -691,7 +691,7 @@ public class QueryTest9 extends BaseTest {
             List<Topic> list2 = entityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
                     .select(Topic.class, (o, tr) -> Select.of(
-                            o.stars().nullDefault(0).setAlias(tr.title()),
+                            o.stars().nullDefault(0)._alias(tr.title()),
                             Select.sql("IFNULL({0},'')", c -> {
                                 c.keepStyle();
                                 c.expression(o.id());
@@ -712,7 +712,7 @@ public class QueryTest9 extends BaseTest {
             List<Topic> list2 = entityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
                     .select(Topic.class, (o, tr) -> Select.of(
-                            o.stars().nullEmpty().setAlias(tr.title()),
+                            o.stars().nullEmpty()._alias(tr.title()),
                             Select.sql("IFNULL({0},'')", c -> {
                                 c.keepStyle();
                                 c.expression(o.id());
@@ -917,7 +917,7 @@ public class QueryTest9 extends BaseTest {
                     .groupBy(o -> o.FETCHER.title())
                     .select(Topic.class, (o, tr) -> Select.of(
                             o.FETCHER.title(),
-                            o.id().count().setAlias(tr.stars())
+                            o.id().count()._alias(tr.stars())
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -935,7 +935,7 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
                     .select(Topic.class, (o, tr) -> o.FETCHER
                             .allFieldsExclude(o.id(),o.title())
-                            .id().setAlias(tr.title())
+                            .id()._alias(tr.title())
                             .id())
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -956,7 +956,7 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
                     .select(MapProxy.createTable(), o -> o.FETCHER
                             .allFieldsExclude(o.id(), o.title())
-                            .id().setAlias("abc")
+                            .id()._alias("abc")
                             .id())
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -976,7 +976,7 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.id().in(idQuery))
                     .select(MapProxy.createTable(), o -> o.FETCHER
                             .allFieldsExclude(o.id(), o.title())
-                            .id().setAlias("abc")
+                            .id()._alias("abc")
                             .id())
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -997,7 +997,7 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.id().in(idQuery))
                     .select(MapProxy.createTable(), (a,b) -> a.FETCHER
                             .allFieldsExclude(a.id(), a.title())
-                            .id().setAlias("abc")
+                            .id()._alias("abc")
                             .id())
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1016,14 +1016,17 @@ public class QueryTest9 extends BaseTest {
             List<Map<String, Object>> abc = entityQuery.queryable(Topic.class)
                     .leftJoin(BlogEntity.class,(a,b)->a.id().eq(b.id()))
                     .where(o -> o.id().in(idQuery))
-                    .selectMerge(MapProxy.createTable(), a -> a.t().FETCHER
-                            .allFieldsExclude(a.t().id(), a.t().title())
-                            .id().setAlias("abc")
-                            .id())
+                    .selectMerge(MapProxy.createTable(), a -> a.t1.FETCHER
+                            .allFieldsExclude(a.t1.id(), a.t1.title())
+                            .id()._alias("abc")
+                            .id()._concat(
+                                    a.t1.id()
+                                    ,a.t1.createTime().dateTimeFormat("yyyy-MM-dd HH:mm:ss")
+                            ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`stars`,t.`create_time`,t.`id` AS `abc`,t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (SELECT t2.`id` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`id` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`stars`,t.`create_time`,t.`id` AS `abc`,t.`id`,t.`id`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IN (SELECT t2.`id` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`id` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("false(Boolean),false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }

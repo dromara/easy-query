@@ -19,7 +19,15 @@ import java.util.Collection;
 public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     /**
      * 构建where条件
-     * where(o->o.eq(...).ge(...))
+     * where(o->o.id().eq().and(o.id().eq()))
+     * where(o->Predicate.and(
+     *      o.id().eq(),
+     *      o.id().eq(),
+     *      Predicate.or(
+     *          o.id().eq(),
+     *          o.id().eq()
+     *      )
+     * ))
      * @param whereExpression where表达式
      * @return 返回当前查询queryable
      */
@@ -29,7 +37,15 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
 
     /**
      * 构建where条件
-     * where(boolean，o->o.eq(...).ge(...))
+     * where(boolean, o->o.id().eq().and(o.id().eq()))
+     * where(boolean, o->Predicate.and(
+     *      o.id().eq(),
+     *      o.id().eq(),
+     *      Predicate.or(
+     *          o.id().eq(),
+     *          o.id().eq()
+     *      )
+     * ))
      * @param condition 是否要添加后续的表达式,true:表示要添加,false表示不添加
      * @param whereExpression where表达式
      * @return 返回当前查询queryable

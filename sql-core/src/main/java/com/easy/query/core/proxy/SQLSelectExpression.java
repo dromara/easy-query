@@ -1,10 +1,12 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectImpl;
+import com.easy.query.core.proxy.sql.Select;
 
 /**
  * create time 2023/12/1 22:56
@@ -44,27 +46,37 @@ public interface SQLSelectExpression extends TablePropColumn {
 
     /**
      * 设置别名
+     *
      * @param propColumn
      * @return
      */
-    default SQLSelectAsExpression setAlias(TablePropColumn propColumn) {
-        return setAlias(propColumn.getValue());
+    default SQLSelectAsExpression _alias(TablePropColumn propColumn) {
+        return _alias(propColumn.getValue());
     }
-    default SQLSelectAsExpression setAlias(String propertyAlias) {
+
+    default SQLSelectAsExpression _alias(String propertyAlias) {
         return new SQLSelectAsImpl(s -> {
-            s.columnAs(this.getTable(), this.getValue(),propertyAlias);
+            s.columnAs(this.getTable(), this.getValue(), propertyAlias);
         }, s -> {
             s.columnAs(this.getTable(), this.getValue(), propertyAlias);
         }, s -> {
-           throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException();
         });
     }
 
-    default SQLSelectExpression concat(SQLSelectExpression select) {
-        return new SQLSelectImpl(x -> {
-            accept(x);
-            select.accept(x);
-        });
+    default SQLSelectExpression _concat(SQLSelectExpression... sqlSelectAses) {
+        return _concat(true, sqlSelectAses);
+    }
+
+    default SQLSelectExpression _concat(boolean condition, SQLSelectExpression... sqlSelectAs) {
+        if (condition) {
+            SQLSelectExpression expression = Select.of(sqlSelectAs);
+            return new SQLSelectImpl(x -> {
+                accept(x);
+                expression.accept(x);
+            });
+        }
+        return SQLSelectExpression.empty;
     }
 
     default void accept(Selector s) {
@@ -75,6 +87,11 @@ public interface SQLSelectExpression extends TablePropColumn {
         }
     }
 
+    default void accept(OnlySelector s) {
+        s.column(getTable(), getValue());
+    }
+
     SQLSelectExpression empty = new SQLSelectImpl(x -> {
     });
+
 }

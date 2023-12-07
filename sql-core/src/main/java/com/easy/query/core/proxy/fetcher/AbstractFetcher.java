@@ -2,6 +2,7 @@ package com.easy.query.core.proxy.fetcher;
 
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
+import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
@@ -84,8 +85,8 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     protected void acceptAsSelector(AsSelector s) {
         if (prev != null) {
             prev.acceptAsSelector(s);
+            sqlSelectAsExpression.accept(s);
         }
-        sqlSelectAsExpression.accept(s);
     }
 
     @Override
@@ -96,8 +97,8 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     protected void acceptSelector(Selector s) {
         if (prev != null) {
             prev.acceptSelector(s);
+            sqlSelectAsExpression.accept(s);
         }
-        sqlSelectAsExpression.accept(s);
     }
 
     @Override
@@ -108,13 +109,24 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     protected void acceptGroupSelector(GroupSelector s) {
         if (prev != null) {
             prev.acceptGroupSelector(s);
+            sqlSelectAsExpression.accept(s);
         }
-        sqlSelectAsExpression.accept(s);
     }
 
     @Override
-    public TChain setAlias(String propertyAlias) {
-        sqlSelectAsExpression=sqlSelectAsExpression.setAlias(propertyAlias);
+    public void accept(OnlySelector s) {
+        acceptOnlySelector(s);
+    }
+    protected void acceptOnlySelector(OnlySelector s) {
+        if (prev != null) {
+            prev.acceptOnlySelector(s);
+            sqlSelectAsExpression.accept(s);
+        }
+    }
+
+    @Override
+    public TChain _alias(String propertyAlias) {
+        sqlSelectAsExpression=sqlSelectAsExpression._alias(propertyAlias);
         return (TChain)this;
     }
 }

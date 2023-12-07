@@ -1,11 +1,7 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable4;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable4;
-import com.easy.query.api.proxy.sql.ProxyOrderSelector;
-import com.easy.query.api.proxy.sql.impl.ProxyOrderSelectorImpl;
-import com.easy.query.core.common.tuple.Tuple4;
-import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.lambda.SQLExpression5;
+import com.easy.query.core.common.tuple.MergeTuple4;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression4;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -36,13 +32,13 @@ public interface EntityOrderable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable4();
     }
 
-    default EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByMerge(SQLFuncExpression1<Tuple4<T1Proxy, T2Proxy, T3Proxy, T4Proxy>,SQLOrderByExpression> selectExpression) {
+    default EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByMerge(SQLFuncExpression1<MergeTuple4<T1Proxy, T2Proxy, T3Proxy, T4Proxy>,SQLOrderByExpression> selectExpression) {
         return orderByMerge(true, selectExpression);
     }
 
-    default EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByMerge(boolean condition, SQLFuncExpression1<Tuple4<T1Proxy, T2Proxy, T3Proxy, T4Proxy>,SQLOrderByExpression> selectExpression) {
+    default EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByMerge(boolean condition, SQLFuncExpression1<MergeTuple4<T1Proxy, T2Proxy, T3Proxy, T4Proxy>,SQLOrderByExpression> selectExpression) {
         return orderBy(condition, (t, t1, t2, t3) -> {
-            return selectExpression.apply(new Tuple4<>(t, t1, t2, t3));
+            return selectExpression.apply(new MergeTuple4<>(t, t1, t2, t3));
         });
     }
 }

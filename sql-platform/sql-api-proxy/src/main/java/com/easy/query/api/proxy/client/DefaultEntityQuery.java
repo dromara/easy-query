@@ -1,30 +1,31 @@
 package com.easy.query.api.proxy.client;
 
-import com.easy.query.api.proxy.delete.ProxyEntityDeletable;
-import com.easy.query.api.proxy.delete.ProxyExpressionDeletable;
-import com.easy.query.api.proxy.delete.impl.EasyProxyEntityDeletable;
-import com.easy.query.api.proxy.delete.impl.EasyProxyExpressionDeletable;
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
+import com.easy.query.api.proxy.entity.delete.EntityDeletable;
+import com.easy.query.api.proxy.entity.delete.ExpressionDeletable;
+import com.easy.query.api.proxy.entity.delete.impl.EasyEntityDeletable;
+import com.easy.query.api.proxy.entity.delete.impl.EasyExpressionDeletable;
+import com.easy.query.api.proxy.entity.insert.EasyEmptyEntityInsertable;
+import com.easy.query.api.proxy.entity.insert.EasyEntityInsertable;
+import com.easy.query.api.proxy.entity.insert.EntityInsertable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
-import com.easy.query.api.proxy.insert.EasyProxyOnlyEntityInsertable;
-import com.easy.query.api.proxy.insert.ProxyOnyEntityInsertable;
-import com.easy.query.api.proxy.select.ProxyQueryable;
-import com.easy.query.api.proxy.select.impl.EasyProxyQueryable;
-import com.easy.query.api.proxy.update.ProxyEntityUpdatable;
-import com.easy.query.api.proxy.update.ProxyExpressionUpdatable;
-import com.easy.query.api.proxy.update.ProxyOnlyEntityUpdatable;
-import com.easy.query.api.proxy.update.impl.EasyProxyEntityUpdatable;
-import com.easy.query.api.proxy.update.impl.EasyProxyExpressionUpdatable;
-import com.easy.query.api.proxy.update.impl.EasyProxyOnlyEntityUpdatable;
+import com.easy.query.api.proxy.entity.update.EntityUpdatable;
+import com.easy.query.api.proxy.entity.update.ExpressionUpdatable;
+import com.easy.query.api.proxy.entity.update.impl.EasyEmptyEntityUpdatable;
+import com.easy.query.api.proxy.entity.update.impl.EasyEntityUpdatable;
+import com.easy.query.api.proxy.entity.update.impl.EasyExpressionUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * create time 2023/9/19 08:07
@@ -32,7 +33,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public class DefaultEntityQuery implements EntityQuery{
+public class DefaultEntityQuery implements EntityQuery {
 
     private final EasyQueryClient easyQueryClient;
 
@@ -50,10 +51,6 @@ public class DefaultEntityQuery implements EntityQuery{
         return easyQueryClient.getRuntimeContext();
     }
 
-    @Override
-    public <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> ProxyQueryable<TProxy, TEntity> queryable(TProxy table) {
-        return new EasyProxyQueryable<>(table, easyQueryClient.queryable(table.getEntityClass()));
-    }
 
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> queryable(Class<T> entityClass) {
@@ -62,8 +59,9 @@ public class DefaultEntityQuery implements EntityQuery{
     }
 
     @Override
-    public <TProxy extends ProxyEntity<TProxy, T>, T> ProxyQueryable<TProxy, T> queryable(String sql, TProxy table) {
-        return new EasyProxyQueryable<>(table, easyQueryClient.queryable(sql,table.getEntityClass()));
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> queryable(String sql, Class<T> entityClass) {
+        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
+        return new EasyEntityQueryable<>(tProxy, easyQueryClient.queryable(sql, entityClass));
     }
 
     @Override
@@ -72,54 +70,66 @@ public class DefaultEntityQuery implements EntityQuery{
     }
 
     @Override
-    public <T> ProxyOnyEntityInsertable<T> insertable(T entity) {
-        return new EasyProxyOnlyEntityInsertable<>(easyQueryClient.insertable(entity));
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityInsertable<TProxy, T> insertable(T entity) {
+        Objects.requireNonNull(entity, "entities is null");
+        Class<T> aClass = EasyObjectUtil.typeCast(entity.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(aClass);
+        return new EasyEntityInsertable<>(tProxy, easyQueryClient.insertable(entity));
     }
 
     @Override
-    public <T> ProxyOnyEntityInsertable<T> insertable(Collection<T> entities) {
-        return new EasyProxyOnlyEntityInsertable<>(easyQueryClient.insertable(entities));
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityInsertable<TProxy, T> insertable(Collection<T> entities) {
+        Objects.requireNonNull(entities, "entities is null");
+        if (EasyCollectionUtil.isEmpty(entities)) {
+            return new EasyEmptyEntityInsertable<>();
+        }
+        T first = EasyCollectionUtil.first(entities);
+        Class<T> aClass = EasyObjectUtil.typeCast(first.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(aClass);
+        return new EasyEntityInsertable<>(tProxy, easyQueryClient.insertable(entities));
     }
 
     @Override
-    public <TProxy extends ProxyEntity<TProxy, T>, T> ProxyExpressionUpdatable<TProxy, T> updatable(TProxy proxy) {
-        return new EasyProxyExpressionUpdatable<>(proxy,easyQueryClient.updatable(proxy.getEntityClass()));
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> ExpressionUpdatable<TProxy, T> updatable(Class<T> entityClass) {
+        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
+        return new EasyExpressionUpdatable<>(tProxy, easyQueryClient.updatable(entityClass));
     }
 
     @Override
-    public <T> ProxyOnlyEntityUpdatable<T> updatable(T entity) {
-        return new EasyProxyOnlyEntityUpdatable<>(easyQueryClient.updatable(entity));
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityUpdatable<TProxy, T> updatable(T entity) {
+        Objects.requireNonNull(entity, "entities is null");
+        Class<T> aClass = EasyObjectUtil.typeCast(entity.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(aClass);
+        return new EasyEntityUpdatable<>(tProxy, easyQueryClient.updatable(entity));
     }
 
     @Override
-    public <T> ProxyOnlyEntityUpdatable<T> updatable(Collection<T> entities) {
-        return new EasyProxyOnlyEntityUpdatable<>(easyQueryClient.updatable(entities));
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityUpdatable<TProxy, T> updatable(Collection<T> entities) {
+        Objects.requireNonNull(entities, "entities is null");
+        if (EasyCollectionUtil.isEmpty(entities)) {
+            return new EasyEmptyEntityUpdatable<>();
+        }
+        T first = EasyCollectionUtil.first(entities);
+        Class<T> aClass = EasyObjectUtil.typeCast(first.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(aClass);
+        return new EasyEntityUpdatable<>(tProxy, easyQueryClient.updatable(entities));
     }
 
     @Override
-    public <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy, T> updatable(T entity, TProxy proxy) {
-        return new EasyProxyEntityUpdatable<>(proxy,easyQueryClient.updatable(entity));
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityDeletable<TProxy,T> deletable(T entity) {
+        Objects.requireNonNull(entity, "entities is null");
+        return new EasyEntityDeletable<>(easyQueryClient.deletable(entity));
     }
 
     @Override
-    public <TProxy extends ProxyEntity<TProxy, T>, T> ProxyEntityUpdatable<TProxy, T> updatable(Collection<T> entities, TProxy proxy) {
-
-        return new EasyProxyEntityUpdatable<>(proxy,easyQueryClient.updatable(entities));
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityDeletable<TProxy,T> deletable(Collection<T> entities) {
+        return new EasyEntityDeletable<>(easyQueryClient.deletable(entities));
     }
 
     @Override
-    public <T> ProxyEntityDeletable<T> deletable(T entity) {
-        return new EasyProxyEntityDeletable<>(easyQueryClient.deletable(entity));
-    }
-
-    @Override
-    public <T> ProxyEntityDeletable<T> deletable(Collection<T> entities) {
-        return new EasyProxyEntityDeletable<>(easyQueryClient.deletable(entities));
-    }
-
-    @Override
-    public <TProxy extends ProxyEntity<TProxy, T>, T> ProxyExpressionDeletable<TProxy, T> deletable(TProxy proxy) {
-        return new EasyProxyExpressionDeletable<>(proxy,easyQueryClient.deletable(proxy.getEntityClass()));
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> ExpressionDeletable<TProxy, T> deletable(Class<T> entityClass) {
+        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
+        return new EasyExpressionDeletable<>(tProxy, easyQueryClient.deletable(entityClass));
     }
 
     @Override

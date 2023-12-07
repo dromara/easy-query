@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable8;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable8;
-import com.easy.query.core.common.tuple.Tuple8;
+import com.easy.query.core.common.tuple.MergeTuple8;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression8;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -36,13 +36,13 @@ public interface EntityOrderable8<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable8();
     }
 
-    default EntityQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> orderByMerge(SQLFuncExpression1<Tuple8<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy>,SQLOrderByExpression> selectExpression) {
+    default EntityQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> orderByMerge(SQLFuncExpression1<MergeTuple8<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy>,SQLOrderByExpression> selectExpression) {
         return orderByMerge(true, selectExpression);
     }
 
-    default EntityQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> orderByMerge(boolean condition, SQLFuncExpression1<Tuple8<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy>,SQLOrderByExpression> selectExpression) {
+    default EntityQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> orderByMerge(boolean condition, SQLFuncExpression1<MergeTuple8<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy>,SQLOrderByExpression> selectExpression) {
         return orderBy(condition, (t, t1, t2, t3, t4, t5, t6, t7) -> {
-            return selectExpression.apply(new Tuple8<>(t, t1, t2, t3, t4, t5, t6, t7));
+            return selectExpression.apply(new MergeTuple8<>(t, t1, t2, t3, t4, t5, t6, t7));
         });
     }
 

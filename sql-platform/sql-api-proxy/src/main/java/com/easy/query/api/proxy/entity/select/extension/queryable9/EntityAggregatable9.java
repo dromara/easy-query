@@ -1,6 +1,6 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable9;
 
-import com.easy.query.core.common.tuple.Tuple9;
+import com.easy.query.core.common.tuple.MergeTuple9;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression9;
@@ -126,94 +126,94 @@ public interface EntityAggregatable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      * @param <TMember>
      * @return
      */
-    default <TMember extends Number> BigDecimal sumBigDecimalOrNullMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
+    default <TMember extends Number> BigDecimal sumBigDecimalOrNullMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
         return sumBigDecimalOrNull((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         });
     }
 
 
-    default <TMember extends Number> BigDecimal sumBigDecimalOrDefaultMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, BigDecimal def) {
+    default <TMember extends Number> BigDecimal sumBigDecimalOrDefaultMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, BigDecimal def) {
         return sumBigDecimalOrDefault((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         }, def);
     }
 
-    default <TMember extends Number> TMember sumOrNullMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
+    default <TMember extends Number> TMember sumOrNullMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
         return sumOrNull((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         });
     }
 
-    default <TMember extends Number> TMember sumOrDefaultMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, TMember def) {
+    default <TMember extends Number> TMember sumOrDefaultMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, TMember def) {
         return sumOrDefault((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         }, def);
     }
 
-    default <TMember> TMember maxOrNullMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
+    default <TMember> TMember maxOrNullMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
         return maxOrNull((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         });
     }
 
-    default <TMember> TMember maxOrDefaultMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, TMember def) {
+    default <TMember> TMember maxOrDefaultMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, TMember def) {
         return maxOrDefault((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         }, def);
     }
 
-    default <TMember> TMember minOrNullMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
+    default <TMember> TMember minOrNullMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
         return minOrNull((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         });
     }
 
-    default <TMember> TMember minOrDefaultMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, TMember def) {
+    default <TMember> TMember minOrDefaultMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, TMember def) {
         return minOrDefault((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         }, def);
     }
 
-    default <TMember extends Number> Double avgOrNullMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
+    default <TMember extends Number> Double avgOrNullMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
         return avgOrNull((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         });
     }
 
-    default <TMember extends Number> BigDecimal avgBigDecimalOrNullMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNullMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
         return avgBigDecimalOrNull((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         });
     }
 
-    default <TMember extends Number> Float avgFloatOrNullMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
+    default <TMember extends Number> Float avgFloatOrNullMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression) {
         return avgFloatOrNull((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         });
     }
 
-    default <TMember extends Number> Double avgOrDefaultMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, Double def) {
+    default <TMember extends Number> Double avgOrDefaultMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, Double def) {
         return avgOrDefault((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         }, def);
     }
 
-    default <TMember extends Number> BigDecimal avgBigDecimalOrDefaultMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, BigDecimal def) {
+    default <TMember extends Number> BigDecimal avgBigDecimalOrDefaultMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, BigDecimal def) {
         return avgBigDecimalOrDefault((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         }, def);
     }
 
-    default <TMember extends Number> Float avgFloatOrDefaultMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, Float def) {
+    default <TMember extends Number> Float avgFloatOrDefaultMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, Float def) {
         return avgFloatOrDefault((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         }, def);
     }
 
-    default <TMember extends Number, TResult extends Number> TResult avgOrDefaultMerge(SQLFuncExpression1<Tuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
+    default <TMember extends Number, TResult extends Number> TResult avgOrDefaultMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, SQLColumn<?,TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
         return avgOrDefault((t, t1, t2, t4, t5, t6, t7, t8, t9) -> {
-            return columnSelectorExpression.apply(new Tuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
+            return columnSelectorExpression.apply(new MergeTuple9<>(t, t1, t2, t4, t5, t6, t7, t8, t9));
         }, def, resultClass);
     }
 }
