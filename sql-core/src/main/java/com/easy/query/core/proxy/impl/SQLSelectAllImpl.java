@@ -31,7 +31,7 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
     }
 
     @Override
-    public SQLSelectAsExpression as(TablePropColumn propColumn) {
+    public SQLSelectAsExpression setAlias(TablePropColumn propColumn) {
         throw new UnsupportedOperationException();
     }
 

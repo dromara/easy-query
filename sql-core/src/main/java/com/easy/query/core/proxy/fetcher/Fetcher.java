@@ -3,6 +3,7 @@ package com.easy.query.core.proxy.fetcher;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.TablePropColumn;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -71,4 +72,10 @@ public interface Fetcher<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, T
 
     TChain valueObjectColumnExclude(SQLColumn<TProxy, ?> column, Collection<SQLColumn<TProxy, ?>> ignoreColumns);
 
+    @Override
+   default TChain setAlias(TablePropColumn propColumn){
+        return setAlias(propColumn.getValue());
+    }
+    @Override
+    TChain setAlias(String propertyAlias);
 }

@@ -8,6 +8,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
+import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
@@ -39,6 +40,23 @@ public class GroupSelectorImpl implements GroupSelector {
     public GroupSelector column(TableAvailable table, String property) {
         GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByColumnSegment(table, property, entityQueryExpressionBuilder.getRuntimeContext());
         sqlSegmentBuilder.append(groupByColumnSegment);
+        return this;
+    }
+
+    @Override
+    public GroupSelector columnIgnore(TableAvailable table, String property) {
+        sqlSegmentBuilder.getSQLSegments().removeIf(sqlSegment -> {
+            if (sqlSegment instanceof SQLEntitySegment) {
+                SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
+                return Objects.equals(sqlEntitySegment.getTable(), table) &&
+                        (
+                                Objects.equals(sqlEntitySegment.getPropertyName(), property)
+                                        ||
+                                        (sqlEntitySegment.getPropertyName().contains("." ) && sqlEntitySegment.getPropertyName().startsWith(property + "." ))
+                        );
+            }
+            return false;
+        });
         return this;
     }
 

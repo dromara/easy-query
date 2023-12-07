@@ -42,11 +42,21 @@ public interface SQLSelectExpression extends TablePropColumn {
         return SQLOrderByExpression.empty;
     }
 
-    default SQLSelectAsExpression as(TablePropColumn propColumn) {
+    /**
+     * 设置别名
+     * @param propColumn
+     * @return
+     */
+    default SQLSelectAsExpression setAlias(TablePropColumn propColumn) {
+        return setAlias(propColumn.getValue());
+    }
+    default SQLSelectAsExpression setAlias(String propertyAlias) {
         return new SQLSelectAsImpl(s -> {
-            s.columnAs(this.getTable(), this.getValue(), propColumn.getValue());
+            s.columnAs(this.getTable(), this.getValue(),propertyAlias);
         }, s -> {
-            s.columnAs(this.getTable(), this.getValue(), propColumn.getValue());
+            s.columnAs(this.getTable(), this.getValue(), propertyAlias);
+        }, s -> {
+           throw new UnsupportedOperationException();
         });
     }
 

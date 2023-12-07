@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.expression.builder.AsSelector;
+import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -17,34 +18,63 @@ import java.util.function.Consumer;
 public class SQLSelectAsImpl extends SQLSelectImpl implements SQLSelectAsExpression {
 
     private final Consumer<AsSelector> asSelectConsumer;
+    private final Consumer<GroupSelector> groupSelectorConsumer;
+    private final TableAvailable table;
+    private final  String property;
 
-    public SQLSelectAsImpl(Consumer<Selector> selectorConsumer,Consumer<AsSelector> asSelectConsumer){
+    public SQLSelectAsImpl(Consumer<Selector> selectorConsumer, Consumer<AsSelector> asSelectConsumer, Consumer<GroupSelector> groupSelectorConsumer) {
+        this(selectorConsumer,asSelectConsumer,groupSelectorConsumer,null,null);
+    }
+
+    public SQLSelectAsImpl(Consumer<Selector> selectorConsumer, Consumer<AsSelector> asSelectConsumer, Consumer<GroupSelector> groupSelectorConsumer, TableAvailable table, String property) {
         super(selectorConsumer);
         this.asSelectConsumer = asSelectConsumer;
+        this.groupSelectorConsumer = groupSelectorConsumer;
+        this.table = table;
+        this.property = property;
     }
 
     @Override
-    public void accept(AsSelector f) {
-        asSelectConsumer.accept(f);
+    public void accept(GroupSelector s) {
+        groupSelectorConsumer.accept(s);
     }
+
+    @Override
+    public void accept(AsSelector s) {
+        asSelectConsumer.accept(s);
+    }
+
 
     @Override
     public String getValue() {
-        throw new UnsupportedOperationException();
+        if(property==null){
+            throw new UnsupportedOperationException();
+        }
+        return property;
+    }
+
+
+    @Override
+    public SQLSelectAsExpression setAlias(TablePropColumn propColumn) {
+        return setAlias(propColumn.getValue());
     }
 
     @Override
-    public SQLSelectAsExpression as(TablePropColumn propColumn) {
-        return new SQLSelectAsImpl(s->{
+    public SQLSelectAsExpression setAlias(String propertyAlias) {
+        return new SQLSelectAsImpl(s -> {
             throw new UnsupportedOperationException();
-        },s -> {
-            s.columnAs(this.getTable(), this.getValue(), propColumn.getValue());
+        }, s -> {
+            s.columnAs(this.getTable(), this.getValue(), propertyAlias);
+        }, s -> {
+            throw new UnsupportedOperationException();
         });
     }
 
-
     @Override
     public TableAvailable getTable() {
-        throw new UnsupportedOperationException();
+        if(table==null){
+            throw new UnsupportedOperationException();
+        }
+        return table;
     }
 }

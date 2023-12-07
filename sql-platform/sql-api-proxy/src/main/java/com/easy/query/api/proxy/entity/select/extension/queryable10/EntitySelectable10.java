@@ -4,8 +4,10 @@ import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.common.tuple.Tuple10;
 import com.easy.query.core.common.tuple.Tuple11;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression10;
 import com.easy.query.core.expression.lambda.SQLFuncExpression11;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -42,17 +44,17 @@ public interface EntitySelectable10<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
             return selectExpression.apply(new Tuple11<>(t, t1, t2, t3, t4, t5, t6, t7, t8, t9,tr));
         });
     }
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> selectProxy(TRProxy trProxy, SQLFuncExpression11<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy, T10Proxy,TRProxy, SQLSelectAsExpression> selectExpression) {
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> select(TRProxy trProxy, SQLFuncExpression10<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy, T10Proxy, SQLSelectAsExpression> selectExpression) {
         ClientQueryable<TR> select = getClientQueryable10().select(trProxy.getEntityClass(), (t, t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
-            SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy(), get10Proxy(), trProxy);
+            SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy(), get10Proxy());
             sqlSelectAsExpression.accept(t.getAsSelector());
         });
         return new EasyEntityQueryable<>(trProxy, select);
     }
 
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> selectProxyMerge(TRProxy trProxy, SQLFuncExpression1<Tuple11<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy, T10Proxy,TRProxy>, SQLSelectAsExpression> selectExpression) {
-        return selectProxy(trProxy, (t, t1, t2, t3, t4, t5, t6, t7, t8, t9,tr) -> {
-            return selectExpression.apply(new Tuple11<>(t, t1, t2, t3, t4, t5, t6, t7, t8, t9,tr));
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> selectMerge(TRProxy trProxy, SQLFuncExpression1<Tuple10<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy, T10Proxy>, SQLSelectAsExpression> selectExpression) {
+        return select(trProxy, (t, t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
+            return selectExpression.apply(new Tuple10<>(t, t1, t2, t3, t4, t5, t6, t7, t8, t9));
         });
     }
 }

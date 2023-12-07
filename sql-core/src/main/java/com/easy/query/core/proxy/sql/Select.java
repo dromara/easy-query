@@ -76,6 +76,8 @@ public class Select {
                 c.setPropertyAlias(sqlColumnAlias.getValue());
                 contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
             });
+        },f -> {
+            throw  new UnsupportedOperationException();
         });
     }
 
@@ -86,6 +88,10 @@ public class Select {
 
     public static <TRProxy extends ProxyEntity<TRProxy, TR>, TR> SQLSelectAsExpression sqlAlias(TRProxy proxy, String sqlSegment, SQLExpression1<SQLAliasNativeProxyExpressionContext<TRProxy, TR>> contextConsume) {
         return new SQLSelectAsImpl(s->{
+            s.sqlNativeSegment(sqlSegment, c -> {
+                contextConsume.apply(new SQLAliasNativeProxyExpressionContextImpl<>(c));
+            });
+        },s -> {
             s.sqlNativeSegment(sqlSegment, c -> {
                 contextConsume.apply(new SQLAliasNativeProxyExpressionContextImpl<>(c));
             });

@@ -14,6 +14,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 public interface GroupSelector extends SQLNative<GroupSelector>, RuntimeContextAvailable {
 
     GroupSelector column(TableAvailable table,String property);
+    GroupSelector columnIgnore(TableAvailable table, String property);
 
     GroupSelector columnFunc(TableAvailable table,ColumnPropertyFunction columnPropertyFunction);
 }

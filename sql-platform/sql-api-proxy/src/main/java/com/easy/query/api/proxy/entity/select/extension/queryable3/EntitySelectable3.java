@@ -4,8 +4,10 @@ import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.common.tuple.Tuple3;
 import com.easy.query.core.common.tuple.Tuple4;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression3;
 import com.easy.query.core.expression.lambda.SQLFuncExpression4;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -35,17 +37,17 @@ public interface EntitySelectable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
             return selectExpression.apply(new Tuple4<>(t1, t2, t3, tr));
         });
     }
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxy(TRProxy trProxy, SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, TRProxy, SQLSelectAsExpression> selectExpression) {
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(TRProxy trProxy, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLSelectAsExpression> selectExpression) {
         ClientQueryable<TR> select = getClientQueryable3().select(trProxy.getEntityClass(), (selector1, selector2, selector3) -> {
-            SQLSelectAsExpression sqlSelectAs = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), trProxy);
+            SQLSelectAsExpression sqlSelectAs = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
             sqlSelectAs.accept(selector1.getAsSelector());
         });
         return new EasyEntityQueryable<>(trProxy, select);
     }
 
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxyMerge(TRProxy trProxy, SQLFuncExpression1<Tuple4<T1Proxy, T2Proxy, T3Proxy, TRProxy>, SQLSelectAsExpression> selectExpression) {
-        return selectProxy(trProxy, (t1, t2, t3, tr) -> {
-            return selectExpression.apply(new Tuple4<>(t1, t2, t3, tr));
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(TRProxy trProxy, SQLFuncExpression1<Tuple3<T1Proxy, T2Proxy, T3Proxy>, SQLSelectAsExpression> selectExpression) {
+        return select(trProxy, (t1, t2, t3) -> {
+            return selectExpression.apply(new Tuple3<>(t1, t2, t3));
         });
     }
 }

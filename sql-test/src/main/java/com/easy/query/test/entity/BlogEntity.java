@@ -3,6 +3,8 @@ package com.easy.query.test.entity;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,7 +24,7 @@ import java.time.LocalDateTime;
 @Table("t_blog")
 @EntityProxy
 @ToString
-public class BlogEntity extends BaseEntity{
+public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogEntity , BlogEntityProxy> {
 
     /**
      * 标题
@@ -65,4 +67,9 @@ public class BlogEntity extends BaseEntity{
      * 是否置顶
      */
     private Boolean top;
+
+    @Override
+    public Class<BlogEntityProxy> proxyTableClass() {
+        return BlogEntityProxy.class;
+    }
 }

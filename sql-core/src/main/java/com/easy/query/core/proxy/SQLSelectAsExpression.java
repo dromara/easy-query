@@ -24,6 +24,9 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
             }, x -> {
                 accept(x);
                 sqlSelectAs.accept(x);
+            },x->{
+                accept(x);
+                sqlSelectAs.accept(x);
             });
         }
         return SQLSelectAsExpression.empty;
@@ -35,6 +38,7 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
 
     SQLSelectAsExpression empty = new SQLSelectAsImpl(s -> {
     }, s -> {
+    }, s -> {
     });
 
     static SQLSelectAsExpression createDefault(TableAvailable table, String property) {
@@ -42,11 +46,18 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
             x.column(table, property);
         }, x -> {
             x.column(table, property);
-        });
+        }, x -> {
+            x.column(table, property);
+        },table,property);
     }
 
     static <TProxy> SQLSelectAsExpression createColumnExclude(SQLColumn<TProxy, ?> column, Collection<SQLColumn<TProxy, ?>> ignoreColumns) {
         return new SQLSelectAsImpl(x -> {
+            x.column(column.getTable(), column.getValue());
+            for (SQLColumn<TProxy, ?> ignoreColumn : ignoreColumns) {
+                x.columnIgnore(ignoreColumn.getTable(), ignoreColumn.getValue());
+            }
+        }, x -> {
             x.column(column.getTable(), column.getValue());
             for (SQLColumn<TProxy, ?> ignoreColumn : ignoreColumns) {
                 x.columnIgnore(ignoreColumn.getTable(), ignoreColumn.getValue());

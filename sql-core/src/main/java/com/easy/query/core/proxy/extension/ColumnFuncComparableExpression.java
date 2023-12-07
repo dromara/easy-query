@@ -22,14 +22,20 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
         DSLValueAggregatePredicate<T> ,
         DSLSQLFunctionAssertPredicate<T> {
     @Override
-    default SQLSelectAsExpression as(TablePropColumn propColumn) {
+    default SQLSelectAsExpression setAlias(TablePropColumn propColumn) {
+        return setAlias(propColumn.getValue());
+    }
+    @Override
+    default SQLSelectAsExpression setAlias(String propertyAlias) {
         return new SQLSelectAsImpl(s -> {
             SQLFunc fx = s.getRuntimeContext().fx();
-            s.columnFunc(this.getTable(), func().apply(fx), propColumn.getValue());
+            s.columnFunc(this.getTable(), func().apply(fx), propertyAlias);
         }, s -> {
             SQLFunc fx = s.getRuntimeContext().fx();
-            s.columnFunc(this.getTable(), this.getValue(), func().apply(fx), propColumn.getValue(), () -> {
+            s.columnFunc(this.getTable(), this.getValue(), func().apply(fx), propertyAlias, () -> {
             });
+        }, s -> {
+            throw new UnsupportedOperationException();
         });
     }
 

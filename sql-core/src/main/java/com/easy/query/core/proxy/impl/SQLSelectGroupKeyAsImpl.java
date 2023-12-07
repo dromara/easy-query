@@ -41,11 +41,18 @@ public class SQLSelectGroupKeyAsImpl implements SQLSelectAsExpression {
     }
 
     @Override
-    public SQLSelectAsExpression as(TablePropColumn propColumn) {
+    public SQLSelectAsExpression setAlias(TablePropColumn propColumn) {
+        return setAlias(propColumn.getValue());
+    }
+
+    @Override
+    public SQLSelectAsExpression setAlias(String propertyAlias) {
         return new SQLSelectAsImpl(f->{
             f.groupKeys(index);
         },f -> {
-            f.groupKeysAs(index, propColumn.getValue());
+            f.groupKeysAs(index, propertyAlias);
+        },f -> {
+            throw new UnsupportedOperationException();
         });
     }
 }

@@ -21,7 +21,7 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
 
     private final TProxy tProxy;
     private final AbstractFetcher<TProxy, TEntity, TChain> prev;
-    private final SQLSelectAsExpression sqlSelectAsExpression;
+    private SQLSelectAsExpression sqlSelectAsExpression;
 
     public AbstractFetcher(TProxy tProxy, AbstractFetcher<TProxy, TEntity, TChain> prev, SQLSelectAsExpression sqlSelectAsExpression) {
 
@@ -65,18 +65,24 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
         return createFetcher(tProxy, this, columnWithout);
     }
 
+    //    protected TChain createFetcher(TProxy tProxy, AbstractFetcher<TProxy, TEntity, TChain> prev, TableAvailable table,String property){
+//        SQLSelectAsExpression selectAsExpression = SQLSelectAsExpression.createDefault(table, property);
+//        return createFetcher(tProxy, this, selectAsExpression);
+//    }
     protected abstract TChain createFetcher(TProxy tProxy, AbstractFetcher<TProxy, TEntity, TChain> prev, SQLSelectAsExpression sqlSelectExpression);
 
-    protected TChain add(SQLColumn<TProxy,?> sqlColumn){
+    protected TChain add(SQLColumn<TProxy, ?> sqlColumn) {
         SQLSelectAsExpression selectAsExpression = SQLSelectAsExpression.createDefault(getProxy().getTable(), sqlColumn.getValue());
         return createFetcher(tProxy, this, selectAsExpression);
     }
+
     @Override
     public void accept(AsSelector s) {
         acceptAsSelector(s);
     }
-    protected void acceptAsSelector(AsSelector s){
-        if(prev!=null){
+
+    protected void acceptAsSelector(AsSelector s) {
+        if (prev != null) {
             prev.acceptAsSelector(s);
         }
         sqlSelectAsExpression.accept(s);
@@ -86,8 +92,9 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     public void accept(Selector s) {
         acceptSelector(s);
     }
-    protected void acceptSelector(Selector s){
-        if(prev!=null){
+
+    protected void acceptSelector(Selector s) {
+        if (prev != null) {
             prev.acceptSelector(s);
         }
         sqlSelectAsExpression.accept(s);
@@ -97,10 +104,17 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     public void accept(GroupSelector s) {
         acceptGroupSelector(s);
     }
-    protected void acceptGroupSelector(GroupSelector s){
-        if(prev!=null){
+
+    protected void acceptGroupSelector(GroupSelector s) {
+        if (prev != null) {
             prev.acceptGroupSelector(s);
         }
         sqlSelectAsExpression.accept(s);
+    }
+
+    @Override
+    public TChain setAlias(String propertyAlias) {
+        sqlSelectAsExpression=sqlSelectAsExpression.setAlias(propertyAlias);
+        return (TChain)this;
     }
 }
