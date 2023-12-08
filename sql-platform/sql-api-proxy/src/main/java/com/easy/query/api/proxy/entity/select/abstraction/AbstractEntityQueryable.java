@@ -309,24 +309,15 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
-//    @Override
-//    public EntityQueryable<T1Proxy, T1> having(boolean condition, SQLExpression2<ProxyAggregateFilter, T1Proxy> aggregateFilterSQLExpression) {
-//
-//        if (condition) {
-//            entityQueryable.having(whereAggregatePredicate -> {
-//                aggregateFilterSQLExpression.apply(new ProxyAggregateFilterImpl(whereAggregatePredicate.getAggregateFilter()), get1Proxy());
-//            });
-//        }
-//        return this;
-//    }
 
 
     @Override
-    public EntityQueryable<T1Proxy, T1> having(boolean condition, SQLFuncExpression1<T1Proxy, SQLAggregatePredicateExpression> aggregateFilterSQLExpression) {
+    public EntityQueryable<T1Proxy, T1> having(boolean condition, SQLExpression1<T1Proxy> aggregateFilterSQLExpression) {
         if (condition) {
             entityQueryable.having(whereAggregatePredicate -> {
-                SQLAggregatePredicateExpression sqlAggregatePredicate = aggregateFilterSQLExpression.apply(t1Proxy);
-                sqlAggregatePredicate.accept(whereAggregatePredicate.getAggregateFilter());
+                get1Proxy().getEntitySQLContext()._having(whereAggregatePredicate.getAggregateFilter(),()->{
+                    aggregateFilterSQLExpression.apply(t1Proxy);
+                });
 
             });
         }

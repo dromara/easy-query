@@ -79,12 +79,12 @@ public interface OverrideEntityQueryable3<T1Proxy extends ProxyEntity<T1Proxy, T
     EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> groupBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression);
 
     @Override
-    default EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> having(SQLFuncExpression1<T1Proxy, SQLAggregatePredicateExpression> predicateExpression) {
+    default EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> having(SQLExpression1<T1Proxy> predicateExpression) {
         return having(true, predicateExpression);
     }
 
     @Override
-    EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> having(boolean condition, SQLFuncExpression1<T1Proxy, SQLAggregatePredicateExpression> predicateExpression);
+    EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> having(boolean condition, SQLExpression1<T1Proxy> predicateExpression);
 
     @Override
     default EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> orderBy(SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression) {

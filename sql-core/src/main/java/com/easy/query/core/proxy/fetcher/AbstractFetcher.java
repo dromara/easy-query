@@ -131,8 +131,8 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     }
 
     @Override
-    public TChain alias(String propertyAlias) {
-        sqlSelectAsExpression=sqlSelectAsExpression.alias(propertyAlias);
+    public TChain as(String propertyAlias) {
+        sqlSelectAsExpression=sqlSelectAsExpression.as(propertyAlias);
         return (TChain)this;
     }
 }

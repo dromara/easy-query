@@ -58,12 +58,12 @@ public class SQLSelectAsImpl extends SQLSelectImpl implements SQLSelectAsExpress
 
 
     @Override
-    public SQLSelectAsExpression alias(TablePropColumn propColumn) {
-        return alias(propColumn.getValue());
+    public SQLSelectAsExpression as(TablePropColumn propColumn) {
+        return as(propColumn.getValue());
     }
 
     @Override
-    public SQLSelectAsExpression alias(String propertyAlias) {
+    public SQLSelectAsExpression as(String propertyAlias) {
         return new SQLSelectAsImpl(s -> {
             throw new UnsupportedOperationException();
         }, s -> {

@@ -21,32 +21,6 @@ public class SQLAggregatePredicateImpl extends SQLPredicateImpl implements SQLAg
     }
 
     @Override
-    public SQLAggregatePredicateExpression and(SQLAggregatePredicateExpression predicate) {
-        Consumer<Filter> f1 = f -> f.and(predicate::accept);
-        Consumer<AggregateFilter> f2 = f -> f.and(predicate::accept);
-        return new SQLAggregatePredicateImpl(x -> {
-            filterConsumer.accept(x);
-            f1.accept(x);
-        }, x -> {
-            aggregateFilterConsumer.accept(x);
-            f2.accept(x);
-        });
-    }
-
-    @Override
-    public SQLAggregatePredicateExpression or(SQLAggregatePredicateExpression predicate) {
-        Consumer<Filter> f1 = f -> f.or(predicate::accept);
-        Consumer<AggregateFilter> f2 = f -> f.or(predicate::accept);
-        return new SQLAggregatePredicateImpl(x -> {
-            filterConsumer.accept(x);
-            f1.accept(x);
-        }, x -> {
-            aggregateFilterConsumer.accept(x);
-            f2.accept(x);
-        });
-    }
-
-    @Override
     public void accept(AggregateFilter f) {
         aggregateFilterConsumer.accept(f);
     }

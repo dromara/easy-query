@@ -1,11 +1,14 @@
 package com.easy.query.core.proxy.core;
 
+import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.SQLPredicateExpression;
+import com.easy.query.core.proxy.core.accpet.AggregatePredicateEntityExpressionAccept;
+import com.easy.query.core.proxy.core.accpet.AggregatePredicateEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
 import com.easy.query.core.proxy.core.accpet.PredicateEntityExpressionAccept;
 import com.easy.query.core.proxy.core.accpet.PredicateEntityExpressionAcceptImpl;
@@ -63,6 +66,17 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
                 innerAccept.nextOr(false);
             });
             this.accept=predicateEntityExpressionAccept;
+        } else if(accept instanceof AggregatePredicateEntityExpressionAccept){
+            AggregatePredicateEntityExpressionAccept aggregatePredicateEntityExpressionAccept = (AggregatePredicateEntityExpressionAccept) accept;
+            AggregateFilter aggregateFilter = aggregatePredicateEntityExpressionAccept.getAggregateFilter();
+            aggregateFilter.and(f->{
+                AggregatePredicateEntityExpressionAcceptImpl innerAccept = new AggregatePredicateEntityExpressionAcceptImpl(f);
+                this.accept= innerAccept;
+                innerAccept.nextOr(true);
+                sqlActionExpression.apply();
+                innerAccept.nextOr(false);
+            });
+            this.accept=aggregatePredicateEntityExpressionAccept;
         }else{
             throw new UnsupportedOperationException();
         }

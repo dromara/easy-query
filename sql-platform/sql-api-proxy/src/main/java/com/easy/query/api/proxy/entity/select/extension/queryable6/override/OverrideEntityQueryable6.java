@@ -85,12 +85,12 @@ public interface OverrideEntityQueryable6<T1Proxy extends ProxyEntity<T1Proxy, T
     EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression);
 
     @Override
-    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> having(SQLFuncExpression1<T1Proxy, SQLAggregatePredicateExpression> predicateExpression) {
+    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> having(SQLExpression1<T1Proxy> predicateExpression) {
         return having(true, predicateExpression);
     }
 
     @Override
-    EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> having(boolean condition, SQLFuncExpression1<T1Proxy, SQLAggregatePredicateExpression> predicateExpression);
+    EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> having(boolean condition, SQLExpression1<T1Proxy> predicateExpression);
 
     @Override
     default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> orderBy(SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression) {

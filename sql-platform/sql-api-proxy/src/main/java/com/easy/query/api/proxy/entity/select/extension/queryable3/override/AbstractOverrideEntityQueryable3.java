@@ -78,7 +78,7 @@ public abstract class AbstractOverrideEntityQueryable3<T1Proxy extends ProxyEnti
     }
 
     @Override
-    public EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> having(boolean condition, SQLFuncExpression1<T1Proxy, SQLAggregatePredicateExpression> predicateExpression) {
+    public EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> having(boolean condition, SQLExpression1<T1Proxy> predicateExpression) {
         super.having(condition, predicateExpression);
         return getQueryable3();
     }

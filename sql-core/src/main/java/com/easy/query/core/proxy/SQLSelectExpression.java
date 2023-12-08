@@ -53,11 +53,11 @@ public interface SQLSelectExpression extends TablePropColumn, DSLUpdateSet {
      * @param propColumn
      * @return
      */
-    default SQLSelectAsExpression alias(TablePropColumn propColumn) {
-        return alias(propColumn.getValue());
+    default SQLSelectAsExpression as(TablePropColumn propColumn) {
+        return as(propColumn.getValue());
     }
 
-    default SQLSelectAsExpression alias(String propertyAlias) {
+    default SQLSelectAsExpression as(String propertyAlias) {
         return new SQLSelectAsImpl(s -> {
             s.columnAs(this.getTable(), this.getValue(), propertyAlias);
         }, s -> {

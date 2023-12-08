@@ -21,24 +21,6 @@ public class SQLPredicateImpl implements SQLPredicateExpression {
     }
 
     @Override
-    public SQLPredicateExpression and(SQLPredicateExpression predicate) {
-        Consumer<Filter> f=f1->f1.and(predicate::accept);
-        return new SQLPredicateImpl(x->{
-            filterConsumer.accept(x);
-            f.accept(x);
-        });
-    }
-
-    @Override
-    public SQLPredicateExpression or(SQLPredicateExpression predicate) {
-        Consumer<Filter> f=f1->f1.or(predicate::accept);
-        return new SQLPredicateImpl(x->{
-            filterConsumer.accept(x);
-            f.accept(x);
-        });
-    }
-
-    @Override
     public void accept(Filter f) {
         filterConsumer.accept(f);
     }

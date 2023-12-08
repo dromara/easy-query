@@ -8,9 +8,6 @@ import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLPredicateExpression;
-import com.easy.query.core.proxy.sql.Predicate;
-import com.easy.query.core.util.EasyArrayUtil;
 
 import java.util.Collection;
 

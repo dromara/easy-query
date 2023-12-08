@@ -3,7 +3,6 @@ package com.easy.query.core.proxy.extension;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.SQLOrderByExpression;
-import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -22,11 +21,11 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
         DSLValueAggregatePredicate<T> ,
         DSLSQLFunctionAssertPredicate<T> {
     @Override
-    default SQLSelectAsExpression alias(TablePropColumn propColumn) {
-        return alias(propColumn.getValue());
+    default SQLSelectAsExpression as(TablePropColumn propColumn) {
+        return as(propColumn.getValue());
     }
     @Override
-    default SQLSelectAsExpression alias(String propertyAlias) {
+    default SQLSelectAsExpression as(String propertyAlias) {
         return new SQLSelectAsImpl(s -> {
             SQLFunc fx = s.getRuntimeContext().fx();
             s.columnFunc(this.getTable(), func().apply(fx), propertyAlias);
