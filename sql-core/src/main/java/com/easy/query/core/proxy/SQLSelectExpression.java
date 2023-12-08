@@ -18,32 +18,30 @@ import com.easy.query.core.proxy.sql.Select;
  */
 public interface SQLSelectExpression extends TablePropColumn, DSLUpdateSet {
 
-    default SQLOrderByExpression asc() {
-        return asc(true);
+    default void asc() {
+         asc(true);
     }
 
-    default SQLOrderByExpression asc(boolean condition) {
+    default void asc(boolean condition) {
         if (condition) {
-            return new SQLOrderSelectImpl(s -> {
-                s.setAsc(true);
-                s.column(this.getTable(), this.getValue());
-            });
+           getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+               s.setAsc(true);
+               s.column(this.getTable(), this.getValue());
+           }));
         }
-        return SQLOrderByExpression.empty;
     }
 
-    default SQLOrderByExpression desc() {
-        return desc(true);
+    default void desc() {
+         desc(true);
     }
 
-    default SQLOrderByExpression desc(boolean condition) {
+    default void desc(boolean condition) {
         if (condition) {
-            return new SQLOrderSelectImpl(s -> {
+            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(false);
                 s.column(this.getTable(), this.getValue());
-            });
+            }));
         }
-        return SQLOrderByExpression.empty;
     }
 
 

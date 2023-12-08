@@ -11,9 +11,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLGroupByExpression;
-import com.easy.query.core.proxy.SQLOrderByExpression;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -91,12 +89,12 @@ public interface OverrideEntityQueryable4<T1Proxy extends ProxyEntity<T1Proxy, T
     EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> having(boolean condition, SQLExpression1<T1Proxy> predicateExpression);
 
     @Override
-    default EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderBy(SQLFuncExpression1< T1Proxy, SQLOrderByExpression> selectExpression) {
+    default EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderBy(SQLExpression1<T1Proxy> selectExpression) {
         return orderBy(true, selectExpression);
     }
 
     @Override
-    EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderBy(boolean condition, SQLFuncExpression1< T1Proxy, SQLOrderByExpression> selectExpression);
+    EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderBy(boolean condition, SQLExpression1<T1Proxy> selectExpression);
 
     @Override
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> include(SQLFuncExpression2<ProxyNavigateInclude<T1>, T1Proxy, EntityQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {

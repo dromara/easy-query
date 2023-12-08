@@ -36,7 +36,7 @@ public abstract class AbstractOverrideEntityQueryable3<T1Proxy extends ProxyEnti
     }
 
     @Override
-    public EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> orderBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression) {
+    public EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> orderBy(boolean condition, SQLExpression1<T1Proxy> selectExpression) {
         super.orderBy(condition, selectExpression);
         return getQueryable3();
     }

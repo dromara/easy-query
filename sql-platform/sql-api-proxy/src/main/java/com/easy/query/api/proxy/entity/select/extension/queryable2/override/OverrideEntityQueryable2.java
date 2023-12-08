@@ -87,12 +87,12 @@ public interface OverrideEntityQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T
     EntityQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLExpression1<T1Proxy> predicateExpression);
 
     @Override
-    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression) {
+    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(SQLExpression1<T1Proxy> selectExpression) {
         return orderBy(true, selectExpression);
     }
 
     @Override
-    EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(boolean condition,SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression);
+    EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(boolean condition,SQLExpression1<T1Proxy> selectExpression);
 
     @Override
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> include(SQLFuncExpression2<ProxyNavigateInclude<T1>,T1Proxy, EntityQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {

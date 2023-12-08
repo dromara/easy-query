@@ -65,24 +65,22 @@ public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements Col
     }
 
     @Override
-    public SQLOrderByExpression asc(boolean condition) {
+    public void asc(boolean condition) {
         if(condition){
-            return  new SQLOrderSelectImpl(s -> {
+            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 SQLFunctionExpressionUtil.accept(s,getTable(),func,true);
-            });
+            }));
         }
-        return SQLOrderByExpression.empty;
 
     }
 
     @Override
-    public SQLOrderByExpression desc(boolean condition) {
+    public void desc(boolean condition) {
         if(condition){
-            return  new SQLOrderSelectImpl(s -> {
+              getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 SQLFunctionExpressionUtil.accept(s,getTable(),func,false);
-            });
+            }));
         }
-        return SQLOrderByExpression.empty;
     }
 
     @Override

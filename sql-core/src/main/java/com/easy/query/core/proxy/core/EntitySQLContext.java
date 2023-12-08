@@ -2,6 +2,7 @@ package com.easy.query.core.proxy.core;
 
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.Setter;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
@@ -10,6 +11,7 @@ import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.core.accpet.AggregatePredicateEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
+import com.easy.query.core.proxy.core.accpet.OrderByEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.PredicateEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.SetterEntityExpressionAcceptImpl;
 
@@ -28,6 +30,9 @@ public interface EntitySQLContext {
     }
     default void _having(AggregateFilter aggregateFilter, SQLActionExpression sqlActionExpression){
         accept(new AggregatePredicateEntityExpressionAcceptImpl(aggregateFilter),sqlActionExpression);
+    }
+    default void _orderBy(OrderSelector orderSelector, SQLActionExpression sqlActionExpression){
+        accept(new OrderByEntityExpressionAcceptImpl(orderSelector),sqlActionExpression);
     }
     default void _set(Setter setter, SQLActionExpression sqlActionExpression){
         accept(new SetterEntityExpressionAcceptImpl(setter),sqlActionExpression);

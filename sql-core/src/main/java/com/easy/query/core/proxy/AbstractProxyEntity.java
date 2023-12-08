@@ -97,6 +97,8 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     public void sqlNativeSegment(boolean condition,String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
         if(condition){
+
+//            getEntitySQLContext().accept(new SQLEntityNativeSegmentImpl(sqlSegment,contextConsume));
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 f.sqlNativeSegment(sqlSegment, c -> {
                     contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));

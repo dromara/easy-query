@@ -7,6 +7,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
+import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -216,7 +217,11 @@ public class QueryTest9 extends BaseTest {
                     a.title().eq("1");
                     b.createTime().ge(LocalDateTime.of(2021, 1, 1, 1, 1));
                 })
-                .orderBy((a, b) -> a.title().asc().thenBy(a.id().desc()))
+                .orderBy((a, b) ->{
+                    a.title().asc();
+                    a.id().desc();
+                    return SQLOrderByExpression.empty;
+                })
                 .firstOrNull();
 
         Topic topic2 = entityQuery.queryable(Topic.class)
@@ -225,7 +230,10 @@ public class QueryTest9 extends BaseTest {
                     a.title().eq("1");
                     b.createTime().ge(LocalDateTime.of(2021, 1, 1, 1, 1));
                 })
-                .orderBy((a, b) -> a.title().asc())
+                .orderBy((a, b) ->{
+                    a.title().asc();
+                    return SQLOrderByExpression.empty;
+                })
                 .select(o -> o.FETCHER.title().stars())
                 .firstOrNull();
         List<Topic> list1 = entityQuery.queryable(Topic.class)

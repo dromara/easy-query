@@ -27,9 +27,7 @@ import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLGroupByExpression;
-import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -325,11 +323,12 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> orderBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLOrderByExpression> selectExpression) {
+    public EntityQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> selectExpression) {
         if (condition) {
             entityQueryable.orderBy(columnSelector -> {
-                SQLOrderByExpression sqlOrderSelect = selectExpression.apply(t1Proxy);
-                sqlOrderSelect.accept(columnSelector.getOrderSelector());
+                get1Proxy().getEntitySQLContext()._orderBy(columnSelector.getOrderSelector(),()->{
+                    selectExpression.apply(t1Proxy);
+                });
             }, false);
         }
         return this;
