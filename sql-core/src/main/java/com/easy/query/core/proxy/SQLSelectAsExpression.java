@@ -2,6 +2,7 @@ package com.easy.query.core.proxy;
 
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.sql.Select;
 
@@ -14,10 +15,10 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByExpression {
-    default SQLSelectAsExpression _concat(SQLSelectAsExpression... sqlSelectAses) {
-        return _concat(true,sqlSelectAses);
+    default SQLSelectAsExpression concat(SQLSelectAsExpression... sqlSelectAses) {
+        return concat(true,sqlSelectAses);
     }
-    default SQLSelectAsExpression _concat(boolean condition, SQLSelectAsExpression... sqlSelectAs) {
+    default SQLSelectAsExpression concat(boolean condition, SQLSelectAsExpression... sqlSelectAs) {
         if(condition){
 
             SQLSelectAsExpression expression = Select.of(sqlSelectAs);
@@ -44,14 +45,14 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
     }, s -> {
     });
 
-    static SQLSelectAsExpression createDefault(TableAvailable table, String property) {
+    static SQLSelectAsExpression createDefault(EntitySQLContext entitySQLContext, TableAvailable table, String property) {
         return new SQLSelectAsImpl(x -> {
             x.column(table, property);
         }, x -> {
             x.column(table, property);
         }, x -> {
             x.column(table, property);
-        },table,property);
+        },entitySQLContext,table,property);
     }
 
     static <TProxy> SQLSelectAsExpression createColumnExclude(SQLColumn<TProxy, ?> column, Collection<SQLColumn<TProxy, ?>> ignoreColumns) {

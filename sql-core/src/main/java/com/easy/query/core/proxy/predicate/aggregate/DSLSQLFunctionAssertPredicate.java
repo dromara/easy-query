@@ -1,7 +1,6 @@
 package com.easy.query.core.proxy.predicate.aggregate;
 
 import com.easy.query.core.func.SQLFunc;
-import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.proxy.predicate.DSLAssertPredicate;
 
@@ -13,24 +12,22 @@ import com.easy.query.core.proxy.predicate.DSLAssertPredicate;
  */
 public interface DSLSQLFunctionAssertPredicate<TProperty> extends DSLAssertPredicate<TProperty>,DSLSQLFunctionAvailable {
     @Override
-    default SQLPredicateExpression isNull(boolean condition) {
+    default void isNull(boolean condition) {
         if (condition) {
-            return new SQLPredicateImpl(f -> {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.isNull(this.getTable(), func().apply(fx));
-            });
+            }));
         }
-        return SQLPredicateExpression.empty;
     }
 
     @Override
-    default SQLPredicateExpression isNotNull(boolean condition) {
+    default void isNotNull(boolean condition) {
         if (condition) {
-            return new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                f.isNotNull(this.getTable(), func().apply(fx));
-            });
+           getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+               SQLFunc fx = f.getRuntimeContext().fx();
+               f.isNotNull(this.getTable(), func().apply(fx));
+           }));
         }
-        return SQLPredicateExpression.empty;
     }
 }

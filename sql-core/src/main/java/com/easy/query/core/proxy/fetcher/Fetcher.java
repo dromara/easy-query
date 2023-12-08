@@ -15,8 +15,9 @@ import java.util.Collections;
  *
  * @author xuejiaming
  */
-public interface Fetcher<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TChain extends Fetcher<TProxy, TEntity, TChain>> extends SQLSelectAsExpression {
+public interface Fetcher<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TChain extends Fetcher<TProxy, TEntity, TChain>> extends SQLSelectAsExpression {//SQLFetcherExpression {
     TProxy getProxy();
+
     TChain allFields();
 
     default TChain allFieldsExclude(SQLColumn<TProxy, ?> ignoreColumn) {
@@ -62,20 +63,27 @@ public interface Fetcher<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, T
         return valueObjectColumnExclude(column, Arrays.asList(ignoreColumn1, ignoreColumn2, ignoreColumn3, ignoreColumn4));
     }
 
-    default TChain valueObjectColumnExclude(SQLColumn<TProxy, ?> column, SQLColumn<TProxy, ?> ignoreColumn1, SQLColumn<TProxy, ?> ignoreColumn2, SQLColumn<TProxy, ?> ignoreColumn3, SQLColumn<TProxy, ?> ignoreColumn4, SQLColumn<TProxy, ?> ignoreColumn5){
+    default TChain valueObjectColumnExclude(SQLColumn<TProxy, ?> column, SQLColumn<TProxy, ?> ignoreColumn1, SQLColumn<TProxy, ?> ignoreColumn2, SQLColumn<TProxy, ?> ignoreColumn3, SQLColumn<TProxy, ?> ignoreColumn4, SQLColumn<TProxy, ?> ignoreColumn5) {
         return valueObjectColumnExclude(column, Arrays.asList(ignoreColumn1, ignoreColumn2, ignoreColumn3, ignoreColumn4, ignoreColumn5));
     }
 
-    default TChain valueObjectColumnExclude(SQLColumn<TProxy, ?> column, SQLColumn<TProxy, ?> ignoreColumn1, SQLColumn<TProxy, ?> ignoreColumn2, SQLColumn<TProxy, ?> ignoreColumn3, SQLColumn<TProxy, ?> ignoreColumn4, SQLColumn<TProxy, ?> ignoreColumn5, SQLColumn<TProxy, ?> ignoreColumn6){
+    default TChain valueObjectColumnExclude(SQLColumn<TProxy, ?> column, SQLColumn<TProxy, ?> ignoreColumn1, SQLColumn<TProxy, ?> ignoreColumn2, SQLColumn<TProxy, ?> ignoreColumn3, SQLColumn<TProxy, ?> ignoreColumn4, SQLColumn<TProxy, ?> ignoreColumn5, SQLColumn<TProxy, ?> ignoreColumn6) {
         return valueObjectColumnExclude(column, Arrays.asList(ignoreColumn1, ignoreColumn2, ignoreColumn3, ignoreColumn4, ignoreColumn5, ignoreColumn6));
     }
 
     TChain valueObjectColumnExclude(SQLColumn<TProxy, ?> column, Collection<SQLColumn<TProxy, ?>> ignoreColumns);
 
     @Override
-   default TChain _alias(TablePropColumn propColumn){
-        return _alias(propColumn.getValue());
+    default TChain alias(TablePropColumn propColumn) {
+        return alias(propColumn.getValue());
     }
+
     @Override
-    TChain _alias(String propertyAlias);
+    TChain alias(String propertyAlias);
+
+//    @Override
+//    TChain asc(boolean condition);
+//
+//    @Override
+//    TChain desc(boolean condition);
 }

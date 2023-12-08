@@ -1,11 +1,7 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable6;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable6;
-import com.easy.query.api.proxy.sql.ProxyOrderSelector;
-import com.easy.query.api.proxy.sql.impl.ProxyOrderSelectorImpl;
 import com.easy.query.core.common.tuple.MergeTuple6;
-import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.lambda.SQLExpression7;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression6;
 import com.easy.query.core.proxy.ProxyEntity;

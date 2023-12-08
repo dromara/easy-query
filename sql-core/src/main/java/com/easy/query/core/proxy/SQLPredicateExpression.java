@@ -15,6 +15,21 @@ public interface SQLPredicateExpression {
     void accept(Filter f);
 
     SQLPredicateExpression empty=new SQLPredicateImpl(f->{});
+//
+//    default SQLPredicateExpression _concat(SQLPredicateExpression... predicate){
+//        return _concat(true,predicate);
+//    }
+//    default SQLPredicateExpression _concat(boolean condition,SQLPredicateExpression... predicate){
+//        SQLPredicateExpression[] concat = EasyArrayUtil.concat(new SQLPredicateExpression[]{this}, predicate);
+//        return Predicate.and(condition,concat);
+//    }
+//    default SQLPredicateExpression _concatOr(SQLPredicateExpression... predicate){
+//        return _concatOr(true,predicate);
+//    }
+//    default SQLPredicateExpression _concatOr(boolean condition,SQLPredicateExpression... predicate){
+//        SQLPredicateExpression[] concat = EasyArrayUtil.concat(new SQLPredicateExpression[]{this}, predicate);
+//        return Predicate.or(condition,concat);
+//    }
 
 //    static SQLPredicate and() {
 //

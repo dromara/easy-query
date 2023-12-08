@@ -27,6 +27,7 @@ import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.company.ValueCompany1Proxy;
 import com.easy.query.test.mytest.SysUserLogbyMonth;
 import com.easy.query.test.mytest.TestUserMysql;
 import com.easy.query.test.mytest.TestUserMysqlGroup;
@@ -64,7 +65,7 @@ public class Main {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
         LocalDateTime localDateTime1 = LocalDateTime.of(1900, 1, 1, 0, 0).plusDays(45245);
-
+        ValueCompany1Proxy table = ValueCompany1Proxy.createTable();
         int ixx=1- 1 % 1000;
         StringBuilder sqlx=new StringBuilder();
         for (int i = 10000; i < 20000; i++) {

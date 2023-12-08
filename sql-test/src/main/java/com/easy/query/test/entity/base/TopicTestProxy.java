@@ -1,6 +1,5 @@
 package com.easy.query.test.entity.base;
 
-import com.easy.query.core.proxy.AbstractSelector;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.test.entity.Topic;
@@ -47,22 +46,4 @@ public class TopicTestProxy extends AbstractProxyEntity<TopicTestProxy, Topic> {
         return entityClass;
     }
 
-    public TopicTestSelector selector() {
-        return new TopicTestSelector(this);
-    }
-
-    public static class TopicTestSelector extends AbstractSelector<TopicTestProxy,Topic,TopicTestSelector> {
-
-        public TopicTestSelector(TopicTestProxy proxy) {
-            super(proxy);
-        }
-
-        public TopicTestSelector id() {
-            return add(getProxy().id());
-        }
-
-        public TopicTestSelector title() {
-            return add(getProxy().title());
-        }
-    }
 }

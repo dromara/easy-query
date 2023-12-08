@@ -25,33 +25,6 @@ public interface ProxyFilterable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         , T3Proxy extends ProxyEntity<T3Proxy, T3>, T3,
         T4Proxy extends ProxyEntity<T4Proxy, T4>, T4> extends ClientProxyQueryable4Available<T1, T2, T3, T4>, ProxyQueryable4Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> {
 
-    /**
-     * 构建where条件
-     * where(table.id().eq(...),table.name().eq(...))
-     * @param sqlPredicates where表达式
-     * @return 返回当前查询queryable
-     */
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(SQLPredicateExpression... sqlPredicates) {
-        return where(true, sqlPredicates);
-    }
-    /**
-     * 构建where条件
-     * where(table.id().eq(...),table.name().eq(...))
-     * @param condition 是否要添加后续的表达式,true:表示要添加,false表示不添加
-     * @param sqlPredicates where表达式
-     * @return 返回当前查询queryable
-     */
-    default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(boolean condition, SQLPredicateExpression... sqlPredicates){
-        if (condition) {
-            if(EasyArrayUtil.isNotEmpty(sqlPredicates)){
-                getClientQueryable4().where((wherePredicate1, wherePredicate2, wherePredicate3, wherePredicate4) -> {
-                    SQLPredicateExpression predicate = Predicate.and(sqlPredicates);
-                    predicate.accept(wherePredicate1.getFilter());
-                });
-            }
-        }
-        return getQueryable4();
-    }
     default ProxyQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> where(SQLExpression1<MultiProxyFilter4<T1Proxy, T2Proxy, T3Proxy, T4Proxy>> whereExpression) {
         return where(true, whereExpression);
     }

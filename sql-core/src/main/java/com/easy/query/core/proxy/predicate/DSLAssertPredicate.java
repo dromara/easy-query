@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.predicate;
 
-import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.TablePropColumn;
+import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
 /**
@@ -10,25 +10,23 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
  *
  * @author xuejiaming
  */
-public interface DSLAssertPredicate<TProperty> extends TablePropColumn {
-    default SQLPredicateExpression isNull() {
-        return isNull(true);
+public interface DSLAssertPredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
+    default void isNull() {
+         isNull(true);
     }
 
-    default SQLPredicateExpression isNull(boolean condition){
+    default void isNull(boolean condition){
         if(condition){
-            return new SQLPredicateImpl(f -> f.isNull(this.getTable(), this.getValue()));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNull(this.getTable(), this.getValue())));
         }
-        return SQLPredicateExpression.empty;
     }
-    default SQLPredicateExpression isNotNull() {
-        return isNotNull(true);
+    default void isNotNull() {
+         isNotNull(true);
     }
 
-    default SQLPredicateExpression isNotNull(boolean condition){
+    default void isNotNull(boolean condition){
         if(condition){
-            return new SQLPredicateImpl(f -> f.isNotNull(this.getTable(), this.getValue()));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNotNull(this.getTable(), this.getValue())));
         }
-        return SQLPredicateExpression.empty;
     }
 }

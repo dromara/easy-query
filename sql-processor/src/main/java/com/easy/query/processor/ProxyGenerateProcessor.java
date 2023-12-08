@@ -2,6 +2,7 @@ package com.easy.query.processor;
 
 
 import com.easy.query.core.annotation.ColumnIgnore;
+import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.ValueObject;
@@ -119,6 +120,10 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 //                        break;
 //                    }
 //                }
+                EntityFileProxy entityFileProxy = entityClassElement.getAnnotation(EntityFileProxy.class);
+                if(entityFileProxy!=null){
+                    return;
+                }
                 EntityProxy entityProxy = entityClassElement.getAnnotation(EntityProxy.class);
 
                 entityClassNameReference.set(entityClassElement.toString());
@@ -139,6 +144,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage,entityClassName,proxyInstanceName,new AptSelectorInfo(proxyInstanceName+"Fetcher"));
                 aptFileCompiler.addImports("com.easy.query.core.proxy.fetcher.AbstractFetcher");
                 aptFileCompiler.addImports("com.easy.query.core.proxy.SQLSelectAsExpression");
+                aptFileCompiler.addImports("com.easy.query.core.proxy.core.EntitySQLContext");
                 AptValueObjectInfo aptValueObjectInfo = new AptValueObjectInfo(entityClassName);
                 aptFileCompiler.addImports(entityFullName);
                 do {

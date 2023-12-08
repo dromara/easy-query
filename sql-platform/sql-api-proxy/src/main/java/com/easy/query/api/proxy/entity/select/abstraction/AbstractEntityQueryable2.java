@@ -20,7 +20,7 @@ public abstract class AbstractEntityQueryable2<T1Proxy extends ProxyEntity<T1Pro
 
     public AbstractEntityQueryable2(T1Proxy t1Proxy, T2Proxy t2Proxy, ClientQueryable2<T1, T2> entityQueryable) {
         super(t1Proxy, entityQueryable);
-        this.t2Proxy = t2Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(1).getEntityTable());
+        this.t2Proxy = t2Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(1).getEntityTable(),t1Proxy.getEntitySQLContext());
     }
 
 

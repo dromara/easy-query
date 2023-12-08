@@ -54,15 +54,15 @@ public class AptConstant {
     public static final String FIELD_VALUE_OBJECT_TEMPLATE = "\n" +
             "    @{comment}\n" +
             "    public @{entityClass}Proxy @{property}() {\n" +
-            "        return getValueObject(new @{entityClass}Proxy(getTable(), getValueProperty(\"@{property}\")));\n" +
+            "        return getValueObject(new @{entityClass}Proxy(getEntitySQLContext(),getTable(), getValueProperty(\"@{property}\")));\n" +
             "    }";
 
 
     public static final String FIELD_VALUE_OBJECT_CLASS_TEMPLATE = "\n" +
             "    public static class @{entityClass}Proxy extends AbstractValueObjectProxyEntity<@{mainEntityClassProxy}, @{entityClass}> {\n" +
             "\n" +
-            "        private @{entityClass}Proxy(TableAvailable table, String propertyName) {\n" +
-            "            super(table, propertyName);\n" +
+            "        private @{entityClass}Proxy(EntitySQLContext entitySQLContext,TableAvailable table, String propertyName) {\n" +
+            "            super(entitySQLContext,table, propertyName);\n" +
             "        }\n" +
             "\n" +
             "        @{fieldContent}" +

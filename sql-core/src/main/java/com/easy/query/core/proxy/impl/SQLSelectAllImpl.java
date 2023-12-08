@@ -8,6 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.util.EasyArrayUtil;
 
 /**
@@ -17,10 +18,12 @@ import com.easy.query.core.util.EasyArrayUtil;
  * @author xuejiaming
  */
 public class SQLSelectAllImpl implements SQLSelectAsExpression {
+    private final EntitySQLContext entitySQLContext;
     private final TableAvailable table;
     private final PropColumn[] ignoreProps;
 
-    public SQLSelectAllImpl(TableAvailable table, PropColumn[] ignoreProps) {
+    public SQLSelectAllImpl(EntitySQLContext entitySQLContext,TableAvailable table, PropColumn[] ignoreProps) {
+        this.entitySQLContext = entitySQLContext;
 
         this.table = table;
         this.ignoreProps = ignoreProps;
@@ -32,7 +35,7 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
     }
 
     @Override
-    public SQLSelectAsExpression _alias(TablePropColumn propColumn) {
+    public SQLSelectAsExpression alias(TablePropColumn propColumn) {
         throw new UnsupportedOperationException();
     }
 
@@ -74,5 +77,10 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
                 f.columnIgnore(table, ignoreProp.getValue());
             }
         }
+    }
+
+    @Override
+    public EntitySQLContext getEntitySQLContext() {
+        return entitySQLContext;
     }
 }

@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.parser.core.base;
 
+import com.easy.query.core.expression.builder.Setter;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.core.SQLSetPropertyNative;
 
@@ -10,6 +11,7 @@ import com.easy.query.core.expression.parser.core.base.core.SQLSetPropertyNative
  * @author xuejiaming
  */
 public interface ColumnSetter<T1> extends EntitySQLTableOwner<T1>, SQLSetPropertyNative<ColumnSetter<T1>> {
+    Setter getSetter();
     /**
      * set column=val
      */

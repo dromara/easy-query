@@ -1,11 +1,13 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectImpl;
+import com.easy.query.core.proxy.set.DSLUpdateSet;
 import com.easy.query.core.proxy.sql.Select;
 
 /**
@@ -14,7 +16,7 @@ import com.easy.query.core.proxy.sql.Select;
  *
  * @author xuejiaming
  */
-public interface SQLSelectExpression extends TablePropColumn {
+public interface SQLSelectExpression extends TablePropColumn, DSLUpdateSet {
 
     default SQLOrderByExpression asc() {
         return asc(true);
@@ -44,17 +46,18 @@ public interface SQLSelectExpression extends TablePropColumn {
         return SQLOrderByExpression.empty;
     }
 
+
     /**
      * 设置别名
      *
      * @param propColumn
      * @return
      */
-    default SQLSelectAsExpression _alias(TablePropColumn propColumn) {
-        return _alias(propColumn.getValue());
+    default SQLSelectAsExpression alias(TablePropColumn propColumn) {
+        return alias(propColumn.getValue());
     }
 
-    default SQLSelectAsExpression _alias(String propertyAlias) {
+    default SQLSelectAsExpression alias(String propertyAlias) {
         return new SQLSelectAsImpl(s -> {
             s.columnAs(this.getTable(), this.getValue(), propertyAlias);
         }, s -> {
@@ -64,11 +67,11 @@ public interface SQLSelectExpression extends TablePropColumn {
         });
     }
 
-    default SQLSelectExpression _concat(SQLSelectExpression... sqlSelectAses) {
-        return _concat(true, sqlSelectAses);
+    default SQLSelectExpression concat(SQLSelectExpression... sqlSelectAses) {
+        return concat(true, sqlSelectAses);
     }
 
-    default SQLSelectExpression _concat(boolean condition, SQLSelectExpression... sqlSelectAs) {
+    default SQLSelectExpression concat(boolean condition, SQLSelectExpression... sqlSelectAs) {
         if (condition) {
             SQLSelectExpression expression = Select.of(sqlSelectAs);
             return new SQLSelectImpl(x -> {
@@ -80,6 +83,13 @@ public interface SQLSelectExpression extends TablePropColumn {
     }
 
     default void accept(Selector s) {
+        TableAvailable table = this.getTable();
+        String value = this.getValue();
+        if (table != null && value != null) {
+            s.column(table, value);
+        }
+    }
+    default void accept(AsSelector s) {
         TableAvailable table = this.getTable();
         String value = this.getValue();
         if (table != null && value != null) {

@@ -1,8 +1,8 @@
 package com.easy.query.core.proxy.predicate;
 
 import com.easy.query.core.proxy.SQLColumn;
-import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.TablePropColumn;
+import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
 /**
@@ -11,73 +11,73 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
  *
  * @author xuejiaming
  */
-public interface DSLOtherPredicate<TProperty> extends TablePropColumn {
-    default <TProxy,TProp> SQLPredicateExpression ge(SQLColumn<TProxy,TProp> column) {
-        return ge(true, column);
+public interface DSLOtherPredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
+    default <TProxy,TProp> void ge(SQLColumn<TProxy,TProp> column) {
+         ge(true, column);
     }
 
-    default <TProxy,TProp> SQLPredicateExpression ge(boolean condition, SQLColumn<TProxy,TProp> column) {
+    default <TProxy,TProp> void ge(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.ge(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ge(this.getTable(), this.getValue(), column.getTable(), column.getValue())));
         }
-        return SQLPredicateExpression.empty;
+        
     }
-    default <TProxy,TProp> SQLPredicateExpression gt(SQLColumn<TProxy,TProp> column) {
-        return gt(true, column);
+    default <TProxy,TProp> void gt(SQLColumn<TProxy,TProp> column) {
+         gt(true, column);
     }
 
-    default <TProxy,TProp> SQLPredicateExpression gt(boolean condition, SQLColumn<TProxy,TProp> column) {
+    default <TProxy,TProp> void gt(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.gt(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
+            getEntitySQLContext().accept( new SQLPredicateImpl(f -> f.gt(this.getTable(), this.getValue(), column.getTable(), column.getValue())));
         }
-        return SQLPredicateExpression.empty;
+        
     }
 
 
-    default <TProxy,TProp> SQLPredicateExpression eq(SQLColumn<TProxy,TProp> column) {
-        return eq(true, column);
+    default <TProxy,TProp> void eq(SQLColumn<TProxy,TProp> column) {
+         eq(true, column);
     }
 
-    default <TProxy,TProp> SQLPredicateExpression eq(boolean condition, SQLColumn<TProxy,TProp> column) {
+    default <TProxy,TProp> void eq(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), column.getTable(), column.getValue())));
         }
-        return SQLPredicateExpression.empty;
+        
     }
 
 
 
-    default <TProxy,TProp> SQLPredicateExpression ne(SQLColumn<TProxy,TProp> column) {
-        return ne(true, column);
+    default <TProxy,TProp> void ne(SQLColumn<TProxy,TProp> column) {
+         ne(true, column);
     }
 
-    default <TProxy,TProp> SQLPredicateExpression ne(boolean condition, SQLColumn<TProxy,TProp> column) {
+    default <TProxy,TProp> void ne(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.ne(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ne(this.getTable(), this.getValue(), column.getTable(), column.getValue())));
         }
-        return SQLPredicateExpression.empty;
+        
     }
 
-    default <TProxy,TProp> SQLPredicateExpression le(SQLColumn<TProxy,TProp> column) {
-        return le(true, column);
+    default <TProxy,TProp> void le(SQLColumn<TProxy,TProp> column) {
+         le(true, column);
     }
 
-    default <TProxy,TProp> SQLPredicateExpression le(boolean condition, SQLColumn<TProxy,TProp> column) {
+    default <TProxy,TProp> void le(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.le(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
+           getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.le(this.getTable(), this.getValue(), column.getTable(), column.getValue())));
         }
-        return SQLPredicateExpression.empty;
+        
     }
 
-    default <TProxy,TProp> SQLPredicateExpression lt(SQLColumn<TProxy,TProp> column) {
-        return lt(true, column);
+    default <TProxy,TProp> void lt(SQLColumn<TProxy,TProp> column) {
+         lt(true, column);
     }
 
-    default <TProxy,TProp> SQLPredicateExpression lt(boolean condition, SQLColumn<TProxy,TProp> column) {
+    default <TProxy,TProp> void lt(boolean condition, SQLColumn<TProxy,TProp> column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.lt(this.getTable(), this.getValue(), column.getTable(), column.getValue()));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.lt(this.getTable(), this.getValue(), column.getTable(), column.getValue())));
         }
-        return SQLPredicateExpression.empty;
+        
     }
 
 }

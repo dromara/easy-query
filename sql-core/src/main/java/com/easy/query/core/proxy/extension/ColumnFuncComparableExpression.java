@@ -22,11 +22,11 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
         DSLValueAggregatePredicate<T> ,
         DSLSQLFunctionAssertPredicate<T> {
     @Override
-    default SQLSelectAsExpression _alias(TablePropColumn propColumn) {
-        return _alias(propColumn.getValue());
+    default SQLSelectAsExpression alias(TablePropColumn propColumn) {
+        return alias(propColumn.getValue());
     }
     @Override
-    default SQLSelectAsExpression _alias(String propertyAlias) {
+    default SQLSelectAsExpression alias(String propertyAlias) {
         return new SQLSelectAsImpl(s -> {
             SQLFunc fx = s.getRuntimeContext().fx();
             s.columnFunc(this.getTable(), func().apply(fx), propertyAlias);
@@ -40,68 +40,62 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
     }
 
     @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> SQLPredicateExpression ge(boolean condition, T1 column) {
+    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void ge(boolean condition, T1 column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.ge(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-            });
+            }));
         }
-        return SQLPredicateExpression.empty;
     }
 
     @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> SQLPredicateExpression gt(boolean condition, T1 column) {
+    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void gt(boolean condition, T1 column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.gt(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-            });
+            }));
         }
-        return SQLPredicateExpression.empty;
     }
 
     @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> SQLPredicateExpression eq(boolean condition, T1 column) {
+    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void eq(boolean condition, T1 column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.eq(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-            });
+            }));
         }
-        return SQLPredicateExpression.empty;
     }
 
     @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> SQLPredicateExpression ne(boolean condition, T1 column) {
+    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void ne(boolean condition, T1 column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.ne(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-            });
+            }));
         }
-        return SQLPredicateExpression.empty;
     }
 
     @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> SQLPredicateExpression le(boolean condition, T1 column) {
+    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void le(boolean condition, T1 column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                f.le(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-            });
+           getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+               SQLFunc fx = f.getRuntimeContext().fx();
+               f.le(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
+           }));
         }
-        return SQLPredicateExpression.empty;
     }
 
     @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> SQLPredicateExpression lt(boolean condition, T1 column) {
+    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void lt(boolean condition, T1 column) {
         if (condition) {
-            return new SQLPredicateImpl(f -> {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.lt(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-            });
+            }));
         }
-        return SQLPredicateExpression.empty;
     }
 }

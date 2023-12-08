@@ -8,9 +8,6 @@ import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLPredicateExpression;
-import com.easy.query.core.proxy.sql.Predicate;
-import com.easy.query.core.util.EasyArrayUtil;
 
 import java.util.Collection;
 
@@ -26,33 +23,6 @@ public interface ProxyFilterable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T4Proxy extends ProxyEntity<T4Proxy, T4>, T4,
         T5Proxy extends ProxyEntity<T5Proxy, T5>, T5> extends ClientProxyQueryable5Available<T1, T2, T3, T4, T5>, ProxyQueryable5Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> {
 
-    /**
-     * 构建where条件
-     * where(table.id().eq(...),table.name().eq(...))
-     * @param sqlPredicates where表达式
-     * @return 返回当前查询queryable
-     */
-    default ProxyQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> where(SQLPredicateExpression... sqlPredicates) {
-        return where(true, sqlPredicates);
-    }
-    /**
-     * 构建where条件
-     * where(table.id().eq(...),table.name().eq(...))
-     * @param condition 是否要添加后续的表达式,true:表示要添加,false表示不添加
-     * @param sqlPredicates where表达式
-     * @return 返回当前查询queryable
-     */
-    default ProxyQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> where(boolean condition, SQLPredicateExpression... sqlPredicates){
-        if (condition) {
-            if(EasyArrayUtil.isNotEmpty(sqlPredicates)){
-                getClientQueryable5().where((wherePredicate1, wherePredicate2, wherePredicate3, wherePredicate4, wherePredicate5) -> {
-                    SQLPredicateExpression predicate = Predicate.and(sqlPredicates);
-                    predicate.accept(wherePredicate1.getFilter());
-                });
-            }
-        }
-        return getQueryable5();
-    }
     default ProxyQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> where(SQLExpression1<MultiProxyFilter5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> whereExpression) {
         return where(true, whereExpression);
     }

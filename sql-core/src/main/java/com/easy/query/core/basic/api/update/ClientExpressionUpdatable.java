@@ -5,6 +5,7 @@ import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 import com.easy.query.core.expression.sql.TableContext;
@@ -22,6 +23,7 @@ public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpress
         WithVersionable<ClientExpressionUpdatable<T>>,
         ConfigureVersionable<ClientExpressionUpdatable<T>>
 {
+    ColumnSetter<T> getColumnSetter();
     default ClientExpressionUpdatable<T> set(String property, Object val) {
         return set(true, property, val);
     }

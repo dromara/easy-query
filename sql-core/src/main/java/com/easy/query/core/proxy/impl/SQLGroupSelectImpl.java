@@ -3,6 +3,7 @@ package com.easy.query.core.proxy.impl;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.SQLGroupByExpression;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 
 import java.util.function.Consumer;
 
@@ -30,6 +31,11 @@ public class SQLGroupSelectImpl implements SQLGroupByExpression {
 
     @Override
     public TableAvailable getTable() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public EntitySQLContext getEntitySQLContext() {
         throw new UnsupportedOperationException();
     }
 }

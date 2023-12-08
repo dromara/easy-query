@@ -97,7 +97,7 @@ public class DefaultEntityQuery implements EntityQuery {
 
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityUpdatable<TProxy, T> updatable(T entity) {
-        Objects.requireNonNull(entity, "entities is null");
+        Objects.requireNonNull(entity, "entity is null");
         Class<T> aClass = EasyObjectUtil.typeCast(entity.getClass());
         TProxy tProxy = EntityQueryProxyManager.create(aClass);
         return new EasyEntityUpdatable<>(tProxy, easyQueryClient.updatable(entity));

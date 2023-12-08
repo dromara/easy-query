@@ -61,6 +61,11 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     }
 
     @Override
+    public ColumnSetter<T> getColumnSetter() {
+        return columnSetter;
+    }
+
+    @Override
     public EntityUpdateExpressionBuilder getUpdateExpressionBuilder() {
         return entityUpdateExpressionBuilder;
     }

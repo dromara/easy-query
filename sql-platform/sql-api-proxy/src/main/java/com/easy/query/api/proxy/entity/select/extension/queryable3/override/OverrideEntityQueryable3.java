@@ -7,13 +7,13 @@ import com.easy.query.api.proxy.sql.ProxyNavigateInclude;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.proxy.SQLOrderByExpression;
-import com.easy.query.core.proxy.SQLPredicateExpression;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -63,12 +63,12 @@ public interface OverrideEntityQueryable3<T1Proxy extends ProxyEntity<T1Proxy, T
 
 
     @Override
-    default EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> where(SQLFuncExpression1<T1Proxy, SQLPredicateExpression> whereExpression) {
+    default EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> where(SQLExpression1<T1Proxy> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> where(boolean condition, SQLFuncExpression1<T1Proxy, SQLPredicateExpression> whereExpression);
+    EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> where(boolean condition, SQLExpression1<T1Proxy> whereExpression);
 
     @Override
     default EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> groupBy(SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {

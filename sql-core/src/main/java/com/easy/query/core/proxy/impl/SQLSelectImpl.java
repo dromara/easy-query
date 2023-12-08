@@ -3,6 +3,7 @@ package com.easy.query.core.proxy.impl;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.SQLSelectExpression;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 
 import java.util.function.Consumer;
 
@@ -31,5 +32,10 @@ public class SQLSelectImpl implements SQLSelectExpression {
     @Override
     public void accept(Selector s) {
         selectorConsumer.accept(s);
+    }
+
+    @Override
+    public EntitySQLContext getEntitySQLContext() {
+        throw new UnsupportedOperationException();
     }
 }

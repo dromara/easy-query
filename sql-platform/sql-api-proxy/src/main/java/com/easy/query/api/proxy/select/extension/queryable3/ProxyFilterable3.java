@@ -25,34 +25,6 @@ public interface ProxyFilterable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         , T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> extends ClientProxyQueryable3Available<T1, T2,T3>, ProxyQueryable3Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> {
 
 
-    /**
-     * 构建where条件
-     * where(table.id().eq(...),table.name().eq(...))
-     * @param sqlPredicates where表达式
-     * @return 返回当前查询queryable
-     */
-    default ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> where(SQLPredicateExpression... sqlPredicates) {
-        return where(true, sqlPredicates);
-    }
-    /**
-     * 构建where条件
-     * where(table.id().eq(...),table.name().eq(...))
-     * @param condition 是否要添加后续的表达式,true:表示要添加,false表示不添加
-     * @param sqlPredicates where表达式
-     * @return 返回当前查询queryable
-     */
-    default ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> where(boolean condition, SQLPredicateExpression... sqlPredicates){
-        if (condition) {
-            if(EasyArrayUtil.isNotEmpty(sqlPredicates)){
-                getClientQueryable3().where((wherePredicate1, wherePredicate2, wherePredicate3) -> {
-                    SQLPredicateExpression predicate = Predicate.and(sqlPredicates);
-                    predicate.accept(wherePredicate1.getFilter());
-                });
-            }
-        }
-        return getQueryable3();
-    }
-
     default ProxyQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> where(SQLExpression1<MultiProxyFilter3<T1Proxy, T2Proxy, T3Proxy>> whereExpression) {
         return where(true,whereExpression);
     }

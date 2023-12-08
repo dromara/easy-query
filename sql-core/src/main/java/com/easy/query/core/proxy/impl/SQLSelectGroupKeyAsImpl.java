@@ -5,6 +5,7 @@ import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 
 /**
  * create time 2023/12/2 18:42
@@ -31,6 +32,11 @@ public class SQLSelectGroupKeyAsImpl implements SQLSelectAsExpression {
     }
 
     @Override
+    public EntitySQLContext getEntitySQLContext() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void accept(AsSelector f) {
         f.groupKeys(index);
     }
@@ -41,12 +47,12 @@ public class SQLSelectGroupKeyAsImpl implements SQLSelectAsExpression {
     }
 
     @Override
-    public SQLSelectAsExpression _alias(TablePropColumn propColumn) {
-        return _alias(propColumn.getValue());
+    public SQLSelectAsExpression alias(TablePropColumn propColumn) {
+        return alias(propColumn.getValue());
     }
 
     @Override
-    public SQLSelectAsExpression _alias(String propertyAlias) {
+    public SQLSelectAsExpression alias(String propertyAlias) {
         return new SQLSelectAsImpl(f->{
             f.groupKeys(index);
         },f -> {

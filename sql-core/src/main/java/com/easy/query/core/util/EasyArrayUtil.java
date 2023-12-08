@@ -1,5 +1,7 @@
 package com.easy.query.core.util;
 
+import java.util.Arrays;
+
 /**
  * create time 2023/10/11 22:29
  * 文件说明
@@ -35,27 +37,27 @@ public class EasyArrayUtil {
     }
 
 
-//    /**
-//     * 合并两个数组为一个新的数组
-//     *
-//     * @param first  第一个数组
-//     * @param second 第二个数组
-//     * @param <T> 数组类型
-//     * @return 新的数组
-//     */
-//    public static <T> T[] concat(T[] first, T[] second) {
-//        if (first == null && second == null) {
-//            throw new IllegalArgumentException("not allow first and second are null.");
-//        } else if (isEmpty(first) && second != null) {
-//            return second;
-//        } else if (isEmpty(second)) {
-//            return first;
-//        } else {
-//            T[] result = Arrays.copyOf(first, first.length + second.length);
-//            System.arraycopy(second, 0, result, first.length, second.length);
-//            return result;
-//        }
-//    }
+    /**
+     * 合并两个数组为一个新的数组
+     *
+     * @param first  第一个数组
+     * @param second 第二个数组
+     * @param <T> 数组类型
+     * @return 新的数组
+     */
+    public static <T> T[] concat(T[] first, T[] second) {
+        if (first == null && second == null) {
+            throw new IllegalArgumentException("not allow first and second are null.");
+        } else if (isEmpty(first) && second != null) {
+            return second;
+        } else if (isEmpty(second)) {
+            return first;
+        } else {
+            T[] result = Arrays.copyOf(first, first.length + second.length);
+            System.arraycopy(second, 0, result, first.length, second.length);
+            return result;
+        }
+    }
 
 
 //    public static <TSource, TElement> Iterable<TElement> select(TSource[] sources, Selector<TSource, TElement> selector) {

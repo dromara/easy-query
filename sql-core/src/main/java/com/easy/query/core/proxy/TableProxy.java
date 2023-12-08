@@ -4,6 +4,9 @@ package com.easy.query.core.proxy;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
+import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.ProxyEntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
 import java.io.Serializable;
@@ -15,7 +18,7 @@ import java.util.function.Supplier;
  *
  * @author xuejiaming
  */
-public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity> extends BeanProxy, EntitySQLTableOwner<TEntity>, Serializable {
+public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity> extends BeanProxy, EntitySQLTableOwner<TEntity>, EntitySQLContextAvailable, Serializable {
 
     default boolean isDefault() {
         return getTable() == null;
@@ -23,31 +26,27 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
 
     Class<TEntity> getEntityClass();
 
-    TProxy create(TableAvailable table);
-//    void setTable(TableAvailable table);
+   default TProxy create(TableAvailable table){
+       return create(table,new ProxyEntitySQLContext());
+   }
+    TProxy create(TableAvailable table, EntitySQLContext entitySQLContext);
 
-//    default TEntity createEntity() {
-//        return null;
-//    }
-
-    default SQLPredicateExpression exists(Supplier<Query<?>> subQueryFunc) {
-        return exists(true, subQueryFunc);
+    default void exists(Supplier<Query<?>> subQueryFunc) {
+         exists(true, subQueryFunc);
     }
 
-    default SQLPredicateExpression exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
+    default void exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.exists(subQueryFunc.get()));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(subQueryFunc.get())));
         }
-        return SQLPredicateExpression.empty;
     }
-    default SQLPredicateExpression notExists(Supplier<Query<?>> subQueryFunc) {
-        return notExists(true, subQueryFunc);
+    default void notExists(Supplier<Query<?>> subQueryFunc) {
+         notExists(true, subQueryFunc);
     }
 
-    default SQLPredicateExpression notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
+    default void notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get()));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
         }
-        return SQLPredicateExpression.empty;
     }
 }

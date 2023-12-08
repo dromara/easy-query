@@ -9,6 +9,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.SQLOrderByExpression;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 
 import java.util.function.Function;
@@ -20,11 +21,13 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements ColumnFuncComparableExpression<TProperty> {
+    private final EntitySQLContext entitySQLContext;
     private final TableAvailable table;
     private final String property;
     private final Function<SQLFunc, SQLFunction> func;
 
-    public SQLColumnFunctionComparableExpressionImpl(TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
+    public SQLColumnFunctionComparableExpressionImpl(EntitySQLContext entitySQLContext,TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
+        this.entitySQLContext = entitySQLContext;
 
         this.table = table;
         this.property = property;
@@ -87,6 +90,10 @@ public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements Col
         return this.func;
     }
 
+    @Override
+    public EntitySQLContext getEntitySQLContext() {
+        return entitySQLContext;
+    }
 }
 //        if(condition){
 //            return new SQLPredicateImpl(f->{

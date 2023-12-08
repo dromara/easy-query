@@ -521,4 +521,5 @@ public interface Filter extends SQLNative<Filter> {
 
 
     Filter or(SQLExpression1<Filter> sqlWherePredicateSQLExpression);
+    Filter create();
 }

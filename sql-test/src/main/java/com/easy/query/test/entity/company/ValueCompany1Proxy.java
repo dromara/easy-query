@@ -5,6 +5,7 @@ import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.AbstractValueObjectProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 
 /**
@@ -46,7 +47,7 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
      * 企业地址信息
      */
     public ValueCompanyAddressProxy address() {
-        return getValueObject(new ValueCompanyAddressProxy(getTable(), getValueProperty("address")));
+        return getValueObject(new ValueCompanyAddressProxy(getEntitySQLContext(),getTable(), getValueProperty("address")));
     }
 
     /**
@@ -54,7 +55,7 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
      * 企业地址信息
      */
     public ValueCompanyLicenseProxy license() {
-        return getValueObject(new ValueCompanyLicenseProxy(getTable(), getValueProperty("license")));
+        return getValueObject(new ValueCompanyLicenseProxy(getEntitySQLContext(),getTable(), getValueProperty("license")));
     }
 
     @Override
@@ -64,8 +65,8 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
 
     public static class ValueCompanyAddressProxy extends AbstractValueObjectProxyEntity<ValueCompany1Proxy, ValueCompanyAddress> {
 
-        private ValueCompanyAddressProxy(TableAvailable table, String propertyName) {
-            super(table, propertyName);
+        private ValueCompanyAddressProxy(EntitySQLContext entitySQLContext, TableAvailable table, String propertyName) {
+            super(entitySQLContext,table, propertyName);
         }
 
         public SQLColumn<ValueCompany1Proxy, String> province() {
@@ -76,8 +77,8 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
     public static class ValueCompanyLicenseProxy extends AbstractValueObjectProxyEntity<ValueCompany1Proxy, ValueCompanyLicense> {
 
 
-        private ValueCompanyLicenseProxy(TableAvailable table, String propertyName) {
-            super(table, propertyName);
+        private ValueCompanyLicenseProxy(EntitySQLContext entitySQLContext,TableAvailable table, String propertyName) {
+            super(entitySQLContext,table, propertyName);
         }
 
         public SQLColumn<ValueCompany1Proxy, String> licenseNo() {
@@ -85,13 +86,13 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
         }
 
         public ValueCompanyLicenseExtraProxy extra() {
-            return getValueObject(new ValueCompanyLicenseExtraProxy(getTable(), getValueProperty("extra")));
+            return getValueObject(new ValueCompanyLicenseExtraProxy(getEntitySQLContext(),getTable(), getValueProperty("extra")));
         }
 
         public static class ValueCompanyLicenseExtraProxy extends AbstractValueObjectProxyEntity<ValueCompany1Proxy, ValueCompanyLicenseExtra> {
 
-            private ValueCompanyLicenseExtraProxy(TableAvailable table, String propertyName) {
-                super(table, propertyName);
+            private ValueCompanyLicenseExtraProxy(EntitySQLContext entitySQLContext,TableAvailable table, String propertyName) {
+                super(entitySQLContext,table, propertyName);
             }
 
             public SQLColumn<ValueCompany1Proxy, String> licenseImage() {

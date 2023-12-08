@@ -1,8 +1,8 @@
 package com.easy.query.core.proxy.predicate;
 
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.TablePropColumn;
+import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
 /**
@@ -11,85 +11,84 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
  *
  * @author xuejiaming
  */
-public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn {
-    default SQLPredicateExpression ge(Query<TProperty> subQuery) {
-        return ge(true, subQuery);
+public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
+    default void ge(Query<TProperty> subQuery) {
+        ge(true, subQuery);
     }
 
-    default SQLPredicateExpression ge(boolean condition, Query<TProperty> subQuery) {
+    default void ge(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.ge(this.getTable(), this.getValue(), subQuery));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ge(this.getTable(), this.getValue(), subQuery)));
         }
-        return SQLPredicateExpression.empty;
-    }
-    default SQLPredicateExpression gt(Query<TProperty> subQuery) {
-        return gt(true, subQuery);
     }
 
-    default SQLPredicateExpression gt(boolean condition, Query<TProperty> subQuery) {
-        if (condition) {
-            return new SQLPredicateImpl(f -> f.gt(this.getTable(), this.getValue(), subQuery));
-        }
-        return SQLPredicateExpression.empty;
-    }
-    default SQLPredicateExpression eq(Query<TProperty> subQuery) {
-        return eq(true, subQuery);
+    default void gt(Query<TProperty> subQuery) {
+        gt(true, subQuery);
     }
 
-    default SQLPredicateExpression eq(boolean condition, Query<TProperty> subQuery) {
+    default void gt(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), subQuery));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.gt(this.getTable(), this.getValue(), subQuery)));
         }
-        return SQLPredicateExpression.empty;
-    }
-    default SQLPredicateExpression ne(Query<TProperty> subQuery) {
-        return ne(true, subQuery);
     }
 
-    default SQLPredicateExpression ne(boolean condition, Query<TProperty> subQuery) {
-        if (condition) {
-            return new SQLPredicateImpl(f -> f.ne(this.getTable(), this.getValue(), subQuery));
-        }
-        return SQLPredicateExpression.empty;
-    }
-    default SQLPredicateExpression le(Query<TProperty> subQuery) {
-        return le(true, subQuery);
+    default void eq(Query<TProperty> subQuery) {
+        eq(true, subQuery);
     }
 
-    default SQLPredicateExpression le(boolean condition, Query<TProperty> subQuery) {
+    default void eq(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.le(this.getTable(), this.getValue(), subQuery));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), subQuery)));
         }
-        return SQLPredicateExpression.empty;
-    }
-    default SQLPredicateExpression lt(Query<TProperty> subQuery) {
-        return lt(true, subQuery);
     }
 
-    default SQLPredicateExpression lt(boolean condition, Query<TProperty> subQuery) {
-        if (condition) {
-            return new SQLPredicateImpl(f -> f.lt(this.getTable(), this.getValue(), subQuery));
-        }
-        return SQLPredicateExpression.empty;
-    }
-    default SQLPredicateExpression in(Query<TProperty> subQuery) {
-        return in(true, subQuery);
+    default void ne(Query<TProperty> subQuery) {
+        ne(true, subQuery);
     }
 
-    default SQLPredicateExpression in(boolean condition, Query<TProperty> subQuery) {
+    default void ne(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), subQuery));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ne(this.getTable(), this.getValue(), subQuery)));
         }
-        return SQLPredicateExpression.empty;
-    }
-    default SQLPredicateExpression notIn(Query<TProperty> subQuery) {
-        return notIn(true, subQuery);
     }
 
-    default SQLPredicateExpression notIn(boolean condition, Query<TProperty> subQuery) {
+    default void le(Query<TProperty> subQuery) {
+        le(true, subQuery);
+    }
+
+    default void le(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            return new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), subQuery));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.le(this.getTable(), this.getValue(), subQuery)));
         }
-        return SQLPredicateExpression.empty;
+    }
+
+    default void lt(Query<TProperty> subQuery) {
+        lt(true, subQuery);
+    }
+
+    default void lt(boolean condition, Query<TProperty> subQuery) {
+        if (condition) {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.lt(this.getTable(), this.getValue(), subQuery)));
+        }
+    }
+
+    default void in(Query<TProperty> subQuery) {
+         in(true, subQuery);
+    }
+
+    default void in(boolean condition, Query<TProperty> subQuery) {
+        if (condition) {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), subQuery)));
+        }
+    }
+
+    default void notIn(Query<TProperty> subQuery) {
+         notIn(true, subQuery);
+    }
+
+    default void notIn(boolean condition, Query<TProperty> subQuery) {
+        if (condition) {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), subQuery)));
+        }
     }
 }

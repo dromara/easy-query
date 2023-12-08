@@ -8,6 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 
 import java.util.Collection;
 
@@ -42,6 +43,11 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     }
 
     @Override
+    public EntitySQLContext getEntitySQLContext() {
+        return tProxy.getEntitySQLContext();
+    }
+
+    @Override
     public String getValue() {
         throw new UnsupportedOperationException();
     }
@@ -73,7 +79,7 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     protected abstract TChain createFetcher(TProxy tProxy, AbstractFetcher<TProxy, TEntity, TChain> prev, SQLSelectAsExpression sqlSelectExpression);
 
     protected TChain add(SQLColumn<TProxy, ?> sqlColumn) {
-        SQLSelectAsExpression selectAsExpression = SQLSelectAsExpression.createDefault(getProxy().getTable(), sqlColumn.getValue());
+        SQLSelectAsExpression selectAsExpression = SQLSelectAsExpression.createDefault(getProxy().getEntitySQLContext(),getProxy().getTable(), sqlColumn.getValue());
         return createFetcher(tProxy, this, selectAsExpression);
     }
 
@@ -125,8 +131,8 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     }
 
     @Override
-    public TChain _alias(String propertyAlias) {
-        sqlSelectAsExpression=sqlSelectAsExpression._alias(propertyAlias);
+    public TChain alias(String propertyAlias) {
+        sqlSelectAsExpression=sqlSelectAsExpression.alias(propertyAlias);
         return (TChain)this;
     }
 }

@@ -4,9 +4,8 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLPredicateExpression;
 
 import java.util.Collection;
 
@@ -31,9 +30,10 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @param whereExpression where表达式
      * @return 返回当前查询queryable
      */
-    default EntityQueryable<T1Proxy, T1> where(SQLFuncExpression1<T1Proxy, SQLPredicateExpression> whereExpression) {
+    default EntityQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
         return where(true, whereExpression);
     }
+//    EntityQueryable<T1Proxy,T1> where1(SQLExpression1<T1Proxy> whereExpression);
 
     /**
      * 构建where条件
@@ -50,7 +50,7 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @param whereExpression where表达式
      * @return 返回当前查询queryable
      */
-    EntityQueryable<T1Proxy, T1> where(boolean condition, SQLFuncExpression1<T1Proxy, SQLPredicateExpression> whereExpression);
+    EntityQueryable<T1Proxy, T1> where(boolean condition, SQLExpression1<T1Proxy> whereExpression);
 
 
     /**
