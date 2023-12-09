@@ -5,7 +5,6 @@ import com.easy.query.core.common.tuple.MergeTuple7;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression7;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 
 /**
  * create time 2023/8/16 08:49

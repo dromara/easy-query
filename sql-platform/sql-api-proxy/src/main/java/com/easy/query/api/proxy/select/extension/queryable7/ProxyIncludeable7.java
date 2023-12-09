@@ -2,7 +2,6 @@ package com.easy.query.api.proxy.select.extension.queryable7;
 
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.ProxyQueryable7;
-import com.easy.query.api.proxy.select.ProxyQueryable8;
 import com.easy.query.api.proxy.sql.ProxyNavigateInclude;
 import com.easy.query.api.proxy.sql.impl.ProxyNavigateIncludeImpl;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;

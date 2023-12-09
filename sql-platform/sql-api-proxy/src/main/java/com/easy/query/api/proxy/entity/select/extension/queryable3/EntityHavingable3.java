@@ -4,9 +4,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable3;
 import com.easy.query.core.common.tuple.MergeTuple3;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression3;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 
 /**
  * create time 2023/8/16 08:49

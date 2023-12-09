@@ -5,8 +5,6 @@ import com.easy.query.api.proxy.select.extension.queryable6.sql.MultiProxyAggreg
 import com.easy.query.api.proxy.select.extension.queryable6.sql.impl.MultiProxyAggregateFilter6Impl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
-import com.easy.query.core.util.EasyArrayUtil;
 
 /**
  * create time 2023/8/16 08:49

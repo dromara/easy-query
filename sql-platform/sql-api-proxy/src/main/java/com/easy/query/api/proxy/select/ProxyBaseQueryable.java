@@ -1,9 +1,6 @@
 package com.easy.query.api.proxy.select;
 
-import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.proxy.ProxyEntity;
-
-import java.util.List;
 
 /**
  * create time 2023/9/10 09:10

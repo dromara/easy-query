@@ -1,6 +1,5 @@
 package com.easy.query.api.proxy.select.impl;
 
-import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.ProxyQueryable5;
 import com.easy.query.api.proxy.select.abstraction.AbstractProxyQueryable5;
 import com.easy.query.core.basic.api.select.ClientQueryable5;

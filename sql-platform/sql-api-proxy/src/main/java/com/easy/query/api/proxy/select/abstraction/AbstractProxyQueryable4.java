@@ -1,6 +1,5 @@
 package com.easy.query.api.proxy.select.abstraction;
 
-import com.easy.query.api.proxy.select.ProxyQueryable4;
 import com.easy.query.api.proxy.select.extension.queryable4.AbstractOverrideProxyQueryable4;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.proxy.ProxyEntity;

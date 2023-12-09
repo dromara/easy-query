@@ -2,7 +2,6 @@ package com.easy.query.api.proxy.select.extension.queryable9;
 
 import com.easy.query.api.proxy.select.ProxyQueryable9;
 import com.easy.query.api.proxy.select.extension.queryable.Proxy1Available;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
