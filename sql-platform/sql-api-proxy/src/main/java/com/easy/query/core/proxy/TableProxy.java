@@ -2,6 +2,7 @@ package com.easy.query.core.proxy;
 
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
@@ -26,8 +27,8 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
 
     Class<TEntity> getEntityClass();
 
-   default TProxy create(TableAvailable table){
-       return create(table,new ProxyEntitySQLContext());
+   default TProxy create(TableAvailable table, QueryRuntimeContext runtimeContext){
+       return create(table,new ProxyEntitySQLContext(runtimeContext));
    }
     TProxy create(TableAvailable table, EntitySQLContext entitySQLContext);
 

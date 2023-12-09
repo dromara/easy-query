@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.core;
 
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
@@ -20,8 +21,13 @@ import com.easy.query.core.proxy.core.accpet.PredicateEntityExpressionAcceptImpl
  * @author xuejiaming
  */
 public class ProxyEntitySQLContext implements EntitySQLContext {
+    private final QueryRuntimeContext runtimeContext;
     private EntityExpressionAccept accept = EntityExpressionAccept.empty;
 
+    public ProxyEntitySQLContext(QueryRuntimeContext runtimeContext){
+
+        this.runtimeContext = runtimeContext;
+    }
     @Override
     public void accept(EntityExpressionAccept accept, SQLActionExpression sqlActionExpression) {
         EntityExpressionAccept tempAccept = this.accept;
@@ -52,6 +58,11 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
         accept.accept(sqlOrderByExpression);
     }
 
+
+    @Override
+    public QueryRuntimeContext getRuntimeContext() {
+        return runtimeContext;
+    }
 
     @Override
     public void _whereOr(SQLActionExpression sqlActionExpression) {

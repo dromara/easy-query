@@ -34,14 +34,14 @@ public abstract class AbstractProxyQueryable8<T1Proxy extends ProxyEntity<T1Prox
     public AbstractProxyQueryable8(T1Proxy t1Proxy, T2Proxy t2Proxy, T3Proxy t3Proxy, T4Proxy t4Proxy, T5Proxy t5Proxy, T6Proxy t6Proxy, T7Proxy t7Proxy, T8Proxy t8Proxy, ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> entityQueryable) {
         super(entityQueryable);
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
-        this.t1Proxy = t1Proxy.create(sqlEntityExpressionBuilder.getTable(0).getEntityTable());
-        this.t2Proxy = t2Proxy.create(sqlEntityExpressionBuilder.getTable(1).getEntityTable());
-        this.t3Proxy = t3Proxy.create(sqlEntityExpressionBuilder.getTable(2).getEntityTable());
-        this.t4Proxy = t4Proxy.create(sqlEntityExpressionBuilder.getTable(3).getEntityTable());
-        this.t5Proxy = t5Proxy.create(sqlEntityExpressionBuilder.getTable(4).getEntityTable());
-        this.t6Proxy = t6Proxy.create(sqlEntityExpressionBuilder.getTable(5).getEntityTable());
-        this.t7Proxy = t7Proxy.create(sqlEntityExpressionBuilder.getTable(6).getEntityTable());
-        this.t8Proxy = t8Proxy.create(sqlEntityExpressionBuilder.getTable(7).getEntityTable());
+        this.t1Proxy = t1Proxy.create(sqlEntityExpressionBuilder.getTable(0).getEntityTable(),getRuntimeContext());
+        this.t2Proxy = t2Proxy.create(sqlEntityExpressionBuilder.getTable(1).getEntityTable(),getRuntimeContext());
+        this.t3Proxy = t3Proxy.create(sqlEntityExpressionBuilder.getTable(2).getEntityTable(),getRuntimeContext());
+        this.t4Proxy = t4Proxy.create(sqlEntityExpressionBuilder.getTable(3).getEntityTable(),getRuntimeContext());
+        this.t5Proxy = t5Proxy.create(sqlEntityExpressionBuilder.getTable(4).getEntityTable(),getRuntimeContext());
+        this.t6Proxy = t6Proxy.create(sqlEntityExpressionBuilder.getTable(5).getEntityTable(),getRuntimeContext());
+        this.t7Proxy = t7Proxy.create(sqlEntityExpressionBuilder.getTable(6).getEntityTable(),getRuntimeContext());
+        this.t8Proxy = t8Proxy.create(sqlEntityExpressionBuilder.getTable(7).getEntityTable(),getRuntimeContext());
     }
 
     @Override

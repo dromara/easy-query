@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.core;
 
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.OrderSelector;
@@ -22,6 +23,7 @@ import com.easy.query.core.proxy.core.accpet.SetterEntityExpressionAcceptImpl;
  * @author xuejiaming
  */
 public interface EntitySQLContext {
+    QueryRuntimeContext getRuntimeContext();
     default void _where(Filter filter, SQLActionExpression sqlActionExpression){
         accept(new PredicateEntityExpressionAcceptImpl(filter),sqlActionExpression);
     }

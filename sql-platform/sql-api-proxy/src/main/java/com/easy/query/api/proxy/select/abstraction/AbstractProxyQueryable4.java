@@ -21,10 +21,10 @@ public abstract class AbstractProxyQueryable4<T1Proxy extends ProxyEntity<T1Prox
 
     public AbstractProxyQueryable4(T1Proxy t1Proxy, T2Proxy t2Proxy, T3Proxy t3Proxy, T4Proxy t4Proxy, ClientQueryable4<T1, T2, T3, T4> entityQueryable) {
         super(entityQueryable);
-        this.t1Proxy = t1Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(0).getEntityTable());
-        this.t2Proxy = t2Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(1).getEntityTable());
-        this.t3Proxy = t3Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(2).getEntityTable());
-        this.t4Proxy = t4Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(3).getEntityTable());
+        this.t1Proxy = t1Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(0).getEntityTable(),getRuntimeContext());
+        this.t2Proxy = t2Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(1).getEntityTable(),getRuntimeContext());
+        this.t3Proxy = t3Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(2).getEntityTable(),getRuntimeContext());
+        this.t4Proxy = t4Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(3).getEntityTable(),getRuntimeContext());
     }
 
     @Override

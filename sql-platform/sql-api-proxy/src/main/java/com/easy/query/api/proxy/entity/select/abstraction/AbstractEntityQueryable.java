@@ -54,7 +54,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     public AbstractEntityQueryable(T1Proxy t1Proxy, ClientQueryable<T1> entityQueryable) {
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
         this.runtimeContext = sqlEntityExpressionBuilder.getRuntimeContext();
-        this.t1Proxy = t1Proxy.create(sqlEntityExpressionBuilder.getTable(0).getEntityTable());
+        this.t1Proxy = t1Proxy.create(sqlEntityExpressionBuilder.getTable(0).getEntityTable(),sqlEntityExpressionBuilder.getRuntimeContext());
         this.entityQueryable = entityQueryable;
     }
 
@@ -429,7 +429,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.leftJoin(joinClass, (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(t1Proxy, t2Proxy.create(t1.getTable()));
+                on.apply(t1Proxy, t2Proxy.create(t1.getTable(),runtimeContext));
             });
         });
         return new EasyEntityQueryable2<>(t1Proxy, t2Proxy, entityQueryable2);
@@ -451,7 +451,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.rightJoin(joinClass, (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(t1Proxy, t2Proxy.create(t1.getTable()));
+                on.apply(t1Proxy, t2Proxy.create(t1.getTable(),runtimeContext));
             });
         });
         return new EasyEntityQueryable2<>(t1Proxy, t2Proxy, entityQueryable2);
@@ -473,7 +473,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.innerJoin(joinClass, (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(t1Proxy, t2Proxy.create(t1.getTable()));
+                on.apply(t1Proxy, t2Proxy.create(t1.getTable(),runtimeContext));
             });
         });
         return new EasyEntityQueryable2<>(t1Proxy, t2Proxy, entityQueryable2);

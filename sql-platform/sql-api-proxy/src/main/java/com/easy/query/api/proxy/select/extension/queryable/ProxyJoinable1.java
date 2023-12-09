@@ -19,28 +19,28 @@ public interface ProxyJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
 
    default  <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy joinProxy, SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> on){
        ClientQueryable2<T1, T2> entityQueryable2 = getClientQueryable().leftJoin(joinProxy.getEntityClass(), (t, t1) -> {
-           on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinProxy.create(t1.getTable())));
+           on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinProxy.create(t1.getTable(),getRuntimeContext())));
        });
        return new EasyProxyQueryable2<>(get1Proxy(), joinProxy, entityQueryable2);
    }
 
     default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> on){
         ClientQueryable2<T1, T2> entityQueryable2 = getClientQueryable().leftJoin(joinQueryable.getClientQueryable(), (t, t1) -> {
-            on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinQueryable.get1Proxy().create(t1.getTable())));
+            on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinQueryable.get1Proxy().create(t1.getTable(),getRuntimeContext())));
         });
         return new EasyProxyQueryable2<>(get1Proxy(), joinQueryable.get1Proxy(), entityQueryable2);
     }
 
    default  <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(T2Proxy joinProxy, SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> on){
        ClientQueryable2<T1, T2> entityQueryable2 = getClientQueryable().rightJoin(joinProxy.getEntityClass(), (t, t1) -> {
-           on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinProxy.create(t1.getTable())));
+           on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinProxy.create(t1.getTable(),getRuntimeContext())));
        });
        return new EasyProxyQueryable2<>(get1Proxy(), joinProxy, entityQueryable2);
    }
 
    default  <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> on){
        ClientQueryable2<T1, T2> entityQueryable2 = getClientQueryable().rightJoin(joinQueryable.getClientQueryable(), (t, t1) -> {
-           on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinQueryable.get1Proxy().create(t1.getTable())));
+           on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinQueryable.get1Proxy().create(t1.getTable(),getRuntimeContext())));
        });
        return new EasyProxyQueryable2<>(get1Proxy(), joinQueryable.get1Proxy(), entityQueryable2);
 
@@ -48,14 +48,14 @@ public interface ProxyJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ex
 
    default  <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(T2Proxy joinProxy, SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> on){
        ClientQueryable2<T1, T2> entityQueryable2 = getClientQueryable().innerJoin(joinProxy.getEntityClass(), (t, t1) -> {
-           on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinProxy.create(t1.getTable())));
+           on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinProxy.create(t1.getTable(),getRuntimeContext())));
        });
        return new EasyProxyQueryable2<>(get1Proxy(), joinProxy, entityQueryable2);
    }
 
    default  <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression1<MultiProxyFilter2<T1Proxy, T2Proxy>> on){
        ClientQueryable2<T1, T2> entityQueryable2 = getClientQueryable().innerJoin(joinQueryable.getClientQueryable(), (t, t1) -> {
-           on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinQueryable.get1Proxy().create(t1.getTable())));
+           on.apply(new MultiProxyFilter2Impl<>(t.getFilter(), get1Proxy(), joinQueryable.get1Proxy().create(t1.getTable(),getRuntimeContext())));
        });
        return new EasyProxyQueryable2<>(get1Proxy(), joinQueryable.get1Proxy(), entityQueryable2);
 

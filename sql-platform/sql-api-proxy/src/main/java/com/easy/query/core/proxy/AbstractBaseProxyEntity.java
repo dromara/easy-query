@@ -1,8 +1,10 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
-import com.easy.query.core.proxy.columns.SQLNavigateOneColumn;
-import com.easy.query.core.proxy.columns.impl.SQLNavigateOneColumnImpl;
+import com.easy.query.core.proxy.columns.SQLNavigateColumn;
+import com.easy.query.core.proxy.columns.impl.SQLNavigateColumnImpl;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
 
 /**
@@ -13,12 +15,14 @@ import com.easy.query.core.proxy.impl.SQLColumnImpl;
  */
 public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ProxyEntity<TProxy, TEntity>, EntitySQLContextAvailable {
 
+    protected TableAvailable table;
+    protected EntitySQLContext entitySQLContext;
 
     protected <TProperty> SQLColumn<TProxy, TProperty> get(String property) {
-        return new SQLColumnImpl<>(getEntitySQLContext(),getTable(), property);
+        return new SQLColumnImpl<>(entitySQLContext,table, property);
     }
-    protected <TProperty> SQLNavigateOneColumn<TProxy, TProperty> getNavigateOne(String property) {
-        return new SQLNavigateOneColumnImpl<>(getEntitySQLContext(),getTable(), property);
+    protected <TProperty,TPProxy extends ProxyEntity<TPProxy,TProperty>> SQLNavigateColumn<TProxy, TProperty,TPProxy> getNavigate(String property) {
+        return new SQLNavigateColumnImpl<>(entitySQLContext,table, property);
     }
 
 

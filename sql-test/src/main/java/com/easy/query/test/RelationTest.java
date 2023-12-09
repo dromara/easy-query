@@ -183,7 +183,9 @@ public class RelationTest extends BaseTest {
             }
             {
                 List<SchoolStudent> list1 = entityQuery.queryable(SchoolStudent.class)
-                        .include(o->o.schoolClass().asQueryable())
+                        .include((o,t)->{
+                            return o.asQueryable(t.schoolClass(),1);
+                        })
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());

@@ -28,7 +28,7 @@ public interface EntityJoinable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T6Proxy t6Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable6<T1, T2, T3, T4, T5, T6> entityQueryable6 = getClientQueryable5().leftJoin(joinClass, (t, t1, t2, t3, t4, t5) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), t6Proxy.create(t5.getTable()));
+                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), t6Proxy.create(t5.getTable(),getRuntimeContext()));
             });
         });
         return new EasyEntityQueryable6<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(), t6Proxy, entityQueryable6);
@@ -48,7 +48,7 @@ public interface EntityJoinable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T6Proxy t6Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable6<T1, T2, T3, T4, T5, T6> entityQueryable6 = getClientQueryable5().rightJoin(joinClass, (t, t1, t2, t3, t4, t5) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), t6Proxy.create(t5.getTable()));
+                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), t6Proxy.create(t5.getTable(),getRuntimeContext()));
             });
         });
         return new EasyEntityQueryable6<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(), t6Proxy, entityQueryable6);
@@ -68,7 +68,7 @@ public interface EntityJoinable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T6Proxy t6Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable6<T1, T2, T3, T4, T5, T6> entityQueryable6 = getClientQueryable5().innerJoin(joinClass, (t, t1, t2, t3, t4, t5) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), t6Proxy.create(t5.getTable()));
+                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), t6Proxy.create(t5.getTable(),getRuntimeContext()));
             });
         });
         return new EasyEntityQueryable6<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(), t6Proxy, entityQueryable6);

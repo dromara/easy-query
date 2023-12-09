@@ -5,7 +5,6 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.core.ProxyEntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -24,8 +23,6 @@ import java.util.Objects;
  */
 public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractBaseProxyEntity<TProxy, TEntity> {
 
-    protected TableAvailable table;
-    protected EntitySQLContext entitySQLContext=new ProxyEntitySQLContext();
 
     protected <TPropertyProxy extends SQLColumn<TProxy, TProperty>, TProperty> TPropertyProxy getValueObject(TPropertyProxy propertyProxy) {
         return propertyProxy;
@@ -43,6 +40,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     @Override
     public EntitySQLContext getEntitySQLContext() {
+        Objects.requireNonNull(entitySQLContext, "cant found entitySQLContext in sql context");
         return entitySQLContext;
     }
 
