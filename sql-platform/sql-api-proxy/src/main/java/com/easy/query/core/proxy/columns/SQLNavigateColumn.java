@@ -1,6 +1,5 @@
 package com.easy.query.core.proxy.columns;
 
-import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
 /**
@@ -9,5 +8,7 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface SQLNavigateColumn<TProxy, TProperty,TPProxy extends ProxyEntity<TPProxy,TProperty>> extends SQLColumn<TProxy,TProperty> {
+public interface SQLNavigateColumn<TProxy, TProperty> extends SQLColumn<TProxy,TProperty> {
+
+    Class<TProperty> navigateClass();
 }

@@ -39,10 +39,13 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * create time 2023/6/24 14:17
@@ -121,7 +124,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 //                    }
 //                }
                 EntityFileProxy entityFileProxy = entityClassElement.getAnnotation(EntityFileProxy.class);
-                if(entityFileProxy!=null){
+                if (entityFileProxy != null) {
                     return;
                 }
                 EntityProxy entityProxy = entityClassElement.getAnnotation(EntityProxy.class);
@@ -133,7 +136,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 String entityFullName = entityClassNameReference.get();
                 String realGenPackage = guessTablesPackage(entityFullName);
                 String entityClassName = entityClassElement.getSimpleName().toString();
-                String proxyInstanceName = EasyStringUtil.isBlank(entityProxy.value()) ? entityClassName+ "Proxy" : entityProxy.value();
+                String proxyInstanceName = EasyStringUtil.isBlank(entityProxy.value()) ? entityClassName + "Proxy" : entityProxy.value();
 //                if (EasyStringUtil.isBlank(proxyInstanceName)) {
 //                    proxyInstanceName = buildName(entityClassNameReference + "Proxy", "upperCase");
 //                }
@@ -141,18 +144,18 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
 
                 TypeElement classElement = (TypeElement) entityClassElement;
-                AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage,entityClassName,proxyInstanceName,new AptSelectorInfo(proxyInstanceName+"Fetcher"));
+                AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage, entityClassName, proxyInstanceName, new AptSelectorInfo(proxyInstanceName + "Fetcher"));
                 aptFileCompiler.addImports("com.easy.query.core.proxy.fetcher.AbstractFetcher");
                 aptFileCompiler.addImports("com.easy.query.core.proxy.SQLSelectAsExpression");
                 aptFileCompiler.addImports("com.easy.query.core.proxy.core.EntitySQLContext");
                 AptValueObjectInfo aptValueObjectInfo = new AptValueObjectInfo(entityClassName);
                 aptFileCompiler.addImports(entityFullName);
                 do {
-                    fillPropertyAndColumns(aptFileCompiler,aptValueObjectInfo, classElement, ignoreProperties);
+                    fillPropertyAndColumns(aptFileCompiler, aptValueObjectInfo, classElement, ignoreProperties);
                     classElement = (TypeElement) typeUtils.asElement(classElement.getSuperclass());
                 } while (classElement != null);
 
-                String content = buildTablesClass(aptFileCompiler,aptValueObjectInfo);
+                String content = buildTablesClass(aptFileCompiler, aptValueObjectInfo);
                 genClass(basePath, realGenPackage, proxyInstanceName, content);
 
             });
@@ -302,8 +305,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         }
     }
 
-    private String buildTablesClass(AptFileCompiler aptFileCompiler,AptValueObjectInfo aptValueObjectInfo){
-        return AptCreatorHelper.createProxy(aptFileCompiler,aptValueObjectInfo);
+    private String buildTablesClass(AptFileCompiler aptFileCompiler, AptValueObjectInfo aptValueObjectInfo) {
+        return AptCreatorHelper.createProxy(aptFileCompiler, aptValueObjectInfo);
     }
 
     private String guessTablesPackage(String entityClassName) {
@@ -316,7 +319,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         return guessPackage.toString();
     }
 
-    private void fillValueObject(String parentProperty,AptValueObjectInfo aptValueObjectInfo, Element fieldClassElement, AptFileCompiler aptFileCompiler,Set<String> ignoreProperties) {
+    private void fillValueObject(String parentProperty, AptValueObjectInfo aptValueObjectInfo, Element fieldClassElement, AptFileCompiler aptFileCompiler, Set<String> ignoreProperties) {
         String entityName = aptValueObjectInfo.getEntityName();
         for (Element fieldElement : fieldClassElement.getEnclosedElements()) {
             if (ElementKind.FIELD == fieldElement.getKind()) {
@@ -328,7 +331,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
 
                 String propertyName = fieldElement.toString();
-                if (!ignoreProperties.isEmpty()&&ignoreProperties.contains(parentProperty+"."+propertyName)) {
+                if (!ignoreProperties.isEmpty() && ignoreProperties.contains(parentProperty + "." + propertyName)) {
                     continue;
                 }
                 ColumnIgnore column = fieldElement.getAnnotation(ColumnIgnore.class);
@@ -346,17 +349,19 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 String docComment = elementUtils.getDocComment(fieldElement);
                 ValueObject valueObject = fieldElement.getAnnotation(ValueObject.class);
                 boolean isValueObject = valueObject != null;
-                String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) :entityName;
-                String fieldComment = getFiledComment(docComment,fieldName,propertyName);
-                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, fieldGenericType, fieldComment, fieldName, isValueObject));
-
+                String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : entityName;
+                String fieldComment = getFiledComment(docComment, fieldName, propertyName);
+                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, fieldGenericType, fieldComment, fieldName, isValueObject, includeProperty));
+                if (includeProperty) {
+                    aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
+                }
                 if (valueObject != null) {
                     aptFileCompiler.addImports(fieldGenericType);
                     String valueObjectClassName = fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1);
                     Element fieldClass = ((DeclaredType) type).asElement();
                     AptValueObjectInfo fieldAptValueObjectInfo = new AptValueObjectInfo(valueObjectClassName);
                     aptValueObjectInfo.getChildren().add(fieldAptValueObjectInfo);
-                    fillValueObject(parentProperty+"."+propertyName,fieldAptValueObjectInfo, fieldClass, aptFileCompiler,ignoreProperties);
+                    fillValueObject(parentProperty + "." + propertyName, fieldAptValueObjectInfo, fieldClass, aptFileCompiler, ignoreProperties);
                 }
             }
         }
@@ -377,7 +382,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
 
                 String propertyName = fieldElement.toString();
-                if (!ignoreProperties.isEmpty()&&ignoreProperties.contains(propertyName)) {
+                if (!ignoreProperties.isEmpty() && ignoreProperties.contains(propertyName)) {
                     continue;
                 }
                 ColumnIgnore column = fieldElement.getAnnotation(ColumnIgnore.class);
@@ -396,10 +401,13 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 ValueObject valueObject = fieldElement.getAnnotation(ValueObject.class);
                 boolean isValueObject = valueObject != null;
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : aptFileCompiler.getEntityClassName();
-                String fieldComment = getFiledComment(docComment,fieldName,propertyName);
-                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, fieldGenericType, fieldComment, fieldName, isValueObject));
-                aptFileCompiler.getSelectorInfo().getProperties().add(new AptSelectPropertyInfo(propertyName,fieldComment));
-
+                String fieldComment = getFiledComment(docComment, fieldName, propertyName);
+                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, fieldGenericType, fieldComment, fieldName, isValueObject, includeProperty));
+                if (!includeProperty) {
+                    aptFileCompiler.getSelectorInfo().getProperties().add(new AptSelectPropertyInfo(propertyName, fieldComment));
+                } else {
+                    aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
+                }
 
 
                 if (valueObject != null) {
@@ -409,13 +417,13 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     Element fieldClass = ((DeclaredType) type).asElement();
                     AptValueObjectInfo fieldAptValueObjectInfo = new AptValueObjectInfo(valueObjectClassName);
                     aptValueObjectInfo.getChildren().add(fieldAptValueObjectInfo);
-                    fillValueObject(propertyName,fieldAptValueObjectInfo, fieldClass, aptFileCompiler,ignoreProperties);
+                    fillValueObject(propertyName, fieldAptValueObjectInfo, fieldClass, aptFileCompiler, ignoreProperties);
                 }
             }
         }
     }
 
-    private String getFiledComment(String docComment,String className,String propertyName) {
+    private String getFiledComment(String docComment, String className, String propertyName) {
         if (docComment == null) {
             return FIELD_EMPTY_DOC_COMMENT_TEMPLATE
                     .replace("@{entityClass}", className)
@@ -445,13 +453,37 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
     private String defTypeString(boolean isDeclared, boolean includeProperty, TypeMirror type) {
 
         if (includeProperty || !isDeclared) {
-            return type.toString().trim();
+            if(type instanceof DeclaredType){
+                List<? extends TypeMirror> typeArguments = ((DeclaredType) type).getTypeArguments();
+                if(typeArguments!=null&&typeArguments.size()==1){
+                    return typeArguments.get(0).toString().trim();
+                }
+            }
+            String trim = type.toString().trim();
+            return parseGenericType(trim);
         }
         Element element = typeUtils.asElement(type);
         if (element != null) {
             return element.asType().toString().trim();
         }
         return type.toString().trim();
+    }
+
+    public static String parseGenericType(String genericTypeString) {
+        if(genericTypeString.contains(",")){
+            return genericTypeString;
+        }
+        // 正则表达式用于匹配泛型类型字符串
+        String regex = "<(.+?)>$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(genericTypeString);
+
+        // 如果匹配成功，返回内部类型字符串；否则返回空字符串
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            return genericTypeString;
+        }
     }
 
 }

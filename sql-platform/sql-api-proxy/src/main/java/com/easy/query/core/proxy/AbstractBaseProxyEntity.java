@@ -21,8 +21,8 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     protected <TProperty> SQLColumn<TProxy, TProperty> get(String property) {
         return new SQLColumnImpl<>(entitySQLContext,table, property);
     }
-    protected <TProperty,TPProxy extends ProxyEntity<TPProxy,TProperty>> SQLNavigateColumn<TProxy, TProperty,TPProxy> getNavigate(String property) {
-        return new SQLNavigateColumnImpl<>(entitySQLContext,table, property);
+    protected <TProperty> SQLNavigateColumn<TProxy, TProperty> get(String property, Class<TProperty> clazz) {
+        return new SQLNavigateColumnImpl<>(entitySQLContext,table, property,clazz);
     }
 
 

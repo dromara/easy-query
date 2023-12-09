@@ -18,10 +18,10 @@ import com.easy.query.core.proxy.columns.SQLNavigateColumn;
 public interface ProxyEntityNavigateInclude<T,TProxy extends ProxyEntity<TProxy,T>> {
     TProxy get1Proxy();
     NavigateInclude<T> getNavigateInclude();
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty >, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<TPropertyProxy,TProperty> asQueryable(SQLNavigateColumn<TProxy,TProperty,TPropertyProxy> sqlNavigateColumn){
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty >, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<TPropertyProxy,TProperty> asQueryable(SQLNavigateColumn<TProxy,TProperty> sqlNavigateColumn){
         return  asQueryable(sqlNavigateColumn,null);
     }
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty >, TProperty   extends ProxyEntityAvailable<TProperty,TPropertyProxy>> EntityQueryable<TPropertyProxy,TProperty> asQueryable(SQLNavigateColumn<TProxy,TProperty,TPropertyProxy> sqlNavigateColumn,Integer groupSize){
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty >, TProperty   extends ProxyEntityAvailable<TProperty,TPropertyProxy>> EntityQueryable<TPropertyProxy,TProperty> asQueryable(SQLNavigateColumn<TProxy,TProperty> sqlNavigateColumn,Integer groupSize){
         ClientQueryable<TProperty> clientQueryable = getNavigateInclude().with(sqlNavigateColumn.getValue(),groupSize);
         TPropertyProxy tPropertyProxy = EntityQueryProxyManager.create(clientQueryable.queryClass());
         return new EasyEntityQueryable<>(tPropertyProxy,clientQueryable);

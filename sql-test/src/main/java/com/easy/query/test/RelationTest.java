@@ -184,6 +184,9 @@ public class RelationTest extends BaseTest {
             {
                 List<SchoolStudent> list1 = entityQuery.queryable(SchoolStudent.class)
                         .include((o,t)->{
+//                            SQLNavigateColumn<SchoolStudentProxy, SchoolClass> schoolStudentProxySchoolClassSQLNavigateColumn = t.schoolClass();
+//                            Class<SchoolClass> schoolClassClass = schoolStudentProxySchoolClassSQLNavigateColumn.navigateClass();
+//                            EntityQueryable<SchoolClassProxy, SchoolClass> queryable = entityQuery.queryable(schoolClassClass);
                             return o.asQueryable(t.schoolClass(),1);
                         })
                         .toList();

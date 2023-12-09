@@ -49,15 +49,15 @@ public class SchoolStudentProxy extends AbstractProxyEntity<SchoolStudentProxy, 
     /**
      * {@link SchoolStudent#schoolClass}
      */
-    public SQLNavigateColumn<SchoolStudentProxy,com.easy.query.test.entity.school.SchoolClass,SchoolClassProxy> schoolClass(){
-        return getNavigate("schoolClass");
+    public SQLNavigateColumn<SchoolStudentProxy,com.easy.query.test.entity.school.SchoolClass> schoolClass(){
+        return get("schoolClass",com.easy.query.test.entity.school.SchoolClass.class);
     }
     
     /**
      * {@link SchoolStudent#schoolStudentAddress}
      */
-    public SQLNavigateColumn<SchoolStudentProxy, SchoolStudentAddress,SchoolStudentAddressProxy> schoolStudentAddress(){
-        return getNavigate("schoolStudentAddress");
+    public SQLNavigateColumn<SchoolStudentProxy, SchoolStudentAddress> schoolStudentAddress(){
+        return get("schoolStudentAddress",SchoolStudentAddress.class);
     }
     @Override
     public Class<SchoolStudent> getEntityClass() {

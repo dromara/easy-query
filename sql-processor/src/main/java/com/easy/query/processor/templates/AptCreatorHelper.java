@@ -38,7 +38,9 @@ public class AptCreatorHelper {
                          .replace("@{entityClassProxy}", aptFileCompiler.getEntityClassProxyName())
                          .replace("@{comment}", property.getComment())
                          .replace("@{propertyType}", property.getPropertyType())
-                         .replace("@{property}", property.getPropertyName());
+                         .replace("@{property}", property.getPropertyName())
+                         .replace("@{includePlaceholder}", property.getIncludePlaceholder())
+                         .replace("@{SQLColumn}", property.getSqlColumn());
                  filedContent.append(fieldString);
              }
          }
