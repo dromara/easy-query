@@ -5,6 +5,8 @@ import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import lombok.Data;
 import lombok.ToString;
 
@@ -20,7 +22,7 @@ import java.util.List;
 @Data
 @ToString
 @EntityProxy
-public class SchoolClass {
+public class SchoolClass implements ProxyEntityAvailable<SchoolClass , SchoolClassProxy> {
     @Column(primaryKey = true)//主键
     private String id;
     private String name;
@@ -45,4 +47,9 @@ public class SchoolClass {
 //            , targetMappingProperty = "teacherId")
 
     private List<SchoolTeacher> schoolTeachers;
+
+    @Override
+    public Class<SchoolClassProxy> proxyTableClass() {
+        return SchoolClassProxy.class;
+    }
 }

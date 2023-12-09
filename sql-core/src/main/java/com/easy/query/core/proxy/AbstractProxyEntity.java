@@ -4,12 +4,10 @@ import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
-import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.core.ProxyEntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
-import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
@@ -24,14 +22,10 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ProxyEntity<TProxy, TEntity>, EntitySQLContextAvailable {
+public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractBaseProxyEntity<TProxy, TEntity> {
 
     protected TableAvailable table;
     protected EntitySQLContext entitySQLContext=new ProxyEntitySQLContext();
-
-    protected <TProperty> SQLColumn<TProxy, TProperty> get(String property) {
-        return new SQLColumnImpl<>(entitySQLContext,table, property);
-    }
 
     protected <TPropertyProxy extends SQLColumn<TProxy, TProperty>, TProperty> TPropertyProxy getValueObject(TPropertyProxy propertyProxy) {
         return propertyProxy;

@@ -1,21 +1,18 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable8.override;
 
-import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable8;
 import com.easy.query.api.proxy.entity.select.abstraction.AbstractEntityQueryable;
 import com.easy.query.api.proxy.entity.select.extension.queryable8.EntityQueryable8Available;
-import com.easy.query.api.proxy.sql.ProxyNavigateInclude;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLGroupByExpression;
-import com.easy.query.core.proxy.SQLOrderByExpression;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -92,7 +89,7 @@ public abstract class AbstractOverrideEntityQueryable8<T1Proxy extends ProxyEnti
     }
 
     @Override
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> include(boolean condition, SQLFuncExpression2<ProxyNavigateInclude<T1>, T1Proxy, EntityQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty,TPropertyProxy>> EntityQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> include(boolean condition, SQLFuncExpression1<T1Proxy, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
         super.include(condition, navigateIncludeSQLExpression);
         return getQueryable8();
     }

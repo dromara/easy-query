@@ -4,6 +4,8 @@ import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.school.proxy.SchoolStudentAddressProxy;
 import lombok.Data;
 import lombok.ToString;
 
@@ -17,10 +19,15 @@ import lombok.ToString;
 @Data
 @ToString
 @EntityProxy
-public class SchoolStudentAddress {
+public class SchoolStudentAddress implements ProxyEntityAvailable<SchoolStudentAddress , SchoolStudentAddressProxy> {
     private String id;
     private String studentId;
     private String address;
     @Navigate(value = RelationTypeEnum.ManyToOne,selfProperty = "studentId",targetProperty = "id")
     private SchoolStudent schoolStudent;
+
+    @Override
+    public Class<SchoolStudentAddressProxy> proxyTableClass() {
+        return SchoolStudentAddressProxy.class;
+    }
 }

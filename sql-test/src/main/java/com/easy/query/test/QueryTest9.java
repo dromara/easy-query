@@ -7,7 +7,6 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
-import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -220,7 +219,6 @@ public class QueryTest9 extends BaseTest {
                 .orderBy((a, b) ->{
                     a.title().asc();
                     a.id().desc();
-                    return SQLOrderByExpression.empty;
                 })
                 .firstOrNull();
 
@@ -232,7 +230,6 @@ public class QueryTest9 extends BaseTest {
                 })
                 .orderBy((a, b) ->{
                     a.title().asc();
-                    return SQLOrderByExpression.empty;
                 })
                 .select(o -> o.FETCHER.title().stars())
                 .firstOrNull();

@@ -3,17 +3,15 @@ package com.easy.query.api.proxy.entity.select.extension.queryable2.override;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.extension.queryable2.EntityQueryable2Available;
-import com.easy.query.api.proxy.sql.ProxyNavigateInclude;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLGroupByExpression;
-import com.easy.query.core.proxy.SQLOrderByExpression;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -95,12 +93,12 @@ public interface OverrideEntityQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T
     EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(boolean condition,SQLExpression1<T1Proxy> selectExpression);
 
     @Override
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> include(SQLFuncExpression2<ProxyNavigateInclude<T1>,T1Proxy, EntityQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty  extends ProxyEntityAvailable<TProperty,TPropertyProxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> include(SQLFuncExpression1<T1Proxy, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);
     }
 
     @Override
-    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> include(boolean condition, SQLFuncExpression2<ProxyNavigateInclude<T1>,T1Proxy, EntityQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression);
+    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty  extends ProxyEntityAvailable<TProperty,TPropertyProxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> include(boolean condition, SQLFuncExpression1<T1Proxy, ClientQueryable<TProperty>> navigateIncludeSQLExpression);
 
     @Override
     default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> limit(long rows) {

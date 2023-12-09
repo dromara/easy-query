@@ -147,23 +147,43 @@ public class RelationTest extends BaseTest {
         List<String> ids = Arrays.asList("1", "2", "3");
         try {
             relationInit(ids);
+            {
+                List<SchoolStudent> list = easyQuery.queryable(SchoolStudent.class).toList();
+                Assert.assertEquals(3, list.size());
+                for (SchoolStudent schoolStudent : list) {
+                    Assert.assertNull(schoolStudent.getSchoolStudentAddress());
+                }
+            }
+            {
+                List<SchoolStudent> list = entityQuery.queryable(SchoolStudent.class).toList();
+                Assert.assertEquals(3, list.size());
+                for (SchoolStudent schoolStudent : list) {
+                    Assert.assertNull(schoolStudent.getSchoolStudentAddress());
+                }
+            }
+            {
 
-            List<SchoolStudent> list = easyQuery.queryable(SchoolStudent.class).toList();
-            Assert.assertEquals(3, list.size());
-            for (SchoolStudent schoolStudent : list) {
-                Assert.assertNull(schoolStudent.getSchoolStudentAddress());
+                SchoolStudentProxy table = SchoolStudentProxy.createTable();
+                List<SchoolStudent> listp = easyProxyQuery.queryable(table).toList();
+                Assert.assertEquals(3, listp.size());
+                for (SchoolStudent schoolStudent : listp) {
+                    Assert.assertNull(schoolStudent.getSchoolStudentAddress());
+                }
             }
 
-            SchoolStudentProxy table = SchoolStudentProxy.createTable();
-            List<SchoolStudent> listp = easyProxyQuery.queryable(table).toList();
-            Assert.assertEquals(3, listp.size());
-            for (SchoolStudent schoolStudent : listp) {
-                Assert.assertNull(schoolStudent.getSchoolStudentAddress());
-            }
 
             {
                 List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
                         .include(o -> o.one(SchoolStudent::getSchoolClass, 1))
+                        .toList();
+                for (SchoolStudent schoolStudent : list1) {
+                    Assert.assertNotNull(schoolStudent.getSchoolClass());
+                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
+                }
+            }
+            {
+                List<SchoolStudent> list1 = entityQuery.queryable(SchoolStudent.class)
+                        .include(o->o.schoolClass().asQueryable())
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());
