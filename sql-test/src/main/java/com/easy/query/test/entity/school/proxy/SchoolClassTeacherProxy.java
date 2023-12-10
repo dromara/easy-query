@@ -25,16 +25,16 @@ public class SchoolClassTeacherProxy extends AbstractProxyEntity < SchoolClassTe
     }
 
     /**
-     * {@link SchoolClassTeacher#classId}
+     * {@link SchoolClassTeacher#getClassId}
      */
-    public SQLColumn < SchoolClassTeacherProxy, String> classId(){
+    public SQLColumn < SchoolClassTeacherProxy, java.lang.String> classId(){
     return get("classId");
 }
 
     /**
-     * {@link SchoolClassTeacher#teacherId}
+     * {@link SchoolClassTeacher#getTeacherId}
      */
-    public SQLColumn < SchoolClassTeacherProxy, String> teacherId(){
+    public SQLColumn < SchoolClassTeacherProxy, java.lang.String> teacherId(){
     return get("teacherId");
 }
 
@@ -61,14 +61,14 @@ public class SchoolClassTeacherProxy extends AbstractProxyEntity < SchoolClassTe
 
 
         /**
-         * {@link SchoolClassTeacher#classId}
+         * {@link SchoolClassTeacher#getClassId}
          */
         public SchoolClassTeacherProxyFetcher classId() {
             return add(getProxy().classId());
         }
 
         /**
-         * {@link SchoolClassTeacher#teacherId}
+         * {@link SchoolClassTeacher#getTeacherId}
          */
         public SchoolClassTeacherProxyFetcher teacherId() {
             return add(getProxy().teacherId());

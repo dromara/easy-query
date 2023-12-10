@@ -26,28 +26,28 @@ public class SchoolStudentAddressProxy extends AbstractProxyEntity < SchoolStude
     }
 
     /**
-     * {@link SchoolStudentAddress#id}
+     * {@link SchoolStudentAddress#getId}
      */
-    public SQLColumn < SchoolStudentAddressProxy, String> id(){
+    public SQLColumn < SchoolStudentAddressProxy, java.lang.String> id(){
     return get("id");
 }
 
     /**
-     * {@link SchoolStudentAddress#studentId}
+     * {@link SchoolStudentAddress#getStudentId}
      */
-    public SQLColumn < SchoolStudentAddressProxy, String> studentId(){
+    public SQLColumn < SchoolStudentAddressProxy, java.lang.String> studentId(){
     return get("studentId");
 }
 
     /**
-     * {@link SchoolStudentAddress#address}
+     * {@link SchoolStudentAddress#getAddress}
      */
-    public SQLColumn < SchoolStudentAddressProxy, String> address(){
+    public SQLColumn < SchoolStudentAddressProxy, java.lang.String> address(){
     return get("address");
 }
 
     /**
-     * {@link SchoolStudentAddress#schoolStudent}
+     * {@link SchoolStudentAddress#getSchoolStudent}
      */
     public SQLNavigateColumn < SchoolStudentAddressProxy, com.easy.query.test.entity.school.SchoolStudent> schoolStudent(){
     return get("schoolStudent", com.easy.query.test.entity.school.SchoolStudent.class);
@@ -76,21 +76,21 @@ public class SchoolStudentAddressProxy extends AbstractProxyEntity < SchoolStude
 
 
         /**
-         * {@link SchoolStudentAddress#id}
+         * {@link SchoolStudentAddress#getId}
          */
         public SchoolStudentAddressProxyFetcher id() {
             return add(getProxy().id());
         }
 
         /**
-         * {@link SchoolStudentAddress#studentId}
+         * {@link SchoolStudentAddress#getStudentId}
          */
         public SchoolStudentAddressProxyFetcher studentId() {
             return add(getProxy().studentId());
         }
 
         /**
-         * {@link SchoolStudentAddress#address}
+         * {@link SchoolStudentAddress#getAddress}
          */
         public SchoolStudentAddressProxyFetcher address() {
             return add(getProxy().address());

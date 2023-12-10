@@ -26,22 +26,22 @@ public class SchoolClassProxy extends AbstractProxyEntity < SchoolClassProxy, Sc
     }
 
     /**
-     * {@link SchoolClass#id}
+     * {@link SchoolClass#getId}
      */
-    public SQLColumn < SchoolClassProxy, String> id(){
+    public SQLColumn < SchoolClassProxy, java.lang.String> id(){
     return get("id");
 }
 
     /**
-     * {@link SchoolClass#name}
+     * {@link SchoolClass#getName}
      */
-    public SQLColumn < SchoolClassProxy, String> name(){
+    public SQLColumn < SchoolClassProxy, java.lang.String> name(){
     return get("name");
 }
 
     /**
      * 一对多 一个班级多个学生
-     * {@link SchoolClass#schoolStudents}
+     * {@link SchoolClass#getSchoolStudents}
      */
     public SQLNavigateColumn < SchoolClassProxy, com.easy.query.test.entity.school.SchoolStudent> schoolStudents(){
     return get("schoolStudents", com.easy.query.test.entity.school.SchoolStudent.class);
@@ -49,7 +49,7 @@ public class SchoolClassProxy extends AbstractProxyEntity < SchoolClassProxy, Sc
 
     /**
      * 中间表多对多配置,其中mappingClass表示中间表,selfMappingProperty表示中间表的哪个字段和当前表对应,
-     * {@link SchoolClass#schoolTeachers}
+     * {@link SchoolClass#getSchoolTeachers}
      */
     public SQLNavigateColumn < SchoolClassProxy, com.easy.query.test.entity.school.SchoolTeacher> schoolTeachers(){
     return get("schoolTeachers", com.easy.query.test.entity.school.SchoolTeacher.class);
@@ -77,14 +77,14 @@ public class SchoolClassProxy extends AbstractProxyEntity < SchoolClassProxy, Sc
 
 
         /**
-         * {@link SchoolClass#id}
+         * {@link SchoolClass#getId}
          */
         public SchoolClassProxyFetcher id() {
             return add(getProxy().id());
         }
 
         /**
-         * {@link SchoolClass#name}
+         * {@link SchoolClass#getName}
          */
         public SchoolClassProxyFetcher name() {
             return add(getProxy().name());
