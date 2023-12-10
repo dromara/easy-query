@@ -1,8 +1,10 @@
 package com.easy.query.test.entity.school.dto;
 
-import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.school.dto.proxy.SchoolClassVOProxy;
 import lombok.Data;
 
 import java.util.List;
@@ -14,12 +16,17 @@ import java.util.List;
  * @author xuejiaming
  */
 @Data
-@EntityProxy
-public class SchoolClassVO {
+@EntityFileProxy
+public class SchoolClassVO implements ProxyEntityAvailable<SchoolClassVO , SchoolClassVOProxy> {
     private String id;
     private String name;
     @Navigate(RelationTypeEnum.OneToMany)
     private List<SchoolStudentVO> schoolStudents;
     @Navigate(RelationTypeEnum.ManyToMany)
     private List<SchoolTeacherVO> schoolTeachers;
+
+    @Override
+    public Class<SchoolClassVOProxy> proxyTableClass() {
+        return SchoolClassVOProxy.class;
+    }
 }

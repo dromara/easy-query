@@ -1,6 +1,7 @@
 package com.easy.query.test.entity.school;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
@@ -18,7 +19,7 @@ import lombok.ToString;
 @Table("school_student")
 @Data
 @ToString
-//@EntityProxy
+@EntityFileProxy
 public class SchoolStudent implements ProxyEntityAvailable<SchoolStudent, SchoolStudentProxy> {
     @Column(primaryKey = true)
     private String id;

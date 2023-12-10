@@ -1,8 +1,10 @@
 package com.easy.query.test.entity.school.dto;
 
-import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.school.dto.proxy.SchoolStudentVOProxy;
 import lombok.Data;
 
 /**
@@ -12,8 +14,8 @@ import lombok.Data;
  * @author xuejiaming
  */
 @Data
-@EntityProxy
-public class SchoolStudentVO {
+@EntityFileProxy
+public class SchoolStudentVO implements ProxyEntityAvailable<SchoolStudentVO , SchoolStudentVOProxy> {
     private String id;
     private String classId;
     private String name;
@@ -21,4 +23,9 @@ public class SchoolStudentVO {
     private SchoolClassVO schoolClass;
     @Navigate(RelationTypeEnum.OneToOne)
     private SchoolStudentAddressVO schoolStudentAddress;
+
+    @Override
+    public Class<SchoolStudentVOProxy> proxyTableClass() {
+        return SchoolStudentVOProxy.class;
+    }
 }

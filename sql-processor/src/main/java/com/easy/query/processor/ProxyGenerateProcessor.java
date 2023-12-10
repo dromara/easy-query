@@ -427,7 +427,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         if (docComment == null) {
             return FIELD_EMPTY_DOC_COMMENT_TEMPLATE
                     .replace("@{entityClass}", className)
-                    .replace("@{property}", propertyName);
+                    .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName));
         }
         String[] commentLines = docComment.trim().split("\n");
         StringBuilder fieldComment = new StringBuilder();
@@ -438,7 +438,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         return FIELD_DOC_COMMENT_TEMPLATE
                 .replace("@{comment}", fieldComment.toString())
                 .replace("@{entityClass}", className)
-                .replace("@{property}", propertyName);
+                .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName));
     }
 
     private String getGenericTypeString(boolean isGeneric, boolean isDeclared, boolean includeProperty, TypeMirror type) {

@@ -1,6 +1,8 @@
 package com.easy.query.test.entity.school.dto;
 
-import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.EntityFileProxy;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.school.dto.proxy.SchoolTeacherVOProxy;
 import lombok.Data;
 import lombok.ToString;
 
@@ -12,8 +14,13 @@ import lombok.ToString;
  */
 @Data
 @ToString
-@EntityProxy
-public class SchoolTeacherVO {
+@EntityFileProxy
+public class SchoolTeacherVO implements ProxyEntityAvailable<SchoolTeacherVO , SchoolTeacherVOProxy> {
     private String id;
     private String name;
+
+    @Override
+    public Class<SchoolTeacherVOProxy> proxyTableClass() {
+        return SchoolTeacherVOProxy.class;
+    }
 }
