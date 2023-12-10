@@ -10,7 +10,7 @@ public enum FileGenerateEnum {
     /**
      * 创建如果存在就跳过
      */
-    GENERATE_IF_EXISTS_SKIP,
+    GENERATE_IF_NOT_EXISTS,
     /**
      * 仅编译当前文件创建覆盖
      */
