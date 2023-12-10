@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.builder;
 
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -31,6 +30,7 @@ public interface AsSelector extends SQLNative<AsSelector>, RuntimeContextAvailab
 
     EntityQueryExpressionBuilder getEntityQueryExpressionBuilder();
 
+    AsSelector columnKeys(TableAvailable table);
     AsSelector column(TableAvailable table, String property);
 
     /**

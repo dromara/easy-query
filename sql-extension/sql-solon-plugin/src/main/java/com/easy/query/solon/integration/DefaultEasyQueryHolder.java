@@ -1,6 +1,7 @@
 package com.easy.query.solon.integration;
 
 import com.easy.query.api.proxy.client.EasyProxyQuery;
+import com.easy.query.api.proxy.client.EntityQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.api4kt.client.EasyKtQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -17,13 +18,15 @@ import org.noear.solon.core.VarHolder;
 public class DefaultEasyQueryHolder implements EasyQueryHolder{
 
     private final EasyQueryClient easyQueryClient;
+    private final EntityQuery entityQuery;
     private final EasyQuery easyQuery;
     private final EasyProxyQuery easyProxyQuery;
     private final EasyKtQuery easyKtQuery;
 //    private final EntityQuery entityQuery;
 
-    public DefaultEasyQueryHolder(EasyQueryClient easyQueryClient, EasyQuery easyQuery, EasyProxyQuery easyProxyQuery, EasyKtQuery easyKtQuery){
+    public DefaultEasyQueryHolder(EasyQueryClient easyQueryClient,EntityQuery entityQuery, EasyQuery easyQuery, EasyProxyQuery easyProxyQuery, EasyKtQuery easyKtQuery){
         this.easyQueryClient = easyQueryClient;
+        this.entityQuery = entityQuery;
         this.easyQuery = easyQuery;
 
         this.easyProxyQuery = easyProxyQuery;
@@ -34,6 +37,11 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
     @Override
     public EasyQueryClient getEasyQueryClient() {
         return easyQueryClient;
+    }
+
+    @Override
+    public EntityQuery getEntityQuery() {
+        return entityQuery;
     }
 
     @Override
@@ -58,6 +66,11 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
 
     @Override
     public void injectTo(VarHolder varH) {
+
+        if (EntityQuery.class.isAssignableFrom(varH.getType())) {
+            varH.setValue(this.entityQuery);
+            return;
+        }
 
         if (EasyQuery.class.isAssignableFrom(varH.getType())) {
             varH.setValue(this.easyQuery);

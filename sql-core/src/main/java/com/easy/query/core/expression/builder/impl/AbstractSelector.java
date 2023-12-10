@@ -96,6 +96,17 @@ public abstract class AbstractSelector<TChain> {
 
     protected abstract String getResultColumnName(String propertyAlias);
 
+
+    public TChain columnKeys(TableAvailable table) {
+        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
+        if(EasyCollectionUtil.isEmpty(keyProperties)){
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(table.getEntityClass()) +" not found keys");
+        }
+        for (String keyProperty : keyProperties) {
+            column(table,keyProperty);
+        }
+        return castChain();
+    }
     public TChain column(TableAvailable table, String property) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         appendColumnMetadata(table, columnMetadata, true, false, false, null);

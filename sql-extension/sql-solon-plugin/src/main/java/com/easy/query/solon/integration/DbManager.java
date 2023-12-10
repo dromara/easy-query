@@ -1,6 +1,8 @@
 package com.easy.query.solon.integration;
 
 import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
+import com.easy.query.api.proxy.client.DefaultEntityQuery;
+import com.easy.query.api.proxy.client.EntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4kt.client.DefaultEasyKtQuery;
 import com.easy.query.api4kt.client.EasyKtQuery;
@@ -148,12 +150,12 @@ public class DbManager {
         EasyQueryClient easyQueryClient =easyQueryBuilderConfiguration.build();
         //扩展
         EventBus.publish(easyQueryClient.getRuntimeContext());
+        EntityQuery entityQuery = new DefaultEntityQuery(easyQueryClient);
         DefaultEasyQuery easyQuery = new DefaultEasyQuery(easyQueryClient);
         DefaultEasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
         EasyKtQuery easyKtQuery = new DefaultEasyKtQuery(easyQueryClient);
-//        EntityQuery entityQuery = new DefaultEntityQuery(easyQueryClient);
 
-        return new DefaultEasyQueryHolder(easyQueryClient,easyQuery,easyProxyQuery,easyKtQuery);
+        return new DefaultEasyQueryHolder(easyQueryClient,entityQuery,easyQuery,easyProxyQuery,easyKtQuery);
     }
 
     private static void useNameConversion(SolonEasyQueryProperties solonEasyQueryProperties,EasyQueryBuilderConfiguration easyQueryBuilderConfiguration){

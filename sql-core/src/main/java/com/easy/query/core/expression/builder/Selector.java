@@ -22,6 +22,7 @@ public interface Selector extends SQLNative<Selector>, RuntimeContextAvailable {
      */
     Selector groupKeys(int index);
 
+    Selector columnKeys(TableAvailable table);
     Selector column(TableAvailable table, String property);
     Selector columnAs(TableAvailable table, String property,String propertyAlias);
 

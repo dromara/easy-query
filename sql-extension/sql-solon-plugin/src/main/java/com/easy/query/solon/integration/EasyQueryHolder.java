@@ -1,6 +1,7 @@
 package com.easy.query.solon.integration;
 
 import com.easy.query.api.proxy.client.EasyProxyQuery;
+import com.easy.query.api.proxy.client.EntityQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.api4kt.client.EasyKtQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -15,6 +16,7 @@ import org.noear.solon.core.VarHolder;
 public interface EasyQueryHolder {
     EasyQueryClient getEasyQueryClient();
 
+    EntityQuery getEntityQuery();
     EasyQuery getEasyQuery();
 
     EasyProxyQuery getEasyProxyQuery();

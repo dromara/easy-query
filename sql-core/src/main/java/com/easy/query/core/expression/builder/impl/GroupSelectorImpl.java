@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -14,7 +15,10 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -36,6 +40,19 @@ public class GroupSelectorImpl implements GroupSelector {
         this.runtimeContext=entityQueryExpressionBuilder.getRuntimeContext();
         this.sqlSegmentFactory=runtimeContext.getSQLSegmentFactory();
     }
+
+    @Override
+    public GroupSelector columnKeys(TableAvailable table) {
+        Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
+        if(EasyCollectionUtil.isEmpty(keyProperties)){
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(table.getEntityClass()) +" not found keys");
+        }
+        for (String keyProperty : keyProperties) {
+            column(table,keyProperty);
+        }
+        return this;
+    }
+
     @Override
     public GroupSelector column(TableAvailable table, String property) {
         GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByColumnSegment(table, property, entityQueryExpressionBuilder.getRuntimeContext());

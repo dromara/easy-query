@@ -408,6 +408,14 @@ public class UpdateTest extends BaseTest {
                 .whereColumns(o -> o.columnKeys().column(o.t().stars())).toSQL(topic);
         Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?", sql);
     }
+    @Test
+    public void updateTest12_2() {
+        Topic topic = entityQuery.queryable(Topic.class).whereById("15").firstOrNull();
+        Assert.assertNotNull(topic);
+        String sql = entityQuery.updatable(topic)
+                .whereColumns(o -> o.FETCHER.keys().stars()).toSQL(topic);
+        Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?", sql);
+    }
 //    @Test
 //    public void updateTest12_2() {
 //        Topic topic = easyQuery.queryable(Topic.class).whereById("15").firstOrNull();
