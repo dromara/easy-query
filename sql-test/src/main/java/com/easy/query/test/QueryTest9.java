@@ -604,7 +604,7 @@ public class QueryTest9 extends BaseTest {
                         o.id().nullDefault("2").eq(o.title().nullDefault(c -> c.column(o.id())));
                         o.title().isEmpty();
                     })
-                    .select(StringProxy.createTable(), a -> a.title())
+                    .selectProxy(StringProxy.createTable(), a -> a.title())
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -684,7 +684,7 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> {
                         o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01");
                     })
-                    .select(MapProxy.createTable(), o -> o.FETCHER
+                    .selectProxy(MapProxy.createTable(), o -> o.FETCHER
                             .allFieldsExclude(o.id(), o.title())
                             .id().as("abc")
                             .id())
@@ -699,12 +699,28 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
+            MapProxy table = MapProxy.createTable();
+            List<Map<String, Object>> list = entityQuery.queryable(Topic.class)
+                    .where(o -> {
+                        o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01");
+                    })
+                    .selectProxy(table).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT * FROM `t_topic` t WHERE DATE_FORMAT(t.`create_time`,'%Y/%m/%d') = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("2023/01/01(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
             EntityQueryable<StringProxy, String> idQuery = entityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123"))
-                    .select(StringProxy.createTable(), o -> o.id());
+                    .selectProxy(StringProxy.createTable(), o -> o.id());
             List<Map<String, Object>> abc = entityQuery.queryable(Topic.class)
                     .where(o -> o.id().in(idQuery))
-                    .select(MapProxy.createTable(), o -> o.FETCHER
+                    .selectProxy(MapProxy.createTable(), o -> o.FETCHER
                             .allFieldsExclude(o.id(), o.title())
                             .id().as("abc")
                             .id())
@@ -721,7 +737,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             EntityQueryable<StringProxy, String> idQuery = entityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123"))
-                    .select(StringProxy.createTable(), o -> o.id());
+                    .selectProxy(StringProxy.createTable(), o -> o.id());
             List<Map<String, Object>> abc = entityQuery.queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (a, b) -> a.id().eq(b.id()))
                     .where(o -> o.id().in(idQuery))
@@ -742,7 +758,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             EntityQueryable<StringProxy, String> idQuery = entityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123"))
-                    .select(StringProxy.createTable(), o -> o.id());
+                    .selectProxy(StringProxy.createTable(), o -> o.id());
             List<Map<String, Object>> abc = entityQuery.queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (a, b) -> a.id().eq(b.id()))
                     .where(o -> o.id().in(idQuery))
@@ -766,7 +782,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             EntityQueryable<StringProxy, String> idQuery = entityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123"))
-                    .select(StringProxy.createTable(), o -> o.id());
+                    .selectProxy(StringProxy.createTable(), o -> o.id());
             List<Map<String, Object>> abc = entityQuery.queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (a, b) -> a.id().eq(b.id()))
                     .where(o -> {
