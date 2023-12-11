@@ -16,7 +16,7 @@ import java.util.List;
 public class TopicTypeTitle2ComplexType extends TypeReference<List<TopicTypeJsonValue>> implements ComplexPropType {
 
     @Override
-    public Type getComplexType() {
+    public Type complexType() {
         return this.getType();
     }
 }

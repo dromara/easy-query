@@ -5,6 +5,7 @@ import com.easy.query.api.proxy.sql.ProxyFilter;
 import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -55,6 +56,16 @@ public abstract class AbstractProxyExpressionDeletable<TProxy extends ProxyEntit
         if (condition) {
             expressionObjectDeletable.where(where -> {
                 whereExpression.apply(new ProxyFilterImpl(where.getFilter()),getProxy());
+            });
+        }
+        return this;
+    }
+
+    @Override
+    public ProxyExpressionDeletable<TProxy, T> where(boolean condition, SQLExpression1<ProxyFilter> whereExpression) {
+        if (condition) {
+            expressionObjectDeletable.where(where -> {
+                whereExpression.apply(new ProxyFilterImpl(where.getFilter()));
             });
         }
         return this;

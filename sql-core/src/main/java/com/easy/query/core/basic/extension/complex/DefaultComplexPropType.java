@@ -16,7 +16,7 @@ public class DefaultComplexPropType implements ComplexPropType {
         this.propertyType = propertyType;
     }
     @Override
-    public Type getComplexType() {
+    public Type complexType() {
         return propertyType;
     }
 }

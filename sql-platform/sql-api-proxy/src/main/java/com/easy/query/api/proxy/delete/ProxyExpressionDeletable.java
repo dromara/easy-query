@@ -3,6 +3,7 @@ package com.easy.query.api.proxy.delete;
 import com.easy.query.api.proxy.sql.ProxyFilter;
 import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.WithVersionable;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -20,6 +21,11 @@ public interface ProxyExpressionDeletable<TProxy extends ProxyEntity<TProxy,T>,T
     }
 
     ProxyExpressionDeletable<TProxy,T> where(boolean condition, SQLExpression2<ProxyFilter,TProxy> whereExpression);
+ default ProxyExpressionDeletable<TProxy,T> where(SQLExpression1<ProxyFilter> whereExpression) {
+        return where(true, whereExpression);
+    }
+
+    ProxyExpressionDeletable<TProxy,T> where(boolean condition, SQLExpression1<ProxyFilter> whereExpression);
 
 
     default ProxyExpressionDeletable<TProxy,T> whereById(Object id) {
