@@ -516,21 +516,39 @@ public class QueryTest extends BaseTest {
 
     @Test
     public void query14() {
+        {
 
-        EasyPageResult<BlogEntity> page = easyQuery
-                .queryable(Topic.class).asTracking()
-                .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
-                .groupBy((t, t1) -> {
-                    Assert.assertNotNull(t.getTable());
-                    Assert.assertNotNull(t.getRuntimeContext());
-                    Assert.assertEquals(t.getRuntimeContext(),t1.getRuntimeContext());
-                    t1.column(BlogEntity::getId);
-                })
-                .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore))
-                .toPageResult(1, 20);
-        Assert.assertEquals(100, page.getTotal());
-        Assert.assertEquals(20, page.getData().size());
+            EasyPageResult<BlogEntity> page = easyQuery
+                    .queryable(Topic.class).asTracking()
+                    .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                    .groupBy((t, t1) -> {
+                        Assert.assertNotNull(t.getTable());
+                        Assert.assertNotNull(t.getRuntimeContext());
+                        Assert.assertEquals(t.getRuntimeContext(),t1.getRuntimeContext());
+                        t1.column(BlogEntity::getId);
+                    })
+                    .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore))
+                    .toPageResult(1, 20);
+            Assert.assertEquals(100, page.getTotal());
+            Assert.assertEquals(20, page.getData().size());
+        }
+        {
+
+            EasyPageResult<BlogEntity> page = easyQuery
+                    .queryable(Topic.class).asTracking()
+                    .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                    .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+                    .groupBy((t, t1) -> {
+                        Assert.assertNotNull(t.getTable());
+                        Assert.assertNotNull(t.getRuntimeContext());
+                        Assert.assertEquals(t.getRuntimeContext(),t1.getRuntimeContext());
+                        t1.column(BlogEntity::getId);
+                    })
+                    .toPageResult(BlogEntity.class,1, 20);
+            Assert.assertEquals(100, page.getTotal());
+            Assert.assertEquals(20, page.getData().size());
+        }
     }
 
     @Test

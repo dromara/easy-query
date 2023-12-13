@@ -23,6 +23,9 @@ public interface PageAble<T> extends QueryAvailable<T> {
     default EasyPageResult<T> toPageResult(long pageIndex, long pageSize) {
         return toPageResult(pageIndex, pageSize, -1);
     }
+    default <TResult> EasyPageResult<TResult> toPageResult(Class<TResult> resultClass,long pageIndex, long pageSize) {
+        return toPageResult(resultClass,pageIndex, pageSize, -1);
+    }
 
     /**
      * 分页 如果{@param pageTotal}  < 0 那么将会查询一次count,否则不查询count在total非常大的时候可以有效的提高性能
@@ -32,7 +35,10 @@ public interface PageAble<T> extends QueryAvailable<T> {
      * @param pageTotal 总条数有多少
      * @return 分页结果
      */
-    EasyPageResult<T> toPageResult(long pageIndex, long pageSize, long pageTotal);
+    default EasyPageResult<T> toPageResult(long pageIndex, long pageSize, long pageTotal){
+        return toPageResult(queryClass(),pageIndex,pageSize,pageTotal);
+    }
+    <TResult> EasyPageResult<TResult> toPageResult(Class<TResult> resultClass,long pageIndex, long pageSize, long pageTotal);
     default <TPageResult> TPageResult toPageResult(Pager<T,TPageResult> pager){
         return pager.toResult(this);
     }
@@ -56,6 +62,9 @@ public interface PageAble<T> extends QueryAvailable<T> {
      * @param totalLines 分页各个分页节点的数量
      * @return 分页结果
      */
-    EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines);
+    default EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines){
+        return toShardingPageResult(queryClass(),pageIndex,pageSize,totalLines);
+    }
+    <TResult> EasyPageResult<TResult> toShardingPageResult(Class<TResult> resultClass,long pageIndex, long pageSize, List<Long> totalLines);
 
 }

@@ -178,13 +178,13 @@ public abstract class AbstractOverrideProxyQueryable5<T1Proxy extends ProxyEntit
     }
 
     @Override
-    public EasyPageResult<T1> toPageResult(long pageIndex, long pageSize, long pageTotal) {
-        return entityQueryable.toPageResult(pageIndex, pageSize, pageTotal);
+    public <TResult> EasyPageResult<TResult> toPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, long pageTotal) {
+        return entityQueryable.toPageResult(tResultClass,pageIndex, pageSize, pageTotal);
     }
 
     @Override
-    public EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines) {
-        return entityQueryable.toShardingPageResult(pageIndex, pageSize, totalLines);
+    public <TResult> EasyPageResult<TResult> toShardingPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, List<Long> totalLines) {
+        return entityQueryable.toShardingPageResult(tResultClass,pageIndex, pageSize, totalLines);
     }
 
     @Override

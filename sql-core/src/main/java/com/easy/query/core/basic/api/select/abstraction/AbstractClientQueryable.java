@@ -734,8 +734,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public EasyPageResult<T1> toPageResult(long pageIndex, long pageSize, long pageTotal) {
-        return doPageResult(pageIndex, pageSize, t1Class, pageTotal);
+    public <TResult> EasyPageResult<TResult> toPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, long pageTotal) {
+        return doPageResult(pageIndex, pageSize, tResultClass, pageTotal);
     }
 
     protected <TR> EasyPageResult<TR> doPageResult(long pageIndex, long pageSize, Class<TR> clazz, long pageTotal) {
@@ -776,8 +776,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public EasyPageResult<T1> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines) {
-        return doShardingPageResult(pageIndex, pageSize, t1Class, totalLines);
+    public <TResult> EasyPageResult<TResult> toShardingPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, List<Long> totalLines) {
+        return doShardingPageResult(pageIndex, pageSize, tResultClass, totalLines);
     }
 
     protected <TR> EasyPageResult<TR> doShardingPageResult(long pageIndex, long pageSize, Class<TR> clazz, List<Long> totalLines) {
