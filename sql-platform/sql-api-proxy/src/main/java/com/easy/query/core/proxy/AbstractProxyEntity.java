@@ -7,11 +7,9 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
-import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
-import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Objects;
@@ -93,13 +91,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     public void sqlNativeSegment(boolean condition,String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
         if(condition){
-
-//            getEntitySQLContext().accept(new SQLEntityNativeSegmentImpl(sqlSegment,contextConsume));
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                f.sqlNativeSegment(sqlSegment, c -> {
-                    contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
-                });
-            }));
+            getEntitySQLContext()._nativeSqlSegment(sqlSegment,contextConsume);
         }
     }
 

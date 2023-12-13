@@ -307,6 +307,33 @@ public class QueryTest9 extends BaseTest {
             Assert.assertEquals("title(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Topic> list3 = entityQuery.queryable(Topic.class)
+                    .where(o -> {
+                        o.title().eq("title");
+                        o.id().eq("1");
+                    })
+                    .orderBy(o -> {
+                        o.createTime().dateTimeFormat("yyyy-MM-dd HH:mm:ss").desc();
+                        o.sqlNativeSegment("IFNULL({0},'') ASC",c->{
+                            c.keepStyle().expression(o.stars());
+                        });
+                    })
+                    .select(Topic.class, (o, tr) -> Select.of(
+                            o.title(),
+                            o.id(),
+                            o.createTime().dateTimeFormat("yyyy-MM-dd HH:mm:ss")
+                    ))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`title`,t.`id`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') FROM `t_topic` t WHERE t.`title` = ? AND t.`id` = ? ORDER BY DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') DESC,IFNULL(t.`stars`,'') ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("title(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
     }
 
     @Test

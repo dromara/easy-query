@@ -13,64 +13,69 @@ import com.easy.query.test.entity.base.City;
  *
  * @author xuejiaming
  */
-public class CityProxy extends AbstractProxyEntity < CityProxy, City > {
+public class CityProxy extends AbstractProxyEntity<CityProxy, City> {
 
-    private static final Class < City > entityClass = City .class;
+    private static final Class<City> entityClass = City.class;
+    /**
+     * 为entityQuery提供静态属性获取
+     */
+    public static final CityProxy TABLE = new CityProxy();
 
-    public static CityProxy createTable () {
-        return new CityProxy ();
+    public static CityProxy createTable() {
+        return new CityProxy();
     }
 
-    public CityProxy () {
+    public CityProxy() {
     }
 
     /**
      * {@link City#getCode}
      */
-    public SQLColumn < CityProxy, java.lang.String> code(){
-    return get("code");
-}
+    public SQLColumn<CityProxy, java.lang.String> code() {
+        return get("code");
+    }
 
     /**
      * {@link City#getProvinceCode}
      */
-    public SQLColumn < CityProxy, java.lang.String> provinceCode(){
-    return get("provinceCode");
-}
+    public SQLColumn<CityProxy, java.lang.String> provinceCode() {
+        return get("provinceCode");
+    }
 
     /**
      * {@link City#getName}
      */
-    public SQLColumn < CityProxy, java.lang.String> name(){
-    return get("name");
-}
+    public SQLColumn<CityProxy, java.lang.String> name() {
+        return get("name");
+    }
 
     /**
      * {@link City#getAreas}
      */
-    public SQLNavigateColumn < CityProxy, com.easy.query.test.entity.base.Area> areas(){
-    return get("areas", com.easy.query.test.entity.base.Area.class);
-}
+    public SQLNavigateColumn<CityProxy, com.easy.query.test.entity.base.Area> areas() {
+        return get("areas", com.easy.query.test.entity.base.Area.class);
+    }
 
 
     @Override
-    public Class < City > getEntityClass () {
+    public Class<City> getEntityClass() {
         return entityClass;
     }
 
 
     /**
      * 数据库列的简单获取
+     *
      * @return
      */
-    public CityProxyFetcher FETCHER = new CityProxyFetcher (this, null, SQLSelectAsExpression.empty);
+    public CityProxyFetcher FETCHER = new CityProxyFetcher(this, null, SQLSelectAsExpression.empty);
 
 
     public static class CityProxyFetcher extends AbstractFetcher<CityProxy, City, CityProxyFetcher> {
 
-        public CityProxyFetcher (CityProxy proxy, CityProxyFetcher prev, SQLSelectAsExpression sqlSelectAsExpression) {
-        super(proxy, prev, sqlSelectAsExpression);
-    }
+        public CityProxyFetcher(CityProxy proxy, CityProxyFetcher prev, SQLSelectAsExpression sqlSelectAsExpression) {
+            super(proxy, prev, sqlSelectAsExpression);
+        }
 
 
         /**
@@ -97,11 +102,11 @@ public class CityProxy extends AbstractProxyEntity < CityProxy, City > {
 
         @Override
         protected CityProxyFetcher createFetcher(
-            CityProxy cp,
-            AbstractFetcher<CityProxy, City, CityProxyFetcher> prev,
-            SQLSelectAsExpression sqlSelectExpression
+                CityProxy cp,
+                AbstractFetcher<CityProxy, City, CityProxyFetcher> prev,
+                SQLSelectAsExpression sqlSelectExpression
         ) {
-            return new CityProxyFetcher (cp, this, sqlSelectExpression);
+            return new CityProxyFetcher(cp, this, sqlSelectExpression);
         }
     }
 

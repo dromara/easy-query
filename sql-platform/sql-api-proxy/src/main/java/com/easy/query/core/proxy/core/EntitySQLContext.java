@@ -6,6 +6,7 @@ import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.Setter;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.SQLOrderByExpression;
@@ -15,6 +16,7 @@ import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
 import com.easy.query.core.proxy.core.accpet.OrderByEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.PredicateEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.SetterEntityExpressionAcceptImpl;
+import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 
 /**
  * create time 2023/12/8 14:56
@@ -28,6 +30,9 @@ public interface EntitySQLContext {
         accept(new PredicateEntityExpressionAcceptImpl(filter),sqlActionExpression);
     }
     default void _whereOr(SQLActionExpression sqlActionExpression){
+        throw new UnsupportedOperationException();
+    }
+    default void _nativeSqlSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
         throw new UnsupportedOperationException();
     }
     default void _having(AggregateFilter aggregateFilter, SQLActionExpression sqlActionExpression){

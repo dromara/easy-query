@@ -22,6 +22,13 @@ import com.easy.query.core.util.EasyArrayUtil;
  */
 public class Select {
 
+    public static SQLSelectExpression of(boolean condition,SQLSelectExpression select){
+        if (condition) {
+            return select;
+        }
+        return SQLSelectAsExpression.empty;
+    }
+
     public static SQLSelectExpression of(SQLSelectExpression... selects){
         if (EasyArrayUtil.isNotEmpty(selects)) {
             SQLSelectExpression firstSQLSelectAs = selects[0];
