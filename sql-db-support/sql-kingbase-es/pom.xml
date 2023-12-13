@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.easy-query</groupId>
         <artifactId>easy-query-all</artifactId>
-        <version>1.7.28</version>
+        <version>1.7.29</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>sql-kingbase-es</artifactId>
