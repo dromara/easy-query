@@ -22,9 +22,9 @@ import com.easy.query.core.util.EasyArrayUtil;
  */
 public class Select {
 
-    public static SQLSelectExpression of(boolean condition,SQLSelectExpression select){
+    public static SQLSelectExpression of(boolean condition,SQLSelectExpression... selects){
         if (condition) {
-            return select;
+            return of(selects);
         }
         return SQLSelectAsExpression.empty;
     }
