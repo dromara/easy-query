@@ -2,9 +2,12 @@ package com.easy.query.test.entity.base;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.ColumnIgnore;
+import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.base.proxy.CityProxy;
 import lombok.Data;
 import lombok.ToString;
 
@@ -19,7 +22,8 @@ import java.util.List;
 @Table("t_city")
 @Data
 @ToString
-public class City {
+@EntityFileProxy
+public class City implements ProxyEntityAvailable<City , CityProxy> {
     @Column(primaryKey = true)
     private String code;
     private String provinceCode;
@@ -30,4 +34,8 @@ public class City {
     @ColumnIgnore
     private Province province;
 
+    @Override
+    public Class<CityProxy> proxyTableClass() {
+        return CityProxy.class;
+    }
 }

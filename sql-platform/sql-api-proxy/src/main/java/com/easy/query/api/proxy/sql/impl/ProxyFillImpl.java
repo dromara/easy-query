@@ -12,10 +12,10 @@ import com.easy.query.core.proxy.ProxyEntity;
  *
  * @author xuejiaming
  */
-public class ProxyFillImp implements ProxyFill {
+public class ProxyFillImpl implements ProxyFill {
     private final FillSelector fillSelector;
 
-    public ProxyFillImp(FillSelector fillSelector){
+    public ProxyFillImpl(FillSelector fillSelector){
 
         this.fillSelector = fillSelector;
     }

@@ -562,6 +562,37 @@ public class RelationTest extends BaseTest {
             }
         }
         {
+            List<Province> list = entityQuery.queryable(Province.class)
+                    .fillMany(City.class,o -> {
+                        return o.with(City.class);
+                    }, o -> {
+                        return o.provinceCode();
+                    }, o -> {
+                        return o.getCode();
+                    }, (x, y) -> {
+
+                    }).toList();
+
+            EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
+                    .fillMany(x -> x.with(City.class).where(y -> y.eq(City::getCode, "3306"))
+                            , City::getProvinceCode
+                            , Province::getCode
+                            , (x, y) -> {
+                                x.setCities(new ArrayList<>(y));
+                            })
+                    .toPageResult(1, 1);
+            Assert.assertEquals(2L, pageResult1.getTotal());
+            Assert.assertEquals(1, pageResult1.getData().size());
+            for (Province province : pageResult1.getData()) {
+                if (!"33".equals(province.getCode())) {
+                    Assert.assertNull(province.getCities());
+                } else {
+                    Assert.assertNotNull(province.getCities());
+                    Assert.assertTrue(province.getCities().size() > 0);
+                }
+            }
+        }
+        {
 
             EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
                     .fillMany(x -> x.consumeNull(true).with(City.class).where(y -> y.eq(City::getCode, "3306"))

@@ -3,7 +3,7 @@ package com.easy.query.api.proxy.select.extension.queryable8;
 import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api.proxy.select.ProxyQueryable8;
 import com.easy.query.api.proxy.sql.ProxyFill;
-import com.easy.query.api.proxy.sql.impl.ProxyFillImp;
+import com.easy.query.api.proxy.sql.impl.ProxyFillImpl;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -30,14 +30,14 @@ public interface ProxyFillable8<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     default <TRProxyEntity extends ProxyEntity<TRProxyEntity, TREntity>, TREntity, TProperty> ProxyQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> fillMany(SQLFuncExpression1<ProxyFill, ProxyQueryable<TRProxyEntity, TREntity>> fillSetterExpression, SQLColumn<TRProxyEntity, TProperty> targetProperty, Property<T1, TProperty> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
         getClientQueryable8().fillMany(fillSelector -> {
-            return fillSetterExpression.apply(new ProxyFillImp(fillSelector)).getClientQueryable();
+            return fillSetterExpression.apply(new ProxyFillImpl(fillSelector)).getClientQueryable();
         }, targetProperty.getValue(), selfProperty, produce);
         return getQueryable8();
     }
 
     default <TRProxyEntity extends ProxyEntity<TRProxyEntity, TREntity>, TREntity, TProperty> ProxyQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> fillOne(SQLFuncExpression1<ProxyFill, ProxyQueryable<TRProxyEntity, TREntity>> fillSetterExpression, SQLColumn<TRProxyEntity, TProperty> targetProperty, Property<T1, TProperty> selfProperty, BiConsumer<T1, TREntity> produce) {
         getClientQueryable8().fillOne(fillSelector -> {
-            return fillSetterExpression.apply(new ProxyFillImp(fillSelector)).getClientQueryable();
+            return fillSetterExpression.apply(new ProxyFillImpl(fillSelector)).getClientQueryable();
         }, targetProperty.getValue(), selfProperty, produce);
         return getQueryable8();
     }
