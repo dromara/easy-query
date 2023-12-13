@@ -1,8 +1,10 @@
 package com.easy.query.test.doc.entity;
 
 import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.doc.entity.proxy.SysUserProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,9 +16,9 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 @Table("t_sys_user")
-@EntityProxy
+@EntityFileProxy
 @Data
-public class SysUser {
+public class SysUser implements ProxyEntityAvailable<SysUser , SysUserProxy> {
     @Column(primaryKey = true)
     private String id;
     private String name;
@@ -24,4 +26,9 @@ public class SysUser {
     private String departName;
     private String phone;
     private LocalDateTime createTime;
+
+    @Override
+    public Class<SysUserProxy> proxyTableClass() {
+        return SysUserProxy.class;
+    }
 }

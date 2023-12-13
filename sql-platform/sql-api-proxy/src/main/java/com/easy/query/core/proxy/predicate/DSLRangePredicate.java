@@ -36,7 +36,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @return
      */
     default void rangeOpenClosed(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        if (!conditionLeft || !conditionRight) {
+        if (conditionLeft || conditionRight) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 f.range(this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN_CLOSED);
             }));
@@ -66,7 +66,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @return
      */
     default void rangeOpen(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        if (!conditionLeft || !conditionRight) {
+        if (conditionLeft || conditionRight) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 f.range(this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN);
             }));
@@ -96,7 +96,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @return
      */
     default void rangeClosedOpen(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        if (!conditionLeft || !conditionRight) {
+        if (conditionLeft || conditionRight) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 f.range(this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED_OPEN);
             }));
@@ -126,7 +126,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @return
      */
     default void rangeClosed(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        if (!conditionLeft || !conditionRight) {
+        if (conditionLeft || conditionRight) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 f.range(this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED);
             }));
