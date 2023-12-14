@@ -107,6 +107,7 @@ public interface Filter extends SQLNative<Filter> {
      * @return children
      */
     Filter isNotNull(TableAvailable table, String property);
+
     /**
      * column is null
      *
@@ -347,6 +348,180 @@ public interface Filter extends SQLNative<Filter> {
     Filter funcValueFilter(TableAvailable table, SQLFunction sqlFunction, Object val, SQLPredicateCompare sqlPredicateCompare);
 
     //endregion
+
+
+    //region func column
+
+
+    /**
+     * 大于 func(column) > column
+     *
+     * @param table1
+     * @param sqlFunction
+     * @param table2
+     * @param property
+     * @return
+     */
+    default Filter gt(TableAvailable table1, SQLFunction sqlFunction, TableAvailable table2, String property) {
+        return funcColumnFilter(table1, sqlFunction, table2, property, SQLPredicateCompareEnum.GT);
+    }
+
+    /**
+     * 等于 func(column) >= column
+     *
+     * @param table1
+     * @param sqlFunction
+     * @param table2
+     * @param property
+     * @return
+     */
+    default Filter ge(TableAvailable table1, SQLFunction sqlFunction, TableAvailable table2, String property) {
+        return funcColumnFilter(table1, sqlFunction, table2, property, SQLPredicateCompareEnum.GE);
+    }
+
+    /**
+     * 等于 func(column) = column
+     *
+     * @param table1
+     * @param sqlFunction
+     * @param table2
+     * @param property
+     * @return
+     */
+    default Filter eq(TableAvailable table1, SQLFunction sqlFunction, TableAvailable table2, String property) {
+        return funcColumnFilter(table1, sqlFunction, table2, property, SQLPredicateCompareEnum.EQ);
+    }
+
+    /**
+     * 不等于 func(column) <> column
+     *
+     * @param table1
+     * @param sqlFunction
+     * @param table2
+     * @param property
+     * @return
+     */
+    default Filter ne(TableAvailable table1, SQLFunction sqlFunction, TableAvailable table2, String property) {
+        return funcColumnFilter(table1, sqlFunction, table2, property, SQLPredicateCompareEnum.NE);
+    }
+
+    /**
+     * 小于等于 func(column) <= column
+     *
+     * @param table1
+     * @param sqlFunction
+     * @param table2
+     * @param property
+     * @return
+     */
+    default Filter le(TableAvailable table1, SQLFunction sqlFunction, TableAvailable table2, String property) {
+        return funcColumnFilter(table1, sqlFunction, table2,property, SQLPredicateCompareEnum.LE);
+    }
+
+    /**
+     * 小于 func(column) < column
+     *
+     * @param table1
+     * @param sqlFunction
+     * @param table2
+     * @param property
+     * @return
+     */
+    default Filter lt(TableAvailable table1, SQLFunction sqlFunction, TableAvailable table2, String property) {
+        return funcColumnFilter(table1, sqlFunction, table2, property, SQLPredicateCompareEnum.LT);
+    }
+
+    Filter funcColumnFilter(TableAvailable table1, SQLFunction sqlFunction, TableAvailable table2, String property, SQLPredicateCompare sqlPredicateCompare);
+
+    //endregion
+
+
+    //region func subQuery
+
+
+    /**
+     * 大于 func(column) > subQuery
+     *
+     * @param table
+     * @param sqlFunction
+     * @param subQuery
+     * @return
+     * @param <TProperty>
+     */
+    default <TProperty> Filter gt(TableAvailable table, SQLFunction sqlFunction, Query<TProperty> subQuery) {
+        return funcSubQueryFilter(table, sqlFunction,subQuery, SQLPredicateCompareEnum.GT);
+    }
+
+    /**
+     * 等于 func(column) >= subQuery
+     *
+     * @param table
+     * @param sqlFunction
+     * @param subQuery
+     * @return
+     * @param <TProperty>
+     */
+    default <TProperty> Filter ge(TableAvailable table, SQLFunction sqlFunction, Query<TProperty> subQuery) {
+        return funcSubQueryFilter(table, sqlFunction,subQuery, SQLPredicateCompareEnum.GE);
+    }
+
+    /**
+     * 等于 func(column) = subQuery
+     *
+     * @param table
+     * @param sqlFunction
+     * @param subQuery
+     * @return
+     * @param <TProperty>
+     */
+    default <TProperty> Filter eq(TableAvailable table, SQLFunction sqlFunction, Query<TProperty> subQuery) {
+        return funcSubQueryFilter(table, sqlFunction,subQuery, SQLPredicateCompareEnum.EQ);
+    }
+
+    /**
+     * 不等于 func(column) <> subQuery
+     *
+     * @param table
+     * @param sqlFunction
+     * @param subQuery
+     * @return
+     * @param <TProperty>
+     */
+    default <TProperty> Filter ne(TableAvailable table, SQLFunction sqlFunction, Query<TProperty> subQuery) {
+        return funcSubQueryFilter(table, sqlFunction,subQuery, SQLPredicateCompareEnum.NE);
+    }
+
+    /**
+     * 小于等于 func(column) <= subQuery
+     *
+     * @param table
+     * @param sqlFunction
+     * @param subQuery
+     * @return
+     * @param <TProperty>
+     */
+    default <TProperty> Filter le(TableAvailable table, SQLFunction sqlFunction, Query<TProperty> subQuery)  {
+        return funcSubQueryFilter(table, sqlFunction,subQuery, SQLPredicateCompareEnum.LE);
+    }
+
+    /**
+     * 小于 func(column) < subQuery
+     *
+     * @param table
+     * @param sqlFunction
+     * @param subQuery
+     * @return
+     * @param <TProperty>
+     */
+    default <TProperty> Filter lt(TableAvailable table, SQLFunction sqlFunction, Query<TProperty> subQuery) {
+        return funcSubQueryFilter(table, sqlFunction,subQuery, SQLPredicateCompareEnum.LT);
+    }
+
+    <TProperty> Filter funcSubQueryFilter(TableAvailable table, SQLFunction sqlFunction, Query<TProperty> subQuery, SQLPredicateCompare sqlPredicateCompare);
+
+    //endregion
+
+
 //region  value func
 
 
@@ -358,7 +533,7 @@ public interface Filter extends SQLNative<Filter> {
      * @param property
      * @return
      */
-    default Filter gt(TableAvailable table, String property,TableAvailable tableRight, SQLFunction sqlFunction) {
+    default Filter gt(TableAvailable table, String property, TableAvailable tableRight, SQLFunction sqlFunction) {
         return valueFuncFilter(table, property, tableRight, sqlFunction, SQLPredicateCompareEnum.GT);
     }
 
@@ -370,7 +545,7 @@ public interface Filter extends SQLNative<Filter> {
      * @param property
      * @return
      */
-    default Filter ge(TableAvailable table, String property,TableAvailable tableRight, SQLFunction sqlFunction) {
+    default Filter ge(TableAvailable table, String property, TableAvailable tableRight, SQLFunction sqlFunction) {
         return valueFuncFilter(table, property, tableRight, sqlFunction, SQLPredicateCompareEnum.GE);
     }
 
@@ -382,7 +557,7 @@ public interface Filter extends SQLNative<Filter> {
      * @param property
      * @return
      */
-    default Filter eq(TableAvailable table, String property,TableAvailable tableRight, SQLFunction sqlFunction) {
+    default Filter eq(TableAvailable table, String property, TableAvailable tableRight, SQLFunction sqlFunction) {
         return valueFuncFilter(table, property, tableRight, sqlFunction, SQLPredicateCompareEnum.EQ);
     }
 
@@ -394,7 +569,7 @@ public interface Filter extends SQLNative<Filter> {
      * @param property
      * @return
      */
-    default Filter ne(TableAvailable table, String property,TableAvailable tableRight, SQLFunction sqlFunction) {
+    default Filter ne(TableAvailable table, String property, TableAvailable tableRight, SQLFunction sqlFunction) {
         return valueFuncFilter(table, property, tableRight, sqlFunction, SQLPredicateCompareEnum.NE);
     }
 
@@ -406,7 +581,7 @@ public interface Filter extends SQLNative<Filter> {
      * @param property
      * @return
      */
-    default Filter le(TableAvailable table, String property,TableAvailable tableRight, SQLFunction sqlFunction) {
+    default Filter le(TableAvailable table, String property, TableAvailable tableRight, SQLFunction sqlFunction) {
         return valueFuncFilter(table, property, tableRight, sqlFunction, SQLPredicateCompareEnum.LE);
     }
 
@@ -418,11 +593,11 @@ public interface Filter extends SQLNative<Filter> {
      * @param sqlFunction
      * @return
      */
-    default Filter lt(TableAvailable table, String property,TableAvailable tableRight, SQLFunction sqlFunction) {
+    default Filter lt(TableAvailable table, String property, TableAvailable tableRight, SQLFunction sqlFunction) {
         return valueFuncFilter(table, property, tableRight, sqlFunction, SQLPredicateCompareEnum.LT);
     }
 
-    Filter valueFuncFilter(TableAvailable table, String property,TableAvailable tableRight, SQLFunction sqlFunction, SQLPredicateCompare sqlPredicateCompare);
+    Filter valueFuncFilter(TableAvailable table, String property, TableAvailable tableRight, SQLFunction sqlFunction, SQLPredicateCompare sqlPredicateCompare);
 
     //endregion
 
@@ -439,7 +614,7 @@ public interface Filter extends SQLNative<Filter> {
      * @return
      */
     default Filter gt(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight) {
-        return funcColumnFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.GT);
+        return funcColumnFuncFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.GT);
     }
 
     /**
@@ -452,7 +627,7 @@ public interface Filter extends SQLNative<Filter> {
      * @return
      */
     default Filter ge(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight) {
-        return funcColumnFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.GE);
+        return funcColumnFuncFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.GE);
     }
 
     /**
@@ -465,7 +640,7 @@ public interface Filter extends SQLNative<Filter> {
      * @return
      */
     default Filter eq(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight) {
-        return funcColumnFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.EQ);
+        return funcColumnFuncFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.EQ);
     }
 
     /**
@@ -478,7 +653,7 @@ public interface Filter extends SQLNative<Filter> {
      * @return
      */
     default Filter ne(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight) {
-        return funcColumnFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.NE);
+        return funcColumnFuncFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.NE);
     }
 
     /**
@@ -491,7 +666,7 @@ public interface Filter extends SQLNative<Filter> {
      * @return
      */
     default Filter le(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight) {
-        return funcColumnFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.LE);
+        return funcColumnFuncFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.LE);
     }
 
     /**
@@ -504,10 +679,10 @@ public interface Filter extends SQLNative<Filter> {
      * @return
      */
     default Filter lt(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight) {
-        return funcColumnFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.LT);
+        return funcColumnFuncFilter(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, SQLPredicateCompareEnum.LT);
     }
 
-    Filter funcColumnFilter(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight, SQLPredicateCompare sqlPredicateCompare);
+    Filter funcColumnFuncFilter(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight, SQLPredicateCompare sqlPredicateCompare);
 
 
     //endregion
@@ -521,5 +696,6 @@ public interface Filter extends SQLNative<Filter> {
 
 
     Filter or(SQLExpression1<Filter> sqlWherePredicateSQLExpression);
+
     Filter create();
 }

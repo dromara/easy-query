@@ -65,11 +65,11 @@ public interface SQLSelectExpression extends TablePropColumn, DSLUpdateSet {
         });
     }
 
-    default SQLSelectExpression concat(SQLSelectExpression... sqlSelectAses) {
-        return concat(true, sqlSelectAses);
+    default SQLSelectExpression _concat(SQLSelectExpression... sqlSelectAses) {
+        return _concat(true, sqlSelectAses);
     }
 
-    default SQLSelectExpression concat(boolean condition, SQLSelectExpression... sqlSelectAs) {
+    default SQLSelectExpression _concat(boolean condition, SQLSelectExpression... sqlSelectAs) {
         if (condition) {
             SQLSelectExpression expression = Select.of(sqlSelectAs);
             return new SQLSelectImpl(x -> {

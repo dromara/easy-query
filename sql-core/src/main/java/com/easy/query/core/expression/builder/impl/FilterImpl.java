@@ -238,8 +238,9 @@ public class FilterImpl implements Filter {
     }
 
     private <TProperty> void subQueryFilter0(TableAvailable table, String property, Query<TProperty> subQueryable, SQLPredicateCompare sqlPredicateCompare) {
-        extract(subQueryable);
-        nextPredicateSegment.setPredicate(new ColumnInSubQueryPredicate(table, property, subQueryable, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
+        Query<TProperty> tPropertyQuery = subQueryable.cloneQueryable();
+        extract(tPropertyQuery);
+        nextPredicateSegment.setPredicate(new ColumnInSubQueryPredicate(table, property, tPropertyQuery, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
         next();
     }
     private void funcValueFilter0(TableAvailable table, SQLFunction sqlFunction, Object val, SQLPredicateCompare sqlPredicateCompare) {
@@ -251,6 +252,24 @@ public class FilterImpl implements Filter {
         nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment+" "+predicateCompare.getSQL()+" {"+sqlFunction.paramMarks()+"}", sqlNativeExpressionContext));
         next();
     }
+    private void funcColumnFilter0(TableAvailable table1, SQLFunction sqlFunction, TableAvailable table2,String property, SQLPredicateCompare sqlPredicateCompare) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table1,sqlNativeExpressionContext));
+        SQLPredicateCompare predicateCompare = getReallyPredicateCompare(sqlPredicateCompare);
+        String sqlSegment = sqlFunction.sqlSegment(table1);
+        sqlNativeExpressionContext.expression(table2,property);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment+" "+predicateCompare.getSQL()+" {"+sqlFunction.paramMarks()+"}", sqlNativeExpressionContext));
+        next();
+    }
+    private <TProperty> void funcSubQueryFilter0(TableAvailable table1, SQLFunction sqlFunction, Query<TProperty> subQuery, SQLPredicateCompare sqlPredicateCompare) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table1,sqlNativeExpressionContext));
+        SQLPredicateCompare predicateCompare = getReallyPredicateCompare(sqlPredicateCompare);
+        String sqlSegment = sqlFunction.sqlSegment(table1);
+        sqlNativeExpressionContext.expression(subQuery.cloneQueryable());
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment+" "+predicateCompare.getSQL()+" ({"+sqlFunction.paramMarks()+"})", sqlNativeExpressionContext));
+        next();
+    }
     private void valueFuncFilter0(TableAvailable table,String property,TableAvailable tableRight, SQLFunction sqlFunction, SQLPredicateCompare sqlPredicateCompare) {
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,sqlNativeExpressionContext));
@@ -260,7 +279,7 @@ public class FilterImpl implements Filter {
         nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, " {"+sqlFunction.paramMarks()+"} "+predicateCompare.getSQL()+" "+sqlSegment, sqlNativeExpressionContext));
         next();
     }
-    private void funcColumnFilter0(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight, SQLPredicateCompare sqlPredicateCompare) {
+    private void funcColumnFuncFilter0(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight, SQLPredicateCompare sqlPredicateCompare) {
         SQLNativeExpressionContextImpl sqlNativeExpressionContextLeft = new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
         sqlFunctionLeft.consume(new SQLNativeChainExpressionContextImpl(tableLeft,sqlNativeExpressionContextLeft));
         String sqlSegmentLeft = sqlFunctionLeft.sqlSegment(tableLeft);
@@ -371,14 +390,26 @@ public class FilterImpl implements Filter {
     }
 
     @Override
+    public Filter funcColumnFilter(TableAvailable table1, SQLFunction sqlFunction, TableAvailable table2, String property, SQLPredicateCompare sqlPredicateCompare) {
+        funcColumnFilter0(table1,sqlFunction,table2,property,sqlPredicateCompare);
+        return this;
+    }
+
+    @Override
+    public <TProperty> Filter funcSubQueryFilter(TableAvailable table, SQLFunction sqlFunction, Query<TProperty> subQuery, SQLPredicateCompare sqlPredicateCompare) {
+        funcSubQueryFilter0(table,sqlFunction,subQuery,sqlPredicateCompare);
+        return this;
+    }
+
+    @Override
     public Filter valueFuncFilter(TableAvailable table, String property,TableAvailable tableRight, SQLFunction sqlFunction, SQLPredicateCompare sqlPredicateCompare) {
         valueFuncFilter0(table,property,tableRight,sqlFunction,sqlPredicateCompare);
         return this;
     }
 
     @Override
-    public Filter funcColumnFilter(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight, SQLPredicateCompare sqlPredicateCompare) {
-        funcColumnFilter0(tableLeft,sqlFunctionLeft,tableRight,sqlFunctionRight,sqlPredicateCompare);
+    public Filter funcColumnFuncFilter(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight, SQLPredicateCompare sqlPredicateCompare) {
+        funcColumnFuncFilter0(tableLeft,sqlFunctionLeft,tableRight,sqlFunctionRight,sqlPredicateCompare);
         return this;
     }
 

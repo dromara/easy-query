@@ -33,7 +33,7 @@ public class Select {
         if (EasyArrayUtil.isNotEmpty(selects)) {
             SQLSelectExpression firstSQLSelectAs = selects[0];
             for (int i = 1; i < selects.length; i++) {
-                firstSQLSelectAs = firstSQLSelectAs.concat(selects[i]);
+                firstSQLSelectAs = firstSQLSelectAs._concat(selects[i]);
             }
             return firstSQLSelectAs;
         }

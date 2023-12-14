@@ -73,12 +73,6 @@ public class DocTest extends BaseTest {
 
         }
         {
-// .like(sysUserTable.name(), sysUserQueryRequest.getName())
-//                .like(sysUserTable.account(), sysUserQueryRequest.getAccount())
-//                .like(sysUserTable.phone(), sysUserQueryRequest.getPhone())
-//                .like(sysUserTable.departName(), sysUserQueryRequest.getDepartName())
-//                .rangeClosed(sysUserTable.createTime(), sysUserQueryRequest.getCreateTimeBegin(), sysUserQueryRequest.getCreateTimeEnd())
-
 
             Supplier<Exception> f = () -> {
                 try {
@@ -160,6 +154,76 @@ public class DocTest extends BaseTest {
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
             Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ?", easyQuerySQLStatementException.getSQL());
+
+        }
+    }
+
+
+    @Test
+    public void test2(){
+
+        {
+
+            Supplier<Exception> f = () -> {
+                try {
+                    List<SysUser> users = entityQuery.queryable(SysUser.class)
+                            .asTable("a222")
+                            .where(o->{
+                                o.id().eq("1");
+                                o.id().eq(false,"1");//true/false表示是否使用该条件默认true
+                                o.id().like("123");
+                                o.id().like(false,"123");
+                            })
+                            .groupBy(o->o.id())
+//                            .groupBy(o->o.id().then(o.name()))
+//                            .groupBy(o->{
+//                                return o.id().then(o.name());
+//                            })
+//                            .groupBy(o->o.FETCHER.id().name())
+                            .select(o->o.id().concat(o.id().count().as(o.phone())))
+                            .toList();
+                } catch (Exception ex) {
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+            Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `phone` FROM `a222` t WHERE t.`id` = ? AND t.`id` LIKE ? GROUP BY t.`id`", easyQuerySQLStatementException.getSQL());
+
+        }
+
+        {
+
+            Supplier<Exception> f = () -> {
+                try {
+                    List<SysUser> users = entityQuery.queryable(SysUser.class)
+                            .asTable("a222")
+                            .where(o->{
+                                o.id().eq("1");
+                                o.id().eq(o.createTime().dateTimeFormat("yyyy-MM-dd"));
+                                o.createTime().dateTimeFormat("yyyy-MM-dd").eq("2023-01-02");
+                                o.name().nullDefault("unknown").like("123");
+                                o.phone().isNotBank();
+                            })
+                            .select(o->o.FETCHER.id().name().phone().departName())
+                            .toList();
+                } catch (Exception ex) {
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`depart_name` FROM `a222` t WHERE t.`id` = ? AND  t.`id` = DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') = ? AND IFNULL(t.`name`,?) LIKE ? AND (t.`phone` IS NOT NULL AND t.`phone` <> '' AND LTRIM(t.`phone`) <> '')", easyQuerySQLStatementException.getSQL());
 
         }
     }

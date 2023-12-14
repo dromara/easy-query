@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.builder.impl;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.AggregateFilter;
@@ -62,6 +63,28 @@ public class AggregateFilterImpl implements AggregateFilter {
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,sqlNativeExpressionContext));
         String sqlSegment = sqlFunction.sqlSegment(table);
         sqlNativeExpressionContext.value(val);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment+" "+compare.getSQL()+" {"+sqlFunction.paramMarks()+"}", sqlNativeExpressionContext));
+        nextAnd();
+        return this;
+    }
+
+    @Override
+    public AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, TableAvailable table2, String property) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(),runtimeContext);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,sqlNativeExpressionContext));
+        String sqlSegment = sqlFunction.sqlSegment(table);
+        sqlNativeExpressionContext.expression(table2,property);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment+" "+compare.getSQL()+" {"+sqlFunction.paramMarks()+"}", sqlNativeExpressionContext));
+        nextAnd();
+        return this;
+    }
+
+    @Override
+    public <TProperty> AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, Query<TProperty> subQuery) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(),runtimeContext);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,sqlNativeExpressionContext));
+        String sqlSegment = sqlFunction.sqlSegment(table);
+        sqlNativeExpressionContext.expression(subQuery);
         nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment+" "+compare.getSQL()+" {"+sqlFunction.paramMarks()+"}", sqlNativeExpressionContext));
         nextAnd();
         return this;

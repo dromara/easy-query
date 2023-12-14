@@ -1,14 +1,15 @@
 package com.easy.query.core.proxy.extension;
 
-import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
-import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
+import com.easy.query.core.proxy.predicate.aggregate.DSLFunctionAggregatePredicate;
+import com.easy.query.core.proxy.predicate.aggregate.DSLLikeAggregatePredicate;
+import com.easy.query.core.proxy.predicate.aggregate.DSLOtherAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAssertPredicate;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSubQueryAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLValueAggregatePredicate;
 
 /**
@@ -19,6 +20,10 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLValueAggregatePredicate;
  */
 public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpression<T>, SQLOrderByExpression,
         DSLValueAggregatePredicate<T> ,
+        DSLLikeAggregatePredicate<T>,
+        DSLFunctionAggregatePredicate<T>,
+        DSLOtherAggregatePredicate<T>,
+        DSLSubQueryAggregatePredicate<T>,
         DSLSQLFunctionAssertPredicate<T> {
     @Override
     default SQLSelectAsExpression as(TablePropColumn propColumn) {
@@ -37,64 +42,32 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
             throw new UnsupportedOperationException();
         });
     }
-
-    @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void ge(boolean condition, T1 column) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                f.ge(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-            }));
-        }
-    }
-
-    @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void gt(boolean condition, T1 column) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                f.gt(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-            }));
-        }
-    }
-
-    @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void eq(boolean condition, T1 column) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                f.eq(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-            }));
-        }
-    }
-
-    @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void ne(boolean condition, T1 column) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                f.ne(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-            }));
-        }
-    }
-
-    @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void le(boolean condition, T1 column) {
-        if (condition) {
-           getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-               SQLFunc fx = f.getRuntimeContext().fx();
-               f.le(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-           }));
-        }
-    }
-
-    @Override
-    default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void lt(boolean condition, T1 column) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                f.lt(this.getTable(), func().apply(fx), column.getTable(), column.func().apply(fx));
-            }));
-        }
-    }
+//
+//    @Override
+//    default void in(boolean condition, Collection<? extends T> collection) {
+//        if (condition) {
+//            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+//                SQLFunc fx = f.getRuntimeContext().fx();
+//                f.ge(this.getTable(), func().apply(fx), subQuery);
+//            }, f -> {
+//                SQLFunc fx = f.getRuntimeContext().fx();
+//                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.GE,subQuery);
+//            }));
+//        }
+//    }
+//
+//    @Override
+//    default void in(boolean condition, T[] array) {
+//        ColumnComparableExpression.super.in(condition, array);
+//    }
+//
+//    @Override
+//    default void notIn(boolean condition, Collection<? extends T> collection) {
+//        ColumnComparableExpression.super.notIn(condition, collection);
+//    }
+//
+//    @Override
+//    default void notIn(boolean condition, T[] array) {
+//        ColumnComparableExpression.super.notIn(condition, array);
+//    }
 }

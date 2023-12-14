@@ -30,6 +30,14 @@ public enum AggregatePredicateCompare implements SQLPredicateCompare {
 
     @Override
     public SQLPredicateCompare toReverse() {
-        return null;
+        switch (this){
+            case EQ:return NE;
+            case NE:return EQ;
+            case GT:return LE;
+            case LE:return GT;
+            case GE:return LT;
+            case LT:return GE;
+        }
+        throw new UnsupportedOperationException();
     }
 }

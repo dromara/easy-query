@@ -11,10 +11,10 @@ import com.easy.query.core.proxy.impl.SQLGroupSelectImpl;
  */
 public interface SQLGroupByExpression extends TablePropColumn {
 
-    default SQLGroupByExpression then(SQLGroupByExpression sqlGroupSelect){
-        return then(true,sqlGroupSelect);
+    default SQLGroupByExpression _thenBy(SQLGroupByExpression sqlGroupSelect){
+        return _thenBy(true,sqlGroupSelect);
     }
-    default SQLGroupByExpression then(boolean condition,SQLGroupByExpression sqlGroupSelect){
+    default SQLGroupByExpression _thenBy(boolean condition, SQLGroupByExpression sqlGroupSelect){
         if(condition){
             return new SQLGroupSelectImpl(x->{
                 accept(x);

@@ -44,9 +44,9 @@ public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredi
     public String toSQL(ToSQLContext toSQLContext) {
         if (EasyCollectionUtil.isEmpty(collection)) {
             if (SQLPredicateCompareEnum.IN == compare) {
-                return "FALSE";
+                return "1 = 2";//FALSE  oracle等数据库不支持
             } else if (SQLPredicateCompareEnum.NOT_IN == compare) {
-                return "TRUE";
+                return "1 = 1";//TRUE  oracle等数据库不支持
             } else {
                 throw new UnsupportedOperationException();
             }

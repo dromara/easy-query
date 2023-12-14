@@ -18,7 +18,7 @@ public class GroupBy {
         if(EasyArrayUtil.isNotEmpty(groupByExpressions)){
             SQLGroupByExpression firstGroupByExpression = groupByExpressions[0];
             for (int i = 1; i < groupByExpressions.length; i++) {
-                firstGroupByExpression = firstGroupByExpression.then(groupByExpressions[i]);
+                firstGroupByExpression = firstGroupByExpression._thenBy(groupByExpressions[i]);
             }
             return firstGroupByExpression;
         }
