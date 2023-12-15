@@ -8,9 +8,11 @@ import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLFunctionAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLLikeAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLOtherAggregatePredicate;
+import com.easy.query.core.proxy.predicate.aggregate.DSLRangeAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAssertPredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSubQueryAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLValueAggregatePredicate;
+import com.easy.query.core.proxy.predicate.aggregate.DSLValuesAggregatePredicate;
 
 /**
  * create time 2023/12/3 09:49
@@ -24,6 +26,8 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
         DSLFunctionAggregatePredicate<T>,
         DSLOtherAggregatePredicate<T>,
         DSLSubQueryAggregatePredicate<T>,
+        DSLValuesAggregatePredicate<T>,
+        DSLRangeAggregatePredicate<T>,
         DSLSQLFunctionAssertPredicate<T> {
     @Override
     default SQLSelectAsExpression as(TablePropColumn propColumn) {
@@ -42,32 +46,4 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
             throw new UnsupportedOperationException();
         });
     }
-//
-//    @Override
-//    default void in(boolean condition, Collection<? extends T> collection) {
-//        if (condition) {
-//            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
-//                SQLFunc fx = f.getRuntimeContext().fx();
-//                f.ge(this.getTable(), func().apply(fx), subQuery);
-//            }, f -> {
-//                SQLFunc fx = f.getRuntimeContext().fx();
-//                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.GE,subQuery);
-//            }));
-//        }
-//    }
-//
-//    @Override
-//    default void in(boolean condition, T[] array) {
-//        ColumnComparableExpression.super.in(condition, array);
-//    }
-//
-//    @Override
-//    default void notIn(boolean condition, Collection<? extends T> collection) {
-//        ColumnComparableExpression.super.notIn(condition, collection);
-//    }
-//
-//    @Override
-//    default void notIn(boolean condition, T[] array) {
-//        ColumnComparableExpression.super.notIn(condition, array);
-//    }
 }

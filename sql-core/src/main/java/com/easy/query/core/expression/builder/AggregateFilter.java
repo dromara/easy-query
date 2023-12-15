@@ -9,6 +9,9 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunction;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
  * create time 2023/6/23 14:07
  * 文件说明
@@ -22,6 +25,10 @@ public interface AggregateFilter extends SQLNative<AggregateFilter> {
     AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, Object val);
     AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, TableAvailable table2,String property);
     <TProperty> AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, Query<TProperty> subQuery);
+    <TProperty> AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, Collection<TProperty> collections);
+    default <TProperty> AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, TProperty[] arrays){
+        return func(table,sqlFunction,compare, Arrays.asList(arrays));
+    }
 
 
     AggregateFilter and();

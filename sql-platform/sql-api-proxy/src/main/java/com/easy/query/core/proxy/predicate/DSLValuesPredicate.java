@@ -17,36 +17,36 @@ public interface DSLValuesPredicate<TProperty> extends TablePropColumn, EntitySQ
          in(true, collection);
     }
 
-    default void in(boolean condition, Collection<? extends TProperty> collection){
+    default void in(boolean condition, Collection<? extends TProperty> collections){
         if(condition){
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), collection)));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), collections)));
         }
     }
-    default void in(TProperty[] array) {
-         in(true, array);
+    default void in(TProperty[] arrays) {
+         in(true, arrays);
     }
 
-    default void in(boolean condition, TProperty[] array){
+    default void in(boolean condition, TProperty[] arrays){
         if(condition){
-           getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), array)));
+           getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), arrays)));
         }
     }
-    default void notIn(Collection<? extends TProperty> collection) {
-         notIn(true, collection);
+    default void notIn(Collection<? extends TProperty> collections) {
+         notIn(true, collections);
     }
 
-    default void notIn(boolean condition, Collection<? extends TProperty> collection){
+    default void notIn(boolean condition, Collection<? extends TProperty> collections){
         if(condition){
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), collection)));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), collections)));
         }
     }
-    default void notIn(TProperty[] array) {
-         notIn(true, array);
+    default void notIn(TProperty[] arrays) {
+         notIn(true, arrays);
     }
 
-    default void notIn(boolean condition, TProperty[] array){
+    default void notIn(boolean condition, TProperty[] arrays){
         if(condition){
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), array)));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), arrays)));
         }
     }
 }

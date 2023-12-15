@@ -12,6 +12,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunction;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -520,7 +521,13 @@ public interface Filter extends SQLNative<Filter> {
     <TProperty> Filter funcSubQueryFilter(TableAvailable table, SQLFunction sqlFunction, Query<TProperty> subQuery, SQLPredicateCompare sqlPredicateCompare);
 
     //endregion
+// regin func in
 
+    <TProperty> Filter funcInFilter(TableAvailable table, SQLFunction sqlFunction, Collection<TProperty> collections, SQLPredicateCompare sqlPredicateCompare);
+    default <TProperty> Filter funcInFilter(TableAvailable table, SQLFunction sqlFunction, TProperty[] arrays, SQLPredicateCompare sqlPredicateCompare){
+        return funcInFilter(table,sqlFunction, Arrays.asList(arrays),sqlPredicateCompare);
+    }
+    //endregion
 
 //region  value func
 

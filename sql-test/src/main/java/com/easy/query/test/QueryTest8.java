@@ -1080,5 +1080,17 @@ public class QueryTest8 extends BaseTest {
                 .select(TopicMisDTOProxy.createTable(), o -> o.column(o.t().id()).column(o.t().stars()).columnAs(o.t().title(),o.tr().title1()).column(o.t().createTime()))
                 .toList();
     }
+    @Test
+     public void testNativeSql(){
+        List<BlogEntity> list1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> {
+                    o.sqlNativeSegment("date_format({0},''%y%m%d'') <= date_format({1},''%y%m%d'')", c -> {
+                        c
+                                //.keepStyle()
+                                .expression(BlogEntity::getPublishTime).value("2023-01-01 00:00:00");
+                    });
+                }).toList();
+        System.out.println("111");
+    }
 
 }

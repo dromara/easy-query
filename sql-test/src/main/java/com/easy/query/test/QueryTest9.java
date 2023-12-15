@@ -953,5 +953,31 @@ public class QueryTest9 extends BaseTest {
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+    @Test
+    public void testQuery8() {
+        List<String> ids = Collections.emptyList();
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+                .where(o -> {
+
+                    o.id().in(ids);
+                    o.id().notIn(ids);
+                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeClosed("2023-01-02","2023-01-03");
+                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeClosed(false,"2023-01-02",false,"2023-01-03");
+                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeOpen("2023-01-04","2023-01-06");
+                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeOpen(false,"2023-01-04",false,"2023-01-06");
+                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeOpenClosed("2023-01-07","2023-01-08");
+                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeOpenClosed(false,"2023-01-07",false,"2023-01-08");
+                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeClosedOpen("2023-01-09","2023-01-10");
+                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeClosedOpen(false,"2023-01-09",false,"2023-01-10");
+                })
+                .select(o->o.FETCHER.allFieldsExclude(o.title(),o.top())).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND 1 = 2 AND 1 = 1 AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') >= ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') <= ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') > ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') < ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') > ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') <= ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') >= ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2023-01-02(String),2023-01-03(String),2023-01-04(String),2023-01-06(String),2023-01-07(String),2023-01-08(String),2023-01-09(String),2023-01-10(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 
 }
