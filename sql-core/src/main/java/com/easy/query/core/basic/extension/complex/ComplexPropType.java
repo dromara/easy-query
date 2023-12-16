@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
  */
 public interface ComplexPropType {
     /**
-     * 请使用接口complexType
+     * 原先为getComplexType后改为complexType
      * 因为get接口会导致json序列化的时候将其生成为json属性
      * @return
      */

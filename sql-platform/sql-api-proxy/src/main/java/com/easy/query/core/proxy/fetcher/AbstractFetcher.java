@@ -18,7 +18,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy, TEntity>, TEntity, TChain extends AbstractFetcher<TProxy, TEntity, TChain>> implements Fetcher<TProxy, TEntity, TChain> {
+public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy, TEntity>, TEntity, TChain extends AbstractFetcher<TProxy, TEntity, TChain>> implements EntityFetcher<TProxy, TEntity, TChain> {
 
 
     private final TProxy tProxy;

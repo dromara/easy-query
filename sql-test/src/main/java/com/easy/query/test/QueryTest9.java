@@ -685,6 +685,7 @@ public class QueryTest9 extends BaseTest {
                                 c.expression(o.stars()).expression(o.createTime());
                             });
                         });
+
                         o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/02");
                         o.id().nullDefault("yyyy/MM/dd2").eq("xxx1");
                     })

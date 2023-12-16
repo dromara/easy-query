@@ -5,6 +5,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.proxy.Fetcher;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.sql.GroupBy;
 import com.easy.query.core.proxy.sql.Select;
@@ -515,7 +516,31 @@ public class DocTest extends BaseTest {
             Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
+        {
 
-
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Topic> list = entityQuery.queryable(Topic.class)
+                    .where(o -> {
+                        o.title().like("123");
+                        o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
+                    })
+                    .orderBy(o -> {
+                        o.id().asc();
+                        o.createTime().desc();
+                    })
+                    .select(o -> {
+                        Fetcher fetcher = Select.createFetcher();
+                        fetcher.fetch(o.id(), o.title());
+                        fetcher.fetch(o.stars().as(o.stars()));
+                        return fetcher;
+                    })
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`title`,t.`stars` AS `stars` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? ORDER BY t.`id` ASC,t.`create_time` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
     }
 }

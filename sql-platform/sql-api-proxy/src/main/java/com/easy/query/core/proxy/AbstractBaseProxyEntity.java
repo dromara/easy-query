@@ -25,5 +25,4 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         return new SQLNavigateColumnImpl<>(entitySQLContext,table, property,clazz);
     }
 
-
 }

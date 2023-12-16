@@ -15,7 +15,7 @@ import java.util.Collections;
  *
  * @author xuejiaming
  */
-public interface Fetcher<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TChain extends Fetcher<TProxy, TEntity, TChain>> extends SQLSelectAsExpression {//SQLFetcherExpression {
+public interface EntityFetcher<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TChain extends EntityFetcher<TProxy, TEntity, TChain>> extends SQLSelectAsExpression {//SQLFetcherExpression {
     TProxy getProxy();
 
     TChain allFields();

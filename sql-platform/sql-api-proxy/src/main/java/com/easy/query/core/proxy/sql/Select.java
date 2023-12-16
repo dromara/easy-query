@@ -3,10 +3,12 @@ package com.easy.query.core.proxy.sql;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.proxy.ColumnFetcher;
+import com.easy.query.core.proxy.Fetcher;
 import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectGroupKeyAsImpl;
@@ -25,11 +27,15 @@ import com.easy.query.core.util.EasyArrayUtil;
  */
 public class Select {
 
+    public static Fetcher createFetcher() {
+        return new ColumnFetcher();
+    }
+
     public static SQLSelectExpression of(boolean condition,SQLSelectExpression... selects){
         if (condition) {
             return of(selects);
         }
-        return SQLSelectAsExpression.empty;
+        return SQLSelectExpression.empty;
     }
 
     public static SQLSelectExpression of(SQLSelectExpression... selects){
@@ -40,7 +46,7 @@ public class Select {
             }
             return firstSQLSelectAs;
         }
-        return SQLSelectAsExpression.empty;
+        return SQLSelectExpression.empty;
     }
     public static SQLSelectAsExpression of(SQLSelectAsExpression... selectAss){
 
