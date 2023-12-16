@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.builder.core;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
@@ -14,7 +15,7 @@ public class AnyValueFilter implements ValueFilter {
 
     }
     @Override
-    public boolean accept(TableAvailable table, String property, Object value) {
+    public boolean accept(@NotNull TableAvailable table,@NotNull String property, Object value) {
         return true;
     }
 }

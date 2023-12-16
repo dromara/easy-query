@@ -27,7 +27,7 @@ public class ColumnTrueOrFalsePredicate implements Predicate{
     }
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        return trueOrFalse?" 1 = 1 ":" 1 = 2 ";
+        return trueOrFalse?"1 = 1":"1 = 2";
     }
 
     @Override

@@ -9,7 +9,7 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLFunctionAggregatePredica
 import com.easy.query.core.proxy.predicate.aggregate.DSLLikeAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLOtherAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLRangeAggregatePredicate;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAssertPredicate;
+import com.easy.query.core.proxy.predicate.aggregate.DSLAssertAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSubQueryAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLValueAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLValuesAggregatePredicate;
@@ -28,7 +28,7 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
         DSLSubQueryAggregatePredicate<T>,
         DSLValuesAggregatePredicate<T>,
         DSLRangeAggregatePredicate<T>,
-        DSLSQLFunctionAssertPredicate<T> {
+        DSLAssertAggregatePredicate<T> {
     @Override
     default SQLSelectAsExpression as(TablePropColumn propColumn) {
         return as(propColumn.getValue());
@@ -46,4 +46,5 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
             throw new UnsupportedOperationException();
         });
     }
+
 }
