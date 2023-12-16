@@ -1,10 +1,13 @@
 package com.easy.query.core.proxy.sql;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectGroupKeyAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectImpl;
@@ -44,11 +47,21 @@ public class Select {
         if (EasyArrayUtil.isNotEmpty(selectAss)) {
             SQLSelectAsExpression firstSQLSelectAs = selectAss[0];
             for (int i = 1; i < selectAss.length; i++) {
-                firstSQLSelectAs = firstSQLSelectAs.concat(selectAss[i]);
+                firstSQLSelectAs = firstSQLSelectAs._concat(selectAss[i]);
             }
             return firstSQLSelectAs;
         }
         return SQLSelectAsExpression.empty;
+    }
+
+    public static <TSubQuery> SQLSelectAsExpression subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, TablePropColumn propColumn){
+        return new SQLSelectAsImpl(s->{
+            throw new UnsupportedOperationException();
+        },s->{
+            s.columnSubQueryAs(subQueryableFunc,propColumn.getValue());
+        },s->{
+            throw new UnsupportedOperationException();
+        });
     }
 
 

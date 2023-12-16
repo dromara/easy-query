@@ -56,7 +56,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      */
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR,TRProxy>> EntityQueryable<TRProxy, TR> select(Class<TR> resultEntityClass, SQLFuncExpression2<T1Proxy,TRProxy, SQLSelectAsExpression> selectExpression);
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxy(TRProxy trProxy);
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxy(TRProxy trProxy, SQLFuncExpression1<T1Proxy,SQLSelectAsExpression> selectExpression);
+    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(TRProxy trProxy, SQLFuncExpression1<T1Proxy,SQLSelectAsExpression> selectExpression);
 
     default EntityQueryable<T1Proxy, T1> select(ColumnSegment columnSegment, boolean clearAll) {
         return select(Collections.singletonList(columnSegment), clearAll);

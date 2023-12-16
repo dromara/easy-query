@@ -15,10 +15,10 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByExpression {
-    default SQLSelectAsExpression concat(SQLSelectAsExpression... sqlSelectAses) {
-        return concat(true,sqlSelectAses);
+    default SQLSelectAsExpression _concat(SQLSelectAsExpression... sqlSelectAses) {
+        return _concat(true,sqlSelectAses);
     }
-    default SQLSelectAsExpression concat(boolean condition, SQLSelectAsExpression... sqlSelectAs) {
+    default SQLSelectAsExpression _concat(boolean condition, SQLSelectAsExpression... sqlSelectAs) {
         if(condition){
 
             SQLSelectAsExpression expression = Select.of(sqlSelectAs);
