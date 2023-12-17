@@ -4,7 +4,9 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Encryption;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
+import com.easy.query.test.entity.proxy.SysUserProxy;
 import lombok.Data;
 
 /**
@@ -16,7 +18,7 @@ import lombok.Data;
 @Data
 @Table(value = "t_sys_user",schema = "easy-query-test",ignoreProperties = {"updateTime","createBy","updateBy","deleted"})
 @EntityProxy
-public class SysUser extends BaseEntity{
+public class SysUser extends BaseEntity implements ProxyEntityAvailable<SysUser , SysUserProxy> {
     private String username;
     @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)
     private String phone;
@@ -25,6 +27,11 @@ public class SysUser extends BaseEntity{
     @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)
     @Column(large = true)
     private String address;
+
+    @Override
+    public Class<SysUserProxy> proxyTableClass() {
+        return SysUserProxy.class;
+    }
 }
 
 //    id varchar(32) not null comment '主键ID'primary key,
