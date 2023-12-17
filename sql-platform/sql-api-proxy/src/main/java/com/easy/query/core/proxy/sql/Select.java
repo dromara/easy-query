@@ -60,7 +60,7 @@ public class Select {
         return SQLSelectAsExpression.empty;
     }
 
-    public static <TSubQuery> SQLSelectAsExpression subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, TablePropColumn propColumn){
+    public static <TSubQuery> SQLSelectAsExpression subQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, TablePropColumn propColumn){
         return new SQLSelectAsImpl(s->{
             throw new UnsupportedOperationException();
         },s->{
