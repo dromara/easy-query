@@ -15,6 +15,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnTrueOrFalsePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredicateImpl;
+import com.easy.query.core.expression.segment.condition.predicate.SQLNativesPredicateImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -68,6 +69,22 @@ public class AggregateFilterImpl implements AggregateFilter {
         String sqlSegment = sqlFunction.sqlSegment(table);
         sqlNativeExpressionContext.value(val);
         nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment + " " + compare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
+        nextAnd();
+        return this;
+    }
+
+    @Override
+    public AggregateFilter func(TableAvailable table1, SQLFunction sqlFunction1, SQLPredicateCompare compare, TableAvailable table2,SQLFunction sqlFunction2) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContextLeft = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(), runtimeContext);
+        sqlFunction1.consume(new SQLNativeChainExpressionContextImpl(table1, sqlNativeExpressionContextLeft));
+        String sqlSegmentLeft = sqlFunction1.sqlSegment(table1);
+        SQLNativePredicateImpl sqlNativePredicateLeft = new SQLNativePredicateImpl(runtimeContext, sqlSegmentLeft, sqlNativeExpressionContextLeft);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContextRight = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(), runtimeContext);
+        sqlFunction2.consume(new SQLNativeChainExpressionContextImpl(table2, sqlNativeExpressionContextRight));
+        String sqlSegmentRight = sqlFunction2.sqlSegment(table2);
+        SQLNativePredicateImpl sqlNativePredicateRight = new SQLNativePredicateImpl(runtimeContext, sqlSegmentRight, sqlNativeExpressionContextRight);
+
+        nextPredicateSegment.setPredicate(new SQLNativesPredicateImpl(runtimeContext, sqlNativePredicateLeft, compare, sqlNativePredicateRight));
         nextAnd();
         return this;
     }

@@ -1215,8 +1215,161 @@ public class QueryTest9 extends BaseTest {
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id`,t.`content`,t.`create_time`,t2.`stars` FROM `t_blog` t LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` AND t2.`title` LIKE ? WHERE t.`deleted` = ? AND 1 = 2 AND EXISTS (SELECT 1 FROM `t_topic` t1 WHERE t1.`id` = t.`id` AND 1 = 2)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%123%(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`id`,t.`content`,t.`create_time`,t2.`stars` FROM `t_blog` t LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` AND t2.`title` LIKE ? WHERE t.`deleted` = ? AND 1 = 2 AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? AND EXISTS (SELECT 1 FROM `t_topic` t1 WHERE t1.`id` = t.`id` AND 1 = 2)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%123%(String),false(Boolean),123%(String),123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+                    .where(o -> {
+                        o.id().eq("123");
+                        o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchLeft("123");
+                        o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchRight("123");
+                    })
+                    .where(o -> {
+                        o.title().like("你好");
+                    })
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` = ? AND DATE_FORMAT(`create_time`,'%Y-%m-%d') LIKE ? AND DATE_FORMAT(`create_time`,'%Y-%m-%d') LIKE ? AND `title` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),123(String),123%(String),123%(String),%你好%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+
+    @Test
+    public void test2(){
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+                    .where(o -> {
+                        o.id().eq("123");
+                    }).groupBy(o->o.id())
+                    .having(o->{
+                        o.id().max().like("1");
+                        o.id().max().like(false,"2");
+                        o.id().max().likeMatchLeft("3");
+                        o.id().max().likeMatchLeft(false,"4");
+                        o.id().max().likeMatchRight("5");
+                        o.id().max().likeMatchRight(false,"6");
+
+
+
+                        o.id().max().notLike("1");
+                        o.id().max().notLike(false,"2");
+                        o.id().max().notLikeMatchLeft("3");
+                        o.id().max().notLikeMatchLeft(false,"4");
+                        o.id().max().notLikeMatchRight("5");
+                        o.id().max().notLikeMatchRight(false,"6");
+                    })
+                    .select(BlogEntity.class,(t,tr)->{
+                        return Select.of(
+                                t.id()
+                        );
+                    })
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` HAVING MAX(t.`id`) LIKE ? AND MAX(t.`id`) LIKE ? AND MAX(t.`id`) LIKE ? AND MAX(t.`id`) NOT LIKE ? AND MAX(t.`id`) NOT LIKE ? AND MAX(t.`id`) NOT LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),123(String),%1%(String),3%(String),%5(String),%1%(String),3%(String),%5(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+
+    @Test
+    public void test3(){
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+                    .where(o -> {
+                        o.id().eq("123");
+                    }).groupBy(o->o.id())
+                    .having(o->{
+                        o.id().max().eq("1");
+                        o.id().max().eq(false,"2");
+                        o.id().max().ge("3");
+                        o.id().max().ge(false,"4");
+                        o.id().max().gt("5");
+                        o.id().max().gt(false,"6");
+
+
+
+                        o.id().max().ne("1");
+                        o.id().max().ne(false,"2");
+                        o.id().max().le("3");
+                        o.id().max().le(false,"4");
+                        o.id().max().lt("5");
+                        o.id().max().lt(false,"6");
+                    })
+                    .select(BlogEntity.class,(t,tr)->{
+                        return Select.of(
+                                t.id()
+                        );
+                    })
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` HAVING MAX(t.`id`) = ? AND MAX(t.`id`) >= ? AND MAX(t.`id`) > ? AND MAX(t.`id`) <> ? AND MAX(t.`id`) <= ? AND MAX(t.`id`) < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),123(String),1(String),3(String),5(String),1(String),3(String),5(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+    @Test
+    public void test4(){
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+                    .where(o -> {
+                        o.id().eq("123");
+                    }).groupBy(o->o.id())
+                    .having(o->{
+                        o.id().max().eq(o.id().min());
+                        o.id().max().eq(false,o.id().min());
+                        o.id().max().ge(o.id().min());
+                        o.id().max().ge(false,o.id().min());
+                        o.id().max().gt(o.id().min());
+                        o.id().max().gt(false,o.id().min());
+
+
+
+                        o.id().max().ne(o.id().min());
+                        o.id().max().ne(false,o.id().min());
+                        o.id().max().le(o.id().min());
+                        o.id().max().le(false,"4");
+                        o.id().max().lt(o.id().min());
+                        o.id().max().lt(false,o.id().min());
+                    })
+                    .select(BlogEntity.class,(t,tr)->{
+                        return Select.of(
+                                t.id()
+                        );
+                    })
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` HAVING MAX(t.`id`) = MIN(t.`id`) AND MAX(t.`id`) >= MIN(t.`id`) AND MAX(t.`id`) > MIN(t.`id`) AND MAX(t.`id`) <> MIN(t.`id`) AND MAX(t.`id`) <= MIN(t.`id`) AND MAX(t.`id`) < MIN(t.`id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),123(String),1(String),3(String),5(String),1(String),3(String),5(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
     }

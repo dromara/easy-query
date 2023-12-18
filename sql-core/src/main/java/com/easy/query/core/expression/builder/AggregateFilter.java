@@ -23,6 +23,7 @@ public interface AggregateFilter extends SQLNative<AggregateFilter> {
 
     AggregateFilter func0(TableAvailable table, ColumnFunction columnFunction, String property, SQLPredicateCompare compare, Object val);
     AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, Object val);
+    AggregateFilter func(TableAvailable table1, SQLFunction sqlFunction1, SQLPredicateCompare compare, TableAvailable table2,SQLFunction sqlFunction2);
     AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, TableAvailable table2,String property);
     AggregateFilter func(TableAvailable table, SQLFunction sqlFunction,SQLPredicateCompare sqlPredicateAssert);
     <TProperty> AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, Query<TProperty> subQuery);

@@ -22,7 +22,7 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLC
         }
     }
     default void likeMatchRight(TProperty val) {
-         likeMatchLeft(true, val);
+        likeMatchRight(true, val);
     }
 
     default void likeMatchRight(boolean condition, TProperty val) {
@@ -49,7 +49,7 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLC
         }
     }
     default void notLikeMatchRight(TProperty val) {
-         notLikeMatchRight(true, val);
+        notLikeMatchRight(true, val);
     }
 
     default void notLikeMatchRight(boolean condition, TProperty val) {
