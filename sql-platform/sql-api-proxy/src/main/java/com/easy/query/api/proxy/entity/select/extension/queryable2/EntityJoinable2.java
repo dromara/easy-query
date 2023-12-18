@@ -36,7 +36,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().leftJoin(joinClass, (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),getRuntimeContext()));
+                on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),get1Proxy().getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), t3Proxy, entityQueryable3);
@@ -56,7 +56,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().rightJoin(joinClass, (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),getRuntimeContext()));
+                on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),get1Proxy().getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), t3Proxy, entityQueryable3);
@@ -77,7 +77,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().innerJoin(joinClass, (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),getRuntimeContext()));
+                on.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),get1Proxy().getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), t3Proxy, entityQueryable3);

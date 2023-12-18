@@ -32,7 +32,7 @@ public interface EntityJoinable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T10Proxy t10Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> entityQueryable10 = getClientQueryable9().leftJoin(joinClass, (t, t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(), () -> {
-                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy(), t10Proxy.create(t9.getTable(),getRuntimeContext()));
+                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy(), t10Proxy.create(t9.getTable(),get1Proxy().getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable10<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy(), t10Proxy, entityQueryable10);
@@ -51,7 +51,7 @@ public interface EntityJoinable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T10Proxy t10Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> entityQueryable10 = getClientQueryable9().rightJoin(joinClass, (t, t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(), () -> {
-                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy(), t10Proxy.create(t9.getTable(),getRuntimeContext()));
+                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy(), t10Proxy.create(t9.getTable(),get1Proxy().getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable10<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy(), t10Proxy, entityQueryable10);
@@ -70,7 +70,7 @@ public interface EntityJoinable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T10Proxy t10Proxy = EntityQueryProxyManager.create(joinClass);
         ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> entityQueryable10 = getClientQueryable9().innerJoin(joinClass, (t, t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(), () -> {
-                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy(), t10Proxy.create(t9.getTable(),getRuntimeContext()));
+                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy(), t10Proxy.create(t9.getTable(),get1Proxy().getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable10<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy(), t10Proxy, entityQueryable10);

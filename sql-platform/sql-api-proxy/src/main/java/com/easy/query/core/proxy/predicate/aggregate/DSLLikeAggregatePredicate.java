@@ -22,6 +22,15 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_RIGHT), SQLPredicateCompareEnum.LIKE);
             }));
+
+
+//            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+//                SQLFunc fx = f.getRuntimeContext().fx();
+//                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_RIGHT), SQLPredicateCompareEnum.LIKE);
+//            },f->{
+//                SQLFunc fx = f.getRuntimeContext().fx();
+//                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.LIKE,EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_RIGHT));
+//            }));
         }
     }
 
