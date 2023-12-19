@@ -4,6 +4,8 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.ValueObject;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.company.proxy.VCTable;
 import lombok.Data;
 import lombok.ToString;
 
@@ -17,7 +19,7 @@ import lombok.ToString;
 @Data
 @ToString
 @EntityProxy(value = "VCTable")
-public class ValueCompany {
+public class ValueCompany implements ProxyEntityAvailable<ValueCompany , VCTable> {
     @Column(primaryKey = true)
     private String id;
     /**
@@ -34,4 +36,9 @@ public class ValueCompany {
      */
     @ValueObject
     private ValueCompanyLicense license;
+
+    @Override
+    public Class<VCTable> proxyTableClass() {
+        return VCTable.class;
+    }
 }

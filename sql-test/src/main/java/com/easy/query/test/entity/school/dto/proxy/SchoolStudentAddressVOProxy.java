@@ -56,7 +56,7 @@ public class SchoolStudentAddressVOProxy extends AbstractProxyEntity < SchoolStu
      * {@link SchoolStudentAddressVO#getSchoolStudent}
      */
     public SQLNavigateColumn < SchoolStudentAddressVOProxy, com.easy.query.test.entity.school.dto.SchoolStudentVO> schoolStudent(){
-    return get("schoolStudent", com.easy.query.test.entity.school.dto.SchoolStudentVO.class);
+    return getNavigate("schoolStudent", com.easy.query.test.entity.school.dto.SchoolStudentVO.class);
 }
 
 

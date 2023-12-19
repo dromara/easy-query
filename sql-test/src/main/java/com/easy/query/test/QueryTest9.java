@@ -8,12 +8,17 @@ import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasyTypeUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.TopicTestProxy;
+import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.h2.vo.QueryVO;
 import com.easy.query.test.listener.ListenerContext;
@@ -904,7 +909,7 @@ public class QueryTest9 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND  t.`id` = DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') = ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`star`,?) >= ? AND IFNULL(t.`star`,?) > ? AND IFNULL(t.`star`,?) <= ? AND IFNULL(t.`star`,?) < ? AND IFNULL(t.`star`,?) = ? AND IFNULL(t.`title`,?) = t.`content` AND (t.`content` IS NOT NULL AND t.`content` <> '' AND LTRIM(t.`content`) <> '') GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`id`) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),1(String),2023-01-02(String),unknown(String),%123%(String),unknown(String),123%(String),unknown(String),123%(String),1(Integer),101(Integer),4(Integer),102(Integer),3(Integer),103(Integer),2(Integer),104(Integer),1(Integer),105(Integer),unknown(String),1(Integer),10(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("false(Boolean),1(String),2023-01-02(String),unknown(String),%123%(String),unknown(String),123%(String),unknown(String),%123(String),1(Integer),101(Integer),4(Integer),102(Integer),3(Integer),103(Integer),2(Integer),104(Integer),1(Integer),105(Integer),unknown(String),1(Integer),10(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
@@ -1123,10 +1128,10 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchLeft("2023");
-                        o.exists(()->{
+                        o.exists(() -> {
                             return entityQuery.queryable(Topic.class)
-                                    .where(x->x.id().eq(o.id()));
-                                });
+                                    .where(x -> x.id().eq(o.id()));
+                        });
                     })
                     .select(o -> {
 
@@ -1151,8 +1156,9 @@ public class QueryTest9 extends BaseTest {
         }
 
     }
+
     @Test
-    public void testLike1(){
+    public void testLike1() {
         {
 
             ListenerContext listenerContext = new ListenerContext();
@@ -1164,17 +1170,17 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().in(tenantIds);
-                        o.exists(()->{
+                        o.exists(() -> {
                             return entityQuery.queryable(Topic.class)
-                                    .where(x->x.id().eq(o.id()))
-                                    .where(x->x.id().in(roleIds));
+                                    .where(x -> x.id().eq(o.id()))
+                                    .where(x -> x.id().in(roleIds));
                         });
                     })
-                    .leftJoin(Topic.class,(t,t1)->{
+                    .leftJoin(Topic.class, (t, t1) -> {
                         t.id().eq(t1.id());
                         t1.title().like("123");
                     })
-                    .select(BlogEntity.class,(t,t1,tr)->Select.of(
+                    .select(BlogEntity.class, (t, t1, tr) -> Select.of(
                             t.FETCHER.id().content().createTime(),
                             t1.stars()
                     ))
@@ -1198,17 +1204,17 @@ public class QueryTest9 extends BaseTest {
                         o.id().in(tenantIds);
                         o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchLeft("123");
                         o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchRight("123");
-                        o.exists(()->{
+                        o.exists(() -> {
                             return entityQuery.queryable(Topic.class)
-                                    .where(x->x.id().eq(o.id()))
-                                    .where(x->x.id().in(roleIds));
+                                    .where(x -> x.id().eq(o.id()))
+                                    .where(x -> x.id().in(roleIds));
                         });
                     })
-                    .leftJoin(Topic.class,(t,t1)->{
+                    .leftJoin(Topic.class, (t, t1) -> {
                         t.id().eq(t1.id());
                         t1.title().like("123");
                     })
-                    .select(BlogEntity.class,(t,t1,tr)->Select.of(
+                    .select(BlogEntity.class, (t, t1, tr) -> Select.of(
                             t.FETCHER.id().content().createTime(),
                             t1.stars()
                     ))
@@ -1216,7 +1222,7 @@ public class QueryTest9 extends BaseTest {
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t.`content`,t.`create_time`,t2.`stars` FROM `t_blog` t LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` AND t2.`title` LIKE ? WHERE t.`deleted` = ? AND 1 = 2 AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? AND EXISTS (SELECT 1 FROM `t_topic` t1 WHERE t1.`id` = t.`id` AND 1 = 2)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%123%(String),false(Boolean),123%(String),123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("%123%(String),false(Boolean),123%(String),%123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
         {
@@ -1238,13 +1244,13 @@ public class QueryTest9 extends BaseTest {
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` = ? AND DATE_FORMAT(`create_time`,'%Y-%m-%d') LIKE ? AND DATE_FORMAT(`create_time`,'%Y-%m-%d') LIKE ? AND `title` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("false(Boolean),123(String),123%(String),123%(String),%你好%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("false(Boolean),123(String),123%(String),%123(String),%你好%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
     }
 
     @Test
-    public void test2(){
+    public void test2() {
 
         {
 
@@ -1255,25 +1261,24 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupBy(o->o.id())
-                    .having(o->{
+                    }).groupBy(o -> o.id())
+                    .having(o -> {
                         o.id().max().like("1");
-                        o.id().max().like(false,"2");
+                        o.id().max().like(false, "2");
                         o.id().max().likeMatchLeft("3");
-                        o.id().max().likeMatchLeft(false,"4");
+                        o.id().max().likeMatchLeft(false, "4");
                         o.id().max().likeMatchRight("5");
-                        o.id().max().likeMatchRight(false,"6");
-
+                        o.id().max().likeMatchRight(false, "6");
 
 
                         o.id().max().notLike("1");
-                        o.id().max().notLike(false,"2");
+                        o.id().max().notLike(false, "2");
                         o.id().max().notLikeMatchLeft("3");
-                        o.id().max().notLikeMatchLeft(false,"4");
+                        o.id().max().notLikeMatchLeft(false, "4");
                         o.id().max().notLikeMatchRight("5");
-                        o.id().max().notLikeMatchRight(false,"6");
+                        o.id().max().notLikeMatchRight(false, "6");
                     })
-                    .select(BlogEntity.class,(t,tr)->{
+                    .select(BlogEntity.class, (t, tr) -> {
                         return Select.of(
                                 t.id()
                         );
@@ -1288,7 +1293,7 @@ public class QueryTest9 extends BaseTest {
     }
 
     @Test
-    public void test3(){
+    public void test3() {
 
         {
 
@@ -1299,25 +1304,24 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupBy(o->o.id())
-                    .having(o->{
+                    }).groupBy(o -> o.id())
+                    .having(o -> {
                         o.id().max().eq("1");
-                        o.id().max().eq(false,"2");
+                        o.id().max().eq(false, "2");
                         o.id().max().ge("3");
-                        o.id().max().ge(false,"4");
+                        o.id().max().ge(false, "4");
                         o.id().max().gt("5");
-                        o.id().max().gt(false,"6");
-
+                        o.id().max().gt(false, "6");
 
 
                         o.id().max().ne("1");
-                        o.id().max().ne(false,"2");
+                        o.id().max().ne(false, "2");
                         o.id().max().le("3");
-                        o.id().max().le(false,"4");
+                        o.id().max().le(false, "4");
                         o.id().max().lt("5");
-                        o.id().max().lt(false,"6");
+                        o.id().max().lt(false, "6");
                     })
-                    .select(BlogEntity.class,(t,tr)->{
+                    .select(BlogEntity.class, (t, tr) -> {
                         return Select.of(
                                 t.id()
                         );
@@ -1330,8 +1334,9 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.clear();
         }
     }
+
     @Test
-    public void test4(){
+    public void test4() {
 
         {
 
@@ -1342,25 +1347,24 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupBy(o->o.id())
-                    .having(o->{
+                    }).groupBy(o -> o.id())
+                    .having(o -> {
                         o.id().max().eq(o.id().min());
-                        o.id().max().eq(false,o.id().min());
+                        o.id().max().eq(false, o.id().min());
                         o.id().max().ge(o.id().min());
-                        o.id().max().ge(false,o.id().min());
+                        o.id().max().ge(false, o.id().min());
                         o.id().max().gt(o.id().min());
-                        o.id().max().gt(false,o.id().min());
-
+                        o.id().max().gt(false, o.id().min());
 
 
                         o.id().max().ne(o.id().min());
-                        o.id().max().ne(false,o.id().min());
+                        o.id().max().ne(false, o.id().min());
                         o.id().max().le(o.id().min());
-                        o.id().max().le(false,"4");
+                        o.id().max().le(false, "4");
                         o.id().max().lt(o.id().min());
-                        o.id().max().lt(false,o.id().min());
+                        o.id().max().lt(false, o.id().min());
                     })
-                    .select(BlogEntity.class,(t,tr)->{
+                    .select(BlogEntity.class, (t, tr) -> {
                         return Select.of(
                                 t.id()
                         );
@@ -1369,8 +1373,160 @@ public class QueryTest9 extends BaseTest {
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` HAVING MAX(t.`id`) = MIN(t.`id`) AND MAX(t.`id`) >= MIN(t.`id`) AND MAX(t.`id`) > MIN(t.`id`) AND MAX(t.`id`) <> MIN(t.`id`) AND MAX(t.`id`) <= MIN(t.`id`) AND MAX(t.`id`) < MIN(t.`id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("false(Boolean),123(String),1(String),3(String),5(String),1(String),3(String),5(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
+        }
+    }
+
+    @Test
+    public void test5() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> page = entityQuery
+                .queryable(Topic.class)
+                .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
+                .where((t, t1) -> t1.title().isNotNull())
+                .groupBy((t, t1) -> t1.id())
+                .select(BlogEntity.class, (t, t1, tr) -> Select.of(t1.id(), t1.score().sum().as(tr.score())))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` HAVING MAX(t.`id`) = MIN(t.`id`) AND MAX(t.`id`) >= MIN(t.`id`) AND MAX(t.`id`) > MIN(t.`id`) AND MAX(t.`id`) <> MIN(t.`id`) AND MAX(t.`id`) <= MIN(t.`id`) AND MAX(t.`id`) < MIN(t.`id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void test6() {
+
+        {
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
+            List<Draft1<String>> list = entityQuery
+                    .queryable(Topic.class)
+                    .groupBy(t -> t.id())
+                    .selectDraft(t -> Select.draft(t.id()))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
+            List<Draft1<String>> list = entityQuery
+                    .queryable(Topic.class)
+                    .groupBy(t -> t.id())
+                    .selectDraft(t -> Select.draft(t.id()))
+                    .where(o -> o.value1().eq("123"))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t1.`value1` AS `value1` FROM (SELECT t.`id` AS `value1` FROM `t_topic` t GROUP BY t.`id`) t1 WHERE t1.`value1` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Draft2<String, Long>> list = entityQuery
+                    .queryable(Topic.class)
+                    .groupBy(t -> t.id())
+                    .selectDraft(t -> Select.draft(
+                            t.id(),
+                            t.id().count().castType(Long.class)
+                    ))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(t.`id`) AS `value2` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Draft3<String, Long, BigDecimal>> list = entityQuery
+                    .queryable(Topic.class)
+                    .groupBy(t -> t.id())
+                    .selectDraft(t -> Select.draft(t.id(), t.id().count(), t.stars().sum()))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(t.`id`) AS `value2`,SUM(t.`stars`) AS `value3` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            listenerContextManager.clear();
+            BigDecimal value3 = list.get(0).getValue3();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Draft2<String, String>> list = entityQuery
+                    .queryable(ValueCompany.class)
+                    .selectDraft(t -> Select.draft(t.id(), t.address().province()))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,t.`province` AS `value2` FROM `my_company` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Draft2<String, LocalDateTime>> list = entityQuery
+                    .queryable(BlogEntity.class)
+                    .selectDraft(t -> Select.draft(t.id(), t.createTime()))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,t.`create_time` AS `value2` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            listenerContextManager.clear();
+            LocalDateTime value2 = list.get(0).getValue2();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Draft3<String, LocalDateTime, String>> list = entityQuery
+                    .queryable(BlogEntity.class)
+                    .selectDraft(t -> Select.draft(t.id(),
+                            t.createTime(),
+                            Select.draftSQL("1").castType(String.class)
+                    ))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,t.`create_time` AS `value2`,1 AS `value3` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            listenerContextManager.clear();
+            LocalDateTime value2 = list.get(0).getValue2();
+            String value3 = list.get(0).getValue3();
+            Assert.assertEquals("1",value3);
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Draft3<String, LocalDateTime, String>> list = entityQuery
+                    .queryable(BlogEntity.class)
+                    .selectDraft(t -> Select.draft(t.id(),
+                            t.createTime(),
+                            Select.draftSQL("IFNULL({0},'1')",c->c.keepStyle().expression(t.title())).castType(String.class)
+                    ))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,t.`create_time` AS `value2`,IFNULL(t.`title`,'1') AS `value3` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            listenerContextManager.clear();
+            LocalDateTime value2 = list.get(0).getValue2();
+            String value3 = list.get(0).getValue3();
+            Assert.assertEquals("title0",value3);
         }
     }
 }

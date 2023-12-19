@@ -223,4 +223,14 @@ public class EmptyExpressionContext implements ExpressionContext{
     public boolean hasDeclareExpressions() {
         return false;
     }
+
+    @Override
+    public void setDraftPropTypes(Class<?>[] propTypes) {
+
+    }
+
+    @Override
+    public Class<?>[] getDraftPropTypes() {
+        return null;
+    }
 }

@@ -10,7 +10,7 @@ import com.easy.query.core.proxy.predicate.DSLPropertyOnlyAssertPredicate;
  *
  * @author xuejiaming
  */
-public interface SQLColumn<TProxy, TProperty> extends ColumnComparableExpression<TProperty>,
+public interface SQLColumn<TProxy, TProperty> extends ColumnComparableExpression<TProperty>,PropTypeColumn<TProperty>,
         DSLPropertyOnlyAssertPredicate<TProperty>,
         ColumnAggregatable<TProperty> {
 }

@@ -28,22 +28,22 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
 
 
     /**
-     * {@link ValueCompany#id}
+     * {@link ValueCompany#getId()}
      */
     public SQLColumn<ValueCompany1Proxy, String> id() {
-        return get("id");
+        return get("id",String.class);
     }
 
     /**
-     * {@link ValueCompany#name}
+     * {@link ValueCompany#getName}
      * 企业名称
      */
     public SQLColumn<ValueCompany1Proxy, java.lang.String> name() {
-        return get("name");
+        return get("name",java.lang.String.class);
     }
 
     /**
-     * {@link ValueCompany#address}
+     * {@link ValueCompany#getAddress()}
      * 企业地址信息
      */
     public ValueCompanyAddressProxy address() {
@@ -51,7 +51,7 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
     }
 
     /**
-     * {@link ValueCompany#address}
+     * {@link ValueCompany#getLicense()}
      * 企业地址信息
      */
     public ValueCompanyLicenseProxy license() {
@@ -70,7 +70,7 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
         }
 
         public SQLColumn<ValueCompany1Proxy, String> province() {
-            return get("province");
+            return get("province",String.class);
         }
     }
 
@@ -82,7 +82,7 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
         }
 
         public SQLColumn<ValueCompany1Proxy, String> licenseNo() {
-            return get("licenseNo");
+            return get("licenseNo",String.class);
         }
 
         public ValueCompanyLicenseExtraProxy extra() {
@@ -96,7 +96,7 @@ public class ValueCompany1Proxy extends AbstractProxyEntity<ValueCompany1Proxy, 
             }
 
             public SQLColumn<ValueCompany1Proxy, String> licenseImage() {
-                return get("licenseImage");
+                return get("licenseImage",String.class);
             }
         }
     }

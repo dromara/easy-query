@@ -14,7 +14,7 @@ import com.easy.query.core.proxy.predicate.DSLValuePredicate;
 public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate<TProperty>,DSLSQLFunctionAvailable {
 
     @Override
-    default void ge(boolean condition, TProperty val){
+    default void ge(boolean condition, Object val){
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -28,7 +28,7 @@ public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate
 
 
    @Override
-    default void gt(boolean condition, TProperty val){
+    default void gt(boolean condition, Object val){
        if (condition) {
            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
@@ -41,7 +41,7 @@ public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate
    }
 
     @Override
-    default void eq(boolean condition, TProperty val){
+    default void eq(boolean condition, Object val){
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -54,7 +54,7 @@ public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate
     }
 
    @Override
-    default void ne(boolean condition, TProperty val){
+    default void ne(boolean condition, Object val){
        if (condition) {
            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
@@ -67,7 +67,7 @@ public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate
    }
 
     @Override
-    default void le(boolean condition, TProperty val){
+    default void le(boolean condition, Object val){
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -80,7 +80,7 @@ public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate
     }
 
    @Override
-    default void lt(boolean condition, TProperty val){
+    default void lt(boolean condition, Object val){
        if (condition) {
            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();

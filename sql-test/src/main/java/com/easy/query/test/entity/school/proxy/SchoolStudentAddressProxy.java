@@ -1,6 +1,5 @@
 package com.easy.query.test.entity.school.proxy;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -50,7 +49,7 @@ public class SchoolStudentAddressProxy extends AbstractProxyEntity < SchoolStude
      * {@link SchoolStudentAddress#getSchoolStudent}
      */
     public SQLNavigateColumn < SchoolStudentAddressProxy, com.easy.query.test.entity.school.SchoolStudent> schoolStudent(){
-    return get("schoolStudent", com.easy.query.test.entity.school.SchoolStudent.class);
+    return getNavigate("schoolStudent", com.easy.query.test.entity.school.SchoolStudent.class);
 }
 
 

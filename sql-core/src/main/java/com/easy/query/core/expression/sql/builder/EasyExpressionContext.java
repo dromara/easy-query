@@ -57,6 +57,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private Consumer<Object> forEachConfigurer;
 
     private Map<TableAvailable, Map<String, ColumnIncludeExpression>> columnIncludeMaps;
+    private Class<?>[] propTypes;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -334,6 +335,10 @@ public class EasyExpressionContext implements ExpressionContext {
         if (hasColumnIncludeMaps()) {
             easyExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
         }
+        if(this.propTypes!=null){
+            easyExpressionContext.propTypes=new Class<?>[this.propTypes.length];
+            System.arraycopy(this.propTypes, 0, easyExpressionContext.propTypes, 0, this.propTypes.length);
+        }
         return easyExpressionContext;
     }
 
@@ -348,5 +353,15 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public boolean hasDeclareExpressions() {
         return EasyCollectionUtil.isNotEmpty(declareExpressions);
+    }
+
+    @Override
+    public void setDraftPropTypes(Class<?>[] propTypes) {
+        this.propTypes=propTypes;
+    }
+
+    @Override
+    public Class<?>[] getDraftPropTypes() {
+        return this.propTypes;
     }
 }

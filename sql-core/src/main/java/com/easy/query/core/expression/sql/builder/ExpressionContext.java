@@ -90,5 +90,7 @@ public interface ExpressionContext {
     boolean hasDeclareExpressions();
 
 
+    void setDraftPropTypes(Class<?>[] propTypes);
+    Class<?>[] getDraftPropTypes();
 
 }

@@ -53,7 +53,7 @@ public class CityProxy extends AbstractProxyEntity<CityProxy, City> {
      * {@link City#getAreas}
      */
     public SQLNavigateColumn<CityProxy, com.easy.query.test.entity.base.Area> areas() {
-        return get("areas", com.easy.query.test.entity.base.Area.class);
+        return getNavigate("areas", com.easy.query.test.entity.base.Area.class);
     }
 
 

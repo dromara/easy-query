@@ -29,5 +29,10 @@ public @interface EntityFileProxy {
      * @return
      */
     String[] ignoreProperties() default {};
-    FileGenerateEnum strategy() default FileGenerateEnum.GENERATE_CURRENT_COMPILE_OVERRIDE;
+
+    /**
+     * 默认直接覆盖全部编译
+     * @return
+     */
+    FileGenerateEnum strategy() default FileGenerateEnum.GENERATE_COMPILE_ALWAYS_OVERRIDE;
 }

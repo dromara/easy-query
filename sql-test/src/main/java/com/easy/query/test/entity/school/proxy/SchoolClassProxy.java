@@ -43,7 +43,7 @@ public class SchoolClassProxy extends AbstractProxyEntity < SchoolClassProxy, Sc
      * {@link SchoolClass#getSchoolStudents}
      */
     public SQLNavigateColumn < SchoolClassProxy, com.easy.query.test.entity.school.SchoolStudent> schoolStudents(){
-    return get("schoolStudents", com.easy.query.test.entity.school.SchoolStudent.class);
+    return getNavigate("schoolStudents", com.easy.query.test.entity.school.SchoolStudent.class);
 }
 
     /**
@@ -51,7 +51,7 @@ public class SchoolClassProxy extends AbstractProxyEntity < SchoolClassProxy, Sc
      * {@link SchoolClass#getSchoolTeachers}
      */
     public SQLNavigateColumn < SchoolClassProxy, com.easy.query.test.entity.school.SchoolTeacher> schoolTeachers(){
-    return get("schoolTeachers", com.easy.query.test.entity.school.SchoolTeacher.class);
+    return getNavigate("schoolTeachers", com.easy.query.test.entity.school.SchoolTeacher.class);
 }
 
 

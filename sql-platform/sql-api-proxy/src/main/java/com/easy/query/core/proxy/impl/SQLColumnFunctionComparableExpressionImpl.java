@@ -7,9 +7,11 @@ import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.function.Function;
 
@@ -24,13 +26,18 @@ public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements Col
     private final TableAvailable table;
     private final String property;
     private final Function<SQLFunc, SQLFunction> func;
+    private Class<?> propType;
 
     public SQLColumnFunctionComparableExpressionImpl(EntitySQLContext entitySQLContext,TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
+        this(entitySQLContext,table,property,func,Object.class);
+    }
+    public SQLColumnFunctionComparableExpressionImpl(EntitySQLContext entitySQLContext,TableAvailable table, String property, Function<SQLFunc, SQLFunction> func,Class<?> propType) {
         this.entitySQLContext = entitySQLContext;
 
         this.table = table;
         this.property = property;
         this.func = func;
+        this.propType=propType;
     }
 
     @Override
@@ -90,6 +97,17 @@ public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements Col
     @Override
     public EntitySQLContext getEntitySQLContext() {
         return entitySQLContext;
+    }
+
+    @Override
+    public Class<?> propertyType() {
+        return propType;
+    }
+
+    @Override
+    public <TR> PropTypeColumn<TR> castType(Class<TR> clazz) {
+        this.propType=clazz;
+        return EasyObjectUtil.typeCastNullable(this);
     }
 }
 //        if(condition){

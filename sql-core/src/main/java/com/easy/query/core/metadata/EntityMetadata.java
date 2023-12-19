@@ -19,8 +19,8 @@ import com.easy.query.core.basic.extension.complex.DefaultComplexPropType;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
-import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.conversion.EnumValueAutoConverter;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.DefaultGeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
@@ -150,6 +150,10 @@ public class EntityMetadata {
             entityMetadataType = EntityMetadataTypeEnum.BASIC_TYPE;
             return;
         }
+//        if(Draft.class.isAssignableFrom(entityClass)){
+//            entityMetadataType = EntityMetadataTypeEnum.DRAFT;
+//            return;
+//        }
 
         QueryConfiguration configuration = serviceProvider.getService(QueryConfiguration.class);
         JdbcTypeHandlerManager jdbcTypeHandlerManager = serviceProvider.getService(JdbcTypeHandlerManager.class);

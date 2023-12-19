@@ -12,16 +12,16 @@ import com.easy.query.core.proxy.impl.SQLColumnImpl;
  * @author xuejiaming
  */
 public class SQLNavigateColumnImpl<TProxy, TProperty> extends SQLColumnImpl<TProxy,TProperty> implements SQLNavigateColumn<TProxy, TProperty> {
-    private final Class<TProperty> clazz;
+    private final Class<TProperty> propType;
 
-    public SQLNavigateColumnImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Class<TProperty> clazz) {
-        super(entitySQLContext, table, property);
-        this.clazz = clazz;
+    public SQLNavigateColumnImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Class<TProperty> propType) {
+        super(entitySQLContext, table, property,propType);
+        this.propType = propType;
     }
 
     @Override
     public Class<TProperty> navigateClass() {
-        return clazz;
+        return propType;
     }
 
 //    @Override

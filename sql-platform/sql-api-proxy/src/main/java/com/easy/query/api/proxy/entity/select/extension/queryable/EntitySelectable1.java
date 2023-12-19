@@ -1,13 +1,15 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.Draft;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.SQLSelectExpression;
+import com.easy.query.core.proxy.core.draft.DraftFetcher;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -19,8 +21,6 @@ import java.util.Collections;
  * @author xuejiaming
  */
 public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
-
-
 
 
     /**
@@ -38,11 +38,11 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * 如果当前存在join，那么join的子表一律不会映射到resultClass上,如果需要那么请手动调用双参数select
      *
      * @param resultEntityClass
-     * @return
      * @param <TRProxy>
      * @param <TR>
+     * @return
      */
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR,TRProxy>> EntityQueryable<TRProxy, TR> select(Class<TR> resultEntityClass);
+    <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> select(Class<TR> resultEntityClass);
 
     /**
      * 设置返回对象，返回对象会根据selectExpression映射相同列名
@@ -50,13 +50,17 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *
      * @param resultEntityClass
      * @param selectExpression
-     * @return
      * @param <TRProxy>
      * @param <TR>
+     * @return
      */
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR,TRProxy>> EntityQueryable<TRProxy, TR> select(Class<TR> resultEntityClass, SQLFuncExpression2<T1Proxy,TRProxy, SQLSelectAsExpression> selectExpression);
+    <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> select(Class<TR> resultEntityClass, SQLFuncExpression2<T1Proxy, TRProxy, SQLSelectAsExpression> selectExpression);
+
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxy(TRProxy trProxy);
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(TRProxy trProxy, SQLFuncExpression1<T1Proxy,SQLSelectAsExpression> selectExpression);
+
+    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(TRProxy trProxy, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression);
+
+    <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & Draft> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression1<T1Proxy, DraftFetcher<TR,TRProxy>> selectExpression);
 
     default EntityQueryable<T1Proxy, T1> select(ColumnSegment columnSegment, boolean clearAll) {
         return select(Collections.singletonList(columnSegment), clearAll);

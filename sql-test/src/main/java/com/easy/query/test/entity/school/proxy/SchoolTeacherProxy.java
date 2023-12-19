@@ -42,7 +42,7 @@ public class SchoolTeacherProxy extends AbstractProxyEntity < SchoolTeacherProxy
      * {@link SchoolTeacher#getSchoolClasses}
      */
     public SQLNavigateColumn < SchoolTeacherProxy, com.easy.query.test.entity.school.SchoolClass> schoolClasses(){
-    return get("schoolClasses", com.easy.query.test.entity.school.SchoolClass.class);
+    return getNavigate("schoolClasses", com.easy.query.test.entity.school.SchoolClass.class);
 }
 
 

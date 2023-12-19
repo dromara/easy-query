@@ -1,18 +1,20 @@
 package com.easy.query.core.proxy.extension;
 
 import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
+import com.easy.query.core.proxy.predicate.aggregate.DSLAssertAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLFunctionAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLLikeAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLOtherAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLRangeAggregatePredicate;
-import com.easy.query.core.proxy.predicate.aggregate.DSLAssertAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSubQueryAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLValueAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLValuesAggregatePredicate;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2023/12/3 09:49
@@ -20,8 +22,8 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLValuesAggregatePredicate
  *
  * @author xuejiaming
  */
-public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpression<T>, SQLOrderByExpression,
-        DSLValueAggregatePredicate<T> ,
+public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpression<T>, SQLOrderByExpression, PropTypeColumn<T>,
+        DSLValueAggregatePredicate<T>,
         DSLLikeAggregatePredicate<T>,
         DSLFunctionAggregatePredicate<T>,
         DSLOtherAggregatePredicate<T>,
@@ -33,6 +35,7 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
     default SQLSelectAsExpression as(TablePropColumn propColumn) {
         return as(propColumn.getValue());
     }
+
     @Override
     default SQLSelectAsExpression as(String propertyAlias) {
         return new SQLSelectAsImpl(s -> {
@@ -46,5 +49,10 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
             throw new UnsupportedOperationException();
         });
     }
+
+//    default <TR> ColumnFuncComparableExpression<TR> castType(Class<TR> clazz) {
+//        return EasyObjectUtil.typeCastNullable(this);
+//    }
+
 
 }

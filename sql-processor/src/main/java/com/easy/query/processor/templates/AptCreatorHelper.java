@@ -39,8 +39,8 @@ public class AptCreatorHelper {
                          .replace("@{comment}", property.getComment())
                          .replace("@{propertyType}", property.getPropertyType())
                          .replace("@{property}", property.getPropertyName())
-                         .replace("@{includePlaceholder}", property.getIncludePlaceholder())
-                         .replace("@{SQLColumn}", property.getSqlColumn());
+                         .replace("@{SQLColumn}", property.getSqlColumn())
+                         .replace("@{sqlColumnMethod}", property.getSqlColumnMethod());
                  filedContent.append(fieldString);
              }
          }

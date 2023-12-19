@@ -1,6 +1,5 @@
 package com.easy.query.test.entity.base.proxy;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -43,7 +42,7 @@ public class ProvinceProxy extends AbstractProxyEntity < ProvinceProxy, Province
      * {@link Province#getCities}
      */
     public SQLNavigateColumn < ProvinceProxy, com.easy.query.test.entity.base.City> cities(){
-    return get("cities", com.easy.query.test.entity.base.City.class);
+    return getNavigate("cities", com.easy.query.test.entity.base.City.class);
 }
 
 

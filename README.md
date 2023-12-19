@@ -401,11 +401,18 @@ Topic topic = easyQuery
 
 ## 多表查询
 ```java
+//lambda
 Topic topic = easyQuery
                 .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                 .where(o -> o.eq(Topic::getId, "3"))
                 .firstOrNull();
+//entity
+Topic topic = entityQuery
+               .queryable(Topic.class)
+               .leftJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
+               .where(o -> o.id().eq("3"))
+               .firstOrNull();
 ```
 ```sql
 ==> Preparing: SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ? LIMIT 1
@@ -417,13 +424,22 @@ Topic topic = easyQuery
 ## 复杂查询
 join + group +分页
 ```java
-
+//lambda
 EasyPageResult<BlogEntity> page = easyQuery
-        .queryable(Topic.class).asTracking()
-        .innerJoin(BlogEntity.class, (t1, t2) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-        .where((t1, t2) -> t1.isNotNull(BlogEntity::getTitle))
-        .groupBy((t1, t2)->t1.column(BlogEntity::getId))
-        .select(BlogEntity.class, (t1, t2) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore))
+        .queryable(Topic.class)
+        .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+        .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
+        .groupBy((t, t1)->t1.column(BlogEntity::getId))
+        .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore))
+        .toPageResult(1, 20);
+
+//entity
+EasyPageResult<BlogEntity> page = entityQuery
+        .queryable(Topic.class)
+        .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
+        .where((t, t1) -> t1.title().isNotNull())
+        .groupBy((t, t1)->t1.id())
+        .select(BlogEntity.class, (t, t1, tr) -> Select.of(t1.id(),t1.score().sum().as(tr.score())))
         .toPageResult(1, 20);
 ```
 ```sql

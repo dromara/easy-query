@@ -24,8 +24,8 @@ public class AptPropertyInfo{
      */
     private final String entityName;
     private final boolean valueObject;
-    private final String includePlaceholder;
-    private final String sqlColumn;;
+    private final String sqlColumn;
+    private final String sqlColumnMethod;
 
     public AptPropertyInfo(String propertyName, String propertyType, String comment, String entityName,boolean valueObject,boolean includeProperty){
 
@@ -34,8 +34,8 @@ public class AptPropertyInfo{
         this.comment = comment;
         this.entityName = entityName;
         this.valueObject = valueObject;
-        this.includePlaceholder = includeProperty?", "+propertyType+".class":"";
         this.sqlColumn = includeProperty?"SQLNavigateColumn":"SQLColumn";
+        this.sqlColumnMethod = includeProperty?"getNavigate":"get";
     }
 
     public String getPropertyName() {
@@ -58,11 +58,11 @@ public class AptPropertyInfo{
         return valueObject;
     }
 
-    public String getIncludePlaceholder() {
-        return includePlaceholder;
-    }
-
     public String getSqlColumn() {
         return sqlColumn;
+    }
+
+    public String getSqlColumnMethod() {
+        return sqlColumnMethod;
     }
 }

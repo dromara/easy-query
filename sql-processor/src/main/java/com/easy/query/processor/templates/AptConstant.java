@@ -49,7 +49,7 @@ public class AptConstant {
     public static final String FIELD_TEMPLATE = "\n" +
             "    @{comment}\n" +
             "    public @{SQLColumn}<@{entityClassProxy},@{propertyType}> @{property}(){\n" +
-            "        return get(\"@{property}\"@{includePlaceholder});\n" +
+            "        return @{sqlColumnMethod}(\"@{property}\",@{propertyType}.class);\n" +
             "    }";
     public static final String FIELD_VALUE_OBJECT_TEMPLATE = "\n" +
             "    @{comment}\n" +

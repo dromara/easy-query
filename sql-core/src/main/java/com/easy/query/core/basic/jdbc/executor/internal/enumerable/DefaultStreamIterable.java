@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -43,9 +44,14 @@ public class DefaultStreamIterable<T> implements StreamIterable<T> {
                 return new MapStreamIterator<>(context, streamResultSet, resultMetadata);
             case BASIC_TYPE:
                 return new BasicStreamIterator<>(context, streamResultSet, resultMetadata);
+//            case DRAFT:
+//                return EasyObjectUtil.typeCastNullable(new DraftStreamIterator(context, streamResultSet, EasyObjectUtil.typeCastNullable(resultMetadata)));
             default:{
                 if(resultMetadata.getDataReader()!=null){
                     return new FastBeanStreamIterator<>(context, streamResultSet, resultMetadata);
+                }
+                if(Draft.class.isAssignableFrom(resultMetadata.getResultClass())){
+                    return EasyObjectUtil.typeCastNullable(new DraftStreamIterator(context, streamResultSet, EasyObjectUtil.typeCastNullable(resultMetadata)));
                 }
                 return new DefaultBeanStreamIterator<>(context, streamResultSet, resultMetadata);
             }

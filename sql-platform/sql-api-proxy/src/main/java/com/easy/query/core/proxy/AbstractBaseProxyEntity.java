@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.columns.SQLNavigateColumn;
@@ -18,11 +19,16 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     protected TableAvailable table;
     protected EntitySQLContext entitySQLContext;
 
+    @Deprecated
     protected <TProperty> SQLColumn<TProxy, TProperty> get(String property) {
-        return new SQLColumnImpl<>(entitySQLContext,table, property);
+        return get(property,null);
     }
-    protected <TProperty> SQLNavigateColumn<TProxy, TProperty> get(String property, Class<TProperty> clazz) {
-        return new SQLNavigateColumnImpl<>(entitySQLContext,table, property,clazz);
+    protected <TProperty> SQLColumn<TProxy, TProperty> get(String property,@Nullable Class<TProperty> propType) {
+        return new SQLColumnImpl<>(entitySQLContext, table, property, propType);
+    }
+
+    protected <TProperty> SQLNavigateColumn<TProxy, TProperty> getNavigate(String property, Class<TProperty> propType) {
+        return new SQLNavigateColumnImpl<>(entitySQLContext, table, property, propType);
     }
 
 }

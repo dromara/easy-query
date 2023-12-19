@@ -16,10 +16,11 @@ import java.util.Collection;
  */
 public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByExpression {
     default SQLSelectAsExpression _concat(SQLSelectAsExpression... sqlSelectAses) {
-        return _concat(true,sqlSelectAses);
+        return _concat(true, sqlSelectAses);
     }
+
     default SQLSelectAsExpression _concat(boolean condition, SQLSelectAsExpression... sqlSelectAs) {
-        if(condition){
+        if (condition) {
 
             SQLSelectAsExpression expression = Select.of(sqlSelectAs);
             return new SQLSelectAsImpl(x -> {
@@ -28,7 +29,7 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
             }, x -> {
                 accept(x);
                 expression.accept(x);
-            },x->{
+            }, x -> {
                 accept(x);
                 expression.accept(x);
             });
@@ -52,7 +53,7 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
             x.column(table, property);
         }, x -> {
             x.column(table, property);
-        },entitySQLContext,table,property);
+        }, entitySQLContext, table, property);
     }
 
     static <TProxy> SQLSelectAsExpression createColumnExclude(SQLColumn<TProxy, ?> column, Collection<SQLColumn<TProxy, ?>> ignoreColumns) {

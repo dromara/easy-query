@@ -1,6 +1,5 @@
 package com.easy.query.test.entity.school.dto.proxy;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -43,14 +42,14 @@ public class SchoolClassVOProxy extends AbstractProxyEntity < SchoolClassVOProxy
      * {@link SchoolClassVO#getSchoolStudents}
      */
     public SQLNavigateColumn < SchoolClassVOProxy, com.easy.query.test.entity.school.dto.SchoolStudentVO> schoolStudents(){
-    return get("schoolStudents", com.easy.query.test.entity.school.dto.SchoolStudentVO.class);
+    return getNavigate("schoolStudents", com.easy.query.test.entity.school.dto.SchoolStudentVO.class);
 }
 
     /**
      * {@link SchoolClassVO#getSchoolTeachers}
      */
     public SQLNavigateColumn < SchoolClassVOProxy, com.easy.query.test.entity.school.dto.SchoolTeacherVO> schoolTeachers(){
-    return get("schoolTeachers", com.easy.query.test.entity.school.dto.SchoolTeacherVO.class);
+    return getNavigate("schoolTeachers", com.easy.query.test.entity.school.dto.SchoolTeacherVO.class);
 }
 
 

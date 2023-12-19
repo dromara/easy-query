@@ -471,6 +471,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
         ExecutorContext executorContext = ExecutorContext.create(expressionContext, true, executeMethod, tracking);
         executorContext.setConfigurer(configurer);
+        // todo data reader
         DataReader dataReader = autoAllColumn && expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN) ? entityMetadata.getDataReader() : null;
         JdbcResult<TR> jdbcResult = entityExpressionExecutor.queryStreamResultSet(executorContext, new EntityResultMetadata<>(entityMetadata, dataReader), entityQueryExpressionBuilder);
         return new JdbcResultWrap<>(executeMethod, expressionContext, entityMetadata, jdbcResult);
