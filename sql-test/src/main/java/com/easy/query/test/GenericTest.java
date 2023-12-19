@@ -418,7 +418,7 @@ public class GenericTest extends BaseTest {
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
-            Assert.assertEquals("can't execute delete statement", ex.getMessage());
+            Assert.assertEquals("无法执行删除命令,因为默认配置了不允许物理删除操作,如有需要物理删除请调用[.allowDeleteStatement(false)]", ex.getMessage());
         }
     }
 

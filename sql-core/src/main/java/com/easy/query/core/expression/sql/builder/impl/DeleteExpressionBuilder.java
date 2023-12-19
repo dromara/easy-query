@@ -189,7 +189,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             return easyUpdateSQLExpression;
         } else {
             if (expressionContext.isDeleteThrow()) {
-                throw new EasyQueryInvalidOperationException("can't execute delete statement");
+                throw new EasyQueryInvalidOperationException("无法执行删除命令,因为默认配置了不允许物理删除操作,如有需要物理删除请调用[.allowDeleteStatement(false)]");
             }
             EntityDeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(entitySQLExpressionMetadata, table.toExpression());
             PredicateSegment where = buildWherePredicateSegment(table);
@@ -216,7 +216,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             return easyUpdateSQLExpression;
         } else {
             if (expressionContext.isDeleteThrow()) {
-                throw new EasyQueryInvalidOperationException("can't execute delete statement");
+                throw new EasyQueryInvalidOperationException("无法执行删除命令,因为默认配置了不允许物理删除操作,如有需要物理删除请调用[.allowDeleteStatement(false)]");
             }
             EntityDeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(entitySQLExpressionMetadata, table.toExpression());
 
