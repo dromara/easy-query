@@ -89,65 +89,45 @@ public class Select {
     public static <T1> DraftFetcher<Draft1<T1>, Draft1Proxy<T1>> draft(PropTypeColumn<T1> column1) {
         Draft1Proxy<T1> draft1Proxy = new Draft1Proxy<>();
         DraftFetcherImpl<Draft1<T1>, Draft1Proxy<T1>> draftFetcher = new DraftFetcherImpl<>(new Draft1<>(), draft1Proxy);
-        SQLSelectAsExpression sqlSelectAsExpression = column1.as(draft1Proxy.value1());
-        draftFetcher.fetch(sqlSelectAsExpression);
-        draftFetcher.getDraftPropTypes()[0] = column1.propertyType();
+        draftFetcher.fetch(0,column1,draft1Proxy.value1());
         return draftFetcher;
     }
 
     public static <T1, T2> DraftFetcher<Draft2<T1, T2>, Draft2Proxy<T1, T2>> draft(PropTypeColumn<T1> column1, PropTypeColumn<T2> column2) {
         Draft2Proxy<T1, T2> draft2Proxy = new Draft2Proxy<>();
         DraftFetcherImpl<Draft2<T1, T2>, Draft2Proxy<T1, T2>> draftFetcher = new DraftFetcherImpl<>(new Draft2<>(), draft2Proxy);
-        SQLSelectAsExpression sqlSelectAsExpression1 = column1.as(draft2Proxy.value1());
-        SQLSelectAsExpression sqlSelectAsExpression2 = column2.as(draft2Proxy.value2());
-        draftFetcher.fetch(sqlSelectAsExpression1, sqlSelectAsExpression2);
-        draftFetcher.getDraftPropTypes()[0] = column1.propertyType();
-        draftFetcher.getDraftPropTypes()[1] = column2.propertyType();
+        draftFetcher.fetch(0,column1,draft2Proxy.value1());
+        draftFetcher.fetch(1,column2,draft2Proxy.value2());
         return draftFetcher;
     }
 
     public static <T1, T2, T3> DraftFetcher<Draft3<T1, T2, T3>, Draft3Proxy<T1, T2, T3>> draft(PropTypeColumn<T1> column1, PropTypeColumn<T2> column2, PropTypeColumn<T3> column3) {
         Draft3Proxy<T1, T2, T3> draft3Proxy = new Draft3Proxy<>();
         DraftFetcherImpl<Draft3<T1, T2, T3>, Draft3Proxy<T1, T2, T3>> draftFetcher = new DraftFetcherImpl<>(new Draft3<>(), draft3Proxy);
-        SQLSelectAsExpression sqlSelectAsExpression1 = column1.as(draft3Proxy.value1());
-        SQLSelectAsExpression sqlSelectAsExpression2 = column2.as(draft3Proxy.value2());
-        SQLSelectAsExpression sqlSelectAsExpression3 = column3.as(draft3Proxy.value3());
-        draftFetcher.fetch(sqlSelectAsExpression1, sqlSelectAsExpression2, sqlSelectAsExpression3);
-        draftFetcher.getDraftPropTypes()[0] = column1.propertyType();
-        draftFetcher.getDraftPropTypes()[1] = column2.propertyType();
-        draftFetcher.getDraftPropTypes()[2] = column3.propertyType();
+        draftFetcher.fetch(0,column1,draft3Proxy.value1());
+        draftFetcher.fetch(1,column2,draft3Proxy.value2());
+        draftFetcher.fetch(2,column3,draft3Proxy.value3());
         return draftFetcher;
     }
 
     public static <T1, T2, T3, T4> DraftFetcher<Draft4<T1, T2, T3, T4>, Draft4Proxy<T1, T2, T3, T4>> draft(PropTypeColumn<T1> column1, PropTypeColumn<T2> column2, PropTypeColumn<T3> column3, PropTypeColumn<T4> column4) {
         Draft4Proxy<T1, T2, T3, T4> draft4Proxy = new Draft4Proxy<>();
         DraftFetcherImpl<Draft4<T1, T2, T3, T4>, Draft4Proxy<T1, T2, T3, T4>> draftFetcher = new DraftFetcherImpl<>(new Draft4<>(), draft4Proxy);
-        SQLSelectAsExpression sqlSelectAsExpression1 = column1.as(draft4Proxy.value1());
-        SQLSelectAsExpression sqlSelectAsExpression2 = column2.as(draft4Proxy.value2());
-        SQLSelectAsExpression sqlSelectAsExpression3 = column3.as(draft4Proxy.value3());
-        SQLSelectAsExpression sqlSelectAsExpression4 = column4.as(draft4Proxy.value4());
-        draftFetcher.fetch(sqlSelectAsExpression1, sqlSelectAsExpression2, sqlSelectAsExpression3, sqlSelectAsExpression4);
-        draftFetcher.getDraftPropTypes()[0] = column1.propertyType();
-        draftFetcher.getDraftPropTypes()[1] = column2.propertyType();
-        draftFetcher.getDraftPropTypes()[2] = column3.propertyType();
-        draftFetcher.getDraftPropTypes()[3] = column4.propertyType();
+        draftFetcher.fetch(0,column1,draft4Proxy.value1());
+        draftFetcher.fetch(1,column2,draft4Proxy.value2());
+        draftFetcher.fetch(2,column3,draft4Proxy.value3());
+        draftFetcher.fetch(3,column4,draft4Proxy.value4());
         return draftFetcher;
     }
 
     public static <T1, T2, T3, T4, T5> DraftFetcher<Draft5<T1, T2, T3, T4, T5>, Draft5Proxy<T1, T2, T3, T4, T5>> draft(PropTypeColumn<T1> column1, PropTypeColumn<T2> column2, PropTypeColumn<T3> column3, PropTypeColumn<T4> column4, PropTypeColumn<T5> column5) {
         Draft5Proxy<T1, T2, T3, T4, T5> draft5Proxy = new Draft5Proxy<>();
         DraftFetcherImpl<Draft5<T1, T2, T3, T4, T5>, Draft5Proxy<T1, T2, T3, T4, T5>> draftFetcher = new DraftFetcherImpl<>(new Draft5<>(), draft5Proxy);
-        SQLSelectAsExpression sqlSelectAsExpression1 = column1.as(draft5Proxy.value1());
-        SQLSelectAsExpression sqlSelectAsExpression2 = column2.as(draft5Proxy.value2());
-        SQLSelectAsExpression sqlSelectAsExpression3 = column3.as(draft5Proxy.value3());
-        SQLSelectAsExpression sqlSelectAsExpression4 = column4.as(draft5Proxy.value4());
-        SQLSelectAsExpression sqlSelectAsExpression5 = column5.as(draft5Proxy.value5());
-        draftFetcher.fetch(sqlSelectAsExpression1, sqlSelectAsExpression2, sqlSelectAsExpression3, sqlSelectAsExpression4, sqlSelectAsExpression5);
-        draftFetcher.getDraftPropTypes()[0] = column1.propertyType();
-        draftFetcher.getDraftPropTypes()[1] = column2.propertyType();
-        draftFetcher.getDraftPropTypes()[2] = column3.propertyType();
-        draftFetcher.getDraftPropTypes()[3] = column4.propertyType();
-        draftFetcher.getDraftPropTypes()[4] = column5.propertyType();
+        draftFetcher.fetch(0,column1,draft5Proxy.value1());
+        draftFetcher.fetch(1,column2,draft5Proxy.value2());
+        draftFetcher.fetch(2,column3,draft5Proxy.value3());
+        draftFetcher.fetch(3,column4,draft5Proxy.value4());
+        draftFetcher.fetch(4,column5,draft5Proxy.value5());
         return draftFetcher;
     }
 
@@ -157,20 +137,12 @@ public class Select {
         Draft6Proxy<T1, T2, T3, T4, T5, T6> draft6Proxy = new Draft6Proxy<>();
         DraftFetcherImpl<Draft6<T1, T2, T3, T4, T5, T6>, Draft6Proxy<T1, T2, T3, T4, T5, T6>> draftFetcher =
                 new DraftFetcherImpl<>(new Draft6<>(), draft6Proxy);
-        SQLSelectAsExpression sqlSelectAsExpression1 = column1.as(draft6Proxy.value1());
-        SQLSelectAsExpression sqlSelectAsExpression2 = column2.as(draft6Proxy.value2());
-        SQLSelectAsExpression sqlSelectAsExpression3 = column3.as(draft6Proxy.value3());
-        SQLSelectAsExpression sqlSelectAsExpression4 = column4.as(draft6Proxy.value4());
-        SQLSelectAsExpression sqlSelectAsExpression5 = column5.as(draft6Proxy.value5());
-        SQLSelectAsExpression sqlSelectAsExpression6 = column6.as(draft6Proxy.value6());
-        draftFetcher.fetch(sqlSelectAsExpression1, sqlSelectAsExpression2, sqlSelectAsExpression3,
-                sqlSelectAsExpression4, sqlSelectAsExpression5, sqlSelectAsExpression6);
-        draftFetcher.getDraftPropTypes()[0] = column1.propertyType();
-        draftFetcher.getDraftPropTypes()[1] = column2.propertyType();
-        draftFetcher.getDraftPropTypes()[2] = column3.propertyType();
-        draftFetcher.getDraftPropTypes()[3] = column4.propertyType();
-        draftFetcher.getDraftPropTypes()[4] = column5.propertyType();
-        draftFetcher.getDraftPropTypes()[5] = column6.propertyType();
+        draftFetcher.fetch(0,column1,draft6Proxy.value1());
+        draftFetcher.fetch(1,column2,draft6Proxy.value2());
+        draftFetcher.fetch(2,column3,draft6Proxy.value3());
+        draftFetcher.fetch(3,column4,draft6Proxy.value4());
+        draftFetcher.fetch(4,column5,draft6Proxy.value5());
+        draftFetcher.fetch(5,column6,draft6Proxy.value6());
         return draftFetcher;
     }
 
@@ -181,22 +153,13 @@ public class Select {
         Draft7Proxy<T1, T2, T3, T4, T5, T6, T7> draft7Proxy = new Draft7Proxy<>();
         DraftFetcherImpl<Draft7<T1, T2, T3, T4, T5, T6, T7>, Draft7Proxy<T1, T2, T3, T4, T5, T6, T7>> draftFetcher =
                 new DraftFetcherImpl<>(new Draft7<>(), draft7Proxy);
-        SQLSelectAsExpression sqlSelectAsExpression1 = column1.as(draft7Proxy.value1());
-        SQLSelectAsExpression sqlSelectAsExpression2 = column2.as(draft7Proxy.value2());
-        SQLSelectAsExpression sqlSelectAsExpression3 = column3.as(draft7Proxy.value3());
-        SQLSelectAsExpression sqlSelectAsExpression4 = column4.as(draft7Proxy.value4());
-        SQLSelectAsExpression sqlSelectAsExpression5 = column5.as(draft7Proxy.value5());
-        SQLSelectAsExpression sqlSelectAsExpression6 = column6.as(draft7Proxy.value6());
-        SQLSelectAsExpression sqlSelectAsExpression7 = column7.as(draft7Proxy.value7());
-        draftFetcher.fetch(sqlSelectAsExpression1, sqlSelectAsExpression2, sqlSelectAsExpression3,
-                sqlSelectAsExpression4, sqlSelectAsExpression5, sqlSelectAsExpression6, sqlSelectAsExpression7);
-        draftFetcher.getDraftPropTypes()[0] = column1.propertyType();
-        draftFetcher.getDraftPropTypes()[1] = column2.propertyType();
-        draftFetcher.getDraftPropTypes()[2] = column3.propertyType();
-        draftFetcher.getDraftPropTypes()[3] = column4.propertyType();
-        draftFetcher.getDraftPropTypes()[4] = column5.propertyType();
-        draftFetcher.getDraftPropTypes()[5] = column6.propertyType();
-        draftFetcher.getDraftPropTypes()[6] = column7.propertyType();
+        draftFetcher.fetch(0,column1,draft7Proxy.value1());
+        draftFetcher.fetch(1,column2,draft7Proxy.value2());
+        draftFetcher.fetch(2,column3,draft7Proxy.value3());
+        draftFetcher.fetch(3,column4,draft7Proxy.value4());
+        draftFetcher.fetch(4,column5,draft7Proxy.value5());
+        draftFetcher.fetch(5,column6,draft7Proxy.value6());
+        draftFetcher.fetch(6,column7,draft7Proxy.value7());
         return draftFetcher;
     }
 
@@ -207,25 +170,14 @@ public class Select {
         Draft8Proxy<T1, T2, T3, T4, T5, T6, T7, T8> draft8Proxy = new Draft8Proxy<>();
         DraftFetcherImpl<Draft8<T1, T2, T3, T4, T5, T6, T7, T8>, Draft8Proxy<T1, T2, T3, T4, T5, T6, T7, T8>> draftFetcher =
                 new DraftFetcherImpl<>(new Draft8<>(), draft8Proxy);
-        SQLSelectAsExpression sqlSelectAsExpression1 = column1.as(draft8Proxy.value1());
-        SQLSelectAsExpression sqlSelectAsExpression2 = column2.as(draft8Proxy.value2());
-        SQLSelectAsExpression sqlSelectAsExpression3 = column3.as(draft8Proxy.value3());
-        SQLSelectAsExpression sqlSelectAsExpression4 = column4.as(draft8Proxy.value4());
-        SQLSelectAsExpression sqlSelectAsExpression5 = column5.as(draft8Proxy.value5());
-        SQLSelectAsExpression sqlSelectAsExpression6 = column6.as(draft8Proxy.value6());
-        SQLSelectAsExpression sqlSelectAsExpression7 = column7.as(draft8Proxy.value7());
-        SQLSelectAsExpression sqlSelectAsExpression8 = column8.as(draft8Proxy.value8());
-        draftFetcher.fetch(sqlSelectAsExpression1, sqlSelectAsExpression2, sqlSelectAsExpression3,
-                sqlSelectAsExpression4, sqlSelectAsExpression5, sqlSelectAsExpression6, sqlSelectAsExpression7,
-                sqlSelectAsExpression8);
-        draftFetcher.getDraftPropTypes()[0] = column1.propertyType();
-        draftFetcher.getDraftPropTypes()[1] = column2.propertyType();
-        draftFetcher.getDraftPropTypes()[2] = column3.propertyType();
-        draftFetcher.getDraftPropTypes()[3] = column4.propertyType();
-        draftFetcher.getDraftPropTypes()[4] = column5.propertyType();
-        draftFetcher.getDraftPropTypes()[5] = column6.propertyType();
-        draftFetcher.getDraftPropTypes()[6] = column7.propertyType();
-        draftFetcher.getDraftPropTypes()[7] = column8.propertyType();
+        draftFetcher.fetch(0,column1,draft8Proxy.value1());
+        draftFetcher.fetch(1,column2,draft8Proxy.value2());
+        draftFetcher.fetch(2,column3,draft8Proxy.value3());
+        draftFetcher.fetch(3,column4,draft8Proxy.value4());
+        draftFetcher.fetch(4,column5,draft8Proxy.value5());
+        draftFetcher.fetch(5,column6,draft8Proxy.value6());
+        draftFetcher.fetch(6,column7,draft8Proxy.value7());
+        draftFetcher.fetch(7,column8,draft8Proxy.value8());
         return draftFetcher;
     }
 
@@ -236,27 +188,15 @@ public class Select {
         Draft9Proxy<T1, T2, T3, T4, T5, T6, T7, T8, T9> draft9Proxy = new Draft9Proxy<>();
         DraftFetcherImpl<Draft9<T1, T2, T3, T4, T5, T6, T7, T8, T9>, Draft9Proxy<T1, T2, T3, T4, T5, T6, T7, T8, T9>> draftFetcher =
                 new DraftFetcherImpl<>(new Draft9<>(), draft9Proxy);
-        SQLSelectAsExpression sqlSelectAsExpression1 = column1.as(draft9Proxy.value1());
-        SQLSelectAsExpression sqlSelectAsExpression2 = column2.as(draft9Proxy.value2());
-        SQLSelectAsExpression sqlSelectAsExpression3 = column3.as(draft9Proxy.value3());
-        SQLSelectAsExpression sqlSelectAsExpression4 = column4.as(draft9Proxy.value4());
-        SQLSelectAsExpression sqlSelectAsExpression5 = column5.as(draft9Proxy.value5());
-        SQLSelectAsExpression sqlSelectAsExpression6 = column6.as(draft9Proxy.value6());
-        SQLSelectAsExpression sqlSelectAsExpression7 = column7.as(draft9Proxy.value7());
-        SQLSelectAsExpression sqlSelectAsExpression8 = column8.as(draft9Proxy.value8());
-        SQLSelectAsExpression sqlSelectAsExpression9 = column9.as(draft9Proxy.value9());
-        draftFetcher.fetch(sqlSelectAsExpression1, sqlSelectAsExpression2, sqlSelectAsExpression3,
-                sqlSelectAsExpression4, sqlSelectAsExpression5, sqlSelectAsExpression6, sqlSelectAsExpression7,
-                sqlSelectAsExpression8, sqlSelectAsExpression9);
-        draftFetcher.getDraftPropTypes()[0] = column1.propertyType();
-        draftFetcher.getDraftPropTypes()[1] = column2.propertyType();
-        draftFetcher.getDraftPropTypes()[2] = column3.propertyType();
-        draftFetcher.getDraftPropTypes()[3] = column4.propertyType();
-        draftFetcher.getDraftPropTypes()[4] = column5.propertyType();
-        draftFetcher.getDraftPropTypes()[5] = column6.propertyType();
-        draftFetcher.getDraftPropTypes()[6] = column7.propertyType();
-        draftFetcher.getDraftPropTypes()[7] = column8.propertyType();
-        draftFetcher.getDraftPropTypes()[8] = column9.propertyType();
+        draftFetcher.fetch(0,column1,draft9Proxy.value1());
+        draftFetcher.fetch(1,column2,draft9Proxy.value2());
+        draftFetcher.fetch(2,column3,draft9Proxy.value3());
+        draftFetcher.fetch(3,column4,draft9Proxy.value4());
+        draftFetcher.fetch(4,column5,draft9Proxy.value5());
+        draftFetcher.fetch(5,column6,draft9Proxy.value6());
+        draftFetcher.fetch(6,column7,draft9Proxy.value7());
+        draftFetcher.fetch(7,column8,draft9Proxy.value8());
+        draftFetcher.fetch(8,column9,draft9Proxy.value9());
         return draftFetcher;
     }
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> DraftFetcher<Draft10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, Draft10Proxy<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> draft(
@@ -266,29 +206,17 @@ public class Select {
         Draft10Proxy<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> draft10Proxy = new Draft10Proxy<>();
         DraftFetcherImpl<Draft10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, Draft10Proxy<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> draftFetcher =
                 new DraftFetcherImpl<>(new Draft10<>(), draft10Proxy);
-        SQLSelectAsExpression sqlSelectAsExpression1 = column1.as(draft10Proxy.value1());
-        SQLSelectAsExpression sqlSelectAsExpression2 = column2.as(draft10Proxy.value2());
-        SQLSelectAsExpression sqlSelectAsExpression3 = column3.as(draft10Proxy.value3());
-        SQLSelectAsExpression sqlSelectAsExpression4 = column4.as(draft10Proxy.value4());
-        SQLSelectAsExpression sqlSelectAsExpression5 = column5.as(draft10Proxy.value5());
-        SQLSelectAsExpression sqlSelectAsExpression6 = column6.as(draft10Proxy.value6());
-        SQLSelectAsExpression sqlSelectAsExpression7 = column7.as(draft10Proxy.value7());
-        SQLSelectAsExpression sqlSelectAsExpression8 = column8.as(draft10Proxy.value8());
-        SQLSelectAsExpression sqlSelectAsExpression9 = column9.as(draft10Proxy.value9());
-        SQLSelectAsExpression sqlSelectAsExpression10 = column10.as(draft10Proxy.value10());
-        draftFetcher.fetch(sqlSelectAsExpression1, sqlSelectAsExpression2, sqlSelectAsExpression3,
-                sqlSelectAsExpression4, sqlSelectAsExpression5, sqlSelectAsExpression6, sqlSelectAsExpression7,
-                sqlSelectAsExpression8, sqlSelectAsExpression9, sqlSelectAsExpression10);
-        draftFetcher.getDraftPropTypes()[0] = column1.propertyType();
-        draftFetcher.getDraftPropTypes()[1] = column2.propertyType();
-        draftFetcher.getDraftPropTypes()[2] = column3.propertyType();
-        draftFetcher.getDraftPropTypes()[3] = column4.propertyType();
-        draftFetcher.getDraftPropTypes()[4] = column5.propertyType();
-        draftFetcher.getDraftPropTypes()[5] = column6.propertyType();
-        draftFetcher.getDraftPropTypes()[6] = column7.propertyType();
-        draftFetcher.getDraftPropTypes()[7] = column8.propertyType();
-        draftFetcher.getDraftPropTypes()[8] = column9.propertyType();
-        draftFetcher.getDraftPropTypes()[9] = column10.propertyType();
+
+        draftFetcher.fetch(0,column1,draft10Proxy.value1());
+        draftFetcher.fetch(1,column2,draft10Proxy.value2());
+        draftFetcher.fetch(2,column3,draft10Proxy.value3());
+        draftFetcher.fetch(3,column4,draft10Proxy.value4());
+        draftFetcher.fetch(4,column5,draft10Proxy.value5());
+        draftFetcher.fetch(5,column6,draft10Proxy.value6());
+        draftFetcher.fetch(6,column7,draft10Proxy.value7());
+        draftFetcher.fetch(7,column8,draft10Proxy.value8());
+        draftFetcher.fetch(8,column9,draft10Proxy.value9());
+        draftFetcher.fetch(9,column10,draft10Proxy.value10());
         return draftFetcher;
     }
 //

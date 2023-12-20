@@ -1529,4 +1529,70 @@ public class QueryTest9 extends BaseTest {
             Assert.assertEquals("title0",value3);
         }
     }
+
+    @Test
+    public void testDraft9(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft3<Integer, LocalDateTime, String>> list = entityQuery.queryable(Topic.class)
+                .leftJoin(Topic.class, (t, t1) -> {
+                    t.id().eq(t1.id());
+                })
+                .orderBy((t, t1) -> {
+                    t.id().asc();
+                    t1.createTime().desc();
+                })
+                .selectDraft((t, t1) -> Select.draft(
+                        t.stars(),
+                        t.createTime(),
+                        t1.title()
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`stars` AS `value1`,t.`create_time` AS `value2`,t1.`title` AS `value3` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` ORDER BY t.`id` ASC,t1.`create_time` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+        for (Draft3<Integer, LocalDateTime, String> item : list) {
+
+            Integer value1 = item.getValue1();
+            LocalDateTime value2 = item.getValue2();
+            String value3 = item.getValue3();
+            if(item.getValue1()!=null){
+                Assert.assertTrue(item.getValue1() instanceof Integer);
+            }
+            if(item.getValue2()!=null){
+                Assert.assertTrue(item.getValue2() != null);
+            }
+            if(item.getValue3()!=null){
+                Assert.assertTrue(item.getValue3() instanceof String);
+            }
+
+        }
+    }
+    @Test
+    public void testDraft10(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, Long>> list = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().like("123");
+                    o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
+                })
+                .groupBy(o -> o.id())//多个用GroupBy.of(.....)
+                .selectDraft(o -> Select.draft(
+                        o.id(),
+                        o.id().count()
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(t.`id`) AS `value2` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+    }
 }

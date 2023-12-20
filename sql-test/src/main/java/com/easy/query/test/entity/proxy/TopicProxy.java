@@ -27,35 +27,35 @@ public class TopicProxy extends AbstractProxyEntity < TopicProxy, Topic > {
      * {@link Topic#getId}
      */
     public SQLColumn < TopicProxy, java.lang.String> id(){
-    return get("id");
+    return get("id", java.lang.String.class);
 }
 
     /**
      * {@link Topic#getStars}
      */
     public SQLColumn < TopicProxy, java.lang.Integer> stars(){
-    return get("stars");
+    return get("stars", java.lang.Integer.class);
 }
 
     /**
      * {@link Topic#getTitle}
      */
     public SQLColumn < TopicProxy, java.lang.String> title(){
-    return get("title");
+    return get("title", java.lang.String.class);
 }
 
     /**
      * {@link Topic#getCreateTime}
      */
     public SQLColumn < TopicProxy, java.time.LocalDateTime> createTime(){
-    return get("createTime");
+    return get("createTime", java.time.LocalDateTime.class);
 }
 
     /**
      * {@link Topic#getAlias}
      */
     public SQLColumn < TopicProxy, java.lang.String> alias(){
-    return get("alias");
+    return get("alias", java.lang.String.class);
 }
 
 
