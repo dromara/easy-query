@@ -13,6 +13,8 @@ import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.impl.NowSQLFunction;
 import com.easy.query.core.func.def.impl.RoundSQLFunction;
+import com.easy.query.core.func.def.impl.ToLowerSQLFunction;
+import com.easy.query.core.func.def.impl.ToUpperSQLFunction;
 import com.easy.query.core.func.def.impl.UtcNowSQLFunction;
 import com.easy.query.core.func.def.impl.NullDefaultSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
@@ -59,6 +61,16 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction min(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new MinSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction toLower(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new ToLowerSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction toUpper(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new ToUpperSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override

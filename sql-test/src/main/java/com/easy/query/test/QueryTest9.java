@@ -1595,4 +1595,32 @@ public class QueryTest9 extends BaseTest {
         Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(t.`id`) AS `value2` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         listenerContextManager.clear();
     }
+    @Test
+    public void testDraft11(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft3<String, String, String>> list = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().toLower().like("123");
+                    o.title().toLower().eq(o.id().toUpper());
+                    o.title().toLower().ne(o.id().toLower());
+                    o.title().toLower().eq(o.id().toUpper());
+                    o.title().toUpper().like("123");
+                    o.title().toUpper().eq(o.id().toUpper());
+                    o.title().toUpper().ne(o.id().toLower());
+                })
+                .selectDraft(o -> Select.draft(
+                        o.id(),
+                        o.title().toLower(),
+                        o.title().toUpper()
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,LOWER(t.`title`) AS `value2`,UPPER(t.`title`) AS `value3` FROM `t_topic` t WHERE LOWER(t.`title`) LIKE ? AND LOWER(t.`title`) = UPPER(t.`id`) AND LOWER(t.`title`) <> LOWER(t.`id`) AND LOWER(t.`title`) = UPPER(t.`id`) AND UPPER(t.`title`) LIKE ? AND UPPER(t.`title`) = UPPER(t.`id`) AND UPPER(t.`title`) <> LOWER(t.`id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+    }
 }

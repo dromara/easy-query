@@ -117,4 +117,15 @@ public interface ColumnAggregatable<TProperty> extends SQLSelectAsExpression, Pr
         });
     }
     //todo length trim left trim right trim padleft padright
+
+    default ColumnFuncComparableExpression<String> toLower(){
+        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(),this.getTable(),this.getValue(), fx->{
+            return fx.toLower(this.getValue());
+        },String.class);
+    }
+    default ColumnFuncComparableExpression<String> toUpper(){
+        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(),this.getTable(),this.getValue(), fx->{
+            return fx.toUpper(this.getValue());
+        },String.class);
+    }
 }
