@@ -37,6 +37,7 @@ import com.easy.query.core.proxy.impl.SQLDraftSelectImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectGroupKeyAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectImpl;
+import com.easy.query.core.proxy.impl.SQLSelectNativeAsImpl;
 import com.easy.query.core.proxy.sql.scec.SQLAliasNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLAliasNativeProxyExpressionContextImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
@@ -326,13 +327,6 @@ public class Select {
                 }
                 contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
             });
-        }, (alias, f) -> {
-            f.sqlNativeSegment(sqlSegment, c -> {
-                if (alias != null) {
-                    c.setPropertyAlias(alias);
-                }
-                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
-            });
         });
     }
 
@@ -355,17 +349,11 @@ public class Select {
     }
 
     public static SQLSelectAsExpression sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume, PropColumn sqlColumnAlias) {
-        return new SQLSelectAsImpl(f -> {
-            f.sqlNativeSegment(sqlSegment, c -> {
-                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
-            });
-        }, f -> {
+        return new SQLSelectNativeAsImpl(f -> {
             f.sqlNativeSegment(sqlSegment, c -> {
                 c.setPropertyAlias(sqlColumnAlias.getValue());
                 contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
             });
-        }, f -> {
-            throw new UnsupportedOperationException();
         });
     }
 
@@ -375,15 +363,7 @@ public class Select {
     }
 
     public static <TRProxy extends ProxyEntity<TRProxy, TR>, TR> SQLSelectAsExpression sqlAlias(TRProxy proxy, String sqlSegment, SQLExpression1<SQLAliasNativeProxyExpressionContext<TRProxy, TR>> contextConsume) {
-        return new SQLSelectAsImpl(s -> {
-            s.sqlNativeSegment(sqlSegment, c -> {
-                contextConsume.apply(new SQLAliasNativeProxyExpressionContextImpl<>(c));
-            });
-        }, s -> {
-            s.sqlNativeSegment(sqlSegment, c -> {
-                contextConsume.apply(new SQLAliasNativeProxyExpressionContextImpl<>(c));
-            });
-        }, s -> {
+        return new SQLSelectNativeAsImpl(s -> {
             s.sqlNativeSegment(sqlSegment, c -> {
                 contextConsume.apply(new SQLAliasNativeProxyExpressionContextImpl<>(c));
             });

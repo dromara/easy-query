@@ -1,7 +1,6 @@
 package com.easy.query.core.proxy.impl;
 
-import com.easy.query.core.expression.builder.AsSelector;
-import com.easy.query.core.expression.builder.Selector;
+import com.easy.query.core.expression.builder.core.SQLNativeAble;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -19,13 +18,11 @@ import java.util.function.BiConsumer;
 public class SQLDraftSelectImpl implements PropTypeColumn<Object> {
 
 
-    private final BiConsumer<String, Selector> selectorConsumer;
-    private final BiConsumer<String, AsSelector> selectorAsConsumer;
+    private final BiConsumer<String, SQLNativeAble> selectorConsumer;
     private Class<?> propType;
 
-    public SQLDraftSelectImpl(BiConsumer<String,Selector> selectorConsumer,BiConsumer<String, AsSelector> selectorAsConsumer){
+    public SQLDraftSelectImpl(BiConsumer<String, SQLNativeAble> selectorConsumer){
         this.selectorConsumer = selectorConsumer;
-        this.selectorAsConsumer = selectorAsConsumer;
 
         this.propType = Object.class;
     }
@@ -35,7 +32,7 @@ public class SQLDraftSelectImpl implements PropTypeColumn<Object> {
         return new SQLSelectAsImpl(s -> {
             selectorConsumer.accept(propertyAlias,s);
         }, s -> {
-            selectorAsConsumer.accept(propertyAlias,s);
+            selectorConsumer.accept(propertyAlias,s);
         }, s -> {
             throw new UnsupportedOperationException();
         });
