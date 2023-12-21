@@ -1,7 +1,10 @@
 package com.easy.query.test.dameng.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.dameng.entity.proxy.DamengMyTopicProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,11 +17,17 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table("MY_TOPIC")
-public class DamengMyTopic {
+@EntityFileProxy
+public class DamengMyTopic implements ProxyEntityAvailable<DamengMyTopic , DamengMyTopicProxy> {
 
     @Column(primaryKey = true)
     private String id;
     private Integer stars;
     private String title;
     private LocalDateTime createTime;
+
+    @Override
+    public Class<DamengMyTopicProxy> proxyTableClass() {
+        return DamengMyTopicProxy.class;
+    }
 }

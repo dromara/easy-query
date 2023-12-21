@@ -72,4 +72,9 @@ public class DamengSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction rightPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new DamengRightPadSQLFunction(getColumnExpressions(sqlExpression));
     }
+
+    @Override
+    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DamengJoinSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

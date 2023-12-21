@@ -10,6 +10,7 @@ import com.easy.query.core.func.column.ColumnFuncFormatExpression;
 import com.easy.query.core.func.column.ColumnFuncValueExpression;
 import com.easy.query.core.func.column.ColumnFunctionExpression;
 import com.easy.query.core.func.column.ColumnPropertyExpression;
+import com.easy.query.core.func.column.ColumnSubQueryExpression;
 import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.List;
@@ -56,6 +57,9 @@ public abstract class AbstractExpressionSQLFunction extends AbstractSQLFunction 
             ColumnFunctionExpression columnFunctionExpression = (ColumnFunctionExpression) columnExpression;
             SQLSegment sqlSegment = new SQLFunctionTranslateImpl(columnFunctionExpression.getSQLFunction()).toSQLSegment(context.getExpressionContext(), context.getDefaultTable(), context.getExpressionContext().getRuntimeContext(),null);
             context.sql(sqlSegment);
+        } else if(columnExpression instanceof ColumnSubQueryExpression){
+            ColumnSubQueryExpression columnSubQueryExpression = (ColumnSubQueryExpression) columnExpression;
+            context.expression(columnSubQueryExpression.getQuery());
         }else {
             throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(columnExpression));
         }

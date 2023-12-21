@@ -64,4 +64,8 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
     public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new KingbaseESAvgSQLFunction(getColumnExpressions(sqlExpression));
     }
+    @Override
+    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new KingbaseESJoinSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

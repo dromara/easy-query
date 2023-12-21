@@ -468,4 +468,38 @@ public interface SQLStringFunc {
      * @return 字符串补齐函数
      */
     SQLFunction rightPad(SQLExpression1<ColumnFuncSelector> sqlExpression);
+
+
+    /**
+     * 列组合
+     * @param property 属性列
+     * @param delimiter 分隔符
+     * @return 替换字符串函数
+     */
+    default SQLFunction join(String property,String delimiter){
+        return join(s->{
+            s.value(delimiter);
+            s.column(property);
+        });
+    }
+    /**
+     * 列组合
+     * @param sqlFunction sql函数
+     * @param delimiter 分隔符
+     * @return 列组合函数
+     */
+    default SQLFunction join(SQLFunction sqlFunction,String delimiter){
+        return join(s->{
+            s.value(delimiter);
+            s.sqlFunc(sqlFunction);
+        });
+    }
+
+    /**
+     * 列组合
+     * @param sqlExpression 属性选择函数
+     * @return 列组合函数
+     */
+    SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression);
+
 }

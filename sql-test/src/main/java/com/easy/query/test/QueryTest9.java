@@ -1857,4 +1857,23 @@ public class QueryTest9 extends BaseTest {
             Assert.assertTrue(stringStringDraft2.getValue2().startsWith("0"));
         }
     }
+    @Test
+    public void testDraft20(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<String, String>> list2 = entityQuery.queryable(BlogEntity.class)
+                .groupBy(o -> o.content().subString(0,8))
+                .selectDraft(o -> Select.draft(
+                        o.content().subString(0,8),
+                        o.id().join(",")
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT SUBSTR(t.`content`,1,8) AS `value1`,GROUP_CONCAT(t.`id` SEPARATOR ?) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY SUBSTR(t.`content`,1,8)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+    }
 }

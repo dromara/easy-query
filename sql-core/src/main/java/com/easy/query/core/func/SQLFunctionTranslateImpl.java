@@ -29,8 +29,8 @@ public class SQLFunctionTranslateImpl implements SQLFunctionTranslate {
             if(alias!=null){
                 sqlNativeExpressionContext.setAlias(alias);
             }
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(defTable,sqlNativeExpressionContext));
             String sqlSegment = sqlFunction.sqlSegment(defTable);
+            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(defTable,sqlNativeExpressionContext));
             return runtimeContext.getSQLSegmentFactory().createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
         });
 

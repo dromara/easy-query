@@ -16,7 +16,7 @@ import com.easy.query.core.util.EasySQLUtil;
 public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<TProperty>,DSLSQLFunctionAvailable {
 
     @Override
-    default void likeMatchLeft(boolean condition, Object val) {
+    default void likeMatchLeft(boolean condition, TProperty val) {
         if (condition) {
 //            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
 //                SQLFunc fx = f.getRuntimeContext().fx();
@@ -35,7 +35,7 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
     }
 
     @Override
-    default void likeMatchRight(boolean condition, Object val) {
+    default void likeMatchRight(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -48,7 +48,7 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
     }
 
     @Override
-    default void like(boolean condition, Object val) {
+    default void like(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -61,7 +61,7 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
     }
 
     @Override
-    default void notLikeMatchLeft(boolean condition, Object val) {
+    default void notLikeMatchLeft(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -74,7 +74,7 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
     }
 
     @Override
-    default void notLikeMatchRight(boolean condition, Object val) {
+    default void notLikeMatchRight(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -87,7 +87,7 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
     }
 
     @Override
-    default void notLike(boolean condition, Object val) {
+    default void notLike(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();

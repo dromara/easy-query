@@ -2,6 +2,8 @@ package com.easy.query.test.dameng;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
 import org.junit.Assert;
 import org.junit.Test;
@@ -105,6 +107,16 @@ public class DamengQueryTest extends DamengBaseTest{
                 .asTreeCTE("id", "title")
                 .toList();
         Assert.assertNotNull(list);
+    }
+
+    @Test
+    public void testJoin1(){
+        List<Draft2<String, String>> list = entityQuery.queryable(DamengMyTopic.class)
+                .groupBy(o -> o.title())
+                .selectDraft(o -> Select.draft(
+                        o.title(),
+                        o.id().join(",")
+                )).toList();
     }
 
 //    @Test

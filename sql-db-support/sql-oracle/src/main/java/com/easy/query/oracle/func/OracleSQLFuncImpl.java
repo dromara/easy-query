@@ -74,4 +74,8 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction rightPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new OracleRightPadSQLFunction(getColumnExpressions(sqlExpression));
     }
+    @Override
+    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleJoinSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

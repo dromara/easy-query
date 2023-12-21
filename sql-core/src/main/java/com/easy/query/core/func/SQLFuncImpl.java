@@ -14,6 +14,7 @@ import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeFormatSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
+import com.easy.query.core.func.def.impl.JoinSQLFunction;
 import com.easy.query.core.func.def.impl.MaxSQLFunction;
 import com.easy.query.core.func.def.impl.MinSQLFunction;
 import com.easy.query.core.func.def.impl.NowSQLFunction;
@@ -170,5 +171,10 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction rightPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new RightPadSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new JoinSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

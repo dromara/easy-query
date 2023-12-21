@@ -317,4 +317,14 @@ public interface ColumnAggregatable<TProperty> extends SQLSelectAsExpression, Pr
             }
         }, String.class);
     }
+    default ColumnFunctionComparableChainExpression<String> join(String delimiter) {
+        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.join(sqlFunction,delimiter);
+            } else {
+                return fx.join(this.getValue(),delimiter);
+            }
+        }, String.class);
+    }
 }
