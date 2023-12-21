@@ -11,6 +11,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTypeUtil;
@@ -1622,5 +1623,238 @@ public class QueryTest9 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id` AS `value1`,LOWER(t.`title`) AS `value2`,UPPER(t.`title`) AS `value3` FROM `t_topic` t WHERE LOWER(t.`title`) LIKE ? AND LOWER(t.`title`) = UPPER(t.`id`) AND LOWER(t.`title`) <> LOWER(t.`id`) AND LOWER(t.`title`) = UPPER(t.`id`) AND UPPER(t.`title`) LIKE ? AND UPPER(t.`title`) = UPPER(t.`id`) AND UPPER(t.`title`) <> LOWER(t.`id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         listenerContextManager.clear();
+    }
+    @Test
+    public void testDraft12(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft4<String, String, String, String>> list = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().subString(1,2).eq("123");
+                    o.title().toLower().subString(1,2).eq("123");
+                    o.title().toLower().toUpper().toLower().subString(1,2).eq("123");
+                    o.createTime()
+                            .dateTimeFormat("yyyy-MM")//日期先格式化
+                            .toLower()//然后转成小写
+                            .subString(1,10)//分割从第一位
+                            .like("023-01");
+                })
+                .selectDraft(o -> Select.draft(
+                        o.id(),
+                        o.title().toLower(),
+                        o.title().toUpper(),
+                        o.title().toLower().subString(1,2)
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,LOWER(t.`title`) AS `value2`,UPPER(t.`title`) AS `value3`,SUBSTR(LOWER(t.`title`),2,2) AS `value4` FROM `t_topic` t WHERE SUBSTR(t.`title`,2,2) = ? AND SUBSTR(LOWER(t.`title`),2,2) = ? AND SUBSTR(LOWER(UPPER(LOWER(t.`title`))),2,2) = ? AND SUBSTR(LOWER(DATE_FORMAT(t.`create_time`,'%Y-%m')),2,10) LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),123(String),123(String),%023-01%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDraft13(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft4<String, String, String, String>> list = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().trim().subString(1,2).eq("123");
+                    o.title().trim().toLower().subString(1,2).eq("123");
+                    o.title().toLower().trim().toUpper().toLower().subString(1,2).eq("123");
+                    o.createTime()
+                            .dateTimeFormat("yyyy-MM")//日期先格式化
+                            .toLower()//然后转成小写
+                            .subString(1,10)//分割从第一位
+                            .trim()
+                            .like("023-01");
+                })
+                .selectDraft(o -> Select.draft(
+                        o.id(),
+                        o.title().toLower().trim(),
+                        o.title().trim().toUpper(),
+                        o.title().toLower().trim().subString(1,2)
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,TRIM(LOWER(t.`title`)) AS `value2`,UPPER(TRIM(t.`title`)) AS `value3`,SUBSTR(TRIM(LOWER(t.`title`)),2,2) AS `value4` FROM `t_topic` t WHERE SUBSTR(TRIM(t.`title`),2,2) = ? AND SUBSTR(LOWER(TRIM(t.`title`)),2,2) = ? AND SUBSTR(LOWER(UPPER(TRIM(LOWER(t.`title`)))),2,2) = ? AND TRIM(SUBSTR(LOWER(DATE_FORMAT(t.`create_time`,'%Y-%m')),2,10)) LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),123(String),123(String),%023-01%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDraft14(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft4<String, String, String, String>> list = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().trimStart().subString(1,2).eq("123");
+                    o.title().trimStart().toLower().subString(1,2).eq("123");
+                    o.title().toLower().trimStart().toUpper().toLower().subString(1,2).eq("123");
+                    o.createTime()
+                            .dateTimeFormat("yyyy-MM")//日期先格式化
+                            .toLower()//然后转成小写
+                            .subString(1,10)//分割从第一位
+                            .trimStart()
+                            .like("023-01");
+                })
+                .selectDraft(o -> Select.draft(
+                        o.id(),
+                        o.title().toLower().trimStart(),
+                        o.title().trimStart().toUpper(),
+                        o.title().toLower().trimStart().subString(1,2)
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,LTRIM(LOWER(t.`title`)) AS `value2`,UPPER(LTRIM(t.`title`)) AS `value3`,SUBSTR(LTRIM(LOWER(t.`title`)),2,2) AS `value4` FROM `t_topic` t WHERE SUBSTR(LTRIM(t.`title`),2,2) = ? AND SUBSTR(LOWER(LTRIM(t.`title`)),2,2) = ? AND SUBSTR(LOWER(UPPER(LTRIM(LOWER(t.`title`)))),2,2) = ? AND LTRIM(SUBSTR(LOWER(DATE_FORMAT(t.`create_time`,'%Y-%m')),2,10)) LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),123(String),123(String),%023-01%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDraft15(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft4<String, String, String, String>> list = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().trimEnd().subString(1,2).eq("123");
+                    o.title().trimEnd().toLower().subString(1,2).eq("123");
+                    o.title().toLower().trimEnd().toUpper().toLower().subString(1,2).eq("123");
+                    o.createTime()
+                            .dateTimeFormat("yyyy-MM")//日期先格式化
+                            .toLower()//然后转成小写
+                            .subString(1,10)//分割从第一位
+                            .trimEnd()
+                            .like("023-01");
+                })
+                .selectDraft(o -> Select.draft(
+                        o.id(),
+                        o.title().toLower().trimEnd(),
+                        o.title().trimEnd().toUpper(),
+                        o.title().toLower().trimEnd().subString(1,2)
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,RTRIM(LOWER(t.`title`)) AS `value2`,UPPER(RTRIM(t.`title`)) AS `value3`,SUBSTR(RTRIM(LOWER(t.`title`)),2,2) AS `value4` FROM `t_topic` t WHERE SUBSTR(RTRIM(t.`title`),2,2) = ? AND SUBSTR(LOWER(RTRIM(t.`title`)),2,2) = ? AND SUBSTR(LOWER(UPPER(RTRIM(LOWER(t.`title`)))),2,2) = ? AND RTRIM(SUBSTR(LOWER(DATE_FORMAT(t.`create_time`,'%Y-%m')),2,10)) LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),123(String),123(String),%023-01%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDraft16(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, String>> list = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().trimEnd().trimStart().eq(o.id().trimStart());
+                    o.createTime().subString(0,4).eq("2021");
+                })
+                .selectDraft(o -> Select.draft(
+                        o.id(),
+                        o.title().toLower()
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,LOWER(t.`title`) AS `value2` FROM `t_topic` t WHERE LTRIM(RTRIM(t.`title`)) = LTRIM(t.`id`) AND SUBSTR(t.`create_time`,1,4) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2021(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDraft17(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, String>> list = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().trimEnd().trimStart().replace("title","abc").like("abc");
+                })
+                .selectDraft(o -> Select.draft(
+                        o.id(),
+                        o.title().toLower().replace("title","abc")
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,REPLACE(LOWER(t.`title`),?,?) AS `value2` FROM `t_topic` t WHERE REPLACE(LTRIM(RTRIM(t.`title`)),?,?) LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("title(String),abc(String),title(String),abc(String),%abc%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDraft18(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, Integer>> list = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().compareTo(o.id()).eq(0);//==0
+                    o.title().trim().compareTo(o.id().toLower().subString(1, 10)).ge(2);//>=2
+                    o.id().compareTo(o.title()).le(1);//<=1
+                })
+                .selectDraft(o -> Select.draft(
+                        o.id(),
+                        o.title().compareTo(o.id())
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,STRCMP(t.`title`,t.`id`) AS `value2` FROM `t_topic` t WHERE STRCMP(t.`title`,t.`id`) = ? AND STRCMP(TRIM(t.`title`),SUBSTR(LOWER(t.`id`),2,10)) >= ? AND STRCMP(t.`id`,t.`title`) <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("0(Integer),2(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDraft19(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, String>> list = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().leftPad(5,'1').ne("title0");//==0
+                })
+                .selectDraft(o -> Select.draft(
+                        o.id(),
+                        o.title().leftPad(9,'0')
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,LPAD(t.`title`, 9, ?) AS `value2` FROM `t_topic` t WHERE LPAD(t.`title`, 5, ?) <> ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("0(String),1(String),title0(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+        List<Draft2<String, String>> list1 = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().leftPad(5,'1').ne("title0");//==0
+                    o.id().ne("7");
+                })
+                .selectDraft(o -> Select.draft(
+                        o.id(),
+                        o.title().leftPad(9,'0')
+                ))
+                .toList();
+        for (Draft2<String, String> stringStringDraft2 : list1) {
+
+            Assert.assertTrue(stringStringDraft2.getValue2().startsWith("0"));
+        }
     }
 }

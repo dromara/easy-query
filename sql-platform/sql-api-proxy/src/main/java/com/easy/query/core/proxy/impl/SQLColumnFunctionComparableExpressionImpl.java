@@ -10,7 +10,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
+import com.easy.query.core.proxy.extension.ColumnFunctionComparableChainExpression;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.function.Function;
@@ -21,7 +21,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements ColumnFuncComparableExpression<TProperty> {
+public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements ColumnFunctionComparableChainExpression<TProperty> {
     private final EntitySQLContext entitySQLContext;
     private final TableAvailable table;
     private final String property;

@@ -66,4 +66,12 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
     public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new SQLiteAvgSQLFunction(getColumnExpressions(sqlExpression));
     }
+    @Override
+    public SQLFunction leftPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteLeftPadSQLFunction(getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction rightPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteRightPadSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

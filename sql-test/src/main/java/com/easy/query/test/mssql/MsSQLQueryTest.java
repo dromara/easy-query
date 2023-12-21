@@ -2,6 +2,9 @@ package com.easy.query.test.mssql;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic1;
 import org.junit.Assert;
@@ -97,5 +100,42 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
             Assert.assertEquals(msSQLMyTopic.getId(),String.valueOf(i+20) );
             Assert.assertEquals(msSQLMyTopic.getStars(),(Integer)(i+120) );
         }
+    }
+    
+    @Test
+    public void query7(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+
+        List<MsSQLMyTopic> list = entityQuery.queryable(MsSQLMyTopic.class)
+                .where(o -> {
+                    o.title().compareTo("1").eq(1);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE (CASE WHEN [Title] = ? THEN 0 WHEN [Title] > ? THEN 1 ELSE -1 END) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String),1(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void query8(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+
+        List<MsSQLMyTopic> list = entityQuery.queryable(MsSQLMyTopic.class)
+                .where(o -> {
+                    o.title().compareTo(o.id()).eq(1);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE (CASE WHEN [Title] = [Id] THEN 0 WHEN [Title] > [Id] THEN 1 ELSE -1 END) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }

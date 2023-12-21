@@ -7,63 +7,63 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
 /**
  * create time 2023/12/2 14:13
- * 文件说明
+ * column like val,val必须是值不可以是函数
  *
  * @author xuejiaming
  */
 public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
-    default void likeMatchLeft(Object val) {
-         likeMatchLeft(true, val);
+    default void likeMatchLeft(TProperty val) {
+        likeMatchLeft(true, val);
     }
 
-    default void likeMatchLeft(boolean condition, Object val) {
+    default void likeMatchLeft(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT)));
         }
     }
-    default void likeMatchRight(Object val) {
+    default void likeMatchRight(TProperty val) {
         likeMatchRight(true, val);
     }
 
-    default void likeMatchRight(boolean condition, Object val) {
+    default void likeMatchRight(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_LEFT)));
         }
     }
-    default void like(Object val) {
-         like(true, val);
+    default void like(TProperty val) {
+        like(true, val);
     }
 
-    default void like(boolean condition, Object val) {
+    default void like(boolean condition, TProperty val) {
         if (condition) {
-           getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
         }
     }
-    default void notLikeMatchLeft(Object val) {
-         notLikeMatchLeft(true, val);
+    default void notLikeMatchLeft(TProperty val) {
+        notLikeMatchLeft(true, val);
     }
 
-    default void notLikeMatchLeft(boolean condition, Object val) {
+    default void notLikeMatchLeft(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT)));
         }
     }
-    default void notLikeMatchRight(Object val) {
+    default void notLikeMatchRight(TProperty val) {
         notLikeMatchRight(true, val);
     }
 
-    default void notLikeMatchRight(boolean condition, Object val) {
+    default void notLikeMatchRight(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_LEFT)));
         }
     }
-    default void notLike(Object val) {
-         notLike(true, val);
+    default void notLike(TProperty val) {
+        notLike(true, val);
     }
 
-    default void notLike(boolean condition, Object val) {
+    default void notLike(boolean condition, TProperty val) {
         if (condition) {
-           getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
         }
     }
 }

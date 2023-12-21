@@ -64,4 +64,14 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new OracleAvgSQLFunction(getColumnExpressions(sqlExpression));
     }
+
+    @Override
+    public SQLFunction leftPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleLeftPadSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction rightPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleRightPadSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

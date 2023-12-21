@@ -64,4 +64,12 @@ public class DamengSQLFuncImpl extends SQLFuncImpl {
     public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new DamengAvgSQLFunction(getColumnExpressions(sqlExpression));
     }
+    @Override
+    public SQLFunction leftPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DamengLeftPadSQLFunction(getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction rightPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DamengRightPadSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

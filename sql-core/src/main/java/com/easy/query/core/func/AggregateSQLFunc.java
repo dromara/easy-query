@@ -120,63 +120,6 @@ public interface AggregateSQLFunc {
      */
     SQLFunction min(SQLExpression1<ColumnFuncSelector> sqlExpression);
     /**
-     * 小写
-     * @param property 属性列
-     * @return 小写函数
-     */
-    default SQLFunction toLower(String property){
-        return toLower(s->{
-            s.column(property);
-        });
-    }
-    /**
-     * 小写
-     * @param sqlFunction sum函数
-     * @return 小写函数
-     */
-    default SQLFunction toLower(SQLFunction sqlFunction){
-        return toLower(s->{
-            s.sqlFunc(sqlFunction);
-        });
-    }
-
-    /**
-     * 小写
-     * @param sqlExpression 属性选择函数
-     * @return 小写函数
-     */
-    SQLFunction toLower(SQLExpression1<ColumnFuncSelector> sqlExpression);
-
-    /**
-     * 大写
-     * @param property 属性列
-     * @return 大写函数
-     */
-    default SQLFunction toUpper(String property){
-        return toUpper(s->{
-            s.column(property);
-        });
-    }
-    /**
-     * 大写
-     * @param sqlFunction sum函数
-     * @return 大写函数
-     */
-    default SQLFunction toUpper(SQLFunction sqlFunction){
-        return toUpper(s->{
-            s.sqlFunc(sqlFunction);
-        });
-    }
-
-    /**
-     * 大写
-     * @param sqlExpression 属性选择函数
-     * @return 大写函数
-     */
-    SQLFunction toUpper(SQLExpression1<ColumnFuncSelector> sqlExpression);
-
-
-    /**
      * 平均值函数
      * @param property 属性列
      * @return 平均值函数

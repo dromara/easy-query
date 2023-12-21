@@ -6,22 +6,30 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
+import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.impl.AbsSQLFunction;
+import com.easy.query.core.func.def.impl.AvgSQLFunction;
+import com.easy.query.core.func.def.impl.CompareToSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
+import com.easy.query.core.func.def.impl.CountSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeFormatSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
-import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
-import com.easy.query.core.func.def.impl.NowSQLFunction;
-import com.easy.query.core.func.def.impl.RoundSQLFunction;
-import com.easy.query.core.func.def.impl.ToLowerSQLFunction;
-import com.easy.query.core.func.def.impl.ToUpperSQLFunction;
-import com.easy.query.core.func.def.impl.UtcNowSQLFunction;
-import com.easy.query.core.func.def.impl.NullDefaultSQLFunction;
-import com.easy.query.core.func.def.impl.AvgSQLFunction;
-import com.easy.query.core.func.def.impl.CountSQLFunction;
 import com.easy.query.core.func.def.impl.MaxSQLFunction;
 import com.easy.query.core.func.def.impl.MinSQLFunction;
+import com.easy.query.core.func.def.impl.NowSQLFunction;
+import com.easy.query.core.func.def.impl.NullDefaultSQLFunction;
+import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
+import com.easy.query.core.func.def.impl.RightPadSQLFunction;
+import com.easy.query.core.func.def.impl.ReplaceSQLFunction;
+import com.easy.query.core.func.def.impl.RoundSQLFunction;
+import com.easy.query.core.func.def.impl.SubStringSQLFunction;
 import com.easy.query.core.func.def.impl.SumSQLFunction;
+import com.easy.query.core.func.def.impl.ToLowerSQLFunction;
+import com.easy.query.core.func.def.impl.ToUpperSQLFunction;
+import com.easy.query.core.func.def.impl.TrimEndSQLFunction;
+import com.easy.query.core.func.def.impl.TrimSQLFunction;
+import com.easy.query.core.func.def.impl.TrimStartSQLFunction;
+import com.easy.query.core.func.def.impl.UtcNowSQLFunction;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.ArrayList;
@@ -74,6 +82,11 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
+    public SQLFunction subString(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SubStringSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
     public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new AvgSQLFunction(getColumnExpressions(sqlExpression));
     }
@@ -123,5 +136,39 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction utcNow() {
         return UtcNowSQLFunction.INSTANCE;
+    }
+
+    @Override
+    public SQLFunction trim(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new TrimSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction trimStart(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new TrimStartSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction trimEnd(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new TrimEndSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction replace(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new ReplaceSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction compareTo(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new CompareToSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction leftPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new LeftPadSQLFunction(getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction rightPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new RightPadSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

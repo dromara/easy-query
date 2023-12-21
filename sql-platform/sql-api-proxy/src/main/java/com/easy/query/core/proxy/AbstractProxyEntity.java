@@ -95,5 +95,15 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         }
     }
 
+//    public ColumnFuncComparableExpression<String> subString(DSLSQLFunctionAvailable dslsqlFunctionAvailable, int begin, int length){
+//        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(),this.getTable(),null, fx->{
+//            SQLFunction sqlFunction = dslsqlFunctionAvailable.func().apply(fx);
+//            return fx.subString(sqlFunction,begin,length);
+//        },String.class);
+//    }
+
+//    public EntitySQLFunc fx(){
+//        return new EntitySQLFuncImpl(this.getEntitySQLContext(),this.getTable());
+//    }
 
 }

@@ -1,13 +1,18 @@
 package com.easy.query.test.mssql;
 
+import com.easy.query.api.proxy.client.DefaultEntityQuery;
+import com.easy.query.api.proxy.client.EntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
+import com.easy.query.test.listener.ListenerContextManager;
+import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -24,6 +29,8 @@ import java.util.List;
 public abstract class MsSQLBaseTest {
     public static HikariDataSource dataSource;
     public static EasyQuery easyQuery;
+    public static EntityQuery entityQuery;
+    public static ListenerContextManager listenerContextManager;
 
     static {
         LogFactory.useStdOutLogging();
@@ -48,16 +55,20 @@ public abstract class MsSQLBaseTest {
     }
 
     public static void initEasyQuery() {
+        listenerContextManager=new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
         EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
                 })
                 .useDatabaseConfigure(new MsSQLDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .replaceService(NameConversion.class, UpperCamelCaseNameConversion.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);
+        entityQuery = new DefaultEntityQuery(easyQueryClient);
     }
 
     public static void initData() {

@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.builder;
 
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnFunction;
@@ -165,7 +166,16 @@ public interface AsSelector extends SQLNative<AsSelector>, RuntimeContextAvailab
         return columnFuncAs(table, columnPropertyFunction, propertyAlias);
     }
 
-    AsSelector columnFunc(TableAvailable table, String property, SQLFunction sqlFunction, String propertyAlias, SQLActionExpression sqlActionExpression);
+    /**
+     * 当{@param table}和{@param property}为空时  {@param propertyAlias}不能为空
+     * @param table
+     * @param property
+     * @param sqlFunction
+     * @param propertyAlias
+     * @param sqlActionExpression
+     * @return
+     */
+    AsSelector columnFunc(@Nullable TableAvailable table, @Nullable String property, SQLFunction sqlFunction, String propertyAlias, SQLActionExpression sqlActionExpression);
 
     AsSelector columnFuncAs(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
 

@@ -64,4 +64,14 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
     public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new MsSQLAvgSQLFunction(getColumnExpressions(sqlExpression));
     }
+
+    @Override
+    public SQLFunction subString(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLSubStringSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction trim(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLTrimSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

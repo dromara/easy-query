@@ -30,6 +30,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -168,15 +169,27 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
 
     @Override
     public AsSelector columnFunc(TableAvailable table, String property, SQLFunction sqlFunction, String propertyAlias, SQLActionExpression sqlActionExpression) {
-        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        String columnAsName = propertyAlias == null ? columnMetadata.getName() : getResultColumnName(propertyAlias);
-        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
-                .toSQLSegment(expressionContext, table, runtimeContext, columnAsName);
-        FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, columnMetadata, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), columnAsName);
-        sqlBuilderSegment.append(funcColumnSegment);
-//        columnAppendSQLFunction(table,property,sqlFunction,propertyAlias);
-        sqlActionExpression.apply();
-        return this;
+        if(table==null||property==null){
+            if(EasyStringUtil.isBlank(propertyAlias)){
+                throw new EasyQueryInvalidOperationException("propertyAlias is bank");
+            }
+            String columnAsName = getResultColumnName(propertyAlias);
+            SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                    .toSQLSegment(expressionContext, table, runtimeContext, columnAsName);
+            FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, null, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), columnAsName);
+            sqlBuilderSegment.append(funcColumnSegment);
+            sqlActionExpression.apply();
+            return this;
+        }else{
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+            String columnAsName = propertyAlias == null ? columnMetadata.getName() : getResultColumnName(propertyAlias);
+            SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                    .toSQLSegment(expressionContext, table, runtimeContext, columnAsName);
+            FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, columnMetadata, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), columnAsName);
+            sqlBuilderSegment.append(funcColumnSegment);
+            sqlActionExpression.apply();
+            return this;
+        }
     }
 
     //    @Override

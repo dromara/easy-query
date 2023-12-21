@@ -2,17 +2,7 @@ package com.easy.query.core.func;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
-import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
-import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
-import com.easy.query.core.func.def.impl.BankSQLFunction;
-import com.easy.query.core.func.def.impl.EmptySQLFunction;
-import com.easy.query.core.func.def.impl.NotBankSQLFunction;
-import com.easy.query.core.func.def.impl.NotEmptySQLFunction;
-import com.easy.query.core.util.EasyArrayUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * create time 2023/10/5 22:12
@@ -20,7 +10,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface SQLFunc extends AggregateSQLFunc{
+public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc{
     /**
      * 如果property对应的值为null则返回def值
      *
@@ -138,46 +128,6 @@ public interface SQLFunc extends AggregateSQLFunc{
      */
     SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format);
 
-    /**
-     * 连接函数将多个列合并在一起
-     *
-     * @param property1 属性列1
-     * @param property2 属性列2
-     * @param properties 其他属性列
-     * @return 链接函数
-     */
-    default SQLFunction concat(String property1, String property2, String... properties) {
-        return concat(s -> {
-            s.column(property1)
-                    .column(property2);
-            if (EasyArrayUtil.isNotEmpty(properties)) {
-                for (String property : properties) {
-                    s.column(property);
-                }
-            }
-        });
-    }
-
-    /**
-     * 链接函数表达式 将多个列合并在一起
-     *
-     * @param sqlExpression 指定多个属性列
-     * @return 链接函数
-     */
-    default SQLFunction concat(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        List<ColumnExpression> concatExpressions = new ArrayList<>();
-        sqlExpression.apply(new ColumnFuncSelectorImpl(concatExpressions));
-        return concat(concatExpressions);
-    }
-
-    /**
-     * 链接函数 将多个列合并在一起
-     *
-     * @param concatExpressions 链接列或者常量等表达式
-     * @return 链接函数
-     */
-    SQLFunction concat(List<ColumnExpression> concatExpressions);
-
 //    default SQLFunction join(String separator, String property1, String property2, String... properties) {
 //        return join(separator, s -> {
 //            s.column(property1)
@@ -210,18 +160,4 @@ public interface SQLFunc extends AggregateSQLFunc{
      * @return UTC时间函数
      */
     SQLFunction utcNow();
-
-    default SQLFunction bank(String property){
-        return new BankSQLFunction(property);
-    }
-    default SQLFunction notBank(String property){
-        return new NotBankSQLFunction(property);
-    }
-
-    default SQLFunction empty(String property){
-        return new EmptySQLFunction(property);
-    }
-    default SQLFunction notEmpty(String property){
-        return new NotEmptySQLFunction(property);
-    }
 }
