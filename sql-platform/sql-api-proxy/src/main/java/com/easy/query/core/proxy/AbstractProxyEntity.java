@@ -55,7 +55,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     public SQLSelectAsExpression allFields() {
         return new SQLSelectAllImpl(this.getEntitySQLContext(),getTable(), new TablePropColumn[0]);
     }
-    public SQLSelectAsExpression keys() {
+    public SQLSelectAsExpression columnKeys() {
         return new SQLSelectKeysImpl(this.getEntitySQLContext(),getTable());
     }
 

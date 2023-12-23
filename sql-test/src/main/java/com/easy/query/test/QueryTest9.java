@@ -7,11 +7,17 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
+import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
+import com.easy.query.core.proxy.core.draft.group.GroupKey1;
+import com.easy.query.core.proxy.core.draft.group.GroupKeyFetcher;
+import com.easy.query.core.proxy.core.draft.group.proxy.GroupKey1Proxy;
+import com.easy.query.core.proxy.grouping.Grouping;
+import com.easy.query.core.proxy.sql.GroupBy;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTypeUtil;
@@ -21,6 +27,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.TopicTestProxy;
 import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.h2.vo.QueryVO;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
@@ -1499,7 +1506,7 @@ public class QueryTest9 extends BaseTest {
                     .queryable(BlogEntity.class)
                     .selectDraft(t -> Select.draft(t.id(),
                             t.createTime(),
-                            Select.draftSQL("1").castType(String.class)
+                            DraftColumn.ofSQL("1").castType(String.class)
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1518,7 +1525,7 @@ public class QueryTest9 extends BaseTest {
                     .queryable(BlogEntity.class)
                     .selectDraft(t -> Select.draft(t.id(),
                             t.createTime(),
-                            Select.draftSQL("IFNULL({0},'1')",c->c.keepStyle().expression(t.title())).castType(String.class)
+                            DraftColumn.ofSQL("IFNULL({0},'1')", c->c.keepStyle().expression(t.title())).castType(String.class)
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1875,5 +1882,48 @@ public class QueryTest9 extends BaseTest {
         Assert.assertEquals(",(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
+    }
+
+    @Test
+    public void testGroup1(){
+
+        List<GroupKey1<String>> title = entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().eq("title");
+                    o.id().eq("1");
+                })
+                .groupByDraft(o -> {
+                    GroupKeyFetcher<GroupKey1<String>, GroupKey1Proxy<String>> keys = GroupBy.keys(
+                            o.title()
+                    );
+                    return keys;
+                }).toList();
+
+        entityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().eq("title");
+                    o.id().eq("1");
+                })
+                .groupByDraft(o -> {
+                    GroupKeyFetcher<GroupKey1<String>, GroupKey1Proxy<String>> keys = GroupBy.keys(
+                            o.title()
+                    );
+                    return keys;
+                }).selectDraft(o->Select.draft(
+                        o.key1(),
+                ))
+//
+//        entityQuery.queryable(Topic.class)
+//                .where(o -> {
+//                    o.title().eq("title");
+//                    o.id().eq("1");
+//                })
+//                .groupByDraft(o -> GroupBy.keys(
+//                        o.title()
+//                ))
+//                .selectDraft(o -> Select.draft(
+//                        o.groupKeys().key1(),
+//                        o.count(x->x.title())
+//                )).toList();
     }
 }

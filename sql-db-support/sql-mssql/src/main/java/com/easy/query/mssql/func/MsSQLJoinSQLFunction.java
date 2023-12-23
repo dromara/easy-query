@@ -26,7 +26,7 @@ public class MsSQLJoinSQLFunction extends AbstractExpressionSQLFunction {
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         if(columnExpressions.size()!=2){
-            throw new IllegalArgumentException("join arguments != 2");
+                throw new IllegalArgumentException("join arguments != 2");
         }
 //        if(defaultTable!=null){
 //            ColumnPropertyExpression columnPropertyExpression = (ColumnPropertyExpression)columnExpressions.get(1);
