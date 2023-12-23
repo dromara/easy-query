@@ -1,4 +1,4 @@
-package com.easy.query.core.func.def.impl;
+package com.easy.query.oracle.func;
 
 import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -14,10 +14,10 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class LengthSQLFunction extends AbstractExpressionSQLFunction{
+public class OracleLengthSQLFunction extends AbstractExpressionSQLFunction{
     private final List<ColumnExpression> columnExpressions;
 
-    public LengthSQLFunction(List<ColumnExpression> columnExpressions) {
+    public OracleLengthSQLFunction(List<ColumnExpression> columnExpressions) {
 
         this.columnExpressions = columnExpressions;
     }
@@ -25,7 +25,7 @@ public class LengthSQLFunction extends AbstractExpressionSQLFunction{
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
-        return String.format("CHAR_LENGTH(%s)", String.join(",", params));
+        return String.format("LENGTH(%s)", String.join(",", params));
     }
 
     @Override

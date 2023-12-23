@@ -21,6 +21,7 @@ import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQueryUnexpectedException;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyAesUtil;
 import com.easy.query.core.util.EasyBase64Util;
 import com.easy.query.core.util.EasyBitwiseUtil;
@@ -39,6 +40,7 @@ import com.easy.query.test.entity.NoKeyEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.UnknownTable;
 import com.easy.query.test.entity.notable.QueryLargeColumnTestEntity;
+import com.easy.query.test.entity.proxy.TopicShardingProxy;
 import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
@@ -1271,5 +1273,11 @@ public class GenericTest extends BaseTest {
             Exception exception = f.get();
             Assert.assertNull(exception);
         }
+    }
+    @Test
+    public void test(){
+        TopicShardingProxy table = TopicShardingProxy.createTable();
+        SQLColumn<TopicShardingProxy, String> topicShardingProxyStringSQLColumn = table._title();
+        TopicShardingProxy.TopicShardingProxyFetcher topicShardingProxyFetcher = table.FETCHER._title();
     }
 }

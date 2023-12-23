@@ -1,8 +1,11 @@
 package com.easy.query.core.func.def.impl;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
-import com.easy.query.core.func.def.AbstractSQLFunction;
+import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
+import com.easy.query.core.util.EasyCollectionUtil;
+
+import java.util.List;
 
 /**
  * create time 2023/10/12 15:46
@@ -10,32 +13,28 @@ import com.easy.query.core.func.def.AbstractSQLFunction;
  *
  * @author xuejiaming
  */
-public class AbsSQLFunction extends AbstractSQLFunction {
-    private final TableAvailable table;
-    private final String property;
+public class AbsSQLFunction extends AbstractExpressionSQLFunction {
+    private final List<ColumnExpression> columnExpressions;
 
-    public AbsSQLFunction(TableAvailable table, String property) {
+    public AbsSQLFunction(List<ColumnExpression> columnExpressions) {
 
-        this.table = table;
-        this.property = property;
+        this.columnExpressions = columnExpressions;
     }
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        return "ABS({0})";
+        Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
+        return String.format("ABS(%s)", String.join(",", params));
     }
 
     @Override
     public int paramMarks() {
-        return 1;
+        return columnExpressions.size();
     }
 
     @Override
-    protected void consume0(SQLNativeChainExpressionContext context) {
-        if (this.table == null) {
-            context.expression(this.property);
-        } else {
-            context.expression(this.table, this.property);
-        }
+    protected List<ColumnExpression> getColumnExpressions() {
+        return columnExpressions;
     }
+
 }

@@ -15,6 +15,7 @@ import com.easy.query.core.func.def.impl.CountSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeFormatSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.impl.JoinSQLFunction;
+import com.easy.query.core.func.def.impl.LengthSQLFunction;
 import com.easy.query.core.func.def.impl.MaxSQLFunction;
 import com.easy.query.core.func.def.impl.MinSQLFunction;
 import com.easy.query.core.func.def.impl.NowSQLFunction;
@@ -100,8 +101,8 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction abs(SQLTableOwner tableOwner, String property) {
-        return new AbsSQLFunction(getTable(tableOwner), property);
+    public SQLFunction abs(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new AbsSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
@@ -176,5 +177,10 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new JoinSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new LengthSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

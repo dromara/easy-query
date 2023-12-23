@@ -2,10 +2,7 @@ package com.easy.query.core.proxy.extension;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.SimpleSQLTableOwner;
-import com.easy.query.core.func.ACSSelector;
-import com.easy.query.core.func.DistinctDefaultSettingImpl;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -14,9 +11,9 @@ import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.math.BigDecimal;
-import java.util.function.Consumer;
 
 /**
  * create time 2023/12/2 23:17
@@ -26,49 +23,55 @@ import java.util.function.Consumer;
  */
 public interface ColumnAggregatable<TProperty> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
     default <T extends Long> ColumnFuncComparableExpression<T> count() {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.count(this.getValue());
-        }, Long.class);
+        return count(false);
     }
-
-    default <T extends Long> ColumnFuncComparableExpression<T> count(Consumer<ACSSelector> setting) {
+    default <T extends Long> ColumnFuncComparableExpression<T> count(boolean distinct) {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            DistinctDefaultSQLFunction count = fx.count(this.getValue());
-            DistinctDefaultSettingImpl distinctDefaultSetting = new DistinctDefaultSettingImpl(count);
-            setting.accept(distinctDefaultSetting);
-            return count;
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.count(sqlFunction).distinct(distinct);
+            } else {
+                return fx.count(this.getValue()).distinct(distinct);
+            }
         }, Long.class);
     }
 
     default <T extends BigDecimal> ColumnFuncComparableExpression<T> avg() {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.avg(this.getValue());
-        }, BigDecimal.class);
+        return avg(false);
     }
-
-    default <T extends BigDecimal> ColumnFuncComparableExpression<T> avg(Consumer<ACSSelector> setting) {
+    default <T extends BigDecimal> ColumnFuncComparableExpression<T> avg(boolean distinct) {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            DistinctDefaultSQLFunction avg = fx.avg(this.getValue());
-            DistinctDefaultSettingImpl distinctDefaultSetting = new DistinctDefaultSettingImpl(avg);
-            setting.accept(distinctDefaultSetting);
-            return avg;
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.avg(sqlFunction).distinct(distinct);
+            } else {
+                return fx.avg(this.getValue()).distinct(distinct);
+            }
         }, BigDecimal.class);
     }
 
     default <T extends BigDecimal> ColumnFuncComparableExpression<T> sum() {
+        return sum(false);
+    }
+    default <T extends BigDecimal> ColumnFuncComparableExpression<T> sum(boolean distinct) {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.sum(this.getValue());
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.sum(sqlFunction).distinct(distinct);
+            } else {
+                return fx.sum(this.getValue()).distinct(distinct);
+            }
         }, BigDecimal.class);
     }
 
-    default <T extends BigDecimal> ColumnFuncComparableExpression<T> sum(Consumer<ACSSelector> setting) {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            DistinctDefaultSQLFunction sum = fx.sum(this.getValue());
-            DistinctDefaultSettingImpl distinctDefaultSetting = new DistinctDefaultSettingImpl(sum);
-            setting.accept(distinctDefaultSetting);
-            return sum;
-        }, BigDecimal.class);
-    }
+//    default <T extends BigDecimal> ColumnFuncComparableExpression<T> sum(Consumer<ACSSelector> setting) {
+//        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+//            DistinctDefaultSQLFunction sum = fx.sum(this.getValue());
+//            DistinctDefaultSettingImpl distinctDefaultSetting = new DistinctDefaultSettingImpl(sum);
+//            setting.accept(distinctDefaultSetting);
+//            return sum;
+//        }, BigDecimal.class);
+//    }
 
     default ColumnFunctionComparableChainExpression<String> dateTimeFormat(String javaFormat) {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
@@ -100,48 +103,69 @@ public interface ColumnAggregatable<TProperty> extends SQLSelectAsExpression, Pr
 
     default ColumnFunctionComparableChainExpression<TProperty> abs() {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.abs(this.getValue());
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.concat(o -> {
+                    o.sqlFunc(sqlFunction);
+                });
+            } else {
+                return fx.abs(new SimpleSQLTableOwner(this.getTable()),this.getValue());
+            }
         }, getPropertyType());
     }
 
-    default ColumnFuncComparableExpression<String> concat(TablePropColumn... propColumns) {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-
-            return fx.concat(o -> {
-                for (TablePropColumn propColumn : propColumns) {
-                    o.column(propColumn.getTable(), propColumn.getValue());
-                }
-            });
-        }, String.class);
-    }
-
-    default ColumnFuncComparableExpression<String> concat(SQLExpression1<ProxyColumnFuncSelector> selector) {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.concat(o -> {
-                selector.apply(new ProxyColumnFuncSelectorImpl(o));
-            });
-        }, String.class);
-    }
-
-    default ColumnFuncComparableExpression<String> nullEmpty() {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.valueOrDefault(getValue(), "");
-        }, String.class);
-    }
-
-    default <T> ColumnFuncComparableExpression<T> nullDefault(T value) {
-        return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.valueOrDefault(getValue(), value);
+    default ColumnFunctionComparableChainExpression<String> concat(TablePropColumn... propColumns) {
+        return concat(o->{
+            for (TablePropColumn propColumn : propColumns) {
+                o.getColumnConcatSelector().column(propColumn.getTable(), propColumn.getValue());
+            }
         });
     }
 
-    default <T> ColumnFuncComparableExpression<T> nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
+    default ColumnFunctionComparableChainExpression<String> concat(SQLExpression1<ProxyColumnFuncSelector> selector) {
+        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.concat(o -> {
+                    o.sqlFunc(sqlFunction);
+                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                });
+            } else {
+                return fx.concat(o -> {
+                    o.column(this.getTable(), this.getValue());
+                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                });
+            }
+        }, String.class);
+    }
+
+    default ColumnFunctionComparableChainExpression<String> nullEmpty() {
+        return nullDefault(o->o.value(EasyStringUtil.EMPTY));
+    }
+
+    default <T> ColumnFunctionComparableChainExpression<T> nullDefault(T value) {
+        return nullDefault(o->o.value(value));
+    }
+
+    default <T> ColumnFunctionComparableChainExpression<T> nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
         return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.valueOrDefault(o -> {
-                ProxyColumnFuncSelectorImpl proxyColumnFuncSelector = new ProxyColumnFuncSelectorImpl(o);
-                o.column(this.getTable(), this.getValue());
-                selector.apply(proxyColumnFuncSelector);
-            });
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.valueOrDefault(o -> {
+                    o.sqlFunc(sqlFunction);
+                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                });
+            } else {
+                return fx.valueOrDefault(o -> {
+                    o.column(this.getTable(), this.getValue());
+                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                });
+            }
+//            return fx.valueOrDefault(o -> {
+//                ProxyColumnFuncSelectorImpl proxyColumnFuncSelector = new ProxyColumnFuncSelectorImpl(o);
+//                o.column(this.getTable(), this.getValue());
+//                selector.apply(proxyColumnFuncSelector);
+//            });
         });
     }
     //todo length trim left trim right trim padleft padright
@@ -324,6 +348,16 @@ public interface ColumnAggregatable<TProperty> extends SQLSelectAsExpression, Pr
                 return fx.join(sqlFunction,delimiter);
             } else {
                 return fx.join(this.getValue(),delimiter);
+            }
+        }, String.class);
+    }
+    default ColumnFunctionComparableChainExpression<String> length() {
+        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.length(sqlFunction);
+            } else {
+                return fx.length(this.getValue());
             }
         }, String.class);
     }

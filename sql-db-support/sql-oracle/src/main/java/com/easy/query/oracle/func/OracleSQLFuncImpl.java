@@ -78,4 +78,8 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new OracleJoinSQLFunction(getColumnExpressions(sqlExpression));
     }
+    @Override
+    public SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleLengthSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

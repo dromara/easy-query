@@ -474,7 +474,7 @@ public interface SQLStringFunc {
      * 列组合
      * @param property 属性列
      * @param delimiter 分隔符
-     * @return 替换字符串函数
+     * @return 列组合函数
      */
     default SQLFunction join(String property,String delimiter){
         return join(s->{
@@ -501,5 +501,32 @@ public interface SQLStringFunc {
      * @return 列组合函数
      */
     SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    /**
+     * 长度
+     * @param property 属性列
+     * @return 长度函数
+     */
+    default SQLFunction length(String property){
+        return length(s->{
+            s.column(property);
+        });
+    }
+    /**
+     * 长度
+     * @param sqlFunction sql函数
+     * @return 长度函数
+     */
+    default SQLFunction length(SQLFunction sqlFunction){
+        return length(s->{
+            s.sqlFunc(sqlFunction);
+        });
+    }
+
+    /**
+     * 长度
+     * @param sqlExpression 属性选择函数
+     * @return 列组合函数
+     */
+    SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
 }

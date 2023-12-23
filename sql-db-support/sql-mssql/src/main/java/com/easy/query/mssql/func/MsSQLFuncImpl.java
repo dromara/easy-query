@@ -7,7 +7,6 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
-import com.easy.query.core.inject.ServiceProvider;
 
 import java.util.List;
 
@@ -18,12 +17,12 @@ import java.util.List;
  * @author xuejiaming
  */
 public class MsSQLFuncImpl extends SQLFuncImpl {
-    private final ServiceProvider serviceProvider;
-
-    public MsSQLFuncImpl(ServiceProvider serviceProvider){
-
-        this.serviceProvider = serviceProvider;
-    }
+//    private final ServiceProvider serviceProvider;
+//
+//    public MsSQLFuncImpl(ServiceProvider serviceProvider){
+//
+//        this.serviceProvider = serviceProvider;
+//    }
     @Override
     public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new MsSQLNullDefaultSQLFunction(getColumnExpressions(sqlExpression));
@@ -84,6 +83,10 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
 
     @Override
     public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new MsSQLJoinSQLFunction(serviceProvider,getColumnExpressions(sqlExpression));
+        return new MsSQLJoinSQLFunction(getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLLengthSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

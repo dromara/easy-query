@@ -50,7 +50,10 @@ public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc{
      * @param property 属性列
      * @return 绝对值函数
      */
-    SQLFunction abs(SQLTableOwner tableOwner, String property);
+   default SQLFunction abs(SQLTableOwner tableOwner, String property){
+       return abs(o->o.column(tableOwner,property));
+   }
+    SQLFunction abs(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 按照指定的小数位数进行四舍五入运算

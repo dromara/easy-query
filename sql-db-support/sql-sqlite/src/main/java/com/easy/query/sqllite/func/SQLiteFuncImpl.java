@@ -78,4 +78,8 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
     public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new SQLiteJoinSQLFunction(getColumnExpressions(sqlExpression));
     }
+    @Override
+    public SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteLengthSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

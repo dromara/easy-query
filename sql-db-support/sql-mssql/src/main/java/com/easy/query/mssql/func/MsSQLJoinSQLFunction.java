@@ -14,11 +14,9 @@ import java.util.List;
  * @author xuejiaming
  */
 public class MsSQLJoinSQLFunction extends AbstractExpressionSQLFunction {
-    private final ServiceProvider serviceProvider;
     private final List<ColumnExpression> columnExpressions;
 
-    public MsSQLJoinSQLFunction(ServiceProvider serviceProvider, List<ColumnExpression> columnExpressions) {
-        this.serviceProvider = serviceProvider;
+    public MsSQLJoinSQLFunction(List<ColumnExpression> columnExpressions) {
 
         this.columnExpressions = columnExpressions;
     }
