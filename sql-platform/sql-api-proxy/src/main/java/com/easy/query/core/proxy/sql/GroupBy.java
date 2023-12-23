@@ -1,12 +1,7 @@
 package com.easy.query.core.proxy.sql;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLGroupByExpression;
-import com.easy.query.core.proxy.core.draft.group.GroupKey1;
-import com.easy.query.core.proxy.core.draft.group.GroupKeyFetcher;
-import com.easy.query.core.proxy.core.draft.group.GroupKeyFetcherImpl;
-import com.easy.query.core.proxy.core.draft.group.proxy.GroupKey1Proxy;
 import com.easy.query.core.proxy.impl.SQLGroupSelectImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
@@ -19,15 +14,17 @@ import com.easy.query.core.util.EasyArrayUtil;
  * @author xuejiaming
  */
 public class GroupBy {
+    /**
+     * 请使用 {@link #keys(SQLGroupByExpression...)}
+     * @param groupByExpressions
+     * @return
+     */
 
-
-    public static <T1> GroupKeyFetcher<GroupKey1<T1>, GroupKey1Proxy<T1>> keys(PropTypeColumn<T1> column1) {
-        GroupKey1Proxy<T1> groupKey1Proxy = new GroupKey1Proxy<>();
-        GroupKeyFetcherImpl<GroupKey1<T1>, GroupKey1Proxy<T1>> groupKeyFetcher = new GroupKeyFetcherImpl<>(new GroupKey1<>(), groupKey1Proxy);
-        groupKeyFetcher.fetch(0,column1);
-        return groupKeyFetcher;
-    }
+    @Deprecated
     public static SQLGroupByExpression of(SQLGroupByExpression... groupByExpressions){
+        return keys(groupByExpressions);
+    }
+    public static SQLGroupByExpression keys(SQLGroupByExpression... groupByExpressions){
         if(EasyArrayUtil.isNotEmpty(groupByExpressions)){
             SQLGroupByExpression firstGroupByExpression = groupByExpressions[0];
             for (int i = 1; i < groupByExpressions.length; i++) {

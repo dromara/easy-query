@@ -1,5 +1,7 @@
 package com.easy.query.processor.templates;
 
+import com.easy.query.core.util.EasyStringUtil;
+
 /**
  * create time 2023/11/8 16:38
  * 文件说明
@@ -26,8 +28,9 @@ public class AptPropertyInfo{
     private final boolean valueObject;
     private final String sqlColumn;
     private final String sqlColumnMethod;
+    private final String proxyPropertyName;
 
-    public AptPropertyInfo(String propertyName, String propertyType, String comment, String entityName,boolean valueObject,boolean includeProperty){
+    public AptPropertyInfo(String propertyName, String propertyType, String comment, String entityName,boolean valueObject,boolean includeProperty,String proxyPropertyName){
 
         this.propertyName = propertyName;
         this.propertyType = propertyType;
@@ -36,6 +39,14 @@ public class AptPropertyInfo{
         this.valueObject = valueObject;
         this.sqlColumn = includeProperty?"SQLNavigateColumn":"SQLColumn";
         this.sqlColumnMethod = includeProperty?"getNavigate":"get";
+        this.proxyPropertyName = proxyPropertyName;
+    }
+
+    public String getProxyPropertyName() {
+        if(EasyStringUtil.isNotBlank(proxyPropertyName)){
+            return proxyPropertyName;
+        }
+        return propertyName;
     }
 
     public String getPropertyName() {

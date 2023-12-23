@@ -5,6 +5,7 @@ import com.easy.query.core.annotation.ColumnIgnore;
 import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
+import com.easy.query.core.annotation.ProxyProperty;
 import com.easy.query.core.annotation.ValueObject;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.processor.templates.AptCreatorHelper;
@@ -70,12 +71,12 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
     private static final String FIELD_DOC_COMMENT_TEMPLATE = "\n" +
             "    /**\n" +
-            "     * {@link @{entityClass}#@{property}}\n" +
+            "     * {@link @{entityClass}#get@{property}}\n" +
             "     @{comment}\n" +
             "     */";
     private static final String FIELD_EMPTY_DOC_COMMENT_TEMPLATE = "\n" +
             "    /**\n" +
-            "     * {@link @{entityClass}#@{property}}\n" +
+            "     * {@link @{entityClass}#get@{property}}\n" +
             "     */";
     private Filer filer;
     private Elements elementUtils;
@@ -341,6 +342,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 Navigate navigate = fieldElement.getAnnotation(Navigate.class);
                 boolean includeProperty = navigate != null;
 
+                ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
+                String proxyPropertyName = proxyProperty!= null? proxyProperty.value() : propertyName;
 
                 TypeMirror type = fieldElement.asType();
                 boolean isGeneric = type.getKind() == TypeKind.TYPEVAR;
@@ -351,7 +354,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean isValueObject = valueObject != null;
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : entityName;
                 String fieldComment = getFiledComment(docComment, fieldName, propertyName);
-                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, fieldGenericType, fieldComment, fieldName, isValueObject, includeProperty));
+                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, fieldGenericType, fieldComment, fieldName, isValueObject, includeProperty,proxyPropertyName));
                 if (includeProperty) {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
                 }
@@ -392,7 +395,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 Navigate navigate = fieldElement.getAnnotation(Navigate.class);
                 boolean includeProperty = navigate != null;
 
-
+                ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
+                String proxyPropertyName = proxyProperty!= null? proxyProperty.value() : propertyName;
                 TypeMirror type = fieldElement.asType();
                 boolean isGeneric = type.getKind() == TypeKind.TYPEVAR;
                 boolean isDeclared = type.getKind() == TypeKind.DECLARED;
@@ -402,9 +406,9 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean isValueObject = valueObject != null;
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : aptFileCompiler.getEntityClassName();
                 String fieldComment = getFiledComment(docComment, fieldName, propertyName);
-                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, fieldGenericType, fieldComment, fieldName, isValueObject, includeProperty));
+                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, fieldGenericType, fieldComment, fieldName, isValueObject, includeProperty,proxyPropertyName));
                 if (!includeProperty) {
-                    aptFileCompiler.getSelectorInfo().getProperties().add(new AptSelectPropertyInfo(propertyName, fieldComment));
+                    aptFileCompiler.getSelectorInfo().getProperties().add(new AptSelectPropertyInfo(propertyName, fieldComment,proxyPropertyName));
                 } else {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
                 }

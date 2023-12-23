@@ -100,7 +100,7 @@ public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements Col
     }
 
     @Override
-    public Class<?> propertyType() {
+    public Class<?> getPropertyType() {
         return propType;
     }
 

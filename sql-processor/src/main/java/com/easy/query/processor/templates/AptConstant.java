@@ -48,12 +48,12 @@ public class AptConstant {
 
     public static final String FIELD_TEMPLATE = "\n" +
             "    @{comment}\n" +
-            "    public @{SQLColumn}<@{entityClassProxy},@{propertyType}> @{property}(){\n" +
+            "    public @{SQLColumn}<@{entityClassProxy},@{propertyType}> @{proxyProperty}(){\n" +
             "        return @{sqlColumnMethod}(\"@{property}\",@{propertyType}.class);\n" +
             "    }";
     public static final String FIELD_VALUE_OBJECT_TEMPLATE = "\n" +
             "    @{comment}\n" +
-            "    public @{entityClass}Proxy @{property}() {\n" +
+            "    public @{entityClass}Proxy @{proxyProperty}() {\n" +
             "        return getValueObject(new @{entityClass}Proxy(getEntitySQLContext(),getTable(), getValueProperty(\"@{property}\")));\n" +
             "    }";
 
@@ -95,7 +95,7 @@ public class AptConstant {
             "    }";
     public static final String FIELD_SELECTOR_PROPERTY_TEMPLATE = "\n" +
             "    @{comment}\n" +
-            "    public @{selectorName} @{property}() {\n" +
-            "            return add(getProxy().@{property}());\n" +
+            "    public @{selectorName} @{proxyProperty}() {\n" +
+            "            return add(getProxy().@{proxyProperty}());\n" +
             "    }";
 }

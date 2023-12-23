@@ -49,7 +49,7 @@ public class SQLDraftSelectImpl implements PropTypeColumn<Object> {
     }
 
     @Override
-    public Class<?> propertyType() {
+    public Class<?> getPropertyType() {
         return propType;
     }
 

@@ -84,7 +84,7 @@ public interface ColumnAggregatable<TProperty> extends SQLSelectAsExpression, Pr
             } else {
                 return fx.max(this.getValue());
             }
-        }, propertyType());
+        }, getPropertyType());
     }
 
     default ColumnFunctionComparableChainExpression<TProperty> min() {
@@ -95,13 +95,13 @@ public interface ColumnAggregatable<TProperty> extends SQLSelectAsExpression, Pr
             } else {
                 return fx.min(this.getValue());
             }
-        }, propertyType());
+        }, getPropertyType());
     }
 
     default ColumnFunctionComparableChainExpression<TProperty> abs() {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.abs(this.getValue());
-        }, propertyType());
+        }, getPropertyType());
     }
 
     default ColumnFuncComparableExpression<String> concat(TablePropColumn... propColumns) {

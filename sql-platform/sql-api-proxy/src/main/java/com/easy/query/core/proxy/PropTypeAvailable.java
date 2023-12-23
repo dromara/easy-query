@@ -9,5 +9,5 @@ import com.easy.query.core.annotation.Nullable;
  * @author xuejiaming
  */
 public interface PropTypeAvailable {
-    @Nullable Class<?> propertyType();
+    @Nullable Class<?> getPropertyType();
 }

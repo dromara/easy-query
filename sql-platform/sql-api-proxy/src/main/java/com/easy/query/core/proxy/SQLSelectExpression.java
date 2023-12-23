@@ -7,6 +7,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectImpl;
+import com.easy.query.core.proxy.impl.draft.SelectToDraftColumn;
 import com.easy.query.core.proxy.set.DSLUpdateSet;
 import com.easy.query.core.proxy.sql.Select;
 
@@ -101,5 +102,9 @@ public interface SQLSelectExpression extends TablePropColumn, DSLUpdateSet {
 
     SQLSelectExpression empty = new SQLSelectImpl(x -> {
     });
+
+    default <TProperty> PropTypeColumn<TProperty> toDraft(Class<TProperty> propType){
+        return new SelectToDraftColumn<>(this,propType);
+    }
 
 }

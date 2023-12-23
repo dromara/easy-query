@@ -33,8 +33,6 @@ import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
-import com.easy.query.core.proxy.core.draft.group.GroupKey;
-import com.easy.query.core.proxy.core.draft.group.GroupKeyFetcher;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -343,18 +341,6 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             });
         }
         return this;
-    }
-
-    @Override
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & GroupKey> EntityQueryable<TRProxy, TR> groupByDraft(SQLFuncExpression1<T1Proxy, GroupKeyFetcher<TR, TRProxy>> selectExpression) {
-//    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & GroupKey> EntityQueryable<GroupingProxy<TRProxy, T1Proxy>, Grouping<TRProxy, T1Proxy>> groupByDraft(SQLFuncExpression1<T1Proxy, GroupKeyFetcher<TR, TRProxy>> selectExpression) {
-        GroupKeyFetcher<TR, TRProxy> groupKeyFetcher = selectExpression.apply(get1Proxy());
-        ClientQueryable<TR> select = entityQueryable.groupBy(columnGroupSelector -> {
-            groupKeyFetcher.accept(columnGroupSelector.getGroupSelector());
-        }).select(EasyObjectUtil.typeCastNullable(groupKeyFetcher.getGroupKey().getClass()),o->o.groupKeysAs(0,"key1"));
-        TRProxy groupKeyProxy = groupKeyFetcher.getGroupKeyProxy();
-//        select.getSQLEntityExpressionBuilder().getExpressionContext().setDraftPropTypes(draftFetcher.getDraftPropTypes());
-        return new EasyEntityQueryable<>(groupKeyProxy, select);
     }
 
     @Override

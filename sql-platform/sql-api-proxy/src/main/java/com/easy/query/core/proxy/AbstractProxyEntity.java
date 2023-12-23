@@ -9,6 +9,7 @@ import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -55,10 +56,13 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     public SQLSelectAsExpression allFields() {
         return new SQLSelectAllImpl(this.getEntitySQLContext(),getTable(), new TablePropColumn[0]);
     }
-    public SQLSelectAsExpression columnKeys() {
+    public SQLSelectAsExpression keys() {
         return new SQLSelectKeysImpl(this.getEntitySQLContext(),getTable());
     }
 
+    public SQLSelectExpression groupKeys(int index){
+        return Select.groupKeys(index);
+    }
     @SafeVarargs
     @SuppressWarnings("varargs")
     public final SQLSelectAsExpression allFieldsExclude(SQLColumn<TProxy, ?>... ignorePropColumns) {

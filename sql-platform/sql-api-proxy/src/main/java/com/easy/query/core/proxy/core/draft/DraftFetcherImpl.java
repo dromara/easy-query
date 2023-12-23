@@ -37,7 +37,7 @@ public class DraftFetcherImpl<T extends ProxyEntityAvailable<T, TProxy> & Draft,
         if (sqlSelectAsExpression instanceof ValueObjectProxyEntity) {
             throw new EasyQueryInvalidOperationException("draft result not support value object columns");
         }
-        propTypes[index]=column.propertyType();
+        propTypes[index]=column.getPropertyType();
         this.sqlSelectAsExpression = this.sqlSelectAsExpression._concat(sqlSelectAsExpression);
     }
 

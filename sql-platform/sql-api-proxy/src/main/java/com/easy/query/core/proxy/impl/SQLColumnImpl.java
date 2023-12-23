@@ -45,7 +45,7 @@ public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProp
     }
 
     @Override
-    public @Nullable Class<?> propertyType() {
+    public @Nullable Class<?> getPropertyType() {
         return propType;
     }
 

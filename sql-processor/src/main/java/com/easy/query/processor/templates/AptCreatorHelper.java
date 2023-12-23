@@ -31,7 +31,8 @@ public class AptCreatorHelper {
                          .replace("@{entityClass}", property.getEntityName())
                          .replace("@{comment}", property.getComment())
                          .replace("@{propertyType}", property.getPropertyType())
-                         .replace("@{property}", property.getPropertyName());
+                         .replace("@{property}", property.getPropertyName())
+                         .replace("@{proxyProperty}", property.getProxyPropertyName());
                  filedContent.append(fieldString);
              }else{
                  String fieldString = AptConstant.FIELD_TEMPLATE
@@ -39,6 +40,7 @@ public class AptCreatorHelper {
                          .replace("@{comment}", property.getComment())
                          .replace("@{propertyType}", property.getPropertyType())
                          .replace("@{property}", property.getPropertyName())
+                         .replace("@{proxyProperty}", property.getProxyPropertyName())
                          .replace("@{SQLColumn}", property.getSqlColumn())
                          .replace("@{sqlColumnMethod}", property.getSqlColumnMethod());
                  filedContent.append(fieldString);
@@ -63,7 +65,8 @@ public class AptCreatorHelper {
                  String fieldString = AptConstant.FIELD_SELECTOR_PROPERTY_TEMPLATE
                          .replace("@{selectorName}", selectorInfo.getName())
                          .replace("@{comment}", property.getComment())
-                         .replace("@{property}", property.getPropertyName());
+//                         .replace("@{property}", property.getPropertyName())
+                         .replace("@{proxyProperty}", property.getProxyPropertyName());
                  filedContent.append(fieldString);
 
          }

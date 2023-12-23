@@ -53,7 +53,7 @@ public abstract class AbstractValueObjectProxyEntity<TProxy, TProperty> implemen
     }
 
     @Override
-    public Class<?> propertyType() {
+    public Class<?> getPropertyType() {
         return propType;
     }
 

@@ -84,7 +84,7 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     }
 
     public TChain keys() {
-        SQLSelectAsExpression keys = tProxy.columnKeys();
+        SQLSelectAsExpression keys = tProxy.keys();
         return createFetcher(tProxy, this, keys);
     }
 
