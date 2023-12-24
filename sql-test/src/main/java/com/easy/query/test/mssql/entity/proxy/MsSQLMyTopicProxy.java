@@ -1,9 +1,9 @@
 package com.easy.query.test.mssql.entity.proxy;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.columns.SQLStringColumn;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 
@@ -27,8 +27,8 @@ public class MsSQLMyTopicProxy extends AbstractProxyEntity < MsSQLMyTopicProxy, 
     /**
      * {@link MsSQLMyTopic#getId}
      */
-    public SQLColumn < MsSQLMyTopicProxy, String> id(){
-    return get("id", String.class);
+    public SQLStringColumn < MsSQLMyTopicProxy, String> id(){
+    return getStringColumn("id", String.class);
 }
 
     /**
@@ -41,8 +41,8 @@ public class MsSQLMyTopicProxy extends AbstractProxyEntity < MsSQLMyTopicProxy, 
     /**
      * {@link MsSQLMyTopic#getTitle}
      */
-    public SQLColumn < MsSQLMyTopicProxy, String> title(){
-    return get("title", String.class);
+    public SQLStringColumn< MsSQLMyTopicProxy, String> title(){
+    return getStringColumn("title", String.class);
 }
 
     /**

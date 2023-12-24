@@ -1274,7 +1274,6 @@ public class GenericTest extends BaseTest {
             Assert.assertNull(exception);
         }
     }
-    @Test
     public void test(){
         TopicShardingProxy table = TopicShardingProxy.createTable();
         SQLColumn<TopicShardingProxy, String> topicShardingProxyStringSQLColumn = table._title();

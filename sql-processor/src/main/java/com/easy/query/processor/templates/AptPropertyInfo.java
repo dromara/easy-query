@@ -14,13 +14,13 @@ public class AptPropertyInfo{
      */
     private final String propertyName;
     /**
+     * 属性类型
+     */
+    private final PropertyColumn propertyColumn;
+    /**
      * 注释内容
      */
     private final String comment;
-    /**
-     * 属性类型
-     */
-    private final String propertyType;
     /**
      * 对象名
      */
@@ -30,15 +30,15 @@ public class AptPropertyInfo{
     private final String sqlColumnMethod;
     private final String proxyPropertyName;
 
-    public AptPropertyInfo(String propertyName, String propertyType, String comment, String entityName,boolean valueObject,boolean includeProperty,String proxyPropertyName){
+    public AptPropertyInfo(String propertyName, PropertyColumn propertyColumn, String comment, String entityName,boolean valueObject,boolean includeProperty,String proxyPropertyName){
 
         this.propertyName = propertyName;
-        this.propertyType = propertyType;
+        this.propertyColumn = propertyColumn;
         this.comment = comment;
         this.entityName = entityName;
         this.valueObject = valueObject;
-        this.sqlColumn = includeProperty?"SQLNavigateColumn":"SQLColumn";
-        this.sqlColumnMethod = includeProperty?"getNavigate":"get";
+        this.sqlColumn = includeProperty?"SQLNavigateColumn":propertyColumn.getSqlColumnName();
+        this.sqlColumnMethod = includeProperty?"getNavigate":propertyColumn.getSQLColumnMethod();
         this.proxyPropertyName = proxyPropertyName;
     }
 
@@ -58,7 +58,7 @@ public class AptPropertyInfo{
     }
 
     public String getPropertyType() {
-        return propertyType;
+        return propertyColumn.getPropertyType();
     }
 
     public String getEntityName() {

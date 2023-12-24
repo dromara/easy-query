@@ -40,7 +40,7 @@ public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc{
      * @return 绝对值函数
      */
     default SQLFunction abs(String property) {
-        return abs(null, property);
+        return abs(o->o.column(property));
     }
 
     /**

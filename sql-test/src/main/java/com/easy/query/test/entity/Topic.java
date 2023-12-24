@@ -1,7 +1,7 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.EntityFileProxy;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.UpdateIgnore;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table("t_topic")
-@EntityFileProxy //添加这个注解插件会在当前目录下面生成一个proxy的包,生成代理对象
+@EntityProxy //添加这个注解插件会在当前目录下面生成一个proxy的包,生成代理对象
 public class Topic implements ProxyEntityAvailable<Topic , TopicProxy> {
 
     @Column(primaryKey = true)

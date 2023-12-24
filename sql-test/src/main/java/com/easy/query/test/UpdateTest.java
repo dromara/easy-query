@@ -1556,7 +1556,7 @@ public class UpdateTest extends BaseTest {
                         o.stars().set(1);
                         o.stars().set(o.title());
                         o.title().set("1");
-                        o.title().set(o.createTime().dateTimeFormat("yyyy/MM/dd"));
+                        o.title().set(o.createTime().format("yyyy/MM/dd"));
                         o.title().set(o.title().nullDefault("x"));
                         o.title().setSQLNativeSegment("IFNULL({0},{1})", c -> {
                             c.keepStyle();

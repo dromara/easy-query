@@ -217,8 +217,8 @@ public class DocTest extends BaseTest {
                             .asTable("a222")
                             .where(o -> {
                                 o.id().eq("1");
-                                o.id().eq(o.createTime().dateTimeFormat("yyyy-MM-dd"));
-                                o.createTime().dateTimeFormat("yyyy-MM-dd").eq("2023-01-02");
+                                o.id().eq(o.createTime().format("yyyy-MM-dd"));
+                                o.createTime().format("yyyy-MM-dd").eq("2023-01-02");
                                 o.name().nullDefault("unknown").like("123");
                                 o.phone().isNotBank();
                             })
@@ -246,10 +246,10 @@ public class DocTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                     .where(o -> {
-                        o.createTime().dateTimeFormat("yyyy-MM-dd").in(Arrays.asList("2023-01-02", "2023-01-03"));
-                        o.createTime().dateTimeFormat("yyyy-MM-dd").notIn(Arrays.asList("2023-01-02", "2023-01-03"));
-                        o.createTime().dateTimeFormat("yyyy-MM-dd").in(times);
-                        o.createTime().dateTimeFormat("yyyy-MM-dd").notIn(times);
+                        o.createTime().format("yyyy-MM-dd").in(Arrays.asList("2023-01-02", "2023-01-03"));
+                        o.createTime().format("yyyy-MM-dd").notIn(Arrays.asList("2023-01-02", "2023-01-03"));
+                        o.createTime().format("yyyy-MM-dd").in(times);
+                        o.createTime().format("yyyy-MM-dd").notIn(times);
                     })
                     .select(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -270,7 +270,7 @@ public class DocTest extends BaseTest {
                 .where(o -> {
                     o.or(() -> {
                         for (int i = 0; i < 3; i++) {
-                            o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchLeft("202" + i);
+                            o.createTime().format("yyyy-MM-dd").likeMatchLeft("202" + i);
                         }
                     });
                 })
@@ -289,7 +289,7 @@ public class DocTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                 .where(o -> {
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchLeft("2023");
+                    o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                 })
                 .select(o -> {
 
@@ -319,7 +319,7 @@ public class DocTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                 .where(o -> {
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchLeft("2023");
+                    o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                 })
                 .select(o -> {
 

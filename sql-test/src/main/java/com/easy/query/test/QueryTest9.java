@@ -284,11 +284,11 @@ public class QueryTest9 extends BaseTest {
                         o.title().eq("title");
                         o.id().eq("1");
                     })
-                    .orderBy(o -> o.createTime().dateTimeFormat("yyyy-MM-dd HH:mm:ss").asc())
+                    .orderBy(o -> o.createTime().format("yyyy-MM-dd HH:mm:ss").asc())
                     .select(Topic.class, (o, tr) -> Select.of(
                             o.title(),
                             o.id(),
-                            o.createTime().dateTimeFormat("yyyy-MM-dd HH:mm:ss")
+                            o.createTime().format("yyyy-MM-dd HH:mm:ss")
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -306,11 +306,11 @@ public class QueryTest9 extends BaseTest {
                         o.title().eq("title");
                         o.id().eq("1");
                     })
-                    .orderBy(o -> o.createTime().dateTimeFormat("yyyy-MM-dd HH:mm:ss").desc())
+                    .orderBy(o -> o.createTime().format("yyyy-MM-dd HH:mm:ss").desc())
                     .select(Topic.class, (o, tr) -> Select.of(
                             o.title(),
                             o.id(),
-                            o.createTime().dateTimeFormat("yyyy-MM-dd HH:mm:ss")
+                            o.createTime().format("yyyy-MM-dd HH:mm:ss")
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -329,7 +329,7 @@ public class QueryTest9 extends BaseTest {
                         o.id().eq("1");
                     })
                     .orderBy(o -> {
-                        o.createTime().dateTimeFormat("yyyy-MM-dd HH:mm:ss").desc();
+                        o.createTime().format("yyyy-MM-dd HH:mm:ss").desc();
                         o.sqlNativeSegment("IFNULL({0},'') ASC", c -> {
                             c.keepStyle().expression(o.stars());
                         });
@@ -337,7 +337,7 @@ public class QueryTest9 extends BaseTest {
                     .select(Topic.class, (o, tr) -> Select.of(
                             o.title(),
                             o.id(),
-                            o.createTime().dateTimeFormat("yyyy-MM-dd HH:mm:ss")
+                            o.createTime().format("yyyy-MM-dd HH:mm:ss")
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -356,11 +356,11 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Topic> list2 = entityQuery.queryable(Topic.class)
-                    .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
-                    .groupBy(o -> o.createTime().dateTimeFormat("yyyy/MM/dd"))
+                    .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
+                    .groupBy(o -> o.createTime().format("yyyy/MM/dd"))
                     .select(Topic.class, (o, tr) -> Select.of(
                             o.id().count().as(tr.stars()),
-                            o.createTime().dateTimeFormat("yyyy/MM/dd").as(tr.title())
+                            o.createTime().format("yyyy/MM/dd").as(tr.title())
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -375,11 +375,11 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Topic> list2 = entityQuery.queryable(Topic.class)
-                    .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
-                    .groupBy(o -> o.createTime().dateTimeFormat("yyyy/MM/dd"))
+                    .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
+                    .groupBy(o -> o.createTime().format("yyyy/MM/dd"))
                     .select(Topic.class, (o, tr) -> Select.of(
                             o.id().count().as(tr.stars()),
-                            o.createTime().dateTimeFormat("yyyy/MM/dd").as(tr.title()),
+                            o.createTime().format("yyyy/MM/dd").as(tr.title()),
                             Select.groupKeys(0).as(tr.id())
                     ))
                     .toList();
@@ -399,7 +399,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Topic> list2 = entityQuery.queryable(Topic.class)
-                    .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
+                    .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .select(Topic.class, (o, tr) -> Select.of(
                             o.stars().nullDefault(0).as(tr.title()),
                             Select.sql("IFNULL({0},'')", c -> {
@@ -420,7 +420,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Topic> list2 = entityQuery.queryable(Topic.class)
-                    .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
+                    .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .select(Topic.class, (o, tr) -> Select.of(
                             o.stars().nullDefault(0).as(tr.title()),
                             Select.sql("IFNULL({0},'')", c -> {
@@ -441,9 +441,9 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Topic> list2 = entityQuery.queryable(Topic.class)
-                    .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
+                    .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .select(Topic.class, (o, tr) -> Select.of(
-                            o.stars().nullEmpty().as(tr.title()),
+                            o.stars().nullDefault(0).as(tr.title()),
                             Select.sql("IFNULL({0},'')", c -> {
                                 c.keepStyle();
                                 c.expression(o.id());
@@ -453,7 +453,7 @@ public class QueryTest9 extends BaseTest {
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT IFNULL(t.`stars`,?) AS `title`,IFNULL(t.`id`,'') AS `alias` FROM `t_topic` t WHERE DATE_FORMAT(t.`create_time`,'%Y/%m/%d') = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("(String),2023/01/01(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("0(Integer),2023/01/01(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
     }
@@ -552,7 +552,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Topic> list2 = entityQuery.queryable(Topic.class)
-                    .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").le(o._now()))
+                    .where(o -> o.createTime().format("yyyy/MM/dd").le(o._now()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -657,7 +657,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Topic> list2 = entityQuery.queryable(Topic.class)
-                    .where(o -> o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01"))
+                    .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .groupBy(o -> o.FETCHER.title())
                     .select(Topic.class, (o, tr) -> Select.of(
                             o.FETCHER.title(),
@@ -678,26 +678,26 @@ public class QueryTest9 extends BaseTest {
             List<Topic> list2 = entityQuery.queryable(Topic.class)
                     .where(o -> {
 
-                        o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01");
+                        o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                         o.or(() -> {
                             o.stars().ne(1);
                             o.createTime().le(LocalDateTime.of(2024, 1, 1, 1, 1));
                             o.title().notLike("abc");
                         });
-                        o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01");
+                        o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                         o.id().nullDefault("yyyy/MM/dd").eq("xxx");
                         o.sqlNativeSegment("{0} != {1}", c -> {
                             c.expression(o.stars()).expression(o.createTime());
                         });
                         o.or(() -> {
-                            o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01");
+                            o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                             o.id().nullDefault("yyyy/MM/dd").eq("xxx");
                             o.sqlNativeSegment("{0} != {1}", c -> {
                                 c.expression(o.stars()).expression(o.createTime());
                             });
                         });
 
-                        o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/02");
+                        o.createTime().format("yyyy/MM/dd").eq("2023/01/02");
                         o.id().nullDefault("yyyy/MM/dd2").eq("xxx1");
                     })
                     .select(o -> o.FETCHER
@@ -722,7 +722,7 @@ public class QueryTest9 extends BaseTest {
 
             List<Map<String, Object>> abc = entityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01");
+                        o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                     })
                     .select(MapProxy.createTable(), o -> o.FETCHER
                             .allFieldsExclude(o.id(), o.title())
@@ -742,7 +742,7 @@ public class QueryTest9 extends BaseTest {
             MapProxy table = MapProxy.createTable();
             List<Map<String, Object>> list = entityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.createTime().dateTimeFormat("yyyy/MM/dd").eq("2023/01/01");
+                        o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                     })
                     .selectProxy(table).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -807,7 +807,7 @@ public class QueryTest9 extends BaseTest {
                             .id().as("abc")
                             .id()._concat(
                                     a.t1.id()
-                                    , a.t1.createTime().dateTimeFormat("yyyy-MM-dd HH:mm:ss")
+                                    , a.t1.createTime().format("yyyy-MM-dd HH:mm:ss")
                             ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -833,7 +833,7 @@ public class QueryTest9 extends BaseTest {
                             .id().as("abc")
                             .id()._concat(
                                     a.t1.id()
-                                    , a.t1.createTime().dateTimeFormat("yyyy-MM-dd HH:mm:ss")
+                                    , a.t1.createTime().format("yyyy-MM-dd HH:mm:ss")
                             ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -855,7 +855,7 @@ public class QueryTest9 extends BaseTest {
                     .groupBy(o -> o.id())
                     .having(o -> {
                         o.id().count().ne(1);
-                        o.id().sum().ge(10);
+                        o.star().sum().ge(10);
                     })
                     .select(BlogEntity.class, (o, tr) -> {
                         return Select.of(o.id(),
@@ -865,7 +865,7 @@ public class QueryTest9 extends BaseTest {
                     }).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`id`) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`star`) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("false(Boolean),123(String),1(Integer),10(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -881,8 +881,8 @@ public class QueryTest9 extends BaseTest {
                 .where(o -> {
 
                     o.id().eq("1");
-                    o.id().eq(o.createTime().dateTimeFormat("yyyy-MM-dd"));
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").eq("2023-01-02");
+                    o.id().eq(o.createTime().format("yyyy-MM-dd"));
+                    o.createTime().format("yyyy-MM-dd").eq("2023-01-02");
                     o.title().nullDefault("unknown").like("123");
                     o.title().nullDefault("unknown").likeMatchLeft("123");
                     o.title().nullDefault("unknown").likeMatchLeft(false, "123");
@@ -899,7 +899,7 @@ public class QueryTest9 extends BaseTest {
                 .groupBy(o -> o.id())
                 .having(o -> {
                     o.id().count().ne(1);
-                    o.id().sum().ge(10);
+                    o.star().sum().ge(10);
                 })
                 .select(BlogEntity.class, (o, tr) -> {
                     return Select.of(o.id(),
@@ -909,7 +909,7 @@ public class QueryTest9 extends BaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND  t.`id` = DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') = ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`star`,?) >= ? AND IFNULL(t.`star`,?) > ? AND IFNULL(t.`star`,?) <= ? AND IFNULL(t.`star`,?) < ? AND IFNULL(t.`star`,?) = ? AND IFNULL(t.`title`,?) = t.`content` AND (t.`content` IS NOT NULL AND t.`content` <> '' AND LTRIM(t.`content`) <> '') GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`id`) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND  t.`id` = DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') = ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`star`,?) >= ? AND IFNULL(t.`star`,?) > ? AND IFNULL(t.`star`,?) <= ? AND IFNULL(t.`star`,?) < ? AND IFNULL(t.`star`,?) = ? AND IFNULL(t.`title`,?) = t.`content` AND (t.`content` IS NOT NULL AND t.`content` <> '' AND LTRIM(t.`content`) <> '') GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`star`) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),1(String),2023-01-02(String),unknown(String),%123%(String),unknown(String),123%(String),unknown(String),%123(String),1(Integer),101(Integer),4(Integer),102(Integer),3(Integer),103(Integer),2(Integer),104(Integer),1(Integer),105(Integer),unknown(String),1(Integer),10(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -933,7 +933,7 @@ public class QueryTest9 extends BaseTest {
                 .groupBy(o -> o.id())
                 .having(o -> {
                     o.id().count().ne(1);
-                    o.id().sum().ge(10);
+                    o.star().sum().ge(10);
                 })
                 .select(BlogEntity.class, (o, tr) -> {
                     return Select.of(o.id(),
@@ -943,7 +943,7 @@ public class QueryTest9 extends BaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = (SELECT t3.`id` FROM `t_blog` t3 WHERE t3.`deleted` = ? AND t3.`id` = ?) AND IFNULL(t.`title`,?) IN (SELECT t3.`id` FROM `t_blog` t3 WHERE t3.`deleted` = ? AND t3.`id` = ?) GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`id`) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = (SELECT t3.`id` FROM `t_blog` t3 WHERE t3.`deleted` = ? AND t3.`id` = ?) AND IFNULL(t.`title`,?) IN (SELECT t3.`id` FROM `t_blog` t3 WHERE t3.`deleted` = ? AND t3.`id` = ?) GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`star`) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),false(Boolean),sss(String),unknown(String),false(Boolean),sss(String),1(Integer),10(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -977,20 +977,20 @@ public class QueryTest9 extends BaseTest {
 
                     o.id().in(ids);
                     o.id().notIn(ids);
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeClosed("2023-01-02", "2023-01-03");
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeClosed(false, "2023-01-02", false, "2023-01-03");
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeOpen("2023-01-04", "2023-01-06");
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeOpen(false, "2023-01-04", false, "2023-01-06");
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeOpenClosed("2023-01-07", "2023-01-08");
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeOpenClosed(false, "2023-01-07", false, "2023-01-08");
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeClosedOpen("2023-01-09", "2023-01-10");
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").rangeClosedOpen(false, "2023-01-09", false, "2023-01-10");
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").isNull();
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").isNull(false);
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").isNotNull();
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").isNotNull(false);
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").in(ids);
-                    o.createTime().dateTimeFormat("yyyy-MM-dd").notIn(ids);
+                    o.createTime().format("yyyy-MM-dd").rangeClosed("2023-01-02", "2023-01-03");
+                    o.createTime().format("yyyy-MM-dd").rangeClosed(false, "2023-01-02", false, "2023-01-03");
+                    o.createTime().format("yyyy-MM-dd").rangeOpen("2023-01-04", "2023-01-06");
+                    o.createTime().format("yyyy-MM-dd").rangeOpen(false, "2023-01-04", false, "2023-01-06");
+                    o.createTime().format("yyyy-MM-dd").rangeOpenClosed("2023-01-07", "2023-01-08");
+                    o.createTime().format("yyyy-MM-dd").rangeOpenClosed(false, "2023-01-07", false, "2023-01-08");
+                    o.createTime().format("yyyy-MM-dd").rangeClosedOpen("2023-01-09", "2023-01-10");
+                    o.createTime().format("yyyy-MM-dd").rangeClosedOpen(false, "2023-01-09", false, "2023-01-10");
+                    o.createTime().format("yyyy-MM-dd").isNull();
+                    o.createTime().format("yyyy-MM-dd").isNull(false);
+                    o.createTime().format("yyyy-MM-dd").isNotNull();
+                    o.createTime().format("yyyy-MM-dd").isNotNull(false);
+                    o.createTime().format("yyyy-MM-dd").in(ids);
+                    o.createTime().format("yyyy-MM-dd").notIn(ids);
                 })
                 .select(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1069,7 +1069,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                     .where(o -> {
-                        o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchLeft("2023");
+                        o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                     })
                     .select(o -> {
 
@@ -1098,7 +1098,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                     .where(o -> {
-                        o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchLeft("2023");
+                        o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                     })
                     .select(o -> {
 
@@ -1128,7 +1128,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                     .where(o -> {
-                        o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchLeft("2023");
+                        o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                         o.exists(() -> {
                             return entityQuery.queryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()));
@@ -1203,8 +1203,8 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().in(tenantIds);
-                        o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchLeft("123");
-                        o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchRight("123");
+                        o.createTime().format("yyyy-MM-dd").likeMatchLeft("123");
+                        o.createTime().format("yyyy-MM-dd").likeMatchRight("123");
                         o.exists(() -> {
                             return entityQuery.queryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()))
@@ -1235,8 +1235,8 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                        o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchLeft("123");
-                        o.createTime().dateTimeFormat("yyyy-MM-dd").likeMatchRight("123");
+                        o.createTime().format("yyyy-MM-dd").likeMatchLeft("123");
+                        o.createTime().format("yyyy-MM-dd").likeMatchRight("123");
                     })
                     .where(o -> {
                         o.title().like("你好");
@@ -1637,7 +1637,7 @@ public class QueryTest9 extends BaseTest {
                     o.title().toLower().subString(1,2).eq("123");
                     o.title().toLower().toUpper().toLower().subString(1,2).eq("123");
                     o.createTime()
-                            .dateTimeFormat("yyyy-MM")//日期先格式化
+                            .format("yyyy-MM")//日期先格式化
                             .toLower()//然后转成小写
                             .subString(1,10)//分割从第一位
                             .like("023-01");
@@ -1668,7 +1668,7 @@ public class QueryTest9 extends BaseTest {
                     o.title().trim().toLower().subString(1,2).eq("123");
                     o.title().toLower().trim().toUpper().toLower().subString(1,2).eq("123");
                     o.createTime()
-                            .dateTimeFormat("yyyy-MM")//日期先格式化
+                            .format("yyyy-MM")//日期先格式化
                             .toLower()//然后转成小写
                             .subString(1,10)//分割从第一位
                             .trim()
@@ -1700,7 +1700,7 @@ public class QueryTest9 extends BaseTest {
                     o.title().trimStart().toLower().subString(1,2).eq("123");
                     o.title().toLower().trimStart().toUpper().toLower().subString(1,2).eq("123");
                     o.createTime()
-                            .dateTimeFormat("yyyy-MM")//日期先格式化
+                            .format("yyyy-MM")//日期先格式化
                             .toLower()//然后转成小写
                             .subString(1,10)//分割从第一位
                             .trimStart()
@@ -1732,7 +1732,7 @@ public class QueryTest9 extends BaseTest {
                     o.title().trimEnd().toLower().subString(1,2).eq("123");
                     o.title().toLower().trimEnd().toUpper().toLower().subString(1,2).eq("123");
                     o.createTime()
-                            .dateTimeFormat("yyyy-MM")//日期先格式化
+                            .format("yyyy-MM")//日期先格式化
                             .toLower()//然后转成小写
                             .subString(1,10)//分割从第一位
                             .trimEnd()
@@ -1761,7 +1761,7 @@ public class QueryTest9 extends BaseTest {
         List<Draft2<String, String>> list = entityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().trimEnd().trimStart().eq(o.id().trimStart());
-                    o.createTime().subString(0,4).eq("2021");
+                    o.createTime().format("yyyy-MM-dd").subString(0,4).eq("2021");
                 })
                 .selectDraft(o -> Select.draft(
                         o.id(),
@@ -1770,7 +1770,7 @@ public class QueryTest9 extends BaseTest {
                 .toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id` AS `value1`,LOWER(t.`title`) AS `value2` FROM `t_topic` t WHERE LTRIM(RTRIM(t.`title`)) = LTRIM(t.`id`) AND SUBSTR(t.`create_time`,1,4) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id` AS `value1`,LOWER(t.`title`) AS `value2` FROM `t_topic` t WHERE LTRIM(RTRIM(t.`title`)) = LTRIM(t.`id`) AND SUBSTR(DATE_FORMAT(t.`create_time`,'%Y-%m-%d'),1,4) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2021(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }

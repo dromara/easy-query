@@ -1,9 +1,9 @@
 package com.easy.query.test.dameng.entity.proxy;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.columns.SQLStringColumn;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
 
@@ -27,8 +27,8 @@ public class DamengMyTopicProxy extends AbstractProxyEntity < DamengMyTopicProxy
     /**
      * {@link DamengMyTopic#getId}
      */
-    public SQLColumn < DamengMyTopicProxy, java.lang.String> id(){
-    return get("id", java.lang.String.class);
+    public SQLStringColumn< DamengMyTopicProxy, String> id(){
+    return getStringColumn("id", java.lang.String.class);
 }
 
     /**
