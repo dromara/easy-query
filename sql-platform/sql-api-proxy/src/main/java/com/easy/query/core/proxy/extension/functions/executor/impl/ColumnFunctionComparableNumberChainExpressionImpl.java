@@ -110,6 +110,7 @@ public class ColumnFunctionComparableNumberChainExpressionImpl<TProperty> implem
         this.propType=clazz;
         return EasyObjectUtil.typeCastNullable(this);
     }
+
 }
 //        if(condition){
 //            return new SQLPredicateImpl(f->{

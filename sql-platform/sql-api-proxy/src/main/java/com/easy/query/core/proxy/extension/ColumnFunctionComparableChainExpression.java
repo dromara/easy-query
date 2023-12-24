@@ -6,6 +6,5 @@ package com.easy.query.core.proxy.extension;
  *
  * @author xuejiaming
  */
-public interface ColumnFunctionComparableChainExpression<T> extends ColumnFuncComparableExpression<T>,
-        ColumnAggregatable<T>{
+public interface ColumnFunctionComparableChainExpression<T> extends ColumnFuncComparableExpression<T>{
 }

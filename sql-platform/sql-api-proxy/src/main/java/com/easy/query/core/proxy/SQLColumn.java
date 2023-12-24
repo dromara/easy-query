@@ -1,6 +1,5 @@
 package com.easy.query.core.proxy;
 
-import com.easy.query.core.proxy.extension.ColumnAggregatable;
 import com.easy.query.core.proxy.extension.ColumnComparableExpression;
 import com.easy.query.core.proxy.predicate.DSLPropertyOnlyAssertPredicate;
 
@@ -12,6 +11,5 @@ import com.easy.query.core.proxy.predicate.DSLPropertyOnlyAssertPredicate;
  */
 public interface SQLColumn<TProxy, TProperty> extends ColumnComparableExpression<TProperty>,
         PropTypeColumn<TProperty>,
-        DSLPropertyOnlyAssertPredicate<TProperty>,
-        ColumnAggregatable<TProperty> {
+        DSLPropertyOnlyAssertPredicate<TProperty>{
 }

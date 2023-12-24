@@ -1,16 +1,21 @@
 package com.easy.query.core.proxy.extension.functions;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleSQLTableOwner;
+import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
-import com.easy.query.core.proxy.extension.ColumnFunctionComparableChainExpression;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
+import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+
+import java.util.function.Function;
 
 /**
  * create time 2023/12/24 00:10
@@ -19,6 +24,7 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  * @author xuejiaming
  */
 public interface ColumnObjectFunctionAvailable<TProperty,TChain> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
+    TChain createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func,Class<?> propType);
     default <T extends Long> ColumnFuncComparableExpression<T> count() {
         return count(false);
     }
@@ -32,8 +38,8 @@ public interface ColumnObjectFunctionAvailable<TProperty,TChain> extends SQLSele
             }
         }, Long.class);
     }
-    default ColumnFunctionComparableChainExpression<TProperty> max() {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default TChain max() {
+        return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.max(sqlFunction);
@@ -43,8 +49,8 @@ public interface ColumnObjectFunctionAvailable<TProperty,TChain> extends SQLSele
         }, getPropertyType());
     }
 
-    default ColumnFunctionComparableChainExpression<TProperty> min() {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default TChain min() {
+        return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.min(sqlFunction);
@@ -59,7 +65,22 @@ public interface ColumnObjectFunctionAvailable<TProperty,TChain> extends SQLSele
         return nullDefault(o->o.value(value));
     }
 
-     <T> TChain nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector);
+     default <T> TChain nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector){
+         return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+             if (this instanceof DSLSQLFunctionAvailable) {
+                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                 return fx.valueOrDefault(o -> {
+                     o.sqlFunc(sqlFunction);
+                     selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                 });
+             } else {
+                 return fx.valueOrDefault(o -> {
+                     o.column(this.getTable(), this.getValue());
+                     selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                 });
+             }
+         }, getPropertyType());
+     }
     default ColumnFuncComparableExpression<Integer> compareTo(String comparedValue) {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {

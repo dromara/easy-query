@@ -1,14 +1,19 @@
 package com.easy.query.core.proxy.extension.functions;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.TablePropColumn;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.util.EasyStringUtil;
+
+import java.util.function.Function;
 
 /**
  * create time 2023/12/24 00:10
@@ -47,23 +52,23 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         return nullDefault(o->o.value(EasyStringUtil.EMPTY));
     }
 
-    @Override
-    default <T> ColumnFunctionComparableStringChainExpression<TProperty> nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
-        return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.valueOrDefault(o -> {
-                    o.sqlFunc(sqlFunction);
-                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
-                });
-            } else {
-                return fx.valueOrDefault(o -> {
-                    o.column(this.getTable(), this.getValue());
-                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
-                });
-            }
-        });
-    }
+//    @Override
+//    default <T> ColumnFunctionComparableStringChainExpression<TProperty> nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
+//        return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+//            if (this instanceof DSLSQLFunctionAvailable) {
+//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+//                return fx.valueOrDefault(o -> {
+//                    o.sqlFunc(sqlFunction);
+//                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+//                });
+//            } else {
+//                return fx.valueOrDefault(o -> {
+//                    o.column(this.getTable(), this.getValue());
+//                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+//                });
+//            }
+//        });
+//    }
 
     default ColumnFunctionComparableStringChainExpression<String> toLower() {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
@@ -223,5 +228,10 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
                 return fx.length(this.getValue());
             }
         }, String.class);
+    }
+
+    @Override
+    default ColumnFunctionComparableStringChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
     }
 }
