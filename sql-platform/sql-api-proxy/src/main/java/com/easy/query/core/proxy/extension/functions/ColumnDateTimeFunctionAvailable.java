@@ -9,7 +9,9 @@ import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComp
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableStringChainExpressionImpl;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -26,6 +28,36 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.dateTimeFormat(this.getValue(), javaFormat);
         }, String.class);
+    }
+    default ColumnFunctionComparableDateTimeChainExpression<TProperty> plus(long duration, TimeUnit timeUnit) {
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.plusDateTime(sqlFunction,duration,timeUnit);
+            } else {
+                return fx.plusDateTime(this.getValue(),duration,timeUnit);
+            }
+        }, getPropertyType());
+    }
+    default ColumnFunctionComparableDateTimeChainExpression<TProperty> plusMonths(int month) {
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.plusDateTimeMonths(sqlFunction,month);
+            } else {
+                return fx.plusDateTimeMonths(this.getValue(),month);
+            }
+        }, getPropertyType());
+    }
+    default ColumnFunctionComparableDateTimeChainExpression<TProperty> plusYears(int year) {
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.plusDateTimeYears(sqlFunction,year);
+            } else {
+                return fx.plusDateTimeYears(this.getValue(),year);
+            }
+        }, getPropertyType());
     }
     @Override
     default ColumnFunctionComparableDateTimeChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {

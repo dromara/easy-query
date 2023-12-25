@@ -9,6 +9,7 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2023/10/13 18:16
@@ -88,5 +89,25 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new MsSQLLengthSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction cast(SQLExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz) {
+        return new MsSQLCastSQLFunction(getColumnExpressions(sqlExpression),targetClazz);
+    }
+
+    @Override
+    public SQLFunction plusDateTime(SQLExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit) {
+        return new MsSQLDateTimePlusSQLFunction(getColumnExpressions(sqlExpression),duration,timeUnit);
+    }
+
+    @Override
+    public SQLFunction plusDateTimeMonths(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLDateTimePlusMonthSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction plusDateTimeYears(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLDateTimePlusYearSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

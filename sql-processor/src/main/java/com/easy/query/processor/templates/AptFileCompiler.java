@@ -41,7 +41,9 @@ public class AptFileCompiler {
     }
 
     public void addImports(String fullClassPackageName) {
-        imports.add("import " + fullClassPackageName + ";");
+        if(fullClassPackageName!=null){
+            imports.add("import " + fullClassPackageName + ";");
+        }
     }
 
     public AptSelectorInfo getSelectorInfo() {

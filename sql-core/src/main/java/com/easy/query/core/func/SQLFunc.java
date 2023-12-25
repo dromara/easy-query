@@ -10,7 +10,7 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
  *
  * @author xuejiaming
  */
-public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc{
+public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc{
     /**
      * 如果property对应的值为null则返回def值
      *
@@ -76,60 +76,6 @@ public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc{
      */
     SQLFunction round(SQLTableOwner tableOwner, String property, int scale);
 
-    /**
-     * 对时间格式的列进行格式化 默认 yyyy-MM-dd HH:mm:ss.fff
-     *
-     * @param property 时间格式列
-     * @return 时间格式函数
-     */
-
-    default SQLFunction dateTimeFormat(String property) {
-        return dateTimeFormat(property, null);
-    }
-
-    /**
-     * 对时间格式的列进行格式化 默认 yyyy-MM-dd HH:mm:ss.fff
-     * {@code javaFormat} yyyy-MM-dd HH:mm:ss | yyyy/MM/dd HH:mm:ss | yyyy-MM-dd ...
-     *
-     * @param property 时间格式列
-     * @param javaFormat java格式化
-     * @return 时间格式函数
-     */
-    default SQLFunction dateTimeFormat(String property, String javaFormat) {
-        return dateTimeFormat(null, property, javaFormat);
-    }
-
-    /**
-     * 对时间格式的列进行格式化 默认 yyyy-MM-dd HH:mm:ss.fff
-     * {@code javaFormat} yyyy-MM-dd HH:mm:ss | yyyy/MM/dd HH:mm:ss | yyyy-MM-dd ...
-     *
-     * @param tableOwner 属性对应的表
-     * @param property 时间格式列
-     * @param javaFormat java格式化
-     * @return 时间格式函数
-     */
-    SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat);
-
-    /**
-     * 对时间格式的列进行格式化
-     *
-     * @param property 时间格式列
-     * @param format 数据库格式化
-     * @return 时间格式函数
-     */
-    default SQLFunction dateTimeSQLFormat(String property, String format) {
-        return dateTimeSQLFormat(null, property, format);
-    }
-
-    /**
-     * 对时间格式的列进行格式化
-     *
-     * @param tableOwner 属性对应的表
-     * @param property 时间格式列
-     * @param format 数据库格式化
-     * @return 时间格式函数
-     */
-    SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format);
 
 //    default SQLFunction join(String separator, String property1, String property2, String... properties) {
 //        return join(separator, s -> {

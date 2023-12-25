@@ -14,6 +14,9 @@ import com.easy.query.core.func.def.impl.CompareToSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeFormatSQLFunction;
+import com.easy.query.core.func.def.impl.DateTimePlusMonthSQLFunction;
+import com.easy.query.core.func.def.impl.DateTimePlusSQLFunction;
+import com.easy.query.core.func.def.impl.DateTimePlusYearSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.impl.JoinSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
@@ -37,6 +40,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2023/10/5 22:23
@@ -188,5 +192,20 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction cast(SQLExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz) {
         return new CastSQLFunction(getColumnExpressions(sqlExpression),targetClazz);
+    }
+
+    @Override
+    public SQLFunction plusDateTime(SQLExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit) {
+        return new DateTimePlusSQLFunction(getColumnExpressions(sqlExpression),duration,timeUnit);
+    }
+
+    @Override
+    public SQLFunction plusDateTimeMonths(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DateTimePlusMonthSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction plusDateTimeYears(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DateTimePlusYearSQLFunction(getColumnExpressions(sqlExpression));
     }
 }
