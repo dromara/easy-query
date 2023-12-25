@@ -50,7 +50,7 @@ public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProp
     }
 
     @Override
-    public <TR> PropTypeColumn<TR> castType(Class<TR> clazz) {
+    public <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz) {
         this.propType=clazz;
         return EasyObjectUtil.typeCastNullable(this);
     }

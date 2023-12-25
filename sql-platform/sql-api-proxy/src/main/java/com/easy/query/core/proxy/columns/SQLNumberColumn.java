@@ -1,6 +1,5 @@
 package com.easy.query.core.proxy.columns;
 
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 
 /**
@@ -9,6 +8,6 @@ import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailab
  *
  * @author xuejiaming
  */
-public interface SQLNumberColumn<TProxy, TProperty> extends SQLColumn<TProxy,TProperty>,
+public interface SQLNumberColumn<TProxy, TProperty> extends SQLObjectColumn<TProxy,TProperty>,
         ColumnNumberFunctionAvailable<TProperty> {
 }

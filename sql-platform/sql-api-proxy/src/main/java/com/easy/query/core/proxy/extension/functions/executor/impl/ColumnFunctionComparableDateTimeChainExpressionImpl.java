@@ -106,11 +106,10 @@ public class ColumnFunctionComparableDateTimeChainExpressionImpl<TProperty> impl
     }
 
     @Override
-    public <TR> PropTypeColumn<TR> castType(Class<TR> clazz) {
+    public <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz) {
         this.propType=clazz;
         return EasyObjectUtil.typeCastNullable(this);
     }
-
 }
 //        if(condition){
 //            return new SQLPredicateImpl(f->{

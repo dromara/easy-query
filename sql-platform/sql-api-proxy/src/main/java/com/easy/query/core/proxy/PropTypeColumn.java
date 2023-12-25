@@ -7,5 +7,5 @@ package com.easy.query.core.proxy;
  * @author xuejiaming
  */
 public interface PropTypeColumn<TProperty> extends SQLSelectAsExpression,PropTypeAvailable{
-    <TR> PropTypeColumn<TR> castType(Class<TR> clazz);
+    <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz);
 }

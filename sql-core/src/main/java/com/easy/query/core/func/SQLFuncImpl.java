@@ -9,6 +9,7 @@ import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.impl.AbsSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
+import com.easy.query.core.func.def.impl.CastSQLFunction;
 import com.easy.query.core.func.def.impl.CompareToSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
@@ -182,5 +183,10 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new LengthSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction cast(SQLExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz) {
+        return new CastSQLFunction(getColumnExpressions(sqlExpression),targetClazz);
     }
 }

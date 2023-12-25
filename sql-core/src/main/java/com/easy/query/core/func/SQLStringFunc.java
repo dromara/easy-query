@@ -528,5 +528,35 @@ public interface SQLStringFunc {
      * @return 列组合函数
      */
     SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    /**
+     * 转换函数
+     * @param property 属性列
+     * @param targetClazz 目标类型
+     * @return 转换函数
+     */
+    default SQLFunction cast(String property,Class<?> targetClazz){
+        return cast(s->{
+            s.column(property);
+        },targetClazz);
+    }
+    /**
+     * 转换函数
+     * @param sqlFunction sql函数
+     * @param targetClazz 目标类型
+     * @return 转换函数
+     */
+    default SQLFunction cast(SQLFunction sqlFunction,Class<?> targetClazz){
+        return cast(s->{
+            s.sqlFunc(sqlFunction);
+        },targetClazz);
+    }
+
+    /**
+     * 转换函数
+     * @param sqlExpression 属性选择函数
+     * @param targetClazz 目标类型
+     * @return 转换函数
+     */
+    SQLFunction cast(SQLExpression1<ColumnFuncSelector> sqlExpression,Class<?> targetClazz);
 
 }

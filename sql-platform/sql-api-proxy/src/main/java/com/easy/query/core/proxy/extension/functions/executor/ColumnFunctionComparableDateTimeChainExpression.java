@@ -1,6 +1,5 @@
 package com.easy.query.core.proxy.extension.functions.executor;
 
-import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.ColumnDateTimeFunctionAvailable;
 
 /**
@@ -9,6 +8,6 @@ import com.easy.query.core.proxy.extension.functions.ColumnDateTimeFunctionAvail
  *
  * @author xuejiaming
  */
-public interface ColumnFunctionComparableDateTimeChainExpression<T> extends ColumnFuncComparableExpression<T>,
+public interface ColumnFunctionComparableDateTimeChainExpression<T> extends ColumnFunctionComparableObjectChainExpression<T>,
         ColumnDateTimeFunctionAvailable<T> {
 }

@@ -6,6 +6,9 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
@@ -21,7 +24,10 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty,ColumnFunctionComparableStringChainExpression<TProperty>> {
+public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty,ColumnFunctionComparableStringChainExpression<TProperty>>,
+        ColumnFunctionCastNumberAvailable<TProperty>,
+        ColumnFunctionCastDateTimeAvailable<TProperty>,
+        ColumnFunctionCastBooleanAvailable<TProperty> {
 
     default ColumnFunctionComparableStringChainExpression<TProperty> concat(TablePropColumn... propColumns) {
         return concat(o->{
@@ -219,7 +225,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             }
         }, String.class);
     }
-    default ColumnFunctionComparableStringChainExpression<String> length() {
+    default ColumnFunctionComparableStringChainExpression<Integer> length() {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
@@ -227,7 +233,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             } else {
                 return fx.length(this.getValue());
             }
-        }, String.class);
+        }, Integer.class);
     }
 
     @Override

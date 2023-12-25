@@ -25,7 +25,7 @@ public class MyTest1 extends BaseTest{
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<Draft2<String, String>> list2 = entityQuery.queryable(BlogEntity.class)
+        List<Draft2<String, Integer>> list2 = entityQuery.queryable(BlogEntity.class)
                 .where(o->{
                     o.title().length().eq(123);
 //                    o.createTime().
@@ -41,6 +41,28 @@ public class MyTest1 extends BaseTest{
         Assert.assertEquals("SELECT t.`content` AS `value1`,CHAR_LENGTH(t.`content`) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND CHAR_LENGTH(t.`title`) = ? GROUP BY t.`content`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+    @Test
+    public void testDraft2(){
 
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<String, Integer>> list2 = entityQuery.queryable(BlogEntity.class)
+                .where(o->{
+                    o.title().toNumber(Integer.class).asAny().eq(123);
+//                    o.createTime().
+//                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
+                })
+                .groupBy(o -> o.content())
+                .selectDraft(o -> Select.draft(
+                        o.groupKeys(0).toDraft(String.class),
+                        o.content().length()
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`content` AS `value1`,CHAR_LENGTH(t.`content`) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND CAST(t.`title` AS SIGNED) = ? GROUP BY t.`content`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }

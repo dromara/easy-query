@@ -4,6 +4,8 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableBooleanChainExpressionImpl;
 
@@ -15,7 +17,9 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty, ColumnFunctionComparableBooleanChainExpression<TProperty>> {
+public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty, ColumnFunctionComparableBooleanChainExpression<TProperty>>,
+        ColumnFunctionCastStringAvailable<TProperty>,
+        ColumnFunctionCastNumberAvailable<TProperty> {
 
     @Override
     default ColumnFunctionComparableBooleanChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {

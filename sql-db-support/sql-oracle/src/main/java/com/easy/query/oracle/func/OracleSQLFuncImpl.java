@@ -82,4 +82,9 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new OracleLengthSQLFunction(getColumnExpressions(sqlExpression));
     }
+
+    @Override
+    public SQLFunction cast(SQLExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz) {
+        return new OracleCastSQLFunction(getColumnExpressions(sqlExpression),targetClazz);
+    }
 }

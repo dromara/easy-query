@@ -1,6 +1,5 @@
 package com.easy.query.core.proxy.columns;
 
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.extension.functions.ColumnDateTimeFunctionAvailable;
 
 /**
@@ -9,6 +8,6 @@ import com.easy.query.core.proxy.extension.functions.ColumnDateTimeFunctionAvail
  *
  * @author xuejiaming
  */
-public interface SQLDateTimeColumn<TProxy, TProperty> extends SQLColumn<TProxy,TProperty>,
+public interface SQLDateTimeColumn<TProxy, TProperty> extends SQLObjectColumn<TProxy,TProperty>,
         ColumnDateTimeFunctionAvailable<TProperty> {
 }

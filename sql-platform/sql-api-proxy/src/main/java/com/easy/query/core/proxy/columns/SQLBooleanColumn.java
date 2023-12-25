@@ -1,6 +1,5 @@
 package com.easy.query.core.proxy.columns;
 
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.extension.functions.ColumnBooleanFunctionAvailable;
 
 /**
@@ -9,6 +8,6 @@ import com.easy.query.core.proxy.extension.functions.ColumnBooleanFunctionAvaila
  *
  * @author xuejiaming
  */
-public interface SQLBooleanColumn<TProxy, TProperty> extends SQLColumn<TProxy,TProperty>,
+public interface SQLBooleanColumn<TProxy, TProperty> extends SQLObjectColumn<TProxy,TProperty>,
         ColumnBooleanFunctionAvailable<TProperty> {
 }

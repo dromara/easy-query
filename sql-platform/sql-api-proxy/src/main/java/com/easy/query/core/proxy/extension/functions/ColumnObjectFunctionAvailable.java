@@ -23,11 +23,13 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface ColumnObjectFunctionAvailable<TProperty,TChain> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
-    TChain createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func,Class<?> propType);
+public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
+    TChain createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType);
+
     default <T extends Long> ColumnFuncComparableExpression<T> count() {
         return count(false);
     }
+
     default <T extends Long> ColumnFuncComparableExpression<T> count(boolean distinct) {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -38,6 +40,7 @@ public interface ColumnObjectFunctionAvailable<TProperty,TChain> extends SQLSele
             }
         }, Long.class);
     }
+
     default TChain max() {
         return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -62,53 +65,57 @@ public interface ColumnObjectFunctionAvailable<TProperty,TChain> extends SQLSele
 
 
     default <T> TChain nullDefault(T value) {
-        return nullDefault(o->o.value(value));
+        return nullDefault(o -> o.value(value));
     }
 
-     default <T> TChain nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector){
-         return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-             if (this instanceof DSLSQLFunctionAvailable) {
-                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                 return fx.valueOrDefault(o -> {
-                     o.sqlFunc(sqlFunction);
-                     selector.apply(new ProxyColumnFuncSelectorImpl(o));
-                 });
-             } else {
-                 return fx.valueOrDefault(o -> {
-                     o.column(this.getTable(), this.getValue());
-                     selector.apply(new ProxyColumnFuncSelectorImpl(o));
-                 });
-             }
-         }, getPropertyType());
-     }
+    default <T> TChain nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
+        return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.valueOrDefault(o -> {
+                    o.sqlFunc(sqlFunction);
+                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                });
+            } else {
+                return fx.valueOrDefault(o -> {
+                    o.column(this.getTable(), this.getValue());
+                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                });
+            }
+        }, getPropertyType());
+    }
+
+
     default ColumnFuncComparableExpression<Integer> compareTo(String comparedValue) {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.compareTo(sqlFunction,comparedValue);
+                return fx.compareTo(sqlFunction, comparedValue);
             } else {
-                return fx.compareTo(this.getValue(),comparedValue);
+                return fx.compareTo(this.getValue(), comparedValue);
             }
         }, Integer.class);
     }
-    default <TColumnProxy> ColumnFuncComparableExpression<Integer> compareTo(SQLColumn<TColumnProxy,String> sqlColumn) {
+
+    default <TColumnProxy> ColumnFuncComparableExpression<Integer> compareTo(SQLColumn<TColumnProxy, String> sqlColumn) {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.compareTo(sqlFunction,new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
+                return fx.compareTo(sqlFunction, new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.getValue());
             } else {
-                return fx.compareTo(this.getValue(),new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
+                return fx.compareTo(this.getValue(), new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.getValue());
             }
         }, Integer.class);
     }
+
     default ColumnFuncComparableExpression<Integer> compareTo(DSLSQLFunctionAvailable otherSQLFunction) {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             SQLFunction comparedSQLFunction = otherSQLFunction.func().apply(fx);
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.compareTo(sqlFunction,comparedSQLFunction);
+                return fx.compareTo(sqlFunction, comparedSQLFunction);
             } else {
-                return fx.compareTo(this.getValue(),comparedSQLFunction);
+                return fx.compareTo(this.getValue(), comparedSQLFunction);
             }
         }, Integer.class);
     }

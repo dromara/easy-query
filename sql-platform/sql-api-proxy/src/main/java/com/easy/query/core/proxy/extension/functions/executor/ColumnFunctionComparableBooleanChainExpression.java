@@ -1,6 +1,5 @@
 package com.easy.query.core.proxy.extension.functions.executor;
 
-import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.ColumnBooleanFunctionAvailable;
 
 /**
@@ -9,6 +8,6 @@ import com.easy.query.core.proxy.extension.functions.ColumnBooleanFunctionAvaila
  *
  * @author xuejiaming
  */
-public interface ColumnFunctionComparableBooleanChainExpression<T> extends ColumnFuncComparableExpression<T>,
+public interface ColumnFunctionComparableBooleanChainExpression<T> extends ColumnFunctionComparableObjectChainExpression<T>,
         ColumnBooleanFunctionAvailable<T> {
 }

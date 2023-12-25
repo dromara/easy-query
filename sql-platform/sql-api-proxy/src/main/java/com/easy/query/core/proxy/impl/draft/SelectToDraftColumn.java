@@ -38,7 +38,7 @@ public class SelectToDraftColumn<TProperty> implements PropTypeColumn<TProperty>
     }
 
     @Override
-    public <TR> PropTypeColumn<TR> castType(Class<TR> clazz) {
+    public <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz) {
         this.propType=clazz;
         return EasyObjectUtil.typeCastNullable(this);
     }

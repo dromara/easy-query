@@ -105,7 +105,7 @@ public interface SQLSelectExpression extends TablePropColumn, DSLUpdateSet {
 
     default <TProperty> PropTypeColumn<TProperty> toDraft(Class<TProperty> propType){
         if(PropTypeColumn.class.isAssignableFrom(this.getClass())){
-            return ((PropTypeColumn<?>)this).castType(propType);
+            return ((PropTypeColumn<?>)this).setPropertyType(propType);
         }
         return new SelectToDraftColumn<>(this,propType);
     }

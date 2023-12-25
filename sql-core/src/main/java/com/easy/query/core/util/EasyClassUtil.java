@@ -52,6 +52,12 @@ public class EasyClassUtil {
         }
         return clazz.getSimpleName();
     }
+    public static String getFullName(Class<?> clazz) {
+        if (clazz == null) {
+            return EasyStringUtil.EMPTY;
+        }
+        return clazz.getName();
+    }
 
     private static PropertyDescriptor find(PropertyDescriptor[] pd, String name) {
         for (PropertyDescriptor p : pd) {

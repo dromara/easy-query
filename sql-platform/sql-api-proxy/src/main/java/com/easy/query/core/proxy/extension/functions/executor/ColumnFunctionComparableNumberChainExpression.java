@@ -1,6 +1,5 @@
 package com.easy.query.core.proxy.extension.functions.executor;
 
-import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 
 /**
@@ -9,6 +8,6 @@ import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailab
  *
  * @author xuejiaming
  */
-public interface ColumnFunctionComparableNumberChainExpression<T> extends ColumnFuncComparableExpression<T>,
+public interface ColumnFunctionComparableNumberChainExpression<T> extends ColumnFunctionComparableObjectChainExpression<T>,
         ColumnNumberFunctionAvailable<T> {
 }

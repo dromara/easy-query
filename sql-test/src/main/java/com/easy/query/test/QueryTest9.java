@@ -1441,7 +1441,7 @@ public class QueryTest9 extends BaseTest {
                     .groupBy(t -> t.id())
                     .selectDraft(t -> Select.draft(
                             t.id(),
-                            t.id().count().castType(Long.class)
+                            t.id().count().setPropertyType(Long.class)
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1499,7 +1499,7 @@ public class QueryTest9 extends BaseTest {
                     .queryable(BlogEntity.class)
                     .selectDraft(t -> Select.draft(t.id(),
                             t.createTime(),
-                            Select.draftSQL("1").castType(String.class)
+                            Select.draftSQL("1").setPropertyType(String.class)
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1518,7 +1518,7 @@ public class QueryTest9 extends BaseTest {
                     .queryable(BlogEntity.class)
                     .selectDraft(t -> Select.draft(t.id(),
                             t.createTime(),
-                            Select.draftSQL("IFNULL({0},'1')", c->c.keepStyle().expression(t.title())).castType(String.class)
+                            Select.draftSQL("IFNULL({0},'1')", c->c.keepStyle().expression(t.title())).setPropertyType(String.class)
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

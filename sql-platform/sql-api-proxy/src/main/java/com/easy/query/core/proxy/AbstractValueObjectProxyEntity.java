@@ -89,7 +89,7 @@ public abstract class AbstractValueObjectProxyEntity<TProxy, TProperty> implemen
     }
 
     @Override
-    public <TR> PropTypeColumn<TR> castType(Class<TR> clazz) {
+    public <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz) {
         this.propType = clazz;
         return EasyObjectUtil.typeCastNullable(this);
     }

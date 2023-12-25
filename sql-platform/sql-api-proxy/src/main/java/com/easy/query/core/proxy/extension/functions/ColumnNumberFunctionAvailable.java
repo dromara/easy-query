@@ -5,6 +5,8 @@ import com.easy.query.core.expression.parser.core.base.SimpleSQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
@@ -18,7 +20,9 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty, ColumnFunctionComparableNumberChainExpression<TProperty>> {
+public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty, ColumnFunctionComparableNumberChainExpression<TProperty>>,
+        ColumnFunctionCastStringAvailable<TProperty>,
+        ColumnFunctionCastBooleanAvailable<TProperty> {
     default <T extends BigDecimal> ColumnFunctionComparableNumberChainExpression<T> avg() {
         return avg(false);
     }
@@ -58,7 +62,6 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
             }
         }, getPropertyType());
     }
-
     @Override
     default ColumnFunctionComparableNumberChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
