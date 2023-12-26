@@ -9,6 +9,7 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
+import com.easy.query.core.func.def.enums.MathMethodEnum;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -111,5 +112,10 @@ public class DamengSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
         return new DamengDateTimeDurationSQLFunction(getColumnExpressions(sqlExpression),durationEnum);
+    }
+
+    @Override
+    public SQLFunction math(SQLExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
+        return new DamengMathSQLFunction(getColumnExpressions(sqlExpression),mathMethodEnum);
     }
 }

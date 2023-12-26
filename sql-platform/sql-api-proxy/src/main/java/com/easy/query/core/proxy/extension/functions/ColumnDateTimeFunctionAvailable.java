@@ -35,6 +35,13 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
             return fx.dateTimeFormat(this.getValue(), javaFormat);
         }, String.class);
     }
+
+    /**
+     * 最小精度为秒部分数据库支持秒以下精度
+     * @param duration
+     * @param timeUnit
+     * @return
+     */
     default ColumnFunctionComparableDateTimeChainExpression<TProperty> plus(long duration, TimeUnit timeUnit) {
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -178,48 +185,6 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
         }, Integer.class);
     }
 
-    /**
-     * 比较两个时间返回nanoTime差
-     * @param otherDateTime
-     * @return 大于0表示前一个比后一个大
-     */
-    default ColumnFunctionComparableNumberChainExpression<Long> compareTo(ColumnDateTimeFunctionAvailable<TProperty> otherDateTime) {
-        return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                if(otherDateTime instanceof DSLSQLFunctionAvailable){
-                    DSLSQLFunctionAvailable otherFunction = (DSLSQLFunctionAvailable) otherDateTime;
-                    SQLFunction otherDateTimeFunction = otherFunction.func().apply(fx);
-                    return fx.dateTimeCompareTo(sqlFunction,otherDateTimeFunction);
-                }else{
-                    return fx.dateTimeCompareTo(sqlFunction,otherDateTime,otherDateTime.getValue());
-                }
-            } else {
-                if(otherDateTime instanceof DSLSQLFunctionAvailable){
-                    DSLSQLFunctionAvailable otherFunction = (DSLSQLFunctionAvailable) otherDateTime;
-                    SQLFunction otherDateTimeFunction = otherFunction.func().apply(fx);
-                    return fx.dateTimeCompareTo(this.getValue(),otherDateTimeFunction);
-                }else{
-                    return fx.dateTimeCompareTo(this.getValue(),otherDateTime,otherDateTime.getValue());
-                }
-            }
-        }, Long.class);
-    }
-    /**
-     * 比较两个时间返回nanoTime差
-     * @param otherDateTime
-     * @return 大于0表示前一个比后一个大
-     */
-    default ColumnFunctionComparableNumberChainExpression<Long> compareTo(LocalDateTime otherDateTime) {
-        return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.dateTimeCompareTo(sqlFunction,otherDateTime);
-            } else {
-                return fx.dateTimeCompareTo(this.getValue(),otherDateTime);
-            }
-        }, Long.class);
-    }
     @Override
     default ColumnFunctionComparableDateTimeChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());

@@ -10,7 +10,7 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
  *
  * @author xuejiaming
  */
-public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc{
+public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,SQLMathFunc{
     /**
      * 如果property对应的值为null则返回def值
      *

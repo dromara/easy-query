@@ -9,11 +9,10 @@ import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
+import com.easy.query.core.func.def.enums.MathMethodEnum;
 import com.easy.query.core.func.def.impl.AbsSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
 import com.easy.query.core.func.def.impl.CastSQLFunction;
-import com.easy.query.core.func.def.impl.DateTimeCompareToSQLFunction;
-import com.easy.query.core.func.def.impl.StringCompareToSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeDurationSQLFunction;
@@ -24,15 +23,17 @@ import com.easy.query.core.func.def.impl.DateTimePlusYearSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimePropertySQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.impl.JoinSQLFunction;
+import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
+import com.easy.query.core.func.def.impl.MathSQLFunction;
 import com.easy.query.core.func.def.impl.MaxSQLFunction;
 import com.easy.query.core.func.def.impl.MinSQLFunction;
 import com.easy.query.core.func.def.impl.NowSQLFunction;
 import com.easy.query.core.func.def.impl.NullDefaultSQLFunction;
-import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
-import com.easy.query.core.func.def.impl.RightPadSQLFunction;
 import com.easy.query.core.func.def.impl.ReplaceSQLFunction;
+import com.easy.query.core.func.def.impl.RightPadSQLFunction;
 import com.easy.query.core.func.def.impl.RoundSQLFunction;
+import com.easy.query.core.func.def.impl.StringCompareToSQLFunction;
 import com.easy.query.core.func.def.impl.SubStringSQLFunction;
 import com.easy.query.core.func.def.impl.SumSQLFunction;
 import com.easy.query.core.func.def.impl.ToLowerSQLFunction;
@@ -225,7 +226,7 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction dateTimeCompareTo(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new DateTimeCompareToSQLFunction(getColumnExpressions(sqlExpression));
+    public SQLFunction math(SQLExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
+        return new MathSQLFunction(getColumnExpressions(sqlExpression),mathMethodEnum);
     }
 }

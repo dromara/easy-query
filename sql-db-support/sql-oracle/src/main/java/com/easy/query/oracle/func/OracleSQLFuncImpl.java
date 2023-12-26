@@ -9,6 +9,7 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
+import com.easy.query.core.func.def.enums.MathMethodEnum;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -114,5 +115,10 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
         return new OracleDateTimeDurationSQLFunction(getColumnExpressions(sqlExpression),durationEnum);
+    }
+
+    @Override
+    public SQLFunction math(SQLExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
+        return new OracleMathSQLFunction(getColumnExpressions(sqlExpression),mathMethodEnum);
     }
 }

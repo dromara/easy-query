@@ -311,69 +311,69 @@ public interface SQLDateTimeFunc {
      */
     SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum);
 
-
-    /**
-     * 时间比较函数
-     *
-     * @param property      属性列
-     * @param comparedValue 被比较的值
-     * @return 时间比较函数
-     */
-    default SQLFunction dateTimeCompareTo(String property, LocalDateTime comparedValue) {
-        return dateTimeCompareTo(s -> {
-            s.column(property);
-            s.value(comparedValue);
-        });
-    }
-
-    default SQLFunction dateTimeCompareTo(String property, SQLTableOwner tableOwner, String otherProperty) {
-        return dateTimeCompareTo(s -> {
-            s.column(property);
-            s.column(tableOwner, otherProperty);
-        });
-    }
-
-    default SQLFunction dateTimeCompareTo(String property, SQLFunction sqlFunction) {
-        return dateTimeCompareTo(s -> {
-            s.column(property);
-            s.sqlFunc(sqlFunction);
-        });
-    }
-
-    /**
-     * 时间比较函数
-     *
-     * @param sqlFunction   sql函数
-     * @param comparedValue 被比较的值
-     * @return 时间比较函数
-     */
-    default SQLFunction dateTimeCompareTo(SQLFunction sqlFunction, LocalDateTime comparedValue) {
-        return dateTimeCompareTo(s -> {
-            s.sqlFunc(sqlFunction);
-            s.value(comparedValue);
-        });
-    }
-
-    default SQLFunction dateTimeCompareTo(SQLFunction sqlFunction, SQLTableOwner tableOwner, String otherProperty) {
-        return dateTimeCompareTo(s -> {
-            s.sqlFunc(sqlFunction);
-            s.column(tableOwner, otherProperty);
-        });
-    }
-
-    default SQLFunction dateTimeCompareTo(SQLFunction sqlFunction, SQLFunction comparedSQLFunction) {
-        return dateTimeCompareTo(s -> {
-            s.sqlFunc(sqlFunction);
-            s.sqlFunc(comparedSQLFunction);
-        });
-    }
-
-    /**
-     * 替换字符串
-     *
-     * @param sqlExpression 属性选择函数
-     * @return 替换字符串函数
-     */
-    SQLFunction dateTimeCompareTo(SQLExpression1<ColumnFuncSelector> sqlExpression);
+//
+//    /**
+//     * 时间比较函数
+//     *
+//     * @param property      属性列
+//     * @param comparedValue 被比较的值
+//     * @return 时间比较函数
+//     */
+//    default SQLFunction dateTimeCompareTo(String property, LocalDateTime comparedValue) {
+//        return dateTimeCompareTo(s -> {
+//            s.column(property);
+//            s.value(comparedValue);
+//        });
+//    }
+//
+//    default SQLFunction dateTimeCompareTo(String property, SQLTableOwner tableOwner, String otherProperty) {
+//        return dateTimeCompareTo(s -> {
+//            s.column(property);
+//            s.column(tableOwner, otherProperty);
+//        });
+//    }
+//
+//    default SQLFunction dateTimeCompareTo(String property, SQLFunction sqlFunction) {
+//        return dateTimeCompareTo(s -> {
+//            s.column(property);
+//            s.sqlFunc(sqlFunction);
+//        });
+//    }
+//
+//    /**
+//     * 时间比较函数
+//     *
+//     * @param sqlFunction   sql函数
+//     * @param comparedValue 被比较的值
+//     * @return 时间比较函数
+//     */
+//    default SQLFunction dateTimeCompareTo(SQLFunction sqlFunction, LocalDateTime comparedValue) {
+//        return dateTimeCompareTo(s -> {
+//            s.sqlFunc(sqlFunction);
+//            s.value(comparedValue);
+//        });
+//    }
+//
+//    default SQLFunction dateTimeCompareTo(SQLFunction sqlFunction, SQLTableOwner tableOwner, String otherProperty) {
+//        return dateTimeCompareTo(s -> {
+//            s.sqlFunc(sqlFunction);
+//            s.column(tableOwner, otherProperty);
+//        });
+//    }
+//
+//    default SQLFunction dateTimeCompareTo(SQLFunction sqlFunction, SQLFunction comparedSQLFunction) {
+//        return dateTimeCompareTo(s -> {
+//            s.sqlFunc(sqlFunction);
+//            s.sqlFunc(comparedSQLFunction);
+//        });
+//    }
+//
+//    /**
+//     * 替换字符串
+//     *
+//     * @param sqlExpression 属性选择函数
+//     * @return 替换字符串函数
+//     */
+//    SQLFunction dateTimeCompareTo(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
 }
