@@ -37,7 +37,7 @@ public class DamengDateTimePlusSQLFunction extends AbstractExpressionSQLFunction
         columnExpressions.add(columnExpression);
         long millis = timeUnit.toMillis(duration);
         columnExpressions.add(new ColumnFuncValueExpressionImpl(millis));
-        return "({0}+({1})/86400000)";
+        return "({0}+({1})/86400000.0)";
     }
 
     @Override

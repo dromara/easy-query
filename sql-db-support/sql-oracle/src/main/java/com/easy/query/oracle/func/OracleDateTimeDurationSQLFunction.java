@@ -29,12 +29,12 @@ public class OracleDateTimeDurationSQLFunction extends AbstractExpressionSQLFunc
             throw new IllegalArgumentException("date time duration sql arguments != 2");
         }
         switch (durationEnum){
-            case Days:return "NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY')";
-            case Hours:return "NUMTODSINTERVAL(({0}+0)-({1}+0),'HOUR')";
-            case Minutes:return "NUMTODSINTERVAL(({0}+0)-({1}+0),'MINUTE')";
-            case Seconds:return "NUMTODSINTERVAL(({0}+0)-({1}+0),'SECOND')";
+            case Days:return "ROUND(TO_NUMBER({0} - {1}))";
+            case Hours:return "ROUND(TO_NUMBER({0} - {1}) * 24)";
+            case Minutes:return "ROUND(TO_NUMBER({0} - {1}) * 24 * 60)";
+            case Seconds:return "ROUND(TO_NUMBER({0} - {1}) * 24 * 60 * 60)";
         }
-        throw new UnsupportedOperationException("不支持当前属性获取:"+ durationEnum);
+        throw new UnsupportedOperationException("不支持当前函数OracleDateTimeDurationSQLFunction:"+ durationEnum);
     }
 
     @Override

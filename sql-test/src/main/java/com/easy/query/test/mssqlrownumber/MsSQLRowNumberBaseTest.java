@@ -1,5 +1,7 @@
 package com.easy.query.test.mssqlrownumber;
 
+import com.easy.query.api.proxy.client.DefaultEntityQuery;
+import com.easy.query.api.proxy.client.EntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -24,6 +26,7 @@ import java.util.List;
 public abstract class MsSQLRowNumberBaseTest {
     public static HikariDataSource dataSource;
     public static EasyQuery easyQuery;
+    public static EntityQuery entityQuery;
 
     static {
         LogFactory.useStdOutLogging();
@@ -58,6 +61,7 @@ public abstract class MsSQLRowNumberBaseTest {
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);
+        entityQuery = new DefaultEntityQuery(easyQueryClient);
     }
 
     public static void initData() {

@@ -1,5 +1,7 @@
 package com.easy.query.test.pgsql;
 
+import com.easy.query.api.proxy.client.DefaultEntityQuery;
+import com.easy.query.api.proxy.client.EntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -35,6 +37,7 @@ import java.util.List;
 public class PgSQLBaseTest {
     public static HikariDataSource dataSource;
     public static EasyQuery easyQuery;
+    public static EntityQuery entityQuery;
 
     static {
         LogFactory.useStdOutLogging();
@@ -70,6 +73,7 @@ public class PgSQLBaseTest {
                 .useDatabaseConfigure(new PgSQLDatabaseConfiguration())
                 .build();
         easyQuery = new DefaultEasyQuery(easyObjectQuery);
+        entityQuery = new DefaultEntityQuery(easyObjectQuery);
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());

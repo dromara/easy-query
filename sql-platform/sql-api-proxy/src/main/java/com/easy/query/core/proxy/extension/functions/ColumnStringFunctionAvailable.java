@@ -6,6 +6,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
@@ -13,6 +14,7 @@ import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComp
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
+import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.util.EasyStringUtil;
 
@@ -239,5 +241,38 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     @Override
     default ColumnFunctionComparableStringChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+    }
+
+
+    default ColumnFuncComparableExpression<Integer> compareTo(String comparedValue) {
+        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.stringCompareTo(sqlFunction, comparedValue);
+            } else {
+                return fx.stringCompareTo(this.getValue(), comparedValue);
+            }
+        }, Integer.class);
+    }
+
+    default ColumnFuncComparableExpression<Integer> compareTo(ColumnStringFunctionAvailable<TProperty> otherColumn) {
+        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                if(otherColumn instanceof DSLSQLFunctionAvailable){
+                    SQLFunction columnFunction = ((DSLSQLFunctionAvailable) otherColumn).func().apply(fx);
+                    return fx.stringCompareTo(sqlFunction, columnFunction);
+                }else{
+                    return fx.stringCompareTo(sqlFunction, otherColumn,otherColumn.getValue());
+                }
+            } else {
+                if(otherColumn instanceof DSLSQLFunctionAvailable){
+                    SQLFunction columnFunction = ((DSLSQLFunctionAvailable) otherColumn).func().apply(fx);
+                    return fx.stringCompareTo(this.getValue(), columnFunction);
+                }else{
+                    return fx.stringCompareTo(this.getValue(), otherColumn,otherColumn.getValue());
+                }
+            }
+        }, Integer.class);
     }
 }

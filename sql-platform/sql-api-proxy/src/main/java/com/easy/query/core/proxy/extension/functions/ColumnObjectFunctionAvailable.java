@@ -85,38 +85,4 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
         }, getPropertyType());
     }
 
-
-    default ColumnFuncComparableExpression<Integer> compareTo(String comparedValue) {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.compareTo(sqlFunction, comparedValue);
-            } else {
-                return fx.compareTo(this.getValue(), comparedValue);
-            }
-        }, Integer.class);
-    }
-
-    default <TColumnProxy> ColumnFuncComparableExpression<Integer> compareTo(SQLColumn<TColumnProxy, String> sqlColumn) {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.compareTo(sqlFunction, new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.getValue());
-            } else {
-                return fx.compareTo(this.getValue(), new SimpleSQLTableOwner(sqlColumn.getTable()), sqlColumn.getValue());
-            }
-        }, Integer.class);
-    }
-
-    default ColumnFuncComparableExpression<Integer> compareTo(DSLSQLFunctionAvailable otherSQLFunction) {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            SQLFunction comparedSQLFunction = otherSQLFunction.func().apply(fx);
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.compareTo(sqlFunction, comparedSQLFunction);
-            } else {
-                return fx.compareTo(this.getValue(), comparedSQLFunction);
-            }
-        }, Integer.class);
-    }
 }

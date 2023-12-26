@@ -12,10 +12,10 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class CompareToSQLFunction extends AbstractExpressionSQLFunction {
+public class DateTimeCompareToSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
 
-    public CompareToSQLFunction(List<ColumnExpression> columnExpressions) {
+    public DateTimeCompareToSQLFunction(List<ColumnExpression> columnExpressions) {
 
         this.columnExpressions = columnExpressions;
     }
@@ -25,7 +25,7 @@ public class CompareToSQLFunction extends AbstractExpressionSQLFunction {
         if(columnExpressions.size()<2){
             throw new IllegalArgumentException("compare to arguments < 2");
         }
-        return "(CASE WHEN {0} = {1} THEN 0 WHEN {0} > {1} THEN 1 ELSE -1 END)";
+        return "timestampdiff(microsecond,{1},{0})*1000";
     }
 
     @Override

@@ -291,20 +291,20 @@ public interface SQLStringFunc {
      * @param comparedValue 被比较的值
      * @return 替换字符串函数
      */
-    default SQLFunction compareTo(String property,String comparedValue){
-        return compareTo(s->{
+    default SQLFunction stringCompareTo(String property, String comparedValue){
+        return stringCompareTo(s->{
             s.column(property);
             s.value(comparedValue);
         });
     }
-    default SQLFunction compareTo(String property, SQLTableOwner tableOwner,String otherProperty){
-        return compareTo(s->{
+    default SQLFunction stringCompareTo(String property, SQLTableOwner tableOwner, String otherProperty){
+        return stringCompareTo(s->{
             s.column(property);
             s.column(tableOwner,otherProperty);
         });
     }
-    default SQLFunction compareTo(String property, SQLFunction sqlFunction){
-        return compareTo(s->{
+    default SQLFunction stringCompareTo(String property, SQLFunction sqlFunction){
+        return stringCompareTo(s->{
             s.column(property);
             s.sqlFunc(sqlFunction);
         });
@@ -315,20 +315,20 @@ public interface SQLStringFunc {
      * @param comparedValue 被比较的值
      * @return 比较字符串函数
      */
-    default SQLFunction compareTo(SQLFunction sqlFunction,String comparedValue){
-        return compareTo(s->{
+    default SQLFunction stringCompareTo(SQLFunction sqlFunction, String comparedValue){
+        return stringCompareTo(s->{
             s.sqlFunc(sqlFunction);
             s.value(comparedValue);
         });
     }
-    default SQLFunction compareTo(SQLFunction sqlFunction, SQLTableOwner tableOwner,String otherProperty){
-        return compareTo(s->{
+    default SQLFunction stringCompareTo(SQLFunction sqlFunction, SQLTableOwner tableOwner, String otherProperty){
+        return stringCompareTo(s->{
             s.sqlFunc(sqlFunction);
             s.column(tableOwner,otherProperty);
         });
     }
-    default SQLFunction compareTo(SQLFunction sqlFunction, SQLFunction comparedSQLFunction){
-        return compareTo(s->{
+    default SQLFunction stringCompareTo(SQLFunction sqlFunction, SQLFunction comparedSQLFunction){
+        return stringCompareTo(s->{
             s.sqlFunc(sqlFunction);
             s.sqlFunc(comparedSQLFunction);
         });
@@ -339,7 +339,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 替换字符串函数
      */
-    SQLFunction compareTo(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction stringCompareTo(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
 
     /**

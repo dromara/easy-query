@@ -12,7 +12,8 @@ import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.impl.AbsSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
 import com.easy.query.core.func.def.impl.CastSQLFunction;
-import com.easy.query.core.func.def.impl.CompareToSQLFunction;
+import com.easy.query.core.func.def.impl.DateTimeCompareToSQLFunction;
+import com.easy.query.core.func.def.impl.StringCompareToSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeDurationSQLFunction;
@@ -170,8 +171,8 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction compareTo(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new CompareToSQLFunction(getColumnExpressions(sqlExpression));
+    public SQLFunction stringCompareTo(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new StringCompareToSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
@@ -221,5 +222,10 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
         return new DateTimeDurationSQLFunction(getColumnExpressions(sqlExpression),durationEnum);
+    }
+
+    @Override
+    public SQLFunction dateTimeCompareTo(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DateTimeCompareToSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

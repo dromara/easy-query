@@ -1,8 +1,9 @@
 package com.easy.query.test.dameng.entity.proxy;
 
 import com.easy.query.core.proxy.AbstractProxyEntity;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.columns.SQLDateTimeColumn;
+import com.easy.query.core.proxy.columns.SQLNumberColumn;
 import com.easy.query.core.proxy.columns.SQLStringColumn;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
@@ -27,29 +28,29 @@ public class DamengMyTopicProxy extends AbstractProxyEntity < DamengMyTopicProxy
     /**
      * {@link DamengMyTopic#getId}
      */
-    public SQLStringColumn< DamengMyTopicProxy, String> id(){
+    public SQLStringColumn < DamengMyTopicProxy, java.lang.String> id(){
     return getStringColumn("id", java.lang.String.class);
 }
 
     /**
      * {@link DamengMyTopic#getStars}
      */
-    public SQLColumn < DamengMyTopicProxy, java.lang.Integer> stars(){
-    return get("stars", java.lang.Integer.class);
+    public SQLNumberColumn < DamengMyTopicProxy, java.lang.Integer> stars(){
+    return getNumberColumn("stars", java.lang.Integer.class);
 }
 
     /**
      * {@link DamengMyTopic#getTitle}
      */
-    public SQLColumn < DamengMyTopicProxy, java.lang.String> title(){
-    return get("title", java.lang.String.class);
+    public SQLStringColumn < DamengMyTopicProxy, java.lang.String> title(){
+    return getStringColumn("title", java.lang.String.class);
 }
 
     /**
      * {@link DamengMyTopic#getCreateTime}
      */
-    public SQLColumn < DamengMyTopicProxy, java.time.LocalDateTime> createTime(){
-    return get("createTime", java.time.LocalDateTime.class);
+    public SQLDateTimeColumn < DamengMyTopicProxy, java.time.LocalDateTime> createTime(){
+    return getDateTimeColumn("createTime", java.time.LocalDateTime.class);
 }
 
 

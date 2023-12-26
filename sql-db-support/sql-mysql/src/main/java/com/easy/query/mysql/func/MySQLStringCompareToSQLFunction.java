@@ -12,10 +12,10 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class MySQLCompareToSQLFunction extends AbstractExpressionSQLFunction {
+public class MySQLStringCompareToSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
 
-    public MySQLCompareToSQLFunction(List<ColumnExpression> columnExpressions) {
+    public MySQLStringCompareToSQLFunction(List<ColumnExpression> columnExpressions) {
 
         this.columnExpressions = columnExpressions;
     }

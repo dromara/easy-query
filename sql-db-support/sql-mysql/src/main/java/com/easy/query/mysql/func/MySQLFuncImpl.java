@@ -13,7 +13,7 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
  */
 public class MySQLFuncImpl extends SQLFuncImpl {
     @Override
-    public SQLFunction compareTo(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new MySQLCompareToSQLFunction(getColumnExpressions(sqlExpression));
+    public SQLFunction stringCompareTo(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MySQLStringCompareToSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

@@ -2,12 +2,19 @@ package com.easy.query.test.mssqlrownumber;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.core.draft.Draft4;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic1;
+import com.easy.query.test.mssqlrownumber.entity.MsSQLRowNumberMyTopic;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2023/7/27 17:34
@@ -147,5 +154,56 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
             Assert.assertEquals(msSQLMyTopic.getId(),String.valueOf(i+20) );
             Assert.assertEquals(msSQLMyTopic.getStars(),(Integer)(i+120) );
         }
+    }
+
+
+    @Test
+    public void testDraft9() {
+        String id = "123456zz9";
+        entityQuery.deletable(MsSQLRowNumberMyTopic.class)
+                .whereById(id)
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .executeRows();
+        MsSQLRowNumberMyTopic blog = new MsSQLRowNumberMyTopic();
+        blog.setId(id);
+        blog.setCreateTime(LocalDateTime.of(2022, 1, 2, 3, 4, 5));
+        blog.setTitle("titlez" );
+        blog.setStars(1);
+        entityQuery.insertable(blog)
+                .executeRows();
+        Draft3<LocalDateTime, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
+                .whereById(id)
+                .selectDraft(o -> Select.draft(
+                        o.createTime().plus(1, TimeUnit.DAYS),
+                        o.createTime().plus(2, TimeUnit.SECONDS),
+                        o.createTime().plus(3, TimeUnit.MINUTES)
+                )).firstOrNull();
+
+        Draft4<Long, Long, Long, Long> draft3 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
+                .whereById(id)
+                .selectDraft(o -> Select.draft(
+                        o.createTime().duration(o.createTime().plus(1,TimeUnit.DAYS), DateTimeDurationEnum.Days),
+                        o.createTime().duration(o.createTime().plus(2,TimeUnit.SECONDS),DateTimeDurationEnum.Seconds),
+                        o.createTime().duration(o.createTime().plus(3,TimeUnit.MINUTES),DateTimeDurationEnum.Minutes),
+                        o.createTime().duration(o.createTime().plus(3,TimeUnit.HOURS),DateTimeDurationEnum.Minutes)
+                )).firstOrNull();
+
+        Assert.assertNotNull(draft3);
+        Long value1 = draft3.getValue1();
+        Assert.assertEquals(-1, (long) value1);
+        Long value2 = draft3.getValue2();
+        Assert.assertEquals(-2, (long) value2);
+        Long value3 = draft3.getValue3();
+        Assert.assertEquals(-3, (long) value3);
+        Long value4 = draft3.getValue4();
+        Assert.assertEquals(-180, (long) value4);
+
+
+        entityQuery.deletable(MsSQLRowNumberMyTopic.class)
+                .whereById(id)
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .executeRows();
     }
 }

@@ -2,7 +2,7 @@ package com.easy.query.pgsql.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
-import com.easy.query.core.func.column.impl.ColumnFuncValueExpressionImpl;
+import com.easy.query.core.func.column.impl.ColumnFuncFormatExpressionImpl;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -35,9 +35,9 @@ public class PgSQLDateTimePlusSQLFunction extends AbstractExpressionSQLFunction 
         ColumnExpression columnExpression = columnExpressions.get(0);
         columnExpressions.clear();
         columnExpressions.add(columnExpression);
-        long millis = timeUnit.toMillis(duration);
-        columnExpressions.add(new ColumnFuncValueExpressionImpl(millis));
-        return "(({0})::timestamp+((({1})/1000)||' milliseconds')::interval)";
+        long seconds = timeUnit.toSeconds(duration);
+        columnExpressions.add(new ColumnFuncFormatExpressionImpl(seconds));
+        return "({0} + INTERVAL '{1} second')";
     }
 
     @Override
