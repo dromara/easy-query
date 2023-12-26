@@ -7,6 +7,8 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
+import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -109,5 +111,13 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction plusDateTimeYears(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new MsSQLDateTimePlusYearSQLFunction(getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction dateTimeProperty(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeUnitEnum dateTimeUnitEnum) {
+        return new MsSQLDateTimePropertySQLFunction(getColumnExpressions(sqlExpression),dateTimeUnitEnum);
+    }
+    @Override
+    public SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
+        return new MsSQLDateTimeDurationSQLFunction(getColumnExpressions(sqlExpression),durationEnum);
     }
 }

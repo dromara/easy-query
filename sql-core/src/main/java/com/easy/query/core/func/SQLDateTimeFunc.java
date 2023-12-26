@@ -3,6 +3,8 @@ package com.easy.query.core.func;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.column.ColumnFuncSelector;
+import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 
 import java.util.concurrent.TimeUnit;
 
@@ -163,5 +165,101 @@ public interface SQLDateTimeFunc {
      * @return 时间格式添加函数
      */
     SQLFunction plusDateTimeYears(SQLExpression1<ColumnFuncSelector> sqlExpression);
+
+
+    /**
+     * 时间格式添加函数
+     * @param property
+     * @param dateTimeUnitEnum
+     * @return 时间格式添加函数
+     */
+    default SQLFunction dateTimeProperty(String property, DateTimeUnitEnum dateTimeUnitEnum){
+        return dateTimeProperty(s->{
+            s.column(property);
+        },dateTimeUnitEnum);
+    }
+
+    /**
+     * 时间格式添加函数
+     * @param sqlFunction
+     * @param dateTimeUnitEnum
+     * @return 时间格式添加函数
+     */
+    default SQLFunction dateTimeProperty(SQLFunction sqlFunction, DateTimeUnitEnum dateTimeUnitEnum){
+        return dateTimeProperty(s->{
+            s.sqlFunc(sqlFunction);
+        },dateTimeUnitEnum);
+    }
+
+    /**
+     * 时间格式添加函数
+     * @param sqlExpression
+     * @return 时间格式添加函数
+     */
+    SQLFunction dateTimeProperty(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeUnitEnum dateTimeUnitEnum);
+
+    /**
+     * 相差时间函数
+     * @param property
+     * @param otherTable
+     * @param otherProperty
+     * @param durationEnum
+     * @return 相差时间函数
+     */
+    default SQLFunction duration(String property, SQLTableOwner otherTable, String otherProperty, DateTimeDurationEnum durationEnum){
+        return duration(s->{
+            s.column(property)
+                    .column(otherTable,otherProperty);
+        },durationEnum);
+    }
+
+    /**
+     * 相差时间函数
+     * @param property
+     * @param sqlFunction
+     * @param durationEnum
+     * @return 相差时间函数
+     */
+    default SQLFunction duration(String property,SQLFunction sqlFunction, DateTimeDurationEnum durationEnum){
+        return duration(s->{
+            s.column(property).sqlFunc(sqlFunction);
+        },durationEnum);
+    }
+
+    /**
+     * 相差时间函数
+     * @param sqlFunction
+     * @param otherTable
+     * @param otherProperty
+     * @param durationEnum
+     * @return 相差时间函数
+     */
+    default SQLFunction duration(SQLFunction sqlFunction,SQLTableOwner otherTable, String otherProperty, DateTimeDurationEnum durationEnum){
+        return duration(s->{
+            s.sqlFunc(sqlFunction)
+                    .column(otherTable,otherProperty);
+        },durationEnum);
+    }
+
+    /**
+     * 相差时间函数
+     * @param sqlFunction1
+     * @param sqlFunction2
+     * @param durationEnum
+     * @return 相差时间函数
+     */
+    default SQLFunction duration(SQLFunction sqlFunction1,SQLFunction sqlFunction2, DateTimeDurationEnum durationEnum){
+        return duration(s->{
+            s.sqlFunc(sqlFunction1).sqlFunc(sqlFunction2);
+        },durationEnum);
+    }
+
+    /**
+     * 相差时间函数
+     * @param sqlExpression
+     * @param durationEnum
+     * @return 相差时间函数
+     */
+    SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum);
 
 }

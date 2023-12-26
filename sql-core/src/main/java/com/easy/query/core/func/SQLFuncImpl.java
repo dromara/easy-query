@@ -7,16 +7,20 @@ import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
+import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.impl.AbsSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
 import com.easy.query.core.func.def.impl.CastSQLFunction;
 import com.easy.query.core.func.def.impl.CompareToSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
+import com.easy.query.core.func.def.impl.DateTimeDurationSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeFormatSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimePlusMonthSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimePlusSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimePlusYearSQLFunction;
+import com.easy.query.core.func.def.impl.DateTimePropertySQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.impl.JoinSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
@@ -207,5 +211,15 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction plusDateTimeYears(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new DateTimePlusYearSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction dateTimeProperty(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeUnitEnum dateTimeUnitEnum) {
+        return new DateTimePropertySQLFunction(getColumnExpressions(sqlExpression),dateTimeUnitEnum);
+    }
+
+    @Override
+    public SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
+        return new DateTimeDurationSQLFunction(getColumnExpressions(sqlExpression),durationEnum);
     }
 }
