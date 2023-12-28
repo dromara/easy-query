@@ -47,7 +47,7 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<Draft2<String, Integer>> list2 = entityQuery.queryable(BlogEntity.class)
+        List<Draft2<String, Integer>> list2 = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
                     o.title().length().eq(123);
 //                    o.createTime().
@@ -71,7 +71,7 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<Draft2<String, Integer>> list2 = entityQuery.queryable(BlogEntity.class)
+        List<Draft2<String, Integer>> list2 = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
                     o.title().toNumber(Integer.class).asAny().eq(123);
 //                    o.createTime().
@@ -92,7 +92,7 @@ public class MyTest1 extends BaseTest {
     @Test
     public void testDraft3() {
         {
-            Draft1<LocalDateTime> localDateTimeDraft1 = entityQuery.queryable(BlogEntity.class)
+            Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
                     .selectDraft(o -> Select.draft(
                             o.createTime()
                     )).firstOrNull();
@@ -105,7 +105,7 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        Draft1<LocalDateTime> localDateTimeDraft1 = entityQuery.queryable(BlogEntity.class)
+        Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
                 .selectDraft(o -> Select.draft(
                         o.createTime().plus(2, TimeUnit.DAYS)
                 )).firstOrNull();
@@ -126,7 +126,7 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        Draft1<LocalDateTime> localDateTimeDraft1 = entityQuery.queryable(BlogEntity.class)
+        Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
                 .selectDraft(o -> Select.draft(
                         o.createTime().plusMonths(2)
                 )).firstOrNull();
@@ -147,7 +147,7 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        Draft1<LocalDateTime> localDateTimeDraft1 = entityQuery.queryable(BlogEntity.class)
+        Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
                 .selectDraft(o -> Select.draft(
                         o.createTime().plusMonths(12).plus(1, TimeUnit.DAYS)
                 )).firstOrNull();
@@ -166,7 +166,7 @@ public class MyTest1 extends BaseTest {
     @Test
     public void testDraft6() {
         String id = "123456zz";
-        entityQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .whereById(id)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
@@ -187,12 +187,12 @@ public class MyTest1 extends BaseTest {
         blog.setIsTop(false);
         blog.setTop(true);
         blog.setDeleted(false);
-        entityQuery.insertable(blog)
+        easyEntityQuery.insertable(blog)
                 .executeRows();
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        Draft3<LocalDateTime, LocalDateTime, LocalDateTime> draft3 = entityQuery.queryable(BlogEntity.class)
+        Draft3<LocalDateTime, LocalDateTime, LocalDateTime> draft3 = easyEntityQuery.queryable(BlogEntity.class)
                 .whereById(id)
                 .where(o -> {
                     o.createTime().plusYears(1).le(LocalDateTime.of(2023, 1, 1, 0, 0));
@@ -223,7 +223,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals("12(Integer),86400000000(Long),1(Integer),3000000(Long),false(Boolean),123456zz(String),1(Integer),2023-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
-        entityQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .whereById(id)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
@@ -233,7 +233,7 @@ public class MyTest1 extends BaseTest {
     @Test
     public void testDraft7() {
         String id = "123456zz7";
-        entityQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .whereById(id)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
@@ -254,12 +254,12 @@ public class MyTest1 extends BaseTest {
         blog.setIsTop(false);
         blog.setTop(true);
         blog.setDeleted(false);
-        entityQuery.insertable(blog)
+        easyEntityQuery.insertable(blog)
                 .executeRows();
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        Draft7<Integer, Integer, Integer, Integer, Integer, Integer, Integer> draft3 = entityQuery.queryable(BlogEntity.class)
+        Draft7<Integer, Integer, Integer, Integer, Integer, Integer, Integer> draft3 = easyEntityQuery.queryable(BlogEntity.class)
                 .whereById(id)
                 .where(o -> {
                     o.createTime().plusYears(1).le(LocalDateTime.of(2023, 2, 1, 0, 0));
@@ -298,7 +298,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals("false(Boolean),123456zz7(String),1(Integer),2023-02-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
-        entityQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .whereById(id)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
@@ -308,7 +308,7 @@ public class MyTest1 extends BaseTest {
     @Test
     public void testDraft8() {
         String id = "123456zz8";
-        entityQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .whereById(id)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
@@ -329,12 +329,12 @@ public class MyTest1 extends BaseTest {
         blog.setIsTop(false);
         blog.setTop(true);
         blog.setDeleted(false);
-        entityQuery.insertable(blog)
+        easyEntityQuery.insertable(blog)
                 .executeRows();
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        Draft7<Integer, Integer, Integer, Integer, Integer, Integer, Integer> draft3 = entityQuery.queryable(BlogEntity.class)
+        Draft7<Integer, Integer, Integer, Integer, Integer, Integer, Integer> draft3 = easyEntityQuery.queryable(BlogEntity.class)
                 .whereById(id)
                 .where(o -> {
                     o.createTime().plusYears(1).le(LocalDateTime.of(2023, 2, 1, 0, 0));
@@ -373,7 +373,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals("false(Boolean),123456zz8(String),1(Integer),2023-02-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
-        entityQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .whereById(id)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
@@ -383,7 +383,7 @@ public class MyTest1 extends BaseTest {
     @Test
     public void testDraft9() {
         String id = "123456zz9";
-        entityQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .whereById(id)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
@@ -404,12 +404,12 @@ public class MyTest1 extends BaseTest {
         blog.setIsTop(false);
         blog.setTop(true);
         blog.setDeleted(false);
-        entityQuery.insertable(blog)
+        easyEntityQuery.insertable(blog)
                 .executeRows();
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        Draft7<Long, Long, Long, Long, Long, Long, Long> draft3 = entityQuery.queryable(BlogEntity.class)
+        Draft7<Long, Long, Long, Long, Long, Long, Long> draft3 = easyEntityQuery.queryable(BlogEntity.class)
                 .whereById(id)
                 .selectDraft(o -> Select.draft(
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days),
@@ -443,7 +443,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals("86400000000(Long),2000000(Long),180000000(Long),false(Boolean),123456zz9(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
-        entityQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .whereById(id)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
@@ -455,11 +455,11 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<Draft4<String, String, LocalDateTime, String>> list = entityQuery.queryable(Topic.class)
+        List<Draft4<String, String, LocalDateTime, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().like("123");
                     o.exists(() -> {
-                        return entityQuery.queryable(BlogEntity.class)
+                        return easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> x.id().eq(o.id()));
                     });
                     //创建时间和现在的相差天数现在小于0
@@ -470,7 +470,7 @@ public class MyTest1 extends BaseTest {
                         o.title(),
                         o.createTime(),
                         Select.draftSubQueryAs(() -> {
-                            return entityQuery.queryable(BlogEntity.class)
+                            return easyEntityQuery.queryable(BlogEntity.class)
                                     .where(x -> x.id().eq(o.id()))
                                     .select(x -> new StringProxy(x.title()));
                         })
@@ -498,11 +498,11 @@ public class MyTest1 extends BaseTest {
         }
         {
 
-            List<TopicSubQueryBlog> list = entityQuery.queryable(Topic.class)
+            List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.title().isNotNull())
                     .select(o -> new TopicSubQueryBlogProxy() {{
                         selectColumns(o.allFields());
-                        blogCount().setSubQuery(entityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
+                        blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
                     }}).toList();
         }
         {
@@ -520,11 +520,11 @@ public class MyTest1 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
 
-            List<TopicSubQueryBlog> list = entityQuery.queryable(Topic.class)
+            List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.title().isNotNull())
                     .select(o -> new TopicSubQueryBlogProxy() {{
                         selectColumns(o.allFields());
-                        blogCount().setSubQuery(entityQuery.queryable(BlogEntity.class)
+                        blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> x.id().eq(o.id())).select(x -> new LongProxy(x.star().sum().setPropertyType(Long.class))));
                     }}).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -541,7 +541,7 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<BlogEntity> list = entityQuery.queryable(Topic.class)
+        List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().isNotNull())
                 .select(o -> new BlogEntityProxy() {
                     {
@@ -562,7 +562,7 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<BlogEntity> list = entityQuery.queryable(Topic.class)
+        List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().isNotNull())
                 .select(o -> new BlogEntityProxy() {
                     {
@@ -583,7 +583,7 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<BlogEntity> list = entityQuery.queryable(Topic.class)
+        List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
@@ -608,7 +608,7 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<BlogEntity> list = entityQuery.queryable(Topic.class)
+        List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().isNotNull())
                 .select(o -> new BlogEntityProxy() {
                     {
@@ -628,7 +628,7 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<BlogEntity> list = entityQuery.queryable(Topic.class)
+        List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().isNotNull())
                 .select(o -> new BlogEntityProxy() {
                     {
@@ -649,7 +649,7 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<BlogGroupIdAndName> list = entityQuery.queryable(Topic.class)
+        List<BlogGroupIdAndName> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
@@ -687,7 +687,7 @@ public class MyTest1 extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<Draft2<String, Long>> list = entityQuery.queryable(Topic.class)
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
@@ -713,7 +713,7 @@ public class MyTest1 extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<String> list = entityQuery.queryable(Topic.class)
+        List<String> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
@@ -725,7 +725,7 @@ public class MyTest1 extends BaseTest {
         listenerContextManager.clear();
 
 
-        List<BigDecimal> list1 = entityQuery.queryable(Topic.class)
+        List<BigDecimal> list1 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
@@ -737,7 +737,7 @@ public class MyTest1 extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<Draft2<String, Long>> list = entityQuery.queryable(Topic.class)
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
@@ -765,11 +765,11 @@ public class MyTest1 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<TopicSubQueryBlog> list = entityQuery.queryable(Topic.class)
+        List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().isNotNull())
                 .select(o -> new TopicSubQueryBlogProxy() {{
                     selectColumns(o.allFields());
-                    blogCount().setSubQuery(entityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
+                    blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
                 }}).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

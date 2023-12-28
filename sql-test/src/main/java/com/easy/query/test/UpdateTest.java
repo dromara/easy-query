@@ -64,7 +64,7 @@ public class UpdateTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
 
-            long rows = entityQuery.updatable(Topic.class)
+            long rows = easyEntityQuery.updatable(Topic.class)
                     .setColumns(o->{
                         o.stars().set(12);
                     })
@@ -85,7 +85,7 @@ public class UpdateTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
 
-            long rows = entityQuery.updatable(Topic.class)
+            long rows = easyEntityQuery.updatable(Topic.class)
                     .setColumns(o -> o.stars().set(12))
                     .where(o -> {
                         o.id().eq("2");
@@ -106,7 +106,7 @@ public class UpdateTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
 
-            long rows = entityQuery.updatable(Topic.class)
+            long rows = easyEntityQuery.updatable(Topic.class)
                     .setColumns(o->{
                         o.stars().set(12);
                     })
@@ -410,9 +410,9 @@ public class UpdateTest extends BaseTest {
     }
     @Test
     public void updateTest12_2() {
-        Topic topic = entityQuery.queryable(Topic.class).whereById("15").firstOrNull();
+        Topic topic = easyEntityQuery.queryable(Topic.class).whereById("15").firstOrNull();
         Assert.assertNotNull(topic);
-        String sql = entityQuery.updatable(topic)
+        String sql = easyEntityQuery.updatable(topic)
                 .whereColumns(o -> o.FETCHER.keys().stars()).toSQL(topic);
         Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?", sql);
     }
@@ -717,7 +717,7 @@ public class UpdateTest extends BaseTest {
     public void updateTest18_1() {
         try {
 
-            long rows = entityQuery.updatable(Topic.class)
+            long rows = easyEntityQuery.updatable(Topic.class)
                     .asTable("xxxxx")
                     .setColumns(o->{
                         o.stars().setSQLNativeSegment("ifnull({0},0)+{1}", (context) -> {
@@ -762,7 +762,7 @@ public class UpdateTest extends BaseTest {
     public void updateTest19_1() {
         try {
             Topic topic = new Topic();
-            long rows = entityQuery.updatable(topic)
+            long rows = easyEntityQuery.updatable(topic)
                     .asTable("xxxxx")
                     .columnConfigure((t, o) -> o.column(t.stars(), "ifnull({0},0)+{1}", (context, sqlParameter) -> {
                         context.expression(t.stars())
@@ -835,17 +835,17 @@ public class UpdateTest extends BaseTest {
 
     @Test
     public void updateTest21_1() {
-        TrackManager trackManager = entityQuery.getRuntimeContext().getTrackManager();
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
 
             trackManager.begin();
-            Topic topic = entityQuery.queryable(Topic.class)
+            Topic topic = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
-            boolean b = entityQuery.addTracking(topic);
+            boolean b = easyEntityQuery.addTracking(topic);
             Assert.assertTrue(b);
             String newTitle = "test123" + new Random().nextInt(100);
             topic.setTitle(newTitle);
-            entityQuery.updatable(topic)
+            easyEntityQuery.updatable(topic)
                     .asTable("x1234")
                     .whereColumns(o -> o.FETCHER.id().title())
                     .executeRows();
@@ -893,17 +893,17 @@ public class UpdateTest extends BaseTest {
 
     @Test
     public void updateTest22_1() {
-        TrackManager trackManager = entityQuery.getRuntimeContext().getTrackManager();
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
 
             trackManager.begin();
-            Topic topic = entityQuery.queryable(Topic.class)
+            Topic topic = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
             boolean b = easyQuery.addTracking(topic);
             Assert.assertTrue(b);
             String newTitle = "test123" + new Random().nextInt(100);
             topic.setTitle(newTitle);
-            entityQuery.updatable(topic)
+            easyEntityQuery.updatable(topic)
                     .asTable("x123")
                     .whereColumns(o -> o.id())
                     .executeRows();
@@ -951,17 +951,17 @@ public class UpdateTest extends BaseTest {
 
     @Test
     public void updateTest23_1() {
-        TrackManager trackManager = entityQuery.getRuntimeContext().getTrackManager();
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
 
             trackManager.begin();
-            Topic topic = entityQuery.queryable(Topic.class)
+            Topic topic = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
-            boolean b = entityQuery.addTracking(topic);
+            boolean b = easyEntityQuery.addTracking(topic);
             Assert.assertTrue(b);
             String newTitle = "test123" + new Random().nextInt(100);
             topic.setTitle(newTitle);
-            (entityQuery.updatable(topic))
+            (easyEntityQuery.updatable(topic))
                     .asTable("x123")
                     .whereColumns(o -> o.title())
                     .executeRows();
@@ -1005,13 +1005,13 @@ public class UpdateTest extends BaseTest {
     public void updateTest24_1() {
         try {
 
-            Topic topic = entityQuery.queryable(Topic.class)
+            Topic topic = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
             boolean b = easyQuery.addTracking(topic);
             Assert.assertFalse(b);
             String newTitle = "test123" + new Random().nextInt(100);
             topic.setTitle(newTitle);
-            (entityQuery.updatable(topic))
+            (easyEntityQuery.updatable(topic))
                     .asTable("x123")
                     .whereColumns(o -> o.title())
                     .executeRows();
@@ -1057,7 +1057,7 @@ public class UpdateTest extends BaseTest {
             user.setIdCard("12345678");
             user.setAddress("xxxxxxx");
             user.setCreateTime(LocalDateTime.now());
-            long rows = entityQuery.updatable(user)
+            long rows = easyEntityQuery.updatable(user)
                     .asTable("xxxxx")
                     .executeRows();
             Assert.assertEquals(1, rows);
@@ -1090,7 +1090,7 @@ public class UpdateTest extends BaseTest {
     public void updateTest26_1() {
         try {
 
-            SysUserSQLEncryption topic = entityQuery.queryable(SysUserSQLEncryption.class)
+            SysUserSQLEncryption topic = easyEntityQuery.queryable(SysUserSQLEncryption.class)
                     .asTable("x123")
                     .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
         } catch (Exception ex) {
@@ -1123,7 +1123,7 @@ public class UpdateTest extends BaseTest {
     public void updateTest27_1() {
         try {
 
-            entityQuery.updatable(SysUserSQLEncryption.class)
+            easyEntityQuery.updatable(SysUserSQLEncryption.class)
                     .asTable("x123")
                     .setColumns(o->{
                         o.phone().set("123123");
@@ -1178,11 +1178,11 @@ public class UpdateTest extends BaseTest {
             topicLarge.setTitle("1");
             topicLarge.setTitle1("2");
             topicLarge.setCreateTime(LocalDateTime.now());
-            entityQuery.addTracking(topicLarge);
+            easyEntityQuery.addTracking(topicLarge);
             topicLarge.setTitle("xx");
 //            String newTitle = "test123" + new Random().nextInt(100000);
 //            topic.setTitle(newTitle);
-            String sql = (entityQuery.updatable(topicLarge))
+            String sql = (easyEntityQuery.updatable(topicLarge))
                     .toSQL(topicLarge);
             Assert.assertEquals("UPDATE `t_topic` SET `title` = ? WHERE `id` = ?", sql);
 
@@ -1220,7 +1220,7 @@ public class UpdateTest extends BaseTest {
         topicLarge.setTitle("xx");
 //            String newTitle = "test123" + new Random().nextInt(100000);
 //            topic.setTitle(newTitle);
-        String sql = (entityQuery.updatable(topicLarge))
+        String sql = (easyEntityQuery.updatable(topicLarge))
                 .toSQL(topicLarge);
         Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`create_time` = ? WHERE `id` = ?", sql);
     }
@@ -1268,12 +1268,12 @@ public class UpdateTest extends BaseTest {
 
             trackManager.begin();
 
-            boolean b = entityQuery.addTracking(blogEntity);
+            boolean b = easyEntityQuery.addTracking(blogEntity);
             Assert.assertTrue(b);
             String newTitle = "test123" + new Random().nextInt(100);
             blogEntity.setContent("111");
             blogEntity.setScore(new BigDecimal("1"));//1.0和1一样
-            entityQuery.updatable(blogEntity)
+            easyEntityQuery.updatable(blogEntity)
                     .asTable("x1234")
                     .executeRows();
         } catch (Exception ex) {
@@ -1528,7 +1528,7 @@ public class UpdateTest extends BaseTest {
                 topic.setCreateTime(null);
                 topics.add(topic);
             }
-            long l = entityQuery.updatable(topics)
+            long l = easyEntityQuery.updatable(topics)
                     .setColumns(o -> o.FETCHER.title())
                     .batch()
                     .ignoreVersion()
@@ -1551,7 +1551,7 @@ public class UpdateTest extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            long rows = entityQuery.updatable(Topic.class)
+            long rows = easyEntityQuery.updatable(Topic.class)
                     .setColumns(o -> {
                         o.stars().set(1);
                         o.stars().set(o.title().toNumber(Integer.class));

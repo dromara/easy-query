@@ -33,11 +33,11 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class DefaultEntityQuery implements EntityQuery {
+public class DefaultEasyEntityQuery implements EasyEntityQuery {
 
     private final EasyQueryClient easyQueryClient;
 
-    public DefaultEntityQuery(EasyQueryClient easyQueryClient) {
+    public DefaultEasyEntityQuery(EasyQueryClient easyQueryClient) {
         this.easyQueryClient = easyQueryClient;
     }
 

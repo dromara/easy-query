@@ -26,7 +26,7 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public interface EntityQuery {
+public interface EasyEntityQuery {
     EasyQueryClient getEasyQueryClient();
     QueryRuntimeContext getRuntimeContext();
 

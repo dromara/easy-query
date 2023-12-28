@@ -205,7 +205,7 @@ public class QueryTest9 extends BaseTest {
 //        ValueCompany1Proxy table2 = ValueCompany1Proxy.createTable();
 //        table2.FETCHER.address().name().id()
 
-        List<Topic> list = entityQuery.queryable(Topic.class)
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.id().eq("1");
                     o.title().like("xxx");
@@ -222,7 +222,7 @@ public class QueryTest9 extends BaseTest {
                         }
                 ).toList();
 
-        Topic topic = entityQuery.queryable(Topic.class)
+        Topic topic = easyEntityQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (a, b) -> {
                     a.id().eq(b.id());
                 })
@@ -236,7 +236,7 @@ public class QueryTest9 extends BaseTest {
                 })
                 .firstOrNull();
 
-        Topic topic2 = entityQuery.queryable(Topic.class)
+        Topic topic2 = easyEntityQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (a, b) -> a.id().eq(b.id()))
                 .where((a, b) -> {
                     a.title().eq("1");
@@ -247,7 +247,7 @@ public class QueryTest9 extends BaseTest {
                 })
                 .fetcher(o -> o.FETCHER.title().stars())
                 .firstOrNull();
-        List<Topic> list1 = entityQuery.queryable(Topic.class)
+        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().eq("title");
                     o.id().eq("1");
@@ -266,7 +266,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Topic> list3 = entityQuery.queryable(Topic.class)
+            List<Topic> list3 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.stars().eq(123);
                     })
@@ -281,7 +281,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Topic> list3 = entityQuery.queryable(Topic.class)
+            List<Topic> list3 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.title().eq("title");
                         o.id().eq("1");
@@ -301,7 +301,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Topic> list3 = entityQuery.queryable(Topic.class)
+            List<Topic> list3 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.title().eq("title");
                         o.id().eq("1");
@@ -321,14 +321,14 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Topic> list3 = entityQuery.queryable(Topic.class)
+            List<Topic> list3 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.title().eq("title");
                         o.id().eq("1");
                     })
                     .orderBy(o -> {
                         o.createTime().format("yyyy-MM-dd HH:mm:ss").desc();
-                        o.whereSQLNativeSegment("IFNULL({0},'') ASC", c -> {
+                        o.sqlNativeSegment("IFNULL({0},'') ASC", c -> {
                             c.keepStyle().expression(o.stars());
                         });
                     })
@@ -351,7 +351,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .groupBy(o -> o.createTime().format("yyyy/MM/dd"))
                     .select(o -> new TopicProxy() {{
@@ -370,7 +370,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .groupBy(o -> o.createTime().format("yyyy/MM/dd"))
                     .select(o -> new TopicProxy() {{
@@ -396,7 +396,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .select(o -> new TopicProxy() {{
                         title().set(o.stars().nullDefault(0).toStr());
@@ -421,7 +421,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .select(o -> new TopicProxy() {{
                         title().set(o.stars().nullDefault(0).toStr());
@@ -442,7 +442,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .select(o -> new TopicProxy() {{
                         title().set(o.stars().nullDefault(0).toStr());
@@ -467,7 +467,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.id().isEmpty();
                         o.title().isEmpty(false);
@@ -484,7 +484,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.id().isBank();
                         o.title().isBank(false);
@@ -501,7 +501,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.id().isNotEmpty();
                         o.title().isNotEmpty(false);
@@ -518,7 +518,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.id().isNotBank();
                         o.title().isNotBank(false);
@@ -539,7 +539,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().le(o.createTime()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -553,7 +553,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").le(o._now()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -567,7 +567,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().le(o._now()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -581,7 +581,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().le(o.createTime().nullDefault("")))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -595,7 +595,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.createTime().le(o.createTime().nullDefault(LocalDateTime.of(2022, 1, 1, 1, 1)));
                         o.id().isNotBank();
@@ -614,7 +614,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.createTime().le(o.createTime().nullDefault(LocalDateTime.of(2022, 1, 1, 1, 1)));
                         o.id().nullDefault("1").isNull();
@@ -638,7 +638,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<String> list2 = entityQuery.queryable(Topic.class)
+            List<String> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.createTime().le(o.createTime().nullDefault(LocalDateTime.of(2022, 1, 1, 1, 1)));
                         o.id().nullDefault("1").isNull();
@@ -658,7 +658,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .groupBy(o -> o.FETCHER.title())
                     .select(o -> new TopicProxy() {{
@@ -677,7 +677,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list2 = entityQuery.queryable(Topic.class)
+            List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
 
                         o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
@@ -688,13 +688,13 @@ public class QueryTest9 extends BaseTest {
                         });
                         o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                         o.id().nullDefault("yyyy/MM/dd").eq("xxx");
-                        o.whereSQLNativeSegment("{0} != {1}", c -> {
+                        o.sqlNativeSegment("{0} != {1}", c -> {
                             c.expression(o.stars()).expression(o.createTime());
                         });
                         o.or(() -> {
                             o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                             o.id().nullDefault("yyyy/MM/dd").eq("xxx");
-                            o.whereSQLNativeSegment("{0} != {1}", c -> {
+                            o.sqlNativeSegment("{0} != {1}", c -> {
                                 c.expression(o.stars()).expression(o.createTime());
                             });
                         });
@@ -722,7 +722,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Map<String, Object>> abc = entityQuery.queryable(Topic.class)
+            List<Map<String, Object>> abc = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                     })
@@ -742,7 +742,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Map<String, Object>> list = entityQuery.queryable(Topic.class)
+            List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
                         o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                     }).select(o -> new MapProxy()).toList();
@@ -756,10 +756,10 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            EntityQueryable<StringProxy, String> idQuery = entityQuery.queryable(BlogEntity.class)
+            EntityQueryable<StringProxy, String> idQuery = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123"))
                     .select(o -> new StringProxy(o.id()));
-            List<Map<String, Object>> abc = entityQuery.queryable(Topic.class)
+            List<Map<String, Object>> abc = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.id().in(idQuery))
                     .select(o -> new MapProxy() {{
                         selectColumns(o.allFieldsExclude(o.id(), o.title()));
@@ -802,10 +802,10 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            EntityQueryable<StringProxy, String> idQuery = entityQuery.queryable(BlogEntity.class)
+            EntityQueryable<StringProxy, String> idQuery = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123"))
                     .select(o -> new StringProxy(o.id()));
-            List<Map<String, Object>> abc = entityQuery.queryable(Topic.class)
+            List<Map<String, Object>> abc = easyEntityQuery.queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (a, b) -> a.id().eq(b.id()))
                     .where(o -> o.id().in(idQuery))
                     .select(a -> new MapProxy() {{
@@ -825,10 +825,10 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            EntityQueryable<StringProxy, String> idQuery = entityQuery.queryable(BlogEntity.class)
+            EntityQueryable<StringProxy, String> idQuery = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123"))
                     .select(o -> new StringProxy(o.id()));
-            List<Map<String, Object>> abc = entityQuery.queryable(Topic.class)
+            List<Map<String, Object>> abc = easyEntityQuery.queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (a, b) -> a.id().eq(b.id()))
                     .where(o -> {
                         o.id().in(idQuery);
@@ -854,7 +854,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123"))
                     .groupBy(o -> o.id())
                     .having(o -> {
@@ -881,7 +881,7 @@ public class QueryTest9 extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
 
                     o.id().eq("1");
@@ -919,14 +919,14 @@ public class QueryTest9 extends BaseTest {
     @Test
     public void testQuery6() {
 
-        EntityQueryable<StringProxy, String> sss = entityQuery.queryable(BlogEntity.class)
+        EntityQueryable<StringProxy, String> sss = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
                     o.id().eq("sss");
                 })
                 .select(o -> new StringProxy(o.id()));
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
 
                     o.id().eq(sss);
@@ -955,7 +955,7 @@ public class QueryTest9 extends BaseTest {
         List<String> ids = Collections.emptyList();
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
 
                     o.id().in(ids);
@@ -974,7 +974,7 @@ public class QueryTest9 extends BaseTest {
         List<String> ids = Collections.emptyList();
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
 
                     o.id().in(ids);
@@ -1009,7 +1009,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<QueryVO> list = entityQuery.queryable(Topic.class)
+            List<QueryVO> list = easyEntityQuery.queryable(Topic.class)
                     //第一个join采用双参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity
                     .leftJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                     //第二个join采用三参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity 第三个参数表示第三张表 SysUser
@@ -1038,7 +1038,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<QueryVO> list = entityQuery.queryable(Topic.class)
+            List<QueryVO> list = easyEntityQuery.queryable(Topic.class)
                     //第一个join采用双参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity
                     .leftJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                     //第二个join采用三参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity 第三个参数表示第三张表 SysUser
@@ -1068,14 +1068,14 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                     })
                     .select(o -> new BlogEntityProxy() {{
                         selectColumns(o.allFieldsExclude(o.title(), o.top()));
                         star().setSubQuery(
-                                entityQuery.queryable(BlogEntity.class)
+                                easyEntityQuery.queryable(BlogEntity.class)
                                         .where(x -> {
                                             x.id().eq(o.id());
                                         })
@@ -1092,13 +1092,13 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                     })
                     .select(o -> new BlogEntityProxy() {{
                         selectColumns(o.allFieldsExclude(o.title(), o.top()));
-                        score().setSubQuery(entityQuery.queryable(BlogEntity.class)
+                        score().setSubQuery(easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> {
                                     x.id().eq(o.id());
                                 })
@@ -1115,18 +1115,18 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                         o.exists(() -> {
-                            return entityQuery.queryable(Topic.class)
+                            return easyEntityQuery.queryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()));
                         });
                     })
                     .select(o -> new BlogEntityProxy() {{
 
 
-                        Query<BigDecimal> subQuery = entityQuery.queryable(BlogEntity.class)
+                        Query<BigDecimal> subQuery = easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> {
                                     x.id().eq(o.id());
                                 })
@@ -1154,11 +1154,11 @@ public class QueryTest9 extends BaseTest {
 
             ArrayList<String> tenantIds = new ArrayList<>();
             ArrayList<String> roleIds = new ArrayList<>();
-            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().in(tenantIds);
                         o.exists(() -> {
-                            return entityQuery.queryable(Topic.class)
+                            return easyEntityQuery.queryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()))
                                     .where(x -> x.id().in(roleIds));
                         });
@@ -1188,13 +1188,13 @@ public class QueryTest9 extends BaseTest {
 
             ArrayList<String> tenantIds = new ArrayList<>();
             ArrayList<String> roleIds = new ArrayList<>();
-            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().in(tenantIds);
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("123");
                         o.createTime().format("yyyy-MM-dd").likeMatchRight("123");
                         o.exists(() -> {
-                            return entityQuery.queryable(Topic.class)
+                            return easyEntityQuery.queryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()))
                                     .where(x -> x.id().in(roleIds));
                         });
@@ -1222,7 +1222,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
 
-            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("123");
@@ -1249,7 +1249,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
 
-            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
                     }).groupBy(o -> o.id())
@@ -1290,7 +1290,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
 
-            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
                     }).groupBy(o -> o.id())
@@ -1331,7 +1331,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
 
-            List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
                     }).groupBy(o -> o.id())
@@ -1369,7 +1369,7 @@ public class QueryTest9 extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<BlogEntity> page = entityQuery
+        List<BlogEntity> page = easyEntityQuery
                 .queryable(Topic.class)
                 .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                 .where((t, t1) -> t1.title().isNotNull())
@@ -1393,7 +1393,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
-            List<Draft1<String>> list = entityQuery
+            List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t -> t.id())
                     .selectDraft(t -> Select.draft(t.id()))
@@ -1408,7 +1408,7 @@ public class QueryTest9 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
-            List<Draft1<String>> list = entityQuery
+            List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t -> t.id())
                     .selectDraft(t -> Select.draft(t.id()))
@@ -1423,7 +1423,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Draft2<String, Long>> list = entityQuery
+            List<Draft2<String, Long>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t -> t.id())
                     .selectDraft(t -> Select.draft(
@@ -1440,7 +1440,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Draft3<String, Long, BigDecimal>> list = entityQuery
+            List<Draft3<String, Long, BigDecimal>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t -> t.id())
                     .selectDraft(t -> Select.draft(t.id(), t.id().count(), t.stars().sum()))
@@ -1455,7 +1455,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Draft2<String, String>> list = entityQuery
+            List<Draft2<String, String>> list = easyEntityQuery
                     .queryable(ValueCompany.class)
                     .selectDraft(t -> Select.draft(t.id(), t.address().province()))
                     .toList();
@@ -1468,7 +1468,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Draft2<String, LocalDateTime>> list = entityQuery
+            List<Draft2<String, LocalDateTime>> list = easyEntityQuery
                     .queryable(BlogEntity.class)
                     .selectDraft(t -> Select.draft(t.id(), t.createTime()))
                     .toList();
@@ -1482,7 +1482,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Draft3<String, LocalDateTime, String>> list = entityQuery
+            List<Draft3<String, LocalDateTime, String>> list = easyEntityQuery
                     .queryable(BlogEntity.class)
                     .selectDraft(t -> Select.draft(t.id(),
                             t.createTime(),
@@ -1501,7 +1501,7 @@ public class QueryTest9 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Draft3<String, LocalDateTime, String>> list = entityQuery
+            List<Draft3<String, LocalDateTime, String>> list = easyEntityQuery
                     .queryable(BlogEntity.class)
                     .selectDraft(t -> Select.draft(t.id(),
                             t.createTime(),
@@ -1525,7 +1525,7 @@ public class QueryTest9 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<Draft3<Integer, LocalDateTime, String>> list = entityQuery.queryable(Topic.class)
+        List<Draft3<Integer, LocalDateTime, String>> list = easyEntityQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (t, t1) -> {
                     t.id().eq(t1.id());
                 })
@@ -1568,7 +1568,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<Draft2<String, Long>> list = entityQuery.queryable(Topic.class)
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().like("123");
                     o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
@@ -1592,7 +1592,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<Draft3<String, String, String>> list = entityQuery.queryable(Topic.class)
+        List<Draft3<String, String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().toLower().like("123");
                     o.title().toLower().eq(o.id().toUpper());
@@ -1621,7 +1621,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<Draft4<String, String, String, String>> list = entityQuery.queryable(Topic.class)
+        List<Draft4<String, String, String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().subString(1, 2).eq("123");
                     o.title().toLower().subString(1, 2).eq("123");
@@ -1653,7 +1653,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<Draft4<String, String, String, String>> list = entityQuery.queryable(Topic.class)
+        List<Draft4<String, String, String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().trim().subString(1, 2).eq("123");
                     o.title().trim().toLower().subString(1, 2).eq("123");
@@ -1686,7 +1686,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<Draft4<String, String, String, String>> list = entityQuery.queryable(Topic.class)
+        List<Draft4<String, String, String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().trimStart().subString(1, 2).eq("123");
                     o.title().trimStart().toLower().subString(1, 2).eq("123");
@@ -1719,7 +1719,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<Draft4<String, String, String, String>> list = entityQuery.queryable(Topic.class)
+        List<Draft4<String, String, String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().trimEnd().subString(1, 2).eq("123");
                     o.title().trimEnd().toLower().subString(1, 2).eq("123");
@@ -1752,7 +1752,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<Draft2<String, String>> list = entityQuery.queryable(Topic.class)
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().trimEnd().trimStart().eq(o.id().trimStart());
                     o.createTime().format("yyyy-MM-dd").subString(0, 4).eq("2021");
@@ -1776,7 +1776,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<Draft2<String, String>> list = entityQuery.queryable(Topic.class)
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().trimEnd().trimStart().replace("title", "abc").like("abc");
                 })
@@ -1799,7 +1799,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<Draft2<String, Integer>> list = entityQuery.queryable(Topic.class)
+        List<Draft2<String, Integer>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().compareTo(o.id()).eq(0);//==0
                     o.title().trim().compareTo(o.id().toLower().subString(1, 10)).ge(2);//>=2
@@ -1824,7 +1824,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<Draft2<String, String>> list = entityQuery.queryable(Topic.class)
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().leftPad(5, '1').ne("title0");//==0
                 })
@@ -1839,7 +1839,7 @@ public class QueryTest9 extends BaseTest {
         Assert.assertEquals("0(String),1(String),title0(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
-        List<Draft2<String, String>> list1 = entityQuery.queryable(Topic.class)
+        List<Draft2<String, String>> list1 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().leftPad(5, '1').ne("title0");//==0
                     o.id().ne("7");
@@ -1861,7 +1861,7 @@ public class QueryTest9 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<Draft2<String, String>> list2 = entityQuery.queryable(BlogEntity.class)
+        List<Draft2<String, String>> list2 = easyEntityQuery.queryable(BlogEntity.class)
                 .groupBy(o -> o.content().subString(0, 8))
                 .selectDraft(o -> Select.draft(
                         o.groupKeys(0).toDraft(String.class),

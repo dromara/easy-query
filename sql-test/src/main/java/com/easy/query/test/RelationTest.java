@@ -155,7 +155,7 @@ public class RelationTest extends BaseTest {
                 }
             }
             {
-                List<SchoolStudent> list = entityQuery.queryable(SchoolStudent.class).toList();
+                List<SchoolStudent> list = easyEntityQuery.queryable(SchoolStudent.class).toList();
                 Assert.assertEquals(3, list.size());
                 for (SchoolStudent schoolStudent : list) {
                     Assert.assertNull(schoolStudent.getSchoolStudentAddress());
@@ -182,7 +182,7 @@ public class RelationTest extends BaseTest {
                 }
             }
             {
-                List<SchoolStudent> list1 = entityQuery.queryable(SchoolStudent.class)
+                List<SchoolStudent> list1 = easyEntityQuery.queryable(SchoolStudent.class)
                         .include((o,t)->{
 //                            SQLNavigateColumn<SchoolStudentProxy, SchoolClass> schoolStudentProxySchoolClassSQLNavigateColumn = t.schoolClass();
 //                            Class<SchoolClass> schoolClassClass = schoolStudentProxySchoolClassSQLNavigateColumn.navigateClass();
@@ -562,7 +562,7 @@ public class RelationTest extends BaseTest {
             }
         }
         {
-            List<Province> list = entityQuery.queryable(Province.class)
+            List<Province> list = easyEntityQuery.queryable(Province.class)
                     .fillMany(City.class,o -> {
                         return o.with(City.class);
                     }, o -> {
@@ -593,7 +593,7 @@ public class RelationTest extends BaseTest {
             }
         }
         {
-            EasyPageResult<Province> pageResult1 = entityQuery.queryable(Province.class)
+            EasyPageResult<Province> pageResult1 = easyEntityQuery.queryable(Province.class)
                     .fillMany(City.class,o -> {
                         return o.with(City.class)
                                 .where(x->{

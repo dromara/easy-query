@@ -1,8 +1,8 @@
 package com.easy.query.solon.integration;
 
 import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
-import com.easy.query.api.proxy.client.DefaultEntityQuery;
-import com.easy.query.api.proxy.client.EntityQuery;
+import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
+import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4kt.client.DefaultEasyKtQuery;
 import com.easy.query.api4kt.client.EasyKtQuery;
@@ -150,7 +150,7 @@ public class DbManager {
         EasyQueryClient easyQueryClient =easyQueryBuilderConfiguration.build();
         //扩展
         EventBus.publish(easyQueryClient.getRuntimeContext());
-        EntityQuery entityQuery = new DefaultEntityQuery(easyQueryClient);
+        EasyEntityQuery entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         DefaultEasyQuery easyQuery = new DefaultEasyQuery(easyQueryClient);
         DefaultEasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
         EasyKtQuery easyKtQuery = new DefaultEasyKtQuery(easyQueryClient);

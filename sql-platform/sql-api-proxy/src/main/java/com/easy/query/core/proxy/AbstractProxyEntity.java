@@ -86,28 +86,35 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         }
     }
 
-    public void whereSQLNativeSegment(String sqlSegment){
-        whereSQLNativeSegment(sqlSegment, c->{});
-    }
-    public void whereSQLNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
-        whereSQLNativeSegment(true,sqlSegment,contextConsume);
+    /**
+     * 支持where having order
+     * @param sqlSegment
+     */
+    public void sqlNativeSegment(String sqlSegment){
+        sqlNativeSegment(sqlSegment, c->{});
     }
 
-    public void whereSQLNativeSegment(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+    /**
+     * 支持where having order
+     *
+     * @param sqlSegment
+     * @param contextConsume
+     */
+    public void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+        sqlNativeSegment(true,sqlSegment,contextConsume);
+    }
+
+    /**
+     * 支持where having order
+     *
+     * @param condition
+     * @param sqlSegment
+     * @param contextConsume
+     */
+    public void sqlNativeSegment(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
         if(condition){
             getEntitySQLContext()._nativeSqlSegment(sqlSegment,contextConsume);
         }
     }
-
-//    public ColumnFuncComparableExpression<String> subString(DSLSQLFunctionAvailable dslsqlFunctionAvailable, int begin, int length){
-//        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(),this.getTable(),null, fx->{
-//            SQLFunction sqlFunction = dslsqlFunctionAvailable.func().apply(fx);
-//            return fx.subString(sqlFunction,begin,length);
-//        },String.class);
-//    }
-
-//    public EntitySQLFunc fx(){
-//        return new EntitySQLFuncImpl(this.getEntitySQLContext(),this.getTable());
-//    }
 
 }
