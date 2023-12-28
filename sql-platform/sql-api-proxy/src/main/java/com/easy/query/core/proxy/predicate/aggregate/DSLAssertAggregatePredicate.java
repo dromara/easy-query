@@ -11,7 +11,7 @@ import com.easy.query.core.proxy.predicate.DSLAssertPredicate;
  *
  * @author xuejiaming
  */
-public interface DSLAssertAggregatePredicate<TProperty> extends DSLAssertPredicate<TProperty>, DSLSQLFunctionAvailable {
+public interface DSLAssertAggregatePredicate<TProperty> extends DSLAssertPredicate<TProperty>,  DSLSQLFunctionAvailable {
     @Override
     default void isNull(boolean condition) {
         if (condition) {

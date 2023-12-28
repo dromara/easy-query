@@ -15,13 +15,14 @@ import com.easy.query.core.util.EasyObjectUtil;
  */
 public class SelectToDraftColumn<TProperty> implements PropTypeColumn<TProperty> {
     private final SQLSelectExpression sqlSelectExpression;
-    private  Class<?> propType;
+    private Class<?> propType;
 
-    public SelectToDraftColumn(SQLSelectExpression sqlSelectExpression,Class<TProperty> propType){
+    public SelectToDraftColumn(SQLSelectExpression sqlSelectExpression, Class<TProperty> propType) {
 
         this.sqlSelectExpression = sqlSelectExpression;
         this.propType = propType;
     }
+
     @Override
     public TableAvailable getTable() {
         return sqlSelectExpression.getTable();
@@ -38,8 +39,13 @@ public class SelectToDraftColumn<TProperty> implements PropTypeColumn<TProperty>
     }
 
     @Override
+    public <TR> void _setPropertyType(Class<TR> clazz) {
+        this.propType = clazz;
+    }
+
+    @Override
     public <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz) {
-        this.propType=clazz;
+        _setPropertyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
 

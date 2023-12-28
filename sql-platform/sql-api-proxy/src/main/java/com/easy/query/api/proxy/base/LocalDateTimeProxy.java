@@ -1,6 +1,8 @@
 package com.easy.query.api.proxy.base;
 
-import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.time.LocalDateTime;
 
@@ -10,13 +12,26 @@ import java.time.LocalDateTime;
  *
  * @author xuejiaming
  */
-public class LocalDateTimeProxy extends AbstractProxyEntity<LocalDateTimeProxy, LocalDateTime> {
+public class LocalDateTimeProxy extends AbstractBasicProxyEntity<LocalDateTimeProxy, LocalDateTime> {
     public static LocalDateTimeProxy createTable() {
         return new LocalDateTimeProxy();
     }
     private static final Class<LocalDateTime> entityClass = LocalDateTime.class;
 
     private LocalDateTimeProxy() {
+    }
+    public LocalDateTimeProxy(LocalDateTime val) {
+        set(val);
+    }
+
+
+    public LocalDateTimeProxy(SQLColumn<?,LocalDateTime> sqlColumn) {
+        set(sqlColumn);
+    }
+
+
+    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<LocalDateTime>> LocalDateTimeProxy(TResult sqlFunctionAvailable) {
+        set(sqlFunctionAvailable);
     }
 
     @Override

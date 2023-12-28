@@ -86,14 +86,14 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         }
     }
 
-    public void sqlNativeSegment(String sqlSegment){
-        sqlNativeSegment(sqlSegment,c->{});
+    public void whereSQLNativeSegment(String sqlSegment){
+        whereSQLNativeSegment(sqlSegment, c->{});
     }
-    public void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
-        sqlNativeSegment(true,sqlSegment,contextConsume);
+    public void whereSQLNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+        whereSQLNativeSegment(true,sqlSegment,contextConsume);
     }
 
-    public void sqlNativeSegment(boolean condition,String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+    public void whereSQLNativeSegment(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
         if(condition){
             getEntitySQLContext()._nativeSqlSegment(sqlSegment,contextConsume);
         }

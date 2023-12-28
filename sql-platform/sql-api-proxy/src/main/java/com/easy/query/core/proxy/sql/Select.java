@@ -33,6 +33,7 @@ import com.easy.query.core.proxy.core.draft.proxy.Draft6Proxy;
 import com.easy.query.core.proxy.core.draft.proxy.Draft7Proxy;
 import com.easy.query.core.proxy.core.draft.proxy.Draft8Proxy;
 import com.easy.query.core.proxy.core.draft.proxy.Draft9Proxy;
+import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
 import com.easy.query.core.proxy.impl.SQLDraftSelectImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectGroupKeyAsImpl;
@@ -256,6 +257,14 @@ public class Select {
                 contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
             });
         });
+    }
+
+
+    public static <TSubQuery> PropTypeColumn<TSubQuery> draftSubQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
+        Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
+        return new SQLDraftAsSelectImpl<>((alias,f)->{
+            f.columnSubQueryAs(()->subQueryQuery, alias);
+        },subQueryQuery.queryClass());
     }
 
     public static SQLSelectExpression sql(String sqlSegment) {

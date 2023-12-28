@@ -1,6 +1,8 @@
 package com.easy.query.api.proxy.base;
 
-import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
  * create time 2023/6/29 09:22
@@ -8,7 +10,7 @@ import com.easy.query.core.proxy.AbstractProxyEntity;
  *
  * @author xuejiaming
  */
-public class ByteArrayProxy extends AbstractProxyEntity<ByteArrayProxy, Byte[]> {
+public class ByteArrayProxy extends AbstractBasicProxyEntity<ByteArrayProxy, Byte[]> {
     public static ByteArrayProxy createTable() {
         return new ByteArrayProxy();
     }
@@ -17,7 +19,18 @@ public class ByteArrayProxy extends AbstractProxyEntity<ByteArrayProxy, Byte[]> 
 
     private ByteArrayProxy() {
     }
+    public ByteArrayProxy(Byte[] val) {
+        set(val);
+    }
 
+
+    public ByteArrayProxy(SQLColumn<?,Byte[]> sqlColumn) {
+        set(sqlColumn);
+    }
+
+    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<Byte[]>> ByteArrayProxy(TResult sqlFunctionAvailable) {
+        set(sqlFunctionAvailable);
+    }
 
     @Override
     public Class<Byte[]> getEntityClass() {

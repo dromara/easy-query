@@ -3,6 +3,7 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
 import com.easy.query.api.proxy.client.DefaultEntityQuery;
 import com.easy.query.api.proxy.client.EasyProxyQuery;
+import com.easy.query.api.proxy.client.EntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.api4j.util.EasyLambdaUtil;
@@ -77,7 +78,7 @@ public abstract class BaseTest {
     public static EasyQueryClient easyQueryClient;
     public static EasyQuery easyQuery;
     public static EasyProxyQuery easyProxyQuery;
-    public static DefaultEntityQuery entityQuery;
+    public static EntityQuery entityQuery;
     public static ListenerContextManager listenerContextManager;
 
     static {

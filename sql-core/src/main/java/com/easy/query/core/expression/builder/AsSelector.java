@@ -177,6 +177,7 @@ public interface AsSelector extends SQLNative<AsSelector>, RuntimeContextAvailab
      */
     AsSelector columnFunc(@Nullable TableAvailable table, @Nullable String property, SQLFunction sqlFunction, String propertyAlias, SQLActionExpression sqlActionExpression);
 
+    AsSelector columnFunc(TableAvailable table, SQLFunction sqlFunction, String propertyAlias);
     AsSelector columnFuncAs(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
 
     //    <T extends SQLFunction> void columnAppendSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias);

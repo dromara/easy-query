@@ -15,6 +15,7 @@ import com.easy.query.core.proxy.columns.impl.SQLDateTimeColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLNavigateColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLNumberColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLStringColumnImpl;
+import com.easy.query.core.proxy.core.ColumnSelectSQLContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
 
@@ -27,7 +28,7 @@ import com.easy.query.core.proxy.impl.SQLColumnImpl;
 public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ProxyEntity<TProxy, TEntity>, EntitySQLContextAvailable {
 
     protected TableAvailable table;
-    protected EntitySQLContext entitySQLContext;
+    protected EntitySQLContext entitySQLContext=new ColumnSelectSQLContext();
 
     @Deprecated
     protected <TProperty> SQLColumn<TProxy, TProperty> get(String property) {
@@ -56,4 +57,10 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         return new SQLNavigateColumnImpl<>(entitySQLContext, table, property, propType);
     }
 
+    protected void selectColumns(SQLSelectAsExpression... sqlSelectAsExpression) {
+        entitySQLContext.accept(sqlSelectAsExpression);
+    }
+//    protected <TSubQuery> SQLSelectAsExpression subQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, TablePropColumn propColumn) {
+//        return Select.subQueryAs(subQueryableFunc,propColumn);
+//    }
 }

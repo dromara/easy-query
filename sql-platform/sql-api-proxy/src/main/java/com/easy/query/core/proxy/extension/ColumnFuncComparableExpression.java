@@ -50,9 +50,13 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
         });
     }
 
-//    default <TR> ColumnFuncComparableExpression<TR> castType(Class<TR> clazz) {
+    @Override
+    default <TR> ColumnFuncComparableExpression<TR> setPropertyType(Class<TR> clazz) {
+        _setPropertyType(clazz);
+        return EasyObjectUtil.typeCastNullable(this);
+    }
+
+    //    default <TR> ColumnFuncComparableExpression<TR> castType(Class<TR> clazz) {
 //        return EasyObjectUtil.typeCastNullable(this);
 //    }
-
-
 }

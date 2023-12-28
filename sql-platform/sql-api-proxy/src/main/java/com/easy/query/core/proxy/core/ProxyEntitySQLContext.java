@@ -9,6 +9,7 @@ import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.SQLPredicateExpression;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.accpet.AggregatePredicateEntityExpressionAccept;
 import com.easy.query.core.proxy.core.accpet.AggregatePredicateEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
@@ -66,10 +67,36 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
         accept.accept(sqlOrderByExpression);
     }
 
+    @Override
+    public void accept(SQLSelectAsExpression... selectAsExpressions) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
+    }
+
+
+    @Override
+    public Filter getFilter() {
+        if (accept instanceof PredicateEntityExpressionAccept) {
+            return ((PredicateEntityExpressionAccept) accept).getFilter();
+        }
+        return null;
+    }
+
+    @Override
+    public AggregateFilter getAggregateFilter() {
+        if (accept instanceof AggregatePredicateEntityExpressionAccept) {
+            return ((AggregatePredicateEntityExpressionAccept) accept).getAggregateFilter();
+        }
+        return null;
+    }
+
+    @Override
+    public SQLSelectAsExpression getSelectAsExpression() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -120,18 +147,18 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
                 f.sqlNativeSegment(sqlSegment, c -> {
                     contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
                 });
-            },f -> {
+            }, f -> {
                 f.sqlNativeSegment(sqlSegment, c -> {
                     contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
                 });
             }));
-        } else if(accept instanceof OrderByEntityExpressionAcceptImpl){
+        } else if (accept instanceof OrderByEntityExpressionAcceptImpl) {
             accept.accept(new SQLOrderSelectImpl(f -> {
                 f.sqlNativeSegment(sqlSegment, c -> {
                     contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
                 });
             }));
-        }else {
+        } else {
             throw new UnsupportedOperationException();
         }
     }

@@ -2,11 +2,9 @@ package com.easy.query.core.proxy.extension.functions;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.SimpleSQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
@@ -39,6 +37,20 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
                 return fx.count(this.getValue()).distinct(distinct);
             }
         }, Long.class);
+    }
+    default <T extends Integer> ColumnFuncComparableExpression<T> intCount() {
+        return intCount(false);
+    }
+
+    default <T extends Integer> ColumnFuncComparableExpression<T> intCount(boolean distinct) {
+        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.count(sqlFunction).distinct(distinct);
+            } else {
+                return fx.count(this.getValue()).distinct(distinct);
+            }
+        }, Integer.class);
     }
 
     default TChain max() {

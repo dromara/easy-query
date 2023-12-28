@@ -1,6 +1,8 @@
 package com.easy.query.api.proxy.base;
 
-import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;
 
@@ -10,7 +12,7 @@ import java.math.BigDecimal;
  *
  * @author xuejiaming
  */
-public class BigDecimalProxy extends AbstractProxyEntity<BigDecimalProxy, BigDecimal> {
+public class BigDecimalProxy extends AbstractBasicProxyEntity<BigDecimalProxy, BigDecimal> {
     public static BigDecimalProxy createTable() {
         return new BigDecimalProxy();
     }
@@ -20,6 +22,19 @@ public class BigDecimalProxy extends AbstractProxyEntity<BigDecimalProxy, BigDec
     private BigDecimalProxy() {
     }
 
+    public BigDecimalProxy(BigDecimal val) {
+        set(val);
+    }
+
+
+    public BigDecimalProxy(SQLColumn<?,BigDecimal> sqlColumn) {
+        set(sqlColumn);
+    }
+
+
+    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<BigDecimal>> BigDecimalProxy(TResult sqlFunctionAvailable) {
+        set(sqlFunctionAvailable);
+    }
 
     @Override
     public Class<BigDecimal> getEntityClass() {

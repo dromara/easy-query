@@ -1,6 +1,8 @@
 package com.easy.query.api.proxy.base;
 
-import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.sql.Timestamp;
 
@@ -10,7 +12,7 @@ import java.sql.Timestamp;
  *
  * @author xuejiaming
  */
-public class TimestampProxy extends AbstractProxyEntity<TimestampProxy, Timestamp> {
+public class TimestampProxy extends AbstractBasicProxyEntity<TimestampProxy, Timestamp> {
     public static TimestampProxy createTable() {
         return new TimestampProxy();
     }
@@ -18,6 +20,20 @@ public class TimestampProxy extends AbstractProxyEntity<TimestampProxy, Timestam
 
     private TimestampProxy() {
     }
+    public TimestampProxy(Timestamp val) {
+        set(val);
+    }
+
+
+    public TimestampProxy(SQLColumn<?,Timestamp> sqlColumn) {
+        set(sqlColumn);
+    }
+
+
+    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<Timestamp>> TimestampProxy(TResult sqlFunctionAvailable) {
+        set(sqlFunctionAvailable);
+    }
+
 
     @Override
     public Class<Timestamp> getEntityClass() {

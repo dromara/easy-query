@@ -1554,7 +1554,7 @@ public class UpdateTest extends BaseTest {
             long rows = entityQuery.updatable(Topic.class)
                     .setColumns(o -> {
                         o.stars().set(1);
-                        o.stars().set(o.title());
+                        o.stars().set(o.title().toNumber(Integer.class));
                         o.title().set("1");
                         o.title().set(o.createTime().format("yyyy/MM/dd"));
                         o.title().set(o.title().nullDefault("x"));
@@ -1572,7 +1572,7 @@ public class UpdateTest extends BaseTest {
             Assert.assertEquals(0, rows);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`stars` = `title`,`title` = ?,`title` = DATE_FORMAT(`create_time`,'%Y/%m/%d'),`title` = IFNULL(`title`,?),`title` = IFNULL(`title`,?) WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`stars` = CAST(`title` AS SIGNED),`title` = ?,`title` = DATE_FORMAT(`create_time`,'%Y/%m/%d'),`title` = IFNULL(`title`,?),`title` = IFNULL(`title`,?) WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),1(String),x(String),p(String),2(String),2c(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }

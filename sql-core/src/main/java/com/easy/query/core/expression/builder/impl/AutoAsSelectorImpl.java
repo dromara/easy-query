@@ -5,6 +5,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
+import com.easy.query.core.expression.builder.core.ResultColumnInfo;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -59,7 +60,7 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
     }
 
     @Override
-    protected String getResultColumnName(String propertyAlias) {
+    protected ResultColumnInfo getResultColumnName(String propertyAlias) {
         throw new UnsupportedOperationException();
     }
 
@@ -85,6 +86,11 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
 
     @Override
     public AsSelector columnFunc(TableAvailable table, String property, SQLFunction sqlFunction, String propertyAlias, SQLActionExpression sqlActionExpression) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public AsSelector columnFunc(TableAvailable table, SQLFunction sqlFunction, String propertyAlias) {
         throw new UnsupportedOperationException();
     }
 

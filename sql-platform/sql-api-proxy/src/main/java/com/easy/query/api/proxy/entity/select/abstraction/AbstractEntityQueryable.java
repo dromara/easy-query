@@ -24,7 +24,6 @@ import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -173,7 +172,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> select(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression) {
+    public EntityQueryable<T1Proxy, T1> fetcher(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression) {
         ClientQueryable<T1> select = entityQueryable.select(get1Proxy().getEntityClass(),columnSelector -> {
             SQLSelectExpression sqlSelect = selectExpression.apply(t1Proxy);
             sqlSelect.accept(columnSelector.getAsSelector());
@@ -186,6 +185,21 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //        return new EasyEntityQueryable<>(t1Proxy, select);
     }
 
+    @Override
+    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression) {
+        TRProxy apply = selectExpression.apply(get1Proxy());
+        SQLSelectAsExpression selectAsExpression = apply.getEntitySQLContext().getSelectAsExpression();
+        if(selectAsExpression==null){//全属性映射
+            ClientQueryable<TR> select = entityQueryable.select(apply.getEntityClass());
+            return new EasyEntityQueryable<>(apply, select);
+        }else{
+            ClientQueryable<TR> select = entityQueryable.select(apply.getEntityClass(), columnAsSelector -> {
+                selectAsExpression.accept(columnAsSelector.getAsSelector());
+            });
+            return new EasyEntityQueryable<>(apply, select);
+        }
+    }
+
     //    @Override
 //    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression2<ProxyAsSelector<TRProxy, TR>, T1Proxy> selectExpression) {
 //
@@ -194,37 +208,37 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //        });
 //        return new EasyProxyQueryable<>(trProxy, select);
 //    }
-    @Override
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> select(Class<TR> resultEntityClass) {
-        ClientQueryable<TR> select = entityQueryable.select(resultEntityClass);
-        TRProxy trProxy = EntityQueryProxyManager.create(resultEntityClass);
-        return new EasyEntityQueryable<>(trProxy, select);
-    }
-
-    @Override
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> select(Class<TR> resultEntityClass, SQLFuncExpression2<T1Proxy, TRProxy, SQLSelectAsExpression> selectExpression) {
-        TRProxy trProxy = EntityQueryProxyManager.create(resultEntityClass);
-        ClientQueryable<TR> select = entityQueryable.select(resultEntityClass, columnAsSelector -> {
-            SQLSelectAsExpression sqlSelectAs = selectExpression.apply(t1Proxy, trProxy);
-            sqlSelectAs.accept(columnAsSelector.getAsSelector());
-        });
-        return new EasyEntityQueryable<>(trProxy, select);
-    }
-
-    @Override
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxy(TRProxy trProxy) {
-        ClientQueryable<TR> select = entityQueryable.select(trProxy.getEntityClass());
-        return new EasyEntityQueryable<>(trProxy, select);
-    }
-
-    @Override
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(TRProxy trProxy, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression) {
-        ClientQueryable<TR> select = entityQueryable.select(trProxy.getEntityClass(), columnAsSelector -> {
-            SQLSelectAsExpression sqlSelectAs = selectExpression.apply(t1Proxy);
-            sqlSelectAs.accept(columnAsSelector.getAsSelector());
-        });
-        return new EasyEntityQueryable<>(trProxy, select);
-    }
+//    @Override
+//    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> selectAs(Class<TR> resultEntityClass) {
+//        ClientQueryable<TR> select = entityQueryable.select(resultEntityClass);
+//        TRProxy trProxy = EntityQueryProxyManager.create(resultEntityClass);
+//        return new EasyEntityQueryable<>(trProxy, select);
+//    }
+//
+//    @Override
+//    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable<TRProxy, TR> selectAs(Class<TR> resultEntityClass, SQLFuncExpression2<T1Proxy, TRProxy, SQLSelectAsExpression> selectExpression) {
+//        TRProxy trProxy = EntityQueryProxyManager.create(resultEntityClass);
+//        ClientQueryable<TR> select = entityQueryable.select(resultEntityClass, columnAsSelector -> {
+//            SQLSelectAsExpression sqlSelectAs = selectExpression.apply(t1Proxy, trProxy);
+//            sqlSelectAs.accept(columnAsSelector.getAsSelector());
+//        });
+//        return new EasyEntityQueryable<>(trProxy, select);
+//    }
+//
+//    @Override
+//    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxy(TRProxy trProxy) {
+//        ClientQueryable<TR> select = entityQueryable.select(trProxy.getEntityClass());
+//        return new EasyEntityQueryable<>(trProxy, select);
+//    }
+//
+//    @Override
+//    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectAs(TRProxy trProxy, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression) {
+//        ClientQueryable<TR> select = entityQueryable.select(trProxy.getEntityClass(), columnAsSelector -> {
+//            SQLSelectAsExpression sqlSelectAs = selectExpression.apply(t1Proxy);
+//            sqlSelectAs.accept(columnAsSelector.getAsSelector());
+//        });
+//        return new EasyEntityQueryable<>(trProxy, select);
+//    }
 
 //    @Override
 //    public <TR, TD extends Draft> Query<TD> selectDraft(SQLFuncExpression1<T1Proxy, DraftFetcher<TD>> selectExpression) {

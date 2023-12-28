@@ -64,6 +64,24 @@ public class Main {
     private static EasyProxyQuery easyProxyQuery;
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
+
+//
+//        {
+//
+//
+//
+//            QueryTest.entityQuery.queryable(Topic.class)
+//                    .where(o -> o.title().isNotNull())
+//                    .selectAs(o -> new BlogEntityProxy() {
+//                        {
+//                            if(false){
+//                                title().set(1);
+//                            }
+//                            id().set(o.title());
+//                        }
+//                    });
+//
+//        }
         String fullName = EasyClassUtil.getFullName(Boolean.class);
         String fullName1 = EasyClassUtil.getFullName(boolean.class);
         LocalDateTime localDateTime1 = LocalDateTime.of(1900, 1, 1, 0, 0).plusDays(45245);

@@ -1,6 +1,8 @@
 package com.easy.query.api.proxy.base;
 
-import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
  * create time 2023/6/29 09:22
@@ -8,7 +10,8 @@ import com.easy.query.core.proxy.AbstractProxyEntity;
  *
  * @author xuejiaming
  */
-public class StringProxy extends AbstractProxyEntity<StringProxy, String> {
+public class StringProxy extends AbstractBasicProxyEntity<StringProxy, String> {
+
     public static StringProxy createTable() {
         return new StringProxy();
     }
@@ -17,9 +20,28 @@ public class StringProxy extends AbstractProxyEntity<StringProxy, String> {
     private StringProxy() {
     }
 
+
+    public StringProxy(String val) {
+        set(val);
+    }
+
+
+    public StringProxy(SQLColumn<?,String> sqlColumn) {
+        set(sqlColumn);
+    }
+
+
+    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<String>> StringProxy(TResult sqlFunctionAvailable) {
+        set(sqlFunctionAvailable);
+    }
+
+
+
     @Override
     public Class<String> getEntityClass() {
         return entityClass;
     }
+
+
 
 }

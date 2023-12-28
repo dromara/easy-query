@@ -2,12 +2,8 @@ package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.util.EasyObjectUtil;
-
-import java.util.Objects;
 
 /**
  * create time 2023/6/22 13:15
@@ -30,7 +26,7 @@ public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProp
 
     @Override
     public TableAvailable getTable() {
-        Objects.requireNonNull(table, "cant found table in sql context");
+//        Objects.requireNonNull(table, "cant found table in sql context");
         return table;
     }
 
@@ -50,8 +46,7 @@ public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProp
     }
 
     @Override
-    public <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz) {
+    public <TR> void _setPropertyType(Class<TR> clazz) {
         this.propType=clazz;
-        return EasyObjectUtil.typeCastNullable(this);
     }
 }

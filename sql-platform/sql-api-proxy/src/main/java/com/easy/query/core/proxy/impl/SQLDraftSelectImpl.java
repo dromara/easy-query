@@ -59,8 +59,13 @@ public class SQLDraftSelectImpl implements PropTypeColumn<Object> {
     }
 
     @Override
-    public <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz) {
+    public <TR> void _setPropertyType(Class<TR> clazz) {
         this.propType=clazz;
+    }
+
+    @Override
+    public <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz) {
+        _setPropertyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
 }

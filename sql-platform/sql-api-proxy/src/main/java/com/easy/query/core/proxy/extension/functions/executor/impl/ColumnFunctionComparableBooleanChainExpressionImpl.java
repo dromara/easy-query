@@ -106,9 +106,8 @@ public class ColumnFunctionComparableBooleanChainExpressionImpl<TProperty> imple
     }
 
     @Override
-    public <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz) {
+    public <TR> void _setPropertyType(Class<TR> clazz) {
         this.propType=clazz;
-        return EasyObjectUtil.typeCastNullable(this);
     }
 
 }

@@ -65,7 +65,7 @@ public class SQLSelectAsImpl extends SQLSelectImpl implements SQLSelectAsExpress
     @Override
     public SQLSelectAsExpression as(String propertyAlias) {
         return new SQLSelectAsImpl(s -> {
-            throw new UnsupportedOperationException();
+            s.columnAs(this.getTable(), this.getValue(), propertyAlias);
         }, s -> {
             s.columnAs(this.getTable(), this.getValue(), propertyAlias);
         }, s -> {

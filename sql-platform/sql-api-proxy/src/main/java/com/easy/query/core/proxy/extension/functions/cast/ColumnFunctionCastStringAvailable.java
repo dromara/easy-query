@@ -3,8 +3,8 @@ package com.easy.query.core.proxy.extension.functions.cast;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
@@ -14,8 +14,8 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  * @author xuejiaming
  */
 public interface ColumnFunctionCastStringAvailable<TProperty> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
-    default ColumnFunctionComparableDateTimeChainExpression<String> toStr(){
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default ColumnFunctionComparableStringChainExpression<String> toStr(){
+        return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.cast(sqlFunction, String.class);

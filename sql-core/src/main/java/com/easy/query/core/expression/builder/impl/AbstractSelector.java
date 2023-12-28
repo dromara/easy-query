@@ -5,6 +5,7 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
+import com.easy.query.core.expression.builder.core.ResultColumnInfo;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
@@ -82,8 +83,8 @@ public abstract class AbstractSelector<TChain> {
         if (sqlSegment instanceof CloneableSQLSegment) {
             CloneableSQLSegment cloneableSQLSegment = ((CloneableSQLSegment) sqlSegment).cloneSQLColumnSegment();
             if (alias != null) {
-                String aliasColumnName = getResultColumnName(alias);
-                CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(cloneableSQLSegment, aliasColumnName, this.runtimeContext);
+                ResultColumnInfo resultColumnInfo = getResultColumnName(alias);
+                CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(cloneableSQLSegment, resultColumnInfo.getColumnAsName(), this.runtimeContext);
                 sqlBuilderSegment.append(sqlColumnAsSegment);
             } else {
                 sqlBuilderSegment.append(cloneableSQLSegment);
@@ -94,7 +95,7 @@ public abstract class AbstractSelector<TChain> {
         return castChain();
     }
 
-    protected abstract String getResultColumnName(String propertyAlias);
+    protected abstract ResultColumnInfo getResultColumnName(String propertyAlias);
 
 
     public TChain columnKeys(TableAvailable table) {

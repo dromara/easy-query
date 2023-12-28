@@ -192,7 +192,7 @@ public class DocTest extends BaseTest {
 //                                return o.id().then(o.name());
 //                            })
 //                            .groupBy(o->o.FETCHER.id().name())
-                            .select(o -> o.id()._concat(o.id().count().as(o.phone())))
+                            .fetcher(o -> o.id()._concat(o.id().count().as(o.phone())))
                             .toList();
                 } catch (Exception ex) {
                     return ex;
@@ -222,7 +222,7 @@ public class DocTest extends BaseTest {
                                 o.name().nullDefault("unknown").like("123");
                                 o.phone().isNotBank();
                             })
-                            .select(o -> o.FETCHER.id().name().phone().departName())
+                            .fetcher(o -> o.FETCHER.id().name().phone().departName())
                             .toList();
                 } catch (Exception ex) {
                     return ex;
@@ -251,7 +251,7 @@ public class DocTest extends BaseTest {
                         o.createTime().format("yyyy-MM-dd").in(times);
                         o.createTime().format("yyyy-MM-dd").notIn(times);
                     })
-                    .select(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
+                    .fetcher(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') IN (?,?) AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') NOT IN (?,?) AND 1 = 2 AND 1 = 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -274,7 +274,7 @@ public class DocTest extends BaseTest {
                         }
                     });
                 })
-                .select(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
+                .fetcher(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND (DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? OR DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? OR DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -291,14 +291,14 @@ public class DocTest extends BaseTest {
                 .where(o -> {
                     o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                 })
-                .select(o -> {
+                .fetcher(o -> {
 
                     SQLSelectAsExpression subQuery = Select.subQueryAs(() -> {
                         return entityQuery.queryable(BlogEntity.class)
                                 .where(x -> {
                                     x.id().eq(o.id());
                                 })
-                                .select(x -> x.FETCHER.createTime());
+                                .fetcher(x -> x.FETCHER.createTime());
                     }, o.createTime());
 
                     return Select.of(
@@ -321,14 +321,14 @@ public class DocTest extends BaseTest {
                 .where(o -> {
                     o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                 })
-                .select(o -> {
+                .fetcher(o -> {
 
                     SQLSelectAsExpression subQuery = Select.subQueryAs(() -> {
                         return entityQuery.queryable(BlogEntity.class)
                                 .where(x -> {
                                     x.id().eq(o.id());
                                 })
-                                .select(x -> x.id().count());
+                                .fetcher(x -> x.id().count());
                     }, o.createTime());
 
                     return Select.of(
@@ -387,11 +387,10 @@ public class DocTest extends BaseTest {
                     .where((t, t1) -> {
                         t.title().like("11");
                         t1.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
-                    }).select(Topic.class, (t, t1, tr) -> {
-                        TopicProxy.TopicProxyFetcher idAndStars = t.FETCHER.id().stars();
-                        TopicProxy.TopicProxyFetcher idAsTitle = t1.FETCHER.id().as(tr.title());
-                        return Select.of(idAndStars, idAsTitle);
-                    }).toList();
+                    })
+                    .select((t,t1)->new TopicProxy(){{
+                        selectColumns(t.FETCHER.id().stars(),t1.FETCHER.id().as(title()));
+                    }}).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t1.`id` AS `title` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ? AND t1.`create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -409,10 +408,10 @@ public class DocTest extends BaseTest {
                     .where((t, t1) -> {
                         t.title().like("11");
                         t1.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
-                    }).select(Topic.class, (t, t1, tr) ->Select.of(
-                                t.FETCHER.id().stars(),
-                                t1.FETCHER.id().as(tr.title())
-                        )).toList();
+                    })
+                    .select((t,t1)->new TopicProxy(){{
+                        selectColumns(t.FETCHER.id().stars(),t1.FETCHER.id().as(title()));
+                    }}).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t1.`id` AS `title` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ? AND t1.`create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -430,11 +429,10 @@ public class DocTest extends BaseTest {
                     .where((t, t1) -> {
                         t.title().like("11");
                         t1.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
-                    }).select(Topic.class, (t, t1, tr) -> Select.of(
-                            t.id(),
-                            t1.stars(),
-                            t1.id().as(tr.title())
-                    )).toList();
+                    })
+                    .select((t,t1)->new TopicProxy(){{
+                        selectColumns(t.id(),t1.stars(),t1.id().as(title()));
+                    }}).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t1.`stars`,t1.`id` AS `title` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ? AND t1.`create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -453,7 +451,12 @@ public class DocTest extends BaseTest {
                         t.id().asc();
                         t1.createTime().desc();
                     })
-                    .select(Topic.class,(t,t1,tr)->t.allFieldsExclude(t.id(),t.title())._concat(t1.title().as(tr.id())))
+                    .select((t,t1)->{
+                        return new TopicProxy(){{
+                           selectColumns(t.allFieldsExclude(t.id(),t.title()));
+                           selectColumns(t1.title().as(id()));
+                        }};
+                    })
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -473,7 +476,7 @@ public class DocTest extends BaseTest {
                         o.id().asc();
                         o.createTime().desc();
                     })
-                    .select(o->o.FETCHER.id().title())
+                    .fetcher(o->o.FETCHER.id().title())
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -494,7 +497,7 @@ public class DocTest extends BaseTest {
                         o.id().asc();
                         o.createTime().desc();
                     })
-                    .select(o->o.FETCHER.allFieldsExclude(o.id()))//返回所有字段除了id
+                    .fetcher(o->o.FETCHER.allFieldsExclude(o.id()))//返回所有字段除了id
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -514,14 +517,18 @@ public class DocTest extends BaseTest {
                     .groupBy(o-> GroupBy.of(
                             o.id()
                     ))
-                    .select(Topic.class,(o,tr)->Select.of(
-                            o.id(),
-                            o.id().count().as(tr.stars())//count(id) as stars
-                    ))
+                    .select(o->new TopicProxy(){{
+                        id().set(o.id());
+                        stars().set(o.id().count().setPropertyType(Integer.class));//count(id) as stars
+        }})
+//                    .selectAs(Topic.class,(o, tr)->Select.of(
+//                            o.id(),
+//                            o.id().count().as(tr.stars())//count(id) as stars
+//                    ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -538,7 +545,7 @@ public class DocTest extends BaseTest {
                         o.id().asc();
                         o.createTime().desc();
                     })
-                    .select(o -> o.FETCHER.id().title())
+                    .fetcher(o -> o.FETCHER.id().title())
                     .toPageResult(1, 20);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -559,7 +566,7 @@ public class DocTest extends BaseTest {
                         o.id().asc();
                         o.createTime().desc();
                     })
-                    .select(o -> {
+                    .fetcher(o -> {
                         Fetcher fetcher = Select.createFetcher();
                         fetcher.fetch(o.id(), o.title());
                         fetcher.fetch(o.stars().as(o.stars()));

@@ -8,8 +8,8 @@ import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectImpl;
 import com.easy.query.core.proxy.impl.draft.SelectToDraftColumn;
-import com.easy.query.core.proxy.set.DSLUpdateSet;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2023/12/1 22:56
@@ -17,7 +17,7 @@ import com.easy.query.core.proxy.sql.Select;
  *
  * @author xuejiaming
  */
-public interface SQLSelectExpression extends TablePropColumn, DSLUpdateSet {
+public interface SQLSelectExpression extends TablePropColumn{
 
     default void asc() {
          asc(true);
@@ -105,7 +105,8 @@ public interface SQLSelectExpression extends TablePropColumn, DSLUpdateSet {
 
     default <TProperty> PropTypeColumn<TProperty> toDraft(Class<TProperty> propType){
         if(PropTypeColumn.class.isAssignableFrom(this.getClass())){
-            return ((PropTypeColumn<?>)this).setPropertyType(propType);
+            PropTypeColumn<? extends TProperty> propTypeColumn = ((PropTypeColumn<?>) this).setPropertyType(propType);
+            return EasyObjectUtil.typeCastNullable(propTypeColumn);
         }
         return new SelectToDraftColumn<>(this,propType);
     }

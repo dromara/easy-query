@@ -1,6 +1,8 @@
 package com.easy.query.api.proxy.base;
 
-import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.sql.Time;
 
@@ -10,13 +12,27 @@ import java.sql.Time;
  *
  * @author xuejiaming
  */
-public class TimeProxy extends AbstractProxyEntity<TimeProxy, Time> {
+public class TimeProxy extends AbstractBasicProxyEntity<TimeProxy, Time> {
     public static TimeProxy createTable() {
         return new TimeProxy();
     }
     private static final Class<Time> entityClass = Time.class;
 
     private TimeProxy() {
+    }
+
+    public TimeProxy(Time val) {
+        set(val);
+    }
+
+
+    public TimeProxy(SQLColumn<?,Time> sqlColumn) {
+        set(sqlColumn);
+    }
+
+
+    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<Time>> TimeProxy(TResult sqlFunctionAvailable) {
+        set(sqlFunctionAvailable);
     }
 
     @Override

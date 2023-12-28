@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.predicate.DSLFunctionPredicate;
  *
  * @author xuejiaming
  */
-public interface DSLFunctionAggregatePredicate<TProperty> extends DSLFunctionPredicate<TProperty>, DSLSQLFunctionAvailable {
+public interface DSLFunctionAggregatePredicate<TProperty> extends DSLFunctionPredicate<TProperty>,  DSLSQLFunctionAvailable {
     @Override
     default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void ge(boolean condition, T1 column) {
         if (condition) {

@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.expression.builder.Selector;
+import com.easy.query.core.expression.builder.core.ResultColumnInfo;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -38,7 +39,7 @@ public class SelectorImpl extends AbstractSelector<Selector> implements Selector
     }
 
     @Override
-    protected String getResultColumnName(String propertyAlias) {
+    protected ResultColumnInfo getResultColumnName(String propertyAlias) {
         throw new UnsupportedOperationException();
     }
 

@@ -7,11 +7,9 @@ import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFunctionComparableChainExpression;
-import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.function.Function;
 
@@ -105,9 +103,8 @@ public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements Col
     }
 
     @Override
-    public <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz) {
+    public <TR> void _setPropertyType(Class<TR> clazz) {
         this.propType=clazz;
-        return EasyObjectUtil.typeCastNullable(this);
     }
 }
 //        if(condition){

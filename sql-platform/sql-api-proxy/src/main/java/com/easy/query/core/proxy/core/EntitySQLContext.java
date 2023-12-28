@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.core;
 
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
@@ -11,6 +12,7 @@ import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.SQLPredicateExpression;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.accpet.AggregatePredicateEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
 import com.easy.query.core.proxy.core.accpet.OrderByEntityExpressionAcceptImpl;
@@ -26,6 +28,10 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
  */
 public interface EntitySQLContext {
     QueryRuntimeContext getRuntimeContext();
+    @Nullable Filter getFilter();
+    @Nullable AggregateFilter getAggregateFilter();
+    @Nullable
+    SQLSelectAsExpression getSelectAsExpression();
     default void _where(Filter filter, SQLActionExpression sqlActionExpression){
         accept(new PredicateEntityExpressionAcceptImpl(filter),sqlActionExpression);
     }
@@ -49,4 +55,5 @@ public interface EntitySQLContext {
     void accept(SQLAggregatePredicateExpression sqlAggregatePredicateExpression);
     void accept(SQLColumnSetExpression sqlColumnSetExpression);
     void accept(SQLOrderByExpression sqlOrderByExpression);
+    void accept(SQLSelectAsExpression... selectAsExpressions);
 }

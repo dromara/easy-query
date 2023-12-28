@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.base;
 
-import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
  * create time 2023/6/29 09:22
@@ -8,7 +9,7 @@ import com.easy.query.core.proxy.AbstractProxyEntity;
  *
  * @author xuejiaming
  */
-public class DoubleProxy extends AbstractProxyEntity<DoubleProxy, Double> {
+public class DoubleProxy extends AbstractBasicProxyEntity<DoubleProxy, Double> {
     public static DoubleProxy createTable() {
         return new DoubleProxy();
     }
@@ -16,6 +17,19 @@ public class DoubleProxy extends AbstractProxyEntity<DoubleProxy, Double> {
 
 
     private DoubleProxy() {
+    }
+    public DoubleProxy(Double val) {
+        set(val);
+    }
+
+
+    public DoubleProxy(SQLColumn<?,Double> sqlColumn) {
+        set(sqlColumn);
+    }
+
+
+    public DoubleProxy(DSLSQLFunctionAvailable sqlFunctionAvailable) {
+        set(sqlFunctionAvailable);
     }
 
     @Override

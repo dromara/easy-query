@@ -10,6 +10,7 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectExpression;
+import com.easy.query.core.proxy.fetcher.EntityFetcher;
 
 /**
  * create time 2023/12/7 13:55

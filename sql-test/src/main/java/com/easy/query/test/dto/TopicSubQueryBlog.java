@@ -1,6 +1,8 @@
 package com.easy.query.test.dto;
 
-import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.EntityFileProxy;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.dto.proxy.TopicSubQueryBlogProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,11 +14,16 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 @Data
-@EntityProxy
-public class TopicSubQueryBlog {
+@EntityFileProxy
+public class TopicSubQueryBlog implements ProxyEntityAvailable<TopicSubQueryBlog , TopicSubQueryBlogProxy> {//自动生成
     private String id;
     private Integer stars;
     private String title;
     private LocalDateTime createTime;
     private Long blogCount;
+
+    @Override
+    public Class<TopicSubQueryBlogProxy> proxyTableClass() {
+        return TopicSubQueryBlogProxy.class;
+    }
 }

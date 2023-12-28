@@ -23,14 +23,5 @@ public class DefaultAssertExceptionFactory implements AssertExceptionFactory {
     public <T> RuntimeException createSingleMoreElementException(Query<T> query) {
         return new EasyQuerySingleMoreElementException("single query has more element in result set.");
     }
-//    @Override
-//    public @NotNull RuntimeException createFirstNotNullException(String msg, String code) {
-//        return new EasyQueryFirstOrNotNullException(msg,code);
-//    }
-//
-//    @Override
-//    public @NotNull RuntimeException createSingleNotNullException(String msg, String code) {
-//        return new EasyQuerySingleOrNotNullException(msg,code);
-//    }
 
 }
