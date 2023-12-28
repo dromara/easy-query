@@ -804,7 +804,7 @@ public class MyTest1 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT SUBSTR(t.`title`,2,2) AS `id`,COUNT(SUBSTR(t.`title`,2,2)) AS `star` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ? GROUP BY t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT SUBSTR(t.`title`,2,2) AS `id`,COUNT(SUBSTR(t.`title`,2,2)) AS `star` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ? GROUP BY SUBSTR(t.`title`,2,2)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
