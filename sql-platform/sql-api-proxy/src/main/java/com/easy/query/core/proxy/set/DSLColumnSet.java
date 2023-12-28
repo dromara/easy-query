@@ -33,11 +33,20 @@ public interface DSLColumnSet<TProperty> extends TablePropColumn, EntitySQLConte
         }
     }
 
-    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void set(TResult val) {
-        set(true, val);
+    default void set(SQLColumn<?, TProperty> column) {
+        set(true, column);
     }
 
-    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void set(boolean condition, TResult val) {
+    default void set(boolean condition, SQLColumn<?, TProperty> column) {
+        if (condition) {
+            getEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
+        }
+    }
+    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void setFunction(TResult val) {
+        setFunction(true, val);
+    }
+
+    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void setFunction(boolean condition, TResult val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetSQLFunctionValueImpl(getTable(), getValue(), val));
         }
@@ -59,15 +68,6 @@ public interface DSLColumnSet<TProperty> extends TablePropColumn, EntitySQLConte
         }
     }
 
-    default void set(SQLColumn<?, TProperty> column) {
-        set(true, column);
-    }
-
-    default void set(boolean condition, SQLColumn<?, TProperty> column) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
-        }
-    }
 
     default void setSubQuery(Query<TProperty> subQuery) {
         setSubQuery(true, subQuery);

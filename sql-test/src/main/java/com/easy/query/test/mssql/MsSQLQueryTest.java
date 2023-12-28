@@ -148,7 +148,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
 
 
         List<Draft2<String, String>> list = entityQuery.queryable(MsSQLMyTopic.class)
-                .groupBy(o -> o.title())
+                .groupByFlat(o -> o.title())
                 .selectDraft(o -> Select.draft(
                         o.title(),
                         o.id().join(",")

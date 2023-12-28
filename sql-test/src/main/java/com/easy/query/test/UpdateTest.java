@@ -1554,10 +1554,10 @@ public class UpdateTest extends BaseTest {
             long rows = easyEntityQuery.updatable(Topic.class)
                     .setColumns(o -> {
                         o.stars().set(1);
-                        o.stars().set(o.title().toNumber(Integer.class));
+                        o.stars().setFunction(o.title().toNumber(Integer.class));
                         o.title().set("1");
-                        o.title().set(o.createTime().format("yyyy/MM/dd"));
-                        o.title().set(o.title().nullDefault("x"));
+                        o.title().setFunction(o.createTime().format("yyyy/MM/dd"));
+                        o.title().setFunction(o.title().nullDefault("x"));
                         o.title().setSQLNativeSegment("IFNULL({0},{1})", c -> {
                             c.keepStyle();
                             c.expression(o.title());

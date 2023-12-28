@@ -28,6 +28,9 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
     Class<TEntity> getEntityClass();
 
    default TProxy create(TableAvailable table, QueryRuntimeContext runtimeContext){
+       if(getEntitySQLContext() instanceof ProxyEntitySQLContext){
+           return create(table,getEntitySQLContext());
+       }
        return create(table,new ProxyEntitySQLContext(runtimeContext));
    }
     TProxy create(TableAvailable table, EntitySQLContext entitySQLContext);

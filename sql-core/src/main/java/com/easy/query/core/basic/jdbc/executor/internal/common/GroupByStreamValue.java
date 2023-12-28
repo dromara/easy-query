@@ -8,7 +8,7 @@ import java.util.stream.Stream;
  *
  * @author xuejiaming
  */
-public interface Grouping<K, V> {
+public interface GroupByStreamValue<K, V> {
     K key();
     Stream<V> values();
 }

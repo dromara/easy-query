@@ -186,7 +186,7 @@ public class DocTest extends BaseTest {
                                 o.id().like("123");
                                 o.id().like(false, "123");
                             })
-                            .groupBy(o -> o.id())
+                            .groupByFlat(o -> o.id())
 //                            .groupBy(o->o.id().then(o.name()))
 //                            .groupBy(o->{
 //                                return o.id().then(o.name());
@@ -514,12 +514,12 @@ public class DocTest extends BaseTest {
                         o.title().like("123");
                         o.createTime().ge(LocalDateTime.of(2022,2,1,3,4));
                     })
-                    .groupBy(o-> GroupBy.of(
+                    .groupByFlat(o-> GroupBy.of(
                             o.id()
                     ))
                     .select(o->new TopicProxy(){{
                         id().set(o.id());
-                        stars().set(o.id().count().setPropertyType(Integer.class));//count(id) as stars
+                        stars().setFunction(o.id().count().setPropertyType(Integer.class));//count(id) as stars
         }})
 //                    .selectAs(Topic.class,(o, tr)->Select.of(
 //                            o.id(),

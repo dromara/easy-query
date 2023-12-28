@@ -28,6 +28,9 @@ public class CountSQLFunction extends AbstractWithValueOrDefaultExpressionSQLFun
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
+        if(EasyCollectionUtil.isEmpty(columnExpressions)){
+            return "COUNT(*)";
+        }
         Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
         if (distinct) {
             return String.format("COUNT(DISTINCT %s)", String.join(",", params));

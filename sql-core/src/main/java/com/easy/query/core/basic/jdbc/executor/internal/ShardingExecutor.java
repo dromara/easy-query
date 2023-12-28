@@ -9,7 +9,7 @@ import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.DataSourceSQLExecutorUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
-import com.easy.query.core.basic.jdbc.executor.internal.common.Grouping;
+import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByStreamValue;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLExecutorGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.unit.Executor;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -91,7 +91,7 @@ public class ShardingExecutor {
      * @param sqlGroups
      * @return
      */
-    private static DataSourceSQLExecutorUnit getSQLExecutorGroups(StreamMergeContext streamMergeContext, Grouping<String, ExecutionUnit> sqlGroups) {
+    private static DataSourceSQLExecutorUnit getSQLExecutorGroups(StreamMergeContext streamMergeContext, GroupByStreamValue<String, ExecutionUnit> sqlGroups) {
         boolean isSerialExecute = !streamMergeContext.isQuery();
         //如果是顺序查询应该使用顺序的connectionlimit或者表达式指定分片的connectionlimit
         int maxShardingQueryLimit = streamMergeContext.getMaxShardingQueryLimit();

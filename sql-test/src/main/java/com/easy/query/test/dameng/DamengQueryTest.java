@@ -116,7 +116,7 @@ public class DamengQueryTest extends DamengBaseTest{
     @Test
     public void testJoin1(){
         List<Draft2<String, String>> list = entityQuery.queryable(DamengMyTopic.class)
-                .groupBy(o -> o.title())
+                .groupByFlat(o -> o.title())
                 .selectDraft(o -> Select.draft(
                         o.title(),
                         o.id().join(",")

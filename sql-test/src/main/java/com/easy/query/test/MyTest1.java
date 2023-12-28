@@ -12,6 +12,7 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.draft.Draft7;
+import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.proxy.sql.GroupBy;
 import com.easy.query.core.proxy.sql.Select;
@@ -23,6 +24,7 @@ import com.easy.query.test.entity.BlogGroupIdAndName;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.BlogGroupIdAndNameProxy;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,7 +55,7 @@ public class MyTest1 extends BaseTest {
 //                    o.createTime().
 //                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
                 })
-                .groupBy(o -> o.content())
+                .groupByFlat(o -> o.content())
                 .selectDraft(o -> Select.draft(
                         o.groupKeys(0).toDraft(String.class),
                         o.content().length()
@@ -77,7 +79,7 @@ public class MyTest1 extends BaseTest {
 //                    o.createTime().
 //                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
                 })
-                .groupBy(o -> o.content())
+                .groupByFlat(o -> o.content())
                 .selectDraft(o -> Select.draft(
                         o.groupKeys(0).toDraft(String.class),
                         o.content().length()
@@ -591,8 +593,8 @@ public class MyTest1 extends BaseTest {
                 .select(o -> new BlogEntityProxy() {
                     {
                         id().set(o.title());
-                        id().set(o.createTime().format("yyyy-MM-dd"));
-                        title().set(o.title().subString(1, 2));
+                        id().setFunction(o.createTime().format("yyyy-MM-dd"));
+                        title().setFunction(o.title().subString(1, 2));
                     }
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -633,7 +635,7 @@ public class MyTest1 extends BaseTest {
                 .select(o -> new BlogEntityProxy() {
                     {
                         id().set(o.title());
-                        title().set(o.title().subString(1,2));
+                        title().setFunction(o.title().subString(1, 2));
                     }
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -657,15 +659,15 @@ public class MyTest1 extends BaseTest {
                 .select(o -> new BlogEntityProxy() {
                     {
                         id().set(o.title());
-                        title().set(o.title().subString(1, 2));
+                        title().setFunction(o.title().subString(1, 2));
 //                        content().set(o.title().subString(1, 2).asAny().toStr());
                     }
                 })
-                .groupBy(o -> GroupBy.of(o.id()))
+                .groupByFlat(o -> GroupBy.of(o.id()))
                 .select(o -> new BlogGroupIdAndNameProxy() {
                     {
                         id().set(o.id());
-                        idCount().set(o.id().count());
+                        idCount().setFunction(o.id().count());
                     }
                 })
                 .orderBy(o -> {
@@ -693,7 +695,7 @@ public class MyTest1 extends BaseTest {
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
                 .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
-                .groupBy(o -> GroupBy.of(o.value1()))
+                .groupByFlat(o -> GroupBy.of(o.value1()))
                 .selectDraft(o -> Select.draft(
                         o.value1(),
                         o.value1().asAny().count()
@@ -743,7 +745,9 @@ public class MyTest1 extends BaseTest {
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
                 .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
-                .groupBy(o -> GroupBy.of(o.value1()))
+                .groupByFlat(o -> {
+                    return GroupBy.of(o.value1());
+                })
                 .orderBy(o -> {
                     o.value1().desc();
                 })
@@ -756,6 +760,8 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals("SELECT t1.`value1` AS `value1`,COUNT(t1.`value1`) AS `value2` FROM (SELECT t.`title` AS `value1`,SUBSTR(t.`title`,2,2) AS `value2` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`value1` ORDER BY t1.`value1` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+
+
     }
 
     @Test
@@ -777,4 +783,266 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
+    @Test
+
+    public void testGroup11() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list1 = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().isNotNull();
+                    o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
+                })
+                .groupBy(o -> GroupBy.keys(o.title().subString(1, 2)))
+                .select(g -> new BlogEntityProxy() {{
+                    id().setFunction(g.key1());
+                    star().setFunction(g.intCount(x -> x.title().subString(1, 2)));
+                }}).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT SUBSTR(t.`title`,2,2) AS `id`,COUNT(SUBSTR(t.`title`,2,2)) AS `star` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ? GROUP BY t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+
+    public void testGroup12() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().isNotNull();
+                    o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
+                })
+                .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
+                .groupBy(o -> {
+                    return GroupBy.keys(o.value1());
+                })
+                .select(g -> new BlogEntityProxy() {{
+                    id().set(g.key1());
+                    star().setFunction(g.intCount(x -> x.value2().asAny()));
+                }}).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`value1` AS `id`,COUNT(t1.`value2`) AS `star` FROM (SELECT t.`title` AS `value1`,SUBSTR(t.`title`,2,2) AS `value2` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`value1`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+
+    public void testGroup13() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().isNotNull();
+                    o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
+                })
+                .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
+                .groupBy(o -> {
+                    return GroupBy.keys(o.value1());
+                })
+                .orderBy(o -> o.key1().asc())
+                .select(g -> new BlogEntityProxy() {{
+                    id().set(g.key1());
+                    star().setFunction(g.intCount(x -> x.value2().asAny()));
+                }}).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`value1` AS `id`,COUNT(t1.`value2`) AS `star` FROM (SELECT t.`title` AS `value1`,SUBSTR(t.`title`,2,2) AS `value2` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`value1` ORDER BY t1.`value1` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+
+    public void testGroup14() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().isNotNull();
+                    o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
+                })
+                .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
+                .groupBy(o -> {
+                    return GroupBy.keys(o.value1());
+                })
+                .select(g -> new BlogEntityProxy() {{
+                    id().set(g.key1());
+                    star().setFunction(g.intCount(x -> x.value2().asAny()));
+                }})
+                .orderBy(o -> o.star().asc()).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`id` AS `id`,t2.`star` AS `star` FROM (SELECT t1.`value1` AS `id`,COUNT(t1.`value2`) AS `star` FROM (SELECT t.`title` AS `value1`,SUBSTR(t.`title`,2,2) AS `value2` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`value1`) t2 ORDER BY t2.`star` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+
+    @Test
+
+    public void testGroup15() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list1 = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().isNotNull();
+                    o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
+                })
+                .groupBy(o -> GroupBy.keys(o.title().subString(1, 2)))
+                .select(g -> new BlogEntityProxy() {{
+                    id().setFunction(g.key1());
+                    title().setFunction(
+                            g.max(TopicProxy::title)
+                    );
+                    score().setFunction(
+                            g.min(x -> x.stars().toNumber(BigDecimal.class))
+                    );
+                    content().setFunction(
+                            g.join(x -> x.id(), ",")
+                    );
+//                    title().set(g.max(x -> x.title()));
+                }}).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT SUBSTR(t.`title`,2,2) AS `id`,MAX(t.`title`) AS `title`,MIN(CAST(t.`stars` AS DECIMAL(36,18))) AS `score`,GROUP_CONCAT(t.`id` SEPARATOR ?) AS `content` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ? GROUP BY SUBSTR(t.`title`,2,2)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+
+    public void testGroup16() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Grouping1<String>> list = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().isNotNull();
+                })
+                .groupBy(o -> GroupBy.keys(o.title().subString(1, 2))).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT SUBSTR(`title`,2,2) FROM `t_topic` WHERE `title` IS NOT NULL GROUP BY SUBSTR(`title`,2,2)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("2023-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+
+    public void testGroup17() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Grouping1<String>> list = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().isNotNull();
+                })
+                .groupBy(o -> GroupBy.keys(o.title().subString(1, 2)))
+                .having(o -> {
+                    o.count().ge(1);
+                }).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT SUBSTR(`title`,2,2) FROM `t_topic` WHERE `title` IS NOT NULL GROUP BY SUBSTR(`title`,2,2) HAVING COUNT(*) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+
+    public void testGroup18() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().isNotNull();
+                })
+                .groupBy(o -> GroupBy.keys(o.title().subString(1, 2)))
+                .having(o -> {
+                    o.count().ge(1);
+                }).selectDraft(o -> Select.draft(
+                        o.key1(),
+                        o.count()
+                )).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT SUBSTR(t.`title`,2,2) AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t WHERE t.`title` IS NOT NULL GROUP BY SUBSTR(t.`title`,2,2) HAVING COUNT(*) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+        for (Draft2<String, Long> stringLongDraft2 : list) {
+
+            if("12".equals(stringLongDraft2.getValue1())){
+                Assert.assertEquals(97L,(long)stringLongDraft2.getValue2());
+            }
+        }
+    }
+    @Test
+
+    public void testGroup19() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft3<String, BigDecimal, Long>> list = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
+                .where((t, t1) -> {
+                    t.id().isNotNull();
+                    t1.score().isNotNull();
+                })
+                .groupBy((t, t1) -> GroupBy.keys(
+                        t.title().subString(1, 2),
+                        t1.score().nullDefault(0)
+                ))
+                .having(t -> {
+                    t.count().ge(1);
+                }).selectDraft(o -> Select.draft(
+                        o.key1(),
+                        o.key2(),
+                        o.count()
+                )).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT SUBSTR(t.`title`,2,2) AS `value1`,IFNULL(t1.`score`,?) AS `value2`,COUNT(*) AS `value3` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IS NOT NULL AND t1.`score` IS NOT NULL GROUP BY SUBSTR(t.`title`,2,2),IFNULL(t1.`score`,?) HAVING COUNT(*) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("0(Integer),false(Boolean),0(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+
+    }
+
 }

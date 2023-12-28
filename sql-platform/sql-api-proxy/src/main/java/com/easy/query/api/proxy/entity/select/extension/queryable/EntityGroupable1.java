@@ -13,9 +13,10 @@ import com.easy.query.core.proxy.SQLGroupByExpression;
  */
 public interface EntityGroupable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 
-    default EntityQueryable<T1Proxy, T1> groupBy(SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
-        return groupBy(true, selectExpression);
+    default EntityQueryable<T1Proxy, T1> groupByFlat(SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
+        return groupByFlat(true, selectExpression);
     }
 
-    EntityQueryable<T1Proxy, T1> groupBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression);
+    EntityQueryable<T1Proxy, T1> groupByFlat(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression);
+    <TRProxy extends ProxyEntity<TRProxy, TR> & SQLGroupByExpression , TR> EntityQueryable<TRProxy, TR> groupBy(SQLFuncExpression1<T1Proxy, SQLFuncExpression1<T1Proxy,TRProxy>> selectExpression);
 }

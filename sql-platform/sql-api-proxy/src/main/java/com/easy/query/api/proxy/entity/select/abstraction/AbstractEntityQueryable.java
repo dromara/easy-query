@@ -14,6 +14,7 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.Draft;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -347,7 +348,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //    }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> groupBy(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
+    public EntityQueryable<T1Proxy, T1> groupByFlat(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
         if (condition) {
             entityQueryable.groupBy(groupBySelector -> {
                 SQLGroupByExpression groupSelect = selectExpression.apply(t1Proxy);
@@ -355,6 +356,18 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             });
         }
         return this;
+    }
+
+    @Override
+    public <TRProxy extends ProxyEntity<TRProxy, TR> & SQLGroupByExpression, TR> EntityQueryable<TRProxy, TR> groupBy(SQLFuncExpression1<T1Proxy, SQLFuncExpression1<T1Proxy, TRProxy>> selectExpression) {
+        SQLFuncExpression1<T1Proxy, TRProxy> keysExpression = selectExpression.apply(get1Proxy());
+        TRProxy grouping1Proxy = keysExpression.apply(get1Proxy());
+        entityQueryable.groupBy(groupBySelector -> {
+            grouping1Proxy.accept(groupBySelector.getGroupSelector());
+        });
+        TRProxy groupProxy = grouping1Proxy.create(null, t1Proxy.getEntitySQLContext());
+        EasyClientQueryable<TR> groupQueryable = new EasyClientQueryable<>(grouping1Proxy.getEntityClass(), entityQueryable.getSQLEntityExpressionBuilder());
+        return new EasyEntityQueryable<>(groupProxy,groupQueryable);
     }
 
     @Override

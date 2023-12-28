@@ -1,7 +1,7 @@
 package com.easy.query.core.util;
 
-import com.easy.query.core.basic.jdbc.executor.internal.common.Grouping;
-import com.easy.query.core.basic.jdbc.executor.internal.common.GroupingImpl;
+import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByStreamValue;
+import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByStreamValueImpl;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -33,9 +33,9 @@ public class EasyUtil {
     private EasyUtil() {
     }
 
-    public static <T, K> Stream<Grouping<K, T>> groupBy(Stream<T> stream, Function<T, K> keyExtractor) {
+    public static <T, K> Stream<GroupByStreamValue<K, T>> groupBy(Stream<T> stream, Function<T, K> keyExtractor) {
         Map<K, List<T>> map = stream.collect(Collectors.groupingBy(keyExtractor));
-        return map.entrySet().stream().map(e -> new GroupingImpl<>(e.getKey(), e.getValue().stream()));
+        return map.entrySet().stream().map(e -> new GroupByStreamValueImpl<>(e.getKey(), e.getValue().stream()));
     }
 
     public static EntityTableExpressionBuilder getPredicateTableByOffset(EntityQueryExpressionBuilder sqlEntityExpression, int offsetForward) {

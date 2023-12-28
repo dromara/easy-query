@@ -252,10 +252,10 @@ public class QueryTest9 extends BaseTest {
                     o.title().eq("title");
                     o.id().eq("1");
                 })
-                .groupBy(o -> o.title())
+                .groupByFlat(o -> o.title())
                 .select(o -> new TopicProxy() {{
                     selectColumns(o.title());
-                    stars().set(o.id().intCount());
+                    stars().setFunction(o.id().intCount());
                 }})
                 .toList();
     }
@@ -353,10 +353,10 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
-                    .groupBy(o -> o.createTime().format("yyyy/MM/dd"))
+                    .groupByFlat(o -> o.createTime().format("yyyy/MM/dd"))
                     .select(o -> new TopicProxy() {{
-                        stars().set(o.id().intCount());
-                        title().set(o.createTime().format("yyyy/MM/dd"));
+                        stars().setFunction(o.id().intCount());
+                        title().setFunction(o.createTime().format("yyyy/MM/dd"));
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -372,10 +372,10 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
-                    .groupBy(o -> o.createTime().format("yyyy/MM/dd"))
+                    .groupByFlat(o -> o.createTime().format("yyyy/MM/dd"))
                     .select(o -> new TopicProxy() {{
-                        stars().set(o.id().intCount());
-                        title().set(o.createTime().format("yyyy/MM/dd"));
+                        stars().setFunction(o.id().intCount());
+                        title().setFunction(o.createTime().format("yyyy/MM/dd"));
 //                        id().set(o.createTime().format("yyyy/MM/dd"));
                         id().setExpression(o.groupKeys(0));
                     }})
@@ -399,7 +399,7 @@ public class QueryTest9 extends BaseTest {
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .select(o -> new TopicProxy() {{
-                        title().set(o.stars().nullDefault(0).toStr());
+                        title().setFunction(o.stars().nullDefault(0).toStr());
                         alias().setSQLNativeSegment("IFNULL({0},'')", c -> {
                             c.keepStyle();
                             c.expression(o.id());
@@ -424,7 +424,7 @@ public class QueryTest9 extends BaseTest {
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .select(o -> new TopicProxy() {{
-                        title().set(o.stars().nullDefault(0).toStr());
+                        title().setFunction(o.stars().nullDefault(0).toStr());
                         alias().setSQLNativeSegment("IFNULL({0},'')", c -> {
                             c.keepStyle();
                             c.expression(o.id());
@@ -445,7 +445,7 @@ public class QueryTest9 extends BaseTest {
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .select(o -> new TopicProxy() {{
-                        title().set(o.stars().nullDefault(0).toStr());
+                        title().setFunction(o.stars().nullDefault(0).toStr());
                         alias().setSQLNativeSegment("IFNULL({0},'')", c -> {
                             c.keepStyle();
                             c.expression(o.id());
@@ -660,10 +660,10 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
-                    .groupBy(o -> o.FETCHER.title())
+                    .groupByFlat(o -> o.FETCHER.title())
                     .select(o -> new TopicProxy() {{
                         selectColumns(o.title());
-                        stars().set(o.id().intCount());
+                        stars().setFunction(o.id().intCount());
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -856,16 +856,16 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123"))
-                    .groupBy(o -> o.id())
+                    .groupByFlat(o -> o.id())
                     .having(o -> {
                         o.id().count().ne(1);
                         o.star().sum().ge(10);
                     })
                     .select(o -> new BlogEntityProxy() {{
                         id().set(o.id());
-                        star().set(o.id().count().setPropertyType(Integer.class));
+                        star().setFunction(o.id().count().setPropertyType(Integer.class));
 //                        star().set(o.id().intCount());
-                        title().set(o.id().max());
+                        title().setFunction(o.id().max());
                     }}).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -900,14 +900,14 @@ public class QueryTest9 extends BaseTest {
                     o.title().nullDefault("unknown").eq(o.content());
                     o.content().isNotBank();
                 })
-                .groupBy(o -> o.id())
+                .groupByFlat(o -> o.id())
                 .having(o -> {
                     o.id().count().ne(1);
                     o.star().sum().ge(10);
                 }).select(o -> new BlogEntityProxy() {{
                     id().set(o.id());
-                    star().set(o.id().intCount());
-                    title().set(o.id().max());
+                    star().setFunction(o.id().intCount());
+                    title().setFunction(o.id().max());
                 }}).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -932,7 +932,7 @@ public class QueryTest9 extends BaseTest {
                     o.id().eq(sss);
                     o.title().nullDefault("unknown").in(sss);
                 })
-                .groupBy(o -> o.id())
+                .groupByFlat(o -> o.id())
                 .having(o -> {
                     o.id().count().ne(1);
                     o.star().sum().ge(10);
@@ -1252,7 +1252,7 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupBy(o -> o.id())
+                    }).groupByFlat(o -> o.id())
                     .having(o -> {
                         o.id().max().like("1");
                         o.id().max().like(false, "2");
@@ -1293,7 +1293,7 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupBy(o -> o.id())
+                    }).groupByFlat(o -> o.id())
                     .having(o -> {
                         o.id().max().eq("1");
                         o.id().max().eq(false, "2");
@@ -1334,7 +1334,7 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupBy(o -> o.id())
+                    }).groupByFlat(o -> o.id())
                     .having(o -> {
                         o.id().max().eq(o.id().min());
                         o.id().max().eq(false, o.id().min());
@@ -1373,10 +1373,10 @@ public class QueryTest9 extends BaseTest {
                 .queryable(Topic.class)
                 .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                 .where((t, t1) -> t1.title().isNotNull())
-                .groupBy((t, t1) -> t1.id())
+                .groupByFlat((t, t1) -> t1.id())
                 .select((t, t1) -> new BlogEntityProxy() {{
                     selectColumns(t1.id());
-                    score().set(t1.score().sum());
+                    score().setFunction(t1.score().sum());
                 }})
                 .toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1395,7 +1395,7 @@ public class QueryTest9 extends BaseTest {
             Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
             List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupBy(t -> t.id())
+                    .groupByFlat(t -> t.id())
                     .selectDraft(t -> Select.draft(t.id()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1410,7 +1410,7 @@ public class QueryTest9 extends BaseTest {
             Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
             List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupBy(t -> t.id())
+                    .groupByFlat(t -> t.id())
                     .selectDraft(t -> Select.draft(t.id()))
                     .where(o -> o.value1().eq("123"))
                     .toList();
@@ -1425,7 +1425,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<Draft2<String, Long>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupBy(t -> t.id())
+                    .groupByFlat(t -> t.id())
                     .selectDraft(t -> Select.draft(
                             t.id(),
                             t.id().count().setPropertyType(Long.class)
@@ -1442,7 +1442,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<Draft3<String, Long, BigDecimal>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupBy(t -> t.id())
+                    .groupByFlat(t -> t.id())
                     .selectDraft(t -> Select.draft(t.id(), t.id().count(), t.stars().sum()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1573,7 +1573,7 @@ public class QueryTest9 extends BaseTest {
                     o.title().like("123");
                     o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                 })
-                .groupBy(o -> o.id())//多个用GroupBy.of(.....)
+                .groupByFlat(o -> o.id())//多个用GroupBy.of(.....)
                 .selectDraft(o -> Select.draft(
                         o.id(),
                         o.id().count()
@@ -1862,7 +1862,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<String, String>> list2 = easyEntityQuery.queryable(BlogEntity.class)
-                .groupBy(o -> o.content().subString(0, 8))
+                .groupByFlat(o -> o.content().subString(0, 8))
                 .selectDraft(o -> Select.draft(
                         o.groupKeys(0).toDraft(String.class),
                         o.id().join(",")

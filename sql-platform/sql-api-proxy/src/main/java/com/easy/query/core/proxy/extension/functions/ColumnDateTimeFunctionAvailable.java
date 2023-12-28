@@ -7,6 +7,7 @@ import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
@@ -27,7 +28,8 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty, ColumnFunctionComparableDateTimeChainExpression<TProperty>>,
-        ColumnFunctionCastStringAvailable<TProperty> {
+        ColumnFunctionCastStringAvailable<TProperty>,
+        ColumnFunctionCastDateTimeAvailable<TProperty> {
 
 
     default ColumnFunctionComparableStringChainExpression<String> format(String javaFormat) {

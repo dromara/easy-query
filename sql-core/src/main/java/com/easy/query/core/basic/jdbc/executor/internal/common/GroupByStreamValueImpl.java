@@ -8,11 +8,11 @@ import java.util.stream.Stream;
  *
  * @author xuejiaming
  */
-public class GroupingImpl<K, V> implements Grouping<K, V> {
+public class GroupByStreamValueImpl<K, V> implements GroupByStreamValue<K, V> {
     private final K key;
     private final Stream<V> values;
 
-    public GroupingImpl(K key, Stream<V> values) {
+    public GroupByStreamValueImpl(K key, Stream<V> values) {
         this.key = key;
         this.values = values;
     }

@@ -6,6 +6,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
@@ -22,6 +23,7 @@ import java.util.function.Function;
  */
 public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty, ColumnFunctionComparableNumberChainExpression<TProperty>>,
         ColumnFunctionCastStringAvailable<TProperty>,
+        ColumnFunctionCastNumberAvailable<TProperty>,
         ColumnFunctionCastBooleanAvailable<TProperty> {
     default <T extends BigDecimal> ColumnFunctionComparableNumberChainExpression<T> avg() {
         return avg(false);
