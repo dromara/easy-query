@@ -1,6 +1,9 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable6;
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable6;
+import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
+import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.common.tuple.MergeTuple6;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression6;
@@ -35,13 +38,39 @@ public interface EntityGroupable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable6();
     }
 
-    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByFlatMerge(SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>,SQLGroupByExpression> selectExpression) {
+    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByFlatMerge(SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>, SQLGroupByExpression> selectExpression) {
         return groupByFlatMerge(true, selectExpression);
     }
 
-    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByFlatMerge(boolean condition, SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>,SQLGroupByExpression> selectExpression) {
+    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByFlatMerge(boolean condition, SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>, SQLGroupByExpression> selectExpression) {
         return groupByFlat(condition, (t, t1, t2, t3, t4, t5) -> {
-            return selectExpression.apply(new MergeTuple6<>(t, t1, t2, t3, t4,t5));
+            return selectExpression.apply(new MergeTuple6<>(t, t1, t2, t3, t4, t5));
         });
     }
+
+    default <TRProxy extends ProxyEntity<TRProxy, TR> & SQLGroupByExpression, TR>
+    EntityQueryable<TRProxy, TR> groupBy(
+            SQLFuncExpression6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy,
+                    SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>, TRProxy>> selectExpression) {
+
+        SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>, TRProxy> keysExpression =
+                selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy());
+        TRProxy grouping1Proxy = keysExpression.apply(new MergeTuple6<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy()));
+
+        getClientQueryable6().groupBy((selector1, selector2, selector3, selector4, selector5, selector6) -> {
+            grouping1Proxy.accept(selector1.getGroupSelector());
+        });
+
+        TRProxy groupProxy = grouping1Proxy.create(null, get1Proxy().getEntitySQLContext());
+        EasyClientQueryable<TR> groupQueryable = new EasyClientQueryable<>(grouping1Proxy.getEntityClass(), getClientQueryable6().getSQLEntityExpressionBuilder());
+        return new EasyEntityQueryable<>(groupProxy, groupQueryable);
+    }
+    default <TRProxy extends ProxyEntity<TRProxy, TR> & SQLGroupByExpression, TR>
+    EntityQueryable<TRProxy, TR> groupByMerge(
+            SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>,
+                    SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>, TRProxy>> selectExpression) {
+
+        return groupBy((t1, t2, t3, t4, t5, t6) -> selectExpression.apply(new MergeTuple6<>(t1, t2, t3, t4, t5, t6)));
+    }
+
 }
