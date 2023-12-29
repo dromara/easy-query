@@ -8,7 +8,9 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 
 import java.util.Collection;
 
@@ -54,15 +56,14 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
 
     @Override
     public TChain allFields() {
-        SQLSelectAsExpression sqlSelectAsExpression = tProxy.allFields();
+        SQLSelectAsExpression sqlSelectAsExpression = new SQLSelectAllImpl(tProxy.getEntitySQLContext(),tProxy.getTable(), new TablePropColumn[0]);
         return createFetcher(tProxy, this, sqlSelectAsExpression);
     }
 
 
     @Override
     public TChain allFieldsExclude(Collection<SQLColumn<TProxy, ?>> ignoreColumns) {
-
-        SQLSelectAsExpression sqlSelectAsExpression = tProxy.allFieldsExclude(ignoreColumns.stream().toArray(SQLColumn[]::new));
+        SQLSelectAsExpression sqlSelectAsExpression =new SQLSelectAllImpl(tProxy.getEntitySQLContext(),tProxy.getTable(), ignoreColumns.stream().toArray(SQLColumn[]::new));
         return createFetcher(tProxy, this, sqlSelectAsExpression);
     }
 
@@ -84,7 +85,7 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     }
 
     public TChain keys() {
-        SQLSelectAsExpression keys = tProxy.keys();
+        SQLSelectAsExpression keys = tProxy.columnKeys();
         return createFetcher(tProxy, this, keys);
     }
 

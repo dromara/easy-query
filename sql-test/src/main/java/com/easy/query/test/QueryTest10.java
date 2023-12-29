@@ -6,6 +6,7 @@ import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTypeUtil;
@@ -90,7 +91,7 @@ public class QueryTest10 extends BaseTest{
                         t2.createTime().eq(LocalDateTime.of(2021, 1, 1, 1, 1));
                     })
                     .select((t, t1, t2) -> new QueryVOProxy() {{
-                        selectColumns(
+                        selectExpression(
                                 t.id(),
                                 t1.title().as(field1()),
                                 t2.id().as(field2())
@@ -119,8 +120,9 @@ public class QueryTest10 extends BaseTest{
                         t2.createTime().eq(LocalDateTime.of(2021, 1, 1, 1, 1));
                     })
                     .select((t, t1, t2) -> new QueryVOProxy() {{
-                        selectColumns(
-                                t.allFieldsExclude(t.title()),
+                        selectAll(t);
+                        selectIgnores(t.title());
+                        selectExpression(
                                 t1.title().as(field1()),
                                 t2.id().as(field2())
                         );
@@ -141,7 +143,8 @@ public class QueryTest10 extends BaseTest{
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                     })
                     .select(o -> new BlogEntityProxy() {{
-                        selectColumns(o.allFieldsExclude(o.title(), o.top()));
+                        selectAll(o);
+                        selectIgnores(o.title(),o.top());
                         star().setSubQuery(
                                 easyEntityQuery.queryable(BlogEntity.class)
                                         .where(x -> {
@@ -165,7 +168,8 @@ public class QueryTest10 extends BaseTest{
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                     })
                     .select(o -> new BlogEntityProxy() {{
-                        selectColumns(o.allFieldsExclude(o.title(), o.top()));
+                        selectAll(o);
+                        selectIgnores(o.title(),o.top());
                         score().setSubQuery(easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> {
                                     x.id().eq(o.id());
@@ -200,7 +204,9 @@ public class QueryTest10 extends BaseTest{
                                 })
                                 .selectCount(BigDecimal.class);
 
-                        selectColumns(o.allFieldsExclude(o.title(), o.top()));
+                        selectAll(o);
+                        selectIgnores(o.title(),o.top());
+
                         score().setSubQuery(subQuery);
                     }}).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -236,7 +242,7 @@ public class QueryTest10 extends BaseTest{
                         t1.title().like("123");
                     })
                     .select((t, t1) -> new BlogEntityProxy() {{
-                        selectColumns(
+                        selectExpression(
                                 t.FETCHER.id().content().createTime(),
                                 t1.stars()
                         );
@@ -272,7 +278,7 @@ public class QueryTest10 extends BaseTest{
                         t1.title().like("123");
                     })
                     .select((t, t1) -> new BlogEntityProxy() {{
-                        selectColumns(
+                        selectExpression(
                                 t.FETCHER.id().content().createTime(),
                                 t1.stars()
                         );
@@ -338,7 +344,7 @@ public class QueryTest10 extends BaseTest{
                         o.id().max().notLikeMatchRight(false, "6");
                     })
                     .select(o -> new BlogEntityProxy() {{
-                        selectColumns(o.id());
+                        selectExpression(o.id());
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -379,7 +385,7 @@ public class QueryTest10 extends BaseTest{
                         o.id().max().lt(false, "6");
                     })
                     .select(o -> new BlogEntityProxy() {{
-                        selectColumns(o.id());
+                        selectExpression(o.id());
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -420,7 +426,7 @@ public class QueryTest10 extends BaseTest{
                         o.id().max().lt(false, o.id().min());
                     })
                     .select(o -> new BlogEntityProxy() {{
-                        selectColumns(o.id());
+                        selectExpression(o.id());
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -443,7 +449,7 @@ public class QueryTest10 extends BaseTest{
                 .where((t, t1) -> t1.title().isNotNull())
                 .groupByExpression((t, t1) -> t1.id())
                 .select((t, t1) -> new BlogEntityProxy() {{
-                    selectColumns(t1.id());
+                    selectExpression(t1.id());
                     score().set(t1.score().sum());
                 }})
                 .toList();
@@ -931,10 +937,11 @@ public class QueryTest10 extends BaseTest{
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<String, String>> list2 = easyEntityQuery.queryable(BlogEntity.class)
-                .groupByExpression(o -> o.content().subString(0, 8))
+                .groupBy(o-> GroupKeys.of(o.content().subString(0,8)))
+//                .groupByExpression(o -> o.content().subString(0, 8))
                 .selectDraft(o -> Select.draft(
-                        o.groupKeys(0).toDraft(String.class),
-                        o.id().join(",")
+                        o.key1(),
+                        o.join(o.group().id(),",")
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

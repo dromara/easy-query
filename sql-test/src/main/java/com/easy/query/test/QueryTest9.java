@@ -3,38 +3,22 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
-import com.easy.query.core.proxy.core.draft.Draft1;
-import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.core.draft.Draft3;
-import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.sql.GroupKeys;
-import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.core.util.EasyTypeUtil;
 import com.easy.query.test.entity.BlogEntity;
-import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.TopicTestProxy;
-import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
-import com.easy.query.test.entity.qq.TodoExecutors;
-import com.easy.query.test.entity.qq.TodoListVo;
-import com.easy.query.test.entity.qq.TodoSingleRecord;
-import com.easy.query.test.h2.vo.QueryVO;
-import com.easy.query.test.h2.vo.proxy.QueryVOProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -293,7 +277,7 @@ public class QueryTest9 extends BaseTest {
                     })
                     .orderBy(o -> o.createTime().format("yyyy-MM-dd HH:mm:ss").asc())
                     .select(o -> new TopicProxy() {{
-                        selectColumns(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss"));
+                        selectExpression(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss"));
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -313,7 +297,7 @@ public class QueryTest9 extends BaseTest {
                     })
                     .orderBy(o -> o.createTime().format("yyyy-MM-dd HH:mm:ss").desc())
                     .select(o -> new TopicProxy() {{
-                        selectColumns(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss"));
+                        selectExpression(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss"));
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -338,7 +322,7 @@ public class QueryTest9 extends BaseTest {
                         });
                     })
                     .select(o -> new TopicProxy() {{
-                        selectColumns(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss"));
+                        selectExpression(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss"));
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -377,12 +361,12 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
-                    .groupByExpression(o -> o.createTime().format("yyyy/MM/dd"))
+                    .groupBy(o->GroupKeys.of(o.createTime().format("yyyy/MM/dd")))
                     .select(o -> new TopicProxy() {{
-                        stars().set(o.id().intCount());
-                        title().set(o.createTime().format("yyyy/MM/dd"));
+                        stars().set(o.intCount(o.group().id()));
+                        title().set(o.group().createTime().format("yyyy/MM/dd"));
 //                        id().set(o.createTime().format("yyyy/MM/dd"));
-                        id().setExpression(o.groupKeys(0));
+                        id().set(o.key1());
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -667,7 +651,7 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
                     .groupByExpression(o -> o.FETCHER.title())
                     .select(o -> new TopicProxy() {{
-                        selectColumns(o.title());
+                        selectExpression(o.title());
                         stars().set(o.id().intCount());
                     }})
                     .toList();
@@ -732,9 +716,10 @@ public class QueryTest9 extends BaseTest {
                         o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                     })
                     .select(o -> new MapProxy() {{
-                        selectColumns(o.allFieldsExclude(o.id(), o.title()));
+                        selectAll(o);
+                        selectIgnores(o.id(),o.title());
                         put("abc", o.id());
-                        selectColumns(o.id());
+                        selectExpression(o.id());
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -767,9 +752,10 @@ public class QueryTest9 extends BaseTest {
             List<Map<String, Object>> abc = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.id().in(idQuery))
                     .select(o -> new MapProxy() {{
-                        selectColumns(o.allFieldsExclude(o.id(), o.title()));
+                        selectAll(o);
+                        selectIgnores(o.id(),o.title());
                         put("abc", o.id());
-                        selectColumns(o.id());
+                        selectExpression(o.id());
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -814,7 +800,8 @@ public class QueryTest9 extends BaseTest {
                     .leftJoin(BlogEntity.class, (a, b) -> a.id().eq(b.id()))
                     .where(o -> o.id().in(idQuery))
                     .select(a -> new MapProxy() {{
-                        selectColumns(a.allFieldsExclude(a.id(), a.title()));
+                        selectAll(a);
+                        selectIgnores(a.id(),a.title());
                         put("abc", a.id());
                         put("id", a.id());
                         put("efg", a.createTime().format("yyyy-MM-dd HH:mm:ss"));
@@ -839,7 +826,8 @@ public class QueryTest9 extends BaseTest {
                         o.id().in(idQuery);
                     })
                     .select(a -> new MapProxy() {{
-                        selectColumns(a.allFieldsExclude(a.id(), a.title()));
+                        selectAll(a);
+                        selectIgnores(a.title(),a.id());
                         put("abc", a.id());
                         put("id", a.id());
                         put("efg", a.createTime().format("yyyy-MM-dd HH:mm:ss"));
@@ -943,7 +931,7 @@ public class QueryTest9 extends BaseTest {
                     o.star().sum().ge(10);
                 })
                 .select(o -> new BlogEntityProxy() {{
-                    selectColumns(o.id()
+                    selectExpression(o.id()
                             , o.id().count().as(star())
                             , o.id().max().as(title())
                     );

@@ -93,20 +93,25 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         }
 
         //导航属性追踪与否
-        List<?> includeResult = queryableGroupExecute(easyQueryOption,includeParseContext.getIncludeQueryable(),includeNavigateParams,relationIds, Query::toList);
+        List<?> includeResult = queryableGroupExecute(easyQueryOption, includeParseContext.getIncludeQueryable(), includeNavigateParams, relationIds, Query::toList);
         if (aliasEntity) {
-            EntityQueryExpressionBuilder sqlEntityExpressionBuilder = includeParseContext.getIncludeQueryable().getSQLEntityExpressionBuilder();
-            TableAvailable aliasTable = getTableByEntityClass(sqlEntityExpressionBuilder, includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getNavigatePropertyType());
-            if (aliasTable == null) {
-                throw new EasyQueryInvalidOperationException("not found relation target table:[" + EasyClassUtil.getSimpleName(includeParseContext.getIncludeQueryable().queryClass()) + "] in result");
+            if (!Objects.equals(navigateMetadata.getNavigatePropertyType(), includeParseContext.getIncludeQueryable().queryClass())) {
+
+                EntityQueryExpressionBuilder sqlEntityExpressionBuilder = includeParseContext.getIncludeQueryable().getSQLEntityExpressionBuilder();
+                TableAvailable aliasTable = getTableByEntityClass(sqlEntityExpressionBuilder, includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getNavigatePropertyType());
+                if (aliasTable == null) {
+                    throw new EasyQueryInvalidOperationException("not found relation target table:[" + EasyClassUtil.getSimpleName(includeParseContext.getIncludeQueryable().queryClass()) + "] in result");
+                }
+                String targetPropertyOrPrimary = navigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
+                String aliasColumnName = getColumnNameByQueryExpressionBuilder(sqlEntityExpressionBuilder, aliasTable, targetPropertyOrPrimary);
+                if (EasyStringUtil.isBlank(aliasColumnName)) {
+                    throw new EasyQueryInvalidOperationException("not found relation target property:[" + targetPropertyOrPrimary + "] in result");
+                }
+                String targetProperty = aliasTable.getEntityMetadata().getPropertyNameNotNull(aliasColumnName);
+                includeParseContext.setTargetProperty(targetProperty);
+            } else {
+                includeParseContext.setTargetProperty(navigateMetadata.getTargetProperty());
             }
-            String targetPropertyOrPrimary = navigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
-            String aliasColumnName = getColumnNameByQueryExpressionBuilder(sqlEntityExpressionBuilder, aliasTable, targetPropertyOrPrimary);
-            if (EasyStringUtil.isBlank(aliasColumnName)) {
-                throw new EasyQueryInvalidOperationException("not found relation target property:[" + targetPropertyOrPrimary + "] in result");
-            }
-            String targetProperty = aliasTable.getEntityMetadata().getPropertyNameNotNull(aliasColumnName);
-            includeParseContext.setTargetProperty(targetProperty);
 
         } else {
             includeParseContext.setTargetProperty(navigateMetadata.getTargetProperty());
@@ -129,7 +134,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
     private TableAvailable getTableByEntityClass(EntityQueryExpressionBuilder sqlEntityExpressionBuilder, Class<?> entityClass) {
         for (EntityTableExpressionBuilder table : sqlEntityExpressionBuilder.getTables()) {
             if (Objects.equals(table.getEntityClass(), entityClass)) {
-                if(EasySQLSegmentUtil.isNotEmpty(sqlEntityExpressionBuilder.getProjects())){
+                if (EasySQLSegmentUtil.isNotEmpty(sqlEntityExpressionBuilder.getProjects())) {
                     return table.getEntityTable();
                 }
             }
@@ -153,12 +158,12 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         includeParseContext.setMappingRows(mappingRows);
     }
 
-    private <TR,TProperty> List<TR> queryableGroupExecute(EasyQueryOption easyQueryOption, ClientQueryable<?> includeQueryable, IncludeNavigateParams includeNavigateParams, List<TProperty> relationIds, SQLFuncExpression1<ClientQueryable<?>,List<TR>> produce){
+    private <TR, TProperty> List<TR> queryableGroupExecute(EasyQueryOption easyQueryOption, ClientQueryable<?> includeQueryable, IncludeNavigateParams includeNavigateParams, List<TProperty> relationIds, SQLFuncExpression1<ClientQueryable<?>, List<TR>> produce) {
         int queryRelationGroupSize = includeNavigateParams.getQueryRelationGroupSize(easyQueryOption.getRelationGroupSize());
 
         if (relationIds.size() <= queryRelationGroupSize) {
             includeNavigateParams.getRelationIds().addAll(relationIds);
-            return executeQueryableAndClearParams(includeQueryable,includeNavigateParams,produce);
+            return executeQueryableAndClearParams(includeQueryable, includeNavigateParams, produce);
         } else {
             ArrayList<TR> result = new ArrayList<>(relationIds.size());
             int i = 0;
@@ -166,19 +171,19 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 i++;
                 includeNavigateParams.getRelationIds().add(relationId);
                 if ((i % queryRelationGroupSize) == 0) {
-                    List<TR> r = executeQueryableAndClearParams(includeQueryable,includeNavigateParams,produce);
+                    List<TR> r = executeQueryableAndClearParams(includeQueryable, includeNavigateParams, produce);
                     result.addAll(r);
                 }
             }
             if (EasyCollectionUtil.isNotEmpty(includeNavigateParams.getRelationIds())) {
-                List<TR> r = executeQueryableAndClearParams(includeQueryable,includeNavigateParams,produce);
+                List<TR> r = executeQueryableAndClearParams(includeQueryable, includeNavigateParams, produce);
                 result.addAll(r);
             }
             return result;
         }
     }
 
-    private <T> List<T> executeQueryableAndClearParams(ClientQueryable<?> mappingQueryable, IncludeNavigateParams includeNavigateParams, SQLFuncExpression1<ClientQueryable<?>,List<T>> produce) {
+    private <T> List<T> executeQueryableAndClearParams(ClientQueryable<?> mappingQueryable, IncludeNavigateParams includeNavigateParams, SQLFuncExpression1<ClientQueryable<?>, List<T>> produce) {
         List<T> result = produce.apply(mappingQueryable);
         includeNavigateParams.getRelationIds().clear();
         return result;

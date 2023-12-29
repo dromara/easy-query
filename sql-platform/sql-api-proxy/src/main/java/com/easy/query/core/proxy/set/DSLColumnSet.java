@@ -1,12 +1,17 @@
 package com.easy.query.core.proxy.set;
 
+import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
+import com.easy.query.core.proxy.impl.SQLColumnIncludeColumnImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetColumnImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetNativeSQLImpl;
@@ -15,6 +20,7 @@ import com.easy.query.core.proxy.impl.SQLColumnSetSubQueryImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetValueImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2023/12/8 10:46
@@ -22,7 +28,7 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
  *
  * @author xuejiaming
  */
-public interface DSLColumnSet<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
+public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,TablePropColumn, EntitySQLContextAvailable {
     default void set(TProperty val) {
         set(true, val);
     }
@@ -94,6 +100,14 @@ public interface DSLColumnSet<TProperty> extends TablePropColumn, EntitySQLConte
         }
     }
 
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TSourcePropertyProxy extends ProxyEntity<TSourcePropertyProxy,TSourceProperty>,TSourceProperty extends ProxyEntityAvailable<TSourceProperty , TSourcePropertyProxy>>
+    void setNavigate(SQLColumn<?,TSourceProperty> column
+            , SQLFuncExpression1<TSourcePropertyProxy,TPropertyProxy> navigateSelectExpression) {
+        Class<TSourceProperty> propertyType = EasyObjectUtil.typeCastNullable(column.getPropertyType());
+        TSourcePropertyProxy tSourcePropertyProxy = EntityQueryProxyManager.create(propertyType);
+        getEntitySQLContext().accept(new SQLColumnIncludeColumnImpl<>(column.getTable(), column.getValue(), getValue(),tSourcePropertyProxy,navigateSelectExpression));
+    }
+//
 //    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>> void setNavigate(TPropertyProxy columnProxy) {
 //        setNavigate(true, columnProxy);
 //    }

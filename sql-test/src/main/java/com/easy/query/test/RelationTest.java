@@ -17,6 +17,8 @@ import com.easy.query.test.entity.school.dto.SchoolClassExtendsVO;
 import com.easy.query.test.entity.school.dto.SchoolClassVO;
 import com.easy.query.test.entity.school.dto.SchoolStudentVO;
 import com.easy.query.test.entity.school.dto.SchoolTeacherVO;
+import com.easy.query.test.entity.school.dto.proxy.SchoolClassVOProxy;
+import com.easy.query.test.entity.school.dto.proxy.SchoolStudentVOProxy;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import org.junit.Assert;
@@ -240,27 +242,21 @@ public class RelationTest extends BaseTest {
                     Assert.assertNotNull(schoolStudent.getSchoolClass().getName());
                 }
             }
-//            {
-//                //todo alias
-//                List<SchoolStudentVO> list1 = easyEntityQuery.queryable(SchoolStudent.class)
-//                        .include((n,o) -> n.asQueryable(o.schoolClass()))
-//                        .select(o->new SchoolStudentVOProxy(){{
-//                            selectColumns(o.allFields());
-//                            schoolClass().setNavigate(new SchoolClassVOProxy(){{
-//                                selectAll();
-//                            }});
-//                        }})
-//                        .select(SchoolStudentVO.class, o -> o
-//                                .columnAll()
-//                                .columnInclude(SchoolStudent::getSchoolClass, SchoolStudentVO::getSchoolClass)
-//                        )
-//                        .toList();
-//                for (SchoolStudentVO schoolStudent : list1) {
-//                    Assert.assertNotNull(schoolStudent.getSchoolClass());
-//                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
-//                    Assert.assertNotNull(schoolStudent.getSchoolClass().getName());
-//                }
-//            }
+            {
+                //todo alias
+                List<SchoolStudentVO> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include((n,o) -> n.asQueryable(o.schoolClass()))
+                        .select(o->new SchoolStudentVOProxy(){{
+                            selectAll(o);
+                            schoolClass().setNavigate(o.schoolClass(),t->new SchoolClassVOProxy());
+                        }})
+                        .toList();
+                for (SchoolStudentVO schoolStudent : list1) {
+                    Assert.assertNotNull(schoolStudent.getSchoolClass());
+                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
+                    Assert.assertNotNull(schoolStudent.getSchoolClass().getName());
+                }
+            }
             {
                 //todo alias
                 List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)

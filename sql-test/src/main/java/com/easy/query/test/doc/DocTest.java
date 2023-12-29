@@ -273,8 +273,8 @@ public class DocTest extends BaseTest {
                                 o.id().like("123");
                                 o.id().like(false, "123");
                             })
-                            .groupBy(o-> GroupKeys.of(o.id()))
-                            .select(o -> new SysUserProxy(){{
+                            .groupBy(o -> GroupKeys.of(o.id()))
+                            .select(o -> new SysUserProxy() {{
                                 id().set(o.key1());
                                 phone().set(o.count().toStr());
                             }})
@@ -306,7 +306,7 @@ public class DocTest extends BaseTest {
                                 o.id().like("123");
                                 o.id().like(false, "123");
                             })
-                            .groupBy(o->GroupKeys.of(o.id()))
+                            .groupBy(o -> GroupKeys.of(o.id()))
                             .select(o -> {
                                 SysUserProxy sysUserProxy = new SysUserProxy();
                                 sysUserProxy.id().set(o.key1());
@@ -387,6 +387,7 @@ public class DocTest extends BaseTest {
         Assert.assertEquals("false(Boolean),false(Boolean),2023%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testSubQuerySelect2() {
 
@@ -470,8 +471,8 @@ public class DocTest extends BaseTest {
                         t.title().like("11");
                         t1.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
                     })
-                    .select((t,t1)->new TopicProxy(){{
-                        selectColumns(t.FETCHER.id().stars(),t1.FETCHER.id().as(title()));
+                    .select((t, t1) -> new TopicProxy() {{
+                        selectExpression(t.FETCHER.id().stars(), t1.FETCHER.id().as(title()));
                     }}).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -491,8 +492,8 @@ public class DocTest extends BaseTest {
                         t.title().like("11");
                         t1.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
                     })
-                    .select((t,t1)->new TopicProxy(){{
-                        selectColumns(t.FETCHER.id().stars(),t1.FETCHER.id().as(title()));
+                    .select((t, t1) -> new TopicProxy() {{
+                        selectExpression(t.FETCHER.id().stars(), t1.FETCHER.id().as(title()));
                     }}).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -512,8 +513,8 @@ public class DocTest extends BaseTest {
                         t.title().like("11");
                         t1.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
                     })
-                    .select((t,t1)->new TopicProxy(){{
-                        selectColumns(t.id(),t1.stars(),t1.id().as(title()));
+                    .select((t, t1) -> new TopicProxy() {{
+                        selectExpression(t.id(), t1.stars(), t1.id().as(title()));
                     }}).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -533,10 +534,12 @@ public class DocTest extends BaseTest {
                         t.id().asc();
                         t1.createTime().desc();
                     })
-                    .select((t,t1)->{
-                        return new TopicProxy(){{
-                           selectColumns(t.allFieldsExclude(t.id(),t.title()));
-                           selectColumns(t1.title().as(id()));
+                    .select((t, t1) -> {
+                        return new TopicProxy() {{
+
+                            selectAll(t);
+                            selectIgnores(t.title(), t.id());
+                            selectExpression(t1.title().as(id()));
                         }};
                     })
                     .toList();
@@ -550,15 +553,15 @@ public class DocTest extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = easyEntityQuery.queryable(Topic.class)
-                    .where(o->{
+                    .where(o -> {
                         o.title().like("123");
-                        o.createTime().ge(LocalDateTime.of(2022,2,1,3,4));
+                        o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                     })
                     .orderBy(o -> {
                         o.id().asc();
                         o.createTime().desc();
                     })
-                    .fetcher(o->o.FETCHER.id().title())
+                    .fetcher(o -> o.FETCHER.id().title())
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -571,15 +574,15 @@ public class DocTest extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = easyEntityQuery.queryable(Topic.class)
-                    .where(o->{
+                    .where(o -> {
                         o.title().like("123");
-                        o.createTime().ge(LocalDateTime.of(2022,2,1,3,4));
+                        o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                     })
                     .orderBy(o -> {
                         o.id().asc();
                         o.createTime().desc();
                     })
-                    .fetcher(o->o.FETCHER.allFieldsExclude(o.id()))//返回所有字段除了id
+                    .fetcher(o -> o.FETCHER.allFieldsExclude(o.id()))//返回所有字段除了id
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -592,17 +595,17 @@ public class DocTest extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = easyEntityQuery.queryable(Topic.class)
-                    .where(o->{
+                    .where(o -> {
                         o.title().like("123");
-                        o.createTime().ge(LocalDateTime.of(2022,2,1,3,4));
+                        o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                     })
-                    .groupByExpression(o-> GroupKeys.expressions(
+                    .groupByExpression(o -> GroupKeys.expressions(
                             o.id()
                     ))
-                    .select(o->new TopicProxy(){{
+                    .select(o -> new TopicProxy() {{
                         id().set(o.id());
                         stars().set(o.id().count().setPropertyType(Integer.class));//count(id) as stars
-        }})
+                    }})
 //                    .selectAs(Topic.class,(o, tr)->Select.of(
 //                            o.id(),
 //                            o.id().count().as(tr.stars())//count(id) as stars
@@ -661,7 +664,7 @@ public class DocTest extends BaseTest {
     }
 
     @Test
-     public void testDoc3x(){
+    public void testDoc3x() {
 //        List<SysUser> list = easyQuery.queryable(SysUser.class)
 //                .where(o -> {
 //                    o.eq(SysUser::getId, "1")
@@ -687,13 +690,13 @@ public class DocTest extends BaseTest {
 //                     id().set(o.key1());//对当前id进行赋值
 //                     phone().set(o.count().toStr());//对当前phone进行赋值因为phone是string类型所以goup后的count需要强转成string也就是cast
 //                 }})
-                 //下面是平替写法其实是一样的
-                 // .select(o -> {
-                 //     SysUserProxy sysUserProxy = new SysUserProxy();
-                 //     sysUserProxy.id().set(o.key1());
-                 //     sysUserProxy.phone().set(o.count().toStr());
-                 //     return sysUserProxy;
-                 // })
+        //下面是平替写法其实是一样的
+        // .select(o -> {
+        //     SysUserProxy sysUserProxy = new SysUserProxy();
+        //     sysUserProxy.id().set(o.key1());
+        //     sysUserProxy.phone().set(o.count().toStr());
+        //     return sysUserProxy;
+        // })
 //                 .toList();
 
 //                 List<SysUser> users = easyEntityQuery.queryable(SysUser.class)

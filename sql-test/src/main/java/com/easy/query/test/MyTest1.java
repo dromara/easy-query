@@ -502,7 +502,7 @@ public class MyTest1 extends BaseTest {
             List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.title().isNotNull())
                     .select(o -> new TopicSubQueryBlogProxy() {{
-                        selectColumns(o.allFields());
+                        selectAll(o);
                         blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
                     }}).toList();
         }
@@ -524,7 +524,7 @@ public class MyTest1 extends BaseTest {
             List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.title().isNotNull())
                     .select(o -> new TopicSubQueryBlogProxy() {{
-                        selectColumns(o.allFields());
+                        selectAll(o);
                         blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> x.id().eq(o.id())).select(x -> new LongProxy(x.star().sum().setPropertyType(Long.class))));
                     }}).toList();
@@ -613,7 +613,7 @@ public class MyTest1 extends BaseTest {
                 .where(o -> o.title().isNotNull())
                 .select(o -> new BlogEntityProxy() {
                     {
-                        selectColumns(o.id(), o.title(), o.createTime().format("yyyy-MM-dd").as(title()));
+                        selectExpression(o.id(), o.title(), o.createTime().format("yyyy-MM-dd").as(title()));
                     }
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -773,7 +773,7 @@ public class MyTest1 extends BaseTest {
         List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().isNotNull())
                 .select(o -> new TopicSubQueryBlogProxy() {{
-                    selectColumns(o.allFields());
+                    selectAll(o);
                     blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
                 }}).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -888,7 +888,7 @@ public class MyTest1 extends BaseTest {
                     return GroupKeys.of(o.value1());
                 })
                 .select(g -> new BlogEntityProxy() {{
-                    selectColumns();
+                    selectExpression();
                     id().set(g.key1());
                     star().set(g.intCount(g.group().value2()));
                 }})

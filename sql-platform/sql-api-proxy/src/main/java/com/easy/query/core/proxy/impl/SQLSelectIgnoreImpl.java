@@ -16,15 +16,11 @@ import com.easy.query.core.util.EasyArrayUtil;
  *
  * @author xuejiaming
  */
-public class SQLSelectAllImpl implements SQLSelectAsExpression {
-    private final EntitySQLContext entitySQLContext;
-    private final TableAvailable table;
+public class SQLSelectIgnoreImpl implements SQLSelectAsExpression {
     private final TablePropColumn[] ignoreProps;
 
-    public SQLSelectAllImpl(EntitySQLContext entitySQLContext,TableAvailable table, TablePropColumn[] ignoreProps) {
-        this.entitySQLContext = entitySQLContext;
+    public SQLSelectIgnoreImpl(TablePropColumn[] ignoreProps) {
 
-        this.table = table;
         this.ignoreProps = ignoreProps;
     }
 
@@ -40,7 +36,6 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
 
     @Override
     public void accept(Selector s) {
-        s.columnAll(table);
         if (EasyArrayUtil.isNotEmpty(ignoreProps)) {
             for (TablePropColumn ignoreProp : ignoreProps) {
                 s.columnIgnore(ignoreProp.getTable(), ignoreProp.getValue());
@@ -50,7 +45,6 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
 
     @Override
     public void accept(OnlySelector s) {
-        s.columnAll(table);
         if (EasyArrayUtil.isNotEmpty(ignoreProps)) {
             for (TablePropColumn ignoreProp : ignoreProps) {
                 s.columnIgnore(ignoreProp.getTable(), ignoreProp.getValue());
@@ -60,17 +54,20 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
 
     @Override
     public void accept(GroupSelector s) {
-        throw new UnsupportedOperationException();
+        if (EasyArrayUtil.isNotEmpty(ignoreProps)) {
+            for (TablePropColumn ignoreProp : ignoreProps) {
+                s.columnIgnore(ignoreProp.getTable(), ignoreProp.getValue());
+            }
+        }
     }
 
     @Override
     public TableAvailable getTable() {
-        return table;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void accept(AsSelector f) {
-        f.columnAll(table);
         if (EasyArrayUtil.isNotEmpty(ignoreProps)) {
             for (TablePropColumn ignoreProp : ignoreProps) {
                 f.columnIgnore(ignoreProp.getTable(), ignoreProp.getValue());
@@ -80,6 +77,6 @@ public class SQLSelectAllImpl implements SQLSelectAsExpression {
 
     @Override
     public EntitySQLContext getEntitySQLContext() {
-        return entitySQLContext;
+        throw new UnsupportedOperationException();
     }
 }

@@ -24,8 +24,8 @@ import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsEntryImpl;
+import com.easy.query.core.proxy.impl.SQLSelectIgnoreImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
-import com.easy.query.core.proxy.sql.Select;
 
 /**
  * create time 2023/6/25 12:39
@@ -64,21 +64,8 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     protected <TProperty> SQLNavigateColumn<TProxy, TProperty> getNavigate(String property, Class<TProperty> propType) {
         return new SQLNavigateColumnImpl<>(entitySQLContext, table, property, propType);
     }
-
-    public SQLSelectAsExpression allFields() {
-        return new SQLSelectAllImpl(this.getEntitySQLContext(),getTable(), new TablePropColumn[0]);
-    }
-    public SQLSelectAsExpression keys() {
+    public SQLSelectAsExpression columnKeys() {
         return new SQLSelectKeysImpl(this.getEntitySQLContext(),getTable());
-    }
-
-    public SQLSelectExpression groupKeys(int index){
-        return Select.groupKeys(index);
-    }
-    @SafeVarargs
-    @SuppressWarnings("varargs")
-    public final SQLSelectAsExpression allFieldsExclude(SQLColumn<TProxy, ?>... ignorePropColumns) {
-        return new SQLSelectAllImpl(this.getEntitySQLContext(),getTable(), ignorePropColumns);
     }
 
     public <T> ColumnFuncComparableExpression<T> _now() {
@@ -89,7 +76,14 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow);
     }
 
-    protected void selectColumns(SQLSelectAsExpression... sqlSelectAsExpression) {
+    public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> void selectAll(TRProxy proxy) {
+        entitySQLContext.accept(new SQLSelectAllImpl(proxy.getEntitySQLContext(),proxy.getTable(), new TablePropColumn[0]));
+    }
+    public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> void selectIgnores(TablePropColumn... ignoreTableProps) {
+        entitySQLContext.accept(new SQLSelectIgnoreImpl(ignoreTableProps));
+    }
+
+    public void selectExpression(SQLSelectAsExpression... sqlSelectAsExpression) {
         entitySQLContext.accept(sqlSelectAsExpression);
     }
 
@@ -98,7 +92,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
      * @param sqlTableOwner
      * @param property
      */
-    protected void selectColumn(SQLTableOwner sqlTableOwner, String property) {
+    public void selectColumn(SQLTableOwner sqlTableOwner, String property) {
         entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property));
     }
     /**
