@@ -94,6 +94,16 @@ public interface DSLColumnSet<TProperty> extends TablePropColumn, EntitySQLConte
         }
     }
 
+//    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>> void setNavigate(TPropertyProxy columnProxy) {
+//        setNavigate(true, columnProxy);
+//    }
+//
+//    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>> void setNavigate(boolean condition, TPropertyProxy columnProxy) {
+//        if (condition) {
+//            getEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
+//        }
+//    }
+
     default void increment() {
         increment(true);
     }

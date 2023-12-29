@@ -659,4 +659,65 @@ public class DocTest extends BaseTest {
             listenerContextManager.clear();
         }
     }
+
+    @Test
+     public void testDoc3x(){
+//        List<SysUser> list = easyQuery.queryable(SysUser.class)
+//                .where(o -> {
+//                    o.eq(SysUser::getId, "1")
+//                            .eq(false, SysUser::getId, "1")
+//                            .like(SysUser::getId, "123")
+//                            .like(false, SysUser::getId, "123");
+//                })
+//                .groupBy(o -> o.column(SysUser::getId))
+//                .select(SysUser.class, o -> {
+//                    o.columnAs(SysUser::getId, SysUser::getId)
+//                            .columnCountAs(SysUser::getId, SysUser::getPhone);
+//                }).toList();
+//
+//        List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
+//                 .where(o -> {
+//                     o.id().eq("1");
+//                     o.id().eq(false, "1");//true/false表示是否使用该条件默认true
+//                     o.id().like("123");
+//                     o.id().like(false, "123");
+//                 })
+//                 .groupBy(o->GroupKeys.of(o.id()))//创建group by
+//                 .select(o -> new SysUserProxy(){{//创建user代理
+//                     id().set(o.key1());//对当前id进行赋值
+//                     phone().set(o.count().toStr());//对当前phone进行赋值因为phone是string类型所以goup后的count需要强转成string也就是cast
+//                 }})
+                 //下面是平替写法其实是一样的
+                 // .select(o -> {
+                 //     SysUserProxy sysUserProxy = new SysUserProxy();
+                 //     sysUserProxy.id().set(o.key1());
+                 //     sysUserProxy.phone().set(o.count().toStr());
+                 //     return sysUserProxy;
+                 // })
+//                 .toList();
+
+//                 List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
+//                 .where(o->{
+//                     o.id().eq("1");// t.`id` = 1
+//                     o.id().eq(o.createTime().format("yyyy-MM-dd"));// t.`id` = DATE_FORMAT(t.`create_time`,'%Y-%m-%d')
+//                     o.createTime().format("yyyy-MM-dd").eq("2023-01-02");//DATE_FORMAT(t.`create_time`,'%Y-%m-%d') = '2023-01-02'
+//                     o.name().nullDefault("unknown").like("123");
+//                     o.phone().isNotBank();
+//                 })
+//                 //可以使用select也可以使用fetcher来实现 fetcher适合返回单个对象的数据获取
+//                 .fetcher(o->o.FETCHER.id().name().phone().departName())
+//                 .toList();
+
+//        List<SysUser> list = easyQuery.queryable(SysUser.class)
+//                .where(o -> {
+//                    LambdaSQLFunc<SysUser> fx = o.fx();
+//                    o.eq(SysUser::getId, "1");
+//                    o.eq(SysUser::getId, fx.dateTimeFormat(SysUser::getCreateTime, "yyyy-MM-dd"));
+//                    o.eq(fx.dateTimeSQLFormat(SysUser::getCreateTime, "yyyy-MM-dd"), "2023-01-01");
+//                    o.isNotBank(SysUser::getPhone);
+//                })
+//                .select(o -> o.column(SysUser::getId).column(SysUser::getName).column(SysUser::getPhone).column(SysUser::getDepartName))
+//                .toList();
+
+    }
 }

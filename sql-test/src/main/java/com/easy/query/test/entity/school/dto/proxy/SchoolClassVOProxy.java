@@ -1,10 +1,14 @@
 package com.easy.query.test.entity.school.dto.proxy;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.test.entity.school.dto.SchoolClassVO;
+import com.easy.query.core.proxy.columns.SQLStringColumn;
+import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.columns.SQLNavigateColumn;
 
 /**
@@ -27,15 +31,15 @@ public class SchoolClassVOProxy extends AbstractProxyEntity < SchoolClassVOProxy
     /**
      * {@link SchoolClassVO#getId}
      */
-    public SQLColumn < SchoolClassVOProxy, java.lang.String> id(){
-    return get("id");
+    public SQLStringColumn < SchoolClassVOProxy, java.lang.String> id(){
+    return getStringColumn("id", java.lang.String.class);
 }
 
     /**
      * {@link SchoolClassVO#getName}
      */
-    public SQLColumn < SchoolClassVOProxy, java.lang.String> name(){
-    return get("name");
+    public SQLStringColumn < SchoolClassVOProxy, java.lang.String> name(){
+    return getStringColumn("name", java.lang.String.class);
 }
 
     /**

@@ -31,6 +31,11 @@ public class SchoolClass implements ProxyEntityAvailable<SchoolClass , SchoolCla
     //完整配置,property忽略表示对应的主键
 //    @Navigate(value = RelationTypeEnum.OneToMany,selfProperty = "id",targetProperty = "classId")
     private List<SchoolStudent> schoolStudents;
+    //一对多 一个班级多个学生
+    @Navigate(value = RelationTypeEnum.OneToMany, targetProperty = "classId")
+    //完整配置,property忽略表示对应的主键
+//    @Navigate(value = RelationTypeEnum.OneToMany,selfProperty = "id",targetProperty = "classId")
+    private List<SchoolStudent> schoolStudents1;
 
     //中间表多对多配置,其中mappingClass表示中间表,selfMappingProperty表示中间表的哪个字段和当前表对应,
     //targetMappingProperty表示中间表的哪个字段和目标表的属性对应

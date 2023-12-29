@@ -11,7 +11,9 @@ import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassTeacher;
 import com.easy.query.test.entity.school.SchoolStudent;
 import com.easy.query.test.entity.school.SchoolStudentAddress;
+import com.easy.query.test.entity.school.SchoolStudentExtendsVO;
 import com.easy.query.test.entity.school.SchoolTeacher;
+import com.easy.query.test.entity.school.dto.SchoolClassExtendsVO;
 import com.easy.query.test.entity.school.dto.SchoolClassVO;
 import com.easy.query.test.entity.school.dto.SchoolStudentVO;
 import com.easy.query.test.entity.school.dto.SchoolTeacherVO;
@@ -225,6 +227,42 @@ public class RelationTest extends BaseTest {
             }
             {
                 //todo alias
+                List<SchoolStudentExtendsVO> list1 = easyQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.one(SchoolStudent::getSchoolClass))
+                        .select(SchoolStudentExtendsVO.class, o -> o
+                                .columnAll()
+                                .columnInclude(SchoolStudent::getSchoolClass, SchoolStudentExtendsVO::getSchoolClass)
+                        )
+                        .toList();
+                for (SchoolStudentExtendsVO schoolStudent : list1) {
+                    Assert.assertNotNull(schoolStudent.getSchoolClass());
+                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
+                    Assert.assertNotNull(schoolStudent.getSchoolClass().getName());
+                }
+            }
+//            {
+//                //todo alias
+//                List<SchoolStudentVO> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+//                        .include((n,o) -> n.asQueryable(o.schoolClass()))
+//                        .select(o->new SchoolStudentVOProxy(){{
+//                            selectColumns(o.allFields());
+//                            schoolClass().setNavigate(new SchoolClassVOProxy(){{
+//                                selectAll();
+//                            }});
+//                        }})
+//                        .select(SchoolStudentVO.class, o -> o
+//                                .columnAll()
+//                                .columnInclude(SchoolStudent::getSchoolClass, SchoolStudentVO::getSchoolClass)
+//                        )
+//                        .toList();
+//                for (SchoolStudentVO schoolStudent : list1) {
+//                    Assert.assertNotNull(schoolStudent.getSchoolClass());
+//                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
+//                    Assert.assertNotNull(schoolStudent.getSchoolClass().getName());
+//                }
+//            }
+            {
+                //todo alias
                 List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
                         .include(o -> o.one(SchoolStudent::getSchoolClass, 1))
                         .select(SchoolStudentVO.class, o -> o
@@ -290,6 +328,18 @@ public class RelationTest extends BaseTest {
                                 .columnIncludeMany(SchoolClass::getSchoolStudents, SchoolClassVO::getSchoolStudents))
                         .toList();
                 for (SchoolClassVO schoolClass : list1) {
+                    Assert.assertNotNull(schoolClass.getSchoolStudents());
+                    Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
+                }
+            }
+            {
+                //todo alias
+                List<SchoolClassExtendsVO> list1 = easyQuery.queryable(SchoolClass.class)
+                        .include(o -> o.many(SchoolClass::getSchoolStudents).where(x->x.isNotNull(SchoolStudent::getId)))
+                        .select(SchoolClassExtendsVO.class, o -> o.columnAll()
+                                .columnIncludeMany(SchoolClass::getSchoolStudents, SchoolClassExtendsVO::getSchoolStudents))
+                        .toList();
+                for (SchoolClassExtendsVO schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
                     Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
                 }

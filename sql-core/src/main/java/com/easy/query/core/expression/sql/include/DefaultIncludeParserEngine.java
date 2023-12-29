@@ -22,6 +22,7 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.ArrayList;
@@ -128,7 +129,9 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
     private TableAvailable getTableByEntityClass(EntityQueryExpressionBuilder sqlEntityExpressionBuilder, Class<?> entityClass) {
         for (EntityTableExpressionBuilder table : sqlEntityExpressionBuilder.getTables()) {
             if (Objects.equals(table.getEntityClass(), entityClass)) {
-                return table.getEntityTable();
+                if(EasySQLSegmentUtil.isNotEmpty(sqlEntityExpressionBuilder.getProjects())){
+                    return table.getEntityTable();
+                }
             }
             if (table instanceof AnonymousEntityTableExpressionBuilder) {
                 AnonymousEntityTableExpressionBuilder anonymousEntityTableExpressionBuilder = (AnonymousEntityTableExpressionBuilder) table;

@@ -3,6 +3,7 @@ package com.easy.query.core.proxy;
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.columns.SQLBooleanColumn;
@@ -18,8 +19,13 @@ import com.easy.query.core.proxy.columns.impl.SQLNumberColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLStringColumnImpl;
 import com.easy.query.core.proxy.core.ColumnSelectSQLContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
+import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
+import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsEntryImpl;
+import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
+import com.easy.query.core.proxy.sql.Select;
 
 /**
  * create time 2023/6/25 12:39
@@ -57,6 +63,30 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
 
     protected <TProperty> SQLNavigateColumn<TProxy, TProperty> getNavigate(String property, Class<TProperty> propType) {
         return new SQLNavigateColumnImpl<>(entitySQLContext, table, property, propType);
+    }
+
+    public SQLSelectAsExpression allFields() {
+        return new SQLSelectAllImpl(this.getEntitySQLContext(),getTable(), new TablePropColumn[0]);
+    }
+    public SQLSelectAsExpression keys() {
+        return new SQLSelectKeysImpl(this.getEntitySQLContext(),getTable());
+    }
+
+    public SQLSelectExpression groupKeys(int index){
+        return Select.groupKeys(index);
+    }
+    @SafeVarargs
+    @SuppressWarnings("varargs")
+    public final SQLSelectAsExpression allFieldsExclude(SQLColumn<TProxy, ?>... ignorePropColumns) {
+        return new SQLSelectAllImpl(this.getEntitySQLContext(),getTable(), ignorePropColumns);
+    }
+
+    public <T> ColumnFuncComparableExpression<T> _now() {
+        return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::now);
+    }
+
+    public <T> ColumnFuncComparableExpression<T> _utcNow() {
+        return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow);
     }
 
     protected void selectColumns(SQLSelectAsExpression... sqlSelectAsExpression) {

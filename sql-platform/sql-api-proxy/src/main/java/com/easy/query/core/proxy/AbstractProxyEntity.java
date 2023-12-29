@@ -5,15 +5,9 @@ import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
-import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
 import com.easy.query.core.proxy.impl.SQLNativeDraftImpl;
-import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
-import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
-import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -57,30 +51,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return EasyObjectUtil.typeCastNullable(this);
     }
 
-
-    public SQLSelectAsExpression allFields() {
-        return new SQLSelectAllImpl(this.getEntitySQLContext(),getTable(), new TablePropColumn[0]);
-    }
-    public SQLSelectAsExpression keys() {
-        return new SQLSelectKeysImpl(this.getEntitySQLContext(),getTable());
-    }
-
-    public SQLSelectExpression groupKeys(int index){
-        return Select.groupKeys(index);
-    }
-    @SafeVarargs
-    @SuppressWarnings("varargs")
-    public final SQLSelectAsExpression allFieldsExclude(SQLColumn<TProxy, ?>... ignorePropColumns) {
-        return new SQLSelectAllImpl(this.getEntitySQLContext(),getTable(), ignorePropColumns);
-    }
-
-    public <T> ColumnFuncComparableExpression<T> _now() {
-        return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::now);
-    }
-
-    public <T> ColumnFuncComparableExpression<T> _utcNow() {
-        return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow);
-    }
 
     public void or(SQLActionExpression sqlActionExpression){
         or(true,sqlActionExpression);
