@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.grouping;
+package com.easy.query.core.proxy.sql;
 
 import com.easy.query.core.common.tuple.MergeTuple10;
 import com.easy.query.core.common.tuple.MergeTuple2;
@@ -12,6 +12,7 @@ import com.easy.query.core.common.tuple.MergeTuple9;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLGroupByExpression;
+import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.grouping.proxy.Grouping10Proxy;
 import com.easy.query.core.proxy.grouping.proxy.Grouping1Proxy;
 import com.easy.query.core.proxy.grouping.proxy.Grouping2Proxy;
@@ -22,6 +23,7 @@ import com.easy.query.core.proxy.grouping.proxy.Grouping6Proxy;
 import com.easy.query.core.proxy.grouping.proxy.Grouping7Proxy;
 import com.easy.query.core.proxy.grouping.proxy.Grouping8Proxy;
 import com.easy.query.core.proxy.grouping.proxy.Grouping9Proxy;
+import com.easy.query.core.proxy.impl.SQLSelectGroupKeyAsImpl;
 import com.easy.query.core.util.EasyArrayUtil;
 
 /**
@@ -31,7 +33,6 @@ import com.easy.query.core.util.EasyArrayUtil;
  * @author xuejiaming
  */
 public class GroupKeys {
-
     public static SQLGroupByExpression expressions(SQLGroupByExpression... groupByExpressions){
 
         if(EasyArrayUtil.isNotEmpty(groupByExpressions)){

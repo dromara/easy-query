@@ -1,16 +1,8 @@
 package com.easy.query.core.proxy.sql;
 
-import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression;
-import com.easy.query.core.proxy.ColumnFetcher;
-import com.easy.query.core.proxy.Fetcher;
-import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
-import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft10;
 import com.easy.query.core.proxy.core.draft.Draft2;
@@ -33,16 +25,7 @@ import com.easy.query.core.proxy.core.draft.proxy.Draft6Proxy;
 import com.easy.query.core.proxy.core.draft.proxy.Draft7Proxy;
 import com.easy.query.core.proxy.core.draft.proxy.Draft8Proxy;
 import com.easy.query.core.proxy.core.draft.proxy.Draft9Proxy;
-import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
-import com.easy.query.core.proxy.impl.SQLNativeDraftImpl;
-import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectGroupKeyAsImpl;
-import com.easy.query.core.proxy.impl.SQLSelectImpl;
-import com.easy.query.core.proxy.impl.SQLSelectNativeAsImpl;
-import com.easy.query.core.proxy.sql.scec.SQLAliasNativeProxyExpressionContext;
-import com.easy.query.core.proxy.sql.scec.SQLAliasNativeProxyExpressionContextImpl;
-import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
-import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.util.EasyArrayUtil;
 
 /**
@@ -52,10 +35,6 @@ import com.easy.query.core.util.EasyArrayUtil;
  * @author xuejiaming
  */
 public class Select {
-
-    public static Fetcher createFetcher() {
-        return new ColumnFetcher();
-    }
 
     public static SQLSelectExpression of(boolean condition, SQLSelectExpression... selects) {
         if (condition) {
@@ -227,15 +206,15 @@ public class Select {
 //        return draftFetcher;
 //    }
 
-    public static <TSubQuery> SQLSelectAsExpression subQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, TablePropColumn propColumn) {
-        return new SQLSelectAsImpl(s -> {
-            throw new UnsupportedOperationException();
-        }, s -> {
-            s.columnSubQueryAs(subQueryableFunc, propColumn.getValue());
-        }, s -> {
-            throw new UnsupportedOperationException();
-        });
-    }
+//    public static <TSubQuery> SQLSelectAsExpression subQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, TablePropColumn propColumn) {
+//        return new SQLSelectAsImpl(s -> {
+//            throw new UnsupportedOperationException();
+//        }, s -> {
+//            s.columnSubQueryAs(subQueryableFunc, propColumn.getValue());
+//        }, s -> {
+//            throw new UnsupportedOperationException();
+//        });
+//    }
 
 
     public static SQLSelectExpression groupKeys(int index) {
@@ -243,67 +222,67 @@ public class Select {
     }
 
     //PropTypeColumn<Object>
-    public static PropTypeColumn<Object> draftSQL(String sqlSegment) {
-        return draftSQL(sqlSegment, f -> {
-        });
-    }
+//    public static PropTypeColumn<Object> draftSQL(String sqlSegment) {
+//        return draftSQL(sqlSegment, f -> {
+//        });
+//    }
+//
+//    public static PropTypeColumn<Object> draftSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+//        return new SQLNativeDraftImpl((alias, f) -> {
+//            f.sqlNativeSegment(sqlSegment, c -> {
+//                if (alias != null) {
+//                    c.setPropertyAlias(alias);
+//                }
+//                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
+//            });
+//        });
+//    }
 
-    public static PropTypeColumn<Object> draftSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        return new SQLNativeDraftImpl((alias, f) -> {
-            f.sqlNativeSegment(sqlSegment, c -> {
-                if (alias != null) {
-                    c.setPropertyAlias(alias);
-                }
-                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
-            });
-        });
-    }
 
-
-    public static <TSubQuery> PropTypeColumn<TSubQuery> draftSubQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
-        Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
-        return new SQLDraftAsSelectImpl<>((alias,f)->{
-            f.columnSubQueryAs(()->subQueryQuery, alias);
-        },subQueryQuery.queryClass());
-    }
-
-    public static SQLSelectExpression sql(String sqlSegment) {
-        return sql(sqlSegment, f -> {
-        });
-    }
-
-    public static SQLSelectExpression sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        return new SQLSelectImpl(f -> {
-            f.sqlNativeSegment(sqlSegment, c -> {
-                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
-            });
-        });
-    }
-
-    public static SQLSelectAsExpression sql(String sqlSegment, PropColumn sqlColumnAlias) {
-        return sql(sqlSegment, f -> {
-        }, sqlColumnAlias);
-    }
-
-    public static SQLSelectAsExpression sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume, PropColumn sqlColumnAlias) {
-        return new SQLSelectNativeAsImpl(f -> {
-            f.sqlNativeSegment(sqlSegment, c -> {
-                c.setPropertyAlias(sqlColumnAlias.getValue());
-                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
-            });
-        });
-    }
-
-    public static <TRProxy extends ProxyEntity<TRProxy, TR>, TR> SQLSelectAsExpression sqlAlias(TRProxy proxy, String sqlSegment) {
-        return sqlAlias(proxy, sqlSegment, f -> {
-        });
-    }
-
-    public static <TRProxy extends ProxyEntity<TRProxy, TR>, TR> SQLSelectAsExpression sqlAlias(TRProxy proxy, String sqlSegment, SQLExpression1<SQLAliasNativeProxyExpressionContext<TRProxy, TR>> contextConsume) {
-        return new SQLSelectNativeAsImpl(s -> {
-            s.sqlNativeSegment(sqlSegment, c -> {
-                contextConsume.apply(new SQLAliasNativeProxyExpressionContextImpl<>(c));
-            });
-        });
-    }
+//    public static <TSubQuery> PropTypeColumn<TSubQuery> draftSubQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
+//        Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
+//        return new SQLDraftAsSelectImpl<>((alias,f)->{
+//            f.columnSubQueryAs(()->subQueryQuery, alias);
+//        },subQueryQuery.queryClass());
+//    }
+//
+//    public static SQLSelectExpression sql(String sqlSegment) {
+//        return sql(sqlSegment, f -> {
+//        });
+//    }
+//
+//    public static SQLSelectExpression sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+//        return new SQLSelectImpl(f -> {
+//            f.sqlNativeSegment(sqlSegment, c -> {
+//                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
+//            });
+//        });
+//    }
+//
+//    public static SQLSelectAsExpression sql(String sqlSegment, PropColumn sqlColumnAlias) {
+//        return sql(sqlSegment, f -> {
+//        }, sqlColumnAlias);
+//    }
+//
+//    public static SQLSelectAsExpression sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume, PropColumn sqlColumnAlias) {
+//        return new SQLSelectNativeAsImpl(f -> {
+//            f.sqlNativeSegment(sqlSegment, c -> {
+//                c.setPropertyAlias(sqlColumnAlias.getValue());
+//                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
+//            });
+//        });
+//    }
+//
+//    public static <TRProxy extends ProxyEntity<TRProxy, TR>, TR> SQLSelectAsExpression sqlAlias(TRProxy proxy, String sqlSegment) {
+//        return sqlAlias(proxy, sqlSegment, f -> {
+//        });
+//    }
+//
+//    public static <TRProxy extends ProxyEntity<TRProxy, TR>, TR> SQLSelectAsExpression sqlAlias(TRProxy proxy, String sqlSegment, SQLExpression1<SQLAliasNativeProxyExpressionContext<TRProxy, TR>> contextConsume) {
+//        return new SQLSelectNativeAsImpl(s -> {
+//            s.sqlNativeSegment(sqlSegment, c -> {
+//                contextConsume.apply(new SQLAliasNativeProxyExpressionContextImpl<>(c));
+//            });
+//        });
+//    }
 }

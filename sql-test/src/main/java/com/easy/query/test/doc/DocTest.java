@@ -5,9 +5,8 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
-import com.easy.query.core.proxy.Fetcher;
-import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.grouping.GroupKeys;
+import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -362,18 +361,24 @@ public class DocTest extends BaseTest {
                     o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                 })
                 .fetcher(o -> {
-
-                    SQLSelectAsExpression subQuery = Select.subQueryAs(() -> {
+                    PropTypeColumn<BlogEntity> subQuery = o.subQuery(() -> {
                         return easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> {
                                     x.id().eq(o.id());
                                 })
                                 .fetcher(x -> x.FETCHER.createTime());
-                    }, o.createTime());
+                    });
+//                    SQLSelectAsExpression subQuery = Select.subQueryAs(() -> {
+//                        return easyEntityQuery.queryable(BlogEntity.class)
+//                                .where(x -> {
+//                                    x.id().eq(o.id());
+//                                })
+//                                .fetcher(x -> x.FETCHER.createTime());
+//                    }, o.createTime());
 
                     return Select.of(
                             o.FETCHER.allFieldsExclude(o.title(), o.top()),
-                            subQuery
+                            subQuery.as(o.createTime())
                     );
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -393,17 +398,24 @@ public class DocTest extends BaseTest {
                 })
                 .fetcher(o -> {
 
-                    SQLSelectAsExpression subQuery = Select.subQueryAs(() -> {
+                    PropTypeColumn<BlogEntity> subQuery = o.subQuery(() -> {
                         return easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> {
                                     x.id().eq(o.id());
                                 })
                                 .fetcher(x -> x.id().count());
-                    }, o.createTime());
+                    });
+//                    SQLSelectAsExpression subQuery = Select.subQueryAs(() -> {
+//                        return easyEntityQuery.queryable(BlogEntity.class)
+//                                .where(x -> {
+//                                    x.id().eq(o.id());
+//                                })
+//                                .fetcher(x -> x.id().count());
+//                    }, o.createTime());
 
                     return Select.of(
                             o.FETCHER.allFieldsExclude(o.title(), o.top()),
-                            subQuery
+                            subQuery.as(o.createTime())
                     );
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -637,10 +649,7 @@ public class DocTest extends BaseTest {
                         o.createTime().desc();
                     })
                     .fetcher(o -> {
-                        Fetcher fetcher = Select.createFetcher();
-                        fetcher.fetch(o.id(), o.title());
-                        fetcher.fetch(o.stars().as(o.stars()));
-                        return fetcher;
+                        return o.FETCHER.id().title().stars().as(o.stars());
                     })
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

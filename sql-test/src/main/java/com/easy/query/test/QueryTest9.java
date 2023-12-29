@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
-import com.easy.query.core.proxy.grouping.GroupKeys;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTypeUtil;
@@ -1489,7 +1489,7 @@ public class QueryTest9 extends BaseTest {
                     .queryable(BlogEntity.class)
                     .selectDraft(t -> Select.draft(t.id(),
                             t.createTime(),
-                            Select.draftSQL("1").setPropertyType(String.class)
+                            t.sql("1").setPropertyType(String.class)
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1508,7 +1508,7 @@ public class QueryTest9 extends BaseTest {
                     .queryable(BlogEntity.class)
                     .selectDraft(t -> Select.draft(t.id(),
                             t.createTime(),
-                            Select.draftSQL("IFNULL({0},'1')", c -> c.keepStyle().expression(t.title())).setPropertyType(String.class)
+                            t.sql("IFNULL({0},'1')", c -> c.keepStyle().expression(t.title())).setPropertyType(String.class)
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

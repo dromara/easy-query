@@ -5,7 +5,7 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
-import com.easy.query.core.proxy.grouping.GroupKeys;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
 import org.junit.Assert;

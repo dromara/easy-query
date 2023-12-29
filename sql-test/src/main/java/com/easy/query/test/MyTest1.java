@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.draft.Draft7;
-import com.easy.query.core.proxy.grouping.GroupKeys;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.proxy.sql.Select;
@@ -1055,7 +1055,7 @@ easyEntityQuery.queryable(Topic.class)
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.of(
-                        Select.draftSQL("SUBSTR({0},2,2)",c->c.expression(t.title())),
+                        t.sql("SUBSTR({0},2,2)",c->c.expression(t.title())),
                         t1.score().nullDefault(0)
                 )).toList();
 
@@ -1079,7 +1079,7 @@ easyEntityQuery.queryable(Topic.class)
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.of(
-                        Select.draftSQL("SUBSTR({0},2,2)", c -> c.expression(t.title())).setPropertyType(String.class),
+                        t.sql("SUBSTR({0},2,2)", c -> c.expression(t.title())).setPropertyType(String.class),
                         t1.score().nullDefault(0)
                 ))
                 .selectDraft(o -> Select.draft(
