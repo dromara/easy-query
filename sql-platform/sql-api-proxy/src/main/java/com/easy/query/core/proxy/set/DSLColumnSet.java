@@ -42,6 +42,12 @@ public interface DSLColumnSet<TProperty> extends TablePropColumn, EntitySQLConte
             getEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
         }
     }
+
+    /**
+     * 支持function函数
+     * @param val
+     * @param <TResult>
+     */
     default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void set(TResult val) {
         set(true, val);
     }

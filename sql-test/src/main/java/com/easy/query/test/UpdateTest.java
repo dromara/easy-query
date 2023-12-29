@@ -1548,6 +1548,7 @@ public class UpdateTest extends BaseTest {
     public void updateSet1() {
 
         {
+
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 

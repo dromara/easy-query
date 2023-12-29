@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.SQLPredicateExpression;
  *
  * @author xuejiaming
  */
-public class OrderByEntityExpressionAcceptImpl implements EntityExpressionAccept {
+public class OrderByEntityExpressionAcceptImpl implements OrderByEntityExpressionAccept {
     private final OrderSelector orderSelector;
 
     public OrderByEntityExpressionAcceptImpl(OrderSelector orderSelector) {
@@ -37,5 +37,10 @@ public class OrderByEntityExpressionAcceptImpl implements EntityExpressionAccept
     @Override
     public void accept(SQLOrderByExpression sqlOrderByExpression) {
         sqlOrderByExpression.accept(orderSelector);
+    }
+
+    @Override
+    public OrderSelector getOrderSelector() {
+        return orderSelector;
     }
 }

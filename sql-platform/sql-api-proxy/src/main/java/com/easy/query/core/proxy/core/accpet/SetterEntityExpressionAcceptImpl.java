@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.SQLPredicateExpression;
  *
  * @author xuejiaming
  */
-public class SetterEntityExpressionAcceptImpl implements EntityExpressionAccept {
+public class SetterEntityExpressionAcceptImpl implements SetterEntityExpressionAccept {
     private final Setter setter;
 
     public SetterEntityExpressionAcceptImpl(Setter setter) {
@@ -37,5 +37,10 @@ public class SetterEntityExpressionAcceptImpl implements EntityExpressionAccept 
     @Override
     public void accept(SQLOrderByExpression sqlOrderByExpression) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Setter getSetter() {
+        return setter;
     }
 }

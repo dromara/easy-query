@@ -30,6 +30,7 @@ public interface EntitySQLContext {
     QueryRuntimeContext getRuntimeContext();
     @Nullable Filter getFilter();
     @Nullable AggregateFilter getAggregateFilter();
+    @Nullable OrderSelector getOrderSelector();
     @Nullable
     SQLSelectAsExpression getSelectAsExpression();
     default void _where(Filter filter, SQLActionExpression sqlActionExpression){

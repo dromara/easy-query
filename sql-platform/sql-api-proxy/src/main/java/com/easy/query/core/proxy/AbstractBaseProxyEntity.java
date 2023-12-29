@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.core.annotation.Nullable;
+import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
@@ -18,6 +19,7 @@ import com.easy.query.core.proxy.columns.impl.SQLStringColumnImpl;
 import com.easy.query.core.proxy.core.ColumnSelectSQLContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
+import com.easy.query.core.proxy.impl.SQLSelectAsEntryImpl;
 
 /**
  * create time 2023/6/25 12:39
@@ -59,6 +61,24 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
 
     protected void selectColumns(SQLSelectAsExpression... sqlSelectAsExpression) {
         entitySQLContext.accept(sqlSelectAsExpression);
+    }
+
+    /**
+     * 支持动态select+动态group取列防止sql注入
+     * @param sqlTableOwner
+     * @param property
+     */
+    protected void selectColumn(SQLTableOwner sqlTableOwner, String property) {
+        entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property));
+    }
+    /**
+     * 支持动态select+动态selectAs取列防止sql注入
+     * @param sqlTableOwner
+     * @param property
+     * @param propertyAlias
+     */
+    protected void selectColumnAs(SQLTableOwner sqlTableOwner,String property,String propertyAlias) {
+        entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property,propertyAlias));
     }
 //    protected <TSubQuery> SQLSelectAsExpression subQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, TablePropColumn propColumn) {
 //        return Select.subQueryAs(subQueryableFunc,propColumn);

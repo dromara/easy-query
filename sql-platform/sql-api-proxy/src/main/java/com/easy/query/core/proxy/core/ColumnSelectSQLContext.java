@@ -3,6 +3,7 @@ package com.easy.query.core.proxy.core;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
@@ -55,8 +56,8 @@ public class ColumnSelectSQLContext implements EntitySQLContext {
 
     @Override
     public void accept(SQLColumnSetExpression sqlColumnSetExpression) {
-        if(sqlSelectAsExpression==null){
-            sqlSelectAsExpression=SQLSelectAsExpression.empty;
+        if (sqlSelectAsExpression == null) {
+            sqlSelectAsExpression = SQLSelectAsExpression.empty;
         }
         sqlSelectAsExpression = sqlSelectAsExpression._concat(new SQLSelectAsImpl(sqlColumnSetExpression::accept, sqlColumnSetExpression::accept, s -> {
             throw new UnsupportedOperationException();
@@ -70,8 +71,8 @@ public class ColumnSelectSQLContext implements EntitySQLContext {
 
     @Override
     public void accept(SQLSelectAsExpression... selectAsExpressions) {
-        if(sqlSelectAsExpression==null){
-            sqlSelectAsExpression=SQLSelectAsExpression.empty;
+        if (sqlSelectAsExpression == null) {
+            sqlSelectAsExpression = SQLSelectAsExpression.empty;
         }
         sqlSelectAsExpression = sqlSelectAsExpression._concat(Select.of(selectAsExpressions));
     }
@@ -89,6 +90,11 @@ public class ColumnSelectSQLContext implements EntitySQLContext {
 
     @Override
     public AggregateFilter getAggregateFilter() {
+        return null;
+    }
+
+    @Override
+    public OrderSelector getOrderSelector() {
         return null;
     }
 

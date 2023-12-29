@@ -888,6 +888,7 @@ public class MyTest1 extends BaseTest {
                     return GroupKeys.of(o.value1());
                 })
                 .select(g -> new BlogEntityProxy() {{
+                    selectColumns();
                     id().set(g.key1());
                     star().set(g.intCount(g.group().value2()));
                 }})

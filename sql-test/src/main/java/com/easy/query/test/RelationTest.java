@@ -3,6 +3,7 @@ package com.easy.query.test;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.test.dto.CityVO;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.Area;
 import com.easy.query.test.entity.base.City;
 import com.easy.query.test.entity.base.Province;
@@ -671,6 +672,15 @@ public class RelationTest extends BaseTest {
         List<Province> list = easyQuery.queryable(Province.class)
                 .whereById("33")
                 .include(o -> o.many(Province::getCities))
+                .toList();
+        Assert.assertEquals(1, list.size());
+    }
+    @Test
+    public void provinceTest61() {
+
+        List<Province> list = easyQuery.queryable(Province.class)
+                .whereById("33")
+                .include(o -> o.many(Province::getCities).leftJoin(Topic.class,(x,y)->x.eq(y,City::getCode,Topic::getId)).where((x,y)->y.like(Topic::getTitle,"title")))
                 .toList();
         Assert.assertEquals(1, list.size());
     }

@@ -3,6 +3,7 @@ package com.easy.query.core.proxy.core;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
@@ -13,6 +14,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.accpet.AggregatePredicateEntityExpressionAccept;
 import com.easy.query.core.proxy.core.accpet.AggregatePredicateEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
+import com.easy.query.core.proxy.core.accpet.OrderByEntityExpressionAccept;
 import com.easy.query.core.proxy.core.accpet.OrderByEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.PredicateEntityExpressionAccept;
 import com.easy.query.core.proxy.core.accpet.PredicateEntityExpressionAcceptImpl;
@@ -90,6 +92,14 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
     public AggregateFilter getAggregateFilter() {
         if (accept instanceof AggregatePredicateEntityExpressionAccept) {
             return ((AggregatePredicateEntityExpressionAccept) accept).getAggregateFilter();
+        }
+        return null;
+    }
+
+    @Override
+    public OrderSelector getOrderSelector() {
+        if (accept instanceof OrderByEntityExpressionAccept) {
+            return ((OrderByEntityExpressionAccept) accept).getOrderSelector();
         }
         return null;
     }
