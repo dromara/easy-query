@@ -276,8 +276,8 @@ public class DocTest extends BaseTest {
                             })
                             .groupBy(o-> GroupKeys.of(o.id()))
                             .select(o -> new SysUserProxy(){{
-                                id().setColumn(o.key1());
-                                phone().setFunction(o.count().toStr());
+                                id().set(o.key1());
+                                phone().set(o.count().toStr());
                             }})
                             .toList();
                 } catch (Exception ex) {
@@ -310,8 +310,8 @@ public class DocTest extends BaseTest {
                             .groupBy(o->GroupKeys.of(o.id()))
                             .select(o -> {
                                 SysUserProxy sysUserProxy = new SysUserProxy();
-                                sysUserProxy.id().setColumn(o.key1());
-                                sysUserProxy.phone().setFunction(o.count().toStr());
+                                sysUserProxy.id().set(o.key1());
+                                sysUserProxy.phone().set(o.count().toStr());
                                 return sysUserProxy;
                             })
                             .toList();
@@ -588,8 +588,8 @@ public class DocTest extends BaseTest {
                             o.id()
                     ))
                     .select(o->new TopicProxy(){{
-                        id().setColumn(o.id());
-                        stars().setFunction(o.id().count().setPropertyType(Integer.class));//count(id) as stars
+                        id().set(o.id());
+                        stars().set(o.id().count().setPropertyType(Integer.class));//count(id) as stars
         }})
 //                    .selectAs(Topic.class,(o, tr)->Select.of(
 //                            o.id(),

@@ -546,8 +546,8 @@ public class MyTest1 extends BaseTest {
                 .where(o -> o.title().isNotNull())
                 .select(o -> new BlogEntityProxy() {
                     {
-                        title().setValue("1");
-                        id().setColumn(o.title());
+                        title().set("1");
+                        id().set(o.title());
                     }
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -567,8 +567,8 @@ public class MyTest1 extends BaseTest {
                 .where(o -> o.title().isNotNull())
                 .select(o -> new BlogEntityProxy() {
                     {
-                        id().setColumn(o.title());
-                        title().setSQLNativeSegment("1+1+{0}", c -> c.expression(o.stars()));
+                        id().set(o.title());
+                        title().setSQL("1+1+{0}", c -> c.expression(o.stars()));
                     }
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -591,9 +591,9 @@ public class MyTest1 extends BaseTest {
                 })
                 .select(o -> new BlogEntityProxy() {
                     {
-                        id().setColumn(o.title());
-                        id().setFunction(o.createTime().format("yyyy-MM-dd"));
-                        title().setFunction(o.title().subString(1, 2));
+                        id().set(o.title());
+                        id().set(o.createTime().format("yyyy-MM-dd"));
+                        title().set(o.title().subString(1, 2));
                     }
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -633,8 +633,8 @@ public class MyTest1 extends BaseTest {
                 .where(o -> o.title().isNotNull())
                 .select(o -> new BlogEntityProxy() {
                     {
-                        id().setColumn(o.title());
-                        title().setFunction(o.title().subString(1, 2));
+                        id().set(o.title());
+                        title().set(o.title().subString(1, 2));
                     }
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -657,16 +657,16 @@ public class MyTest1 extends BaseTest {
                 })
                 .select(o -> new BlogEntityProxy() {
                     {
-                        id().setColumn(o.title());
-                        title().setFunction(o.title().subString(1, 2));
+                        id().set(o.title());
+                        title().set(o.title().subString(1, 2));
 //                        content().set(o.title().subString(1, 2).asAny().toStr());
                     }
                 })
                 .groupByExpression(o -> GroupKeys.expressions(o.id()))
                 .select(o -> new BlogGroupIdAndNameProxy() {
                     {
-                        id().setColumn(o.id());
-                        idCount().setFunction(o.id().count());
+                        id().set(o.id());
+                        idCount().set(o.id().count());
                     }
                 })
                 .orderBy(o -> {
@@ -797,8 +797,8 @@ public class MyTest1 extends BaseTest {
                 })
                 .groupBy(o -> GroupKeys.of(o.title().subString(1, 2)))
                 .select(g -> new BlogEntityProxy() {{
-                    id().setFunction(g.key1());
-                    star().setFunction(g.intCount(g.group().title().subString(1, 2)));
+                    id().set(g.key1());
+                    star().set(g.intCount(g.group().title().subString(1, 2)));
                 }}).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -827,8 +827,8 @@ public class MyTest1 extends BaseTest {
                     return GroupKeys.of(o.value1());
                 })
                 .select(g -> new BlogEntityProxy() {{
-                    id().setColumn(g.key1());
-                    star().setFunction(g.intCount(g.group().value2().asAny()));
+                    id().set(g.key1());
+                    star().set(g.intCount(g.group().value2()));
                 }}).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -858,8 +858,8 @@ public class MyTest1 extends BaseTest {
                 })
                 .orderBy(o -> o.key1().asc())
                 .select(g -> new BlogEntityProxy() {{
-                    id().setColumn(g.key1());
-                    star().setFunction(g.intCount(g.group().value2().asAny()));
+                    id().set(g.key1());
+                    star().set(g.intCount(g.group().value2()));
                 }}).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -888,8 +888,8 @@ public class MyTest1 extends BaseTest {
                     return GroupKeys.of(o.value1());
                 })
                 .select(g -> new BlogEntityProxy() {{
-                    id().setColumn(g.key1());
-                    star().setFunction(g.intCount(g.group().value2().asAny()));
+                    id().set(g.key1());
+                    star().set(g.intCount(g.group().value2()));
                 }})
                 .orderBy(o -> o.star().asc()).toList();
 
@@ -915,14 +915,14 @@ public class MyTest1 extends BaseTest {
                 })
                 .groupBy(o -> GroupKeys.of(o.title().subString(1, 2)))
                 .select(g -> new BlogEntityProxy() {{
-                    id().setFunction(g.key1());
-                    title().setFunction(
+                    id().set(g.key1());
+                    title().set(
                             g.max(g.group().title())
                     );
-                    score().setFunction(
+                    score().set(
                             g.min(g.group().stars().toNumber(BigDecimal.class))
                     );
-                    content().setFunction(
+                    content().set(
                             g.join(g.group().id(), ",")
                     );
 //                    title().set(g.max(x -> x.title()));

@@ -66,7 +66,7 @@ public class UpdateTest extends BaseTest {
 
             long rows = easyEntityQuery.updatable(Topic.class)
                     .setColumns(o->{
-                        o.stars().setValue(12);
+                        o.stars().set(12);
                     })
                     .where(o -> o.id().eq("2"))
                     .where(o -> o.title().eq("2c"))
@@ -86,7 +86,7 @@ public class UpdateTest extends BaseTest {
 
 
             long rows = easyEntityQuery.updatable(Topic.class)
-                    .setColumns(o -> o.stars().setValue(12))
+                    .setColumns(o -> o.stars().set(12))
                     .where(o -> {
                         o.id().eq("2");
                         o.title().eq("2c");
@@ -108,7 +108,7 @@ public class UpdateTest extends BaseTest {
 
             long rows = easyEntityQuery.updatable(Topic.class)
                     .setColumns(o->{
-                        o.stars().setValue(12);
+                        o.stars().set(12);
                     })
                     .where(o -> {
                         o.id().eq("2");
@@ -720,7 +720,7 @@ public class UpdateTest extends BaseTest {
             long rows = easyEntityQuery.updatable(Topic.class)
                     .asTable("xxxxx")
                     .setColumns(o->{
-                        o.stars().setSQLNativeSegment("ifnull({0},0)+{1}", (context) -> {
+                        o.stars().setSQL("ifnull({0},0)+{1}", (context) -> {
                             context.expression(o.stars())
                                     .value(1);
                         });
@@ -1126,7 +1126,7 @@ public class UpdateTest extends BaseTest {
             easyEntityQuery.updatable(SysUserSQLEncryption.class)
                     .asTable("x123")
                     .setColumns(o->{
-                        o.phone().setValue("123123");
+                        o.phone().set("123123");
                     })
                     .where(o -> o.id().eq("7")).executeRows();
         } catch (Exception ex) {
@@ -1553,12 +1553,12 @@ public class UpdateTest extends BaseTest {
 
             long rows = easyEntityQuery.updatable(Topic.class)
                     .setColumns(o -> {
-                        o.stars().setValue(1);
-                        o.stars().setFunction(o.title().toNumber(Integer.class));
-                        o.title().setValue("1");
-                        o.title().setFunction(o.createTime().format("yyyy/MM/dd"));
-                        o.title().setFunction(o.title().nullDefault("x"));
-                        o.title().setSQLNativeSegment("IFNULL({0},{1})", c -> {
+                        o.stars().set(1);
+                        o.stars().set(o.title().toNumber(Integer.class));
+                        o.title().set("1");
+                        o.title().set(o.createTime().format("yyyy/MM/dd"));
+                        o.title().set(o.title().nullDefault("x"));
+                        o.title().setSQL("IFNULL({0},{1})", c -> {
                             c.keepStyle();
                             c.expression(o.title());
                             c.value("p");

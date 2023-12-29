@@ -23,46 +23,46 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
  * @author xuejiaming
  */
 public interface DSLColumnSet<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
-    default void setValue(TProperty val) {
-        setValue(true, val);
+    default void set(TProperty val) {
+        set(true, val);
     }
 
-    default void setValue(boolean condition, TProperty val) {
+    default void set(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), val));
         }
     }
 
-    default void setColumn(SQLColumn<?, TProperty> column) {
-        setColumn(true, column);
+    default void set(SQLColumn<?, TProperty> column) {
+        set(true, column);
     }
 
-    default void setColumn(boolean condition, SQLColumn<?, TProperty> column) {
+    default void set(boolean condition, SQLColumn<?, TProperty> column) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
         }
     }
-    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void setFunction(TResult val) {
-        setFunction(true, val);
+    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void set(TResult val) {
+        set(true, val);
     }
 
-    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void setFunction(boolean condition, TResult val) {
+    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void set(boolean condition, TResult val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetSQLFunctionValueImpl(getTable(), getValue(), val));
         }
     }
 
-    default void setSQLNativeSegment(String sqlSegment) {
-        setSQLNativeSegment(sqlSegment, c -> {
+    default void setSQL(String sqlSegment) {
+        setSQL(sqlSegment, c -> {
         });
     }
 
-    default void setSQLNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        setSQLNativeSegment(true, sqlSegment, contextConsume);
+    default void setSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+        setSQL(true, sqlSegment, contextConsume);
     }
 
 
-    default void setSQLNativeSegment(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    default void setSQL(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetNativeSQLImpl(getTable(), getValue(), sqlSegment, contextConsume));
         }
