@@ -1,20 +1,18 @@
 package com.easy.query.core.proxy.grouping.proxy;
 
 import com.easy.query.core.expression.builder.GroupSelector;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLGroupByExpression;
-import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.ColumnObjectFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.ColumnStringFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
-import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;
@@ -34,39 +32,46 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
         this.tSourceProxy = tSourceProxy;
     }
 
-    public <TProperty> ColumnFuncComparableExpression<Long> count(SQLFuncExpression1<TSourceProxy, ColumnObjectFunctionAvailable<TProperty, ?>> column) {
-        return column.apply(tSourceProxy).count();
+    /**
+     * 当仅单表是group就是当前表
+     * 如果是多表下比如join下那么groups就是MergeTuple2-10最多10个如有需要可以提交issue或者自行扩展
+     * @return
+     */
+    public TSourceProxy group(){
+        return tSourceProxy;
     }
-    public ColumnFuncComparableExpression<Long> count() {
-        return new SQLColumnFunctionComparableExpressionImpl<>(getEntitySQLContext(),null,null,f->{
+
+    public ColumnFunctionComparableNumberChainExpression<Long> count() {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null, f->{
             return f.count(c->{});
         }, Long.class);
     }
-    public ColumnFuncComparableExpression<Integer> intCount() {
-        return new SQLColumnFunctionComparableExpressionImpl<>(getEntitySQLContext(),null,null,f->{
+    public ColumnFunctionComparableNumberChainExpression<Integer> intCount() {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null,f->{
             return f.count(c->{});
         }, Integer.class);
     }
-
-    public <TProperty> ColumnFuncComparableExpression<Integer> intCount(SQLFuncExpression1<TSourceProxy, ColumnObjectFunctionAvailable<TProperty, ?>> column) {
-        return column.apply(tSourceProxy).intCount();
+    public <TProperty> ColumnFunctionComparableNumberChainExpression<Long> count(ColumnObjectFunctionAvailable<TProperty, ?> column) {
+        return column.count();
+    }
+    public <TProperty> ColumnFunctionComparableNumberChainExpression<Integer> intCount(ColumnObjectFunctionAvailable<TProperty, ?> column) {
+        return column.intCount();
+    }
+    public <TProperty, TChain extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> TChain max(ColumnObjectFunctionAvailable<TProperty, TChain> column) {
+        return column.max();
     }
 
-    public <TProperty, TChain extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> TChain max(SQLFuncExpression1<TSourceProxy, ColumnObjectFunctionAvailable<TProperty, TChain>> column) {
-        return column.apply(tSourceProxy).max();
+    public <TProperty, TChain extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> TChain min(ColumnObjectFunctionAvailable<TProperty, TChain> column) {
+        return column.min();
     }
-
-    public <TProperty, TChain extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> TChain min(SQLFuncExpression1<TSourceProxy, ColumnObjectFunctionAvailable<TProperty, TChain>> column) {
-        return column.apply(tSourceProxy).min();
+    public <TProperty> ColumnFunctionComparableNumberChainExpression<BigDecimal> sum(ColumnNumberFunctionAvailable<TProperty> column) {
+        return column.sum();
     }
-    public <TProperty> ColumnFunctionComparableNumberChainExpression<BigDecimal> sum(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> column) {
-        return column.apply(tSourceProxy).sum();
+    public <TProperty> ColumnFunctionComparableNumberChainExpression<BigDecimal> avg(ColumnNumberFunctionAvailable<TProperty> column) {
+        return column.avg();
     }
-    public <TProperty> ColumnFunctionComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> column) {
-        return column.apply(tSourceProxy).avg();
-    }
-    public <TProperty> ColumnFunctionComparableStringChainExpression<String> join(SQLFuncExpression1<TSourceProxy, ColumnStringFunctionAvailable<TProperty>> column, String delimiter) {
-        return column.apply(tSourceProxy).join(delimiter);
+    public <TProperty> ColumnFunctionComparableStringChainExpression<String> join(ColumnStringFunctionAvailable<TProperty> column, String delimiter) {
+        return column.join(delimiter);
     }
 
     protected <TKey extends PropTypeColumn<TKey1>, TKey1> void acceptGroupSelector(TKey key, GroupSelector s){
@@ -77,7 +82,11 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
             SQLFunction sqlFunction = funcCreate.apply(fx);
             s.columnFunc(key.getTable(),sqlFunction);
         }else{
-            s.column(key.getTable(), key.getValue());
+            key.accept(s);
+//            if(key instanceof SQLNativeDraft){
+//            }else{
+//                s.column(key.getTable(), key.getValue());
+//            }
         }
     }
 

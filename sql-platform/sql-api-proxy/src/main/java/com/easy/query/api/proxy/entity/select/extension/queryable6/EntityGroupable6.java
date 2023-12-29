@@ -24,11 +24,11 @@ public interface EntityGroupable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T6Proxy extends ProxyEntity<T6Proxy, T6>, T6> extends ClientEntityQueryable6Available<T1, T2, T3, T4, T5, T6>, EntityQueryable6Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> {
 
 
-    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByFlat(SQLFuncExpression6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, SQLGroupByExpression> selectExpression) {
-        return groupByFlat(true, selectExpression);
+    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByExpression(SQLFuncExpression6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, SQLGroupByExpression> selectExpression) {
+        return groupByExpression(true, selectExpression);
     }
 
-    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByFlat(boolean condition, SQLFuncExpression6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, SQLGroupByExpression> selectExpression) {
+    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByExpression(boolean condition, SQLFuncExpression6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, SQLGroupByExpression> selectExpression) {
         if (condition) {
             getClientQueryable6().groupBy((t, t1, t2, t3, t4, t5) -> {
                 SQLGroupByExpression sqlGroupByExpression = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy());
@@ -38,12 +38,12 @@ public interface EntityGroupable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable6();
     }
 
-    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByFlatMerge(SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>, SQLGroupByExpression> selectExpression) {
-        return groupByFlatMerge(true, selectExpression);
+    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByExpressionMerge(SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>, SQLGroupByExpression> selectExpression) {
+        return groupByExpressionMerge(true, selectExpression);
     }
 
-    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByFlatMerge(boolean condition, SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>, SQLGroupByExpression> selectExpression) {
-        return groupByFlat(condition, (t, t1, t2, t3, t4, t5) -> {
+    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByExpressionMerge(boolean condition, SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>, SQLGroupByExpression> selectExpression) {
+        return groupByExpression(condition, (t, t1, t2, t3, t4, t5) -> {
             return selectExpression.apply(new MergeTuple6<>(t, t1, t2, t3, t4, t5));
         });
     }

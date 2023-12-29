@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.impl;
 
+import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.builder.core.SQLNativeAble;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -15,13 +16,13 @@ import java.util.function.BiConsumer;
  *
  * @author xuejiaming
  */
-public class SQLDraftSelectImpl implements PropTypeColumn<Object> {
+public class SQLNativeDraftImpl implements PropTypeColumn<Object>{
 
 
     private final BiConsumer<String, SQLNativeAble> selectorConsumer;
     private Class<?> propType;
 
-    public SQLDraftSelectImpl(BiConsumer<String, SQLNativeAble> selectorConsumer){
+    public SQLNativeDraftImpl(BiConsumer<String, SQLNativeAble> selectorConsumer){
         this.selectorConsumer = selectorConsumer;
 
         this.propType = Object.class;
@@ -36,6 +37,11 @@ public class SQLDraftSelectImpl implements PropTypeColumn<Object> {
         }, s -> {
             throw new UnsupportedOperationException();
         });
+    }
+
+    @Override
+    public void accept(GroupSelector s) {
+        selectorConsumer.accept(null,s);
     }
 
     @Override

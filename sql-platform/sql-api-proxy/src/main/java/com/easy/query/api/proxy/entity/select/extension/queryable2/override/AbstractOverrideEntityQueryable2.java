@@ -71,8 +71,8 @@ public abstract class AbstractOverrideEntityQueryable2<T1Proxy extends ProxyEnti
     }
 
     @Override
-    public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> groupByFlat(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
-        super.groupByFlat(condition, selectExpression);
+    public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> groupByExpression(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
+        super.groupByExpression(condition, selectExpression);
         return getQueryable2();
     }
 

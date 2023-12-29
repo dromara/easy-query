@@ -77,12 +77,12 @@ public interface OverrideEntityQueryable7<T1Proxy extends ProxyEntity<T1Proxy, T
     EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> where(boolean condition, SQLExpression1<T1Proxy> whereExpression);
 
     @Override
-    default EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> groupByFlat(SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
-        return groupByFlat(true, selectExpression);
+    default EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> groupByExpression(SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
+        return groupByExpression(true, selectExpression);
     }
 
     @Override
-    EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> groupByFlat(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression);
+    EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> groupByExpression(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression);
 
     @Override
     default EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> having(SQLExpression1<T1Proxy> predicateExpression) {

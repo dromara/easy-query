@@ -5,6 +5,7 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.grouping.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
 import org.junit.Assert;
@@ -116,10 +117,10 @@ public class DamengQueryTest extends DamengBaseTest{
     @Test
     public void testJoin1(){
         List<Draft2<String, String>> list = entityQuery.queryable(DamengMyTopic.class)
-                .groupByFlat(o -> o.title())
+                .groupBy(o -> GroupKeys.of(o.title()))
                 .selectDraft(o -> Select.draft(
-                        o.title(),
-                        o.id().join(",")
+                        o.key1(),
+                        o.join(o.group().id(),",")
                 )).toList();
     }
 

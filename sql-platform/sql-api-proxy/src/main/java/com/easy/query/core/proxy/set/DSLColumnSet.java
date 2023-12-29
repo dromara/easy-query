@@ -23,21 +23,21 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
  * @author xuejiaming
  */
 public interface DSLColumnSet<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
-    default void set(TProperty val) {
-        set(true, val);
+    default void setValue(TProperty val) {
+        setValue(true, val);
     }
 
-    default void set(boolean condition, TProperty val) {
+    default void setValue(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), val));
         }
     }
 
-    default void set(SQLColumn<?, TProperty> column) {
-        set(true, column);
+    default void setColumn(SQLColumn<?, TProperty> column) {
+        setColumn(true, column);
     }
 
-    default void set(boolean condition, SQLColumn<?, TProperty> column) {
+    default void setColumn(boolean condition, SQLColumn<?, TProperty> column) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
         }

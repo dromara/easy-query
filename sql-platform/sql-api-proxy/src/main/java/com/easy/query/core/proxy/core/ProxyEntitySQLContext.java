@@ -134,7 +134,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
 //    }
 
     @Override
-    public void _nativeSqlSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    public void _executeNativeSql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
 
         if (accept instanceof PredicateEntityExpressionAccept) {
             accept.accept(new SQLPredicateImpl(f -> {

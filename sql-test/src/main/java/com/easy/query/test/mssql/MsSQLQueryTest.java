@@ -4,6 +4,7 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.grouping.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
@@ -146,12 +147,11 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-
         List<Draft2<String, String>> list = entityQuery.queryable(MsSQLMyTopic.class)
-                .groupByFlat(o -> o.title())
+                .groupBy(o -> GroupKeys.of(o.title()))
                 .selectDraft(o -> Select.draft(
-                        o.title(),
-                        o.id().join(",")
+                        o.key1(),
+                        o.join(o.group().id(),",")
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

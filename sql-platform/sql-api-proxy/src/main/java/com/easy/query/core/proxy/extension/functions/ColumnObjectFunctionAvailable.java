@@ -7,10 +7,10 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
-import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.util.function.Function;
@@ -24,12 +24,12 @@ import java.util.function.Function;
 public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
     TChain createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType);
 
-    default <T extends Long> ColumnFuncComparableExpression<T> count() {
+    default <T extends Long> ColumnFunctionComparableNumberChainExpression<T> count() {
         return count(false);
     }
 
-    default <T extends Long> ColumnFuncComparableExpression<T> count(boolean distinct) {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default <T extends Long> ColumnFunctionComparableNumberChainExpression<T> count(boolean distinct) {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.count(sqlFunction).distinct(distinct);
@@ -38,12 +38,12 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
             }
         }, Long.class);
     }
-    default <T extends Integer> ColumnFuncComparableExpression<T> intCount() {
+    default <T extends Integer> ColumnFunctionComparableNumberChainExpression<T> intCount() {
         return intCount(false);
     }
 
-    default <T extends Integer> ColumnFuncComparableExpression<T> intCount(boolean distinct) {
-        return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default <T extends Integer> ColumnFunctionComparableNumberChainExpression<T> intCount(boolean distinct) {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.count(sqlFunction).distinct(distinct);

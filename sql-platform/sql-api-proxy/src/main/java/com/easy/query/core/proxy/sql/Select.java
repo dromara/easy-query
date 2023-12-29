@@ -34,7 +34,7 @@ import com.easy.query.core.proxy.core.draft.proxy.Draft7Proxy;
 import com.easy.query.core.proxy.core.draft.proxy.Draft8Proxy;
 import com.easy.query.core.proxy.core.draft.proxy.Draft9Proxy;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
-import com.easy.query.core.proxy.impl.SQLDraftSelectImpl;
+import com.easy.query.core.proxy.impl.SQLNativeDraftImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectGroupKeyAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectImpl;
@@ -249,7 +249,7 @@ public class Select {
     }
 
     public static PropTypeColumn<Object> draftSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        return new SQLDraftSelectImpl((alias, f) -> {
+        return new SQLNativeDraftImpl((alias, f) -> {
             f.sqlNativeSegment(sqlSegment, c -> {
                 if (alias != null) {
                     c.setPropertyAlias(alias);

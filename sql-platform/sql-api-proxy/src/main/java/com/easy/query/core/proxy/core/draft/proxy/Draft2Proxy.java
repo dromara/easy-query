@@ -1,8 +1,8 @@
 package com.easy.query.core.proxy.core.draft.proxy;
 
 import com.easy.query.core.proxy.AbstractProxyEntity;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -27,15 +27,15 @@ public class Draft2Proxy<T1,T2> extends AbstractProxyEntity<Draft2Proxy<T1,T2>, 
     /**
      * {@link Draft2#getValue1}
      */
-    public SQLColumn<Draft2Proxy<T1,T2>, T1> value1() {
-        return get("value1");
+    public SQLAnyColumn<Draft2Proxy<T1,T2>, T1> value1() {
+        return getAnyColumn("value1",null);
     }
 
     /**
      * {@link Draft2#getValue2()}
      */
-    public SQLColumn<Draft2Proxy<T1,T2>, T2> value2() {
-        return get("value2");
+    public SQLAnyColumn<Draft2Proxy<T1,T2>, T2> value2() {
+        return getAnyColumn("value2",null);
     }
 
 

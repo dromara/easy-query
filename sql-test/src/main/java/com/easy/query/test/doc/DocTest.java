@@ -7,13 +7,14 @@ import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.Fetcher;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.sql.GroupBy;
+import com.easy.query.core.proxy.grouping.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.BaseTest;
 import com.easy.query.test.doc.dto.SysUserQueryRequest;
 import com.easy.query.test.doc.entity.SysUser;
+import com.easy.query.test.doc.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.TopicProxy;
@@ -186,7 +187,7 @@ public class DocTest extends BaseTest {
                                 o.id().like("123");
                                 o.id().like(false, "123");
                             })
-                            .groupByFlat(o -> o.id())
+                            .groupByExpression(o -> o.id())
 //                            .groupBy(o->o.id().then(o.name()))
 //                            .groupBy(o->{
 //                                return o.id().then(o.name());
@@ -257,6 +258,75 @@ public class DocTest extends BaseTest {
             Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') IN (?,?) AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') NOT IN (?,?) AND 1 = 2 AND 1 = 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("false(Boolean),2023-01-02(String),2023-01-03(String),2023-01-02(String),2023-01-03(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
+
+        }
+
+
+        {
+
+            Supplier<Exception> f = () -> {
+                try {
+                    List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
+                            .asTable("a222")
+                            .where(o -> {
+                                o.id().eq("1");
+                                o.id().eq(false, "1");//true/false表示是否使用该条件默认true
+                                o.id().like("123");
+                                o.id().like(false, "123");
+                            })
+                            .groupBy(o-> GroupKeys.of(o.id()))
+                            .select(o -> new SysUserProxy(){{
+                                id().setColumn(o.key1());
+                                phone().setFunction(o.count().toStr());
+                            }})
+                            .toList();
+                } catch (Exception ex) {
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+            Assert.assertEquals("SELECT t.`id` AS `id`,CAST(COUNT(*) AS CHAR) AS `phone` FROM `a222` t WHERE t.`id` = ? AND t.`id` LIKE ? GROUP BY t.`id`", easyQuerySQLStatementException.getSQL());
+
+        }
+
+        {
+
+            Supplier<Exception> f = () -> {
+                try {
+                    List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
+                            .asTable("a222")
+                            .where(o -> {
+                                o.id().eq("1");
+                                o.id().eq(false, "1");//true/false表示是否使用该条件默认true
+                                o.id().like("123");
+                                o.id().like(false, "123");
+                            })
+                            .groupBy(o->GroupKeys.of(o.id()))
+                            .select(o -> {
+                                SysUserProxy sysUserProxy = new SysUserProxy();
+                                sysUserProxy.id().setColumn(o.key1());
+                                sysUserProxy.phone().setFunction(o.count().toStr());
+                                return sysUserProxy;
+                            })
+                            .toList();
+                } catch (Exception ex) {
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+            Assert.assertEquals("SELECT t.`id` AS `id`,CAST(COUNT(*) AS CHAR) AS `phone` FROM `a222` t WHERE t.`id` = ? AND t.`id` LIKE ? GROUP BY t.`id`", easyQuerySQLStatementException.getSQL());
 
         }
     }
@@ -514,11 +584,11 @@ public class DocTest extends BaseTest {
                         o.title().like("123");
                         o.createTime().ge(LocalDateTime.of(2022,2,1,3,4));
                     })
-                    .groupByFlat(o-> GroupBy.of(
+                    .groupByExpression(o-> GroupKeys.expressions(
                             o.id()
                     ))
                     .select(o->new TopicProxy(){{
-                        id().set(o.id());
+                        id().setColumn(o.id());
                         stars().setFunction(o.id().count().setPropertyType(Integer.class));//count(id) as stars
         }})
 //                    .selectAs(Topic.class,(o, tr)->Select.of(

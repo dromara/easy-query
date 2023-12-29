@@ -1,8 +1,8 @@
 package com.easy.query.core.proxy.core.draft.proxy;
 
 import com.easy.query.core.proxy.AbstractProxyEntity;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.core.draft.Draft10;
 import com.easy.query.core.proxy.core.draft.Draft9;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
@@ -28,63 +28,63 @@ public class Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10> extends AbstractProxyE
     /**
      * {@link Draft10#getValue1}
      */
-    public SQLColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T1> value1() {
-        return get("value1");
+    public SQLAnyColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T1> value1() {
+        return getAnyColumn("value1",null);
     }
 
     /**
      * {@link Draft10#getValue2()}
      */
-    public SQLColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T2> value2() {
-        return get("value2");
+    public SQLAnyColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T2> value2() {
+        return getAnyColumn("value2",null);
     }
     /**
      * {@link Draft10#getValue3()}
      */
-    public SQLColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T3> value3() {
-        return get("value3");
+    public SQLAnyColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T3> value3() {
+        return getAnyColumn("value3",null);
     }
     /**
      * {@link Draft10#getValue4()}
      */
-    public SQLColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T4> value4() {
-        return get("value4");
+    public SQLAnyColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T4> value4() {
+        return getAnyColumn("value4",null);
     }
     /**
      * {@link Draft10#getValue5()}
      */
-    public SQLColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T5> value5() {
-        return get("value5");
+    public SQLAnyColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T5> value5() {
+        return getAnyColumn("value5",null);
     }
     /**
      * {@link Draft10#getValue6()}
      */
-    public SQLColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T6> value6() {
-        return get("value6");
+    public SQLAnyColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T6> value6() {
+        return getAnyColumn("value6",null);
     }
     /**
      * {@link Draft10#getValue7()}
      */
-    public SQLColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T7> value7() {
-        return get("value7");
+    public SQLAnyColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T7> value7() {
+        return getAnyColumn("value7",null);
     }
     /**
      * {@link Draft10#getValue8()}
      */
-    public SQLColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T8> value8() {
-        return get("value8");
+    public SQLAnyColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T8> value8() {
+        return getAnyColumn("value8",null);
     }
     /**
      * {@link Draft10#getValue9()}
      */
-    public SQLColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T9> value9() {
-        return get("value9");
+    public SQLAnyColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T9> value9() {
+        return getAnyColumn("value9",null);
     }
     /**
      * {@link Draft10#getValue10()}
      */
-    public SQLColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T10> value10() {
-        return get("value10");
+    public SQLAnyColumn<Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>, T10> value10() {
+        return getAnyColumn("value10",null);
     }
 
 

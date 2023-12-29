@@ -1,16 +1,21 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
+import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
+import com.easy.query.core.proxy.impl.SQLNativeDraftImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
+import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Objects;
@@ -90,8 +95,8 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * 支持where having order
      * @param sqlSegment
      */
-    public void sqlNativeSegment(String sqlSegment){
-        sqlNativeSegment(sqlSegment, c->{});
+    public void executeSQL(String sqlSegment){
+        executeSQL(sqlSegment, c->{});
     }
 
     /**
@@ -100,8 +105,8 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * @param sqlSegment
      * @param contextConsume
      */
-    public void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
-        sqlNativeSegment(true,sqlSegment,contextConsume);
+    public void executeSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+        executeSQL(true,sqlSegment,contextConsume);
     }
 
     /**
@@ -111,10 +116,33 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * @param sqlSegment
      * @param contextConsume
      */
-    public void sqlNativeSegment(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+    public void executeSQL(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
         if(condition){
-            getEntitySQLContext()._nativeSqlSegment(sqlSegment,contextConsume);
+            getEntitySQLContext()._executeNativeSql(sqlSegment,contextConsume);
         }
     }
 
+
+
+    public PropTypeColumn<Object> sql(String sqlSegment) {
+        return sql(sqlSegment, c->{});
+    }
+
+    public PropTypeColumn<Object> sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+        return new SQLNativeDraftImpl((alias, f) -> {
+            f.sqlNativeSegment(sqlSegment, c -> {
+                if (alias != null) {
+                    c.setPropertyAlias(alias);
+                }
+                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
+            });
+        });
+    }
+
+    public <TSubQuery> PropTypeColumn<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
+        Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
+        return new SQLDraftAsSelectImpl<>((alias, f)->{
+            f.columnSubQueryAs(()->subQueryQuery, alias);
+        },subQueryQuery.queryClass());
+    }
 }

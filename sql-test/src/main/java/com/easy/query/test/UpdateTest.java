@@ -66,7 +66,7 @@ public class UpdateTest extends BaseTest {
 
             long rows = easyEntityQuery.updatable(Topic.class)
                     .setColumns(o->{
-                        o.stars().set(12);
+                        o.stars().setValue(12);
                     })
                     .where(o -> o.id().eq("2"))
                     .where(o -> o.title().eq("2c"))
@@ -86,7 +86,7 @@ public class UpdateTest extends BaseTest {
 
 
             long rows = easyEntityQuery.updatable(Topic.class)
-                    .setColumns(o -> o.stars().set(12))
+                    .setColumns(o -> o.stars().setValue(12))
                     .where(o -> {
                         o.id().eq("2");
                         o.title().eq("2c");
@@ -108,7 +108,7 @@ public class UpdateTest extends BaseTest {
 
             long rows = easyEntityQuery.updatable(Topic.class)
                     .setColumns(o->{
-                        o.stars().set(12);
+                        o.stars().setValue(12);
                     })
                     .where(o -> {
                         o.id().eq("2");
@@ -1126,7 +1126,7 @@ public class UpdateTest extends BaseTest {
             easyEntityQuery.updatable(SysUserSQLEncryption.class)
                     .asTable("x123")
                     .setColumns(o->{
-                        o.phone().set("123123");
+                        o.phone().setValue("123123");
                     })
                     .where(o -> o.id().eq("7")).executeRows();
         } catch (Exception ex) {
@@ -1553,9 +1553,9 @@ public class UpdateTest extends BaseTest {
 
             long rows = easyEntityQuery.updatable(Topic.class)
                     .setColumns(o -> {
-                        o.stars().set(1);
+                        o.stars().setValue(1);
                         o.stars().setFunction(o.title().toNumber(Integer.class));
-                        o.title().set("1");
+                        o.title().setValue("1");
                         o.title().setFunction(o.createTime().format("yyyy/MM/dd"));
                         o.title().setFunction(o.title().nullDefault("x"));
                         o.title().setSQLNativeSegment("IFNULL({0},{1})", c -> {

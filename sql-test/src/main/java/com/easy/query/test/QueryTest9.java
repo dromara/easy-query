@@ -12,6 +12,7 @@ import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
+import com.easy.query.core.proxy.grouping.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTypeUtil;
@@ -252,12 +253,13 @@ public class QueryTest9 extends BaseTest {
                     o.title().eq("title");
                     o.id().eq("1");
                 })
-                .groupByFlat(o -> o.title())
+                .groupBy(o -> GroupKeys.of( o.title()))
                 .select(o -> new TopicProxy() {{
-                    selectColumns(o.title());
-                    stars().setFunction(o.id().intCount());
+                    title().setColumn(o.key1());
+                    stars().setFunction(o.intCount(o.group().id()));
                 }})
                 .toList();
+
     }
 
     @Test
@@ -328,7 +330,7 @@ public class QueryTest9 extends BaseTest {
                     })
                     .orderBy(o -> {
                         o.createTime().format("yyyy-MM-dd HH:mm:ss").desc();
-                        o.sqlNativeSegment("IFNULL({0},'') ASC", c -> {
+                        o.executeSQL("IFNULL({0},'') ASC", c -> {
                             c.keepStyle().expression(o.stars());
                         });
                     })
@@ -353,7 +355,7 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
-                    .groupByFlat(o -> o.createTime().format("yyyy/MM/dd"))
+                    .groupByExpression(o -> o.createTime().format("yyyy/MM/dd"))
                     .select(o -> new TopicProxy() {{
                         stars().setFunction(o.id().intCount());
                         title().setFunction(o.createTime().format("yyyy/MM/dd"));
@@ -372,7 +374,7 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
-                    .groupByFlat(o -> o.createTime().format("yyyy/MM/dd"))
+                    .groupByExpression(o -> o.createTime().format("yyyy/MM/dd"))
                     .select(o -> new TopicProxy() {{
                         stars().setFunction(o.id().intCount());
                         title().setFunction(o.createTime().format("yyyy/MM/dd"));
@@ -660,7 +662,7 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
-                    .groupByFlat(o -> o.FETCHER.title())
+                    .groupByExpression(o -> o.FETCHER.title())
                     .select(o -> new TopicProxy() {{
                         selectColumns(o.title());
                         stars().setFunction(o.id().intCount());
@@ -688,13 +690,13 @@ public class QueryTest9 extends BaseTest {
                         });
                         o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                         o.id().nullDefault("yyyy/MM/dd").eq("xxx");
-                        o.sqlNativeSegment("{0} != {1}", c -> {
+                        o.executeSQL("{0} != {1}", c -> {
                             c.expression(o.stars()).expression(o.createTime());
                         });
                         o.or(() -> {
                             o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                             o.id().nullDefault("yyyy/MM/dd").eq("xxx");
-                            o.sqlNativeSegment("{0} != {1}", c -> {
+                            o.executeSQL("{0} != {1}", c -> {
                                 c.expression(o.stars()).expression(o.createTime());
                             });
                         });
@@ -856,13 +858,13 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123"))
-                    .groupByFlat(o -> o.id())
+                    .groupByExpression(o -> o.id())
                     .having(o -> {
                         o.id().count().ne(1);
                         o.star().sum().ge(10);
                     })
                     .select(o -> new BlogEntityProxy() {{
-                        id().set(o.id());
+                        id().setColumn(o.id());
                         star().setFunction(o.id().count().setPropertyType(Integer.class));
 //                        star().set(o.id().intCount());
                         title().setFunction(o.id().max());
@@ -900,12 +902,12 @@ public class QueryTest9 extends BaseTest {
                     o.title().nullDefault("unknown").eq(o.content());
                     o.content().isNotBank();
                 })
-                .groupByFlat(o -> o.id())
+                .groupByExpression(o -> o.id())
                 .having(o -> {
                     o.id().count().ne(1);
                     o.star().sum().ge(10);
                 }).select(o -> new BlogEntityProxy() {{
-                    id().set(o.id());
+                    id().setColumn(o.id());
                     star().setFunction(o.id().intCount());
                     title().setFunction(o.id().max());
                 }}).toList();
@@ -932,7 +934,7 @@ public class QueryTest9 extends BaseTest {
                     o.id().eq(sss);
                     o.title().nullDefault("unknown").in(sss);
                 })
-                .groupByFlat(o -> o.id())
+                .groupByExpression(o -> o.id())
                 .having(o -> {
                     o.id().count().ne(1);
                     o.star().sum().ge(10);
@@ -1252,7 +1254,7 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupByFlat(o -> o.id())
+                    }).groupByExpression(o -> o.id())
                     .having(o -> {
                         o.id().max().like("1");
                         o.id().max().like(false, "2");
@@ -1293,7 +1295,7 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupByFlat(o -> o.id())
+                    }).groupByExpression(o -> o.id())
                     .having(o -> {
                         o.id().max().eq("1");
                         o.id().max().eq(false, "2");
@@ -1334,7 +1336,7 @@ public class QueryTest9 extends BaseTest {
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupByFlat(o -> o.id())
+                    }).groupByExpression(o -> o.id())
                     .having(o -> {
                         o.id().max().eq(o.id().min());
                         o.id().max().eq(false, o.id().min());
@@ -1373,7 +1375,7 @@ public class QueryTest9 extends BaseTest {
                 .queryable(Topic.class)
                 .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                 .where((t, t1) -> t1.title().isNotNull())
-                .groupByFlat((t, t1) -> t1.id())
+                .groupByExpression((t, t1) -> t1.id())
                 .select((t, t1) -> new BlogEntityProxy() {{
                     selectColumns(t1.id());
                     score().setFunction(t1.score().sum());
@@ -1395,7 +1397,7 @@ public class QueryTest9 extends BaseTest {
             Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
             List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupByFlat(t -> t.id())
+                    .groupByExpression(t -> t.id())
                     .selectDraft(t -> Select.draft(t.id()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1410,7 +1412,7 @@ public class QueryTest9 extends BaseTest {
             Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
             List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupByFlat(t -> t.id())
+                    .groupByExpression(t -> t.id())
                     .selectDraft(t -> Select.draft(t.id()))
                     .where(o -> o.value1().eq("123"))
                     .toList();
@@ -1425,7 +1427,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<Draft2<String, Long>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupByFlat(t -> t.id())
+                    .groupByExpression(t -> t.id())
                     .selectDraft(t -> Select.draft(
                             t.id(),
                             t.id().count().setPropertyType(Long.class)
@@ -1442,7 +1444,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<Draft3<String, Long, BigDecimal>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupByFlat(t -> t.id())
+                    .groupByExpression(t -> t.id())
                     .selectDraft(t -> Select.draft(t.id(), t.id().count(), t.stars().sum()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1477,6 +1479,7 @@ public class QueryTest9 extends BaseTest {
             Assert.assertEquals("SELECT t.`id` AS `value1`,t.`create_time` AS `value2` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             listenerContextManager.clear();
             LocalDateTime value2 = list.get(0).getValue2();
+            System.out.println(value2);
         }
         {
 
@@ -1573,7 +1576,7 @@ public class QueryTest9 extends BaseTest {
                     o.title().like("123");
                     o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                 })
-                .groupByFlat(o -> o.id())//多个用GroupBy.of(.....)
+                .groupByExpression(o -> o.id())//多个用GroupBy.of(.....)
                 .selectDraft(o -> Select.draft(
                         o.id(),
                         o.id().count()
@@ -1862,7 +1865,7 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<String, String>> list2 = easyEntityQuery.queryable(BlogEntity.class)
-                .groupByFlat(o -> o.content().subString(0, 8))
+                .groupByExpression(o -> o.content().subString(0, 8))
                 .selectDraft(o -> Select.draft(
                         o.groupKeys(0).toDraft(String.class),
                         o.id().join(",")
