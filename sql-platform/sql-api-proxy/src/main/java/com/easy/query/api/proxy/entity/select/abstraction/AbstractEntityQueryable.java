@@ -40,6 +40,7 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -188,16 +189,17 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression) {
-        TRProxy apply = selectExpression.apply(get1Proxy());
-        SQLSelectAsExpression selectAsExpression = apply.getEntitySQLContext().getSelectAsExpression();
+        TRProxy resultProxy = selectExpression.apply(get1Proxy());
+        Objects.requireNonNull(resultProxy,"select null result class");
+        SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
         if(selectAsExpression==null){//全属性映射
-            ClientQueryable<TR> select = entityQueryable.select(apply.getEntityClass());
-            return new EasyEntityQueryable<>(apply, select);
+            ClientQueryable<TR> select = entityQueryable.select(resultProxy.getEntityClass());
+            return new EasyEntityQueryable<>(resultProxy, select);
         }else{
-            ClientQueryable<TR> select = entityQueryable.select(apply.getEntityClass(), columnAsSelector -> {
+            ClientQueryable<TR> select = entityQueryable.select(resultProxy.getEntityClass(), columnAsSelector -> {
                 selectAsExpression.accept(columnAsSelector.getAsSelector());
             });
-            return new EasyEntityQueryable<>(apply, select);
+            return new EasyEntityQueryable<>(resultProxy, select);
         }
     }
 

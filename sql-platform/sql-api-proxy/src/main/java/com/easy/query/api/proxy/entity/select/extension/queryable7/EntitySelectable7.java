@@ -13,6 +13,8 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.util.Objects;
+
 /**
  * create time 2023/8/16 08:47
  * 文件说明
@@ -41,16 +43,17 @@ public interface EntitySelectable7<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     }
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR>  select(SQLFuncExpression7<T1Proxy,T2Proxy,T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy, TRProxy> selectExpression){
 
-        TRProxy apply = selectExpression.apply(get1Proxy(),get2Proxy(),get3Proxy(),get4Proxy(),get5Proxy(),get6Proxy(),get7Proxy());
-        SQLSelectAsExpression selectAsExpression = apply.getEntitySQLContext().getSelectAsExpression();
+        TRProxy resultProxy = selectExpression.apply(get1Proxy(),get2Proxy(),get3Proxy(),get4Proxy(),get5Proxy(),get6Proxy(),get7Proxy());
+        Objects.requireNonNull(resultProxy,"select null result class");
+        SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
         if(selectAsExpression==null){//全属性映射
-            ClientQueryable<TR> select = getClientQueryable7().select(apply.getEntityClass());
-            return new EasyEntityQueryable<>(apply, select);
+            ClientQueryable<TR> select = getClientQueryable7().select(resultProxy.getEntityClass());
+            return new EasyEntityQueryable<>(resultProxy, select);
         }else{
-            ClientQueryable<TR> select = getClientQueryable7().select(apply.getEntityClass(), columnAsSelector -> {
+            ClientQueryable<TR> select = getClientQueryable7().select(resultProxy.getEntityClass(), columnAsSelector -> {
                 selectAsExpression.accept(columnAsSelector.getAsSelector());
             });
-            return new EasyEntityQueryable<>(apply, select);
+            return new EasyEntityQueryable<>(resultProxy, select);
         }
     }
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR>  selectMerge(SQLFuncExpression1<MergeTuple7<T1Proxy,T2Proxy,T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy>, TRProxy> selectExpression){

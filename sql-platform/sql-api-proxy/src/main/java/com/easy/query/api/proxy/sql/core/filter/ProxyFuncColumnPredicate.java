@@ -10,6 +10,7 @@ import com.easy.query.core.func.SQLFunction;
  *
  * @author xuejiaming
  */
+@Deprecated
 public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, ChainCast<TChain> {
 
     /**
@@ -19,6 +20,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
      * @param sqlFunctionRight
      * @return
      */
+    @Deprecated
     default TChain gt(SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
         return gt(true, sqlFunctionLeft, sqlFunctionRight);
     }
@@ -31,6 +33,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
      * @param sqlFunctionRight
      * @return
      */
+    @Deprecated
     default TChain gt(boolean condition, SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
 
         if (condition) {
@@ -47,6 +50,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
      * @param sqlFunctionRight
      * @return
      */
+    @Deprecated
     default TChain ge(SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
         return ge(true, sqlFunctionLeft, sqlFunctionRight);
     }
@@ -59,6 +63,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
      * @param sqlFunctionRight
      * @return
      */
+    @Deprecated
     default TChain ge(boolean condition, SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
 
         if (condition) {
@@ -70,6 +75,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
     /**
      * 等于 func(column) = func(column|val)
      */
+    @Deprecated
     default TChain eq(SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
         return eq(true, sqlFunctionLeft, sqlFunctionRight);
     }
@@ -82,6 +88,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
      * @param sqlFunctionRight
      * @return
      */
+    @Deprecated
     default TChain eq(boolean condition, SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
 
         if (condition) {
@@ -98,6 +105,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
      * @param sqlFunctionRight
      * @return
      */
+    @Deprecated
     default TChain ne(SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
         return ne(true, sqlFunctionLeft, sqlFunctionRight);
     }
@@ -110,6 +118,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
      * @param sqlFunctionRight
      * @return
      */
+    @Deprecated
     default TChain ne(boolean condition, SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
         if (condition) {
             getFilter().ne(null, sqlFunctionLeft, null, sqlFunctionRight);
@@ -124,6 +133,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
      * @param sqlFunctionRight
      * @return
      */
+    @Deprecated
     default TChain le(SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
         return le(true, sqlFunctionLeft, sqlFunctionRight);
     }
@@ -136,6 +146,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
      * @param sqlFunctionRight
      * @return
      */
+    @Deprecated
     default TChain le(boolean condition, SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
         if (condition) {
             getFilter().le(null, sqlFunctionLeft, null, sqlFunctionRight);
@@ -150,6 +161,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
      * @param sqlFunctionRight
      * @return
      */
+    @Deprecated
     default TChain lt(SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
         return lt(true, sqlFunctionLeft, sqlFunctionRight);
     }
@@ -162,6 +174,7 @@ public interface ProxyFuncColumnPredicate<TChain> extends FilterAvailable, Chain
      * @param sqlFunctionRight
      * @return
      */
+    @Deprecated
     default TChain lt(boolean condition, SQLFunction sqlFunctionLeft, SQLFunction sqlFunctionRight) {
         if (condition) {
             getFilter().lt(null, sqlFunctionLeft, null, sqlFunctionRight);

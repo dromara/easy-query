@@ -3,6 +3,11 @@ package com.easy.query.api.proxy.sql;
 import com.easy.query.api.proxy.sql.core.SQLProxyNative;
 import com.easy.query.api.proxy.sql.core.available.ProxySQLFuncAvailable;
 import com.easy.query.api.proxy.sql.core.filter.ProxyAssertPredicate;
+import com.easy.query.api.proxy.sql.core.filter.ProxyColumnFunc2FuncAvailablePredicate;
+import com.easy.query.api.proxy.sql.core.filter.ProxyColumnFuncAvailablePredicate;
+import com.easy.query.api.proxy.sql.core.filter.ProxyColumnFuncPredicate;
+import com.easy.query.api.proxy.sql.core.filter.ProxyFuncAvailableLikePredicate;
+import com.easy.query.api.proxy.sql.core.filter.ProxyFuncAvailableValuePredicate;
 import com.easy.query.api.proxy.sql.core.filter.ProxyFuncColumnPredicate;
 import com.easy.query.api.proxy.sql.core.filter.ProxyFuncValuePredicate;
 import com.easy.query.api.proxy.sql.core.filter.ProxyLikePredicate;
@@ -36,6 +41,11 @@ public interface ProxyFilter extends SQLProxyNative<ProxyFilter>, ProxySQLFuncAv
         , ProxyFuncColumnPredicate<ProxyFilter>
         , ProxyValuePredicate<ProxyFilter>
         , ProxyValuesPredicate<ProxyFilter>
+        , ProxyFuncAvailableValuePredicate<ProxyFilter>
+        , ProxyColumnFuncPredicate<ProxyFilter>
+        , ProxyColumnFuncAvailablePredicate<ProxyFilter>
+        , ProxyColumnFunc2FuncAvailablePredicate<ProxyFilter>
+        , ProxyFuncAvailableLikePredicate<ProxyFilter>
         , ProxyLikePredicate<ProxyFilter> {
     Filter getFilter();
     default QueryRuntimeContext getRuntimeContext() {

@@ -715,12 +715,148 @@ public class DocTest extends BaseTest {
 //                .where(o -> {
 //                    LambdaSQLFunc<SysUser> fx = o.fx();
 //                    o.eq(SysUser::getId, "1");
-//                    o.eq(SysUser::getId, fx.dateTimeFormat(SysUser::getCreateTime, "yyyy-MM-dd"));
-//                    o.eq(fx.dateTimeSQLFormat(SysUser::getCreateTime, "yyyy-MM-dd"), "2023-01-01");
+//                    o.eq(fx.dateTimeFormat(SysUser::getCreateTime, "yyyy-MM-dd"), "2023-01-01");
 //                    o.isNotBank(SysUser::getPhone);
 //                })
 //                .select(o -> o.column(SysUser::getId).column(SysUser::getName).column(SysUser::getPhone).column(SysUser::getDepartName))
 //                .toList();
 
+//        List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
+//                .where(o -> {
+//                    o.id().eq("1");
+//                    o.id().eq(false, "1");//true/false表示是否使用该条件默认true
+//                    o.id().like("123");
+//                    o.id().like(false, "123");
+//                })
+//                .groupBy(o->GroupKeys.of(o.id()))//创建group by
+//                .select(o -> new SysUserProxy(){{//创建user代理
+//                    id().set(o.key1());//对当前id进行赋值
+//                    phone().set(o.count().toStr());//对当前phone进行赋值因为phone是string类型所以goup后的count需要强转成string也就是cast
+//                }})
+//                //下面是平替写法其实是一样的
+//                // .select(o -> {
+//                //     SysUserProxy sysUserProxy = new SysUserProxy();
+//                //     sysUserProxy.id().set(o.key1());
+//                //     sysUserProxy.phone().set(o.count().toStr());
+//                //     return sysUserProxy;
+//                // })
+//                .toList();
+
+
+//        List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
+//                .where(o->{
+//                    o.id().eq("1");// t.`id` = 1
+//                    o.id().eq(o.createTime().format("yyyy-MM-dd"));// t.`id` = DATE_FORMAT(t.`create_time`,'%Y-%m-%d')
+//                    o.createTime().format("yyyy-MM-dd").eq("2023-01-02");//DATE_FORMAT(t.`create_time`,'%Y-%m-%d') = '2023-01-02'
+//                    o.name().nullDefault("unknown").like("123");
+//                    o.phone().isNotBank();
+//                })
+//                //可以使用select也可以使用fetcher来实现 fetcher适合返回单个对象的数据获取
+//                .fetcher(o->o.FETCHER.id().name().phone().departName())
+//                .toList();
+        SysUserProxy utable = SysUserProxy.createTable();
+        List<SysUser> list = easyProxyQuery.queryable(utable)
+                .where(o -> {
+                    o.eq(utable.id(), "1")
+                            .eq(utable.id(), utable.createTime().format("yyyy-MM-dd"))
+                            .eq(utable.createTime().format("yyyy-MM-dd"),"2023-01-01")
+                            .eq(utable.createTime().format("yyyy-MM-dd"),utable.name().nullDefault("unknown"))
+                            .like(utable.name().nullDefault("unknown"),"123")
+                            .isNotBank(utable.phone());
+                })
+                .groupBy(o -> o.column(utable.id()))
+                .select(SysUserProxy.createTable(), o -> o.columns(utable.id(),utable.name(),utable.phone(),utable.departName()))
+                .toList();
+//
+//                List<SysUser> list = easyQueryClient.queryable(SysUser.class)
+//                .where(o -> {
+//                    SQLFunc fx = o.fx();
+//                    o.eq("id", "1");
+//                    o.eq(fx.dateTimeFormat("createTime", "yyyy-MM-dd"), "2023-01-01");
+//                    o.isNotBank("phone");
+//                })
+//                .select(o -> o.column("id").column("name").column("phone").column("departName"))
+//                .toList();
+
+
+//        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+//                .where(o->{
+//                    o.title().like("123");
+//                    o.createTime().ge(LocalDateTime.of(2022,2,1,3,4));
+//                })
+//                //会生成{key1:x,key2:x.... group:{t1:xx,t2:xx}}其中key1...keyn表示key默认支持10个 t1...tn表示前面的表
+//                //无论join了多少张表group后全部只有一个入参参数其余参数在group属性里面
+//                .groupBy(o-> GroupKeys.of(o.id()))
+//                .select(o->new TopicProxy(){{
+//                    id().set(o.key1());//key1就是id
+//                    stars().set(o.intCount());//COUNT(*)返回int 默认返回long类型
+//                }})
+//                .toList();
+
+
+//        //草稿模式无需定义返回结果,返回草稿支持1-10 Draft1-Draft10
+//        List<Draft3<String, Integer, Integer>> list = easyEntityQuery.queryable(Topic.class)
+//                .where(o -> {
+//                    o.title().like("123");
+//                    o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
+//                })
+//                .groupBy(o -> GroupKeys.of(o.id()))
+//                .select(o -> new TopicProxy() {{
+//                    id().set(o.key1());//key1就是id
+//                    stars().set(o.intCount());//COUNT(*)返回int 默认返回long类型
+//                }})
+//                .selectDraft(o -> Select.draft(
+//                        o.id().nullDefault("123"),//如果为空就赋值123
+//                        o.stars(),
+//                        o.stars().abs()//取绝对值
+//                ))
+//                .toList();
+
+//
+//        EasyPageResult<Topic> pageResult = easyEntityQuery.queryable(Topic.class)
+//                .where(o -> {
+//                    o.title().like("123");
+//                    o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
+//                })
+//                .orderBy(o -> {
+//                    o.id().asc();
+//                    o.createTime().desc();
+//                })
+//                .select(o -> new TopicProxy(){{
+//                    selectExpression(o.id(),o.title());
+//                }})
+//                .toPageResult(1, 20);
+
+//        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+//                .leftJoin(Topic.class, (t, t1) -> {//第一个参数t表示第一个表,第二个参数t1表示第二个表
+//                    t.id().eq(t1.id());// ON t.`id` = t1.`id`
+//                })
+//                .where((t, t1) -> {
+//                    t.title().like("11");
+//                    t1.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
+//                })
+//                .select((t, t1) -> new TopicProxy() {{
+//                    id().set(t.id());
+//                    stars().set(t.stars());
+//                    title().set(t1.id());
+//                }}).toList();
+
+
+
+//        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+//                .leftJoin(Topic.class, (t, t1) -> {
+//                    t.id().eq(t1.id());
+//                })
+//                .orderBy((t, t1) -> {
+//                    t.id().asc();
+//                    t1.createTime().desc();
+//                })
+//                //查询t表的所有除了id和title,并且返回t1的title取别名为content
+//                .select((t,t1)->new TopicProxy(){{
+//                    selectAll(t);
+//                    selectIgnores(t.id(),t.title());
+//                    id().set(t1.title());
+//                }})
+//                .toList();
     }
 }

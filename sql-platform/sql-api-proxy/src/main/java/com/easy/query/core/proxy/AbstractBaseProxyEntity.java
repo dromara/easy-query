@@ -83,10 +83,13 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         entitySQLContext.accept(new SQLSelectIgnoreImpl(ignoreTableProps));
     }
 
+    /**
+     * 快速选择表达式
+     * @param sqlSelectAsExpression
+     */
     public void selectExpression(SQLSelectAsExpression... sqlSelectAsExpression) {
         entitySQLContext.accept(sqlSelectAsExpression);
     }
-
     /**
      * 支持动态select+动态group取列防止sql注入
      * @param sqlTableOwner
@@ -101,10 +104,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
      * @param property
      * @param propertyAlias
      */
-    protected void selectColumnAs(SQLTableOwner sqlTableOwner,String property,String propertyAlias) {
+    public void selectColumnAs(SQLTableOwner sqlTableOwner,String property,String propertyAlias) {
         entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property,propertyAlias));
     }
-//    protected <TSubQuery> SQLSelectAsExpression subQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, TablePropColumn propColumn) {
-//        return Select.subQueryAs(subQueryableFunc,propColumn);
-//    }
 }

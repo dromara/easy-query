@@ -10,11 +10,13 @@ import com.easy.query.core.func.SQLFunction;
  *
  * @author xuejiaming
  */
+@Deprecated
 public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainCast<TChain> {
 
     /**
      * 大于 func(column) > val
      */
+    @Deprecated
     default TChain gt(SQLFunction sqlFunction, Object val) {
         return gt(true, sqlFunction, val);
     }
@@ -27,6 +29,7 @@ public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainC
      * @param val       值
      * @return children
      */
+    @Deprecated
     default TChain gt(boolean condition, SQLFunction sqlFunction, Object val) {
 
         if (condition) {
@@ -38,6 +41,7 @@ public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainC
     /**
      * 等于 func(column) >= val
      */
+    @Deprecated
     default TChain ge(SQLFunction sqlFunction, Object val) {
         return ge(true, sqlFunction, val);
     }
@@ -50,6 +54,7 @@ public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainC
      * @param val       值
      * @return children
      */
+    @Deprecated
     default TChain ge(boolean condition, SQLFunction sqlFunction, Object val){
 
         if (condition) {
@@ -61,6 +66,7 @@ public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainC
     /**
      * 等于 func(column) = val
      */
+    @Deprecated
     default TChain eq(SQLFunction sqlFunction, Object val) {
         return eq(true, sqlFunction, val);
     }
@@ -73,6 +79,7 @@ public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainC
      * @param val 值
      * @return children
      */
+    @Deprecated
     default TChain eq(boolean condition, SQLFunction sqlFunction, Object val) {
 
         if (condition) {
@@ -85,6 +92,7 @@ public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainC
     /**
      * 不等于 func(column) <> val
      */
+    @Deprecated
     default TChain ne(SQLFunction sqlFunction, Object val) {
         return ne(true, sqlFunction, val);
     }
@@ -97,6 +105,7 @@ public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainC
      * @param val       值
      * @return children
      */
+    @Deprecated
     default TChain ne(boolean condition, SQLFunction sqlFunction, Object val){
         if (condition) {
             getFilter().ne(null,sqlFunction, val);
@@ -107,6 +116,7 @@ public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainC
     /**
      * 小于等于 func(column) <= val
      */
+    @Deprecated
     default TChain le(SQLFunction sqlFunction, Object val) {
         return le(true, sqlFunction, val);
     }
@@ -119,6 +129,7 @@ public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainC
      * @param val       值
      * @return children
      */
+    @Deprecated
     default TChain le(boolean condition, SQLFunction sqlFunction, Object val){
         if (condition) {
             getFilter().le(null,sqlFunction, val);
@@ -129,6 +140,7 @@ public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainC
     /**
      * 小于 func(column) < val
      */
+    @Deprecated
     default TChain lt(SQLFunction sqlFunction, Object val) {
         return lt(true, sqlFunction, val);
     }
@@ -141,6 +153,7 @@ public interface ProxyFuncValuePredicate<TChain> extends FilterAvailable, ChainC
      * @param val       值
      * @return children
      */
+    @Deprecated
     default TChain lt(boolean condition, SQLFunction sqlFunction, Object val){
         if (condition) {
             getFilter().lt(null,sqlFunction, val);

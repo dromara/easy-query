@@ -413,7 +413,7 @@ public class UpdateTest extends BaseTest {
         Topic topic = easyEntityQuery.queryable(Topic.class).whereById("15").firstOrNull();
         Assert.assertNotNull(topic);
         String sql = easyEntityQuery.updatable(topic)
-                .whereColumns(o -> o.FETCHER.keys().stars()).toSQL(topic);
+                .whereColumns(o -> o.FETCHER.columnKeys().stars()).toSQL(topic);
         Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?", sql);
     }
 //    @Test
