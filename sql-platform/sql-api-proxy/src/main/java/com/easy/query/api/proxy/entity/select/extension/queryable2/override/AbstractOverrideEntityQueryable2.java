@@ -69,13 +69,6 @@ public abstract class AbstractOverrideEntityQueryable2<T1Proxy extends ProxyEnti
         super.where(condition, whereExpression);
         return getQueryable2();
     }
-
-    @Override
-    public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> groupByExpression(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
-        super.groupByExpression(condition, selectExpression);
-        return getQueryable2();
-    }
-
     @Override
     public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLExpression1<T1Proxy> predicateExpression) {
         super.having(condition, predicateExpression);

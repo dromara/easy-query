@@ -342,10 +342,10 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
-                    .groupByExpression(o -> o.createTime().format("yyyy/MM/dd"))
+                    .groupBy(o -> GroupKeys.of(o.createTime().format("yyyy/MM/dd")))
                     .select(o -> new TopicProxy() {{
-                        stars().set(o.id().intCount());
-                        title().set(o.createTime().format("yyyy/MM/dd"));
+                        stars().set(o.intCount(o.group().id()));
+                        title().set(o.key1());
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -649,10 +649,10 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
-                    .groupByExpression(o -> o.FETCHER.title())
+                    .groupBy(o -> GroupKeys.of(o.title()))
                     .select(o -> new TopicProxy() {{
-                        selectExpression(o.title());
-                        stars().set(o.id().intCount());
+                        selectExpression(o.key1());
+                        stars().set(o.intCount(o.group().id()));
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -849,20 +849,20 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123"))
-                    .groupByExpression(o -> o.id())
+                    .groupBy(o -> GroupKeys.of(o.id()))
                     .having(o -> {
-                        o.id().count().ne(1);
-                        o.star().sum().ge(10);
+                        o.count().ne(1);
+                        o.sum(o.group().star()).ge(10);
                     })
                     .select(o -> new BlogEntityProxy() {{
-                        id().set(o.id());
-                        star().set(o.id().count().setPropertyType(Integer.class));
+                        id().set(o.key1());
+                        star().set(o.group().id().count().setPropertyType(Integer.class));
 //                        star().set(o.id().intCount());
-                        title().set(o.id().max());
+                        title().set(o.group().id().max());
                     }}).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`star`) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` HAVING COUNT(*) <> ? AND SUM(t.`star`) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("false(Boolean),123(String),1(Integer),10(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -893,18 +893,18 @@ public class QueryTest9 extends BaseTest {
                     o.title().nullDefault("unknown").eq(o.content());
                     o.content().isNotBank();
                 })
-                .groupByExpression(o -> o.id())
+                .groupBy(o -> GroupKeys.of(o.id()))
                 .having(o -> {
-                    o.id().count().ne(1);
-                    o.star().sum().ge(10);
+                    o.count(o.group().id()).ne(1);
+                    o.sum(o.group().star()).ge(10);
                 }).select(o -> new BlogEntityProxy() {{
-                    id().set(o.id());
-                    star().set(o.id().intCount());
-                    title().set(o.id().max());
+                    id().set(o.key1());
+                    star().set(o.intCount());
+                    title().set(o.max(o.group().id()));
                 }}).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND  t.`id` = DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') = ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`star`,?) >= ? AND IFNULL(t.`star`,?) > ? AND IFNULL(t.`star`,?) <= ? AND IFNULL(t.`star`,?) < ? AND IFNULL(t.`star`,?) = ? AND IFNULL(t.`title`,?) = t.`content` AND (t.`content` IS NOT NULL AND t.`content` <> '' AND LTRIM(t.`content`) <> '') GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`star`) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(*) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND  t.`id` = DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') = ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`star`,?) >= ? AND IFNULL(t.`star`,?) > ? AND IFNULL(t.`star`,?) <= ? AND IFNULL(t.`star`,?) < ? AND IFNULL(t.`star`,?) = ? AND IFNULL(t.`title`,?) = t.`content` AND (t.`content` IS NOT NULL AND t.`content` <> '' AND LTRIM(t.`content`) <> '') GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`star`) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),1(String),2023-01-02(String),unknown(String),%123%(String),unknown(String),123%(String),unknown(String),%123(String),1(Integer),101(Integer),4(Integer),102(Integer),3(Integer),103(Integer),2(Integer),104(Integer),1(Integer),105(Integer),unknown(String),1(Integer),10(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -925,15 +925,15 @@ public class QueryTest9 extends BaseTest {
                     o.id().eq(sss);
                     o.title().nullDefault("unknown").in(sss);
                 })
-                .groupByExpression(o -> o.id())
+                .groupBy(o -> GroupKeys.of(o.id()))
                 .having(o -> {
-                    o.id().count().ne(1);
-                    o.star().sum().ge(10);
+                    o.count(o.group().id()).ne(1);
+                    o.sum(o.group().star()).ge(10);
                 })
                 .select(o -> new BlogEntityProxy() {{
-                    selectExpression(o.id()
-                            , o.id().count().as(star())
-                            , o.id().max().as(title())
+                    selectExpression(o.key1()
+                            , o.group().id().count().as(star())
+                            , o.group().id().max().as(title())
                     );
                 }}).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -950,7 +950,6 @@ public class QueryTest9 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
-
                     o.id().in(ids);
                     o.id().notIn(ids);
                 })

@@ -45,13 +45,17 @@ public class SQLColumnIncludeColumnImpl<TProperty, TPropertyProxy extends ProxyE
     public void accept(AsSelector s) {
         s.columnInclude(table, selfProperty, aliasProperty, is -> {
             TableAvailable entityTable = is.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
-            TSourcePropertyProxy newEntityProxy = tSourceProxyProxy.create(entityTable, is.getRuntimeContext());
-            TPropertyProxy apply = navigateSelectExpression.apply(newEntityProxy);
-            SQLSelectAsExpression selectAsExpression = apply.getEntitySQLContext().getSelectAsExpression();
-            if (selectAsExpression == null) {//全属性映射
+            if(navigateSelectExpression!=null){
+                TSourcePropertyProxy newEntityProxy = tSourceProxyProxy.create(entityTable, is.getRuntimeContext());
+                TPropertyProxy apply = navigateSelectExpression.apply(newEntityProxy);
+                SQLSelectAsExpression selectAsExpression = apply.getEntitySQLContext().getSelectAsExpression();
+                if (selectAsExpression == null) {//全属性映射
+                    is.columnAll(entityTable);
+                } else {
+                    selectAsExpression.accept(is);
+                }
+            }else{
                 is.columnAll(entityTable);
-            } else {
-                selectAsExpression.accept(is);
             }
         });
     }

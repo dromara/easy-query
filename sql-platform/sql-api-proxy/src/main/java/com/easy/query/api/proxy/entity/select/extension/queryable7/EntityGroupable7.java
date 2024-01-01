@@ -7,12 +7,17 @@ import com.easy.query.api.proxy.sql.ProxyGroupSelector;
 import com.easy.query.api.proxy.sql.impl.ProxyGroupSelectorImpl;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.common.tuple.MergeTuple7;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression8;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression7;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLGroupByExpression;
+import com.easy.query.core.util.EasySQLSegmentUtil;
+
+import java.util.Objects;
 
 /**
  * create time 2023/8/16 08:49
@@ -28,29 +33,6 @@ public interface EntityGroupable7<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T6Proxy extends ProxyEntity<T6Proxy, T6>, T6,
         T7Proxy extends ProxyEntity<T7Proxy, T7>, T7> extends ClientEntityQueryable7Available<T1, T2, T3, T4, T5, T6, T7>, EntityQueryable7Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> {
 
-
-    default EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> groupByExpression(SQLExpression8<ProxyGroupSelector, T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy> selectExpression) {
-        return groupByExpression(true, selectExpression);
-    }
-
-    default EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> groupByExpression(boolean condition, SQLExpression8<ProxyGroupSelector, T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy> selectExpression) {
-        if (condition) {
-            getClientQueryable7().groupBy((t, t1, t2, t3, t4, t5, t6) -> {
-                selectExpression.apply(new ProxyGroupSelectorImpl(t.getGroupSelector()), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy());
-            });
-        }
-        return getQueryable7();
-    }
-
-    default EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> groupByExpressionMerge(SQLExpression2<ProxyGroupSelector, MergeTuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>> selectExpression) {
-        return groupByExpressionMerge(true, selectExpression);
-    }
-
-    default EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> groupByExpressionMerge(boolean condition, SQLExpression2<ProxyGroupSelector, MergeTuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>> selectExpression) {
-        return groupByExpression(condition, (groupSelector, t, t1, t2, t3, t4, t5, t6) -> {
-            selectExpression.apply(groupSelector, new MergeTuple7<>(t, t1, t2, t3, t4, t5, t6));
-        });
-    }
     default <TRProxy extends ProxyEntity<TRProxy, TR> & SQLGroupByExpression, TR>
     EntityQueryable<TRProxy, TR> groupBy(
             SQLFuncExpression7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy,
@@ -58,8 +40,14 @@ public interface EntityGroupable7<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
         SQLFuncExpression1<MergeTuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, TRProxy> keysExpression =
                 selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy());
+        Objects.requireNonNull(keysExpression,"groupBy result expression is null");
         TRProxy grouping1Proxy = keysExpression.apply(new MergeTuple7<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy()));
 
+        Objects.requireNonNull(grouping1Proxy,"groupBy result is null");
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = getClientQueryable7().getSQLEntityExpressionBuilder();
+        if (EasySQLSegmentUtil.isNotEmpty(sqlEntityExpressionBuilder.getGroup()) && EasySQLSegmentUtil.isEmpty(sqlEntityExpressionBuilder.getProjects())) {
+            throw new EasyQueryInvalidOperationException("ENG:The [select] statement should be used between two consecutive [groupBy] statements to determine the query results of the preceding [groupBy].CN:连续两个[groupBy]之间应该使用[select]来确定前一次[groupBy]的查询结果");
+        }
         getClientQueryable7().groupBy((selector1, selector2, selector3, selector4, selector5, selector6, selector7) -> {
             grouping1Proxy.accept(selector1.getGroupSelector());
         });

@@ -13,6 +13,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  */
 public interface OrderSelector extends SQLNative<OrderSelector>, RuntimeContextAvailable {
     void setAsc(boolean asc);
+    boolean isAsc();
     OrderSelector column(TableAvailable table, String property);
 
     OrderSelector columnFunc(TableAvailable table,ColumnPropertyFunction columnPropertyFunction);

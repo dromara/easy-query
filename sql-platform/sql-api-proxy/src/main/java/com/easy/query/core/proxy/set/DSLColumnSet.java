@@ -100,6 +100,10 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
         }
     }
 
+    default < TSourcePropertyProxy extends ProxyEntity<TSourcePropertyProxy,TSourceProperty>,TSourceProperty extends ProxyEntityAvailable<TSourceProperty , TSourcePropertyProxy>>
+    void setNavigate(SQLColumn<?,TSourceProperty> column) {
+      setNavigate(column,null);
+    }
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TSourcePropertyProxy extends ProxyEntity<TSourcePropertyProxy,TSourceProperty>,TSourceProperty extends ProxyEntityAvailable<TSourceProperty , TSourcePropertyProxy>>
     void setNavigate(SQLColumn<?,TSourceProperty> column
             , SQLFuncExpression1<TSourcePropertyProxy,TPropertyProxy> navigateSelectExpression) {

@@ -790,6 +790,32 @@ public class QueryTest8 extends BaseTest {
                     List<Topic> list = easyProxyQuery.queryable(table)
                             .asTable("AAA")
                             .limit(1)
+                            .select(TopicProxy.createTable(), o -> o.expression(table.id())
+                                    .expressions(table.stars().as(o.tr().stars()), table.title().subString(1, 2)))
+                            .toList();
+                }catch (Exception ex){
+                    return ex;
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+            Assert.assertEquals("SELECT t.`id`,t.`stars` AS `stars`,SUBSTR(t.`title`,2,2) FROM `AAA` t LIMIT 1",easyQuerySQLStatementException.getSQL());
+
+        }
+        {
+
+
+            Supplier<Exception> f = () -> {
+                try {
+                    TopicProxy table = TopicProxy.createTable();
+                    List<Topic> list = easyProxyQuery.queryable(table)
+                            .asTable("AAA")
+                            .limit(1)
                             .select(TopicProxy.createTable(), o -> o.column(table.id()))
                             .limit(1, 2).toList();
                 }catch (Exception ex){

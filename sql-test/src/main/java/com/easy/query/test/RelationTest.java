@@ -248,7 +248,23 @@ public class RelationTest extends BaseTest {
                         .include((n,o) -> n.asQueryable(o.schoolClass()))
                         .select(o->new SchoolStudentVOProxy(){{
                             selectAll(o);
+//                            schoolClass().setNavigate(o.schoolClass());
                             schoolClass().setNavigate(o.schoolClass(),t->new SchoolClassVOProxy());
+                        }})
+                        .toList();
+                for (SchoolStudentVO schoolStudent : list1) {
+                    Assert.assertNotNull(schoolStudent.getSchoolClass());
+                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
+                    Assert.assertNotNull(schoolStudent.getSchoolClass().getName());
+                }
+            }
+            {
+                //todo alias
+                List<SchoolStudentVO> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include((n,o) -> n.asQueryable(o.schoolClass()))
+                        .select(o->new SchoolStudentVOProxy(){{
+                            selectAll(o);
+                            schoolClass().setNavigate(o.schoolClass());
                         }})
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {

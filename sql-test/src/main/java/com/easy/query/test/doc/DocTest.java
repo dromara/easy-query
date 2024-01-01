@@ -174,40 +174,6 @@ public class DocTest extends BaseTest {
     @Test
     public void test2() {
 
-        {
-
-            Supplier<Exception> f = () -> {
-                try {
-                    List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
-                            .asTable("a222")
-                            .where(o -> {
-                                o.id().eq("1");
-                                o.id().eq(false, "1");//true/false表示是否使用该条件默认true
-                                o.id().like("123");
-                                o.id().like(false, "123");
-                            })
-                            .groupByExpression(o -> o.id())
-//                            .groupBy(o->o.id().then(o.name()))
-//                            .groupBy(o->{
-//                                return o.id().then(o.name());
-//                            })
-//                            .groupBy(o->o.FETCHER.id().name())
-                            .fetcher(o -> o.id()._concat(o.id().count().as(o.phone())))
-                            .toList();
-                } catch (Exception ex) {
-                    return ex;
-                }
-                return null;
-            };
-            Exception exception = f.get();
-            Assert.assertNotNull(exception);
-            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
-            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
-            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `phone` FROM `a222` t WHERE t.`id` = ? AND t.`id` LIKE ? GROUP BY t.`id`", easyQuerySQLStatementException.getSQL());
-
-        }
 
         {
 
@@ -599,12 +565,12 @@ public class DocTest extends BaseTest {
                         o.title().like("123");
                         o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                     })
-                    .groupByExpression(o -> GroupKeys.expressions(
+                    .groupBy(o -> GroupKeys.of(
                             o.id()
                     ))
                     .select(o -> new TopicProxy() {{
-                        id().set(o.id());
-                        stars().set(o.id().count().setPropertyType(Integer.class));//count(id) as stars
+                        id().set(o.key1());
+                        stars().set(o.count(o.group().id()).setPropertyType(Integer.class));//count(id) as stars
                     }})
 //                    .selectAs(Topic.class,(o, tr)->Select.of(
 //                            o.id(),
@@ -754,19 +720,19 @@ public class DocTest extends BaseTest {
 //                //可以使用select也可以使用fetcher来实现 fetcher适合返回单个对象的数据获取
 //                .fetcher(o->o.FETCHER.id().name().phone().departName())
 //                .toList();
-        SysUserProxy utable = SysUserProxy.createTable();
-        List<SysUser> list = easyProxyQuery.queryable(utable)
-                .where(o -> {
-                    o.eq(utable.id(), "1")
-                            .eq(utable.id(), utable.createTime().format("yyyy-MM-dd"))
-                            .eq(utable.createTime().format("yyyy-MM-dd"),"2023-01-01")
-                            .eq(utable.createTime().format("yyyy-MM-dd"),utable.name().nullDefault("unknown"))
-                            .like(utable.name().nullDefault("unknown"),"123")
-                            .isNotBank(utable.phone());
-                })
-                .groupBy(o -> o.column(utable.id()))
-                .select(SysUserProxy.createTable(), o -> o.columns(utable.id(),utable.name(),utable.phone(),utable.departName()))
-                .toList();
+//        SysUserProxy utable = SysUserProxy.createTable();
+//        List<SysUser> list = easyProxyQuery.queryable(utable)
+//                .where(o -> {
+//                    o.eq(utable.id(), "1")
+//                            .eq(utable.id(), utable.createTime().format("yyyy-MM-dd"))
+//                            .eq(utable.createTime().format("yyyy-MM-dd"),"2023-01-01")
+//                            .eq(utable.createTime().format("yyyy-MM-dd"),utable.name().nullDefault("unknown"))
+//                            .like(utable.name().nullDefault("unknown"),"123")
+//                            .isNotBank(utable.phone());
+//                })
+//                .groupBy(o -> o.column(utable.id()))
+//                .select(SysUserProxy.createTable(), o -> o.columns(utable.id(),utable.name(),utable.phone(),utable.departName()))
+//                .toList();
 //
 //                List<SysUser> list = easyQueryClient.queryable(SysUser.class)
 //                .where(o -> {

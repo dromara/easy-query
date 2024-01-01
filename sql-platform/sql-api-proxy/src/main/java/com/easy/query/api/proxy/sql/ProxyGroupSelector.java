@@ -6,6 +6,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.SQLGroupByExpression;
 
 /**
  * create time 2023/6/23 13:21
@@ -30,6 +31,16 @@ public interface ProxyGroupSelector extends SQLProxyNative<ProxyGroupSelector> ,
 
     default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> ProxyGroupSelector column(SQLColumn<TProxy,TProperty> column) {
         getGroupSelector().column(column.getTable(), column.getValue());
+        return this;
+    }
+    default ProxyGroupSelector expressions(SQLGroupByExpression... groupByExpressions) {
+        for (SQLGroupByExpression groupByExpression : groupByExpressions) {
+            expression(groupByExpression);
+        }
+        return this;
+    }
+    default ProxyGroupSelector expression(SQLGroupByExpression groupByExpression) {
+        groupByExpression.accept(getGroupSelector());
         return this;
     }
 

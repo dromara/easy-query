@@ -326,25 +326,25 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupByExpression(o -> o.id())
+                    }).groupBy(o -> GroupKeys.of(o.id()))
                     .having(o -> {
-                        o.id().max().like("1");
-                        o.id().max().like(false, "2");
-                        o.id().max().likeMatchLeft("3");
-                        o.id().max().likeMatchLeft(false, "4");
-                        o.id().max().likeMatchRight("5");
-                        o.id().max().likeMatchRight(false, "6");
+                        o.key1().max().like("1");
+                        o.key1().max().like(false, "2");
+                        o.key1().max().likeMatchLeft("3");
+                        o.key1().max().likeMatchLeft(false, "4");
+                        o.key1().max().likeMatchRight("5");
+                        o.key1().max().likeMatchRight(false, "6");
 
 
-                        o.id().max().notLike("1");
-                        o.id().max().notLike(false, "2");
-                        o.id().max().notLikeMatchLeft("3");
-                        o.id().max().notLikeMatchLeft(false, "4");
-                        o.id().max().notLikeMatchRight("5");
-                        o.id().max().notLikeMatchRight(false, "6");
+                        o.key1().max().notLike("1");
+                        o.key1().max().notLike(false, "2");
+                        o.key1().max().notLikeMatchLeft("3");
+                        o.key1().max().notLikeMatchLeft(false, "4");
+                        o.key1().max().notLikeMatchRight("5");
+                        o.key1().max().notLikeMatchRight(false, "6");
                     })
                     .select(o -> new BlogEntityProxy() {{
-                        selectExpression(o.id());
+                        selectExpression(o.key1());
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -367,25 +367,25 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupByExpression(o -> o.id())
+                    }).groupBy(o -> GroupKeys.of(o.id()))
                     .having(o -> {
-                        o.id().max().eq("1");
-                        o.id().max().eq(false, "2");
-                        o.id().max().ge("3");
-                        o.id().max().ge(false, "4");
-                        o.id().max().gt("5");
-                        o.id().max().gt(false, "6");
+                        o.key1().max().eq("1");
+                        o.key1().max().eq(false, "2");
+                        o.key1().max().ge("3");
+                        o.key1().max().ge(false, "4");
+                        o.key1().max().gt("5");
+                        o.key1().max().gt(false, "6");
 
 
-                        o.id().max().ne("1");
-                        o.id().max().ne(false, "2");
-                        o.id().max().le("3");
-                        o.id().max().le(false, "4");
-                        o.id().max().lt("5");
-                        o.id().max().lt(false, "6");
+                        o.key1().max().ne("1");
+                        o.key1().max().ne(false, "2");
+                        o.key1().max().le("3");
+                        o.key1().max().le(false, "4");
+                        o.key1().max().lt("5");
+                        o.key1().max().lt(false, "6");
                     })
                     .select(o -> new BlogEntityProxy() {{
-                        selectExpression(o.id());
+                        selectExpression(o.key1());
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -408,25 +408,25 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupByExpression(o -> o.id())
+                    }).groupBy(o -> GroupKeys.of(o.id()))
                     .having(o -> {
-                        o.id().max().eq(o.id().min());
-                        o.id().max().eq(false, o.id().min());
-                        o.id().max().ge(o.id().min());
-                        o.id().max().ge(false, o.id().min());
-                        o.id().max().gt(o.id().min());
-                        o.id().max().gt(false, o.id().min());
+                        o.key1().max().eq(o.key1().min());
+                        o.key1().max().eq(false, o.key1().min());
+                        o.key1().max().ge(o.key1().min());
+                        o.key1().max().ge(false, o.key1().min());
+                        o.key1().max().gt(o.key1().min());
+                        o.key1().max().gt(false, o.key1().min());
 
 
-                        o.id().max().ne(o.id().min());
-                        o.id().max().ne(false, o.id().min());
-                        o.id().max().le(o.id().min());
-                        o.id().max().le(false, "4");
-                        o.id().max().lt(o.id().min());
-                        o.id().max().lt(false, o.id().min());
+                        o.key1().max().ne(o.key1().min());
+                        o.key1().max().ne(false, o.key1().min());
+                        o.key1().max().le(o.key1().min());
+                        o.key1().max().le(false, "4");
+                        o.key1().max().lt(o.key1().min());
+                        o.key1().max().lt(false, o.key1().min());
                     })
                     .select(o -> new BlogEntityProxy() {{
-                        selectExpression(o.id());
+                        selectExpression(o.key1());
                     }})
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -447,10 +447,10 @@ public class QueryTest10 extends BaseTest{
                 .queryable(Topic.class)
                 .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                 .where((t, t1) -> t1.title().isNotNull())
-                .groupByExpression((t, t1) -> t1.id())
-                .select((t, t1) -> new BlogEntityProxy() {{
-                    selectExpression(t1.id());
-                    score().set(t1.score().sum());
+                .groupBy((t, t1) -> GroupKeys.of(t1.id()))
+                .select((g) -> new BlogEntityProxy() {{
+                    selectExpression(g.key1());
+                    score().set(g.sum(g.group().t2.score()));
                 }})
                 .toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -469,8 +469,8 @@ public class QueryTest10 extends BaseTest{
             Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
             List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupByExpression(t -> t.id())
-                    .selectDraft(t -> Select.draft(t.id()))
+                    .groupBy(t ->GroupKeys.of( t.id()))
+                    .selectDraft(t -> Select.draft(t.key1()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -484,8 +484,8 @@ public class QueryTest10 extends BaseTest{
             Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
             List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupByExpression(t -> t.id())
-                    .selectDraft(t -> Select.draft(t.id()))
+                    .groupBy(t -> GroupKeys.of(t.id()))
+                    .selectDraft(t -> Select.draft(t.key1()))
                     .where(o -> o.value1().eq("123"))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -499,15 +499,15 @@ public class QueryTest10 extends BaseTest{
             listenerContextManager.startListen(listenerContext);
             List<Draft2<String, Long>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupByExpression(t -> t.id())
+                    .groupBy(t -> GroupKeys.of(t.id()))
                     .selectDraft(t -> Select.draft(
-                            t.id(),
-                            t.id().count().setPropertyType(Long.class)
+                            t.key1(),
+                            t.count()
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(t.`id`) AS `value2` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
             listenerContextManager.clear();
         }
         {
@@ -516,12 +516,12 @@ public class QueryTest10 extends BaseTest{
             listenerContextManager.startListen(listenerContext);
             List<Draft3<String, Long, BigDecimal>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupByExpression(t -> t.id())
-                    .selectDraft(t -> Select.draft(t.id(), t.id().count(), t.stars().sum()))
+                    .groupBy(t -> GroupKeys.of(t.id()))
+                    .selectDraft(g -> Select.draft(g.key1(), g.count(), g.sum(g.group().stars())))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(t.`id`) AS `value2`,SUM(t.`stars`) AS `value3` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(*) AS `value2`,SUM(t.`stars`) AS `value3` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
             listenerContextManager.clear();
             BigDecimal value3 = list.get(0).getValue3();
         }
@@ -648,15 +648,15 @@ public class QueryTest10 extends BaseTest{
                     o.title().like("123");
                     o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                 })
-                .groupByExpression(o -> o.id())//多个用GroupBy.of(.....)
+                .groupBy(o -> GroupKeys.of(o.id()))//多个用GroupBy.of(.....)
                 .selectDraft(o -> Select.draft(
-                        o.id(),
-                        o.id().count()
+                        o.key1(),
+                        o.count()
                 ))
                 .toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(t.`id`) AS `value2` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         listenerContextManager.clear();
     }
 
@@ -983,5 +983,13 @@ public class QueryTest10 extends BaseTest{
                 })
                 .toList();
         System.out.println(list);
+    }
+
+    @Test
+    public void test222(){
+        List<Draft1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .groupBy(o -> GroupKeys.of(o.content().subString(0, 8)))
+                .selectDraft(o -> Select.draft(o.key1()))
+                .toList();
     }
 }

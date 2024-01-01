@@ -76,14 +76,6 @@ public interface OverrideEntityQueryable6<T1Proxy extends ProxyEntity<T1Proxy, T
     EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> where(boolean condition, SQLExpression1<T1Proxy> whereExpression);
 
     @Override
-    default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByExpression(SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
-        return groupByExpression(true, selectExpression);
-    }
-
-    @Override
-    EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> groupByExpression(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression);
-
-    @Override
     default EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> having(SQLExpression1<T1Proxy> predicateExpression) {
         return having(true, predicateExpression);
     }

@@ -662,11 +662,11 @@ public class MyTest1 extends BaseTest {
 //                        content().set(o.title().subString(1, 2).asAny().toStr());
                     }
                 })
-                .groupByExpression(o -> GroupKeys.expressions(o.id()))
+                .groupBy(o -> GroupKeys.of(o.id()))
                 .select(o -> new BlogGroupIdAndNameProxy() {
                     {
-                        id().set(o.id());
-                        idCount().set(o.id().count());
+                        id().set(o.key1());
+                        idCount().set(o.count());
                     }
                 })
                 .orderBy(o -> {
@@ -674,7 +674,7 @@ public class MyTest1 extends BaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t2.`id` AS `id`,t2.`id_count` AS `id_count` FROM (SELECT t1.`id` AS `id`,COUNT(t1.`id`) AS `id_count` FROM (SELECT t.`title` AS `id`,SUBSTR(t.`title`,2,2) AS `title` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`id`) t2 ORDER BY t2.`id_count` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t2.`id` AS `id`,t2.`id_count` AS `id_count` FROM (SELECT t1.`id` AS `id`,COUNT(*) AS `id_count` FROM (SELECT t.`title` AS `id`,SUBSTR(t.`title`,2,2) AS `title` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`id`) t2 ORDER BY t2.`id_count` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -694,17 +694,17 @@ public class MyTest1 extends BaseTest {
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
                 .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
-                .groupByExpression(o -> GroupKeys.expressions(o.value1()))
+                .groupBy(o -> GroupKeys.of(o.value1()))
                 .selectDraft(o -> Select.draft(
-                        o.value1(),
-                        o.value1().asAny().count()
+                        o.key1(),
+                        o.count()
                 ))
                 .orderBy(o -> {
                     o.value1().desc();
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t2.`value1` AS `value1`,t2.`value2` AS `value2` FROM (SELECT t1.`value1` AS `value1`,COUNT(t1.`value1`) AS `value2` FROM (SELECT t.`title` AS `value1`,SUBSTR(t.`title`,2,2) AS `value2` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`value1`) t2 ORDER BY t2.`value1` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t2.`value1` AS `value1`,t2.`value2` AS `value2` FROM (SELECT t1.`value1` AS `value1`,COUNT(*) AS `value2` FROM (SELECT t.`title` AS `value1`,SUBSTR(t.`title`,2,2) AS `value2` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`value1`) t2 ORDER BY t2.`value1` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -744,19 +744,19 @@ public class MyTest1 extends BaseTest {
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
                 .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
-                .groupByExpression(o -> {
-                    return GroupKeys.expressions(o.value1());
+                .groupBy(o -> {
+                    return GroupKeys.of(o.value1());
                 })
                 .orderBy(o -> {
-                    o.value1().desc();
+                    o.key1().desc();
                 })
                 .selectDraft(o -> Select.draft(
-                        o.value1(),
-                        o.value1().asAny().count()
+                        o.key1(),
+                        o.count()
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t1.`value1` AS `value1`,COUNT(t1.`value1`) AS `value2` FROM (SELECT t.`title` AS `value1`,SUBSTR(t.`title`,2,2) AS `value2` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`value1` ORDER BY t1.`value1` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t1.`value1` AS `value1`,COUNT(*) AS `value2` FROM (SELECT t.`title` AS `value1`,SUBSTR(t.`title`,2,2) AS `value2` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`value1` ORDER BY t1.`value1` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 

@@ -10,11 +10,9 @@ import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.core.proxy.SQLGroupByExpression;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -75,12 +73,6 @@ public abstract class AbstractOverrideEntityQueryable8<T1Proxy extends ProxyEnti
     @Override
     public EntityQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> where(boolean condition, SQLExpression1<T1Proxy> whereExpression) {
         super.where(condition, whereExpression);
-        return getQueryable8();
-    }
-
-    @Override
-    public EntityQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> groupByExpression(boolean condition, SQLFuncExpression1<T1Proxy, SQLGroupByExpression> selectExpression) {
-        super.groupByExpression(condition, selectExpression);
         return getQueryable8();
     }
 

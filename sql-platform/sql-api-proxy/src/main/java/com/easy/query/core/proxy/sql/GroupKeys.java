@@ -33,17 +33,6 @@ import com.easy.query.core.util.EasyArrayUtil;
  * @author xuejiaming
  */
 public class GroupKeys {
-    public static SQLGroupByExpression expressions(SQLGroupByExpression... groupByExpressions){
-
-        if(EasyArrayUtil.isNotEmpty(groupByExpressions)){
-            SQLGroupByExpression firstGroupByExpression = groupByExpressions[0];
-            for (int i = 1; i < groupByExpressions.length; i++) {
-                firstGroupByExpression = firstGroupByExpression._thenBy(groupByExpressions[i]);
-            }
-            return firstGroupByExpression;
-        }
-        return SQLGroupByExpression.empty;
-    }
     public static <TKey1Proxy extends PropTypeColumn<TKey1>,TKey1,T1Proxy> SQLFuncExpression1<T1Proxy,Grouping1Proxy<TKey1Proxy,TKey1,T1Proxy>> of(TKey1Proxy key1Proxy){
         return o->new Grouping1Proxy<>(key1Proxy,o);
     }

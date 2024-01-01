@@ -76,6 +76,11 @@ public class OrderSelectorImpl implements OrderSelector {
     }
 
     @Override
+    public boolean isAsc() {
+        return asc;
+    }
+
+    @Override
     public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }

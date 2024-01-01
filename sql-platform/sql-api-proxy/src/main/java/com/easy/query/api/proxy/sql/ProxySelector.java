@@ -6,6 +6,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.SQLSelectExpression;
 
 /**
  * create time 2023/6/22 21:24
@@ -30,6 +31,16 @@ public interface ProxySelector extends SQLProxyNative<ProxySelector>, ProxySQLFu
 
     default <TProxy extends ProxyEntity<TProxy, T>, T, TProperty> ProxySelector column(SQLColumn<TProxy, TProperty> column) {
         getSelector().column(column.getTable(), column.getValue());
+        return this;
+    }
+    default ProxySelector expressions(SQLSelectExpression... selectAsExpressions) {
+        for (SQLSelectExpression selectAsExpression : selectAsExpressions) {
+            expression(selectAsExpression);
+        }
+        return this;
+    }
+    default ProxySelector expression(SQLSelectExpression selectAsExpression) {
+        selectAsExpression.accept(getSelector());
         return this;
     }
 

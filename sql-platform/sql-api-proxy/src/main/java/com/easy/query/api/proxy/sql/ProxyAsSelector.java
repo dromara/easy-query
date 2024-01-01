@@ -12,6 +12,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.ACSSelector;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 
 import java.util.function.Function;
 
@@ -44,6 +45,16 @@ public interface ProxyAsSelector<TRProxy extends ProxyEntity<TRProxy, TR>, TR> e
     }
     default <TProxy extends ProxyEntity<TProxy,T>,T,TProperty> ProxyAsSelector<TRProxy, TR> column(SQLColumn<TProxy,TProperty> column) {
         getAsSelector().column(column.getTable(), column.getValue());
+        return this;
+    }
+    default ProxyAsSelector<TRProxy, TR> expressions(SQLSelectAsExpression... selectAsExpressions) {
+        for (SQLSelectAsExpression selectAsExpression : selectAsExpressions) {
+            expression(selectAsExpression);
+        }
+        return this;
+    }
+    default ProxyAsSelector<TRProxy, TR> expression(SQLSelectAsExpression selectAsExpression) {
+        selectAsExpression.accept(getAsSelector());
         return this;
     }
 
