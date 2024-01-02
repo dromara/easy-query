@@ -1,7 +1,7 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table("t_blog")
-@EntityProxy
+@EntityFileProxy
 @ToString
 public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogEntity , BlogEntityProxy> {
 

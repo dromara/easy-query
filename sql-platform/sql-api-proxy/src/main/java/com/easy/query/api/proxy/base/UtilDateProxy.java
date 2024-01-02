@@ -25,15 +25,8 @@ public class UtilDateProxy extends AbstractBasicProxyEntity<UtilDateProxy, Date>
     public UtilDateProxy(Date val) {
         set(val);
     }
-
-
-    public UtilDateProxy(SQLColumn<?,Date> sqlColumn) {
-        set(sqlColumn);
-    }
-
-
-    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<Date>> UtilDateProxy(TResult sqlFunctionAvailable) {
-        set(sqlFunctionAvailable);
+    public UtilDateProxy(PropTypeColumn<Date> propTypeColumn) {
+        set(propTypeColumn);
     }
 
     @Override

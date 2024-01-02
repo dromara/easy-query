@@ -23,7 +23,6 @@ import com.easy.query.core.expression.sql.builder.SQLAnonymousUnionEntityQueryEx
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -122,9 +121,9 @@ public abstract class AbstractSelector<TChain> {
     }
 
     public TChain columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression) {
-        NavigateMetadata navigateMetadata = table.getEntityMetadata().getNavigateNotNull(selfProperty);
+//        NavigateMetadata navigateMetadata = table.getEntityMetadata().getNavigateNotNull(selfProperty);
         Map<String, ColumnIncludeExpression> propertyColumnIncludeExpressionMap = expressionContext.getColumnIncludeMaps().computeIfAbsent(table, k -> new HashMap<>());
-        propertyColumnIncludeExpressionMap.put(navigateMetadata.getSelfPropertyOrPrimary(), new ColumnIncludeExpression(table, selfProperty, aliasProperty, includeSelectorExpression));
+        propertyColumnIncludeExpressionMap.put(selfProperty, new ColumnIncludeExpression(table, selfProperty, aliasProperty, includeSelectorExpression));
         return castChain();
     }
 

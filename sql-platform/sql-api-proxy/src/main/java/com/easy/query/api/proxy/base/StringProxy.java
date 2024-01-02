@@ -29,6 +29,9 @@ public class StringProxy extends AbstractBasicProxyEntity<StringProxy, String> {
     public StringProxy(SQLColumn<?,String> sqlColumn) {
         set(sqlColumn);
     }
+//    public StringProxy(PropTypeColumn<String> sqlColumn) {
+//        set(sqlColumn);
+//    }
 
 
     public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<String>> StringProxy(TResult sqlFunctionAvailable) {

@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.base;
 
-import com.easy.query.core.proxy.SQLColumn;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+import com.easy.query.core.proxy.PropTypeColumn;
 
 /**
  * create time 2023/6/29 09:22
@@ -23,13 +22,8 @@ public class DoubleProxy extends AbstractBasicProxyEntity<DoubleProxy, Double> {
     }
 
 
-    public DoubleProxy(SQLColumn<?,Double> sqlColumn) {
-        set(sqlColumn);
-    }
-
-
-    public DoubleProxy(DSLSQLFunctionAvailable sqlFunctionAvailable) {
-        set(sqlFunctionAvailable);
+    public DoubleProxy(PropTypeColumn<Double> propTypeColumn) {
+        set(propTypeColumn);
     }
 
     @Override

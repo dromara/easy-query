@@ -3,9 +3,8 @@ package com.easy.query.api.proxy.entity.delete;
 import com.easy.query.core.basic.api.delete.Deletable;
 import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.WithVersionable;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLPredicateExpression;
 
 import java.util.Collection;
 
@@ -16,11 +15,11 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface ExpressionDeletable<TProxy extends ProxyEntity<TProxy, T>, T> extends Deletable<T, ExpressionDeletable<TProxy,T>>, WithVersionable<ExpressionDeletable<TProxy,T>>, ConfigureVersionable<ExpressionDeletable<TProxy,T>> {
-    default ExpressionDeletable<TProxy,T> where(SQLFuncExpression1<TProxy, SQLPredicateExpression> whereExpression) {
+    default ExpressionDeletable<TProxy,T> where(SQLExpression1<TProxy> whereExpression) {
         return where(true, whereExpression);
     }
 
-    ExpressionDeletable<TProxy,T> where(boolean condition, SQLFuncExpression1<TProxy, SQLPredicateExpression> whereExpression);
+    ExpressionDeletable<TProxy,T> where(boolean condition, SQLExpression1<TProxy> whereExpression);
 
 
     default ExpressionDeletable<TProxy,T> whereById(Object id) {

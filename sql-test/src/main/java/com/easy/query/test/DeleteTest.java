@@ -1,20 +1,24 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.delete.ExpressionDeletable;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicValueUpdateAtomicTrack;
+import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.Supplier;
 
 /**
  * @author xuejiaming
@@ -292,5 +296,140 @@ public class DeleteTest extends BaseTest {
                 .allowDeleteStatement(true)
                 .executeRows();
         Assert.assertEquals(0,l);
+    }
+    @Test
+    public void deleteTest19(){
+        String sql = easyEntityQuery.deletable(BlogEntity.class)
+                .where(o -> o.id().eq("id123456"))
+                .toSQL();
+        Assert.assertEquals("UPDATE `t_blog` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?",sql);
+
+
+        String sql2 = easyEntityQuery.deletable(BlogEntity.class)
+                .where(o -> {
+                    o.id().eq("id123456");
+                    o.createTime().le(LocalDateTime.of(2023,1,1,1,1));
+                })
+                .toSQL();
+        Assert.assertEquals("UPDATE `t_blog` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ? AND `create_time` <= ?",sql2);
+        String sql1 = easyEntityQuery.deletable(BlogEntity.class)
+                .where(o -> o.id().eq("id123456"))
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .toSQL();
+        Assert.assertEquals("DELETE FROM `t_blog` WHERE `id` = ?",sql1);
+
+        long l1 = easyEntityQuery.deletable(BlogEntity.class)
+                .where(o -> o.id().eq("id123456")).executeRows();
+        Assert.assertEquals(0,l1);
+
+        long l = easyEntityQuery.deletable(BlogEntity.class)
+                .where(o->o.id().eq("id123456"))
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .executeRows();
+        Assert.assertEquals(0,l);
+    }
+    @Test
+    public void deleteTest20(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Supplier<Exception> f = () -> {
+            try {
+                long l = easyEntityQuery.deletable(BlogEntity.class)
+                        .asTable(o->o+"123abc")
+                        .where(o -> {
+                            o.id().eq("id123456");
+                            o.createTime().le(LocalDateTime.of(2023, 1, 1, 1, 1));
+                        })
+                        .executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("UPDATE `t_blog123abc` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ? AND `create_time` <= ?", easyQuerySQLStatementException.getSQL());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `t_blog123abc` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ? AND `create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("true(Boolean),false(Boolean),id123456(String),2023-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void deleteTest21(){
+
+        Topic topic = new Topic();
+        topic.setId(String.valueOf(1));
+        topic.setStars(1 + 100);
+        topic.setTitle("标题" + 1);
+        topic.setCreateTime(LocalDateTime.of(2021, 1, 1, 1, 1, 1));
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Supplier<Exception> f = () -> {
+            try {
+                long l = easyEntityQuery.deletable(topic)
+                        .asTable(o->o+"123abc")
+                        .executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("DELETE FROM `t_topic123abc` WHERE `id` = ?", easyQuerySQLStatementException.getSQL());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("DELETE FROM `t_topic123abc` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void deleteTest22(){
+
+        BlogEntity blog = new BlogEntity();
+        blog.setId(String.valueOf(1));
+        blog.setTitle("标题" + 1);
+        blog.setCreateTime(LocalDateTime.of(2021, 1, 1, 1, 1, 1));
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Supplier<Exception> f = () -> {
+            try {
+                long l = easyEntityQuery.deletable(blog)
+                        .asTable(o->o+"123abc")
+                        .executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("UPDATE `t_blog123abc` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?", easyQuerySQLStatementException.getSQL());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `t_blog123abc` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("true(Boolean),false(Boolean),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }

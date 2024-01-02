@@ -1,8 +1,6 @@
 package com.easy.query.api.proxy.base;
 
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.SQLColumn;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.sql.Date;
 
@@ -25,14 +23,8 @@ public class SQLDateProxy extends AbstractBasicProxyEntity<SQLDateProxy, Date> {
         set(val);
     }
 
-
-    public SQLDateProxy(SQLColumn<?,Date> sqlColumn) {
-        set(sqlColumn);
-    }
-
-
-    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<Date>> SQLDateProxy(TResult sqlFunctionAvailable) {
-        set(sqlFunctionAvailable);
+    public SQLDateProxy(PropTypeColumn<Date> propTypeColumn) {
+        set(propTypeColumn);
     }
 
     @Override

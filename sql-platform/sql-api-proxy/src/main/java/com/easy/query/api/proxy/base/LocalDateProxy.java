@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.base;
 
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.time.LocalDate;
@@ -25,13 +24,8 @@ public class LocalDateProxy extends AbstractBasicProxyEntity<LocalDateProxy, Loc
     }
 
 
-    public LocalDateProxy(SQLColumn<?,LocalDate> sqlColumn) {
-        set(sqlColumn);
-    }
-
-
-    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<LocalDate>> LocalDateProxy(TResult sqlFunctionAvailable) {
-        set(sqlFunctionAvailable);
+    public LocalDateProxy(PropTypeColumn<LocalDate> propTypeColumn) {
+        set(propTypeColumn);
     }
 
     @Override

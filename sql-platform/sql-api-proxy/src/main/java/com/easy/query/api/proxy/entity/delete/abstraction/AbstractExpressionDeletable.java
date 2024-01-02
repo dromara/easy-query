@@ -3,10 +3,10 @@ package com.easy.query.api.proxy.entity.delete.abstraction;
 import com.easy.query.api.proxy.entity.delete.ExpressionDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLPredicateExpression;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -22,8 +22,13 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
     private final ClientExpressionDeletable<T> expressionObjectDeletable;
 
     public AbstractExpressionDeletable(TProxy tProxy,ClientExpressionDeletable<T> expressionObjectDeletable) {
-        this.tProxy = tProxy;
         this.expressionObjectDeletable = expressionObjectDeletable;
+        this.tProxy = tProxy.create(expressionObjectDeletable.getDeleteExpressionBuilder().getTable(0).getEntityTable(), getExpressionContext().getRuntimeContext());
+    }
+
+    @Override
+    public EntityDeleteExpressionBuilder getDeleteExpressionBuilder() {
+        return expressionObjectDeletable.getDeleteExpressionBuilder();
     }
 
     @Override
@@ -45,11 +50,12 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
 //    }
 
     @Override
-    public ExpressionDeletable<TProxy,T> where(boolean condition, SQLFuncExpression1<TProxy, SQLPredicateExpression> whereExpression) {
+    public ExpressionDeletable<TProxy,T> where(boolean condition, SQLExpression1<TProxy> whereExpression) {
         if (condition) {
             expressionObjectDeletable.where(where -> {
-                SQLPredicateExpression sqlPredicateExpression = whereExpression.apply(tProxy);
-                sqlPredicateExpression.accept(where.getFilter());
+                tProxy.getEntitySQLContext()._where(where.getFilter(), () -> {
+                    whereExpression.apply(tProxy);
+                });
             });
         }
         return this;

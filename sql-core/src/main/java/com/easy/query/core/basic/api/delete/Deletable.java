@@ -6,6 +6,7 @@ import com.easy.query.core.basic.api.internal.SQLExecuteExpectRows;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
@@ -17,6 +18,8 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 public interface Deletable<T, TChain> extends SQLExecuteExpectRows,
         Interceptable<TChain>, LogicDeletable<TChain>, TableReNameable<TChain> {
     ExpressionContext getExpressionContext();
+
+    EntityDeleteExpressionBuilder getDeleteExpressionBuilder();
     /**
      * 语句转成sql
      *

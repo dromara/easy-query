@@ -3,6 +3,7 @@ package com.easy.query.api.proxy.delete.abstraction;
 import com.easy.query.api.proxy.delete.ProxyEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.util.function.Function;
@@ -22,6 +23,11 @@ public abstract class AbstractProxyEntityDeletable<T> implements ProxyEntityDele
     @Override
     public ExpressionContext getExpressionContext() {
         return entityObjectDeletable.getExpressionContext();
+    }
+
+    @Override
+    public EntityDeleteExpressionBuilder getDeleteExpressionBuilder() {
+        return entityObjectDeletable.getDeleteExpressionBuilder();
     }
 
     @Override

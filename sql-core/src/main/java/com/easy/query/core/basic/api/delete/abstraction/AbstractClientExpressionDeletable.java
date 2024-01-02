@@ -53,6 +53,11 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     }
 
     @Override
+    public EntityDeleteExpressionBuilder getDeleteExpressionBuilder() {
+        return entityDeleteExpressionBuilder.cloneEntityExpressionBuilder();
+    }
+
+    @Override
     public ExpressionContext getExpressionContext() {
         return entityDeleteExpressionBuilder.getExpressionContext();
     }

@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.core.draft.Draft1;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * create time 2023/12/29 16:32
@@ -89,8 +91,11 @@ public class QueryTest10 extends BaseTest{
                         t.id().eq("123");
                         t1.title().like("456");
                         t2.createTime().eq(LocalDateTime.of(2021, 1, 1, 1, 1));
+//                        t.stars().eq(0);
                     })
                     .select((t, t1, t2) -> new QueryVOProxy() {{
+//                        PropTypeColumn<String> col = t.sql("IFNull({0},{1})", c -> c.expression(t.id()).value("1")).setPropertyType(String.class);
+//                        field1().set(col);
                         selectExpression(
                                 t.id(),
                                 t1.title().as(field1()),
@@ -983,13 +988,29 @@ public class QueryTest10 extends BaseTest{
                 })
                 .toList();
         System.out.println(list);
+        List<TodoSingleRecord> list1 = easyQuery.queryable(TodoSingleRecord.class)
+                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsList)
+                        .where(p1 -> p1.eq(TodoExecutors::getType, 0)))
+                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsJoinList)
+                        .where(p1 -> p1.eq(TodoExecutors::getType, 1)))
+                .toList();
+        System.out.println(list1);
     }
 
     @Test
     public void test222(){
+        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class).orderBy(o -> {
+            o.createTime().format("yyyy-MM-dd").asc();
+        }).toList();
         List<Draft1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
                 .groupBy(o -> GroupKeys.of(o.content().subString(0, 8)))
                 .selectDraft(o -> Select.draft(o.key1()))
                 .toList();
+        query(q->q.whereObject(new Object()));
+    }
+
+    public Queryable<Topic> query(Function<Queryable<Topic>,Queryable<Topic>> queryableFunction){
+        Queryable<Topic> topicQueryable = easyQuery.queryable(Topic.class);
+        return queryableFunction.apply(topicQueryable).select(Topic.class);
     }
 }

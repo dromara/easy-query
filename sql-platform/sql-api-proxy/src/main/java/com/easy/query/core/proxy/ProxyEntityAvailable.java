@@ -2,7 +2,7 @@ package com.easy.query.core.proxy;
 
 /**
  * create time 2023/11/25 22:38
- * 文件说明
+ * 当前注解只需要让数据库对象继承即可
  *
  * @author xuejiaming
  */

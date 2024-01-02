@@ -197,7 +197,8 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         if (hasColumnIncludeMaps) {
             Map<String, ColumnIncludeExpression> propertyColumnIncludeExpressionMap = expressionContext.getColumnIncludeMaps().get(includeNavigateParams.getTable());
             if (propertyColumnIncludeExpressionMap != null) {
-                ColumnIncludeExpression columnIncludeExpression = propertyColumnIncludeExpressionMap.get(includeParseContext.getSelfProperty());
+                String propertyName = includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getPropertyName();
+                ColumnIncludeExpression columnIncludeExpression = propertyColumnIncludeExpressionMap.get(propertyName);
                 if (columnIncludeExpression != null) {
                     NavigateMetadata aliasNavigateMetadata = entityMetadata.getNavigateNotNull(columnIncludeExpression.getAliasProperty());
                     if (includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getRelationType() != aliasNavigateMetadata.getRelationType()) {

@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.base;
 
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
@@ -24,13 +23,8 @@ public class IntegerProxy extends AbstractBasicProxyEntity<IntegerProxy, Integer
     }
 
 
-    public IntegerProxy(SQLColumn<?,Integer> sqlColumn) {
-        set(sqlColumn);
-    }
-
-
-    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<Integer>> IntegerProxy(TResult sqlFunctionAvailable) {
-        set(sqlFunctionAvailable);
+    public IntegerProxy(PropTypeColumn<Integer> propTypeColumn) {
+        set(propTypeColumn);
     }
 
     @Override

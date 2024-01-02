@@ -25,13 +25,8 @@ public class LocalDateTimeProxy extends AbstractBasicProxyEntity<LocalDateTimePr
     }
 
 
-    public LocalDateTimeProxy(SQLColumn<?,LocalDateTime> sqlColumn) {
-        set(sqlColumn);
-    }
-
-
-    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<LocalDateTime>> LocalDateTimeProxy(TResult sqlFunctionAvailable) {
-        set(sqlFunctionAvailable);
+    public LocalDateTimeProxy(PropTypeColumn<LocalDateTime> propTypeColumn) {
+        set(propTypeColumn);
     }
 
     @Override

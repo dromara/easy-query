@@ -24,14 +24,8 @@ public class TimestampProxy extends AbstractBasicProxyEntity<TimestampProxy, Tim
         set(val);
     }
 
-
-    public TimestampProxy(SQLColumn<?,Timestamp> sqlColumn) {
-        set(sqlColumn);
-    }
-
-
-    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<Timestamp>> TimestampProxy(TResult sqlFunctionAvailable) {
-        set(sqlFunctionAvailable);
+    public TimestampProxy(PropTypeColumn<Timestamp> propTypeColumn) {
+        set(propTypeColumn);
     }
 
 

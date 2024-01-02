@@ -6,6 +6,7 @@ import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.util.Collection;
@@ -27,6 +28,11 @@ public abstract class AbstractExpressionDeletable<T> implements ExpressionDeleta
     @Override
     public ExpressionContext getExpressionContext() {
         return expressionObjectDeletable.getExpressionContext();
+    }
+
+    @Override
+    public EntityDeleteExpressionBuilder getDeleteExpressionBuilder() {
+        return expressionObjectDeletable.getDeleteExpressionBuilder();
     }
 
     @Override

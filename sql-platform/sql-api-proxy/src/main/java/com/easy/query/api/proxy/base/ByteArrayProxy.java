@@ -1,8 +1,6 @@
 package com.easy.query.api.proxy.base;
 
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.SQLColumn;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
  * create time 2023/6/29 09:22
@@ -23,13 +21,8 @@ public class ByteArrayProxy extends AbstractBasicProxyEntity<ByteArrayProxy, Byt
         set(val);
     }
 
-
-    public ByteArrayProxy(SQLColumn<?,Byte[]> sqlColumn) {
-        set(sqlColumn);
-    }
-
-    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<Byte[]>> ByteArrayProxy(TResult sqlFunctionAvailable) {
-        set(sqlFunctionAvailable);
+    public ByteArrayProxy(PropTypeColumn<Byte[]> propTypeColumn) {
+        set(propTypeColumn);
     }
 
     @Override

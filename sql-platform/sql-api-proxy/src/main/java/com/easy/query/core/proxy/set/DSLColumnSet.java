@@ -12,13 +12,11 @@ import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumnImpl;
-import com.easy.query.core.proxy.impl.SQLColumnSetColumnImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetNativeSQLImpl;
-import com.easy.query.core.proxy.impl.SQLColumnSetSQLFunctionValueImpl;
+import com.easy.query.core.proxy.impl.SQLColumnSetPropColumnImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetSubQueryImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetValueImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -38,29 +36,43 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
             getEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), val));
         }
     }
-
-    default void set(SQLColumn<?, TProperty> column) {
-        set(true, column);
-    }
-
-    default void set(boolean condition, SQLColumn<?, TProperty> column) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
-        }
-    }
-
+//
+//    default void set(SQLColumn<?, TProperty> column) {
+//        set(true, column);
+//    }
+//
+//    default void set(boolean condition, SQLColumn<?, TProperty> column) {
+//        if (condition) {
+//            getEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
+//        }
+//    }
+//
+//    /**
+//     * 支持function函数
+//     * @param val
+//     * @param <TResult>
+//     */
+//    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void set(TResult val) {
+//        set(true, val);
+//    }
+//
+//    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void set(boolean condition, TResult val) {
+//        if (condition) {
+//            getEntitySQLContext().accept(new SQLColumnSetSQLFunctionValueImpl(getTable(), getValue(), val));
+//        }
+//    }
     /**
      * 支持function函数
      * @param val
      * @param <TResult>
      */
-    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void set(TResult val) {
+    default <TResult extends PropTypeColumn<TProperty>> void set(TResult val) {
         set(true, val);
     }
 
-    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void set(boolean condition, TResult val) {
+    default <TResult extends PropTypeColumn<TProperty>> void set(boolean condition, TResult val) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLColumnSetSQLFunctionValueImpl(getTable(), getValue(), val));
+            getEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(getTable(), getValue(), val));
         }
     }
 

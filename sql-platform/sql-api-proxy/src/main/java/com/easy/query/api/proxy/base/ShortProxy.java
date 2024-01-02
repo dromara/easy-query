@@ -2,7 +2,6 @@ package com.easy.query.api.proxy.base;
 
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLColumn;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
  * create time 2023/6/29 09:22
@@ -23,13 +22,8 @@ public class ShortProxy extends AbstractBasicProxyEntity<ShortProxy, Short> {
     }
 
 
-    public ShortProxy(SQLColumn<?,Short> sqlColumn) {
-        set(sqlColumn);
-    }
-
-
-    public <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<Short>> ShortProxy(TResult sqlFunctionAvailable) {
-        set(sqlFunctionAvailable);
+    public ShortProxy(PropTypeColumn<Short> propTypeColumn) {
+        set(propTypeColumn);
     }
 
     @Override

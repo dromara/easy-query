@@ -6,6 +6,7 @@ import com.easy.query.api4kt.sql.impl.SQLKtWherePredicateImpl;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.util.Collection;
@@ -22,6 +23,11 @@ public abstract class AbstractKtExpressionDeletable<T> implements KtExpressionDe
 
     public AbstractKtExpressionDeletable(ClientExpressionDeletable<T> expressionObjectDeletable) {
         this.expressionObjectDeletable = expressionObjectDeletable;
+    }
+
+    @Override
+    public EntityDeleteExpressionBuilder getDeleteExpressionBuilder() {
+        return expressionObjectDeletable.getDeleteExpressionBuilder();
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -24,13 +25,18 @@ public abstract class AbstractProxyExpressionDeletable<TProxy extends ProxyEntit
     private final ClientExpressionDeletable<T> expressionObjectDeletable;
 
     public AbstractProxyExpressionDeletable(TProxy proxy, ClientExpressionDeletable<T> expressionObjectDeletable) {
-        this.proxy = proxy;
         this.expressionObjectDeletable = expressionObjectDeletable;
+        this.proxy = proxy.create(expressionObjectDeletable.getDeleteExpressionBuilder().getTable(0).getEntityTable(), getExpressionContext().getRuntimeContext());
     }
 
     @Override
     public TProxy getProxy() {
         return proxy;
+    }
+
+    @Override
+    public EntityDeleteExpressionBuilder getDeleteExpressionBuilder() {
+        return expressionObjectDeletable.getDeleteExpressionBuilder();
     }
 
     @Override

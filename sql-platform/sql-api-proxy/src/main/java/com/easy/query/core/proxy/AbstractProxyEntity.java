@@ -93,11 +93,41 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
 
-
+    /**
+     * 返回group或者selectDraft自定义sql片段
+     * <blockquote><pre>
+     * {@code
+     *
+     *  .select((t, t1, t2) -> new QueryVOProxy() {{
+     *      t.sql("now()");
+     *      //指定返回类型给draft类型进行明确
+     *      //t.sql("now()").setPropertyType(String.class);
+     *  }}).toList();
+     * }
+     * </blockquote></pre>
+     * @param sqlSegment
+     * @return
+     */
     public PropTypeColumn<Object> sql(String sqlSegment) {
         return sql(sqlSegment, c->{});
     }
 
+    /**
+     * 返回group或者selectDraft自定义sql片段
+     * <blockquote><pre>
+     * {@code
+     *
+     *  .select((t, t1, t2) -> new QueryVOProxy() {{
+     *      t.sql("IFNull({0},{1})",c->c.expression(t.id()).value("1"));
+     *      //指定返回类型给draft类型进行明确
+     *      //t.sql("IFNull({0},{1})",c->c.expression(t.id()).value("1")).setPropertyType(String.class);
+     *  }}).toList();
+     * }
+     * </blockquote></pre>
+     * @param sqlSegment
+     * @param contextConsume
+     * @return
+     */
     public PropTypeColumn<Object> sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         return new SQLNativeDraftImpl((alias, f) -> {
             f.sqlNativeSegment(sqlSegment, c -> {

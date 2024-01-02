@@ -52,6 +52,11 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
     }
 
     @Override
+    public EntityDeleteExpressionBuilder getDeleteExpressionBuilder() {
+        return entityDeleteExpressionBuilder;
+    }
+
+    @Override
     public long executeRows() {
 
         if (!entities.isEmpty()) {
