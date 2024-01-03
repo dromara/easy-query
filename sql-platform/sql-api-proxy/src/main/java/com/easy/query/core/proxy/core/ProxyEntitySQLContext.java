@@ -113,32 +113,112 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
     public void _whereOr(SQLActionExpression sqlActionExpression) {
         if (accept instanceof PredicateEntityExpressionAccept) {
             PredicateEntityExpressionAccept predicateEntityExpressionAccept = (PredicateEntityExpressionAccept) accept;
+            boolean nextIsOr = predicateEntityExpressionAccept.nextIsOr();
             Filter filter = predicateEntityExpressionAccept.getFilter();
-            filter.and(f -> {
-                PredicateEntityExpressionAcceptImpl innerAccept = new PredicateEntityExpressionAcceptImpl(f);
-                this.accept = innerAccept;
-                innerAccept.nextOr(true);
-                sqlActionExpression.apply();
-                innerAccept.nextOr(false);
-            });
+            if(nextIsOr){
+                filter.or(f -> {
+                    PredicateEntityExpressionAcceptImpl innerAccept = new PredicateEntityExpressionAcceptImpl(f);
+                    innerAccept.nextOr(true);
+                    this.accept = innerAccept;
+                    sqlActionExpression.apply();
+                    innerAccept.nextOr(true);
+                });
+                filter.or();
+            }else{
+                filter.and(f -> {
+                    PredicateEntityExpressionAcceptImpl innerAccept = new PredicateEntityExpressionAcceptImpl(f);
+                    innerAccept.nextOr(true);
+                    this.accept = innerAccept;
+                    sqlActionExpression.apply();
+                    innerAccept.nextOr(false);
+                });
+                filter.and();
+            }
             this.accept = predicateEntityExpressionAccept;
         } else if (accept instanceof AggregatePredicateEntityExpressionAccept) {
             AggregatePredicateEntityExpressionAccept aggregatePredicateEntityExpressionAccept = (AggregatePredicateEntityExpressionAccept) accept;
+            boolean nextIsOr = aggregatePredicateEntityExpressionAccept.nextIsOr();
             AggregateFilter aggregateFilter = aggregatePredicateEntityExpressionAccept.getAggregateFilter();
-            aggregateFilter.and(f -> {
-                AggregatePredicateEntityExpressionAcceptImpl innerAccept = new AggregatePredicateEntityExpressionAcceptImpl(f);
-                this.accept = innerAccept;
-                innerAccept.nextOr(true);
-                sqlActionExpression.apply();
-                innerAccept.nextOr(false);
-            });
+            if(nextIsOr){
+                aggregateFilter.or(f -> {
+                    AggregatePredicateEntityExpressionAcceptImpl innerAccept = new AggregatePredicateEntityExpressionAcceptImpl(f);
+                    innerAccept.nextOr(true);
+                    this.accept = innerAccept;
+                    sqlActionExpression.apply();
+                    innerAccept.nextOr(true);
+                });
+                aggregateFilter.or();
+            }else{
+                aggregateFilter.and(f -> {
+                    AggregatePredicateEntityExpressionAcceptImpl innerAccept = new AggregatePredicateEntityExpressionAcceptImpl(f);
+                    innerAccept.nextOr(true);
+                    this.accept = innerAccept;
+                    sqlActionExpression.apply();
+                    innerAccept.nextOr(false);
+                });
+                aggregateFilter.and();
+            }
             this.accept = aggregatePredicateEntityExpressionAccept;
         } else {
             throw new UnsupportedOperationException();
         }
     }
 
-//    @Override
+    @Override
+    public void _whereAnd(SQLActionExpression sqlActionExpression) {
+        if (accept instanceof PredicateEntityExpressionAccept) {
+            PredicateEntityExpressionAccept predicateEntityExpressionAccept = (PredicateEntityExpressionAccept) accept;
+            boolean nextIsOr = predicateEntityExpressionAccept.nextIsOr();
+            Filter filter = predicateEntityExpressionAccept.getFilter();
+            if (nextIsOr) {
+                filter.or(f -> {
+                    PredicateEntityExpressionAcceptImpl innerAccept = new PredicateEntityExpressionAcceptImpl(f);
+                    innerAccept.nextOr(false);
+                    this.accept = innerAccept;
+                    sqlActionExpression.apply();
+                    innerAccept.nextOr(true);
+                });
+                filter.or();
+            }else{
+                filter.and(f -> {
+                    PredicateEntityExpressionAcceptImpl innerAccept = new PredicateEntityExpressionAcceptImpl(f);
+                    innerAccept.nextOr(false);
+                    this.accept = innerAccept;
+                    sqlActionExpression.apply();
+                    innerAccept.nextOr(false);
+                });
+                filter.and();
+            }
+            this.accept = predicateEntityExpressionAccept;
+        } else if (accept instanceof AggregatePredicateEntityExpressionAccept) {
+            AggregatePredicateEntityExpressionAccept aggregatePredicateEntityExpressionAccept = (AggregatePredicateEntityExpressionAccept) accept;
+            boolean nextIsOr = aggregatePredicateEntityExpressionAccept.nextIsOr();
+            AggregateFilter aggregateFilter = aggregatePredicateEntityExpressionAccept.getAggregateFilter();
+            if(nextIsOr){
+                aggregateFilter.or(f -> {
+                    AggregatePredicateEntityExpressionAcceptImpl innerAccept = new AggregatePredicateEntityExpressionAcceptImpl(f);
+                    this.accept = innerAccept;
+                    innerAccept.nextOr(false);
+                    sqlActionExpression.apply();
+                    innerAccept.nextOr(true);
+                });
+                aggregateFilter.or();
+            }else{
+                aggregateFilter.and(f -> {
+                    AggregatePredicateEntityExpressionAcceptImpl innerAccept = new AggregatePredicateEntityExpressionAcceptImpl(f);
+                    this.accept = innerAccept;
+                    innerAccept.nextOr(false);
+                    sqlActionExpression.apply();
+                    innerAccept.nextOr(false);
+                });
+                aggregateFilter.and();
+            }
+            this.accept = aggregatePredicateEntityExpressionAccept;
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+    //    @Override
 //    public void _nativeSqlSegment(SQLActionExpression sqlActionExpression) {
 //        1111
 //    }

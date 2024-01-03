@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.core.draft.Draft1;
@@ -681,6 +682,7 @@ public class QueryTest10 extends BaseTest{
                     o.title().toUpper().like("123");
                     o.title().toUpper().eq(o.id().toUpper());
                     o.title().toUpper().ne(o.id().toLower());
+//                    o.title().toUpper().ne(new LocalDateTimeProxy(LocalDateTime.of(2021,1,1,1,1)).format("yyyy-MM-dd"));
                 })
                 .selectDraft(o -> Select.draft(
                         o.id(),
@@ -976,6 +978,17 @@ public class QueryTest10 extends BaseTest{
 
     @Test
     public void test111(){
+        Queryable2<TodoSingleRecord, Topic> todoSingleRecordTopicQueryable2 = easyQuery.queryable(TodoSingleRecord.class)
+                .leftJoin(Topic.class, (a, b) -> a.eq(b, TodoSingleRecord::getTodoId, Topic::getId));
+        Queryable<TodoSingleRecord> x=todoSingleRecordTopicQueryable2;
+
+//        Queryable<TodoSingleRecord> queryable = easyQuery.queryable(TodoSingleRecord.class);
+//        Queryable<TodoSingleRecord> queryable1 = easyQuery.queryable(TodoSingleRecord.class);
+//        EntityTableExpressionBuilder table = queryable.getSQLEntityExpressionBuilder().getTable(0);
+//        EntityTableExpressionBuilder table1 = queryable1.getSQLEntityExpressionBuilder().getTable(0);
+//        boolean b = table == table1;
+//        System.out.println(b);
+
         List<TodoListVo> list = easyQuery.queryable(TodoSingleRecord.class)
                 .include(o -> o.many(TodoSingleRecord::getTodoExecutorsList)
                         .where(p1 -> p1.eq(TodoExecutors::getType, 0)))
@@ -988,6 +1001,23 @@ public class QueryTest10 extends BaseTest{
                 })
                 .toList();
         System.out.println(list);
+
+        List<TodoListVo> list2 = easyQuery.queryable(TodoSingleRecord.class)
+                .groupBy(o -> o.column(TodoSingleRecord::getTodoId))
+                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsList)
+                        .where(p1 -> p1.eq(TodoExecutors::getType, 0)))
+                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsJoinList)
+                        .where(p1 -> p1.eq(TodoExecutors::getType, 1)))
+                .select(TodoListVo.class, p1 -> {
+                    p1.columnAs(TodoSingleRecord::getTodoId, TodoListVo::getTodoId);
+                    p1.columnIncludeMany(TodoSingleRecord::getTodoExecutorsList, TodoListVo::getTodoExecutorsList);
+                    p1.columnIncludeMany(TodoSingleRecord::getTodoExecutorsJoinList, TodoListVo::getTodoExecutorsJoinList);
+                })
+                .toList();
+
+
+
+
         List<TodoSingleRecord> list1 = easyQuery.queryable(TodoSingleRecord.class)
                 .include(o -> o.many(TodoSingleRecord::getTodoExecutorsList)
                         .where(p1 -> p1.eq(TodoExecutors::getType, 0)))
@@ -1007,6 +1037,46 @@ public class QueryTest10 extends BaseTest{
                 .selectDraft(o -> Select.draft(o.key1()))
                 .toList();
         query(q->q.whereObject(new Object()));
+    }
+    @Test
+    public void test223(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().ne("title0");//==0
+                    o.or(()->{
+                        o.title().eq("1");
+                        o.title().eq("2");
+                        o.title().eq("3");
+                        o.and(()->{
+                            o.title().eq("4");
+                            o.title().eq("5");
+                            o.title().eq("6");
+                            o.or(()->{
+                                o.title().eq("7");
+                                o.title().eq("8");
+                                o.title().eq("9");
+                            });
+                            o.title().eq("10");
+                            o.title().eq("11");
+                            o.title().eq("12");
+                        });
+
+                        o.title().eq("13");
+                        o.title().eq("14");
+                        o.title().eq("15");
+                    });
+                })
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` <> ? AND (`title` = ? OR `title` = ? OR `title` = ? OR (`title` = ? AND `title` = ? AND `title` = ? AND (`title` = ? OR `title` = ? OR `title` = ?) AND `title` = ? AND `title` = ? AND `title` = ?) OR `title` = ? OR `title` = ? OR `title` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("title0(String),1(String),2(String),3(String),4(String),5(String),6(String),7(String),8(String),9(String),10(String),11(String),12(String),13(String),14(String),15(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
     public Queryable<Topic> query(Function<Queryable<Topic>,Queryable<Topic>> queryableFunction){

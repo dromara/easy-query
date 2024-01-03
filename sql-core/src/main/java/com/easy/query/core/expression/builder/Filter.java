@@ -697,12 +697,14 @@ public interface Filter extends SQLNative<Filter> {
 
 
     Filter and(SQLExpression1<Filter> sqlWherePredicateSQLExpression);
+//    Filter _and(SQLExpression1<Filter> sqlWherePredicateSQLExpression,boolean nextOr);
 
 
     Filter or();
 
 
     Filter or(SQLExpression1<Filter> sqlWherePredicateSQLExpression);
+//    Filter _or(SQLExpression1<Filter> sqlWherePredicateSQLExpression,boolean nextOr);
 
     Filter create();
 }

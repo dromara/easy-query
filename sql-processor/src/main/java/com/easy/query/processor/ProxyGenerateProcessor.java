@@ -69,23 +69,23 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         TYPE_MAPPING.put("long", "java.lang.Long");
         TYPE_MAPPING.put("byte", "java.lang.Byte");
         TYPE_MAPPING.put("boolean", "java.lang.Boolean");
-        TYPE_COLUMN_MAPPING.put("java.lang.Float",new PropertyColumn("SQLNumberColumn","java.lang.Float"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Double",new PropertyColumn("SQLNumberColumn","java.lang.Double"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Short",new PropertyColumn("SQLNumberColumn","java.lang.Short"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Integer",new PropertyColumn("SQLNumberColumn","java.lang.Integer"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Long",new PropertyColumn("SQLNumberColumn","java.lang.Long"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Byte",new PropertyColumn("SQLNumberColumn","java.lang.Byte"));
-        TYPE_COLUMN_MAPPING.put("java.math.BigDecimal",new PropertyColumn("SQLNumberColumn","java.math.BigDecimal"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Boolean",new PropertyColumn("SQLBooleanColumn","java.lang.Boolean"));
-        TYPE_COLUMN_MAPPING.put("java.lang.String",new PropertyColumn("SQLStringColumn","java.lang.String"));
-        TYPE_COLUMN_MAPPING.put("java.util.UUID",new PropertyColumn("SQLStringColumn","java.util.UUID"));
-        TYPE_COLUMN_MAPPING.put("java.sql.Timestamp",new PropertyColumn("SQLDateTimeColumn","java.sql.Timestamp"));
-        TYPE_COLUMN_MAPPING.put("java.sql.Time",new PropertyColumn("SQLDateTimeColumn","java.sql.Time"));
-        TYPE_COLUMN_MAPPING.put("java.sql.Date",new PropertyColumn("SQLDateTimeColumn","java.sql.Date"));
-        TYPE_COLUMN_MAPPING.put("java.util.Date",new PropertyColumn("SQLDateTimeColumn","java.util.Date"));
-        TYPE_COLUMN_MAPPING.put("java.time.LocalDate",new PropertyColumn("SQLDateTimeColumn","java.time.LocalDate"));
-        TYPE_COLUMN_MAPPING.put("java.time.LocalDateTime",new PropertyColumn("SQLDateTimeColumn","java.time.LocalDateTime"));
-        TYPE_COLUMN_MAPPING.put("java.time.LocalTime",new PropertyColumn("SQLDateTimeColumn","java.time.LocalTime"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Float", new PropertyColumn("SQLNumberColumn", "java.lang.Float"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Double", new PropertyColumn("SQLNumberColumn", "java.lang.Double"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Short", new PropertyColumn("SQLNumberColumn", "java.lang.Short"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Integer", new PropertyColumn("SQLNumberColumn", "java.lang.Integer"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Long", new PropertyColumn("SQLNumberColumn", "java.lang.Long"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Byte", new PropertyColumn("SQLNumberColumn", "java.lang.Byte"));
+        TYPE_COLUMN_MAPPING.put("java.math.BigDecimal", new PropertyColumn("SQLNumberColumn", "java.math.BigDecimal"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Boolean", new PropertyColumn("SQLBooleanColumn", "java.lang.Boolean"));
+        TYPE_COLUMN_MAPPING.put("java.lang.String", new PropertyColumn("SQLStringColumn", "java.lang.String"));
+        TYPE_COLUMN_MAPPING.put("java.util.UUID", new PropertyColumn("SQLStringColumn", "java.util.UUID"));
+        TYPE_COLUMN_MAPPING.put("java.sql.Timestamp", new PropertyColumn("SQLDateTimeColumn", "java.sql.Timestamp"));
+        TYPE_COLUMN_MAPPING.put("java.sql.Time", new PropertyColumn("SQLDateTimeColumn", "java.sql.Time"));
+        TYPE_COLUMN_MAPPING.put("java.sql.Date", new PropertyColumn("SQLDateTimeColumn", "java.sql.Date"));
+        TYPE_COLUMN_MAPPING.put("java.util.Date", new PropertyColumn("SQLDateTimeColumn", "java.util.Date"));
+        TYPE_COLUMN_MAPPING.put("java.time.LocalDate", new PropertyColumn("SQLDateTimeColumn", "java.time.LocalDate"));
+        TYPE_COLUMN_MAPPING.put("java.time.LocalDateTime", new PropertyColumn("SQLDateTimeColumn", "java.time.LocalDateTime"));
+        TYPE_COLUMN_MAPPING.put("java.time.LocalTime", new PropertyColumn("SQLDateTimeColumn", "java.time.LocalTime"));
     }
 
     private static final String FIELD_DOC_COMMENT_TEMPLATE = "\n" +
@@ -362,7 +362,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean includeProperty = navigate != null;
 
                 ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
-                String proxyPropertyName = proxyProperty!= null? proxyProperty.value() : propertyName;
+                String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
 
                 TypeMirror type = fieldElement.asType();
                 boolean isGeneric = type.getKind() == TypeKind.TYPEVAR;
@@ -375,7 +375,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 String fieldComment = getFiledComment(docComment, fieldName, propertyName);
                 PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType);
                 aptFileCompiler.addImports(propertyColumn.getImport());
-                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName,propertyColumn, fieldComment, fieldName, isValueObject, includeProperty,proxyPropertyName));
+                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, proxyPropertyName));
                 if (includeProperty) {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
                 }
@@ -415,9 +415,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
                 Navigate navigate = fieldElement.getAnnotation(Navigate.class);
                 boolean includeProperty = navigate != null;
-
                 ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
-                String proxyPropertyName = proxyProperty!= null? proxyProperty.value() : propertyName;
+                String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
                 TypeMirror type = fieldElement.asType();
                 boolean isGeneric = type.getKind() == TypeKind.TYPEVAR;
                 boolean isDeclared = type.getKind() == TypeKind.DECLARED;
@@ -429,9 +428,9 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 String fieldComment = getFiledComment(docComment, fieldName, propertyName);
                 PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType);
                 aptFileCompiler.addImports(propertyColumn.getImport());
-                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty,proxyPropertyName));
+                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, proxyPropertyName));
                 if (!includeProperty) {
-                    aptFileCompiler.getSelectorInfo().getProperties().add(new AptSelectPropertyInfo(propertyName, fieldComment,proxyPropertyName));
+                    aptFileCompiler.getSelectorInfo().getProperties().add(new AptSelectPropertyInfo(propertyName, fieldComment, proxyPropertyName));
                 } else {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
                 }
@@ -473,13 +472,16 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             return "java.lang.Object";
         }
         String typeString = defTypeString(isDeclared, includeProperty, type);
+        if (typeString.contains("<") && typeString.contains(">")){
+            return "java.lang.Object";
+        }
 
         return TYPE_MAPPING.getOrDefault(typeString, typeString);
     }
 
     private String defTypeString(boolean isDeclared, boolean includeProperty, TypeMirror type) {
 
-        if (includeProperty || !isDeclared) {
+        if (includeProperty) {
             if(type instanceof DeclaredType){
                 List<? extends TypeMirror> typeArguments = ((DeclaredType) type).getTypeArguments();
                 if(typeArguments!=null&&typeArguments.size()==1){
@@ -497,7 +499,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
     }
 
     public static String parseGenericType(String genericTypeString) {
-        if(genericTypeString.contains(",")){
+        if (genericTypeString.contains(",")) {
             return genericTypeString;
         }
         // 正则表达式用于匹配泛型类型字符串
@@ -514,7 +516,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
     }
 
     public static PropertyColumn getPropertyColumn(String fieldGenericType) {
-        return TYPE_COLUMN_MAPPING.getOrDefault(fieldGenericType,new PropertyColumn("SQLAnyColumn",fieldGenericType));
+        return TYPE_COLUMN_MAPPING.getOrDefault(fieldGenericType, new PropertyColumn("SQLAnyColumn", fieldGenericType));
     }
 
 }

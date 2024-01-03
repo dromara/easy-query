@@ -1,9 +1,13 @@
 package com.easy.query.test.entity.qq;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
+import com.easy.query.core.annotation.ProxyProperty;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.qq.proxy.TodoSingleRecordProxy;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -19,7 +23,8 @@ import java.util.List;
 
 @Table(value = "todo_single_record")
 @Data
-public class TodoSingleRecord extends BaseEntity implements Serializable {
+@EntityProxy
+public class TodoSingleRecord extends BaseEntity implements Serializable, ProxyEntityAvailable<TodoSingleRecord , TodoSingleRecordProxy> {
     private static final long serialVersionUID = 1L;
     /**
      * 主键
@@ -33,6 +38,7 @@ public class TodoSingleRecord extends BaseEntity implements Serializable {
     /**
      * 描述
      */
+    @ProxyProperty("_desc")
     private String desc;
     /**
      * 截止时间
@@ -59,6 +65,15 @@ public class TodoSingleRecord extends BaseEntity implements Serializable {
             , selfProperty = "todoId"
             , targetProperty = "todoId")
     private List<TodoExecutors> todoExecutorsJoinList;
+
+
+    @Override
+    public Class<TodoSingleRecordProxy> proxyTableClass() {
+        return TodoSingleRecordProxy.class;
+    }
+
+//    private List<Long> userIdsx;
+
 
 
 }

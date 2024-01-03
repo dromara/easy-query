@@ -11,4 +11,5 @@ import com.easy.query.core.expression.builder.AggregateFilter;
 public interface AggregatePredicateEntityExpressionAccept extends EntityExpressionAccept {
     AggregateFilter getAggregateFilter();
     void nextOr(boolean or);
+    boolean nextIsOr();
 }

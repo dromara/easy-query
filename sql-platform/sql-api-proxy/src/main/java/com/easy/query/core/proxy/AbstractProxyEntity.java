@@ -61,6 +61,15 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         }
     }
 
+    public void and(SQLActionExpression sqlActionExpression){
+        and(true,sqlActionExpression);
+    }
+    public void and(boolean condition,SQLActionExpression sqlActionExpression){
+        if(condition){
+            getEntitySQLContext()._whereAnd(sqlActionExpression);
+        }
+    }
+
     /**
      * 支持where having order
      * @param sqlSegment

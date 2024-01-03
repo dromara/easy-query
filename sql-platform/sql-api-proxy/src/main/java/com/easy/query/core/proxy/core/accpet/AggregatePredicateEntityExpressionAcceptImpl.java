@@ -30,6 +30,11 @@ public class AggregatePredicateEntityExpressionAcceptImpl implements AggregatePr
     }
 
     @Override
+    public boolean nextIsOr() {
+        return _nextOr;
+    }
+
+    @Override
     public void accept(SQLPredicateExpression sqlPredicateExpression) {
         throw new UnsupportedOperationException();
     }

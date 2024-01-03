@@ -11,4 +11,5 @@ import com.easy.query.core.expression.builder.Filter;
 public interface PredicateEntityExpressionAccept extends EntityExpressionAccept {
     Filter getFilter();
     void nextOr(boolean or);
+    boolean nextIsOr();
 }

@@ -39,6 +39,9 @@ public interface EntitySQLContext {
     default void _whereOr(SQLActionExpression sqlActionExpression){
         throw new UnsupportedOperationException();
     }
+    default void _whereAnd(SQLActionExpression sqlActionExpression){
+        throw new UnsupportedOperationException();
+    }
     default void _executeNativeSql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
         throw new UnsupportedOperationException();
     }

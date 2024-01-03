@@ -84,6 +84,22 @@ public class FilterImpl implements Filter {
         }
     }
 
+//    protected void _next(boolean nextOr) {
+//        if (reverse) {
+//            if (nextOr) {
+//                nextAnd();
+//            } else {
+//                nextOr();
+//            }
+//        } else {
+//            if (nextOr) {
+//                nextOr();
+//            } else {
+//                nextAnd();
+//            }
+//        }
+//    }
+
     private boolean conditionAppend(TableAvailable table, String property, Object value) {
         return this.conditionAcceptAssert.accept(table, property, value);
     }
@@ -336,7 +352,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter in(TableAvailable table, String property, Query<TProperty> subQuery) {
-        if(conditionAppend(table, property, subQuery)){
+        if (conditionAppend(table, property, subQuery)) {
             subQueryFilter0(table, property, subQuery, SQLPredicateCompareEnum.IN);
         }
         return this;
@@ -362,7 +378,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter notIn(TableAvailable table, String property, Query<TProperty> subQuery) {
-        if(conditionAppend(table, property, subQuery)){
+        if (conditionAppend(table, property, subQuery)) {
             subQueryFilter0(table, property, subQuery, SQLPredicateCompareEnum.NOT_IN);
         }
         return this;
@@ -370,7 +386,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <T2> Filter exists(Query<T2> subQuery) {
-        if(conditionAppend(null, null, subQuery)){
+        if (conditionAppend(null, null, subQuery)) {
             subQueryExists(subQuery, SQLPredicateCompareEnum.EXISTS);
         }
         return this;
@@ -378,7 +394,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <T2> Filter notExists(Query<T2> subQuery) {
-        if(conditionAppend(null, null, subQuery)){
+        if (conditionAppend(null, null, subQuery)) {
             subQueryExists(subQuery, SQLPredicateCompareEnum.NOT_EXISTS);
         }
         return this;
@@ -426,7 +442,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter funcValueFilter(TableAvailable table, SQLFunction sqlFunction, Object val, SQLPredicateCompare sqlPredicateCompare) {
-        if(conditionAppend(table, null, val)){
+        if (conditionAppend(table, null, val)) {
             funcValueFilter0(table, sqlFunction, val, sqlPredicateCompare);
         }
         return this;
@@ -440,7 +456,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter funcSubQueryFilter(TableAvailable table, SQLFunction sqlFunction, Query<TProperty> subQuery, SQLPredicateCompare sqlPredicateCompare) {
-        if(conditionAppend(table, null, subQuery)){
+        if (conditionAppend(table, null, subQuery)) {
             funcSubQueryFilter0(table, sqlFunction, subQuery, sqlPredicateCompare);
         }
         return this;
@@ -448,7 +464,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public <TProperty> Filter funcInFilter(TableAvailable table, SQLFunction sqlFunction, Collection<TProperty> collections, SQLPredicateCompare sqlPredicateCompare) {
-        if(conditionAppend(table, null, collections)){
+        if (conditionAppend(table, null, collections)) {
             funcInFilter0(table, sqlFunction, collections, sqlPredicateCompare);
         }
         return this;
@@ -464,7 +480,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter funcColumnFuncFilter(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight, SQLPredicateCompare sqlPredicateCompare) {
-        if(conditionAppend(tableLeft, null, sqlFunctionRight)){
+        if (conditionAppend(tableLeft, null, sqlFunctionRight)) {
             funcColumnFuncFilter0(tableLeft, sqlFunctionLeft, tableRight, sqlFunctionRight, sqlPredicateCompare);
         }
         return this;
@@ -502,6 +518,14 @@ public class FilterImpl implements Filter {
         next();
         return this;
     }
+//    @Override
+//    public Filter _and(SQLExpression1<Filter> sqlWherePredicateSQLExpression,boolean nextOr) {
+//        and0();
+//        Filter filter = create();
+//        sqlWherePredicateSQLExpression.apply(filter);
+//        _next(nextOr);
+//        return this;
+//    }
 
     protected void or0() {
         if (reverse) {
@@ -525,6 +549,15 @@ public class FilterImpl implements Filter {
         next();
         return this;
     }
+
+//    @Override
+//    public Filter _or(SQLExpression1<Filter> sqlWherePredicateSQLExpression, boolean nextOr) {
+//        or0();
+//        Filter filter = create();
+//        sqlWherePredicateSQLExpression.apply(filter);
+//        _next(nextOr);
+//        return this;
+//    }
 
     @Override
     public Filter create() {

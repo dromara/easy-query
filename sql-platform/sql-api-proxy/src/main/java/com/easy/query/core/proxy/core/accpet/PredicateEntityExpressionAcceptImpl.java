@@ -56,4 +56,9 @@ public class PredicateEntityExpressionAcceptImpl implements PredicateEntityExpre
     public void nextOr(boolean or) {
         this._nextOr = or;
     }
+
+    @Override
+    public boolean nextIsOr() {
+        return _nextOr;
+    }
 }

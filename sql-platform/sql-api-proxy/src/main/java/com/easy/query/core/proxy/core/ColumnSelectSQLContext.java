@@ -108,7 +108,11 @@ public class ColumnSelectSQLContext implements EntitySQLContext {
         throw new UnsupportedOperationException();
     }
 
-//    @Override
+    @Override
+    public void _whereAnd(SQLActionExpression sqlActionExpression) {
+        throw new UnsupportedOperationException();
+    }
+    //    @Override
 //    public void _nativeSqlSegment(SQLActionExpression sqlActionExpression) {
 //        1111
 //    }
