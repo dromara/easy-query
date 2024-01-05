@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.core.basic.api.select.Query;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -601,6 +603,20 @@ public class QueryTest10 extends BaseTest{
 
     @Test
     public void testDraft9() {
+
+        {
+            List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
+                    .orderBy(t -> {
+                        t.id().asc();
+                    })
+                    .select(o -> new MapProxy() {{
+                        put("a", o.title());
+                        put("b", o.id());
+                        put("c", o.stars());
+                    }}).toList();
+            System.out.println(list);
+        }
+
 
 
         ListenerContext listenerContext = new ListenerContext();

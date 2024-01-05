@@ -48,8 +48,7 @@
 
 </div>
 
-## multi mode
-### entity mode
+## entity query
 ```java
 
 List<Topic> list1 = entityQuery.queryable(Topic.class)
@@ -60,91 +59,14 @@ List<Topic> list1 = entityQuery.queryable(Topic.class)
         })
         .toList();
 
-        ==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
-        ==> Parameters: %someTitle%(String)
-        <== Time Elapsed: 3(ms)
-        <== Total: 0
-```
-
-### proxy mode
-
-```java
-
-TopicProxy topic = TopicProxy.createTable();
-List<Topic> list1 = easyProxyQuery.queryable(topic)
-        .where(f -> f.like(topic.title(), "someTitle"))
-        .orderByAsc(o -> o.columns(topic.createTime(),topic.id()))
-        .toList();
-
-        ==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
-        ==> Parameters: %someTitle%(String)
-        <== Time Elapsed: 3(ms)
-        <== Total: 0
-```
-### lambda mode
-
-```java
-List<Topic> list = easyQuery.queryable(Topic.class)
-      .where(o -> o.like(Topic::getTitle, "someTitle"))
-      .orderByAsc(o -> o.column(Topic::getCreateTime).column(Topic::getId))
-      .toList();
-
-        ==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
-        ==> Parameters: %someTitle%(String)
-        <== Time Elapsed: 3(ms)
-        <== Total: 0
-```
-### property mode
-```java
-List<Topic> list = easyQueryClient.queryable(Topic.class)
-                .where(o -> o.like("title", "someTitle"))
-                .orderByAsc(o -> o.column("createTime").column("id"))
-                .toList();
-
-        ==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
-        ==> Parameters: %someTitle%(String)
-        <== Time Elapsed: 3(ms)
-        <== Total: 0
+==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
+==> Parameters: %someTitle%(String)
+<== Time Elapsed: 3(ms)
+<== Total: 0
 ```
 
 ## Dependency
-### use property
-```xml
-
-<properties>
-  <easy-query.version>last-version</easy-query.version>
-</properties>
-<!--<dependency>-->
-<!--  <groupId>com.easy-query</groupId>-->
-<!--  <artifactId>sql-core</artifactId>-->
-<!--  <version>${easy-query.version}</version>-->
-<!--</dependency>-->
-<!--sql-mysql已经包含sql-core-->
-<dependency>
-<groupId>com.easy-query</groupId>
-<artifactId>sql-mysql</artifactId>
-<version>${easy-query.version}</version>
-</dependency>
-```
-### use lambda
-```xml
-
-<properties>
-  <easy-query.version>last-version</easy-query.version>
-</properties>
-<dependency>
-<groupId>com.easy-query</groupId>
-<artifactId>sql-api4j</artifactId>
-<version>${easy-query.version}</version>
-</dependency>
-<dependency>
-<groupId>com.easy-query</groupId>
-<artifactId>sql-mysql</artifactId>
-<version>${easy-query.version}</version>
-</dependency>
-```
-### use proxy
-entity use `@EntityProxy` annotation then build project apt will auto generate java code for proxy
+entity use `@EntityProxy` or `@EntityFileProxy` annotation then build project apt will auto generate java code for proxy
 ```xml
 
 <properties>
@@ -189,10 +111,7 @@ entity use `@EntityProxy` annotation then build project apt will auto generate j
 
 ## 简介
 
-`easy-query`是一款无任何依赖的JAVA/Kotlin ORM
-框架，十分轻量，拥有非常高的性能，支持单表查询、多表查询、union、子查询、分页、动态表名、VO对象查询返回、逻辑删、全局拦截、数据库列加密(
-支持高性能like查询)、数据追踪差异更新、乐观锁、多租户、自动分库、自动分表、读写分离，支持框架全功能外部扩展定制，拥有强类型表达式。
-
+`easy-query` is a dependency-free JAVA/Kotlin ORM framework, extremely lightweight, with high performance. It supports single table queries, multi-table queries, union, subqueries, pagination, dynamic table names, VO object query returns, logical deletion, global interception, database column encryption (supporting high-performance LIKE queries), data tracking for differential updates, optimistic locking, multi-tenancy, automatic database sharding, automatic table sharding, read-write separation, and supports full-featured external extension customization of the framework, with strong-typed expressions.
 
 ## 如何获取最新版本
 
