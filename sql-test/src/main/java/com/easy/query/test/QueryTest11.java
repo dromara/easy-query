@@ -159,5 +159,28 @@ public class QueryTest11 extends BaseTest {
             Assert.assertEquals("false(Boolean),2023%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            EntityQueryable<TopicProxy, Topic> sql = easyEntityQuery
+                    .queryable(Topic.class)
+                    .where(o -> o.id().eq("3" ));
+
+            List<BlogEntity> topics = easyEntityQuery
+                    .queryable(BlogEntity.class)
+                    .leftJoin(sql,(a,b)->a.id().eq(b.id()))
+                    .where((a,b) -> {
+                        a.id().isNotNull();
+                        b.id().isNotNull();
+                    })
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?) t2 ON t.`id` = t2.`id` WHERE t.`deleted` = ? AND t.`id` IS NOT NULL AND t2.`id` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("3(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
     }
 }

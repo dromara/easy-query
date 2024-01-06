@@ -491,7 +491,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.leftJoin(clientQueryable, (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
-                on.apply(t1Proxy, joinQueryable.get1Proxy());
+                on.apply(t1Proxy, joinQueryable.get1Proxy().create(t1.getTable(), t1Proxy.getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);
@@ -513,7 +513,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.rightJoin(clientQueryable, (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
-                on.apply(t1Proxy, joinQueryable.get1Proxy());
+                on.apply(t1Proxy, joinQueryable.get1Proxy().create(t1.getTable(), t1Proxy.getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);
@@ -535,7 +535,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
         ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.innerJoin(clientQueryable, (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
-                on.apply(t1Proxy, joinQueryable.get1Proxy());
+                on.apply(t1Proxy, joinQueryable.get1Proxy().create(t1.getTable(), t1Proxy.getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);

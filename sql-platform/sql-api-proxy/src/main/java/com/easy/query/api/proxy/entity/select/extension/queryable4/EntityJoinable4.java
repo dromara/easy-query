@@ -50,7 +50,7 @@ public interface EntityJoinable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5,T5Proxy>> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> leftJoin(EntityQueryable<T5Proxy, T5> joinQueryable, SQLExpression5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy> on) {
         ClientQueryable5<T1, T2, T3, T4, T5> entityQueryable5 = getClientQueryable4().leftJoin(joinQueryable.getClientQueryable(), (t, t1, t2, t3, t4) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), joinQueryable.get1Proxy());
+                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), joinQueryable.get1Proxy().create(t1.getTable(), get1Proxy().getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable5<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), joinQueryable.get1Proxy(), entityQueryable5);
@@ -70,7 +70,7 @@ public interface EntityJoinable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5,T5Proxy>> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> rightJoin(EntityQueryable<T5Proxy, T5> joinQueryable, SQLExpression5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy> on) {
         ClientQueryable5<T1, T2, T3, T4, T5> entityQueryable5 = getClientQueryable4().rightJoin(joinQueryable.getClientQueryable(), (t, t1, t2, t3, t4) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), joinQueryable.get1Proxy());
+                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), joinQueryable.get1Proxy().create(t1.getTable(), get1Proxy().getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable5<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), joinQueryable.get1Proxy(), entityQueryable5);
@@ -90,7 +90,7 @@ public interface EntityJoinable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5,T5Proxy>> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> innerJoin(EntityQueryable<T5Proxy, T5> joinQueryable, SQLExpression5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy> on) {
         ClientQueryable5<T1, T2, T3, T4, T5> entityQueryable5 = getClientQueryable4().innerJoin(joinQueryable.getClientQueryable(), (t, t1, t2, t3, t4) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
-                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), joinQueryable.get1Proxy());
+                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), joinQueryable.get1Proxy().create(t1.getTable(), get1Proxy().getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable5<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), joinQueryable.get1Proxy(), entityQueryable5);
