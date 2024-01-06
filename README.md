@@ -203,10 +203,8 @@ create table t_blog
   top tinyint(1) not null comment '是否置顶'
 )comment '博客表';
 ```
-查询对象
+query entity
 ```java
-
-
 
 @Data
 public class BaseEntity implements Serializable {
@@ -348,7 +346,7 @@ Topic topic = entityQuery
 ```
 
 ## Complex Query
-join + group +分页
+join + group +page
 ```java
 EasyPageResult<BlogEntity> page = easyEntityQuery
         .queryable(Topic.class)

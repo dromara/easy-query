@@ -292,8 +292,6 @@ create table t_blog
 查询对象
 ```java
 
-
-
 @Data
 public class BaseEntity implements Serializable {
   private static final long serialVersionUID = -4834048418175625051L;
@@ -305,7 +303,7 @@ public class BaseEntity implements Serializable {
    */
   private LocalDateTime createTime;
   /**
-   * 修改时间;修改时间
+   * Update时间;Update时间
    */
   private LocalDateTime updateTime;
   /**
@@ -313,11 +311,11 @@ public class BaseEntity implements Serializable {
    */
   private String createBy;
   /**
-   * 修改人;修改人
+   * Update人;Update人
    */
   private String updateBy;
   /**
-   * 是否删除;是否删除
+   * 是否Delete;是否Delete
    */
   @LogicDelete(strategy = LogicDeleteStrategyEnum.BOOLEAN)
   private Boolean deleted;
@@ -326,19 +324,30 @@ public class BaseEntity implements Serializable {
 
 @Data
 @Table("t_topic")
+@EntityProxy //or @EntityFileProxy
 @ToString
-public class Topic {
+public class Topic implements ProxyEntityAvailable<Topic , TopicProxy> {
 
   @Column(primaryKey = true)
   private String id;
   private Integer stars;
   private String title;
   private LocalDateTime createTime;
+
+
+  @Override
+  public Class<TopicProxy> proxyTableClass() {
+    return TopicProxy.class;
+  }
 }
+
+//The ProxyEntityAvailable interface can be quickly generated using the IDEA plugin EasyQueryAssistant.
+
 
 @Data
 @Table("t_blog")
-public class BlogEntity extends BaseEntity{
+@EntityProxy //or @EntityFileProxy
+public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogEntity , BlogEntityProxy>{
 
   /**
    * 标题
@@ -380,15 +389,22 @@ public class BlogEntity extends BaseEntity{
    * 是否置顶
    */
   private Boolean top;
+
+
+
+  @Override
+  public Class<BlogEntityProxy> proxyTableClass() {
+    return BlogEntityProxy.class;
+  }
 }
 
 ```
 ## 单表查询
 ```java
-Topic topic = easyQuery
+Topic topic = easyEntityQuery
                 .queryable(Topic.class)
-                .where(o -> o.eq(Topic::getId, "3"))
-                .firstOrNull();      
+                .where(o -> o.id().eq("3"))
+                .firstOrNull();        
 ```
 ```sql
 ==> Preparing: SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ? LIMIT 1
@@ -400,18 +416,24 @@ Topic topic = easyQuery
 ## 多表查询
 ```java
 
-//lambda
-Topic topic = easyQuery
-        .queryable(Topic.class)
-        .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-        .where(o -> o.eq(Topic::getId, "3"))
-        .firstOrNull();
-//entity
-        Topic topic = entityQuery
-        .queryable(Topic.class)
-        .leftJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
-        .where(o -> o.id().eq("3"))
-        .firstOrNull();
+```
+```sql
+==> Preparing: SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ? LIMIT 1
+==> Parameters: 3(String)
+<== Time Elapsed: 15(ms)
+<== Total: 1     
+```
+
+## Multi-Table Query
+```java
+Topic topic = entityQuery
+               .queryable(Topic.class)
+               .leftJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
+               .where(o -> {
+                    o.id().eq("3");
+                    o.title().eq("4");
+                })
+               .firstOrNull();
 ```
 ```sql
 ==> Preparing: SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ? LIMIT 1
@@ -423,40 +445,34 @@ Topic topic = easyQuery
 ## 复杂查询
 join + group +分页
 ```java
-
-//lambda
-EasyPageResult<BlogEntity> page = easyQuery
+EasyPageResult<BlogEntity> page = easyEntityQuery
         .queryable(Topic.class)
-        .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-        .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
-        .groupBy((t, t1)->t1.column(BlogEntity::getId))
-        .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore))
-        .toPageResult(1, 20);
-
-//entity
-        EasyPageResult<BlogEntity> page = entityQuery
-        .queryable(Topic.class)
-        .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
-        .where((t, t1) -> t1.title().isNotNull())
-        .groupBy((t, t1)->t1.id())
-        .select(BlogEntity.class, (t, t1, tr) -> Select.of(t1.id(),t1.score().sum().as(tr.score())))
+        .innerJoin(BlogEntity.class,(t1,t2)->t1.id().eq(t2.id()))
+        .where((t1,t2)->t2.title().isNotNull())
+        .groupBy((t1,t2)->GroupKeys.of(t2.id()))
+        .select(g->new BlogEntityProxy(){{
+              id().set(g.key1());
+              score().set(g.sum(g.group().t2.score()));
+        }})
         .toPageResult(1, 20);
 ```
 ```sql
-
-==> Preparing: SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` LIMIT 20
+==> Preparing: SELECT COUNT(*) FROM (SELECT t1.`id` AS `id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id`) t2
+  ==> Parameters: false(Boolean)
+<== Time Elapsed: 4(ms)
+<== Total: 1
+==> Preparing: SELECT t1.`id` AS `id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` LIMIT 20
 ==> Parameters: false(Boolean)
-<== Time Elapsed: 5(ms)
+<== Time Elapsed: 2(ms)
 <== Total: 20
 ```
 
 ## 动态表名
 ```java
-
-String sql = easyQuery.queryable(BlogEntity.class)
+easyEntityQuery.queryable(BlogEntity.class)
         .asTable(a->"aa_bb_cc")
-        .where(o -> o.eq(BlogEntity::getId, "123"))
-        .toSQL();
+        .where(o -> o.id().eq("123"))
+        .toList();
      
 ```
 ```sql
@@ -472,7 +488,7 @@ topic.setStars(100);
 topic.setTitle("标题0");
 topic.setCreateTime(LocalDateTime.now().plusDays(i));
 
-long rows = easyQuery.insertable(topic).executeRows();
+long rows = easyEntityQuery.insertable(topic).executeRows();
 ```
 ```sql
 
@@ -485,8 +501,8 @@ long rows = easyQuery.insertable(topic).executeRows();
 ## 修改
 ```java
 //实体更新
- Topic topic = easyQuery.queryable(Topic.class)
-        .where(o -> o.eq(Topic::getId, "7")).firstNotNull("未找到对应的数据");
+ Topic topic = easyEntityQuery.queryable(Topic.class)
+        .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
         String newTitle = "test123" + new Random().nextInt(100);
         topic.setTitle(newTitle);
 
@@ -499,15 +515,19 @@ long rows=easyQuery.updatable(topic).executeRows();
 ```
 ```java
 //表达式更新
-long rows = easyQuery.updatable(Topic.class)
-                .set(Topic::getStars, 12)
-                .where(o -> o.eq(Topic::getId, "2"))
-                .executeRows();
+long rows = easyEntityQuery.updatable(Topic.class)
+                    .setColumns(o->{
+                        o.stars().set(12);
+                    })
+                    .where(o->o.id().eq("2"))
+                    .executeRows();
 //rows为1
-easyQuery.updatable(Topic.class)
-                    .set(Topic::getStars, 12)
-                    .where(o -> o.eq(Topic::getId, "2"))
-                    .executÎeRows(1,"更新失败");
+easyEntityQuery.updatable(Topic.class)
+        .setColumns(o->{
+            o.stars().set(12);
+        })
+        .where(o->o.id().eq("2"))
+                    .executeRows(1,"更新失败");
 //判断受影响行数并且进行报错,如果当前操作不在事务内执行那么会自动开启事务!!!会自动开启事务!!!会自动开启事务!!!来实现并发更新控制,异常为:EasyQueryConcurrentException 
 //抛错后数据将不会被更新
 ```
@@ -521,7 +541,7 @@ easyQuery.updatable(Topic.class)
 
 ```java
 long l = easyQuery.deletable(Topic.class)
-                    .where(o->o.eq(Topic::getTitle,"title998"))
+                    .where(o->o.title().eq("title998"))
                     .executeRows();
 ```
 ```sql
@@ -560,30 +580,36 @@ List<Topic> list = q1.union(q2, q3).where(o -> o.eq(Topic::getId, "123321")).toL
 ## 子查询
 ### in子查询
 ```java
-Queryable<String> idQueryable = easyQuery.queryable(BlogEntity.class)
-        .where(o -> o.eq(BlogEntity::getId, "1"))
-        .select(String.class,o->o.column(BlogEntity::getId));
-List<Topic> list = easyQuery
-        .queryable(Topic.class, "x").where(o -> o.in(Topic::getId, idQueryable)).toList();
+EntityQueryable<StringProxy, String> idQuery = easyEntityQuery.queryable(BlogEntity.class)
+        .where(o -> o.id().eq("1" ))
+        .select(o -> new StringProxy(o.id()));
+
+        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+        .where(o -> o.id().in(idQuery))
+        .toList();
 ```
 ```sql
-==> Preparing: SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE x.`id` IN (SELECT t.`id` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?) 
-==> Parameters: false(Boolean),1(String)
-<== Time Elapsed: 3(ms)
-<== Total: 1    
+==> Preparing: SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IN (SELECT t1.`id` FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = ?)
+  ==> Parameters: false(Boolean),1(String)
+<== Time Elapsed: 6(ms)
+<== Total: 1 
 ```
 
 ### exists子查询
 ```java
-Queryable<BlogEntity> where1 = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.eq(BlogEntity::getId, "1"));
-List<Topic> x = easyQuery
-        .queryable(Topic.class, "x").where(o -> o.exists(where1.where(q -> q.eq(o, BlogEntity::getId, Topic::getId)))).toList();
+
+EntityQueryable<BlogEntityProxy, BlogEntity> where = easyEntityQuery.queryable(BlogEntity.class)
+        .where(o -> o.id().eq("1" ));
+
+List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
+        .where(o -> {
+        o.exists(() -> where.where(q -> q.id().eq(o.id())));
+        }).toList();
 ```
 ```sql
-==> Preparing: SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE EXISTS (SELECT 1 FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND t.`id` = x.`id`) 
+==> Preparing: SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE EXISTS (SELECT 1 FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = ? AND t1.`id` = t.`id`)
 ==> Parameters: false(Boolean),1(String)
-<== Time Elapsed: 10(ms)
+<== Time Elapsed: 2(ms)
 <== Total: 1
 ```
 
