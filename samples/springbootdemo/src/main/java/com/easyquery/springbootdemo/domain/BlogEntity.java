@@ -1,9 +1,11 @@
 package com.easyquery.springbootdemo.domain;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easyquery.springbootdemo.domain.proxy.BlogEntityProxy;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,7 +19,8 @@ import java.time.LocalDateTime;
 
 @Data
 @Table("t_blog")
-public class BlogEntity extends BaseEntity {
+@EntityFileProxy
+public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogEntity , BlogEntityProxy> {
 
     /**
      * 标题
@@ -60,4 +63,9 @@ public class BlogEntity extends BaseEntity {
      * 是否置顶
      */
     private Boolean top;
+
+    @Override
+    public Class<BlogEntityProxy> proxyTableClass() {
+        return BlogEntityProxy.class;
+    }
 }

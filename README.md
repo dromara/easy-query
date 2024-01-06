@@ -84,41 +84,41 @@ entity use `@EntityProxy` or `@EntityFileProxy` annotation then build project ap
 </dependency>
 ```
 
-## 🚀 介绍
+## 🚀  Introduction
 
-- [使用介绍](#使用介绍)
-    - [简介](#简介)
-    - [如何获取最新版本](#如何获取最新版本)
-    - [安装](#安装)
-- [开始](#开始)
-    - [单表查询](#单表查询)
-    - [多表查询](#多表查询)
-    - [复杂查询](#复杂查询)
-    - [动态表名](#动态表名)
-    - [新增](#新增)
-    - [修改](#修改)
-    - [删除](#删除)
-    - [联合查询](#联合查询)
-    - [子查询](#子查询)
-- [分片](#分片)
-    - [分表](#分表)
-    - [分库](#分库)
-- [捐赠](#捐赠)
+- [Usage Guide](#Usage Guide)
+    - [Overview](#Overview)
+    - [How to Get the Latest Version](#How to Get the Latest Version)
+    - [Installation](#Installation)
+- [Getting Started](#Getting Started)
+    - [Single Table Query](#Single Table Query)
+    - [Multi-Table Query](#Multi-Table Query)
+    - [Complex Query](#Complex Query)
+    - [Dynamic Table Names](#Dynamic Table Names)
+    - [Insert](#Insert)
+    - [Update](#Update)
+    - [Delete](#Delete)
+    - [Union/ALL Query](#Union/ALL Query)
+    - [Subquery](#Subquery)
+- [Sharding](#Sharding)
+    - [Table Sharding](#Table Sharding)
+    - [Database Sharding](#Database Sharding)
+- [support](#support)
 
 
-# 使用介绍
-`easy-query` 🚀 一款高性能、轻量级、多功能的Java/Kotlin对象查询ORM框架支持分库分表读写分离
+# Usage Guide
+`easy-query` 🚀 is a high-performance, lightweight, and versatile Java/Kotlin object query ORM framework that supports database sharding and read-write separation.
 
-## 简介
+## Overview
 
 `easy-query` is a dependency-free JAVA/Kotlin ORM framework, extremely lightweight, with high performance. It supports single table queries, multi-table queries, union, subqueries, pagination, dynamic table names, VO object query returns, logical deletion, global interception, database column encryption (supporting high-performance LIKE queries), data tracking for differential updates, optimistic locking, multi-tenancy, automatic database sharding, automatic table sharding, read-write separation, and supports full-featured external extension customization of the framework, with strong-typed expressions.
 
-## 如何获取最新版本
+## How to Get the Latest Version
 
-[https://central.sonatype.com/](https://central.sonatype.com/) 搜索`com.easy-query`获取最新安装包
+[https://central.sonatype.com/](https://central.sonatype.com/) search `com.easy-query`获取最新Installation包
 
-## 安装
-以下是`spring-boot`环境和控制台模式的安装
+## Installation
+Here is the usage guide for spring-boot environment and console mode.
 ### spring-boot
 
 ```xml
@@ -133,25 +133,18 @@ entity use `@EntityProxy` or `@EntityFileProxy` annotation then build project ap
 </dependency>
 ```
 ### console
-以mysql为例
+for mysql
 ```xml
 
 <properties>
   <easy-query.version>last-version</easy-query.version>
 </properties>
-        <!--  not required support proxy 非必须  提供了代理模式支持apt模式以非lambda形式的强类型sql语法 -->
 <dependency>
 <groupId>com.easy-query</groupId>
 <artifactId>sql-api-proxy</artifactId>
 <version>${easy-query.version}</version>
 </dependency>
-        <!--  not required support labda  提供了以java语法强类型,如果不引用也可以使用只是无法使用lambda表达式来表示属性只能用字符串 -->
-<dependency>
-<groupId>com.easy-query</groupId>
-<artifactId>sql-api4j</artifactId>
-<version>${easy-query.version}</version>
-</dependency>
-        <!-- required databaase sql  这边以mysql为例 其实不需要添加下面的包也可以运行,指示默认的个别数据库行为语句没办法生成 -->
+        <!-- required data base dialect -->
 <dependency>
 <groupId>com.easy-query</groupId>
 <artifactId>sql-mysql</artifactId>
@@ -161,26 +154,26 @@ entity use `@EntityProxy` or `@EntityFileProxy` annotation then build project ap
 ```
 
 ```java
-//初始化连接池
+//init DataSource
  HikariDataSource dataSource=new HikariDataSource();
          dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
          dataSource.setUsername("root");
          dataSource.setPassword("root");
          dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
          dataSource.setMaximumPoolSize(20);
-//非强类型api
+//property api client
          EasyQueryClient easyQueryClient=EasyQueryBootstrapper.defaultBuilderConfiguration()
          .setDataSource(dataSource)
          .useDatabaseConfigure(new MySQLDatabaseConfiguration())
          .build();
-//强类型api
-         EasyQuery easyQuery=new DefaultEasyQuery(easyQueryClient);
+//entity query api
+         EasyEntityQuery easyEntityQuery=new DefaultEasyEntityQuery(easyQueryClient);
 ```
 
 
 
-# 开始
-sql脚本
+# Getting Started
+sql script
 ```sql
 create table t_topic
 (
@@ -193,7 +186,7 @@ create table t_topic
 create table t_blog
 (
   id varchar(32) not null comment '主键ID'primary key,
-  deleted tinyint(1) default 0 not null comment '是否删除',
+  deleted tinyint(1) default 0 not null comment '是否Delete',
   create_by varchar(32) not null comment '创建人',
   create_time datetime not null comment '创建时间',
   update_by varchar(32) not null comment '更新人',
@@ -226,7 +219,7 @@ public class BaseEntity implements Serializable {
    */
   private LocalDateTime createTime;
   /**
-   * 修改时间;修改时间
+   * Update时间;Update时间
    */
   private LocalDateTime updateTime;
   /**
@@ -234,11 +227,11 @@ public class BaseEntity implements Serializable {
    */
   private String createBy;
   /**
-   * 修改人;修改人
+   * Update人;Update人
    */
   private String updateBy;
   /**
-   * 是否删除;是否删除
+   * 是否Delete;是否Delete
    */
   @LogicDelete(strategy = LogicDeleteStrategyEnum.BOOLEAN)
   private Boolean deleted;
@@ -247,19 +240,30 @@ public class BaseEntity implements Serializable {
 
 @Data
 @Table("t_topic")
+@EntityProxy //or @EntityFileProxy
 @ToString
-public class Topic {
+public class Topic implements ProxyEntityAvailable<Topic , TopicProxy> {
 
   @Column(primaryKey = true)
   private String id;
   private Integer stars;
   private String title;
   private LocalDateTime createTime;
+
+
+  @Override
+  public Class<TopicProxy> proxyTableClass() {
+    return TopicProxy.class;
+  }
 }
+
+//The ProxyEntityAvailable interface can be quickly generated using the IDEA plugin EasyQueryAssistant.
+
 
 @Data
 @Table("t_blog")
-public class BlogEntity extends BaseEntity{
+@EntityProxy //or @EntityFileProxy
+public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogEntity , BlogEntityProxy>{
 
   /**
    * 标题
@@ -301,14 +305,21 @@ public class BlogEntity extends BaseEntity{
    * 是否置顶
    */
   private Boolean top;
+
+
+
+  @Override
+  public Class<BlogEntityProxy> proxyTableClass() {
+    return BlogEntityProxy.class;
+  }
 }
 
 ```
-## 单表查询
+## Single Table Query
 ```java
-Topic topic = easyQuery
+Topic topic = easyEntityQuery
                 .queryable(Topic.class)
-                .where(o -> o.eq(Topic::getId, "3"))
+                .where(o -> o.id().eq("3"))
                 .firstOrNull();      
 ```
 ```sql
@@ -318,71 +329,63 @@ Topic topic = easyQuery
 <== Total: 1     
 ```
 
-## 多表查询
+## Multi-Table Query
 ```java
-//lambda
-Topic topic = easyQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-                .where(o -> o.eq(Topic::getId, "3"))
-                .firstOrNull();
-//entity
 Topic topic = entityQuery
                .queryable(Topic.class)
                .leftJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
-               .where(o -> o.id().eq("3"))
+               .where(o -> {
+                    o.id().eq("3");
+                    o.title().eq("4");
+                })
                .firstOrNull();
 ```
 ```sql
-==> Preparing: SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ? LIMIT 1
-==> Parameters: false(Boolean),3(String)
+==> Preparing: SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ? AND t.`title` = ? LIMIT 1
+==> Parameters: false(Boolean),3(String),4(String)
 <== Time Elapsed: 2(ms)
 <== Total: 1
 ```
 
-## 复杂查询
+## Complex Query
 join + group +分页
 ```java
-//lambda
-EasyPageResult<BlogEntity> page = easyQuery
+EasyPageResult<BlogEntity> page = easyEntityQuery
         .queryable(Topic.class)
-        .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
-        .where((t, t1) -> t1.isNotNull(BlogEntity::getTitle))
-        .groupBy((t, t1)->t1.column(BlogEntity::getId))
-        .select(BlogEntity.class, (t, t1) -> t1.column(BlogEntity::getId).columnSum(BlogEntity::getScore))
-        .toPageResult(1, 20);
-
-//entity
-EasyPageResult<BlogEntity> page = entityQuery
-        .queryable(Topic.class)
-        .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
-        .where((t, t1) -> t1.title().isNotNull())
-        .groupBy((t, t1)->t1.id())
-        .select(BlogEntity.class, (t, t1, tr) -> Select.of(t1.id(),t1.score().sum().as(tr.score())))
+        .innerJoin(BlogEntity.class,(t1,t2)->t1.id().eq(t2.id()))
+        .where((t1,t2)->t2.title().isNotNull())
+        .groupBy((t1,t2)->GroupKeys.of(t2.id()))
+        .select(g->new BlogEntityProxy(){{
+              id().set(g.key1());
+              score().set(g.sum(g.group().t2.score()));
+        }})
         .toPageResult(1, 20);
 ```
 ```sql
-
-==> Preparing: SELECT t1.`id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` LIMIT 20
+==> Preparing: SELECT COUNT(*) FROM (SELECT t1.`id` AS `id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id`) t2
+  ==> Parameters: false(Boolean)
+<== Time Elapsed: 4(ms)
+<== Total: 1
+==> Preparing: SELECT t1.`id` AS `id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY t1.`id` LIMIT 20
 ==> Parameters: false(Boolean)
-<== Time Elapsed: 5(ms)
+<== Time Elapsed: 2(ms)
 <== Total: 20
 ```
 
-## 动态表名
+## Dynamic Table Names
 ```java
 
-String sql = easyQuery.queryable(BlogEntity.class)
+easyEntityQuery.queryable(BlogEntity.class)
         .asTable(a->"aa_bb_cc")
-        .where(o -> o.eq(BlogEntity::getId, "123"))
-        .toSQL();
+        .where(o -> o.id().eq("123"))
+        .toList();
      
 ```
 ```sql
  SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `aa_bb_cc` t WHERE t.`deleted` = ? AND t.`id` = ?  
 ```
 
-## 新增
+## Insert
 ```java
 
 Topic topic = new Topic();
@@ -391,7 +394,7 @@ topic.setStars(100);
 topic.setTitle("标题0");
 topic.setCreateTime(LocalDateTime.now().plusDays(i));
 
-long rows = easyQuery.insertable(topic).executeRows();
+long rows = easyEntityQuery.insertable(topic).executeRows();
 ```
 ```sql
 
@@ -401,15 +404,15 @@ long rows = easyQuery.insertable(topic).executeRows();
 <== Total: 1
 ```
 
-## 修改
+## Update
 ```java
 //实体更新
- Topic topic = easyQuery.queryable(Topic.class)
-        .where(o -> o.eq(Topic::getId, "7")).firstNotNull("未找到对应的数据");
+ Topic topic = easyEntityQuery.queryable(Topic.class)
+        .where(o -> o.id().eq("7")).firstNotNull("未找到对应的数据");
         String newTitle = "test123" + new Random().nextInt(100);
         topic.setTitle(newTitle);
 
-long rows=easyQuery.updatable(topic).executeRows();
+long rows=easyEntityQuery.updatable(topic).executeRows();
 ```
 ```sql
 ==> Preparing: UPDATE t_topic SET `stars` = ?,`title` = ?,`create_time` = ? WHERE `id` = ?
@@ -418,14 +421,19 @@ long rows=easyQuery.updatable(topic).executeRows();
 ```
 ```java
 //表达式更新
-long rows = easyQuery.updatable(Topic.class)
-                .set(Topic::getStars, 12)
-                .where(o -> o.eq(Topic::getId, "2"))
-                .executeRows();
+
+long rows = easyEntityQuery.updatable(Topic.class)
+                    .setColumns(o->{
+                        o.stars().set(12);
+                    })
+                    .where(o->o.id().eq("2"))
+                    .executeRows();
 //rows为1
-easyQuery.updatable(Topic.class)
-                    .set(Topic::getStars, 12)
-                    .where(o -> o.eq(Topic::getId, "2"))
+easyEntityQuery.updatable(Topic.class)
+        .setColumns(o->{
+            o.stars().set(12);
+        })
+        .where(o->o.id().eq("2"))
                     .executeRows(1,"更新失败");
 //判断受影响行数并且进行报错,如果当前操作不在事务内执行那么会自动开启事务!!!会自动开启事务!!!会自动开启事务!!!来实现并发更新控制,异常为:EasyQueryConcurrentException 
 //抛错后数据将不会被更新
@@ -436,11 +444,11 @@ easyQuery.updatable(Topic.class)
 <== Total: 1
 ```
 
-## 删除
+## Delete
 
 ```java
 long l = easyQuery.deletable(Topic.class)
-                    .where(o->o.eq(Topic::getTitle,"title998"))
+                    .where(o->o.title().eq("title998"))
                     .executeRows();
 ```
 ```sql
@@ -458,7 +466,7 @@ long l = easyQuery.deletable(topic).executeRows();
 <== Total: 1
 ```
 
-## 联合查询
+## Union/ALL Query
 ```java
 Queryable<Topic> q1 = easyQuery
                 .queryable(Topic.class);
@@ -476,41 +484,47 @@ List<Topic> list = q1.union(q2, q3).where(o -> o.eq(Topic::getId, "123321")).toL
 <== Total: 0
 ```
 
-## 子查询
-### in子查询
+## Subquery
+### inSubquery
 ```java
-Queryable<String> idQueryable = easyQuery.queryable(BlogEntity.class)
-        .where(o -> o.eq(BlogEntity::getId, "1"))
-        .select(String.class,o->o.column(BlogEntity::getId));
-List<Topic> list = easyQuery
-        .queryable(Topic.class, "x").where(o -> o.in(Topic::getId, idQueryable)).toList();
+EntityQueryable<StringProxy, String> idQuery = easyEntityQuery.queryable(BlogEntity.class)
+        .where(o -> o.id().eq("1" ))
+        .select(o -> new StringProxy(o.id()));
+
+        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+        .where(o -> o.id().in(idQuery))
+        .toList();
 ```
 ```sql
-==> Preparing: SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE x.`id` IN (SELECT t.`id` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ?) 
-==> Parameters: false(Boolean),1(String)
-<== Time Elapsed: 3(ms)
-<== Total: 1    
+==> Preparing: SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` IN (SELECT t1.`id` FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = ?)
+  ==> Parameters: false(Boolean),1(String)
+<== Time Elapsed: 6(ms)
+<== Total: 1 
 ```
 
-### exists子查询
+### existsSubquery
 ```java
-Queryable<BlogEntity> where1 = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.eq(BlogEntity::getId, "1"));
-List<Topic> x = easyQuery
-        .queryable(Topic.class, "x").where(o -> o.exists(where1.where(q -> q.eq(o, BlogEntity::getId, Topic::getId)))).toList();
+
+EntityQueryable<BlogEntityProxy, BlogEntity> where = easyEntityQuery.queryable(BlogEntity.class)
+        .where(o -> o.id().eq("1" ));
+
+List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
+        .where(o -> {
+        o.exists(() -> where.where(q -> q.id().eq(o.id())));
+        }).toList();
 ```
 ```sql
-==> Preparing: SELECT x.`id`,x.`stars`,x.`title`,x.`create_time` FROM `t_topic` x WHERE EXISTS (SELECT 1 FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND t.`id` = x.`id`) 
+==> Preparing: SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE EXISTS (SELECT 1 FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = ? AND t1.`id` = t.`id`)
 ==> Parameters: false(Boolean),1(String)
-<== Time Elapsed: 10(ms)
+<== Time Elapsed: 2(ms)
 <== Total: 1
 ```
 
-# 分片
-`easy-query`支持分表、分库、分表+分库
-## 分表
+# Sharding
+`easy-query`支持Table Sharding、Database Sharding、Table Sharding+Database Sharding
+## Table Sharding
 ```java
-//创建分片对象
+//创建Sharding对象
 @Data
 @Table(value = "t_topic_sharding_time",shardingInitializer = TopicShardingTimeShardingInitializer.class)
 @ToString
@@ -523,7 +537,7 @@ public class TopicShardingTime {
     @ShardingTableKey
     private LocalDateTime createTime;
 }
-//分片初始化器很简单 假设我们是2020年1月到2023年5月也就是当前时间进行分片那么要生成对应的分片表每月一张
+//Sharding初始化器很简单 假设我们是2020年1月到2023年5月也就是当前时间进行Sharding那么要生成对应的Sharding表每月一张
 public class TopicShardingTimeShardingInitializer extends AbstractShardingMonthInitializer<TopicShardingTime> {
 
     @Override
@@ -540,7 +554,7 @@ public class TopicShardingTimeShardingInitializer extends AbstractShardingMonthI
     @Override
     public void configure0(ShardingEntityBuilder<TopicShardingTime> builder) {
 
-////以下条件可以选择配置也可以不配置用于优化分片性能
+////以下条件可以选择配置也可以不配置用于优化Sharding性能
 //        builder.paginationReverse(0.5,100)
 //                .ascSequenceConfigure(new TableNameStringComparator())
 //                .addPropertyDefaultUseDesc(TopicShardingTime::getCreateTime)
@@ -549,7 +563,7 @@ public class TopicShardingTimeShardingInitializer extends AbstractShardingMonthI
 
     }
 }
-//分片时间路由规则按月然后bean分片属性就是LocalDateTime也可以自定义实现
+//Sharding时间路由规则按月然后beanSharding属性就是LocalDateTime也可以自定义实现
 public class TopicShardingTimeTableRoute extends AbstractMonthTableRoute<TopicShardingTime> {
 
     @Override
@@ -561,9 +575,9 @@ public class TopicShardingTimeTableRoute extends AbstractMonthTableRoute<TopicSh
 ```
 [数据库脚本参考源码](https://github.com/xuejmnet/easy-query/blob/main/sql-test/src/main/resources/mysql-init-sqk-easy-sharding.sql)
 
-其中`shardingInitializer`为分片初始化器用来初始化告诉框架有多少分片的表名(支持动态添加)
+其中`shardingInitializer`为Sharding初始化器用来初始化告诉框架有多少Sharding的表名(支持动态添加)
 
-`ShardingTableKey`表示哪个字段作为分片键(分片键不等于主键)
+`ShardingTableKey`表示哪个字段作为Sharding键(Sharding键不等于主键)
 
 执行sql
 ```java
@@ -598,7 +612,7 @@ List<TopicShardingTime> list = easyQuery.queryable(TopicShardingTime.class)
 ```
 
 
-## 分库
+## Database Sharding
 
 ```java
 
@@ -631,7 +645,7 @@ public class DataSourceShardingInitializer implements EntityShardingInitializer<
 
     }
 }
-//分库数据源路由规则
+//Database Sharding数据源路由规则
 public class TopicShardingDataSourceRoute extends AbstractDataSourceRoute<TopicShardingDataSource> {
     @Override
     protected RouteFunction<String> getRouteFilter(TableAvailable table, Object shardingValue, ShardingOperatorEnum shardingOperator, boolean withEntity) {
@@ -684,7 +698,7 @@ EasyPageResult<TopicShardingDataSource> pageResult = easyQuery.queryable(TopicSh
 <== Total: 33
 ```
 
-## 捐赠
+## support
 <img src="./imgs/zfb.jpg" title="JetBrains" width=200 />
 <img src="./imgs/wx.jpg" title="JetBrains" width=222 />
 [博客](https://www.cnblogs.com/xuejiaming)

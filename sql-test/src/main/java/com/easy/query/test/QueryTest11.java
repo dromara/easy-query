@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable2;
@@ -7,6 +8,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dto.BlogEntityTest;
@@ -32,8 +34,39 @@ public class QueryTest11 extends BaseTest {
     @Test
     public void testx() {
 
+        Queryable<BlogEntity> where1 = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.eq(BlogEntity::getId, "1"));
+        List<Topic> x = easyQuery
+                .queryable(Topic.class).where(o -> o.exists(where1.where(q -> q.eq(o, BlogEntity::getId, Topic::getId)))).toList();
+
+
+        EntityQueryable<BlogEntityProxy, BlogEntity> where = easyEntityQuery.queryable(BlogEntity.class)
+                .where(o -> o.id().eq("1" ));
+        List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.exists(() -> where.where(q -> q.id().eq(o.id())));
+                }).toList();
+
+        EntityQueryable<StringProxy, String> idQuery = easyEntityQuery.queryable(BlogEntity.class)
+                .where(o -> o.id().eq("1" ))
+                .select(o -> new StringProxy(o.id()));
+
+        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+                .where(o -> o.id().in(idQuery))
+                .toList();
+
+        easyEntityQuery.queryable(Topic.class)
+                .innerJoin(BlogEntity.class,(t1,t2)->t1.id().eq(t2.id()))
+                .where((t1,t2)->t2.title().isNotNull())
+                .groupBy((t1,t2)->GroupKeys.of(t2.id()))
+                .select(g->new BlogEntityProxy(){{
+                    id().set(g.key1());
+                    score().set(g.sum(g.group().t2.score()));
+                }})
+                .toPageResult(1, 20);
 
         EntityQueryable<TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
+//                .filterConfigure()
                 .where(o -> o.id().eq("1"))
                 .select(o -> new TopicProxy() {{
                     selectExpression(o.id(), o.title());
