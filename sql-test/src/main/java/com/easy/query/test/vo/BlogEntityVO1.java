@@ -1,11 +1,11 @@
 package com.easy.query.test.vo;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityFileProxy;
 import lombok.Data;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * create time 2023/5/24 21:59
@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @ToString
+@EntityFileProxy
 public class BlogEntityVO1 {
 
     /**
