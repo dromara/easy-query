@@ -501,10 +501,10 @@ public class MyTest1 extends BaseTest {
 
             List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.title().isNotNull())
-                    .select(o -> new TopicSubQueryBlogProxy() {{
-                        selectAll(o);
-                        blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
-                    }}).toList();
+                    .select(o -> new TopicSubQueryBlogProxy().adapter(r->{
+                        r.selectAll(o);
+                        r.blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
+                    })).toList();
         }
         {
             Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class);
@@ -523,11 +523,12 @@ public class MyTest1 extends BaseTest {
 
             List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.title().isNotNull())
-                    .select(o -> new TopicSubQueryBlogProxy() {{
-                        selectAll(o);
-                        blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class)
+                    .select(o -> new TopicSubQueryBlogProxy().adapter(r->{
+
+                        r.selectAll(o);
+                        r.blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> x.id().eq(o.id())).select(x -> new LongProxy(x.star().sum().setPropertyType(Long.class))));
-                    }}).toList();
+                    })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(SELECT SUM(t1.`star`) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t WHERE t.`title` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -772,10 +773,11 @@ public class MyTest1 extends BaseTest {
 
         List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().isNotNull())
-                .select(o -> new TopicSubQueryBlogProxy() {{
-                    selectAll(o);
-                    blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
-                }}).toList();
+                .select(o -> new TopicSubQueryBlogProxy().adapter(r->{
+
+                    r.selectAll(o);
+                    r.blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
+                })).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(SELECT COUNT(*) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t WHERE t.`title` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -796,10 +798,11 @@ public class MyTest1 extends BaseTest {
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
                 .groupBy(o -> GroupKeys.of(o.title().subString(1, 2)))
-                .select(g -> new BlogEntityProxy() {{
-                    id().set(g.key1());
-                    star().set(g.intCount(g.group().title().subString(1, 2)));
-                }}).toList();
+                .select(g -> new BlogEntityProxy().adapter(r->{
+
+                   r.id().set(g.key1());
+                    r.star().set(g.intCount(g.group().title().subString(1, 2)));
+                })).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -826,10 +829,10 @@ public class MyTest1 extends BaseTest {
                 .groupBy(o -> {
                     return GroupKeys.of(o.value1());
                 })
-                .select(g -> new BlogEntityProxy() {{
-                    id().set(g.key1());
-                    star().set(g.intCount(g.group().value2()));
-                }}).toList();
+                .select(g -> new BlogEntityProxy().adapter(r->{
+                    r.id().set(g.key1());
+                    r.star().set(g.intCount(g.group().value2()));
+                })).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -857,10 +860,10 @@ public class MyTest1 extends BaseTest {
                     return GroupKeys.of(o.value1());
                 })
                 .orderBy(o -> o.key1().asc())
-                .select(g -> new BlogEntityProxy() {{
-                    id().set(g.key1());
-                    star().set(g.intCount(g.group().value2()));
-                }}).toList();
+                .select(g -> new BlogEntityProxy().adapter(r->{
+                    r.id().set(g.key1());
+                    r.star().set(g.intCount(g.group().value2()));
+                })).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -887,11 +890,11 @@ public class MyTest1 extends BaseTest {
                 .groupBy(o -> {
                     return GroupKeys.of(o.value1());
                 })
-                .select(g -> new BlogEntityProxy() {{
-                    selectExpression();
-                    id().set(g.key1());
-                    star().set(g.intCount(g.group().value2()));
-                }})
+                .select(g -> new BlogEntityProxy().adapter(r->{
+                    r.selectExpression();
+                    r.id().set(g.key1());
+                    r.star().set(g.intCount(g.group().value2()));
+                }))
                 .orderBy(o -> o.star().asc()).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -915,19 +918,19 @@ public class MyTest1 extends BaseTest {
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
                 .groupBy(o -> GroupKeys.of(o.title().subString(1, 2)))
-                .select(g -> new BlogEntityProxy() {{
-                    id().set(g.key1());
-                    title().set(
+                .select(g -> new BlogEntityProxy().adapter(r->{
+
+                    r.id().set(g.key1());
+                    r.title().set(
                             g.max(g.group().title())
                     );
-                    score().set(
+                    r.score().set(
                             g.min(g.group().stars().toNumber(BigDecimal.class))
                     );
-                    content().set(
+                    r.content().set(
                             g.join(g.group().id(), ",")
                     );
-//                    title().set(g.max(x -> x.title()));
-                }}).toList();
+                })).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

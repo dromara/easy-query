@@ -23,16 +23,15 @@ public class DataSourceShardingInitializer implements EntityShardingInitializer<
         EntityMetadata entityMetadata = builder.getEntityMetadata();
         String tableName = entityMetadata.getTableName();
         List<String> tables = Collections.singletonList(tableName);
-        LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
-            put("ds2020", tables);
-            put("ds2021", tables);
-            put("ds2022", tables);
-            put("ds2023", tables);
-        }};
+        LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>();
+        initTables.put("ds2020" , tables);
+        initTables.put("ds2021" , tables);
+        initTables.put("ds2022" , tables);
+        initTables.put("ds2023" , tables);
         builder.actualTableNameInit(initTables)
                 .paginationReverse(0.5, 100L)
                 .ascSequenceConfigure(new DataSourceAndTableComparator())
-                .addPropertyDefaultUseDesc("createTime")
+                .addPropertyDefaultUseDesc("createTime" )
                 .defaultAffectedMethod(false, ExecuteMethodEnum.LIST, ExecuteMethodEnum.ANY, ExecuteMethodEnum.FIRST, ExecuteMethodEnum.COUNT)
                 .useMaxShardingQueryLimit(1, ExecuteMethodEnum.FIRST);
 

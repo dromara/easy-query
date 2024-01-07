@@ -31,9 +31,8 @@ public class FixShardingInitializer implements ShardingInitializer {
             for (int i = 0; i < 3; i++) {
                 actualTableNames.add(tableName+"_"+i);
             }
-            LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
-                put("ds2020", actualTableNames);
-            }};
+            LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>();
+            initTables.put("ds2020", actualTableNames);
            builder.actualTableNameInit(initTables);
         }else if(TopicShardingTime.class.equals(entityMetadata.getEntityClass())){
 
@@ -47,9 +46,8 @@ public class FixShardingInitializer implements ShardingInitializer {
                 actualTableNames.add(tableName+"_"+month);
                 beginTime=beginTime.plusMonths(1);
             }
-            LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
-                put("ds2020", actualTableNames);
-            }};
+            LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>();
+            initTables.put("ds2020", actualTableNames);
 
             ((ShardingEntityBuilder<TopicShardingTime>) builder).actualTableNameInit(initTables)
                     .paginationReverse(0.5,100)

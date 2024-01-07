@@ -96,15 +96,13 @@ public class QueryTest10 extends BaseTest{
                         t2.createTime().eq(LocalDateTime.of(2021, 1, 1, 1, 1));
 //                        t.stars().eq(0);
                     })
-                    .select((t, t1, t2) -> new QueryVOProxy() {{
-//                        PropTypeColumn<String> col = t.sql("IFNull({0},{1})", c -> c.expression(t.id()).value("1")).setPropertyType(String.class);
-//                        field1().set(col);
-                        selectExpression(
+                    .select((t, t1, t2) -> new QueryVOProxy().adapter(r->{
+                        r.selectExpression(
                                 t.id(),
-                                t1.title().as(field1()),
-                                t2.id().as(field2())
+                                t1.title().as(r.field1()),
+                                t2.id().as(r.field2())
                         );
-                    }}).toList();
+                    })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t1.`title` AS `field1`,t2.`id` AS `field2` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `easy-query-test`.`t_sys_user` t2 ON t.`id` = t2.`id` WHERE t.`id` = ? AND t.`id` = ? AND t1.`title` LIKE ? AND t2.`create_time` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -127,14 +125,14 @@ public class QueryTest10 extends BaseTest{
                         t1.title().like("456");
                         t2.createTime().eq(LocalDateTime.of(2021, 1, 1, 1, 1));
                     })
-                    .select((t, t1, t2) -> new QueryVOProxy() {{
-                        selectAll(t);
-                        selectIgnores(t.title());
-                        selectExpression(
-                                t1.title().as(field1()),
-                                t2.id().as(field2())
+                    .select((t, t1, t2) -> new QueryVOProxy().adapter(r->{
+                        r.selectAll(t);
+                        r.selectIgnores(t.title());
+                        r.selectExpression(
+                                t1.title().as(r.field1()),
+                                t2.id().as(r.field2())
                         );
-                    }}).toList();
+                    })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t1.`title` AS `field1`,t2.`id` AS `field2` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `easy-query-test`.`t_sys_user` t2 ON t.`id` = t2.`id` WHERE t.`id` = ? AND t.`id` = ? AND t1.`title` LIKE ? AND t2.`create_time` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -150,17 +148,18 @@ public class QueryTest10 extends BaseTest{
                     .where(o -> {
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                     })
-                    .select(o -> new BlogEntityProxy() {{
-                        selectAll(o);
-                        selectIgnores(o.title(),o.top());
-                        star().setSubQuery(
+                    .select(o -> new BlogEntityProxy().adapter(r->{
+
+                        r.selectAll(o);
+                        r.selectIgnores(o.title(),o.top());
+                        r.star().setSubQuery(
                                 easyEntityQuery.queryable(BlogEntity.class)
                                         .where(x -> {
                                             x.id().eq(o.id());
                                         })
                                         .selectCount(Integer.class)
                         );
-                    }}).toList();
+                    })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,(SELECT COUNT(*) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AS `star` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -175,15 +174,16 @@ public class QueryTest10 extends BaseTest{
                     .where(o -> {
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
                     })
-                    .select(o -> new BlogEntityProxy() {{
-                        selectAll(o);
-                        selectIgnores(o.title(),o.top());
-                        score().setSubQuery(easyEntityQuery.queryable(BlogEntity.class)
+                    .select(o -> new BlogEntityProxy().adapter(r->{
+
+                        r.selectAll(o);
+                        r.selectIgnores(o.title(),o.top());
+                        r.score().setSubQuery(easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> {
                                     x.id().eq(o.id());
                                 })
                                 .selectCount(BigDecimal.class));
-                    }}).toList();
+                    })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,(SELECT COUNT(*) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -203,7 +203,7 @@ public class QueryTest10 extends BaseTest{
                                     .where(x -> x.id().eq(o.id()));
                         });
                     })
-                    .select(o -> new BlogEntityProxy() {{
+                    .select(o -> new BlogEntityProxy().adapter(r->{
 
 
                         Query<BigDecimal> subQuery = easyEntityQuery.queryable(BlogEntity.class)
@@ -212,11 +212,11 @@ public class QueryTest10 extends BaseTest{
                                 })
                                 .selectCount(BigDecimal.class);
 
-                        selectAll(o);
-                        selectIgnores(o.title(),o.top());
+                        r.selectAll(o);
+                        r.selectIgnores(o.title(),o.top());
 
-                        score().setSubQuery(subQuery);
-                    }}).toList();
+                        r.score().setSubQuery(subQuery);
+                    })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,(SELECT COUNT(*) FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`id` = t.`id`) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? AND EXISTS (SELECT 1 FROM `t_topic` t1 WHERE t1.`id` = t.`id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -249,12 +249,13 @@ public class QueryTest10 extends BaseTest{
                         t.id().eq(t1.id());
                         t1.title().like("123");
                     })
-                    .select((t, t1) -> new BlogEntityProxy() {{
-                        selectExpression(
+                    .select((t, t1) -> new BlogEntityProxy().adapter(r->{
+
+                        r.selectExpression(
                                 t.FETCHER.id().content().createTime(),
                                 t1.stars()
                         );
-                    }})
+                    }))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -285,12 +286,13 @@ public class QueryTest10 extends BaseTest{
                         t.id().eq(t1.id());
                         t1.title().like("123");
                     })
-                    .select((t, t1) -> new BlogEntityProxy() {{
-                        selectExpression(
+                    .select((t, t1) -> new BlogEntityProxy().adapter(r->{
+
+                        r.selectExpression(
                                 t.FETCHER.id().content().createTime(),
                                 t1.stars()
                         );
-                    }})
+                    }))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -351,9 +353,7 @@ public class QueryTest10 extends BaseTest{
                         o.key1().max().notLikeMatchRight("5");
                         o.key1().max().notLikeMatchRight(false, "6");
                     })
-                    .select(o -> new BlogEntityProxy() {{
-                        selectExpression(o.key1());
-                    }})
+                    .select(o -> new BlogEntityProxy().selectExpression(o.key1()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -392,9 +392,7 @@ public class QueryTest10 extends BaseTest{
                         o.key1().max().lt("5");
                         o.key1().max().lt(false, "6");
                     })
-                    .select(o -> new BlogEntityProxy() {{
-                        selectExpression(o.key1());
-                    }})
+                    .select(o -> new BlogEntityProxy().selectExpression(o.key1()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -433,9 +431,7 @@ public class QueryTest10 extends BaseTest{
                         o.key1().max().lt(o.key1().min());
                         o.key1().max().lt(false, o.key1().min());
                     })
-                    .select(o -> new BlogEntityProxy() {{
-                        selectExpression(o.key1());
-                    }})
+                    .select(o -> new BlogEntityProxy().selectExpression(o.key1()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -456,10 +452,10 @@ public class QueryTest10 extends BaseTest{
                 .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                 .where((t, t1) -> t1.title().isNotNull())
                 .groupBy((t, t1) -> GroupKeys.of(t1.id()))
-                .select((g) -> new BlogEntityProxy() {{
-                    selectExpression(g.key1());
-                    score().set(g.sum(g.group().t2.score()));
-                }})
+                .select((g) -> new BlogEntityProxy().adapter(r->{
+                    r.selectExpression(g.key1());
+                    r.score().set(g.sum(g.group().t2.score()));
+                }))
                 .toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -609,11 +605,11 @@ public class QueryTest10 extends BaseTest{
                     .orderBy(t -> {
                         t.id().asc();
                     })
-                    .select(o -> new MapProxy() {{
-                        put("a", o.title());
-                        put("b", o.id());
-                        put("c", o.stars());
-                    }}).toList();
+                    .select(o -> new MapProxy().adapter(r->{
+                        r.put("a", o.title());
+                        r.put("b", o.id());
+                        r.put("c", o.stars());
+                    })).toList();
             System.out.println(list);
         }
 

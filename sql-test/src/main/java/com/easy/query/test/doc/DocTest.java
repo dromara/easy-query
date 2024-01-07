@@ -37,10 +37,10 @@ public class DocTest extends BaseTest {
     @Test
     public void test1() {
         SysUserQueryRequest sysUserQueryRequest = new SysUserQueryRequest();
-        sysUserQueryRequest.setName("小明");
+        sysUserQueryRequest.setName("小明" );
         sysUserQueryRequest.setCreateTimeBegin(LocalDateTime.now().plusDays(-10));
         sysUserQueryRequest.setCreateTimeEnd(LocalDateTime.now());
-        sysUserQueryRequest.setPhone("180");
+        sysUserQueryRequest.setPhone("180" );
 
         {
 
@@ -60,7 +60,7 @@ public class DocTest extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT COUNT(*) FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ?", easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("SELECT COUNT(*) FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ?" , easyQuerySQLStatementException.getSQL());
 
         }
         {
@@ -81,7 +81,7 @@ public class DocTest extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ? LIMIT 10", easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ? LIMIT 10" , easyQuerySQLStatementException.getSQL());
 
         }
         {
@@ -109,7 +109,7 @@ public class DocTest extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ?", easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ?" , easyQuerySQLStatementException.getSQL());
 
         }
         {
@@ -138,7 +138,7 @@ public class DocTest extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ?", easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ?" , easyQuerySQLStatementException.getSQL());
 
         }
         {
@@ -165,7 +165,7 @@ public class DocTest extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ?", easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ?" , easyQuerySQLStatementException.getSQL());
 
         }
     }
@@ -180,12 +180,12 @@ public class DocTest extends BaseTest {
             Supplier<Exception> f = () -> {
                 try {
                     List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
-                            .asTable("a222")
+                            .asTable("a222" )
                             .where(o -> {
-                                o.id().eq("1");
-                                o.id().eq(o.createTime().format("yyyy-MM-dd"));
-                                o.createTime().format("yyyy-MM-dd").eq("2023-01-02");
-                                o.name().nullDefault("unknown").like("123");
+                                o.id().eq("1" );
+                                o.id().eq(o.createTime().format("yyyy-MM-dd" ));
+                                o.createTime().format("yyyy-MM-dd" ).eq("2023-01-02" );
+                                o.name().nullDefault("unknown" ).like("123" );
                                 o.phone().isNotBank();
                             })
                             .fetcher(o -> o.FETCHER.id().name().phone().departName())
@@ -201,7 +201,7 @@ public class DocTest extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`depart_name` FROM `a222` t WHERE t.`id` = ? AND  t.`id` = DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') = ? AND IFNULL(t.`name`,?) LIKE ? AND (t.`phone` IS NOT NULL AND t.`phone` <> '' AND LTRIM(t.`phone`) <> '')", easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`depart_name` FROM `a222` t WHERE t.`id` = ? AND  t.`id` = DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') = ? AND IFNULL(t.`name`,?) LIKE ? AND (t.`phone` IS NOT NULL AND t.`phone` <> '' AND LTRIM(t.`phone`) <> '')" , easyQuerySQLStatementException.getSQL());
 
         }
         {
@@ -212,16 +212,16 @@ public class DocTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
-                        o.createTime().format("yyyy-MM-dd").in(Arrays.asList("2023-01-02", "2023-01-03"));
-                        o.createTime().format("yyyy-MM-dd").notIn(Arrays.asList("2023-01-02", "2023-01-03"));
-                        o.createTime().format("yyyy-MM-dd").in(times);
-                        o.createTime().format("yyyy-MM-dd").notIn(times);
+                        o.createTime().format("yyyy-MM-dd" ).in(Arrays.asList("2023-01-02" , "2023-01-03" ));
+                        o.createTime().format("yyyy-MM-dd" ).notIn(Arrays.asList("2023-01-02" , "2023-01-03" ));
+                        o.createTime().format("yyyy-MM-dd" ).in(times);
+                        o.createTime().format("yyyy-MM-dd" ).notIn(times);
                     })
                     .fetcher(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') IN (?,?) AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') NOT IN (?,?) AND 1 = 2 AND 1 = 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("false(Boolean),2023-01-02(String),2023-01-03(String),2023-01-02(String),2023-01-03(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') IN (?,?) AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') NOT IN (?,?) AND 1 = 2 AND 1 = 1" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),2023-01-02(String),2023-01-03(String),2023-01-02(String),2023-01-03(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
 
         }
@@ -232,18 +232,19 @@ public class DocTest extends BaseTest {
             Supplier<Exception> f = () -> {
                 try {
                     List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
-                            .asTable("a222")
+                            .asTable("a222" )
                             .where(o -> {
-                                o.id().eq("1");
-                                o.id().eq(false, "1");//true/false表示是否使用该条件默认true
-                                o.id().like("123");
-                                o.id().like(false, "123");
+                                o.id().eq("1" );
+                                o.id().eq(false, "1" );//true/false表示是否使用该条件默认true
+                                o.id().like("123" );
+                                o.id().like(false, "123" );
                             })
                             .groupBy(o -> GroupKeys.of(o.id()))
-                            .select(o -> new SysUserProxy() {{
-                                id().set(o.key1());
-                                phone().set(o.count().toStr());
-                            }})
+                            .select(o -> new SysUserProxy().adapter(r -> {
+
+                                r.id().set(o.key1());
+                                r.phone().set(o.count().toStr());
+                            }))
                             .toList();
                 } catch (Exception ex) {
                     return ex;
@@ -256,7 +257,7 @@ public class DocTest extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT t.`id` AS `id`,CAST(COUNT(*) AS CHAR) AS `phone` FROM `a222` t WHERE t.`id` = ? AND t.`id` LIKE ? GROUP BY t.`id`", easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("SELECT t.`id` AS `id`,CAST(COUNT(*) AS CHAR) AS `phone` FROM `a222` t WHERE t.`id` = ? AND t.`id` LIKE ? GROUP BY t.`id`" , easyQuerySQLStatementException.getSQL());
 
         }
 
@@ -265,12 +266,12 @@ public class DocTest extends BaseTest {
             Supplier<Exception> f = () -> {
                 try {
                     List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
-                            .asTable("a222")
+                            .asTable("a222" )
                             .where(o -> {
-                                o.id().eq("1");
-                                o.id().eq(false, "1");//true/false表示是否使用该条件默认true
-                                o.id().like("123");
-                                o.id().like(false, "123");
+                                o.id().eq("1" );
+                                o.id().eq(false, "1" );//true/false表示是否使用该条件默认true
+                                o.id().like("123" );
+                                o.id().like(false, "123" );
                             })
                             .groupBy(o -> GroupKeys.of(o.id()))
                             .select(o -> {
@@ -291,7 +292,7 @@ public class DocTest extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT t.`id` AS `id`,CAST(COUNT(*) AS CHAR) AS `phone` FROM `a222` t WHERE t.`id` = ? AND t.`id` LIKE ? GROUP BY t.`id`", easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("SELECT t.`id` AS `id`,CAST(COUNT(*) AS CHAR) AS `phone` FROM `a222` t WHERE t.`id` = ? AND t.`id` LIKE ? GROUP BY t.`id`" , easyQuerySQLStatementException.getSQL());
 
         }
     }
@@ -305,15 +306,15 @@ public class DocTest extends BaseTest {
                 .where(o -> {
                     o.or(() -> {
                         for (int i = 0; i < 3; i++) {
-                            o.createTime().format("yyyy-MM-dd").likeMatchLeft("202" + i);
+                            o.createTime().format("yyyy-MM-dd" ).likeMatchLeft("202" + i);
                         }
                     });
                 })
                 .fetcher(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND (DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? OR DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? OR DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),2020%(String),2021%(String),2022%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND (DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? OR DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? OR DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ?)" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020%(String),2021%(String),2022%(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
@@ -324,7 +325,7 @@ public class DocTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
-                    o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
+                    o.createTime().format("yyyy-MM-dd" ).likeMatchLeft("2023" );
                 })
                 .fetcher(o -> {
                     PropTypeColumn<BlogEntity> subQuery = o.subQuery(() -> {
@@ -349,8 +350,8 @@ public class DocTest extends BaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,(SELECT t1.`create_time` FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AS `create_time` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),false(Boolean),2023%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,(SELECT t1.`create_time` FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AS `create_time` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),false(Boolean),2023%(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
@@ -361,7 +362,7 @@ public class DocTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
-                    o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
+                    o.createTime().format("yyyy-MM-dd" ).likeMatchLeft("2023" );
                 })
                 .fetcher(o -> {
 
@@ -387,8 +388,8 @@ public class DocTest extends BaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,(SELECT COUNT(t1.`id`) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AS `create_time` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),false(Boolean),2023%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,(SELECT COUNT(t1.`id`) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AS `create_time` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),false(Boolean),2023%(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
@@ -401,13 +402,13 @@ public class DocTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             long count = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.title().like("11");
+                        o.title().like("11" );
                         o.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
                     }).count();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` WHERE `title` LIKE ? AND `create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%11%(String),2021-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` WHERE `title` LIKE ? AND `create_time` <= ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%11%(String),2021-01-01T01:01(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
         {
@@ -416,13 +417,13 @@ public class DocTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             long intCount = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.title().like("11");
+                        o.title().like("11" );
                         o.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
                     }).intCount();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` WHERE `title` LIKE ? AND `create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%11%(String),2021-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` WHERE `title` LIKE ? AND `create_time` <= ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%11%(String),2021-01-01T01:01(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
         {
@@ -434,16 +435,16 @@ public class DocTest extends BaseTest {
                         t.id().eq(t1.id());
                     })
                     .where((t, t1) -> {
-                        t.title().like("11");
+                        t.title().like("11" );
                         t1.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
                     })
-                    .select((t, t1) -> new TopicProxy() {{
-                        selectExpression(t.FETCHER.id().stars(), t1.FETCHER.id().as(title()));
-                    }}).toList();
+                    .select((t, t1) -> new TopicProxy().adapter(r -> {
+                        r.selectExpression(t.FETCHER.id().stars(), t1.FETCHER.id().as(r.title()));
+                    })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id`,t.`stars`,t1.`id` AS `title` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ? AND t1.`create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%11%(String),2021-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t1.`id` AS `title` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ? AND t1.`create_time` <= ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%11%(String),2021-01-01T01:01(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
         {
@@ -455,16 +456,16 @@ public class DocTest extends BaseTest {
                         t.id().eq(t1.id());
                     })
                     .where((t, t1) -> {
-                        t.title().like("11");
+                        t.title().like("11" );
                         t1.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
                     })
-                    .select((t, t1) -> new TopicProxy() {{
-                        selectExpression(t.FETCHER.id().stars(), t1.FETCHER.id().as(title()));
-                    }}).toList();
+                    .select((t, t1) -> new TopicProxy().adapter(r -> {
+                        r.selectExpression(t.FETCHER.id().stars(), t1.FETCHER.id().as(r.title()));
+                    })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id`,t.`stars`,t1.`id` AS `title` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ? AND t1.`create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%11%(String),2021-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t1.`id` AS `title` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ? AND t1.`create_time` <= ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%11%(String),2021-01-01T01:01(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
         {
@@ -476,16 +477,16 @@ public class DocTest extends BaseTest {
                         t.id().eq(t1.id());
                     })
                     .where((t, t1) -> {
-                        t.title().like("11");
+                        t.title().like("11" );
                         t1.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
                     })
-                    .select((t, t1) -> new TopicProxy() {{
-                        selectExpression(t.id(), t1.stars(), t1.id().as(title()));
-                    }}).toList();
+                    .select((t, t1) -> new TopicProxy().adapter(r -> {
+                        r.selectExpression(t.id(), t1.stars(), t1.id().as(r.title()));
+                    })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id`,t1.`stars`,t1.`id` AS `title` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ? AND t1.`create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%11%(String),2021-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`id`,t1.`stars`,t1.`id` AS `title` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ? AND t1.`create_time` <= ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%11%(String),2021-01-01T01:01(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
         {
@@ -501,17 +502,17 @@ public class DocTest extends BaseTest {
                         t1.createTime().desc();
                     })
                     .select((t, t1) -> {
-                        return new TopicProxy() {{
+                        TopicProxy topic = new TopicProxy();
 
-                            selectAll(t);
-                            selectIgnores(t.title(), t.id());
-                            selectExpression(t1.title().as(id()));
-                        }};
+                        topic.selectAll(t);
+                        topic.selectIgnores(t.title(), t.id());
+                        topic.selectExpression(t1.title().as(topic.id()));
+                        return topic;
                     })
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`stars`,t.`create_time`,t1.`title` AS `id` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` ORDER BY t.`id` ASC,t1.`create_time` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`stars`,t.`create_time`,t1.`title` AS `id` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` ORDER BY t.`id` ASC,t1.`create_time` DESC" , jdbcExecuteAfterArg.getBeforeArg().getSql());
             listenerContextManager.clear();
         }
         {
@@ -520,7 +521,7 @@ public class DocTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.title().like("123");
+                        o.title().like("123" );
                         o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                     })
                     .orderBy(o -> {
@@ -531,8 +532,8 @@ public class DocTest extends BaseTest {
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? ORDER BY t.`id` ASC,t.`create_time` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? ORDER BY t.`id` ASC,t.`create_time` DESC" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
         {
@@ -541,7 +542,7 @@ public class DocTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.title().like("123");
+                        o.title().like("123" );
                         o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                     })
                     .orderBy(o -> {
@@ -552,8 +553,8 @@ public class DocTest extends BaseTest {
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? ORDER BY t.`id` ASC,t.`create_time` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? ORDER BY t.`id` ASC,t.`create_time` DESC" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
         {
@@ -562,16 +563,16 @@ public class DocTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.title().like("123");
+                        o.title().like("123" );
                         o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                     })
                     .groupBy(o -> GroupKeys.of(
                             o.id()
                     ))
-                    .select(o -> new TopicProxy() {{
-                        id().set(o.key1());
-                        stars().set(o.count(o.group().id()).setPropertyType(Integer.class));//count(id) as stars
-                    }})
+                    .select(o -> new TopicProxy().adapter(r->{
+                        r.id().set(o.key1());
+                        r.stars().set(o.count(o.group().id()).setPropertyType(Integer.class));//count(id) as stars
+                    }))
 //                    .selectAs(Topic.class,(o, tr)->Select.of(
 //                            o.id(),
 //                            o.id().count().as(tr.stars())//count(id) as stars
@@ -579,8 +580,8 @@ public class DocTest extends BaseTest {
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? GROUP BY t.`id`" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
         {
@@ -589,7 +590,7 @@ public class DocTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             EasyPageResult<Topic> pageResult = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.title().like("123");
+                        o.title().like("123" );
                         o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                     })
                     .orderBy(o -> {
@@ -600,8 +601,8 @@ public class DocTest extends BaseTest {
                     .toPageResult(1, 20);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
         {
@@ -610,7 +611,7 @@ public class DocTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.title().like("123");
+                        o.title().like("123" );
                         o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                     })
                     .orderBy(o -> {
@@ -623,8 +624,8 @@ public class DocTest extends BaseTest {
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id`,t.`title`,t.`stars` AS `stars` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? ORDER BY t.`id` ASC,t.`create_time` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`id`,t.`title`,t.`stars` AS `stars` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? ORDER BY t.`id` ASC,t.`create_time` DESC" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
     }
@@ -806,7 +807,6 @@ public class DocTest extends BaseTest {
 //                    stars().set(t.stars());
 //                    title().set(t1.id());
 //                }}).toList();
-
 
 
 //        List<Topic> list = easyEntityQuery.queryable(Topic.class)

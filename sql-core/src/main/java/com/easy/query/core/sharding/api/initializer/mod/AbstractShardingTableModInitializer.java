@@ -47,9 +47,8 @@ public abstract class AbstractShardingTableModInitializer<TEntity> implements En
                     return tableName+tableSeparator()+tail;
                 })
                 .collect(Collectors.toList());
-        Map<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
-            put(easyQueryOption.getDefaultDataSourceName(), actualTableNames);
-        }};
+        Map<String, Collection<String>> initTables = new LinkedHashMap<>();
+        initTables.put(easyQueryOption.getDefaultDataSourceName(), actualTableNames);
         builder.actualTableNameInit(initTables);
         configure0(builder);
     }

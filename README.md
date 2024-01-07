@@ -353,10 +353,12 @@ EasyPageResult<BlogEntity> page = easyEntityQuery
         .innerJoin(BlogEntity.class,(t1,t2)->t1.id().eq(t2.id()))
         .where((t1,t2)->t2.title().isNotNull())
         .groupBy((t1,t2)->GroupKeys.of(t2.id()))
-        .select(g->new BlogEntityProxy(){{
-              id().set(g.key1());
-              score().set(g.sum(g.group().t2.score()));
-        }})
+        .select(g->{
+            BlogEntityProxy r = new BlogEntityProxy();
+            r.id().set(g.key1());
+            r.score().set(g.sum(g.group().t2.score()));
+            return r;
+        })
         .toPageResult(1, 20);
 ```
 ```sql

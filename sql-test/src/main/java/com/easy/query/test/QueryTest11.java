@@ -64,18 +64,16 @@ public class QueryTest11 extends BaseTest {
                 .innerJoin(BlogEntity.class,(t1,t2)->t1.id().eq(t2.id()))
                 .where((t1,t2)->t2.title().isNotNull())
                 .groupBy((t1,t2)->GroupKeys.of(t2.id()))
-                .select(g->new BlogEntityProxy(){{
-                    id().set(g.key1());
-                    score().set(g.sum(g.group().t2.score()));
-                }})
+                .select(g->new BlogEntityProxy().adapter(r->{
+                    r.id().set(g.key1());
+                    r.score().set(g.sum(g.group().t2.score()));
+                }))
                 .toPageResult(1, 20);
 
         EntityQueryable<TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
 //                .filterConfigure()
                 .where(o -> o.id().eq("1"))
-                .select(o -> new TopicProxy() {{
-                    selectExpression(o.id(), o.title());
-                }});
+                .select(o -> new TopicProxy().selectExpression(o.id(), o.title()));
 
         EntityQueryable<TopicProxy, Topic> query2 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.id().eq("1"))
@@ -84,9 +82,7 @@ public class QueryTest11 extends BaseTest {
 
         Query<Topic> query1 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.id().eq("1"))
-                .select(o -> new TopicProxy() {{
-                    selectExpression(o.id(), o.title());
-                }});
+                .select(o -> new TopicProxy().selectExpression(o.id(), o.title()));
 
 
         List<Topic> list = query.leftJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
@@ -153,11 +149,10 @@ public class QueryTest11 extends BaseTest {
                                     .where(x -> x.id().eq(o.id()));
                         });
                     })
-                    .select(o -> new BlogEntityProxy() {{
-
+                    .select(o -> new BlogEntityProxy().adapter(r->{
                         PropTypeColumn<BigDecimal> integerPropTypeColumn = o.sql("1").setPropertyType(BigDecimal.class);
-                        score().set(integerPropTypeColumn);
-                    }}).toList();
+                        r.score().set(integerPropTypeColumn);
+                    })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT 1 AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? AND EXISTS (SELECT 1 FROM `t_topic` t1 WHERE t1.`id` = t.`id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -194,10 +189,10 @@ public class QueryTest11 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<Map<String,Object>> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(f -> f.id().eq( "1"))
-                    .select(s -> new MapProxy(){{
-                        put("id",s.id());
-                        put("name",s.stars());
-                    }})
+                    .select(s -> new MapProxy().adapter(r->{
+                        r.put("id",s.id());
+                        r.put("name",s.stars());
+                    }))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -212,9 +207,7 @@ public class QueryTest11 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<Map<String,Object>> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(f -> f.id().eq( "1"))
-                    .select(s -> new MapProxy(){{
-                        selectAll(s);
-                    }})
+                    .select(s -> new MapProxy().selectAll(s))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -239,22 +232,40 @@ public class QueryTest11 extends BaseTest {
     }
     @Test
     public void testx2() {
-        String sql = easyEntityQuery.queryable(BlogEntity.class)
-                .where(o -> o.id().eq( "2"))
-                .select(o->new BlogEntityVO1Proxy(){{
-                    score().set(o.order());//将查询的order映射到vo对象的score上
-                }})
-                .limit(1).toSQL();
-        Assert.assertEquals("SELECT t.`order` AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+        {
 
-        EntityQueryable<BlogEntityTest2Proxy, BlogEntityTest2> queryable = easyEntityQuery.queryable(BlogEntity.class)
-                .select(o -> new BlogEntityTest2Proxy() {{
-                    selectAll(o);//等于*但是不会用*这种暴力的语法会将字段列出
-                    selectIgnores(o.title());//忽略前面的selectAll里面的title列
-                    url().set(o.url());//并且将url映射到my_url上
-                }});
-        String sql1 = queryable.toSQL();
-        Assert.assertEquals("SELECT t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`url` AS `my_url` FROM `t_blog` t WHERE t.`deleted` = ?", sql1);
+            String sql = easyEntityQuery.queryable(BlogEntity.class)
+                    .where(o -> o.id().eq( "2"))
+                    .select(o->{
+                        BlogEntityVO1Proxy r = new BlogEntityVO1Proxy();
+                        r.score().set(o.order());
+                        return r;
+                    })
+                    .limit(1).toSQL();
+            Assert.assertEquals("SELECT t.`order` AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+        }
+        {
+
+            String sql = easyEntityQuery.queryable(BlogEntity.class)
+                    .where(o -> o.id().eq( "2"))
+                    .select(o->{
+                        BlogEntityVO1Proxy r = new BlogEntityVO1Proxy();
+                        r.score().set(o.order());
+                        return r;
+                    })
+                    .limit(1).toSQL();
+            Assert.assertEquals("SELECT t.`order` AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+        }
+        {
+
+            EntityQueryable<BlogEntityTest2Proxy, BlogEntityTest2> queryable = easyEntityQuery.queryable(BlogEntity.class)
+                    .select(o -> new BlogEntityTest2Proxy().selectAll(o).selectIgnores(o.title()).adapter(r->{
+                        r.url().set(o.url());
+                    }));
+            String sql1 = queryable.toSQL();
+            Assert.assertEquals("SELECT t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`url` AS `my_url` FROM `t_blog` t WHERE t.`deleted` = ?", sql1);
+
+        }
     }
     @Test
     public void testx3() {

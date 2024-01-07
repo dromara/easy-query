@@ -27,6 +27,8 @@ import com.easy.query.core.proxy.impl.SQLSelectAsEntryImpl;
 import com.easy.query.core.proxy.impl.SQLSelectIgnoreImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
 
+import java.util.function.Consumer;
+
 /**
  * create time 2023/6/25 12:39
  * 文件说明
@@ -76,27 +78,31 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow);
     }
 
-    public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> void selectAll(TRProxy proxy) {
+    public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectAll(TRProxy proxy) {
         entitySQLContext.accept(new SQLSelectAllImpl(proxy.getEntitySQLContext(),proxy.getTable(), new TablePropColumn[0]));
+        return castProxy();
     }
-    public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> void selectIgnores(TablePropColumn... ignoreTableProps) {
+    public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectIgnores(TablePropColumn... ignoreTableProps) {
         entitySQLContext.accept(new SQLSelectIgnoreImpl(ignoreTableProps));
+        return castProxy();
     }
 
     /**
      * 快速选择表达式
      * @param sqlSelectAsExpression
      */
-    public void selectExpression(SQLSelectAsExpression... sqlSelectAsExpression) {
+    public TProxy selectExpression(SQLSelectAsExpression... sqlSelectAsExpression) {
         entitySQLContext.accept(sqlSelectAsExpression);
+        return castProxy();
     }
     /**
      * 支持动态select+动态group取列防止sql注入
      * @param sqlTableOwner
      * @param property
      */
-    public void selectColumn(SQLTableOwner sqlTableOwner, String property) {
+    public TProxy selectColumn(SQLTableOwner sqlTableOwner, String property) {
         entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property));
+        return castProxy();
     }
     /**
      * 支持动态select+动态selectAs取列防止sql注入
@@ -104,7 +110,16 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
      * @param property
      * @param propertyAlias
      */
-    public void selectColumnAs(SQLTableOwner sqlTableOwner,String property,String propertyAlias) {
+    public TProxy selectColumnAs(SQLTableOwner sqlTableOwner,String property,String propertyAlias) {
         entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property,propertyAlias));
+        return castProxy();
+    }
+
+    private TProxy castProxy(){
+        return (TProxy)this;
+    }
+    public TProxy adapter(Consumer<TProxy> select) {
+        select.accept(castProxy());
+        return castProxy();
     }
 }

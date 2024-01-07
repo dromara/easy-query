@@ -24,9 +24,8 @@ public class TopicShardingShardingInitializer implements EntityShardingInitializ
         for (int i = 0; i < 3; i++) {
             actualTableNames.add(tableName+"_"+i);
         }
-        LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>() {{
-            put("ds2020", actualTableNames);
-        }};
+        LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>();
+        initTables.put("ds2020", actualTableNames);
         builder.actualTableNameInit(initTables);
     }
 }
