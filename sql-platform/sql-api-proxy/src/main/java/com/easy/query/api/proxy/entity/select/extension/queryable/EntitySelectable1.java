@@ -1,6 +1,8 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.annotation.EntityFileProxy;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.Draft;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -23,23 +25,54 @@ import java.util.Collections;
 public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 
 
-//    /**
-//     * 对当前表达式返回自定义select列
-//     *
-//     * @param selectExpression
-//     * @return
-//     */
+    /**
+     * 快速选择当前对象
+     * <blockquote><pre>
+     *     {@code
+     *          .fetcher(o -> o.FETCHER.id().name().phone().departName())
+     *                 }
+     * </pre></blockquote>
+     * @param selectExpression 快速选择表达式
+     * @return
+     */
     EntityQueryable<T1Proxy, T1> fetcher(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression);
 
+
     /**
-     * 将当前T1对象转成TR对象，select会将T1属性所对应的列名映射到TR对象的列名上(忽略大小写)
-     * T1.property1列名叫做column1,T1.property2列名叫做column2，TR.property3的列名也叫column1
-     * 那么生成的sql为:select column1 from t1
-     * 如果当前存在join，那么join的子表一律不会映射到resultClass上,如果需要那么请手动调用双参数select
-     * @param selectExpression
-     * @return
-     * @param <TRProxy>
-     * @param <TR>
+     * 返回自定义形状的结果代理对象,由{@link EntityProxy}或者{@link EntityFileProxy}生成
+     * <blockquote><pre>
+     *     {@code
+     *          //表示入参o表全部映射到返回结果TopicProxy中
+     *         .select(o->new TopicProxy())
+     *          //表示入参o表自定义映射到返回结果TopicProxy中
+     *          //SELECT t.`id` as `id`,t.`title` as `title` FROM ....
+     *         .select(o->new TopicProxy().adapter(r->{
+     *             r.id().set(o.id()); //手动指定赋值
+     *             r.title().set(o.title())
+     *         }))
+     *
+     *          //最原始的写法和上述adapter一致
+     *         .select(o->{
+     *            TopicProxy r=new TopicProxy();
+     *            r.id().set(o.id()); //t.`id` as `id`
+     *            r.title().set(o.title())//t.`title` as `title`
+     *            return r;
+     *         })
+     *          //表示入参o表自定义映射到返回结果TopicProxy中除了title 也可以不需要写到adapter内部
+     *         .select(o->new TopicProxy().adapter(r->{
+     *             r.selectAll(o);//相当于t.*
+     *             r.selectIgnores(o.title());//相当于从t.*中移除title列
+     *         }))
+     *          //如果您的映射列名都一样那么可以通过selectExpression来处理大部分列
+     *         .select(o->new TopicProxy().selectExpression(o.FETCHER.id().name().phone().departName()).adapter(r->{
+     *             //这边处理别名
+     *         }))
+     *                 }
+     * </pre></blockquote>
+     * @param selectExpression 入参表达式返回需要转成需要的结果便于后续操作
+     * @return 返回新的结果操作表达式可以继续筛选处理
+     * @param <TRProxy> 返回结果的对象代理类型
+     * @param <TR> 返回结果的对象类型
      */
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression);
 
@@ -60,6 +93,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *                         o.id().count()
      *                 ))
      *                 .toList();
+     *                 }
      * </pre></blockquote>
      *
      * @param selectExpression

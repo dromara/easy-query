@@ -39,10 +39,23 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
         }, BigDecimal.class);
     }
 
-    default <T extends BigDecimal> ColumnFunctionComparableNumberChainExpression<T> sum() {
+    default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum() {
         return sum(false);
     }
-    default <T extends BigDecimal> ColumnFunctionComparableNumberChainExpression<T> sum(boolean distinct) {
+    default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum(boolean distinct) {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.sum(sqlFunction).distinct(distinct);
+            } else {
+                return fx.sum(this.getValue()).distinct(distinct);
+            }
+        }, getPropertyType());
+    }
+    default <T extends BigDecimal> ColumnFunctionComparableNumberChainExpression<T> sumBigDecimal() {
+        return sum(false);
+    }
+    default <T extends BigDecimal> ColumnFunctionComparableNumberChainExpression<T> sumBigDecimal(boolean distinct) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);

@@ -64,8 +64,11 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
     public <TProperty, TChain extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> TChain min(ColumnObjectFunctionAvailable<TProperty, TChain> column) {
         return column.min();
     }
-    public <TProperty> ColumnFunctionComparableNumberChainExpression<BigDecimal> sum(ColumnNumberFunctionAvailable<TProperty> column) {
+    public <TProperty extends Number> ColumnFunctionComparableNumberChainExpression<TProperty> sum(ColumnNumberFunctionAvailable<TProperty> column) {
         return column.sum();
+    }
+    public <TProperty> ColumnFunctionComparableNumberChainExpression<BigDecimal> sumBigDecimal(ColumnNumberFunctionAvailable<TProperty> column) {
+        return column.sumBigDecimal();
     }
     public <TProperty> ColumnFunctionComparableNumberChainExpression<BigDecimal> avg(ColumnNumberFunctionAvailable<TProperty> column) {
         return column.avg();
