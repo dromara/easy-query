@@ -518,7 +518,7 @@ public class QueryTest10 extends BaseTest{
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            List<Draft3<String, Long, BigDecimal>> list = easyEntityQuery
+            List<Draft3<String, Long, Integer>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t -> GroupKeys.of(t.id()))
                     .selectDraft(g -> Select.draft(g.key1(), g.count(), g.sum(g.group().stars())))
@@ -527,7 +527,7 @@ public class QueryTest10 extends BaseTest{
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(*) AS `value2`,SUM(t.`stars`) AS `value3` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
             listenerContextManager.clear();
-            BigDecimal value3 = list.get(0).getValue3();
+            Integer value3 = list.get(0).getValue3();
         }
         {
 
