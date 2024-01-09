@@ -21,8 +21,7 @@ public interface SQLBatchExecute<TChain> {
     }
 
     /**
-     *
-     * 使用当前方法并且链接字符串添加`rewriteBatchedStatements=true`后将以executeBatch执行无法返回正确的受影响行数,
+     * mysql需要添加`rewriteBatchedStatements=true`后将以executeBatch执行批处理,不然mysql下还是一条一条执行
      * 具体受jdbc驱动影响是否实现返回具体行数
      * This method performs batch operations.
      * When using this method with the connection string appended with `rewriteBatchedStatements=true`,

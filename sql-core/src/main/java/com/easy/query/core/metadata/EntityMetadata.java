@@ -150,6 +150,10 @@ public class EntityMetadata {
             entityMetadataType = EntityMetadataTypeEnum.BASIC_TYPE;
             return;
         }
+        if(EasyClassUtil.isEnumType(entityClass)){
+            entityMetadataType = EntityMetadataTypeEnum.BASIC_TYPE;
+            return;
+        }
 //        if(Draft.class.isAssignableFrom(entityClass)){
 //            entityMetadataType = EntityMetadataTypeEnum.DRAFT;
 //            return;

@@ -28,6 +28,7 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLGroupByExpression;
@@ -203,6 +204,14 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             });
             return new EasyEntityQueryable<>(resultProxy, select);
         }
+    }
+
+    @Override
+    public <TR> Query<TR> selectColumn(SQLFuncExpression1<T1Proxy, PropTypeColumn<TR>> selectExpression) {
+        PropTypeColumn<TR> column = selectExpression.apply(get1Proxy());
+        Objects.requireNonNull(column, "select column null result class");
+        ClientQueryable<?> select = entityQueryable.select(column.getPropertyType(), o -> o.column(column.getValue()));
+        return EasyObjectUtil.typeCastNullable(select);
     }
 
     //    @Override

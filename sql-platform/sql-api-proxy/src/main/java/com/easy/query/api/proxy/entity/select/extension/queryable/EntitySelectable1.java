@@ -3,6 +3,7 @@ package com.easy.query.api.proxy.entity.select.extension.queryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.Draft;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -75,6 +76,30 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @param <TR> 返回结果的对象类型
      */
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression);
+
+    /**
+     * 快速读取单列用于subQuery等查询
+     * <blockquote><pre>
+     *     {@code
+     *          //如果您是枚举需要单独查询请转成integer或者具体数据库对应的值
+     *          //直接返回单个列如果是Enum类型的不支持
+     *         .selectColumn(o -> o.enumProp().toNumber(Integer.class))
+     *          //快速生成子查询
+     *          Query<Enum> query = easyEntityQuery.queryable(EntityClass.class).where(o -> o.id().eq("123" )).selectColumn(o -> o.enumProp());
+     *         List<EntityClass> list = easyEntityQuery.queryable(EntityClass.class).where(o -> {
+     *             o.enumProp().in(query);
+     *         }).toList();
+     *
+     *
+     *                 }
+     * </pre></blockquote>
+     * @param selectExpression
+     * @return
+     * @param <TR>
+     */
+    <TR> Query<TR> selectColumn(SQLFuncExpression1<T1Proxy, PropTypeColumn<TR>> selectExpression);
+
+
 
     /**
      * 草稿对象返回草稿对象{@link com.easy.query.core.proxy.core.draft.Draft1}到{@link com.easy.query.core.proxy.core.draft.Draft10}
