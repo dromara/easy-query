@@ -666,7 +666,7 @@ public class QueryTest10 extends BaseTest{
                     o.title().like("123");
                     o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                 })
-                .groupBy(o -> GroupKeys.of(o.id()))//多个用GroupBy.of(.....)
+                .groupBy(o -> GroupKeys.of(o.id()))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
                         o.count()
@@ -957,7 +957,6 @@ public class QueryTest10 extends BaseTest{
 
         List<Draft2<String, String>> list2 = easyEntityQuery.queryable(BlogEntity.class)
                 .groupBy(o-> GroupKeys.of(o.content().subString(0,8)))
-//                .groupByExpression(o -> o.content().subString(0, 8))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
                         o.join(o.group().id(),",")

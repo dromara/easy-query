@@ -86,34 +86,34 @@ entity use `@EntityProxy` or `@EntityFileProxy` annotation then build project ap
 
 ## 🚀  Introduction
 
-- [Usage Guide](#Usage Guide)
+- [Usage Guide](#Usage-Guide)
     - [Overview](#Overview)
-    - [How to Get the Latest Version](#How to Get the Latest Version)
+    - [How to Get the Latest Version](#Get-Latest-Version)
     - [Installation](#Installation)
-- [Getting Started](#Getting Started)
-    - [Single Table Query](#Single Table Query)
-    - [Multi-Table Query](#Multi-Table Query)
-    - [Complex Query](#Complex Query)
-    - [Dynamic Table Names](#Dynamic Table Names)
+- [Getting Started](#GettingStarted)
+    - [Single Table Query](#Single-Table-Query)
+    - [Multi-Table Query](#Multi-Table-Query)
+    - [Complex Query](#Complex-Query)
+    - [Dynamic Table Names](#Dynamic-Table-Names)
     - [Insert](#Insert)
     - [Update](#Update)
     - [Delete](#Delete)
-    - [Union/ALL Query](#Union/ALL Query)
+    - [Union/ALL Query](#Union-ALL-Query)
     - [Subquery](#Subquery)
 - [Sharding](#Sharding)
-    - [Table Sharding](#Table Sharding)
-    - [Database Sharding](#Database Sharding)
+    - [Table Sharding](#Table-Sharding)
+    - [Database Sharding](#Database-Sharding)
 - [support](#support)
 
 
-# Usage Guide
+# Usage-Guide
 `easy-query` 🚀 is a high-performance, lightweight, and versatile Java/Kotlin object query ORM framework that supports database sharding and read-write separation.
 
 ## Overview
 
 `easy-query` is a dependency-free JAVA/Kotlin ORM framework, extremely lightweight, with high performance. It supports single table queries, multi-table queries, union, subqueries, pagination, dynamic table names, VO object query returns, logical deletion, global interception, database column encryption (supporting high-performance LIKE queries), data tracking for differential updates, optimistic locking, multi-tenancy, automatic database sharding, automatic table sharding, read-write separation, and supports full-featured external extension customization of the framework, with strong-typed expressions.
 
-## How to Get the Latest Version
+## Get-Latest-Version
 
 [https://central.sonatype.com/](https://central.sonatype.com/) search `com.easy-query`获取最新Installation包
 
@@ -172,7 +172,7 @@ for mysql
 
 
 
-# Getting Started
+# Getting-Started
 sql script
 ```sql
 create table t_topic
@@ -313,7 +313,7 @@ public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogE
 }
 
 ```
-## Single Table Query
+## Single-Table-Query
 ```java
 Topic topic = easyEntityQuery
                 .queryable(Topic.class)
@@ -327,7 +327,7 @@ Topic topic = easyEntityQuery
 <== Total: 1     
 ```
 
-## Multi-Table Query
+## Multi-Table-Query
 ```java
 Topic topic = entityQuery
                .queryable(Topic.class)
@@ -345,7 +345,7 @@ Topic topic = entityQuery
 <== Total: 1
 ```
 
-## Complex Query
+## Complex-Query
 join + group +page
 ```java
 EasyPageResult<BlogEntity> page = easyEntityQuery
@@ -372,7 +372,7 @@ EasyPageResult<BlogEntity> page = easyEntityQuery
 <== Total: 20
 ```
 
-## Dynamic Table Names
+## Dynamic-Table-Names
 ```java
 
 easyEntityQuery.queryable(BlogEntity.class)
@@ -466,7 +466,7 @@ long l = easyQuery.deletable(topic).executeRows();
 <== Total: 1
 ```
 
-## Union/ALL Query
+## Union-ALL-Query
 ```java
 Queryable<Topic> q1 = easyQuery
                 .queryable(Topic.class);
@@ -522,7 +522,7 @@ List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
 
 # Sharding
 `easy-query`支持Table Sharding、Database Sharding、Table Sharding+Database Sharding
-## Table Sharding
+## Table-Sharding
 ```java
 //创建Sharding对象
 @Data
@@ -612,7 +612,7 @@ List<TopicShardingTime> list = easyQuery.queryable(TopicShardingTime.class)
 ```
 
 
-## Database Sharding
+## Database-Sharding
 
 ```java
 

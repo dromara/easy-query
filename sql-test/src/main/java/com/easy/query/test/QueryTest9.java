@@ -856,7 +856,6 @@ public class QueryTest9 extends BaseTest {
 
                         r.id().set(o.key1());
                         r.star().set(o.group().id().count().setPropertyType(Integer.class));
-//                        star().set(o.id().intCount());
                         r.title().set(o.group().id().max());
                     })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
