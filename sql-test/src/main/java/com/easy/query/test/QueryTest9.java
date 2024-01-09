@@ -849,7 +849,7 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.id().eq("123" ))
                     .groupBy(o -> GroupKeys.of(o.id()))
                     .having(o -> {
-                        o.count().ne(1);
+                        o.count().ne(1L);
                         o.sum(o.group().star()).ge(10);
                     })
                     .select(o -> new BlogEntityProxy().adapter(r->{
@@ -861,7 +861,7 @@ public class QueryTest9 extends BaseTest {
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY t.`id` HAVING COUNT(*) <> ? AND SUM(t.`star`) >= ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("false(Boolean),123(String),1(Integer),10(Integer)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("false(Boolean),123(String),1(Long),10(Integer)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
     }
@@ -893,7 +893,7 @@ public class QueryTest9 extends BaseTest {
                 })
                 .groupBy(o -> GroupKeys.of(o.id()))
                 .having(o -> {
-                    o.count(o.group().id()).ne(1);
+                    o.count(o.group().id()).ne(1L);
                     o.sum(o.group().star()).ge(10);
                 }).select(o -> new BlogEntityProxy().adapter(r->{
                     r.id().set(o.key1());
@@ -903,7 +903,7 @@ public class QueryTest9 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(*) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND  t.`id` = DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') = ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`title`,?) LIKE ? AND IFNULL(t.`star`,?) >= ? AND IFNULL(t.`star`,?) > ? AND IFNULL(t.`star`,?) <= ? AND IFNULL(t.`star`,?) < ? AND IFNULL(t.`star`,?) = ? AND IFNULL(t.`title`,?) = t.`content` AND (t.`content` IS NOT NULL AND t.`content` <> '' AND LTRIM(t.`content`) <> '') GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`star`) >= ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),1(String),2023-01-02(String),unknown(String),%123%(String),unknown(String),123%(String),unknown(String),%123(String),1(Integer),101(Integer),4(Integer),102(Integer),3(Integer),103(Integer),2(Integer),104(Integer),1(Integer),105(Integer),unknown(String),1(Integer),10(Integer)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("false(Boolean),1(String),2023-01-02(String),unknown(String),%123%(String),unknown(String),123%(String),unknown(String),%123(String),1(Integer),101(Integer),4(Integer),102(Integer),3(Integer),103(Integer),2(Integer),104(Integer),1(Integer),105(Integer),unknown(String),1(Long),10(Integer)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
@@ -925,7 +925,7 @@ public class QueryTest9 extends BaseTest {
                 })
                 .groupBy(o -> GroupKeys.of(o.id()))
                 .having(o -> {
-                    o.count(o.group().id()).ne(1);
+                    o.count(o.group().id()).ne(1L);
                     o.sum(o.group().star()).ge(10);
                 })
                 .select(o -> new BlogEntityProxy().adapter(r->{
@@ -938,7 +938,7 @@ public class QueryTest9 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `star`,MAX(t.`id`) AS `title` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = (SELECT t3.`id` FROM `t_blog` t3 WHERE t3.`deleted` = ? AND t3.`id` = ?) AND IFNULL(t.`title`,?) IN (SELECT t3.`id` FROM `t_blog` t3 WHERE t3.`deleted` = ? AND t3.`id` = ?) GROUP BY t.`id` HAVING COUNT(t.`id`) <> ? AND SUM(t.`star`) >= ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),false(Boolean),sss(String),unknown(String),false(Boolean),sss(String),1(Integer),10(Integer)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("false(Boolean),false(Boolean),sss(String),unknown(String),false(Boolean),sss(String),1(Long),10(Integer)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 

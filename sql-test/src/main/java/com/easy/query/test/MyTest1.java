@@ -464,7 +464,7 @@ public class MyTest1 extends BaseTest {
                                 .where(x -> x.id().eq(o.id()));
                     });
                     //创建时间和现在的相差天数现在小于0
-                    o.createTime().duration(LocalDateTime.of(2021, 1, 1, 1, 1), DateTimeDurationEnum.Days).le(0);
+                    o.createTime().duration(LocalDateTime.of(2021, 1, 1, 1, 1), DateTimeDurationEnum.Days).le(0L);
                 })
                 .selectDraft(o -> Select.draft(
                         o.id(),
@@ -481,7 +481,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id` AS `value1`,t.`title` AS `value2`,t.`create_time` AS `value3`,(SELECT t2.`title` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`id` = t.`id`) AS `value4` FROM `t_topic` t WHERE t.`title` LIKE ? AND EXISTS (SELECT 1 FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AND timestampdiff(day, ?, t.`create_time`) <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),%123%(String),false(Boolean),2021-01-01T01:01(LocalDateTime),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("false(Boolean),%123%(String),false(Boolean),2021-01-01T01:01(LocalDateTime),0(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
     }
@@ -972,13 +972,13 @@ public class MyTest1 extends BaseTest {
                 })
                 .groupBy(o -> GroupKeys.of(o.title().subString(1, 2)))
                 .having(o -> {
-                    o.count().ge(1);
+                    o.count().ge(1L);
                 }).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT SUBSTR(`title`,2,2) FROM `t_topic` WHERE `title` IS NOT NULL GROUP BY SUBSTR(`title`,2,2) HAVING COUNT(*) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
@@ -995,7 +995,7 @@ public class MyTest1 extends BaseTest {
                 })
                 .groupBy(o -> GroupKeys.of(o.title().subString(1, 2)))
                 .having(o -> {
-                    o.count().ge(1);
+                    o.count().ge(1L);
                 }).selectDraft(o -> Select.draft(
                         o.key1(),
                         o.count()
@@ -1004,7 +1004,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT SUBSTR(t.`title`,2,2) AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t WHERE t.`title` IS NOT NULL GROUP BY SUBSTR(t.`title`,2,2) HAVING COUNT(*) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
         for (Draft2<String, Long> stringLongDraft2 : list) {
@@ -1032,7 +1032,7 @@ public class MyTest1 extends BaseTest {
                         t1.score().nullDefault(0)
                 ))
                 .having(t -> {
-                    t.count().ge(1);
+                    t.count().ge(1L);
                 }).selectDraft(o -> Select.draft(
                         o.key1(),
                         o.key2(),
@@ -1042,7 +1042,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT SUBSTR(t.`title`,2,2) AS `value1`,IFNULL(t1.`score`,?) AS `value2`,COUNT(*) AS `value3` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IS NOT NULL AND t1.`score` IS NOT NULL GROUP BY SUBSTR(t.`title`,2,2),IFNULL(t1.`score`,?) HAVING COUNT(*) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("0(Integer),false(Boolean),0(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("0(Integer),false(Boolean),0(Integer),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
     @Test
