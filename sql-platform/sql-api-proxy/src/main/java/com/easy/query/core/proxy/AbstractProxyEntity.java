@@ -18,6 +18,7 @@ import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 
+import java.time.LocalDateTime;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -145,12 +146,12 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return new SQLSelectKeysImpl(this.getEntitySQLContext(),getTable());
     }
 
-    public <T> ColumnFunctionComparableDateTimeChainExpression<T> _now() {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::now);
+    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> _now() {
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::now,LocalDateTime.class);
     }
 
-    public <T> ColumnFunctionComparableDateTimeChainExpression<T> _utcNow() {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow);
+    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> _utcNow() {
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow,LocalDateTime.class);
     }
 
     public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectAll(TRProxy proxy) {
