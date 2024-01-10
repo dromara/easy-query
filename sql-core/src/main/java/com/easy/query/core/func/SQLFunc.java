@@ -109,4 +109,8 @@ public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,
      * @return UTC时间函数
      */
     SQLFunction utcNow();
+    default SQLFunction constValue(Object val){
+        return constValue(o->o.value(val));
+    }
+    SQLFunction constValue(SQLExpression1<ColumnFuncSelector> sqlExpression);
 }

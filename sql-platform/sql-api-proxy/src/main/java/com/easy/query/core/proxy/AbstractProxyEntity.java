@@ -7,7 +7,9 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
 import com.easy.query.core.proxy.impl.SQLNativeDraftImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -154,6 +156,17 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow,LocalDateTime.class);
     }
 
+    public ColumnFunctionComparableNumberChainExpression<Long> _count() {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null, f->{
+            return f.count(c->{});
+        }, Long.class);
+    }
+    public ColumnFunctionComparableNumberChainExpression<Integer> _intCount() {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null,f->{
+            return f.count(c->{});
+        }, Integer.class);
+    }
+
     public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectAll(TRProxy proxy) {
         entitySQLContext.accept(new SQLSelectAllImpl(proxy.getEntitySQLContext(),proxy.getTable(), new TablePropColumn[0]));
         return castProxy();
@@ -216,5 +229,9 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
         }
+    }
+
+    public SQLParameterConstValueAvailable SQLParameter(){
+        return new SQLParameterConstValueAvailableImpl(this.getEntitySQLContext());
     }
 }

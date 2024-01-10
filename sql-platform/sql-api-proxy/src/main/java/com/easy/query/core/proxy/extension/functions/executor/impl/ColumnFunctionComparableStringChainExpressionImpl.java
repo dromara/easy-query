@@ -28,7 +28,7 @@ public class ColumnFunctionComparableStringChainExpressionImpl<TProperty> implem
     private Class<?> propType;
 
     public ColumnFunctionComparableStringChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
-        this(entitySQLContext,table,property,func,Object.class);
+        this(entitySQLContext,table,property,func,String.class);
     }
     public ColumnFunctionComparableStringChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         this.entitySQLContext = entitySQLContext;

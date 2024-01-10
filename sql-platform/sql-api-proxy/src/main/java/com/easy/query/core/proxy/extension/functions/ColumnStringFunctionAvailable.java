@@ -2,8 +2,10 @@ package com.easy.query.core.proxy.extension.functions;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
@@ -12,8 +14,6 @@ import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDate
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableStringChainExpressionImpl;
-import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
-import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.util.EasyStringUtil;
@@ -31,26 +31,41 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         ColumnFunctionCastDateTimeAvailable<TProperty>,
         ColumnFunctionCastBooleanAvailable<TProperty> {
 
-    default ColumnFunctionComparableStringChainExpression<TProperty> concat(TablePropColumn... propColumns) {
-        return concat(o->{
-            for (TablePropColumn propColumn : propColumns) {
-                o.getColumnConcatSelector().column(propColumn.getTable(), propColumn.getValue());
+    /**
+     * 链接多个片段可以是表列,函数,片段,常量
+     * @param stringExpressions
+     * @return
+     */
+    default ColumnFunctionComparableStringChainExpression<TProperty> concat(Object... stringExpressions) {
+        SQLExpression1<ColumnFuncSelector> selector= o->{
+            for (Object stringExpression : stringExpressions) {
+                if(stringExpression instanceof DSLSQLFunctionAvailable){
+                    DSLSQLFunctionAvailable functionAvailable = (DSLSQLFunctionAvailable) stringExpression;
+                    SQLFunction sqlFunction = functionAvailable.func().apply(getEntitySQLContext().getRuntimeContext().fx());
+                    o.sqlFunc(sqlFunction);
+                }else if(stringExpression instanceof TablePropColumn){
+                    TablePropColumn propColumn = (TablePropColumn) stringExpression;
+                    o.column(propColumn.getTable(), propColumn.getValue());
+                } else if(stringExpression instanceof SQLFunction){
+                    o.sqlFunc((SQLFunction) stringExpression);
+                }else if(stringExpression instanceof SQLSegment){
+                    o.sql((SQLSegment) stringExpression);
+                }else{
+                    o.value(stringExpression);
+                }
             }
-        });
-    }
-
-    default ColumnFunctionComparableStringChainExpression<TProperty> concat(SQLExpression1<ProxyColumnFuncSelector> selector) {
+        };
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.concat(o -> {
                     o.sqlFunc(sqlFunction);
-                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                    selector.apply(o);
                 });
             } else {
                 return fx.concat(o -> {
                     o.column(this.getTable(), this.getValue());
-                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                    selector.apply(o);
                 });
             }
         }, String.class);

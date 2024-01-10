@@ -15,6 +15,7 @@ import com.easy.query.core.func.def.impl.AvgSQLFunction;
 import com.easy.query.core.func.def.impl.BankSQLFunction;
 import com.easy.query.core.func.def.impl.CastSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
+import com.easy.query.core.func.def.impl.ConstSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeDurationSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeFormatSQLFunction;
@@ -158,6 +159,11 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction notEmpty(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new NotEmptySQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction constValue(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new ConstSQLFunction(getColumnExpressions(sqlExpression));
     }
     //    @Override
 //    public SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {

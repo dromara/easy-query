@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  *
  * @author xuejiaming
  */
-public class LocalDateTimeProxy extends AbstractBasicProxyEntity<LocalDateTimeProxy, LocalDateTime>  {//implements ColumnDateTimeFunctionAvailable<LocalDateTime>
+public class LocalDateTimeProxy extends AbstractBasicProxyEntity<LocalDateTimeProxy, LocalDateTime> {//implements ColumnDateTimeFunctionAvailable<LocalDateTime>
     public static LocalDateTimeProxy createTable() {
         return new LocalDateTimeProxy();
     }
@@ -31,6 +31,33 @@ public class LocalDateTimeProxy extends AbstractBasicProxyEntity<LocalDateTimePr
     public Class<LocalDateTime> getEntityClass() {
         return entityClass;
     }
+
+
+//
+//    @Override
+//    public String getValue() {
+//        throw new UnsupportedOperationException();
+//    }
+//
+//    @Override
+//    public Class<?> getPropertyType() {
+//        return LocalDateTime.class;
+//    }
+//
+//    @Override
+//    public <TR> void _setPropertyType(Class<TR> clazz) {
+//        throw new UnsupportedOperationException();
+//    }
+//
+//    @Override
+//    public void accept(OrderSelector s) {
+//        SQLFunctionExpressionUtil.accept(s,null,func());
+//    }
+//
+//    @Override
+//    public Function<SQLFunc, SQLFunction> func() {
+//        return new constsql;
+//    }
 //
 //    @Override
 //    public String getValue() {
