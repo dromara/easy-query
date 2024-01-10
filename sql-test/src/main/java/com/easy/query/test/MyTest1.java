@@ -54,7 +54,7 @@ public class MyTest1 extends BaseTest {
 //                    o.createTime().
 //                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
                 })
-                .groupBy(o -> GroupKeys.of(o.content()))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.content()))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
                         o.group().content().length()
@@ -78,7 +78,7 @@ public class MyTest1 extends BaseTest {
 //                    o.createTime().
 //                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
                 })
-                .groupBy(o -> GroupKeys.of(o.content()))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.content()))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
                         o.group().content().length()
@@ -663,7 +663,7 @@ public class MyTest1 extends BaseTest {
 //                        content().set(o.title().subString(1, 2).asAny().toStr());
                     }
                 })
-                .groupBy(o -> GroupKeys.of(o.id()))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                 .select(o -> new BlogGroupIdAndNameProxy() {
                     {
                         id().set(o.key1());
@@ -695,7 +695,7 @@ public class MyTest1 extends BaseTest {
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
                 .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
-                .groupBy(o -> GroupKeys.of(o.value1()))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.value1()))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
                         o.count()
@@ -746,7 +746,7 @@ public class MyTest1 extends BaseTest {
                 })
                 .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
                 .groupBy(o -> {
-                    return GroupKeys.of(o.value1());
+                    return GroupKeys.TABLE1.of(o.value1());
                 })
                 .orderBy(o -> {
                     o.key1().desc();
@@ -797,7 +797,7 @@ public class MyTest1 extends BaseTest {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
-                .groupBy(o -> GroupKeys.of(o.title().subString(1, 2)))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.title().subString(1, 2)))
                 .select(g -> new BlogEntityProxy().adapter(r->{
 
                    r.id().set(g.key1());
@@ -827,7 +827,7 @@ public class MyTest1 extends BaseTest {
                 })
                 .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
                 .groupBy(o -> {
-                    return GroupKeys.of(o.value1());
+                    return GroupKeys.TABLE1.of(o.value1());
                 })
                 .select(g -> new BlogEntityProxy().adapter(r->{
                     r.id().set(g.key1());
@@ -857,7 +857,7 @@ public class MyTest1 extends BaseTest {
                 })
                 .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
                 .groupBy(o -> {
-                    return GroupKeys.of(o.value1());
+                    return GroupKeys.TABLE1.of(o.value1());
                 })
                 .orderBy(o -> o.key1().asc())
                 .select(g -> new BlogEntityProxy().adapter(r->{
@@ -888,7 +888,7 @@ public class MyTest1 extends BaseTest {
                 })
                 .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
                 .groupBy(o -> {
-                    return GroupKeys.of(o.value1());
+                    return GroupKeys.TABLE1.of(o.value1());
                 })
                 .select(g -> new BlogEntityProxy().adapter(r->{
                     r.selectExpression();
@@ -917,7 +917,7 @@ public class MyTest1 extends BaseTest {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
-                .groupBy(o -> GroupKeys.of(o.title().subString(1, 2)))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.title().subString(1, 2)))
                 .select(g -> new BlogEntityProxy().adapter(r->{
 
                     r.id().set(g.key1());
@@ -950,7 +950,7 @@ public class MyTest1 extends BaseTest {
                 .where(o -> {
                     o.title().isNotNull();
                 })
-                .groupBy(o -> GroupKeys.of(o.title().subString(1, 2))).toList();
+                .groupBy(o -> GroupKeys.TABLE1.of(o.title().subString(1, 2))).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -970,7 +970,7 @@ public class MyTest1 extends BaseTest {
                 .where(o -> {
                     o.title().isNotNull();
                 })
-                .groupBy(o -> GroupKeys.of(o.title().subString(1, 2)))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.title().subString(1, 2)))
                 .having(o -> {
                     o.count().ge(1L);
                 }).toList();
@@ -993,7 +993,7 @@ public class MyTest1 extends BaseTest {
                 .where(o -> {
                     o.title().isNotNull();
                 })
-                .groupBy(o -> GroupKeys.of(o.title().subString(1, 2)))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.title().subString(1, 2)))
                 .having(o -> {
                     o.count().ge(1L);
                 }).selectDraft(o -> Select.draft(
@@ -1027,7 +1027,7 @@ public class MyTest1 extends BaseTest {
                     t.id().isNotNull();
                     t1.score().isNotNull();
                 })
-                .groupBy((t, t1) -> GroupKeys.of(
+                .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.title().subString(1, 2),
                         t1.score().nullDefault(0)
                 ))
@@ -1058,7 +1058,7 @@ easyEntityQuery.queryable(Topic.class)
                     t.id().isNotNull();
                     t1.score().isNotNull();
                 })
-                .groupBy((t, t1) -> GroupKeys.of(
+                .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.sql("SUBSTR({0},2,2)",c->c.expression(t.title())),
                         t1.score().nullDefault(0)
                 )).toList();
@@ -1082,7 +1082,7 @@ easyEntityQuery.queryable(Topic.class)
                     t.id().isNotNull();
                     t1.score().isNotNull();
                 })
-                .groupBy((t, t1) -> GroupKeys.of(
+                .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.sql("SUBSTR({0},2,2)", c -> c.expression(t.title())).setPropertyType(String.class),
                         t1.score().nullDefault(0)
                 ))
@@ -1117,7 +1117,7 @@ easyEntityQuery.queryable(Topic.class)
                     t.id().isNotNull();
                     t1.score().isNotNull();
                 })
-                .groupBy((t, t1) -> GroupKeys.of(
+                .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.sql("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022,1,1,1,2))).setPropertyType(LocalDateTime.class),
                         t1.score().nullDefault(0)
                 ))

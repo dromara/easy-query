@@ -41,16 +41,6 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
         return tSourceProxy;
     }
 
-    public ColumnFunctionComparableNumberChainExpression<Long> count() {
-        return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null, f->{
-            return f.count(c->{});
-        }, Long.class);
-    }
-    public ColumnFunctionComparableNumberChainExpression<Integer> intCount() {
-        return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null,f->{
-            return f.count(c->{});
-        }, Integer.class);
-    }
     public <TProperty> ColumnFunctionComparableNumberChainExpression<Long> count(ColumnObjectFunctionAvailable<TProperty, ?> column) {
         return column.count();
     }

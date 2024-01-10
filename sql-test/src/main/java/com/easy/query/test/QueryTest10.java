@@ -336,7 +336,7 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupBy(o -> GroupKeys.of(o.id()))
+                    }).groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                     .having(o -> {
                         o.key1().max().like("1");
                         o.key1().max().like(false, "2");
@@ -375,7 +375,7 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupBy(o -> GroupKeys.of(o.id()))
+                    }).groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                     .having(o -> {
                         o.key1().max().eq("1");
                         o.key1().max().eq(false, "2");
@@ -414,7 +414,7 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().eq("123");
-                    }).groupBy(o -> GroupKeys.of(o.id()))
+                    }).groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                     .having(o -> {
                         o.key1().max().eq(o.key1().min());
                         o.key1().max().eq(false, o.key1().min());
@@ -451,7 +451,7 @@ public class QueryTest10 extends BaseTest{
                 .queryable(Topic.class)
                 .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                 .where((t, t1) -> t1.title().isNotNull())
-                .groupBy((t, t1) -> GroupKeys.of(t1.id()))
+                .groupBy((t, t1) -> GroupKeys.TABLE2.of(t1.id()))
                 .select((g) -> new BlogEntityProxy().adapter(r->{
                     r.selectExpression(g.key1());
                     r.score().set(g.sum(g.group().t2.score()));
@@ -473,7 +473,7 @@ public class QueryTest10 extends BaseTest{
             Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
             List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupBy(t ->GroupKeys.of( t.id()))
+                    .groupBy(t ->GroupKeys.TABLE1.of( t.id()))
                     .selectDraft(t -> Select.draft(t.key1()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -488,7 +488,7 @@ public class QueryTest10 extends BaseTest{
             Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
             List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupBy(t -> GroupKeys.of(t.id()))
+                    .groupBy(t -> GroupKeys.TABLE1.of(t.id()))
                     .selectDraft(t -> Select.draft(t.key1()))
                     .where(o -> o.value1().eq("123"))
                     .toList();
@@ -503,7 +503,7 @@ public class QueryTest10 extends BaseTest{
             listenerContextManager.startListen(listenerContext);
             List<Draft2<String, Long>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupBy(t -> GroupKeys.of(t.id()))
+                    .groupBy(t -> GroupKeys.TABLE1.of(t.id()))
                     .selectDraft(t -> Select.draft(
                             t.key1(),
                             t.count()
@@ -520,7 +520,7 @@ public class QueryTest10 extends BaseTest{
             listenerContextManager.startListen(listenerContext);
             List<Draft3<String, Long, Integer>> list = easyEntityQuery
                     .queryable(Topic.class)
-                    .groupBy(t -> GroupKeys.of(t.id()))
+                    .groupBy(t -> GroupKeys.TABLE1.of(t.id()))
                     .selectDraft(g -> Select.draft(g.key1(), g.count(), g.sum(g.group().stars())))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -666,7 +666,7 @@ public class QueryTest10 extends BaseTest{
                     o.title().like("123");
                     o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                 })
-                .groupBy(o -> GroupKeys.of(o.id()))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
                         o.count()
@@ -956,7 +956,7 @@ public class QueryTest10 extends BaseTest{
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<String, String>> list2 = easyEntityQuery.queryable(BlogEntity.class)
-                .groupBy(o-> GroupKeys.of(o.content().subString(0,8)))
+                .groupBy(o-> GroupKeys.TABLE1.of(o.content().subString(0,8)))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
                         o.join(o.group().id(),",")
@@ -1044,7 +1044,7 @@ public class QueryTest10 extends BaseTest{
             o.createTime().format("yyyy-MM-dd").asc();
         }).toList();
         List<Draft1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
-                .groupBy(o -> GroupKeys.of(o.content().subString(0, 8)))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.content().subString(0, 8)))
                 .selectDraft(o -> Select.draft(o.key1()))
                 .toList();
         query(q->q.whereObject(new Object()));

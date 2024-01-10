@@ -240,8 +240,8 @@ public class QueryTest9 extends BaseTest {
                     o.title().eq("title" );
                     o.id().eq("1" );
                 })
-                .groupBy(o -> GroupKeys.of(o.title()))
-                .select(o -> new TopicProxy().adapter(r->{
+                .groupBy(o -> GroupKeys.TABLE1.of(o.title()))
+                .select(o -> new TopicProxy().adapter(r -> {
 
                     r.title().set(o.key1());
                     r.stars().set(o.intCount(o.group().id()));
@@ -337,8 +337,8 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
-                    .groupBy(o -> GroupKeys.of(o.createTime().format("yyyy/MM/dd" )))
-                    .select(o -> new TopicProxy().adapter(r->{
+                    .groupBy(o -> GroupKeys.TABLE1.of(o.createTime().format("yyyy/MM/dd" )))
+                    .select(o -> new TopicProxy().adapter(r -> {
                         r.stars().set(o.intCount(o.group().id()));
                         r.title().set(o.key1());
                     }))
@@ -356,8 +356,8 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
-                    .groupBy(o -> GroupKeys.of(o.createTime().format("yyyy/MM/dd" )))
-                    .select(o -> new TopicProxy().adapter(r->{
+                    .groupBy(o -> GroupKeys.TABLE1.of(o.createTime().format("yyyy/MM/dd" )))
+                    .select(o -> new TopicProxy().adapter(r -> {
 
                         r.stars().set(o.intCount(o.group().id()));
                         r.title().set(o.group().createTime().format("yyyy/MM/dd" ));
@@ -383,7 +383,7 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
-                    .select(o -> new TopicProxy().adapter(r->{
+                    .select(o -> new TopicProxy().adapter(r -> {
 
                         r.title().set(o.stars().nullDefault(0).toStr());
                         r.alias().setSQL("IFNULL({0},'')" , c -> {
@@ -405,7 +405,7 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
-                    .select(o -> new TopicProxy().adapter(r->{
+                    .select(o -> new TopicProxy().adapter(r -> {
 
                         r.title().set(o.stars().nullDefault(0).toStr());
                         r.alias().setSQL("IFNULL({0},'')" , c -> {
@@ -427,7 +427,7 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
-                    .select(o -> new TopicProxy() .adapter(r->{
+                    .select(o -> new TopicProxy().adapter(r -> {
 
                         r.title().set(o.stars().nullDefault(0).toStr());
                         r.alias().setSQL("IFNULL({0},'')" , c -> {
@@ -644,8 +644,8 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
-                    .groupBy(o -> GroupKeys.of(o.title()))
-                    .select(o -> new TopicProxy().adapter(r->{
+                    .groupBy(o -> GroupKeys.TABLE1.of(o.title()))
+                    .select(o -> new TopicProxy().adapter(r -> {
 
                         r.selectExpression(o.key1());
                         r.stars().set(o.intCount(o.group().id()));
@@ -847,12 +847,12 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123" ))
-                    .groupBy(o -> GroupKeys.of(o.id()))
+                    .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                     .having(o -> {
                         o.count().ne(1L);
                         o.sum(o.group().star()).ge(10);
                     })
-                    .select(o -> new BlogEntityProxy().adapter(r->{
+                    .select(o -> new BlogEntityProxy().adapter(r -> {
 
                         r.id().set(o.key1());
                         r.star().set(o.group().id().count().setPropertyType(Integer.class));
@@ -891,11 +891,11 @@ public class QueryTest9 extends BaseTest {
                     o.title().nullDefault("unknown" ).eq(o.content());
                     o.content().isNotBank();
                 })
-                .groupBy(o -> GroupKeys.of(o.id()))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                 .having(o -> {
                     o.count(o.group().id()).ne(1L);
                     o.sum(o.group().star()).ge(10);
-                }).select(o -> new BlogEntityProxy().adapter(r->{
+                }).select(o -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(o.key1());
                     r.star().set(o.intCount());
                     r.title().set(o.max(o.group().id()));
@@ -923,12 +923,12 @@ public class QueryTest9 extends BaseTest {
                     o.id().eq(sss);
                     o.title().nullDefault("unknown" ).in(sss);
                 })
-                .groupBy(o -> GroupKeys.of(o.id()))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                 .having(o -> {
                     o.count(o.group().id()).ne(1L);
                     o.sum(o.group().star()).ge(10);
                 })
-                .select(o -> new BlogEntityProxy().adapter(r->{
+                .select(o -> new BlogEntityProxy().adapter(r -> {
 
                     r.selectExpression(o.key1()
                             , o.group().id().count().as(r.star())

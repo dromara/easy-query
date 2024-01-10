@@ -10,7 +10,9 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
+import com.easy.query.core.proxy.grouping.proxy.Grouping2Proxy;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -72,7 +74,7 @@ public class QueryTest11 extends BaseTest {
         easyEntityQuery.queryable(Topic.class)
                 .innerJoin(BlogEntity.class, (t1, t2) -> t1.id().eq(t2.id()))
                 .where((t1, t2) -> t2.title().isNotNull())
-                .groupBy((t1, t2) -> GroupKeys.of(t2.id()))
+                .groupBy((t1, t2) -> GroupKeys.TABLE2.of(t2.id()))
                 .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(g.key1());
                     r.score().set(g.sum(g.group().t2.score()));
@@ -488,7 +490,7 @@ public class QueryTest11 extends BaseTest {
         }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT `id`,`stars`,`title`,`topic_type`,`create_time` FROM `t_topic_type` WHERE SUBSTR(`id`,2,2) = ? AND (`id` IS NULL OR `id` = '' OR LTRIM(`id`) = '')" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`topic_type`,`create_time` FROM `t_topic_type` WHERE SUBSTR(`id`,2,2) = ? AND SUBSTR(`id`,2,2) IS NOT NULL AND (SUBSTR(`id`,2,2) IS NULL OR SUBSTR(`id`,2,2) = '' OR LTRIM(SUBSTR(`id`,2,2)) = '') AND (SUBSTR(`id`,2,2) IS NOT NULL AND SUBSTR(`id`,2,2) <> '' AND LTRIM(SUBSTR(`id`,2,2)) <> '') AND (SUBSTR(`id`,2,2) IS NULL OR SUBSTR(`id`,2,2) = '') AND (SUBSTR(`id`,2,2) IS NOT NULL AND SUBSTR(`id`,2,2) <> '') AND (`id` IS NULL OR `id` = '' OR LTRIM(`id`) = '')" , jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -577,15 +579,15 @@ public class QueryTest11 extends BaseTest {
 
         //SELECT 'type1' AS `type`,COUNT(t.`id`) AS `count` FROM `t_topic` t WHERE t.`title` = ?
         Queryable<TopicCount> select1 = easyQuery.queryable(Topic.class)
-                .where(o -> o.eq(Topic::getTitle, "123"))
+                .where(o -> o.eq(Topic::getTitle, "123" ))
                 .select(TopicCount.class, o -> o.sqlNativeSegment("'type1'" , c -> c.setPropertyAlias(TopicCount::getType)).columnCountAs(Topic::getId, TopicCount::getCount));
         //SELECT 'type1' AS `type`,COUNT(t.`id`) AS `count` FROM `t_topic` t WHERE t.`title` = ?
         Queryable<TopicCount> select2 = easyQuery.queryable(Topic.class)
-                .where(o -> o.eq(Topic::getTitle, "123"))
+                .where(o -> o.eq(Topic::getTitle, "123" ))
                 .select(TopicCount.class, o -> o.sqlNativeSegment("'type2'" , c -> c.setPropertyAlias(TopicCount::getType)).columnCountAs(Topic::getId, TopicCount::getCount));
         //SELECT 'type1' AS `type`,COUNT(t.`id`) AS `count` FROM `t_topic` t WHERE t.`title` = ?
         Queryable<TopicCount> select3 = easyQuery.queryable(Topic.class)
-                .where(o -> o.eq(Topic::getTitle, "123"))
+                .where(o -> o.eq(Topic::getTitle, "123" ))
                 .select(TopicCount.class, o -> o.sqlNativeSegment("'type3'" , c -> c.setPropertyAlias(TopicCount::getType)).columnCountAs(Topic::getId, TopicCount::getCount));
         List<TopicCount> list = select1.unionAll(select2, select3).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -602,22 +604,22 @@ public class QueryTest11 extends BaseTest {
 
         //SELECT 'type1' AS `type`,COUNT(t.`id`) AS `count` FROM `t_topic` t WHERE t.`title` = ?
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select1 = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.title().eq("123"))
+                .where(o -> o.title().eq("123" ))
                 .selectDraft(o -> Select.draft(
-                        o.SQLParameter().valueOf("type1"),
-                        o._count()
+                        o.SQLParameter().valueOf("type1" ),
+                        o.count()
                 ));
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select2 = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.title().eq("123"))
+                .where(o -> o.title().eq("123" ))
                 .selectDraft(o -> Select.draft(
-                        o.SQLParameter().valueOf("type2"),
-                        o._count()
+                        o.SQLParameter().valueOf("type2" ),
+                        o.count()
                 ));
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select3 = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.title().eq("123"))
+                .where(o -> o.title().eq("123" ))
                 .selectDraft(o -> Select.draft(
-                        o.SQLParameter().valueOf("type3"),
-                        o._count()
+                        o.SQLParameter().valueOf("type3" ),
+                        o.count()
                 ));
         List<Draft2<String, Long>> list1 = select1.unionAll(select2, select3).toList();
 
@@ -626,5 +628,59 @@ public class QueryTest11 extends BaseTest {
         Assert.assertEquals("SELECT t6.`value1` AS `value1`,t6.`value2` AS `value2` FROM (SELECT ? AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t WHERE t.`title` = ? UNION ALL SELECT ? AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t2 WHERE t2.`title` = ? UNION ALL SELECT ? AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t4 WHERE t4.`title` = ?) t6" , jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("type1(String),123(String),type2(String),123(String),type3(String),123(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+    @Test
+    public void testx21() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+//        SELECT
+//        YEAR(日期) AS 年份，
+//        MONTH(日期) AS 月份
+//        SUM(收入) AS 月收入
+//        FROM
+//                your_table
+//        WHERE
+//        日期 >= CURDATE()- INTERVAL 3 MONTH
+//        GROUP BY
+//        年份，月份
+//        ORDER BY
+//        年份，月份;
+
+        List<Draft3<Integer, Integer, Integer>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(o -> o.createTime().gt(o._now().plusMonths(-3)))
+                .groupBy(o -> {
+                    return GroupKeys.TABLE1.of(o.createTime().year(), o.createTime().month());
+                })
+                .orderBy(o -> {
+                    o.key1().asc();
+                    o.key2().asc();
+                }).selectDraft(o -> Select.draft(
+                        o.key1(),
+                        o.key2(),
+                        o.sum(o.group().star())
+                )).toList();
+
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT year(t.`create_time`) AS `value1`,month(t.`create_time`) AS `value2`,SUM(t.`star`) AS `value3` FROM `t_blog` t WHERE t.`deleted` = ? AND  t.`create_time` > date_add(NOW(), interval (?) month) GROUP BY year(t.`create_time`),month(t.`create_time`) ORDER BY year(t.`create_time`) ASC,month(t.`create_time`) ASC" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),-3(Integer)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+
+        List<Draft3<Integer, Integer, Integer>> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .where(o -> o.createTime().gt(o._now().plusMonths(-3)))
+                .groupBy(o -> {
+                    return x -> new Grouping2Proxy<>(o.createTime().year(), o.createTime().month(), x);
+                })
+                .orderBy(o -> {
+                    o.key1().asc();
+                    o.key2().asc();
+                }).selectDraft(o -> Select.draft(
+                        o.key1(),
+                        o.key2(),
+                        o.sum(o.group().star())
+                )).toList();
     }
 }

@@ -156,12 +156,12 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow,LocalDateTime.class);
     }
 
-    public ColumnFunctionComparableNumberChainExpression<Long> _count() {
+    public ColumnFunctionComparableNumberChainExpression<Long> count() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null, f->{
             return f.count(c->{});
         }, Long.class);
     }
-    public ColumnFunctionComparableNumberChainExpression<Integer> _intCount() {
+    public ColumnFunctionComparableNumberChainExpression<Integer> intCount() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null,f->{
             return f.count(c->{});
         }, Integer.class);

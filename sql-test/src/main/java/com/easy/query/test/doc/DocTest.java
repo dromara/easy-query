@@ -239,7 +239,7 @@ public class DocTest extends BaseTest {
                                 o.id().like("123" );
                                 o.id().like(false, "123" );
                             })
-                            .groupBy(o -> GroupKeys.of(o.id()))
+                            .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                             .select(o -> new SysUserProxy().adapter(r -> {
 
                                 r.id().set(o.key1());
@@ -273,7 +273,7 @@ public class DocTest extends BaseTest {
                                 o.id().like("123" );
                                 o.id().like(false, "123" );
                             })
-                            .groupBy(o -> GroupKeys.of(o.id()))
+                            .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                             .select(o -> {
                                 SysUserProxy sysUserProxy = new SysUserProxy();
                                 sysUserProxy.id().set(o.key1());
@@ -566,7 +566,7 @@ public class DocTest extends BaseTest {
                         o.title().like("123" );
                         o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                     })
-                    .groupBy(o -> GroupKeys.of(
+                    .groupBy(o -> GroupKeys.TABLE1.of(
                             o.id()
                     ))
                     .select(o -> new TopicProxy().adapter(r->{
@@ -767,7 +767,7 @@ public class DocTest extends BaseTest {
 //                    o.title().like("123");
 //                    o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
 //                })
-//                .groupBy(o -> GroupKeys.of(o.id()))
+//                .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
 //                .select(o -> new TopicProxy() {{
 //                    id().set(o.key1());//key1就是id
 //                    stars().set(o.intCount());//COUNT(*)返回int 默认返回long类型
