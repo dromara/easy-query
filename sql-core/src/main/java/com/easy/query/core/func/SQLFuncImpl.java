@@ -12,6 +12,7 @@ import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
 import com.easy.query.core.func.def.impl.AbsSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
+import com.easy.query.core.func.def.impl.BankSQLFunction;
 import com.easy.query.core.func.def.impl.CastSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
@@ -22,12 +23,15 @@ import com.easy.query.core.func.def.impl.DateTimePlusSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimePlusYearSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimePropertySQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
+import com.easy.query.core.func.def.impl.EmptySQLFunction;
 import com.easy.query.core.func.def.impl.JoinSQLFunction;
 import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
 import com.easy.query.core.func.def.impl.MathSQLFunction;
 import com.easy.query.core.func.def.impl.MaxSQLFunction;
 import com.easy.query.core.func.def.impl.MinSQLFunction;
+import com.easy.query.core.func.def.impl.NotBankSQLFunction;
+import com.easy.query.core.func.def.impl.NotEmptySQLFunction;
 import com.easy.query.core.func.def.impl.NowSQLFunction;
 import com.easy.query.core.func.def.impl.NullDefaultSQLFunction;
 import com.easy.query.core.func.def.impl.ReplaceSQLFunction;
@@ -136,7 +140,26 @@ public class SQLFuncImpl implements SQLFunc {
         return new ConcatSQLFunction(concatExpressions);
     }
 
-//    @Override
+    @Override
+    public SQLFunction bank(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new BankSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction notBank(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new NotBankSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction empty(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new EmptySQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction notEmpty(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new NotEmptySQLFunction(getColumnExpressions(sqlExpression));
+    }
+    //    @Override
 //    public SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
 //        return new StringJoinSQLFunction(separator, concatExpressions);
 //    }

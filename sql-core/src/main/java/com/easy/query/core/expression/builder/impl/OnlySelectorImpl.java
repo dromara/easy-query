@@ -103,6 +103,11 @@ public class OnlySelectorImpl implements OnlySelector {
         return this;
     }
 
+    @Override
+    public QueryRuntimeContext getRuntimeContext() {
+        return runtimeContext;
+    }
+
 //    @Override
 //    public UpdateSetSelector columnSQL(TableAvailable table,String property, String sqlSegment, SQLExpression2<SQLNativeExpressionContext, SQLParameter> contextConsume) {
 //

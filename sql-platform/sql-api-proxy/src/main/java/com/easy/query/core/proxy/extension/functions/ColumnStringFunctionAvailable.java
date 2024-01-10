@@ -101,10 +101,10 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     /**
-     * 字符串截取
+     * 字符串截取[column.subString(0,2)] 如果column值为"abcdefg"返回"ab"
      * @param begin 开始索引默认0
      * @param length 截取长度
-     * @return
+     * @return 支持比较操作的字符串方法表达式
      */
     default ColumnFunctionComparableStringChainExpression<String> subString(int begin, int length) {
         if(begin<0){

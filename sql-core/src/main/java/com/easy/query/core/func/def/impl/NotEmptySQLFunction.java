@@ -1,8 +1,10 @@
 package com.easy.query.core.func.def.impl;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
-import com.easy.query.core.func.def.AbstractSQLFunction;
+import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
+
+import java.util.List;
 
 /**
  * create time 2023/10/28 15:00
@@ -10,26 +12,30 @@ import com.easy.query.core.func.def.AbstractSQLFunction;
  *
  * @author xuejiaming
  */
-public class NotEmptySQLFunction extends AbstractSQLFunction {
-    private final String property;
+public class NotEmptySQLFunction extends AbstractExpressionSQLFunction {
+    private final List<ColumnExpression> columnExpressions;
 
-    public NotEmptySQLFunction(String property) {
+    public NotEmptySQLFunction(List<ColumnExpression> columnExpressions) {
 
-        this.property = property;
+        this.columnExpressions = columnExpressions;
     }
+
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
+        if(columnExpressions.size()!=1){
+            throw new IllegalArgumentException("not empty arguments != 1");
+        }
         return "({0} IS NOT NULL AND {0} <> '')";
     }
 
     @Override
     public int paramMarks() {
-        return 1;
+        return columnExpressions.size();
     }
 
     @Override
-    protected void consume0(SQLNativeChainExpressionContext context) {
-        context.expression(this.property);
+    protected List<ColumnExpression> getColumnExpressions() {
+        return columnExpressions;
     }
 }

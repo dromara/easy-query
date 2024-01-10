@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.builder.core;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
 /**
@@ -9,7 +10,7 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
  *
  * @author xuejiaming
  */
-public interface SQLNativeAble {
+public interface SQLNativeAble extends RuntimeContextAvailable {
     /**
      * 参数格式化 占位符 {0} {1}
      * @param sqlSegment

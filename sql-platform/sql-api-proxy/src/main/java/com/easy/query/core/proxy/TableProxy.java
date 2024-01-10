@@ -34,23 +34,4 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
        return create(table,new ProxyEntitySQLContext(runtimeContext));
    }
     TProxy create(TableAvailable table, EntitySQLContext entitySQLContext);
-
-    default void exists(Supplier<Query<?>> subQueryFunc) {
-         exists(true, subQueryFunc);
-    }
-
-    default void exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(subQueryFunc.get())));
-        }
-    }
-    default void notExists(Supplier<Query<?>> subQueryFunc) {
-         notExists(true, subQueryFunc);
-    }
-
-    default void notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
-        }
-    }
 }

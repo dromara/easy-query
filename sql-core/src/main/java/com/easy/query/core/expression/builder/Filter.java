@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.builder;
 
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
@@ -23,8 +22,6 @@ import java.util.Collection;
  */
 public interface Filter extends SQLNative<Filter> {
     boolean getReverse();
-
-    QueryRuntimeContext getRuntimeContext();
 
     /**
      * 大于 column > val

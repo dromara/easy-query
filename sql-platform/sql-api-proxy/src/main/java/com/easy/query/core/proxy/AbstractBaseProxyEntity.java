@@ -26,7 +26,9 @@ import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsEntryImpl;
 import com.easy.query.core.proxy.impl.SQLSelectIgnoreImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
+import com.easy.query.core.util.EasyObjectUtil;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -39,6 +41,26 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
 
     protected TableAvailable table;
     protected EntitySQLContext entitySQLContext=new ColumnSelectSQLContext();
+
+    @Override
+    public TableAvailable getTable() {
+        Objects.requireNonNull(table, "cant found table in sql context");
+        return table;
+    }
+
+    @Override
+    public EntitySQLContext getEntitySQLContext() {
+        Objects.requireNonNull(entitySQLContext, "cant found entitySQLContext in sql context");
+        return entitySQLContext;
+    }
+
+
+    @Override
+    public TProxy create(TableAvailable table,EntitySQLContext entitySQLContext) {
+        this.table = table;
+        this.entitySQLContext = entitySQLContext;
+        return EasyObjectUtil.typeCastNullable(this);
+    }
 
     @Deprecated
     protected <TProperty> SQLColumn<TProxy, TProperty> get(String property) {
@@ -65,61 +87,5 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
 
     protected <TProperty> SQLNavigateColumn<TProxy, TProperty> getNavigate(String property, Class<TProperty> propType) {
         return new SQLNavigateColumnImpl<>(entitySQLContext, table, property, propType);
-    }
-    public SQLSelectAsExpression columnKeys() {
-        return new SQLSelectKeysImpl(this.getEntitySQLContext(),getTable());
-    }
-
-    public <T> ColumnFuncComparableExpression<T> _now() {
-        return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::now);
-    }
-
-    public <T> ColumnFuncComparableExpression<T> _utcNow() {
-        return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow);
-    }
-
-    public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectAll(TRProxy proxy) {
-        entitySQLContext.accept(new SQLSelectAllImpl(proxy.getEntitySQLContext(),proxy.getTable(), new TablePropColumn[0]));
-        return castProxy();
-    }
-    public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectIgnores(TablePropColumn... ignoreTableProps) {
-        entitySQLContext.accept(new SQLSelectIgnoreImpl(ignoreTableProps));
-        return castProxy();
-    }
-
-    /**
-     * 快速选择表达式
-     * @param sqlSelectAsExpression
-     */
-    public TProxy selectExpression(SQLSelectAsExpression... sqlSelectAsExpression) {
-        entitySQLContext.accept(sqlSelectAsExpression);
-        return castProxy();
-    }
-    /**
-     * 支持动态select+动态group取列防止sql注入
-     * @param sqlTableOwner
-     * @param property
-     */
-    public TProxy selectColumn(SQLTableOwner sqlTableOwner, String property) {
-        entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property));
-        return castProxy();
-    }
-    /**
-     * 支持动态select+动态selectAs取列防止sql注入
-     * @param sqlTableOwner
-     * @param property
-     * @param propertyAlias
-     */
-    public TProxy selectColumnAs(SQLTableOwner sqlTableOwner,String property,String propertyAlias) {
-        entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property,propertyAlias));
-        return castProxy();
-    }
-
-    private TProxy castProxy(){
-        return (TProxy)this;
-    }
-    public TProxy adapter(Consumer<TProxy> select) {
-        select.accept(castProxy());
-        return castProxy();
     }
 }

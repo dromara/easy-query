@@ -5,9 +5,7 @@ import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
-import com.easy.query.core.func.def.impl.BankSQLFunction;
 import com.easy.query.core.func.def.impl.EmptySQLFunction;
-import com.easy.query.core.func.def.impl.NotBankSQLFunction;
 import com.easy.query.core.func.def.impl.NotEmptySQLFunction;
 import com.easy.query.core.util.EasyArrayUtil;
 
@@ -63,18 +61,38 @@ public interface SQLStringFunc {
     SQLFunction concat(List<ColumnExpression> concatExpressions);
 
     default SQLFunction bank(String property){
-        return new BankSQLFunction(property);
+        return bank(o->o.column(property));
     }
+    default SQLFunction bank(SQLFunction sqlFunction){
+        return bank(o->o.sqlFunc(sqlFunction));
+    }
+     SQLFunction bank(SQLExpression1<ColumnFuncSelector> sqlExpression);
+
+
     default SQLFunction notBank(String property){
-        return new NotBankSQLFunction(property);
+        return notBank(o->o.column(property));
     }
+    default SQLFunction notBank(SQLFunction sqlFunction){
+        return notBank(o->o.sqlFunc(sqlFunction));
+    }
+    SQLFunction notBank(SQLExpression1<ColumnFuncSelector> sqlExpression);
+
+
 
     default SQLFunction empty(String property){
-        return new EmptySQLFunction(property);
+        return empty(o->o.column(property));
     }
+    default SQLFunction empty(SQLFunction sqlFunction){
+        return empty(o->o.sqlFunc(sqlFunction));
+    }
+    SQLFunction empty(SQLExpression1<ColumnFuncSelector> sqlExpression);
     default SQLFunction notEmpty(String property){
-        return new NotEmptySQLFunction(property);
+        return notEmpty(o->o.column(property));
     }
+    default SQLFunction notEmpty(SQLFunction sqlFunction){
+        return notEmpty(o->o.sqlFunc(sqlFunction));
+    }
+    SQLFunction notEmpty(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 小写
