@@ -6,8 +6,8 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
-import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
-import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
 import com.easy.query.core.proxy.impl.SQLNativeDraftImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -145,12 +145,12 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return new SQLSelectKeysImpl(this.getEntitySQLContext(),getTable());
     }
 
-    public <T> ColumnFuncComparableExpression<T> _now() {
-        return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::now);
+    public <T> ColumnFunctionComparableDateTimeChainExpression<T> _now() {
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::now);
     }
 
-    public <T> ColumnFuncComparableExpression<T> _utcNow() {
-        return new SQLColumnFunctionComparableExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow);
+    public <T> ColumnFunctionComparableDateTimeChainExpression<T> _utcNow() {
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<T>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow);
     }
 
     public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectAll(TRProxy proxy) {
