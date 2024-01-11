@@ -33,6 +33,7 @@ import com.easy.query.core.func.def.impl.MaxSQLFunction;
 import com.easy.query.core.func.def.impl.MinSQLFunction;
 import com.easy.query.core.func.def.impl.NotBankSQLFunction;
 import com.easy.query.core.func.def.impl.NotEmptySQLFunction;
+import com.easy.query.core.func.def.impl.NotSQLFunction;
 import com.easy.query.core.func.def.impl.NowSQLFunction;
 import com.easy.query.core.func.def.impl.NullDefaultSQLFunction;
 import com.easy.query.core.func.def.impl.ReplaceSQLFunction;
@@ -257,5 +258,10 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction math(SQLExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
         return new MathSQLFunction(getColumnExpressions(sqlExpression),mathMethodEnum);
+    }
+
+    @Override
+    public SQLFunction not(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new NotSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

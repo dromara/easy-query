@@ -449,7 +449,7 @@ EasyPageResult<BlogEntity> page = easyEntityQuery
         .queryable(Topic.class)
         .innerJoin(BlogEntity.class,(t1,t2)->t1.id().eq(t2.id()))
         .where((t1,t2)->t2.title().isNotNull())
-        .groupBy((t1,t2)->GroupKeys.of(t2.id()))
+        .groupBy((t1,t2)->GroupKeys.TABLE2.of(t2.id()))
         .select(g->{
               BlogEntityProxy r = new BlogEntityProxy();
               r.id().set(g.key1());

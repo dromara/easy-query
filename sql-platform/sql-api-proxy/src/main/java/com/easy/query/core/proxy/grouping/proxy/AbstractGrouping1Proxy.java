@@ -12,7 +12,6 @@ import com.easy.query.core.proxy.extension.functions.ColumnObjectFunctionAvailab
 import com.easy.query.core.proxy.extension.functions.ColumnStringFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;
@@ -20,7 +19,7 @@ import java.util.function.Function;
 
 /**
  * create time 2023/12/28 14:57
- * 文件说明
+ * 抽象的group代理对象
  *
  * @author xuejiaming
  */

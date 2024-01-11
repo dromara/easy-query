@@ -113,4 +113,27 @@ public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,
         return constValue(o->o.value(val));
     }
     SQLFunction constValue(SQLExpression1<ColumnFuncSelector> sqlExpression);
+
+    /**
+     * 取反
+     * @param property 属性列
+     * @return 取反函数
+     */
+    default SQLFunction not(String property){
+        return not(s->{
+            s.column(property);
+        });
+    }
+    /**
+     * 取反
+     * @param sqlFunction sql函数
+     * @return 取反函数
+     */
+    default SQLFunction not(SQLFunction sqlFunction){
+        return not(s->{
+            s.sqlFunc(sqlFunction);
+        });
+    }
+
+    SQLFunction not(SQLExpression1<ColumnFuncSelector> sqlExpression);
 }

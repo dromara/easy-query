@@ -53,6 +53,7 @@ public class UpdateTest extends BaseTest {
 
             long rows = easyQuery.updatable(Topic.class)
                     .set(Topic::getStars, 12)
+//                    .setSQLSegment(Topic::getStars,"NOT {0}",c->c.expression(Topic::getStars))
                     .where(o -> o.eq(Topic::getId, "2"))
                     .executeRows();
             Assert.assertEquals(1, rows);

@@ -12,7 +12,6 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
-import com.easy.query.core.proxy.grouping.proxy.Grouping2Proxy;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -668,19 +667,21 @@ public class QueryTest11 extends BaseTest {
         Assert.assertEquals("false(Boolean),-3(Integer)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
+    }
+    @Test
+    public void testx22() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
 
-        List<Draft3<Integer, Integer, Integer>> list1 = easyEntityQuery.queryable(BlogEntity.class)
-                .where(o -> o.createTime().gt(o._now().plusMonths(-3)))
-                .groupBy(o -> {
-                    return x -> new Grouping2Proxy<>(o.createTime().year(), o.createTime().month(), x);
-                })
-                .orderBy(o -> {
-                    o.key1().asc();
-                    o.key2().asc();
-                }).selectDraft(o -> Select.draft(
-                        o.key1(),
-                        o.key2(),
-                        o.sum(o.group().star())
-                )).toList();
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(o -> o.deleted().not().eq(false)).toList();
+
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (NOT `deleted`) = ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),false(Boolean)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
     }
 }

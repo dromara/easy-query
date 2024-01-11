@@ -481,6 +481,21 @@ public class QueryTest10 extends BaseTest{
             Assert.assertEquals("SELECT t.`id` AS `value1` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
             listenerContextManager.clear();
         }
+
+        {
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            Class<Draft1<String>> typeClass = EasyTypeUtil.cast(Draft1.class);
+            List<Draft1<String>> list = easyEntityQuery
+                    .queryable(Topic.class)
+                    .groupBy(t ->GroupKeys.TABLE1.of( t.id(),t.title()))
+                    .selectDraft(t -> Select.draft(t.key1()))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1` FROM `t_topic` t GROUP BY t.`id`,t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            listenerContextManager.clear();
+        }
         {
 
             ListenerContext listenerContext = new ListenerContext();
@@ -1048,6 +1063,8 @@ public class QueryTest10 extends BaseTest{
                 .selectDraft(o -> Select.draft(o.key1()))
                 .toList();
         query(q->q.whereObject(new Object()));
+//        easyEntityQuery.queryable(BlogEntity.class)
+//                .groupBy1(k->k.of(k.group().createTime()))
     }
     @Test
     public void test223(){
