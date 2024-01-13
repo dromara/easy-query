@@ -712,7 +712,7 @@ public class QueryTest11 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id` AS `value1`,t.`url` AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND ? = (SELECT COUNT(*) FROM `t_topic` t1 WHERE t1.`id` = t.`id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id` AS `value1`,t.`url` AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND ? = (SELECT COUNT(*) FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AND t.`star` = (SELECT COUNT(*) FROM `t_topic` t2 WHERE t2.`id` = t.`id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),0(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
