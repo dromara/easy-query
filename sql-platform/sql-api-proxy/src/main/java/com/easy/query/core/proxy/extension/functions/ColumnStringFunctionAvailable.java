@@ -12,6 +12,8 @@ import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
+import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
+import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionComparableExpressionImpl;
@@ -36,24 +38,9 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @param stringExpressions
      * @return
      */
-    default ColumnFunctionComparableStringChainExpression<TProperty> concat(Object... stringExpressions) {
+    default ColumnFunctionComparableStringChainExpression<TProperty> concat(SQLExpression1<ConcatExpressionSelector> stringExpressions) {
         SQLExpression1<ColumnFuncSelector> selector= o->{
-            for (Object stringExpression : stringExpressions) {
-                if(stringExpression instanceof DSLSQLFunctionAvailable){
-                    DSLSQLFunctionAvailable functionAvailable = (DSLSQLFunctionAvailable) stringExpression;
-                    SQLFunction sqlFunction = functionAvailable.func().apply(getEntitySQLContext().getRuntimeContext().fx());
-                    o.sqlFunc(sqlFunction);
-                }else if(stringExpression instanceof TablePropColumn){
-                    TablePropColumn propColumn = (TablePropColumn) stringExpression;
-                    o.column(propColumn.getTable(), propColumn.getValue());
-                } else if(stringExpression instanceof SQLFunction){
-                    o.sqlFunc((SQLFunction) stringExpression);
-                }else if(stringExpression instanceof SQLSegment){
-                    o.sql((SQLSegment) stringExpression);
-                }else{
-                    o.value(stringExpression);
-                }
-            }
+            stringExpressions.apply(new ConcatExpressionSelectorImpl(getEntitySQLContext().getRuntimeContext().fx(),o));
         };
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {

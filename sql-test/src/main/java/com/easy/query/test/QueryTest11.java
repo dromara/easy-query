@@ -556,7 +556,11 @@ public class QueryTest11 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<TopicTypeTest1> list3 = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.id().concat(o.title(), o.title().subString(1, 2)).eq("123");
+            o.id().concat(c->{
+                c.concatWith(o.title());
+                c.concatWith(o.title().subString(1,2));
+            }).eq("123");
+
         }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
