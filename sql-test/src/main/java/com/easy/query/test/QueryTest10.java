@@ -743,15 +743,15 @@ public class QueryTest10 extends BaseTest{
                 })
                 .selectDraft(o -> Select.draft(
                         o.id(),
-                        o.title().toLower(),
+                        o.title().toLower().replace("123","456"),
                         o.title().toUpper(),
                         o.title().toLower().subString(1, 2)
                 ))
                 .toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id` AS `value1`,LOWER(t.`title`) AS `value2`,UPPER(t.`title`) AS `value3`,SUBSTR(LOWER(t.`title`),2,2) AS `value4` FROM `t_topic` t WHERE SUBSTR(t.`title`,2,2) = ? AND SUBSTR(LOWER(t.`title`),2,2) = ? AND SUBSTR(LOWER(UPPER(LOWER(t.`title`))),2,2) = ? AND SUBSTR(LOWER(DATE_FORMAT(t.`create_time`,'%Y-%m')),2,10) LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("123(String),123(String),123(String),%023-01%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id` AS `value1`,REPLACE(LOWER(t.`title`),?,?) AS `value2`,UPPER(t.`title`) AS `value3`,SUBSTR(LOWER(t.`title`),2,2) AS `value4` FROM `t_topic` t WHERE SUBSTR(t.`title`,2,2) = ? AND SUBSTR(LOWER(t.`title`),2,2) = ? AND SUBSTR(LOWER(UPPER(LOWER(t.`title`))),2,2) = ? AND SUBSTR(LOWER(DATE_FORMAT(t.`create_time`,'%Y-%m')),2,10) LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),456(String),123(String),123(String),123(String),%023-01%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 

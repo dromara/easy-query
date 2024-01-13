@@ -295,7 +295,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals(DayOfWeek.SUNDAY, dayOfWeek);
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT year(t.`create_time`) AS `value1`,month(t.`create_time`) AS `value2`,dayofmonth(t.`create_time`) AS `value3`,hour(t.`create_time`) AS `value4`,minute(t.`create_time`) AS `value5`,second(t.`create_time`) AS `value6`,(dayofweek(t.`create_time`)-1) AS `value7` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND date_add(t.`create_time`, interval (?) year) <= ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT YEAR(t.`create_time`) AS `value1`,MONTH(t.`create_time`) AS `value2`,DAYOFMONTH(t.`create_time`) AS `value3`,HOUR(t.`create_time`) AS `value4`,MINUTE(t.`create_time`) AS `value5`,SECOND(t.`create_time`) AS `value6`,(DAYOFWEEK(t.`create_time`)-1) AS `value7` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND date_add(t.`create_time`, interval (?) year) <= ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),123456zz7(String),1(Integer),2023-02-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
@@ -370,7 +370,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals(DayOfWeek.SUNDAY, dayOfWeek);
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT year(t.`create_time`) AS `value1`,month(t.`create_time`) AS `value2`,dayofmonth(t.`create_time`) AS `value3`,hour(t.`create_time`) AS `value4`,minute(t.`create_time`) AS `value5`,second(t.`create_time`) AS `value6`,(dayofweek(t.`create_time`)-1) AS `value7` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND date_add(t.`create_time`, interval (?) year) <= ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT YEAR(t.`create_time`) AS `value1`,MONTH(t.`create_time`) AS `value2`,DAYOFMONTH(t.`create_time`) AS `value3`,HOUR(t.`create_time`) AS `value4`,MINUTE(t.`create_time`) AS `value5`,SECOND(t.`create_time`) AS `value6`,(DAYOFWEEK(t.`create_time`)-1) AS `value7` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND date_add(t.`create_time`, interval (?) year) <= ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),123456zz8(String),1(Integer),2023-02-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 

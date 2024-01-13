@@ -26,11 +26,13 @@ import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
@@ -263,6 +265,12 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //        return EasyObjectUtil.typeCastNullable(select);
 //    }
 
+
+    @Override
+    public EntityQueryable<T1Proxy, T1> asTreeCTE(SQLFuncExpression1<T1Proxy,SQLColumn<T1Proxy, ?>> codePropertyExpression, SQLFuncExpression1<T1Proxy,SQLColumn<T1Proxy, ?>> parentCodePropertyExpression, SQLExpression1<TreeCTEConfigurer> treeExpression) {
+        ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(codePropertyExpression.apply(get1Proxy()).getValue(), parentCodePropertyExpression.apply(get1Proxy()).getValue(), treeExpression);
+        return new EasyEntityQueryable<>(get1Proxy(), clientQueryable);
+    }
 
     @Override
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & Draft> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression1<T1Proxy, DraftFetcher<TR, TRProxy>> selectExpression) {

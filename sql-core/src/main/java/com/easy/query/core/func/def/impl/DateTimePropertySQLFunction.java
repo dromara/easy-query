@@ -30,14 +30,14 @@ public class DateTimePropertySQLFunction extends AbstractExpressionSQLFunction {
             throw new IllegalArgumentException("columnExpressions is empty");
         }
         switch (dateTimeUnitEnum){
-            case DayOfYear:return "dayofyear({0})";
-            case DayOfWeek:return "(dayofweek({0})-1)";
-            case Year:return "year({0})";
-            case Month:return "month({0})";
-            case Day:return "dayofmonth({0})";
-            case Hour:return "hour({0})";
-            case Minute:return "minute({0})";
-            case Second:return "second({0})";
+            case DayOfYear:return "DAYOFYEAR({0})";
+            case DayOfWeek:return "(DAYOFWEEK({0})-1)";
+            case Year:return "YEAR({0})";
+            case Month:return "MONTH({0})";
+            case Day:return "DAYOFMONTH({0})";
+            case Hour:return "HOUR({0})";
+            case Minute:return "MINUTE({0})";
+            case Second:return "SECOND({0})";
         }
         throw new UnsupportedOperationException("不支持当前属性获取:"+ dateTimeUnitEnum);
     }

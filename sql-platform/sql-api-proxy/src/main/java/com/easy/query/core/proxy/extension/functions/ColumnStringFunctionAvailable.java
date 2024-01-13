@@ -93,6 +93,10 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 //        });
 //    }
 
+    /**
+     * 转成小写
+     * @return
+     */
     default ColumnFunctionComparableStringChainExpression<String> toLower() {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -104,6 +108,10 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
 
+    /**
+     * 转成小写
+     * @return
+     */
     default ColumnFunctionComparableStringChainExpression<String> toUpper() {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -242,6 +250,11 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             }
         }, String.class);
     }
+
+    /**
+     * 长度函数返回当前列的长度值
+     * @return
+     */
     default ColumnFunctionComparableStringChainExpression<Integer> length() {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
