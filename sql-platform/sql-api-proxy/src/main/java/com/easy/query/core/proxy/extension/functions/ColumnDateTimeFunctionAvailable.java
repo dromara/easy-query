@@ -119,7 +119,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
     }
 
     /**
-     * mm 0-60
+     * mm 0-59
      * @return
      */
     default ColumnFunctionComparableNumberChainExpression<Integer> minute() {
@@ -127,7 +127,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
     }
 
     /**
-     * ss 0-60
+     * ss 0-59
      * @return
      */
     default ColumnFunctionComparableNumberChainExpression<Integer> second() {

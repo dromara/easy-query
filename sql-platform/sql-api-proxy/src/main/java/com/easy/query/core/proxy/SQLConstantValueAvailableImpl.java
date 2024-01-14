@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy;
 
-import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
@@ -21,62 +21,75 @@ import java.time.LocalTime;
 import java.util.Date;
 
 /**
- * create time 2024/1/10 13:29
+ * create time 2024/1/10 13:22
  * 文件说明
  *
  * @author xuejiaming
  */
-public interface SQLParameterConstValueAvailable extends EntitySQLContextAvailable {
+public class SQLConstantValueAvailableImpl implements SQLConstantValueAvailable {
 
-    default ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> valueOf(LocalDateTime val) {
+
+    private final EntitySQLContext entitySQLContext;
+
+    public SQLConstantValueAvailableImpl(EntitySQLContext entitySQLContext){
+        this.entitySQLContext = entitySQLContext;
+    }
+
+
+    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> valueOf(LocalDateTime val) {
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),null, null, f->f.constValue(val),LocalDateTime.class);
     }
-    default  ColumnFunctionComparableDateTimeChainExpression<LocalDate> valueOf(LocalDate val) {
+    public  ColumnFunctionComparableDateTimeChainExpression<LocalDate> valueOf(LocalDate val) {
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),null, null,f->f.constValue(val),LocalDate.class);
     }
-    default  ColumnFunctionComparableDateTimeChainExpression<LocalTime> valueOf(LocalTime val) {
+    public  ColumnFunctionComparableDateTimeChainExpression<LocalTime> valueOf(LocalTime val) {
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),null, null,f->f.constValue(val),LocalTime.class);
     }
-    default  ColumnFunctionComparableDateTimeChainExpression<Date> valueOf(Date val) {
+    public  ColumnFunctionComparableDateTimeChainExpression<Date> valueOf(Date val) {
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),null, null,f->f.constValue(val),Date.class);
     }
-    default  ColumnFunctionComparableDateTimeChainExpression<java.sql.Date> valueOf(java.sql.Date val) {
+    public  ColumnFunctionComparableDateTimeChainExpression<java.sql.Date> valueOf(java.sql.Date val) {
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),null, null,f->f.constValue(val),java.sql.Date.class);
     }
-    default  ColumnFunctionComparableDateTimeChainExpression<Time> valueOf(Time val) {
+    public  ColumnFunctionComparableDateTimeChainExpression<Time> valueOf(Time val) {
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),null, null,f->f.constValue(val),Time.class);
     }
-    default  ColumnFunctionComparableDateTimeChainExpression<Timestamp> valueOf(Timestamp val) {
+    public  ColumnFunctionComparableDateTimeChainExpression<Timestamp> valueOf(Timestamp val) {
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),null, null,f->f.constValue(val),Timestamp.class);
     }
-    default ColumnFunctionComparableStringChainExpression<String> valueOf(String val) {
+    public ColumnFunctionComparableStringChainExpression<String> valueOf(String val) {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(),null, null, f->f.constValue(val),String.class);
     }
-    default ColumnFunctionComparableNumberChainExpression<BigDecimal> valueOf(BigDecimal val) {
+    public ColumnFunctionComparableNumberChainExpression<BigDecimal> valueOf(BigDecimal val) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(),null, null, f->f.constValue(val),BigDecimal.class);
     }
-    default ColumnFunctionComparableNumberChainExpression<Double> valueOf(Double val) {
+    public ColumnFunctionComparableNumberChainExpression<Double> valueOf(Double val) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(),null, null, f->f.constValue(val),Double.class);
     }
-    default ColumnFunctionComparableNumberChainExpression<Float> valueOf(Float val) {
+    public ColumnFunctionComparableNumberChainExpression<Float> valueOf(Float val) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(),null, null, f->f.constValue(val),Float.class);
     }
-    default ColumnFunctionComparableNumberChainExpression<Long> valueOf(Long val) {
+    public ColumnFunctionComparableNumberChainExpression<Long> valueOf(Long val) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(),null, null, f->f.constValue(val),Long.class);
     }
-    default ColumnFunctionComparableNumberChainExpression<Integer> valueOf(Integer val) {
+    public ColumnFunctionComparableNumberChainExpression<Integer> valueOf(Integer val) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(),null, null, f->f.constValue(val),Integer.class);
     }
-    default ColumnFunctionComparableNumberChainExpression<Short> valueOf(Short val) {
+    public ColumnFunctionComparableNumberChainExpression<Short> valueOf(Short val) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(),null, null, f->f.constValue(val),Short.class);
     }
-    default ColumnFunctionComparableNumberChainExpression<Byte> valueOf(Byte val) {
+    public ColumnFunctionComparableNumberChainExpression<Byte> valueOf(Byte val) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(),null, null, f->f.constValue(val),Byte.class);
     }
-    default ColumnFunctionComparableBooleanChainExpression<Boolean> valueOf(Boolean val) {
+    public ColumnFunctionComparableBooleanChainExpression<Boolean> valueOf(Boolean val) {
         return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(),null, null, f->f.constValue(val),Boolean.class);
     }
-    default <TProperty> ColumnFunctionComparableAnyChainExpression<TProperty> valueOf(TProperty val, Class<TProperty> clazz) {
+    public <TProperty> ColumnFunctionComparableAnyChainExpression<TProperty> valueOf(TProperty val, Class<TProperty> clazz) {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(),null, null, f->f.constValue(val),clazz);
+    }
+
+    @Override
+    public EntitySQLContext getEntitySQLContext() {
+        return entitySQLContext;
     }
 }

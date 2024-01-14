@@ -122,9 +122,9 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      *  }}).toList();
      * }
      * </blockquote></pre>
-     * @param sqlSegment
-     * @param contextConsume
-     * @return
+     * @param sqlSegment 片段
+     * @param contextConsume 片段参数
+     * @return 返回元素sql片段
      */
     public PropTypeColumn<Object> sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         return new SQLNativeDraftImpl((alias, f) -> {
@@ -137,6 +137,19 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         });
     }
 
+    /**
+     * 返回子查询
+     * <blockquote><pre>
+     * {@code
+     *      o.subQuery(()->{
+     *          return easyEntityQuery.queryable(x.class).select(x->new StringProxy(x.id()));
+     *      })
+     *  }
+     * </pre></blockquote>
+     * @param subQueryableFunc 创建子查询方法
+     * @return
+     * @param <TSubQuery>
+     */
     public <TSubQuery> PropTypeColumn<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
         Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
         return new SQLDraftAsSelectImpl<>((alias, f)->{
@@ -144,6 +157,10 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         },subQueryQuery.queryClass());
     }
 
+    /**
+     * 所有主键列
+     * @return 选择所有主键列的表达式
+     */
     public SQLSelectAsExpression columnKeys() {
         return new SQLSelectKeysImpl(this.getEntitySQLContext(),getTable());
     }
@@ -156,21 +173,66 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow,LocalDateTime.class);
     }
 
+    /**
+     * COUNT(*)
+     * @return 返回类型为Long
+     */
     public ColumnFunctionComparableNumberChainExpression<Long> count() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null, f->{
             return f.count(c->{});
         }, Long.class);
     }
+
+    /**
+     * COUNT(*)
+     * @return 返回类型为Integer
+     */
     public ColumnFunctionComparableNumberChainExpression<Integer> intCount() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null,f->{
             return f.count(c->{});
         }, Integer.class);
     }
 
+    /**
+     * 查询表所有属性字段,如果前面已经单独查询了那么会追加下去
+     *
+     * <blockquote><pre>
+     * {@code
+     *  //选择o表所有属性
+     *  .select(o->new ResultProxy().selectAll(o));
+     *  //选择o表所有属性上下两种写法都可以
+     *  .select(o->new ResultProxy().adapter(x->{
+     *     x.selectAll(o);
+     *  }));
+     *  }
+     * </pre></blockquote>
+     * @param proxy
+     * @return
+     * @param <TRProxy>
+     * @param <TREntity>
+     */
     public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectAll(TRProxy proxy) {
         entitySQLContext.accept(new SQLSelectAllImpl(proxy.getEntitySQLContext(),proxy.getTable(), new TablePropColumn[0]));
         return castProxy();
     }
+
+    /**
+     * 忽略前面所选的
+     * <blockquote><pre>
+     * {@code
+     *  //选择o表所有属性但是忽略id和name
+     *  .select(o->new ResultProxy().selectAll(o).selectIgnores(o.id(),o.name()));
+     *  //选择o表所有属性但是忽略id和name 上下两种写法都可以
+     *  .select(o->new ResultProxy().adapter(x->{
+     *     x.selectAll(o).selectIgnores(o.id(),o.name()));
+     *  }));
+     *  }
+     * </pre></blockquote>
+     * @param ignoreTableProps
+     * @return
+     * @param <TRProxy>
+     * @param <TREntity>
+     */
     public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectIgnores(TablePropColumn... ignoreTableProps) {
         entitySQLContext.accept(new SQLSelectIgnoreImpl(ignoreTableProps));
         return castProxy();
@@ -178,7 +240,17 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 快速选择表达式
-     * @param sqlSelectAsExpression
+     * <blockquote><pre>
+     * {@code
+     *
+     *  .select(o->new ResultProxy().selectExpression(o.id(),o.name()));
+     *
+     *  .select(o->new ResultProxy().adapter(x->{
+     *      x.selectExpression(o.id(),o.name());
+     *  }));
+     *  }
+     * </pre></blockquote>
+     * @param sqlSelectAsExpression 要查询的表达式
      */
     public TProxy selectExpression(SQLSelectAsExpression... sqlSelectAsExpression) {
         entitySQLContext.accept(sqlSelectAsExpression);
@@ -186,8 +258,8 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
     /**
      * 支持动态select+动态group取列防止sql注入
-     * @param sqlTableOwner
-     * @param property
+     * @param sqlTableOwner 要查询的表
+     * @param property 要查询的属性
      */
     public TProxy selectColumn(SQLTableOwner sqlTableOwner, String property) {
         entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property));
@@ -195,9 +267,9 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
     /**
      * 支持动态select+动态selectAs取列防止sql注入
-     * @param sqlTableOwner
-     * @param property
-     * @param propertyAlias
+     * @param sqlTableOwner 要查询的表
+     * @param property 要查询的属性
+     * @param propertyAlias 要查询的属性别名映射到返回结果的属性名称
      */
     public TProxy selectColumnAs(SQLTableOwner sqlTableOwner,String property,String propertyAlias) {
         entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property,propertyAlias));
@@ -207,31 +279,70 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     private TProxy castProxy(){
         return (TProxy)this;
     }
-    public TProxy adapter(Consumer<TProxy> select) {
-        select.accept(castProxy());
+
+    /**
+     * 增强当前代理对象
+     * @param selectExpression 选择表达式
+     * @return 返回增强后的当前代理对象
+     */
+    public TProxy adapter(Consumer<TProxy> selectExpression) {
+        selectExpression.accept(castProxy());
         return castProxy();
     }
 
+    /**
+     * where exists(....)
+     * @param subQueryFunc 子查询创建方法
+     */
     public void exists(Supplier<Query<?>> subQueryFunc) {
         exists(true, subQueryFunc);
     }
 
+    /**
+     * where exists(....)
+     * @param condition 为true是exists生效
+     * @param subQueryFunc 子查询创建方法
+     */
     public void exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(subQueryFunc.get())));
         }
     }
+
+    /**
+     * where not exists(....)
+     * @param subQueryFunc 子查询创建方法
+     */
     public void notExists(Supplier<Query<?>> subQueryFunc) {
         notExists(true, subQueryFunc);
     }
 
+
+    /**
+     * where exists(....)
+     * @param condition 为true是not exists生效
+     * @param subQueryFunc 子查询创建方法
+     */
     public void notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
         }
     }
 
-    public SQLParameterConstValueAvailable SQLParameter(){
-        return new SQLParameterConstValueAvailableImpl(this.getEntitySQLContext());
+    /**
+     * 请使用SQLConstant方法
+     * @return 数据库常量值构建方法
+     */
+    @Deprecated
+    public SQLConstantValueAvailable SQLParameter(){
+        return new SQLConstantValueAvailableImpl(this.getEntitySQLContext());
+    }
+
+    /**
+     * 创建常量值用于比较或者处理
+     * @return 数据库常量值构建方法
+     */
+    public SQLConstantValueAvailable SQLConstant(){
+        return new SQLConstantValueAvailableImpl(this.getEntitySQLContext());
     }
 }
