@@ -2,11 +2,9 @@ package com.easy.query.core.proxy.extension.functions;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
-import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
@@ -186,6 +184,11 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
 
+    /**
+     * 左侧补齐totalWidth位数用空格补齐
+     * @param totalWidth
+     * @return
+     */
     default ColumnFunctionComparableStringChainExpression<String> leftPad(int totalWidth) {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -207,6 +210,11 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
 
+    /**
+     * 右侧补齐totalWidth位数用空格补齐
+     * @param totalWidth
+     * @return
+     */
     default ColumnFunctionComparableStringChainExpression<String> rightPad(int totalWidth) {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -258,7 +266,11 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
     }
 
-
+    /**
+     * 比较两个字符串 一样返回0 前一个比后一个大返回1 前一个比后一个小返回-1
+     * @param comparedValue
+     * @return
+     */
     default ColumnFuncComparableExpression<Integer> compareTo(String comparedValue) {
         return new SQLColumnFunctionComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {

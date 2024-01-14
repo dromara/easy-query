@@ -25,10 +25,22 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
         ColumnFunctionCastStringAvailable<TProperty>,
         ColumnFunctionCastNumberAvailable<TProperty>,
         ColumnFunctionCastBooleanAvailable<TProperty> {
-    default <T extends BigDecimal> ColumnFunctionComparableNumberChainExpression<T> avg() {
+    /**
+     * 计算平均值返回 BigDecimal
+     *
+     * @param <T>
+     * @return 计算平均值返回 AVG(age)
+     */
+    default ColumnFunctionComparableNumberChainExpression<BigDecimal> avg() {
         return avg(false);
     }
-    default <T extends BigDecimal> ColumnFunctionComparableNumberChainExpression<T>  avg(boolean distinct) {
+
+    /**
+     * 计算去重后的平均值返回 BigDecimal
+     * @param distinct 是否去重
+     * @return 计算平均值返回 AVG(DISTINCT age)
+     */
+    default ColumnFunctionComparableNumberChainExpression<BigDecimal> avg(boolean distinct) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
@@ -39,9 +51,21 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
         }, BigDecimal.class);
     }
 
+    /**
+     * 计算求和 SUM(age)
+     * @return 计算求和 SUM(age)
+     * @param <T> 任意数字类型
+     */
     default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum() {
         return sum(false);
     }
+
+    /**
+     * 计算去重求和 SUM(DISTINCT age)
+     * @param distinct 是否去重
+     * @return 计算去重求和 SUM(DISTINCT age)
+     * @param <T> 任意数字类型
+     */
     default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum(boolean distinct) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -52,10 +76,12 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
             }
         }, getPropertyType());
     }
-    default <T extends BigDecimal> ColumnFunctionComparableNumberChainExpression<T> sumBigDecimal() {
+
+    default ColumnFunctionComparableNumberChainExpression<BigDecimal> sumBigDecimal() {
         return sum(false);
     }
-    default <T extends BigDecimal> ColumnFunctionComparableNumberChainExpression<T> sumBigDecimal(boolean distinct) {
+
+    default ColumnFunctionComparableNumberChainExpression<BigDecimal> sumBigDecimal(boolean distinct) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
@@ -65,6 +91,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<TProperty> abs() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -73,10 +100,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Abs);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Abs);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Abs);
             }
         }, getPropertyType());
     }
+
     default ColumnFunctionComparableNumberChainExpression<Integer> sign() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -85,10 +113,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Sin);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Sin);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Sin);
             }
         }, Integer.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> floor() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -97,10 +126,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Floor);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Floor);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Floor);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> ceiling() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -109,10 +139,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Ceiling);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Ceiling);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Ceiling);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> round() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -121,10 +152,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Round);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Round);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Round);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> round(int decimals) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -133,10 +165,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction).value(decimals);
                 }, MathMethodEnum.Ceiling);
             } else {
-                return fx.math(o->o.column(this.getValue()).value(decimals),MathMethodEnum.Ceiling);
+                return fx.math(o -> o.column(this.getValue()).value(decimals), MathMethodEnum.Ceiling);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> exp() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -145,10 +178,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Exp);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Exp);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Exp);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> log() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -157,10 +191,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Log);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Log);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Log);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> log(BigDecimal newBase) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -169,10 +204,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction).value(newBase);
                 }, MathMethodEnum.Log);
             } else {
-                return fx.math(o->o.column(this.getValue()).value(newBase),MathMethodEnum.Log);
+                return fx.math(o -> o.column(this.getValue()).value(newBase), MathMethodEnum.Log);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> log10() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -181,10 +217,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Log10);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Log10);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Log10);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> pow() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -193,10 +230,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Pow);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Pow);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Pow);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> pow(BigDecimal exponent) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -205,10 +243,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction).value(exponent);
                 }, MathMethodEnum.Pow);
             } else {
-                return fx.math(o->o.column(this.getValue()).value(exponent),MathMethodEnum.Pow);
+                return fx.math(o -> o.column(this.getValue()).value(exponent), MathMethodEnum.Pow);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> sqrt() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -217,10 +256,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Sqrt);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Sqrt);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Sqrt);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> cos() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -229,10 +269,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Cos);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Cos);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Cos);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> sin() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -241,10 +282,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Sin);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Sin);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Sin);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> tan() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -253,10 +295,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Tan);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Tan);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Tan);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> acos() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -265,10 +308,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Acos);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Acos);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Acos);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> asin() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -277,10 +321,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Asin);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Asin);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Asin);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> atan() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -289,10 +334,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Atan);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Atan);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Atan);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> atan2() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -301,10 +347,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Atan2);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Atan2);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Atan2);
             }
         }, BigDecimal.class);
     }
+
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> truncate() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -313,10 +360,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                     o.sqlFunc(sqlFunction);
                 }, MathMethodEnum.Truncate);
             } else {
-                return fx.math(o->o.column(this.getValue()),MathMethodEnum.Truncate);
+                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Truncate);
             }
         }, BigDecimal.class);
     }
+
     @Override
     default ColumnFunctionComparableNumberChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());

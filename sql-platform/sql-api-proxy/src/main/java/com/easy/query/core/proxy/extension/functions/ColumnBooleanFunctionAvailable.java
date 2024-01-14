@@ -29,7 +29,7 @@ public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectF
 
     /**
      * 取反函数
-     * @return
+     * @return NOT xxx
      */
     default ColumnFunctionComparableBooleanChainExpression<TProperty> not() {
         return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {

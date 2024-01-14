@@ -79,27 +79,32 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
     }
 
     /**
-     * 星期1-6为1-6星期日为0
-     * @return
+     * 星期0-6为0-6星期日为0
+     * @return 返回指定日期
      */
     default ColumnFunctionComparableNumberChainExpression<Integer> dayOfWeek() {
         return dateTimeProp(this,this.getEntitySQLContext(),this.getTable(),this.getValue(),DateTimeUnitEnum.DayOfWeek);
     }
+
+    /**
+     * yyyy 指定时间的年份
+     * @return 返回当前年份
+     */
     default ColumnFunctionComparableNumberChainExpression<Integer> year() {
         return dateTimeProp(this,this.getEntitySQLContext(),this.getTable(),this.getValue(),DateTimeUnitEnum.Year);
     }
 
     /**
      * MM 1-12
-     * @return
+     * @return 返回1到12表示月份
      */
     default ColumnFunctionComparableNumberChainExpression<Integer> month() {
         return dateTimeProp(this,this.getEntitySQLContext(),this.getTable(),this.getValue(),DateTimeUnitEnum.Month);
     }
 
     /**
-     * 1-31
-     * @return
+     * dd 1-31
+     * @return 返回1-31表示在月份中的天数
      */
     default ColumnFunctionComparableNumberChainExpression<Integer> day() {
         return dateTimeProp(this,this.getEntitySQLContext(),this.getTable(),this.getValue(),DateTimeUnitEnum.Day);
@@ -107,7 +112,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
 
     /**
      * HH 24小时制0-23
-     * @return
+     * @return 返回0-23表示小时
      */
     default ColumnFunctionComparableNumberChainExpression<Integer> hour() {
         return dateTimeProp(this,this.getEntitySQLContext(),this.getTable(),this.getValue(),DateTimeUnitEnum.Hour);
@@ -176,6 +181,16 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
             }
         }, Long.class);
     }
+
+    /**
+     * 通用返回时间属性的方法
+     * @param propColumn 属性列
+     * @param entitySQLContext 当前上下文
+     * @param table 当前表
+     * @param property 当前属性
+     * @param dateTimeUnitEnum 时间枚举
+     * @return 返回时间属性的表达式
+     */
     static ColumnFunctionComparableNumberChainExpression<Integer> dateTimeProp(PropColumn propColumn, EntitySQLContext entitySQLContext, TableAvailable table, String property, DateTimeUnitEnum dateTimeUnitEnum){
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(entitySQLContext, table, property, fx -> {
             if (propColumn instanceof DSLSQLFunctionAvailable) {
