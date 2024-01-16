@@ -28,7 +28,7 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
 //        this.serviceProvider = serviceProvider;
 //    }
     @Override
-    public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction nullOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new MsSQLNullDefaultSQLFunction(getColumnExpressions(sqlExpression));
     }
 

@@ -9,6 +9,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
 import com.easy.query.core.util.EasyObjectUtil;
+import kotlin.Deprecated;
 import kotlin.reflect.KProperty1;
 
 import java.util.ArrayList;
@@ -24,23 +25,41 @@ public interface KtLambdaSQLFunc<T> extends KtLambdaAggregateSQLFunc<T> {
 
     /**
      * 如果property对应的值为null则返回def值
-     *
+     *  .nullOrDefault(Topic::title,"123")
      * @param property 属性列
      * @param def 默认值
      * @return ifNull函数
      */
+    default SQLFunction nullOrDefault(KProperty1<? super T, ?> property, Object def) {
+        return getSQLFunc().nullOrDefault(EasyKtLambdaUtil.getPropertyName(property),def);
+    }
+
+    /**
+     * 请使用 nullOrDefault
+     * @param property
+     * @param def
+     * @return
+     */
+    @Deprecated(message = "请使用nullOrDefault")
     default SQLFunction valueOrDefault(KProperty1<? super T, ?> property, Object def) {
-        return getSQLFunc().valueOrDefault(EasyKtLambdaUtil.getPropertyName(property),def);
+        return getSQLFunc().nullOrDefault(EasyKtLambdaUtil.getPropertyName(property),def);
     }
 
     /**
      * 如果选择的对应的值为null则返回默认值
+     * .nullOrDefault(o->o.column(Topic::title).value("1"))
      *
      * @param sqlExpression 属性选择函数
      * @return ifNull函数
      */
+    default SQLFunction nullOrDefault(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
+        return getSQLFunc().nullOrDefault(o->{
+            sqlExpression.apply(new SQLKtColumnFuncSelectorImpl<>(o));
+        });
+    }
+    @Deprecated(message = "请使用nullOrDefault")
     default SQLFunction valueOrDefault(SQLExpression1<SQLKtColumnFuncSelector<T>> sqlExpression) {
-        return getSQLFunc().valueOrDefault(o->{
+        return getSQLFunc().nullOrDefault(o->{
             sqlExpression.apply(new SQLKtColumnFuncSelectorImpl<>(o));
         });
     }

@@ -1029,7 +1029,7 @@ public class MyTest1 extends BaseTest {
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.title().subString(1, 2),
-                        t1.score().nullDefault(0)
+                        t1.score().nullOrDefault(0)
                 ))
                 .having(t -> {
                     t.count().ge(1L);
@@ -1060,7 +1060,7 @@ easyEntityQuery.queryable(Topic.class)
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.sql("SUBSTR({0},2,2)",c->c.expression(t.title())),
-                        t1.score().nullDefault(0)
+                        t1.score().nullOrDefault(0)
                 )).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1084,7 +1084,7 @@ easyEntityQuery.queryable(Topic.class)
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.sql("SUBSTR({0},2,2)", c -> c.expression(t.title())).setPropertyType(String.class),
-                        t1.score().nullDefault(0)
+                        t1.score().nullOrDefault(0)
                 ))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
@@ -1119,7 +1119,7 @@ easyEntityQuery.queryable(Topic.class)
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.sql("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022,1,1,1,2))).setPropertyType(LocalDateTime.class),
-                        t1.score().nullDefault(0)
+                        t1.score().nullOrDefault(0)
                 ))
                 .selectDraft(o -> Select.draft(
                         o.key1(),

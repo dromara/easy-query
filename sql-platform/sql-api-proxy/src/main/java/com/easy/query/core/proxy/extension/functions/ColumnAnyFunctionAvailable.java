@@ -73,7 +73,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default ColumnFunctionComparableAnyChainExpression<TProperty> nullEmpty() {
-        return nullDefault(o->o.value(EasyStringUtil.EMPTY));
+        return nullOrDefault(o->o.value(EasyStringUtil.EMPTY));
     }
 
     default ColumnFunctionComparableAnyChainExpression<String> toLower() {

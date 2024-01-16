@@ -185,7 +185,7 @@ public class DocTest extends BaseTest {
                                 o.id().eq("1" );
                                 o.id().eq(o.createTime().format("yyyy-MM-dd" ));
                                 o.createTime().format("yyyy-MM-dd" ).eq("2023-01-02" );
-                                o.name().nullDefault("unknown" ).like("123" );
+                                o.name().nullOrDefault("unknown" ).like("123" );
                                 o.phone().isNotBank();
                             })
                             .fetcher(o -> o.FETCHER.id().name().phone().departName())

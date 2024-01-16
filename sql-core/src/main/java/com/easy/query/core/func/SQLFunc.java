@@ -13,13 +13,27 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
 public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,SQLMathFunc{
     /**
      * 如果property对应的值为null则返回def值
-     *
+     * o.nullOrDefault("title","123")
      * @param property 属性列
      * @param def 默认值
      * @return ifNull函数
      */
+    default SQLFunction nullOrDefault(String property, Object def) {
+        return nullOrDefault(s->{
+            s.column(property)
+                    .value(def);
+        });
+    }
+
+    /**
+     * 请使用 nullOrDefault
+     * @param property
+     * @param def
+     * @return
+     */
+    @Deprecated
     default SQLFunction valueOrDefault(String property, Object def) {
-        return valueOrDefault(s->{
+        return nullOrDefault(s->{
             s.column(property)
                     .value(def);
         });
@@ -27,11 +41,21 @@ public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,
 
     /**
      * 如果property对应的值为null则返回默认值
-     *
+     * o.fx().nullOrDefault(x->x.column("title").value("123").column("content"))
      * @param sqlExpression 属性选择函数
      * @return ifNull函数
      */
-   SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression);
+   SQLFunction nullOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression);
+
+    /**
+     * 请使用nullOrDefault函数
+     * @param sqlExpression
+     * @return
+     */
+   @Deprecated
+   default SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression){
+       return nullOrDefault(sqlExpression);
+   }
 
     /**
      * 获取绝对值
@@ -75,27 +99,6 @@ public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,
      * @return round函数
      */
     SQLFunction round(SQLTableOwner tableOwner, String property, int scale);
-
-
-//    default SQLFunction join(String separator, String property1, String property2, String... properties) {
-//        return join(separator, s -> {
-//            s.column(property1)
-//                    .column(property2);
-//            if (EasyArrayUtil.isNotEmpty(properties)) {
-//                for (String property : properties) {
-//                    s.column(property);
-//                }
-//            }
-//        });
-//    }
-
-//    default SQLFunction join(String separator, SQLExpression1<ColumnFuncSelector> sqlExpression) {
-//        List<ColumnExpression> concatExpressions = new ArrayList<>();
-//        sqlExpression.apply(new ColumnFuncSelectorImpl(concatExpressions));
-//        return join(separator, concatExpressions);
-//    }
-//
-//    SQLFunction join(String separator, List<ColumnExpression> concatExpressions);
 
     /**
      * 当前时间函数

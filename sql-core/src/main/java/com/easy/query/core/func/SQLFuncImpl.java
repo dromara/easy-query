@@ -111,7 +111,7 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction nullOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         List<ColumnExpression> columnExpressions = new ArrayList<>();
         sqlExpression.apply(new ColumnFuncSelectorImpl(columnExpressions));
         return new NullDefaultSQLFunction(columnExpressions);

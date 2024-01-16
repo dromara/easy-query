@@ -50,7 +50,6 @@ public class QueryTest10 extends BaseTest{
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
-
                     o.id().in(ids);
                     o.id().notIn(ids);
                     o.createTime().format("yyyy-MM-dd").rangeClosed("2023-01-02", "2023-01-03");

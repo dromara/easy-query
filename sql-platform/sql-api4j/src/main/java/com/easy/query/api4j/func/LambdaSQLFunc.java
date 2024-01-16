@@ -31,8 +31,22 @@ public interface LambdaSQLFunc<T1> extends LambdaAggregateSQLFunc<T1> {
      * @param def 默认值
      * @return ifNull函数
      */
+    default SQLFunction nullOrDefault(Property<T1, ?> property, Object def) {
+        return nullOrDefault(s -> {
+            s.column(property)
+                    .value(def);
+        });
+    }
+
+    /**
+     * 请使用 nullOrDefault
+     * @param property
+     * @param def
+     * @return
+     */
+    @Deprecated
     default SQLFunction valueOrDefault(Property<T1, ?> property, Object def) {
-        return valueOrDefault(s -> {
+        return nullOrDefault(s -> {
             s.column(property)
                     .value(def);
         });
@@ -44,11 +58,21 @@ public interface LambdaSQLFunc<T1> extends LambdaAggregateSQLFunc<T1> {
      * @param sqlExpression 属性选择函数
      * @return ifNull函数
      */
-    default SQLFunction valueOrDefault(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
-        return getSQLFunc().valueOrDefault(o->{
+    default SQLFunction nullOrDefault(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
+        return getSQLFunc().nullOrDefault(o->{
             SQLColumnFuncSelectorImpl<T1> sqlColumnConcatSelector = new SQLColumnFuncSelectorImpl<>(o);
             sqlExpression.apply(sqlColumnConcatSelector);
         });
+    }
+
+    /**
+     * 请使用 nullOrDefault
+     * @param sqlExpression
+     * @return
+     */
+    @Deprecated
+    default SQLFunction valueOrDefault(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
+        return nullOrDefault(sqlExpression);
     }
 
     /**

@@ -24,7 +24,7 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
 
 
     @Override
-    public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction nullOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new PgSQLNullDefaultSQLFunction(getColumnExpressions(sqlExpression));
     }
     @Override

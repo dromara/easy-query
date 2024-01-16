@@ -76,25 +76,47 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
 
 
+    /**
+     * 请使用 nullOrDefault
+     * @param value
+     * @return
+     * @param <T>
+     */
+    @Deprecated
     default <T> TChain nullDefault(T value) {
-        return nullDefault(o -> o.value(value));
+        return nullOrDefault(o -> o.value(value));
     }
 
-    default <T> TChain nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
+    default <T> TChain nullOrDefault(T value) {
+        return nullOrDefault(o -> o.value(value));
+    }
+
+    default <T> TChain nullOrDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
         return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.valueOrDefault(o -> {
+                return fx.nullOrDefault(o -> {
                     o.sqlFunc(sqlFunction);
                     selector.apply(new ProxyColumnFuncSelectorImpl(o));
                 });
             } else {
-                return fx.valueOrDefault(o -> {
+                return fx.nullOrDefault(o -> {
                     o.column(this.getTable(), this.getValue());
                     selector.apply(new ProxyColumnFuncSelectorImpl(o));
                 });
             }
         }, getPropertyType());
+    }
+
+    /**
+     * 请使用 nullOrDefault
+     * @param selector
+     * @return
+     * @param <T>
+     */
+    @Deprecated
+    default <T> TChain nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
+        return nullOrDefault(selector);
     }
 
 }

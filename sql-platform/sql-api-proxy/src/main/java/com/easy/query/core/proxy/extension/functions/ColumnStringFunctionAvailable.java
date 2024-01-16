@@ -56,8 +56,16 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
 
+    /**
+     * 请使用 nullOrEmpty
+     * @return
+     */
+    @Deprecated
     default ColumnFunctionComparableStringChainExpression<TProperty> nullEmpty() {
-        return nullDefault(o->o.value(EasyStringUtil.EMPTY));
+        return nullOrDefault(o->o.value(EasyStringUtil.EMPTY));
+    }
+    default ColumnFunctionComparableStringChainExpression<TProperty> nullOrEmpty() {
+        return nullOrDefault(o->o.value(EasyStringUtil.EMPTY));
     }
 
 //    @Override

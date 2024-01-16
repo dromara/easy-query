@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class OracleSQLFuncImpl extends SQLFuncImpl {
     @Override
-    public SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction nullOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new OracleNullDefaultSQLFunction(getColumnExpressions(sqlExpression));
     }
 

@@ -385,7 +385,7 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
                     .select(o -> new TopicProxy().adapter(r -> {
 
-                        r.title().set(o.stars().nullDefault(0).toStr());
+                        r.title().set(o.stars().nullOrDefault(0).toStr());
                         r.alias().setSQL("IFNULL({0},'')" , c -> {
                             c.keepStyle();
                             c.expression(o.id());
@@ -407,7 +407,7 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
                     .select(o -> new TopicProxy().adapter(r -> {
 
-                        r.title().set(o.stars().nullDefault(0).toStr());
+                        r.title().set(o.stars().nullOrDefault(0).toStr());
                         r.alias().setSQL("IFNULL({0},'')" , c -> {
                             c.keepStyle();
                             c.expression(o.id());
@@ -429,7 +429,7 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
                     .select(o -> new TopicProxy().adapter(r -> {
 
-                        r.title().set(o.stars().nullDefault(0).toStr());
+                        r.title().set(o.stars().nullOrDefault(0).toStr());
                         r.alias().setSQL("IFNULL({0},'')" , c -> {
                             c.keepStyle();
                             c.expression(o.id());
@@ -566,7 +566,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.createTime().le(o.createTime().nullDefault("" )))
+                    .where(o -> o.createTime().le(o.createTime().nullOrDefault("" )))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -581,9 +581,9 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.createTime().le(o.createTime().nullDefault(LocalDateTime.of(2022, 1, 1, 1, 1)));
+                        o.createTime().le(o.createTime().nullOrDefault(LocalDateTime.of(2022, 1, 1, 1, 1)));
                         o.id().isNotBank();
-                        o.id().nullDefault("" ).eq(o.title().nullDefault(c -> c.column(o.id())));
+                        o.id().nullOrDefault("" ).eq(o.title().nullOrDefault(c -> c.column(o.id())));
                         o.title().isEmpty();
                     })
                     .toList();
@@ -600,9 +600,9 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.createTime().le(o.createTime().nullDefault(LocalDateTime.of(2022, 1, 1, 1, 1)));
-                        o.id().nullDefault("1" ).isNull();
-                        o.id().nullDefault("2" ).eq(o.title().nullDefault(c -> c.column(o.id())));
+                        o.createTime().le(o.createTime().nullOrDefault(LocalDateTime.of(2022, 1, 1, 1, 1)));
+                        o.id().nullOrDefault("1" ).isNull();
+                        o.id().nullOrDefault("2" ).eq(o.title().nullOrDefault(c -> c.column(o.id())));
                         o.title().isEmpty();
                     })
                     .toList();
@@ -624,9 +624,9 @@ public class QueryTest9 extends BaseTest {
 
             List<String> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.createTime().le(o.createTime().nullDefault(LocalDateTime.of(2022, 1, 1, 1, 1)));
-                        o.id().nullDefault("1" ).isNull();
-                        o.id().nullDefault("2" ).eq(o.title().nullDefault(c -> c.column(o.id())));
+                        o.createTime().le(o.createTime().nullOrDefault(LocalDateTime.of(2022, 1, 1, 1, 1)));
+                        o.id().nullOrDefault("1" ).isNull();
+                        o.id().nullOrDefault("2" ).eq(o.title().nullOrDefault(c -> c.column(o.id())));
                         o.title().isEmpty();
                     })
                     .select(o -> new StringProxy(o.title()))
@@ -672,20 +672,20 @@ public class QueryTest9 extends BaseTest {
                             o.title().notLike("abc" );
                         });
                         o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" );
-                        o.id().nullDefault("yyyy/MM/dd" ).eq("xxx" );
+                        o.id().nullOrDefault("yyyy/MM/dd" ).eq("xxx" );
                         o.executeSQL("{0} != {1}" , c -> {
                             c.expression(o.stars()).expression(o.createTime());
                         });
                         o.or(() -> {
                             o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" );
-                            o.id().nullDefault("yyyy/MM/dd" ).eq("xxx" );
+                            o.id().nullOrDefault("yyyy/MM/dd" ).eq("xxx" );
                             o.executeSQL("{0} != {1}" , c -> {
                                 c.expression(o.stars()).expression(o.createTime());
                             });
                         });
 
                         o.createTime().format("yyyy/MM/dd" ).eq("2023/01/02" );
-                        o.id().nullDefault("yyyy/MM/dd2" ).eq("xxx1" );
+                        o.id().nullOrDefault("yyyy/MM/dd2" ).eq("xxx1" );
                     })
                     .fetcher(o -> o.FETCHER
                             .allFieldsExclude(o.id(), o.title())
@@ -878,17 +878,17 @@ public class QueryTest9 extends BaseTest {
                     o.id().eq("1" );
                     o.id().eq(o.createTime().format("yyyy-MM-dd" ));
                     o.createTime().format("yyyy-MM-dd" ).eq("2023-01-02" );
-                    o.title().nullDefault("unknown" ).like("123" );
-                    o.title().nullDefault("unknown" ).likeMatchLeft("123" );
-                    o.title().nullDefault("unknown" ).likeMatchLeft(false, "123" );
-                    o.title().nullDefault("unknown" ).likeMatchRight("123" );
-                    o.title().nullDefault("unknown" ).likeMatchRight(false, "123" );
-                    o.star().nullDefault(1).ge(101);
-                    o.star().nullDefault(4).gt(102);
-                    o.star().nullDefault(3).le(103);
-                    o.star().nullDefault(2).lt(104);
-                    o.star().nullDefault(1).eq(105);
-                    o.title().nullDefault("unknown" ).eq(o.content());
+                    o.title().nullOrDefault("unknown" ).like("123" );
+                    o.title().nullOrDefault("unknown" ).likeMatchLeft("123" );
+                    o.title().nullOrDefault("unknown" ).likeMatchLeft(false, "123" );
+                    o.title().nullOrDefault("unknown" ).likeMatchRight("123" );
+                    o.title().nullOrDefault("unknown" ).likeMatchRight(false, "123" );
+                    o.star().nullOrDefault(1).ge(101);
+                    o.star().nullOrDefault(4).gt(102);
+                    o.star().nullOrDefault(3).le(103);
+                    o.star().nullOrDefault(2).lt(104);
+                    o.star().nullOrDefault(1).eq(105);
+                    o.title().nullOrDefault("unknown" ).eq(o.content());
                     o.content().isNotBank();
                 })
                 .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
@@ -921,7 +921,7 @@ public class QueryTest9 extends BaseTest {
                 .where(o -> {
 
                     o.id().eq(sss);
-                    o.title().nullDefault("unknown" ).in(sss);
+                    o.title().nullOrDefault("unknown" ).in(sss);
                 })
                 .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                 .having(o -> {
