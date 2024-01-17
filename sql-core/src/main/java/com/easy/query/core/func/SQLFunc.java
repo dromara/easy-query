@@ -46,6 +46,7 @@ public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,
      * @return ifNull函数
      */
    SQLFunction nullOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression);
+   SQLFunction equalsWith(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 请使用nullOrDefault函数

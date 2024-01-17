@@ -25,6 +25,7 @@ import com.easy.query.core.func.def.impl.DateTimePlusYearSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimePropertySQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.impl.EmptySQLFunction;
+import com.easy.query.core.func.def.impl.EqualsWithSQLFunction;
 import com.easy.query.core.func.def.impl.JoinSQLFunction;
 import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
@@ -263,5 +264,10 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction not(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new NotSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction equalsWith(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new EqualsWithSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

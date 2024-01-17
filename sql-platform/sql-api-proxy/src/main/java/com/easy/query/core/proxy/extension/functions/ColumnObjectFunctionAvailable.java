@@ -5,9 +5,12 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableBooleanChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
@@ -83,15 +86,20 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
      * @param <T>
      */
     @Deprecated
-    default <T> TChain nullDefault(T value) {
+    default TChain nullDefault(TProperty value) {
         return nullOrDefault(o -> o.value(value));
     }
 
-    default <T> TChain nullOrDefault(T value) {
+    default TChain nullOrDefault(TProperty value) {
         return nullOrDefault(o -> o.value(value));
     }
+    default TChain nullOrDefault(PropTypeColumn<TProperty> propTypeColumn) {
+        return nullOrDefault(x->{
+            processPropTypeColumn(x,propTypeColumn);
+        });
+    }
 
-    default <T> TChain nullOrDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
+    default TChain nullOrDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
         return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
@@ -117,6 +125,46 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     @Deprecated
     default <T> TChain nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
         return nullOrDefault(selector);
+    }
+
+
+    default ColumnFunctionComparableBooleanChainExpression<Boolean> equalsWith(TProperty value){
+        return equalsWith(x->x.value(value));
+    }
+    default ColumnFunctionComparableBooleanChainExpression<Boolean> equalsWith(PropTypeColumn<TProperty> propTypeColumn){
+        return equalsWith(x->{
+            processPropTypeColumn(x,propTypeColumn);
+        });
+    }
+
+    static <T> void processPropTypeColumn(ProxyColumnFuncSelector proxyColumnFuncSelector,PropTypeColumn<T> propTypeColumn){
+        if(propTypeColumn instanceof SQLColumn){
+            SQLColumn<?, ?> sqlColumn = (SQLColumn<?, ?>) propTypeColumn;
+            proxyColumnFuncSelector.column(sqlColumn);
+        }else if(propTypeColumn instanceof DSLSQLFunctionAvailable){
+            DSLSQLFunctionAvailable typeColumn = (DSLSQLFunctionAvailable) propTypeColumn;
+            SQLFunc fx = propTypeColumn.getEntitySQLContext().getRuntimeContext().fx();
+            SQLFunction sqlFunction = typeColumn.func().apply(fx);
+            proxyColumnFuncSelector.sqlFunc(sqlFunction);
+        }else{
+            throw new UnsupportedOperationException();
+        }
+    }
+    default ColumnFunctionComparableBooleanChainExpression<Boolean> equalsWith(SQLExpression1<ProxyColumnFuncSelector> selector){
+        return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.equalsWith(o -> {
+                    o.sqlFunc(sqlFunction);
+                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                });
+            } else {
+                return fx.equalsWith(o -> {
+                    o.column(this.getTable(), this.getValue());
+                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
+                });
+            }
+        }, Boolean.class);
     }
 
 }

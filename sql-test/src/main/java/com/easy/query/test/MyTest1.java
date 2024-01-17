@@ -1029,7 +1029,7 @@ public class MyTest1 extends BaseTest {
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.title().subString(1, 2),
-                        t1.score().nullOrDefault(0)
+                        t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
                 .having(t -> {
                     t.count().ge(1L);
@@ -1042,7 +1042,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT SUBSTR(t.`title`,2,2) AS `value1`,IFNULL(t1.`score`,?) AS `value2`,COUNT(*) AS `value3` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IS NOT NULL AND t1.`score` IS NOT NULL GROUP BY SUBSTR(t.`title`,2,2),IFNULL(t1.`score`,?) HAVING COUNT(*) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("0(Integer),false(Boolean),0(Integer),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("0(BigDecimal),false(Boolean),0(BigDecimal),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
     @Test
@@ -1060,13 +1060,13 @@ easyEntityQuery.queryable(Topic.class)
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.sql("SUBSTR({0},2,2)",c->c.expression(t.title())),
-                        t1.score().nullOrDefault(0)
+                        t1.score().nullOrDefault(BigDecimal.ZERO)
                 )).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT SUBSTR(t.`title`,2,2),IFNULL(t1.`score`,?) FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IS NOT NULL AND t1.`score` IS NOT NULL GROUP BY SUBSTR(t.`title`,2,2),IFNULL(t1.`score`,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("0(Integer),false(Boolean),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("0(BigDecimal),false(Boolean),0(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
     @Test
@@ -1084,7 +1084,7 @@ easyEntityQuery.queryable(Topic.class)
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.sql("SUBSTR({0},2,2)", c -> c.expression(t.title())).setPropertyType(String.class),
-                        t1.score().nullOrDefault(0)
+                        t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
@@ -1095,7 +1095,7 @@ easyEntityQuery.queryable(Topic.class)
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT SUBSTR(t.`title`,2,2) AS `value1`,COUNT(t.`title`) AS `value2` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IS NOT NULL AND t1.`score` IS NOT NULL GROUP BY SUBSTR(t.`title`,2,2),IFNULL(t1.`score`,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("false(Boolean),0(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
         for (Draft2<String, Long> stringLongDraft2 : list1) {
 
@@ -1119,7 +1119,7 @@ easyEntityQuery.queryable(Topic.class)
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
                         t.sql("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022,1,1,1,2))).setPropertyType(LocalDateTime.class),
-                        t1.score().nullOrDefault(0)
+                        t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
@@ -1130,7 +1130,7 @@ easyEntityQuery.queryable(Topic.class)
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT IFNULL(t.`create_time`,?) AS `value1`,COUNT(t.`title`) AS `value2` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` IS NOT NULL AND t1.`score` IS NOT NULL GROUP BY IFNULL(t.`create_time`,?),IFNULL(t1.`score`,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("2022-01-01T01:02(LocalDateTime),false(Boolean),2022-01-01T01:02(LocalDateTime),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("2022-01-01T01:02(LocalDateTime),false(Boolean),2022-01-01T01:02(LocalDateTime),0(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
         for (Draft2<LocalDateTime, Long> stringLongDraft2 : list1) {
 

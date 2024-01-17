@@ -566,12 +566,12 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.createTime().le(o.createTime().nullOrDefault("" )))
+                    .where(o -> o.createTime().le(o.createTime().nullOrDefault(LocalDateTime.of(2021,1,1,1,1))))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE  `create_time` <= IFNULL(`create_time`,?)" , jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("2021-01-01T01:01(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
         {

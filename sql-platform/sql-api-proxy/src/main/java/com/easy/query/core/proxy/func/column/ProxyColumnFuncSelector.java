@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy.func.column;
 
 import com.easy.query.core.expression.parser.core.base.SimpleSQLTableOwner;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyArrayUtil;
@@ -31,6 +32,10 @@ public interface ProxyColumnFuncSelector {
     }
     default ProxyColumnFuncSelector format(Object valFormat){
         getColumnConcatSelector().format(valFormat);
+        return this;
+    }
+    default ProxyColumnFuncSelector sqlFunc(SQLFunction sqlFunction){
+        getColumnConcatSelector().sqlFunc(sqlFunction);
         return this;
     }
 }

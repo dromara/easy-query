@@ -556,9 +556,9 @@ public class QueryTest11 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<TopicTypeTest1> list3 = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.id().concat(c->{
+            o.id().concat(c -> {
                 c.concatWith(o.title());
-                c.concatWith(o.title().subString(1,2));
+                c.concatWith(o.title().subString(1, 2));
             }).eq("123");
 
         }).toList();
@@ -721,6 +721,7 @@ public class QueryTest11 extends BaseTest {
         listenerContextManager.clear();
 
     }
+
     @Test
     public void testx24() {
         ListenerContext listenerContext = new ListenerContext();
@@ -751,5 +752,28 @@ public class QueryTest11 extends BaseTest {
                 .asTreeCTE(o -> o.id(), o -> o.stars())
                 .toSQL();
         Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t", sql);
+    }
+
+    @Test
+    public void testx26() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .where(o -> {
+                    o.id().eq("123");
+                    o.id().nullOrDefault(o.title().subString(1, 2)).eq("1");
+                })
+                .select(o -> new BlogEntityProxy().adapter(x -> {
+                    x.id().set(o.id());
+                    x.isTop().set(o.id().equalsWith("1"));
+                    x.isTop().set(o.id().subString(1, 2).equalsWith(o.title().toLower()));
+                    x.content().set(o.id().nullOrDefault(o.title().subString(1, 2)));
+                })).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `id`,(CASE t.`id` WHEN ? THEN 1 ELSE 0 END) AS `is_top`,(CASE SUBSTR(t.`id`,2,2) WHEN LOWER(t.`title`) THEN 1 ELSE 0 END) AS `is_top`,IFNULL(t.`id`,SUBSTR(t.`title`,2,2)) AS `content` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND IFNULL(t.`id`,SUBSTR(t.`title`,2,2)) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String),false(Boolean),123(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }
