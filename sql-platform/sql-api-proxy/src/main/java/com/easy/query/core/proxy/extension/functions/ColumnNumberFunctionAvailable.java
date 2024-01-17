@@ -37,6 +37,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 计算去重后的平均值返回 BigDecimal
+     *
      * @param distinct 是否去重
      * @return 计算平均值返回 AVG(DISTINCT age)
      */
@@ -53,8 +54,9 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 计算求和 SUM(age)
-     * @return 计算求和 SUM(age)
+     *
      * @param <T> 任意数字类型
+     * @return 计算求和 SUM(age)
      */
     default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum() {
         return sum(false);
@@ -62,9 +64,10 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 计算去重求和 SUM(DISTINCT age)
+     *
      * @param distinct 是否去重
+     * @param <T>      任意数字类型
      * @return 计算去重求和 SUM(DISTINCT age)
-     * @param <T> 任意数字类型
      */
     default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum(boolean distinct) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {

@@ -38,4 +38,9 @@ public interface ProxyColumnFuncSelector {
         getColumnConcatSelector().sqlFunc(sqlFunction);
         return this;
     }
+
+//    default ProxyColumnFuncSelector sqlParameter(SQLParameter sqlParameter){
+//        getColumnConcatSelector().sqlParameter(sqlParameter);
+//       return this;
+//    }
 }

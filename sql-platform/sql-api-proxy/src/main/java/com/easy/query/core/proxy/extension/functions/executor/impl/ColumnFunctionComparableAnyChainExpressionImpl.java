@@ -38,7 +38,6 @@ public class ColumnFunctionComparableAnyChainExpressionImpl<TProperty> implement
         this.func = func;
         this.propType=propType;
     }
-
     @Override
     public String getValue() {
         return property;

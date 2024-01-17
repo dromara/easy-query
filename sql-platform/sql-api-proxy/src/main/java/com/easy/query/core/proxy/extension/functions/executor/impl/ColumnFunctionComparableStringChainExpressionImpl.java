@@ -38,7 +38,6 @@ public class ColumnFunctionComparableStringChainExpressionImpl<TProperty> implem
         this.func = func;
         this.propType=propType;
     }
-
     @Override
     public String getValue() {
         return property;
@@ -107,7 +106,6 @@ public class ColumnFunctionComparableStringChainExpressionImpl<TProperty> implem
     public <TR> void _setPropertyType(Class<TR> clazz) {
         this.propType=clazz;
     }
-
 }
 //        if(condition){
 //            return new SQLPredicateImpl(f->{

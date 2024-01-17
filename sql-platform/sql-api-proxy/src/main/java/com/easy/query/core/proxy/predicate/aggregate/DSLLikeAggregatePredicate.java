@@ -26,10 +26,10 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
 
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_RIGHT), SQLPredicateCompareEnum.LIKE);
+                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_RIGHT), SQLPredicateCompareEnum.LIKE);
             },f->{
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.LIKE,EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_RIGHT));
+                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.LIKE,EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_RIGHT));
             }));
         }
     }
@@ -39,10 +39,10 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_LEFT), SQLPredicateCompareEnum.LIKE);
+                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_LEFT), SQLPredicateCompareEnum.LIKE);
             },f->{
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.LIKE,EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_LEFT));
+                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.LIKE,EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_LEFT));
             }));
         }
     }
@@ -52,10 +52,10 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_ALL), SQLPredicateCompareEnum.LIKE);
+                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_ALL), SQLPredicateCompareEnum.LIKE);
             },f->{
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.LIKE,EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_ALL));
+                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.LIKE,EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_ALL));
             }));
         }
     }
@@ -65,10 +65,10 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_RIGHT), SQLPredicateCompareEnum.NOT_LIKE);
+                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_RIGHT), SQLPredicateCompareEnum.NOT_LIKE);
             },f->{
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.NOT_LIKE,EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_RIGHT));
+                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.NOT_LIKE,EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_RIGHT));
             }));
         }
     }
@@ -78,10 +78,10 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_LEFT), SQLPredicateCompareEnum.NOT_LIKE);
+                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_LEFT), SQLPredicateCompareEnum.NOT_LIKE);
             },f->{
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.NOT_LIKE,EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_LEFT));
+                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.NOT_LIKE,EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_LEFT));
             }));
         }
     }
@@ -91,10 +91,10 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_ALL), SQLPredicateCompareEnum.NOT_LIKE);
+                f.funcValueFilter(this.getTable(), func().apply(fx), EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_ALL), SQLPredicateCompareEnum.NOT_LIKE);
             },f->{
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.NOT_LIKE,EasySQLUtil.getLikeParameter(val, SQLLikeEnum.LIKE_PERCENT_ALL));
+                f.func(this.getTable(), func().apply(fx),  SQLPredicateCompareEnum.NOT_LIKE,EasySQLUtil.getLikeParameter(_toFunctionSerializeValue(val), SQLLikeEnum.LIKE_PERCENT_ALL));
             }));
         }
     }

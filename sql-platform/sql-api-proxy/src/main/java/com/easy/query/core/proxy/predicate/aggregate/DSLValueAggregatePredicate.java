@@ -18,10 +18,10 @@ public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.ge(this.getTable(), func().apply(fx), val);
+                f.ge(this.getTable(), func().apply(fx), _toFunctionSerializeValue(val));
             }, f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.GE, val);
+                f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.GE, _toFunctionSerializeValue(val));
             }));
         }
     }
@@ -32,10 +32,10 @@ public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate
        if (condition) {
            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
-               f.gt(this.getTable(), func().apply(fx), val);
+               f.gt(this.getTable(), func().apply(fx), _toFunctionSerializeValue(val));
            }, f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
-               f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.GT, val);
+               f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.GT, _toFunctionSerializeValue(val));
            }));
        }
    }
@@ -45,10 +45,10 @@ public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.eq(this.getTable(), func().apply(fx), val);
+                f.eq(this.getTable(), func().apply(fx), _toFunctionSerializeValue(val));
             }, f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.EQ, val);
+                f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.EQ, _toFunctionSerializeValue(val));
             }));
         }
     }
@@ -58,10 +58,10 @@ public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate
        if (condition) {
            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
-               f.ne(this.getTable(), func().apply(fx), val);
+               f.ne(this.getTable(), func().apply(fx), _toFunctionSerializeValue(val));
            }, f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
-               f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.NE, val);
+               f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.NE, _toFunctionSerializeValue(val));
            }));
        }
    }
@@ -71,10 +71,10 @@ public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate
         if (condition) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.le(this.getTable(), func().apply(fx), val);
+                f.le(this.getTable(), func().apply(fx), _toFunctionSerializeValue(val));
             }, f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.LE, val);
+                f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.LE, _toFunctionSerializeValue(val));
             }));
         }
     }
@@ -84,10 +84,10 @@ public interface DSLValueAggregatePredicate<TProperty> extends DSLValuePredicate
        if (condition) {
            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
-               f.lt(this.getTable(), func().apply(fx), val);
+               f.lt(this.getTable(), func().apply(fx), _toFunctionSerializeValue(val));
            }, f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
-               f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.LT, val);
+               f.func(this.getTable(), func().apply(fx), AggregatePredicateCompare.LT, _toFunctionSerializeValue(val));
            }));
        }
    }

@@ -87,11 +87,11 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
      */
     @Deprecated
     default TChain nullDefault(TProperty value) {
-        return nullOrDefault(o -> o.value(value));
+        return nullOrDefault(value);
     }
 
     default TChain nullOrDefault(TProperty value) {
-        return nullOrDefault(o -> o.value(value));
+        return nullOrDefault(o -> o.value(_toFunctionSerializeValue(value)));
     }
     default TChain nullOrDefault(PropTypeColumn<TProperty> propTypeColumn) {
         return nullOrDefault(x->{
@@ -129,7 +129,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
 
 
     default ColumnFunctionComparableBooleanChainExpression<Boolean> equalsWith(TProperty value){
-        return equalsWith(x->x.value(value));
+        return equalsWith(x->x.value(_toFunctionSerializeValue(value)));
     }
     default ColumnFunctionComparableBooleanChainExpression<Boolean> equalsWith(PropTypeColumn<TProperty> propTypeColumn){
         return equalsWith(x->{

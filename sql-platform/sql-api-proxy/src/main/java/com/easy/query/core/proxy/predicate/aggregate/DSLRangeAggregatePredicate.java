@@ -18,12 +18,12 @@ public interface DSLRangeAggregatePredicate<TProperty> extends DSLRangePredicate
         if (conditionLeft||conditionRight) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.gt(getTable(),func().apply(fx),valLeft);
-                f.le(getTable(),func().apply(fx),valRight);
+                f.gt(getTable(),func().apply(fx), _toFunctionSerializeValue(valLeft));
+                f.le(getTable(),func().apply(fx), _toFunctionSerializeValue(valRight));
             }, f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.GT,valLeft);
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.LE,valRight);
+                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.GT, _toFunctionSerializeValue(valLeft));
+                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.LE, _toFunctionSerializeValue(valRight));
             }));
         }
     }
@@ -33,12 +33,12 @@ public interface DSLRangeAggregatePredicate<TProperty> extends DSLRangePredicate
         if (conditionLeft||conditionRight) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.gt(getTable(),func().apply(fx),valLeft);
-                f.lt(getTable(),func().apply(fx),valRight);
+                f.gt(getTable(),func().apply(fx), _toFunctionSerializeValue(valLeft));
+                f.lt(getTable(),func().apply(fx), _toFunctionSerializeValue(valRight));
             }, f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.GT,valLeft);
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.LT,valRight);
+                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.GT, _toFunctionSerializeValue(valLeft));
+                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.LT, _toFunctionSerializeValue(valRight));
             }));
         }
     }
@@ -48,12 +48,12 @@ public interface DSLRangeAggregatePredicate<TProperty> extends DSLRangePredicate
         if (conditionLeft||conditionRight) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.ge(getTable(),func().apply(fx),valLeft);
-                f.lt(getTable(),func().apply(fx),valRight);
+                f.ge(getTable(),func().apply(fx), _toFunctionSerializeValue(valLeft));
+                f.lt(getTable(),func().apply(fx), _toFunctionSerializeValue(valRight));
             }, f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.GE,valLeft);
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.LT,valRight);
+                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.GE, _toFunctionSerializeValue(valLeft));
+                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.LT, _toFunctionSerializeValue(valRight));
             }));
         }
     }
@@ -63,12 +63,12 @@ public interface DSLRangeAggregatePredicate<TProperty> extends DSLRangePredicate
         if (conditionLeft||conditionRight) {
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.ge(getTable(),func().apply(fx),valLeft);
-                f.le(getTable(),func().apply(fx),valRight);
+                f.ge(getTable(),func().apply(fx), _toFunctionSerializeValue(valLeft));
+                f.le(getTable(),func().apply(fx), _toFunctionSerializeValue(valRight));
             }, f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.GE,valLeft);
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.LE,valRight);
+                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.GE, _toFunctionSerializeValue(valLeft));
+                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.LE, _toFunctionSerializeValue(valRight));
             }));
         }
     }

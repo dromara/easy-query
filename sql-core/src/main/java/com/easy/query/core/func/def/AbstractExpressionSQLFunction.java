@@ -60,7 +60,7 @@ public abstract class AbstractExpressionSQLFunction extends AbstractSQLFunction 
         } else if(columnExpression instanceof ColumnSubQueryExpression){
             ColumnSubQueryExpression columnSubQueryExpression = (ColumnSubQueryExpression) columnExpression;
             context.expression(columnSubQueryExpression.getQuery());
-        }else {
+        } else {
             throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(columnExpression));
         }
     }

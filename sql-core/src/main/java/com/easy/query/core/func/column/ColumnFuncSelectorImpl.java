@@ -48,6 +48,12 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
         return this;
     }
 
+//    @Override
+//    public ColumnFuncSelector sqlParameter(SQLParameter sqlParameter) {
+//        concatExpressions.add(new ColumnFuncSQLParameterExpressionImpl(sqlParameter));
+//        return this;
+//    }
+
     @Override
     public ColumnFuncSelector format(Object valFormat) {
         concatExpressions.add(new ColumnFuncFormatExpressionImpl(valFormat));

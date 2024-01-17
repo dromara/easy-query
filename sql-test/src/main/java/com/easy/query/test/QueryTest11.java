@@ -470,7 +470,7 @@ public class QueryTest11 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`topic_type`,`create_time` FROM `t_topic_type` WHERE `topic_type` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("CLASSER(TopicTypeEnum),STUDENT(TopicTypeEnum)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("9(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
@@ -774,6 +774,22 @@ public class QueryTest11 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id` AS `id`,(CASE t.`id` WHEN ? THEN 1 ELSE 0 END) AS `is_top`,(CASE SUBSTR(t.`id`,2,2) WHEN LOWER(t.`title`) THEN 1 ELSE 0 END) AS `is_top`,IFNULL(t.`id`,SUBSTR(t.`title`,2,2)) AS `content` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND IFNULL(t.`id`,SUBSTR(t.`title`,2,2)) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(String),false(Boolean),123(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testx27() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<TopicTypeTest1> list1 = easyEntityQuery.queryable(TopicTypeTest1.class)
+                .where(o -> {
+                    o.topicType().nullOrDefault(TopicTypeEnum.CLASSER).eq(TopicTypeEnum.STUDENT);
+                    o.topicType().eq(TopicTypeEnum.STUDENT);
+                }).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`topic_type`,`create_time` FROM `t_topic_type` WHERE IFNULL(`topic_type`,?) = ? AND `topic_type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("9(Integer),1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 }

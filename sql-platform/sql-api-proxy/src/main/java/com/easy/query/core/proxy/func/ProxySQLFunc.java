@@ -43,7 +43,7 @@ public interface ProxySQLFunc  extends ProxyAggregateSQLFunc{
      * @return ifNull函数
      */
     default SQLFunction valueOrDefault(SQLExpression1<ProxyColumnFuncSelector> sqlExpression) {
-        return getSQLFunc().valueOrDefault(o->{
+        return getSQLFunc().nullOrDefault(o->{
             sqlExpression.apply(new ProxyColumnFuncSelectorImpl(o));
         });
     }

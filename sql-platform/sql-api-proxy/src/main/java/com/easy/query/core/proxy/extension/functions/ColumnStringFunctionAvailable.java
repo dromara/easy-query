@@ -271,7 +271,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
     @Override
     default ColumnFunctionComparableStringChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+        return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),func, getPropertyType());
     }
 
     /**

@@ -16,6 +16,7 @@ public interface ColumnFuncSelector {
     ColumnFuncSelector column(SQLTableOwner tableOwner, String property);
     ColumnFuncSelector column(TableAvailable table, String property);
     ColumnFuncSelector value(Object val);
+//    ColumnFuncSelector sqlParameter(SQLParameter sqlParameter);
     ColumnFuncSelector format(Object valFormat);
     ColumnFuncSelector sql(SQLSegment sqlSegment);
     ColumnFuncSelector sqlFunc(SQLFunction sqlFunction);

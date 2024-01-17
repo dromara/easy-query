@@ -197,7 +197,7 @@ public class EasyJdbcExecutorUtil {
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
-                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(sqlParameters));
+                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters));
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);

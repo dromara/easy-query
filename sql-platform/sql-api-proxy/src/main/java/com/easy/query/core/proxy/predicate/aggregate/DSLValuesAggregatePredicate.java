@@ -5,7 +5,10 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.impl.SQLAggregatePredicateImpl;
 import com.easy.query.core.proxy.predicate.DSLValuesPredicate;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * create time 2023/12/14 23:36
@@ -18,52 +21,44 @@ public interface DSLValuesAggregatePredicate<TProperty> extends DSLValuesPredica
     @Override
     default void in(boolean condition, Collection<? extends TProperty> collections) {
         if (condition) {
+            List<Object> collect = collections.stream().map(this::_toFunctionSerializeValue).collect(Collectors.toList());
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.funcInFilter(this.getTable(), func().apply(fx), collections, SQLPredicateCompareEnum.IN);
+                f.funcInFilter(this.getTable(), func().apply(fx),collect , SQLPredicateCompareEnum.IN);
             }, f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.IN,collections);
+                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.IN,collect);
             }));
         }
     }
 
+
+
     @Override
     default void in(boolean condition, TProperty[] array) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                f.funcInFilter(this.getTable(), func().apply(fx), array,SQLPredicateCompareEnum.IN);
-            }, f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.IN,array);
-            }));
+        if(condition){
+            in(Arrays.asList(array));
         }
     }
 
     @Override
     default void notIn(boolean condition, Collection<? extends TProperty> collections) {
         if (condition) {
+            List<Object> collect = collections.stream().map(this::_toFunctionSerializeValue).collect(Collectors.toList());
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.funcInFilter(this.getTable(), func().apply(fx), collections,SQLPredicateCompareEnum.NOT_IN);
+                f.funcInFilter(this.getTable(), func().apply(fx), collect,SQLPredicateCompareEnum.NOT_IN);
             }, f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.NOT_IN,collections);
+                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.NOT_IN,collect);
             }));
         }
     }
 
     @Override
     default void notIn(boolean condition, TProperty[] arrays) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                f.funcInFilter(this.getTable(), func().apply(fx), arrays,SQLPredicateCompareEnum.NOT_IN);
-            }, f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                f.func(this.getTable(), func().apply(fx), SQLPredicateCompareEnum.NOT_IN,arrays);
-            }));
+        if(condition){
+            notIn(Arrays.asList(arrays));
         }
     }
 }

@@ -23,7 +23,7 @@ public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectF
         ColumnFunctionCastNumberAvailable<TProperty> {
 
     @Override
-    default ColumnFunctionComparableBooleanChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+    default ColumnFunctionComparableBooleanChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property,Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
     }
 
