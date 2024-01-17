@@ -64,6 +64,25 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
 //    }
     /**
      * 支持function函数
+     *
+     * <blockquote><pre>
+     * {@code
+     *   .select(o->new ResultProxy().adapter(r->{
+     *      //返回结果resultProperty设置为一个表达式返回boolean类型 resultProperty= (owner == userId)
+     *      r.resultProperty().set(o.owner().equalsWith(webCurrentUser.getUserId()))
+     *   })
+     *   .select(o->new ResultProxy().adapter(r->{
+     *      //返回结果resultProperty设置为一个表达式返回boolean类型 resultProperty= (owner == userId)
+     *      r.resultProperty().set(o.isTop())
+     *   })
+     *   .select(o->new ResultProxy().adapter(r->{
+     *      //返回结果resultProperty设置为一个表达式 resultProperty= title.subString(1,2)
+     *      r.resultProperty().set(o.title().subString(1,2))
+     *      //返回结果resultProperty设置为一个表达式resultProperty= (title==null?"123":title)
+     *      r.resultProperty().set(o.title().nullOrDefault("123"))
+     *   })
+     * }
+     * </pre></blockquote>
      * @param val
      * @param <TResult>
      */

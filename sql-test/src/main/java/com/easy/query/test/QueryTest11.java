@@ -701,7 +701,7 @@ public class QueryTest11 extends BaseTest {
                     Query<Long> longQuery = easyEntityQuery.queryable(Topic.class)
                             .where(x -> x.id().eq(o.id())).selectCount();
 
-                    o.SQLParameter().valueOf(0L)
+                    o.SQLConstant().valueOf(0L)
                             .eq(longQuery);
 
                     Query<Integer> intQuery = easyEntityQuery.queryable(Topic.class)

@@ -228,6 +228,17 @@ public void query10() {
         Long value7 = draft3.getValue7();
         Assert.assertEquals(-3, (long) value7);
 
+        Draft7<Long, Long, Long, Long, Long, Long, Long> draft4 = entityQuery.queryable(BlogEntity.class)
+                .whereById(id)
+                .selectDraft(o -> Select.draft(
+                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days).abs(),
+                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
+                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),
+                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Seconds),
+                        o.createTime().duration(o.createTime().plus(1,TimeUnit.DAYS), DateTimeDurationEnum.Days),
+                        o.createTime().duration(o.createTime().plus(2,TimeUnit.SECONDS),DateTimeDurationEnum.Seconds),
+                        o.createTime().duration(o.createTime().plus(3,TimeUnit.MINUTES),DateTimeDurationEnum.Minutes)
+                )).firstOrNull();
 
         entityQuery.deletable(BlogEntity.class)
                 .whereById(id)
