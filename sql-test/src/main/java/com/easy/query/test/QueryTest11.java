@@ -792,4 +792,23 @@ public class QueryTest11 extends BaseTest {
         Assert.assertEquals("9(Integer),1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+    @Test
+    public void testx28() {
+        ArrayList<TopicTypeEnum> topicTypeEnums = new ArrayList<>();
+        topicTypeEnums.add(TopicTypeEnum.STUDENT);
+        topicTypeEnums.add(TopicTypeEnum.CLASSER);
+        topicTypeEnums.add(TopicTypeEnum.TEACHER);
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<TopicTypeTest1> list1 = easyEntityQuery.queryable(TopicTypeTest1.class)
+                .where(o -> {
+                    o.topicType().nullOrDefault(TopicTypeEnum.CLASSER).in(topicTypeEnums);
+                }).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`topic_type`,`create_time` FROM `t_topic_type` WHERE IFNULL(`topic_type`,?) IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("9(Integer),1(Integer),9(Integer),3(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 }

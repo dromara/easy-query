@@ -7,8 +7,6 @@ import com.easy.query.core.proxy.predicate.DSLValuesPredicate;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * create time 2023/12/14 23:36
@@ -21,7 +19,7 @@ public interface DSLValuesAggregatePredicate<TProperty> extends DSLValuesPredica
     @Override
     default void in(boolean condition, Collection<? extends TProperty> collections) {
         if (condition) {
-            List<Object> collect = collections.stream().map(this::_toFunctionSerializeValue).collect(Collectors.toList());
+            Collection<?> collect = _toFunctionSerializeValues(collections);
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.funcInFilter(this.getTable(), func().apply(fx),collect , SQLPredicateCompareEnum.IN);
@@ -44,7 +42,7 @@ public interface DSLValuesAggregatePredicate<TProperty> extends DSLValuesPredica
     @Override
     default void notIn(boolean condition, Collection<? extends TProperty> collections) {
         if (condition) {
-            List<Object> collect = collections.stream().map(this::_toFunctionSerializeValue).collect(Collectors.toList());
+            Collection<?> collect = _toFunctionSerializeValues(collections);
             getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.funcInFilter(this.getTable(), func().apply(fx), collect,SQLPredicateCompareEnum.NOT_IN);
