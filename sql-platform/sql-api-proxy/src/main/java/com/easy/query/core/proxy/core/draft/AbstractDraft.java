@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.core.draft;
 
-import com.easy.query.core.basic.jdbc.executor.internal.enumerable.Draft;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DraftResult;
 
 /**
  * create time 2023/12/19 15:10
@@ -8,7 +8,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.Draft;
  *
  * @author xuejiaming
  */
-public abstract class AbstractDraft implements Draft {
+public abstract class AbstractDraft implements DraftResult {
 //    @Override
 //    public void setPropTypes(int index, Class<?> propType) {
 //

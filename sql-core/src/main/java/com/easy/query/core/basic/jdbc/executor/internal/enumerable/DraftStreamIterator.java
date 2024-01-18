@@ -19,12 +19,12 @@ import java.sql.SQLException;
  *
  * @author xuejiaming
  */
-public class DraftStreamIterator extends AbstractMapToStreamIterator<Draft> {
+public class DraftStreamIterator extends AbstractMapToStreamIterator<DraftResult> {
     private ResultSetMetaData rsmd;
     private ResultBasicMetadata[] resultBasicMetadatas;
     private int mapCount = -1;
 
-    public DraftStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<Draft> resultMetadata) throws SQLException {
+    public DraftStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<DraftResult> resultMetadata) throws SQLException {
         super(context, streamResult, resultMetadata);
     }
 
@@ -44,11 +44,11 @@ public class DraftStreamIterator extends AbstractMapToStreamIterator<Draft> {
     }
 
     @Override
-    protected Draft mapTo() throws SQLException {
+    protected DraftResult mapTo() throws SQLException {
 
         mapCount++;
-        Class<Draft> clazz = resultMetadata.getResultClass();
-        Draft draft = EasyClassUtil.newInstance(clazz);
+        Class<DraftResult> clazz = resultMetadata.getResultClass();
+        DraftResult draft = EasyClassUtil.newInstance(clazz);
         JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getJdbcTypeHandlerManager();
 
         if (mapCount == 0) {

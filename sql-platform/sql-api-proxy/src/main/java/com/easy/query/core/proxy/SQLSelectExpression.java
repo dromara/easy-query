@@ -4,6 +4,9 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectImpl;
@@ -24,27 +27,68 @@ public interface SQLSelectExpression extends TablePropColumn{
     }
 
     default void asc(boolean condition) {
+        asc(condition,null);
+    }
+    default void asc(OrderByModeEnum nullsModeEnum) {
+         asc(true,nullsModeEnum);
+    }
+
+    default void asc(boolean condition, OrderByModeEnum nullsModeEnum) {
         if (condition) {
            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                s.setAsc(true);
-               s.column(this.getTable(), this.getValue());
+
+               if(nullsModeEnum!=null){
+                   SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
+                   SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(this.getValue(), true, nullsModeEnum);
+                   s.func(this.getTable(), orderByNullsModeFunction,false);
+               }else{
+                   s.column(this.getTable(), this.getValue());
+               }
            }));
         }
     }
+//
+//    default void nullsLast() {
+//        nullsLast(true);
+//    }
+//
+//    default void nullsLast(boolean condition) {
+//        if (condition) {
+//           getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+//               s.sqlNativeSegment("NULLS LAST",c->c.expression());
+//               s.setAsc(true);
+//               s.column(this.getTable(), this.getValue());
+//           }));
+//        }
+//    }
 
     default void desc() {
-         desc(true);
+        desc(true);
     }
 
     default void desc(boolean condition) {
+        desc(condition,null);
+    }
+    default void desc(OrderByModeEnum nullsModeEnum) {
+        desc(true,nullsModeEnum);
+    }
+
+    default void desc(boolean condition, OrderByModeEnum nullsModeEnum) {
         if (condition) {
             getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(false);
-                s.column(this.getTable(), this.getValue());
+
+                if(nullsModeEnum!=null){
+                    SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
+                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(this.getValue(), false, nullsModeEnum);
+                    s.func(this.getTable(), orderByNullsModeFunction,false);
+                }else{
+                    s.column(this.getTable(), this.getValue());
+                }
             }));
         }
     }
-
 
     /**
      * 设置别名

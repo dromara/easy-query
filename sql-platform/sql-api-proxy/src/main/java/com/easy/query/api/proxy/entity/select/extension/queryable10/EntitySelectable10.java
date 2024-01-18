@@ -3,7 +3,7 @@ package com.easy.query.api.proxy.entity.select.extension.queryable10;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.basic.jdbc.executor.internal.enumerable.Draft;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DraftResult;
 import com.easy.query.core.common.tuple.MergeTuple10;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression10;
@@ -32,7 +32,15 @@ public interface EntitySelectable10<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
         T9Proxy extends ProxyEntity<T9Proxy, T9>, T9,
         T10Proxy extends ProxyEntity<T10Proxy, T10>, T10> extends ClientEntityQueryable10Available<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10>, EntityQueryable10Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9,T10Proxy,T10> {
 
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & Draft> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression10<T1Proxy,T2Proxy,T3Proxy,T4Proxy,T5Proxy,T6Proxy,T7Proxy,T8Proxy,T9Proxy,T10Proxy, DraftFetcher<TR,TRProxy>> selectExpression){
+    /**
+     * 请使用 select + Select.DRAFT.of
+     * @param selectExpression
+     * @return
+     * @param <TRProxy>
+     * @param <TR>
+     */
+    @Deprecated
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression10<T1Proxy,T2Proxy,T3Proxy,T4Proxy,T5Proxy,T6Proxy,T7Proxy,T8Proxy,T9Proxy,T10Proxy, DraftFetcher<TR,TRProxy>> selectExpression){
         DraftFetcher<TR, TRProxy> draftFetcher = selectExpression.apply(get1Proxy(),get2Proxy(),get3Proxy(),get4Proxy(),get5Proxy(),get6Proxy(),get7Proxy(),get8Proxy(),get9Proxy(),get10Proxy());
         ClientQueryable<TR> select = getClientQueryable10().select(EasyObjectUtil.typeCastNullable(draftFetcher.getDraft().getClass()), columnAsSelector -> {
             draftFetcher.accept(columnAsSelector.getAsSelector());
@@ -41,7 +49,16 @@ public interface EntitySelectable10<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
         select.getSQLEntityExpressionBuilder().getExpressionContext().setDraftPropTypes(draftFetcher.getDraftPropTypes());
         return new EasyEntityQueryable<>(draftProxy, select);
     }
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & Draft> EntityQueryable<TRProxy, TR> selectDraftMerge(SQLFuncExpression1<MergeTuple10<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy, T10Proxy>, DraftFetcher<TR,TRProxy>> selectExpression){
+
+    /**
+     * 请使用 select + Select.DRAFT.of
+     * @param selectExpression
+     * @return
+     * @param <TRProxy>
+     * @param <TR>
+     */
+    @Deprecated
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraftMerge(SQLFuncExpression1<MergeTuple10<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy, T10Proxy>, DraftFetcher<TR,TRProxy>> selectExpression){
         return selectDraft((t1,t2,t3,t4,t5,t6,t7,t8,t9,t10)->selectExpression.apply(new MergeTuple10<>(get1Proxy(),get2Proxy(),get3Proxy(),get4Proxy(),get5Proxy(),get6Proxy(),get7Proxy(),get8Proxy(),get9Proxy(),get10Proxy())));
     }
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR>  select(SQLFuncExpression10<T1Proxy,T2Proxy,T3Proxy, T4Proxy,T5Proxy,T6Proxy,T7Proxy,T8Proxy,T9Proxy,T10Proxy, TRProxy> selectExpression){

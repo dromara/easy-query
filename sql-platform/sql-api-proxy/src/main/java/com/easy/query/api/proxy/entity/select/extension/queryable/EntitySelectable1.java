@@ -4,7 +4,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.basic.jdbc.executor.internal.enumerable.Draft;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DraftResult;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -102,6 +102,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
 
 
     /**
+     * 请使用 select + Select.DRAFT.of
      * 草稿对象返回草稿对象{@link com.easy.query.core.proxy.core.draft.Draft1}到{@link com.easy.query.core.proxy.core.draft.Draft10}
      * 使用 {@link Select#draft(PropTypeColumn)}来构建返回需要列,
      * 支持普通属性列,函数列
@@ -113,9 +114,9 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *                     o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
      *                 })
      *                 .groupBy(o -> o.id())//多个用GroupBy.of(.....)
-     *                 .selectDraft(o -> Select.draft(
-     *                         o.id(),
-     *                         o.id().count()
+     *                 .selectDraft(t -> Select.draft(
+     *                         t.key1(),
+     *                         t.count()
      *                 ))
      *                 .toList();
      *                 }
@@ -126,7 +127,8 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @param <TR>
      * @return
      */
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & Draft> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression1<T1Proxy, DraftFetcher<TR, TRProxy>> selectExpression);
+    @Deprecated
+    <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression1<T1Proxy, DraftFetcher<TR, TRProxy>> selectExpression);
 
     default EntityQueryable<T1Proxy, T1> select(ColumnSegment columnSegment, boolean clearAll) {
         return select(Collections.singletonList(columnSegment), clearAll);

@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.core.draft;
 
-import com.easy.query.core.basic.jdbc.executor.internal.enumerable.Draft;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DraftResult;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
@@ -18,7 +18,7 @@ import com.easy.query.core.proxy.ValueObjectProxyEntity;
  *
  * @author xuejiaming
  */
-public class DraftFetcherImpl<T extends ProxyEntityAvailable<T, TProxy> & Draft, TProxy extends ProxyEntity<TProxy, T>> implements DraftFetcher<T,TProxy> {
+public class DraftFetcherImpl<T extends ProxyEntityAvailable<T, TProxy> & DraftResult, TProxy extends ProxyEntity<TProxy, T>> implements DraftFetcher<T,TProxy> {
     private final T draft;
     private final TProxy draftProxy;
     private SQLSelectAsExpression sqlSelectAsExpression = SQLSelectAsExpression.empty;

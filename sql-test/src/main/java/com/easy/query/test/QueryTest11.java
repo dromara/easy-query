@@ -8,6 +8,7 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
@@ -658,6 +659,8 @@ public class QueryTest11 extends BaseTest {
                 .orderBy(o -> {
                     o.key1().asc();
                     o.key2().asc();
+//                    o.key2().nullOrDefault(1).asc();
+//                    o.key2().asc(OrderByModeEnum.NULLS_FIRST);
                 }).selectDraft(o -> Select.draft(
                         o.key1(),
                         o.key2(),
@@ -810,5 +813,52 @@ public class QueryTest11 extends BaseTest {
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`topic_type`,`create_time` FROM `t_topic_type` WHERE IFNULL(`topic_type`,?) IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("9(Integer),1(Integer),9(Integer),3(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+    @Test
+    public void testdraft()
+    {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<String, Long>> list = easyEntityQuery
+                .queryable(Topic.class)
+                .groupBy(t -> GroupKeys.TABLE1.of(t.id()))
+                .select(t -> Select.DRAFT.of(
+                        t.key1(),
+                        t.count()
+                ))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testOrder()
+    {
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Topic> list3 = easyEntityQuery.queryable(Topic.class)
+                    .where(o -> {
+                        o.title().eq("title" );
+                        o.id().eq("1" );
+                    })
+                    .orderBy(o -> {
+                        o.createTime().format("yyyy-MM-dd HH:mm:ss" ).asc();
+                        o.stars().asc(OrderByModeEnum.NULLS_LAST);
+                        o.createTime().format("yyyy-MM-dd HH:mm:ss" ).desc();
+                        o.stars().desc(OrderByModeEnum.NULLS_FIRST);
+                    })
+                    .select(o -> new TopicProxy().selectExpression(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss" )))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`title`,t.`id`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') FROM `t_topic` t WHERE t.`title` = ? AND t.`id` = ? ORDER BY DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') ASC,CASE WHEN t.`stars` IS NULL THEN 1 ELSE 0 END ASC,t.`stars` ASC,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') DESC,CASE WHEN t.`stars` IS NULL THEN 0 ELSE 1 END ASC,t.`stars` DESC" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("title(String),1(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -13,6 +14,7 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.func.SQLFunction;
 
 import java.util.Objects;
 
@@ -40,6 +42,17 @@ public class OrderSelectorImpl implements OrderSelector {
     @Override
     public OrderSelector column(TableAvailable table, String property) {
         OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table, property, runtimeContext, asc);
+        order.append(orderByColumnSegment);
+        return this;
+    }
+
+    @Override
+    public OrderSelector func(TableAvailable table, SQLFunction sqlFunction,boolean appendASC) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(), runtimeContext);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
+        String sqlSegment = sqlFunction.sqlSegment(table)+(appendASC?(asc?" ASC":" DESC"):"");
+
+        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderBySQLNativeSegment(runtimeContext,sqlSegment,sqlNativeExpressionContext, asc);
         order.append(orderByColumnSegment);
         return this;
     }

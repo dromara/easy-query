@@ -3,6 +3,7 @@ package com.easy.query.core.func;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.column.ColumnFuncSelector;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 
 /**
  * create time 2023/10/5 22:12
@@ -47,6 +48,13 @@ public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,
      */
    SQLFunction nullOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression);
    SQLFunction equalsWith(SQLExpression1<ColumnFuncSelector> sqlExpression);
+   default SQLFunction orderByNullsMode(String property, boolean asc, OrderByModeEnum orderByModeEnum){
+       return orderByNullsMode(o->o.column(property),asc,orderByModeEnum);
+   }
+  default SQLFunction orderByNullsMode(SQLFunction sqlFunction, boolean asc, OrderByModeEnum orderByModeEnum){
+       return orderByNullsMode(o->o.sqlFunc(sqlFunction),asc,orderByModeEnum);
+  }
+   SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc, OrderByModeEnum orderByModeEnum);
 
     /**
      * 请使用nullOrDefault函数

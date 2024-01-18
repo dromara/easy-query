@@ -6,7 +6,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
  *
  * @author xuejiaming
  */
-public interface Draft {
+public interface DraftResult {
     int capacity();
     void setValues(int index, Object value);
 //

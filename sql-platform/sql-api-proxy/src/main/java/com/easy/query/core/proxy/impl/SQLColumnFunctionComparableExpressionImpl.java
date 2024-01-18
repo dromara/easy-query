@@ -7,6 +7,7 @@ import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFunctionComparableChainExpression;
@@ -68,21 +69,39 @@ public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements Col
         SQLFunctionExpressionUtil.accept(s,getTable(),func);
     }
 
+
     @Override
-    public void asc(boolean condition) {
-        if(condition){
+    public void asc(boolean condition, OrderByModeEnum nullsModeEnum) {
+        if (condition) {
+
             getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
-                SQLFunctionExpressionUtil.accept(s,getTable(),func,true);
+                s.setAsc(true);
+                SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
+                SQLFunction sqlFunction = func.apply(fx);
+                if (nullsModeEnum != null) {
+                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(sqlFunction, true, nullsModeEnum);
+                    s.func(this.getTable(), orderByNullsModeFunction,false);
+                } else {
+                    s.func(this.getTable(), sqlFunction,true);
+                }
             }));
         }
-
     }
 
     @Override
-    public void desc(boolean condition) {
-        if(condition){
-              getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
-                SQLFunctionExpressionUtil.accept(s,getTable(),func,false);
+    public void desc(boolean condition, OrderByModeEnum nullsModeEnum) {
+        if (condition) {
+
+            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+                s.setAsc(false);
+                SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
+                SQLFunction sqlFunction = func.apply(fx);
+                if (nullsModeEnum != null) {
+                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(sqlFunction, false, nullsModeEnum);
+                    s.func(this.getTable(), orderByNullsModeFunction,false);
+                } else {
+                    s.func(this.getTable(), sqlFunction,true);
+                }
             }));
         }
     }

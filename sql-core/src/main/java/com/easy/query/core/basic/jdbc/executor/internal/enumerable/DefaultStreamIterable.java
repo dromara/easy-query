@@ -50,7 +50,7 @@ public class DefaultStreamIterable<T> implements StreamIterable<T> {
                 if(resultMetadata.getDataReader()!=null){
                     return new FastBeanStreamIterator<>(context, streamResultSet, resultMetadata);
                 }
-                if(Draft.class.isAssignableFrom(resultMetadata.getResultClass())){
+                if(DraftResult.class.isAssignableFrom(resultMetadata.getResultClass())){
                     return EasyObjectUtil.typeCastNullable(new DraftStreamIterator(context, streamResultSet, EasyObjectUtil.typeCastNullable(resultMetadata)));
                 }
                 return new DefaultBeanStreamIterator<>(context, streamResultSet, resultMetadata);

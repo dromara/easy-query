@@ -15,7 +15,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
-import com.easy.query.core.basic.jdbc.executor.internal.enumerable.Draft;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DraftResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -273,7 +273,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & Draft> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression1<T1Proxy, DraftFetcher<TR, TRProxy>> selectExpression) {
+    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression1<T1Proxy, DraftFetcher<TR, TRProxy>> selectExpression) {
         DraftFetcher<TR, TRProxy> draftFetcher = selectExpression.apply(get1Proxy());
         ClientQueryable<TR> select = entityQueryable.select(EasyObjectUtil.typeCastNullable(draftFetcher.getDraft().getClass()), columnAsSelector -> {
             draftFetcher.accept(columnAsSelector.getAsSelector());

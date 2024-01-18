@@ -10,6 +10,7 @@ import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -120,5 +121,10 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction math(SQLExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
         return new OracleMathSQLFunction(getColumnExpressions(sqlExpression),mathMethodEnum);
+    }
+
+    @Override
+    public SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc, OrderByModeEnum orderByModeEnum) {
+        return new OracleOrderByNullsModeSQLFunction(getColumnExpressions(sqlExpression),asc,orderByModeEnum);
     }
 }

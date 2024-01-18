@@ -7,6 +7,7 @@ import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
@@ -28,16 +29,18 @@ public class ColumnFunctionComparableAnyChainExpressionImpl<TProperty> implement
     private Class<?> propType;
 
     public ColumnFunctionComparableAnyChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
-        this(entitySQLContext,table,property,func,Object.class);
+        this(entitySQLContext, table, property, func, Object.class);
     }
+
     public ColumnFunctionComparableAnyChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         this.entitySQLContext = entitySQLContext;
 
         this.table = table;
         this.property = property;
         this.func = func;
-        this.propType=propType;
+        this.propType = propType;
     }
+
     @Override
     public String getValue() {
         return property;
@@ -50,39 +53,73 @@ public class ColumnFunctionComparableAnyChainExpressionImpl<TProperty> implement
 
     @Override
     public void accept(Selector s) {
-        SQLFunctionExpressionUtil.accept(s,getTable(),func);
+        SQLFunctionExpressionUtil.accept(s, getTable(), func);
     }
 
     @Override
     public void accept(AsSelector s) {
-        SQLFunctionExpressionUtil.accept(s,getTable(),func);
+        SQLFunctionExpressionUtil.accept(s, getTable(), func);
     }
 
     @Override
     public void accept(GroupSelector s) {
-        SQLFunctionExpressionUtil.accept(s,getTable(),func);
+        SQLFunctionExpressionUtil.accept(s, getTable(), func);
     }
 
     @Override
     public void accept(OrderSelector s) {
-        SQLFunctionExpressionUtil.accept(s,getTable(),func);
+        SQLFunctionExpressionUtil.accept(s, getTable(), func);
     }
 
+//    @Override
+//    public void asc(boolean condition) {
+//        if (condition) {
+//            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+//                SQLFunctionExpressionUtil.accept(s, getTable(), func, true);
+//            }));
+//        }
+//    }
+
     @Override
-    public void asc(boolean condition) {
-        if(condition){
+    public void asc(boolean condition, OrderByModeEnum nullsModeEnum) {
+        if (condition) {
+
             getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
-                SQLFunctionExpressionUtil.accept(s,getTable(),func,true);
+                s.setAsc(true);
+                SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
+                SQLFunction sqlFunction = func.apply(fx);
+                if (nullsModeEnum != null) {
+                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(sqlFunction, true, nullsModeEnum);
+                    s.func(this.getTable(), orderByNullsModeFunction,false);
+                } else {
+                    s.func(this.getTable(), sqlFunction,true);
+                }
             }));
         }
-
     }
-
+//
+//    @Override
+//    public void desc(boolean condition) {
+//        if (condition) {
+//            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+//                SQLFunctionExpressionUtil.accept(s, getTable(), func, false);
+//            }));
+//        }
+//    }
     @Override
-    public void desc(boolean condition) {
-        if(condition){
-              getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
-                SQLFunctionExpressionUtil.accept(s,getTable(),func,false);
+    public void desc(boolean condition, OrderByModeEnum nullsModeEnum) {
+        if (condition) {
+
+            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+                s.setAsc(false);
+                SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
+                SQLFunction sqlFunction = func.apply(fx);
+                if (nullsModeEnum != null) {
+                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(sqlFunction, false, nullsModeEnum);
+                    s.func(this.getTable(), orderByNullsModeFunction,false);
+                } else {
+                    s.func(this.getTable(), sqlFunction,true);
+                }
             }));
         }
     }
@@ -104,7 +141,7 @@ public class ColumnFunctionComparableAnyChainExpressionImpl<TProperty> implement
 
     @Override
     public <TR> void _setPropertyType(Class<TR> clazz) {
-        this.propType=clazz;
+        this.propType = clazz;
     }
 
 }
