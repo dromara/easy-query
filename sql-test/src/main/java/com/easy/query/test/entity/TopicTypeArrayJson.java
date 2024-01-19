@@ -1,9 +1,12 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.conversion.JsonConverter;
 import com.easy.query.test.conversion.TopicTypeTitle2ComplexType;
+import com.easy.query.test.entity.proxy.TopicTypeArrayJsonProxy;
 import lombok.Data;
 import lombok.ToString;
 
@@ -19,7 +22,8 @@ import java.util.List;
 @Data
 @Table("t_topic_type_array")
 @ToString
-public class TopicTypeArrayJson {
+@EntityFileProxy
+public class TopicTypeArrayJson implements ProxyEntityAvailable<TopicTypeArrayJson , TopicTypeArrayJsonProxy> {
 
     @Column(primaryKey = true)
     private String id;
@@ -30,4 +34,9 @@ public class TopicTypeArrayJson {
     private List<TopicTypeJsonValue> title2;
     private Integer topicType;
     private LocalDateTime createTime;
+
+    @Override
+    public Class<TopicTypeArrayJsonProxy> proxyTableClass() {
+        return TopicTypeArrayJsonProxy.class;
+    }
 }

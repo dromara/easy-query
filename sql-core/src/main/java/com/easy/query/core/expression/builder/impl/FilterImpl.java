@@ -191,6 +191,24 @@ public class FilterImpl implements Filter {
     }
 
     @Override
+    public Filter likeRaw(TableAvailable table, String property, Object val, SQLLikeEnum sqlLike) {
+        if (conditionAppend(table, property, val)) {
+            appendThisPredicate(table, property, EasySQLUtil.getLikeRawParameter(val, sqlLike), SQLPredicateCompareEnum.LIKE);
+            next();
+        }
+        return this;
+    }
+
+    @Override
+    public Filter notLikeRaw(TableAvailable table, String property, Object val, SQLLikeEnum sqlLike) {
+        if (conditionAppend(table, property, val)) {
+            appendThisPredicate(table, property, EasySQLUtil.getLikeRawParameter(val, sqlLike), SQLPredicateCompareEnum.NOT_LIKE);
+            next();
+        }
+        return this;
+    }
+
+    @Override
     public Filter notLike(TableAvailable table, String property, Object val, SQLLikeEnum sqlLike) {
         if (conditionAppend(table, property, val)) {
             appendThisPredicate(table, property, EasySQLUtil.getLikeParameter(val, sqlLike), SQLPredicateCompareEnum.NOT_LIKE);

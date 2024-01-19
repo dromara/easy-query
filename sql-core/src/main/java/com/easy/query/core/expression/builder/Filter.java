@@ -87,8 +87,10 @@ public interface Filter extends SQLNative<Filter> {
      * @return
      */
     Filter like(TableAvailable table, String property, Object val, SQLLikeEnum sqlLike);
+    Filter likeRaw(TableAvailable table, String property, Object val, SQLLikeEnum sqlLike);
 
     Filter notLike(TableAvailable table, String property, Object val, SQLLikeEnum sqlLike);
+    Filter notLikeRaw(TableAvailable table, String property, Object val, SQLLikeEnum sqlLike);
 
     /**
      * column is null

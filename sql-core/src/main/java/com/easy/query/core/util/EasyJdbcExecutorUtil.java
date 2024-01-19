@@ -18,6 +18,7 @@ import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLLikeParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLRawParameter;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
@@ -484,6 +485,9 @@ public class EasyJdbcExecutorUtil {
     }
 
     public static Object toValue(SQLParameter sqlParameter, Object value) {
+        if(value instanceof SQLRawParameter){
+            return ((SQLRawParameter)value).getVal();
+        }
         if (sqlParameter.getTableOrNull() != null) {
             EntityMetadata entityMetadata = sqlParameter.getTableOrNull().getEntityMetadata();
             String propertyName = sqlParameter.getPropertyNameOrNull();

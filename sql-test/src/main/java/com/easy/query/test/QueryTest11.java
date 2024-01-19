@@ -23,6 +23,8 @@ import com.easy.query.test.dto.proxy.BlogEntityTest2Proxy;
 import com.easy.query.test.dto.proxy.TopicSubQueryBlogProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicTypeArrayJson;
+import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
@@ -858,6 +860,47 @@ public class QueryTest11 extends BaseTest {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`title`,t.`id`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') FROM `t_topic` t WHERE t.`title` = ? AND t.`id` = ? ORDER BY DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') ASC,CASE WHEN t.`stars` IS NULL THEN 1 ELSE 0 END ASC,t.`stars` ASC,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') DESC,CASE WHEN t.`stars` IS NULL THEN 0 ELSE 1 END ASC,t.`stars` DESC" , jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("title(String),1(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Topic> list3 = easyEntityQuery.queryable(TopicTypeArrayJson.class)
+                    .where(o -> {
+                        o.title2().likeRaw("123");
+                        o.title2().eq("123");
+                        o.title().likeRaw("456");
+                        TopicTypeJsonValue topicTypeJsonValue = new TopicTypeJsonValue();
+                        topicTypeJsonValue.setAge(1);
+                        topicTypeJsonValue.setName("1");
+                        o.title().eq(topicTypeJsonValue);
+                        o.id().eq("1" );
+                    })
+                    .orderBy(o -> {
+                        o.title2().asc();
+                    })
+                    .select(o -> new TopicProxy().selectExpression(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss" )))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`title`,t.`id`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') FROM `t_topic_type_array` t WHERE t.`title2` LIKE ? AND t.`title2` = ? AND t.`title` LIKE ? AND t.`title` = ? AND t.`id` = ? ORDER BY t.`title2` ASC" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%123%(String),\"123\"(String),%456%(String),{\"age\":1,\"name\":\"1\"}(String),1(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<TopicTypeTest1> list = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
+                o.topicType().likeRaw(TopicTypeEnum.STUDENT.getCode());
+            }).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`topic_type`,`create_time` FROM `t_topic_type` WHERE `topic_type` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
     }

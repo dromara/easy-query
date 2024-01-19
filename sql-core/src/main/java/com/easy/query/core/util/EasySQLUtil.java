@@ -3,6 +3,7 @@ package com.easy.query.core.util;
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLRawParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLLikeEnum;
 
@@ -19,6 +20,11 @@ public class EasySQLUtil {
     }
 
     public static String getLikeParameter(Object val, SQLLikeEnum sqlLike) {
+//        if(val instanceof SQLRawParameter){
+//            SQLRawParameter sqlRawParameter = (SQLRawParameter) val;
+//            sqlRawParameter.setSqlLike(sqlLike);
+//            return sqlRawParameter;
+//        }
         switch (sqlLike) {
             case LIKE_PERCENT_RIGHT:
                 return val + "%";
@@ -27,6 +33,9 @@ public class EasySQLUtil {
             default:
                 return "%" + val + "%";
         }
+    }
+    public static Object getLikeRawParameter(Object val, SQLLikeEnum sqlLike) {
+        return new SQLRawParameter(val,sqlLike);
     }
 
     public static String sqlParameterToString(List<SQLParameter> sqlParameters) {

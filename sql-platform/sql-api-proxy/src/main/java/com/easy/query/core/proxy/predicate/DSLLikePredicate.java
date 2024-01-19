@@ -39,6 +39,15 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLC
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
         }
     }
+    default void likeRaw(Object val) {
+        likeRaw(true, val);
+    }
+
+    default void likeRaw(boolean condition, Object val) {
+        if (condition) {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.likeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
+        }
+    }
     default void notLikeMatchLeft(TProperty val) {
         notLikeMatchLeft(true, val);
     }
@@ -64,6 +73,15 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLC
     default void notLike(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
+        }
+    }
+    default void notLikeRaw(Object val) {
+        notLikeRaw(true, val);
+    }
+
+    default void notLikeRaw(boolean condition, Object val) {
+        if (condition) {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLikeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
         }
     }
 }
