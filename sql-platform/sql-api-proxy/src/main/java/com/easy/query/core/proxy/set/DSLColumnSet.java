@@ -37,6 +37,15 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
             getEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), val));
         }
     }
+    default void setNull() {
+        setNull(true);
+    }
+
+    default void setNull(boolean condition) {
+        if (condition) {
+            getEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), null));
+        }
+    }
 //
 //    default void set(SQLColumn<?, TProperty> column) {
 //        set(true, column);
