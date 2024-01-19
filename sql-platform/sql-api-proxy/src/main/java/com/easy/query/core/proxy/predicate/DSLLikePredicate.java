@@ -1,5 +1,7 @@
 package com.easy.query.core.proxy.predicate;
 
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.basic.jdbc.parameter.SQLRawParameter;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
@@ -39,10 +41,38 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLC
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
         }
     }
+
+    default void likeRawMatchLeft(Object val) {
+        likeRawMatchLeft(true, val);
+    }
+
+    default void likeRawMatchLeft(boolean condition, Object val) {
+        if (condition) {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.likeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT)));
+        }
+    }
+    default void likeRawMatchRight(Object val) {
+        likeRawMatchRight(true, val);
+    }
+
+    default void likeRawMatchRight(boolean condition, Object val) {
+        if (condition) {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.likeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_LEFT)));
+        }
+    }
+    /**
+     * 和传入的指定数据匹配因为普通匹配入参会经过{@link ValueConverter}处理
+     * @param val
+     */
     default void likeRaw(Object val) {
         likeRaw(true, val);
     }
 
+    /**
+     * 和传入的指定数据匹配因为普通匹配入参会经过{@link ValueConverter}处理
+     * @param condition
+     * @param val
+     */
     default void likeRaw(boolean condition, Object val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.likeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
@@ -75,10 +105,38 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLC
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLike(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
         }
     }
+
+    default void notLikeRawMatchLeft(Object val) {
+        notLikeRawMatchLeft(true, val);
+    }
+
+    default void notLikeRawMatchLeft(boolean condition, Object val) {
+        if (condition) {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLikeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT)));
+        }
+    }
+    default void notLikeRawMatchRight(Object val) {
+        notLikeRawMatchRight(true, val);
+    }
+
+    default void notLikeRawMatchRight(boolean condition, Object val) {
+        if (condition) {
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLikeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_LEFT)));
+        }
+    }
+    /**
+     * 和传入的指定数据匹配因为普通匹配入参会经过{@link ValueConverter}处理
+     * @param val
+     */
     default void notLikeRaw(Object val) {
         notLikeRaw(true, val);
     }
 
+    /**
+     * 和传入的指定数据匹配因为普通匹配入参会经过{@link ValueConverter}处理
+     * @param condition
+     * @param val
+     */
     default void notLikeRaw(boolean condition, Object val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLikeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
