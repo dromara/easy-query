@@ -68,6 +68,13 @@ public interface EntityAggregatable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
         return getClientQueryable().avgOrDefault(columnSelector.apply(getQueryable().get1Proxy()).getValue(), def);
     }
 
+    default <TMember extends Number> BigDecimal avgBigDecimalOrDefault(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy,TMember>> columnSelectorExpression, BigDecimal def) {
+        return avgOrDefault(columnSelectorExpression, def, BigDecimal.class);
+    }
+
+    default <TMember extends Number> Float avgFloatOrDefault(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy,TMember>> columnSelectorExpression, Float def) {
+        return avgOrDefault(columnSelectorExpression, def, Float.class);
+    }
     default BigDecimal avgOrDefault(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy,BigDecimal>> columnSelector, BigDecimal def) {
         return getClientQueryable().avgOrDefault(columnSelector.apply(getQueryable().get1Proxy()).getValue(), def);
     }
