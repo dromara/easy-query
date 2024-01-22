@@ -47,6 +47,7 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.2.3.RELEASE</spring.version>
+        <solon.version>2.6.5</solon.version>
         <mysql.version>8.0.17</mysql.version>
     </properties>
     <distributionManagement>
