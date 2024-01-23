@@ -3,7 +3,6 @@ package com.easy.query.api.proxy.entity.select;
 import com.easy.query.api.proxy.entity.select.extension.queryable5.EntityAggregatable5;
 import com.easy.query.api.proxy.entity.select.extension.queryable5.EntityFilterable5;
 import com.easy.query.api.proxy.entity.select.extension.queryable5.EntityGroupable5;
-import com.easy.query.api.proxy.entity.select.extension.queryable5.EntityHavingable5;
 import com.easy.query.api.proxy.entity.select.extension.queryable5.EntityJoinable5;
 import com.easy.query.api.proxy.entity.select.extension.queryable5.EntityOrderable5;
 import com.easy.query.api.proxy.entity.select.extension.queryable5.EntitySelectable5;
@@ -26,7 +25,7 @@ public interface EntityQueryable5<T1Proxy extends ProxyEntity<T1Proxy, T1>,
         EntitySelectable5<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3,T4Proxy, T4,T5Proxy, T5>,
         EntityAggregatable5<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3,T4Proxy, T4,T5Proxy, T5>,
         EntityGroupable5<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3,T4Proxy, T4,T5Proxy, T5>,
-        EntityHavingable5<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3,T4Proxy, T4,T5Proxy, T5>,
+//        EntityHavingable5<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3,T4Proxy, T4,T5Proxy, T5>,
         EntityJoinable5<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3,T4Proxy, T4,T5Proxy, T5>,
         EntityOrderable5<T1Proxy,T1,T2Proxy, T2,T3Proxy, T3,T4Proxy, T4,T5Proxy, T5> {
 
