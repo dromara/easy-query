@@ -23,6 +23,9 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = join1().whereById("1")
+                    .asSchema(o->o)
+                    .asTable(o->o)
+                    .asTableLink(x->x)
                     .whereMerge(o -> {
                         o.t1.id().eq("1");
                         o.t2.id().eq(false, "1");
@@ -33,6 +36,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                     .where(false, (t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) -> {
                         t2.title().like("xx");
                     })
+                    .where(o->Assert.assertTrue(true))
+                    .where(false,o->o.id().eq("xx"))
                     .whereMerge(false, o -> {
                         o.t1.id().eq("xx");
                     })
@@ -44,6 +49,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                         t1.createTime().asc();
                         t2.createTime().desc(false);
                     })
+                    .orderBy(o->Assert.assertTrue(true))
+                    .orderBy(false,o->o.id().asc())
                     .orderByMerge(o -> {
                         o.t4.createTime().desc();
                     })
@@ -63,6 +70,9 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = join2().whereById("1")
+                    .asSchema(o->o)
+                    .asTable(o->o)
+                    .asTableLink(x->x)
                     .whereMerge(o -> {
                         o.t1.id().eq("1");
                         o.t2.id().eq(false, "1");
@@ -73,6 +83,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                     .where(false, (t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
                         t2.title().like("xx");
                     })
+                    .where(o->Assert.assertTrue(true))
+                    .where(false,o->o.id().eq("xx"))
                     .whereMerge(false, o -> {
                         o.t1.id().eq("xx");
                     })
@@ -84,6 +96,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                         t1.createTime().asc();
                         t2.createTime().desc(false);
                     })
+                    .orderBy(o->Assert.assertTrue(true))
+                    .orderBy(false,o->o.id().asc())
                     .orderByMerge(o -> {
                         o.t4.createTime().desc();
                     })
@@ -103,6 +117,9 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = join3().whereById("1")
+                    .asSchema(o->o)
+                    .asTable(o->o)
+                    .asTableLink(x->x)
                     .whereMerge(o -> {
                         o.t1.id().eq("1");
                         o.t2.id().eq(false, "1");
@@ -113,6 +130,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                     .where(false, (t1, t2, t3, t4, t5, t6, t7, t8) -> {
                         t2.title().like("xx");
                     })
+                    .where(o->Assert.assertTrue(true))
+                    .where(false,o->o.id().eq("xx"))
                     .whereMerge(false, o -> {
                         o.t1.id().eq("xx");
                     })
@@ -124,6 +143,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                         t1.createTime().asc();
                         t2.createTime().desc(false);
                     })
+                    .orderBy(o->Assert.assertTrue(true))
+                    .orderBy(false,o->o.id().asc())
                     .orderByMerge(o -> {
                         o.t4.createTime().desc();
                     })
@@ -144,6 +165,9 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = join4().whereById("1")
+                    .asSchema(o->o)
+                    .asTable(o->o)
+                    .asTableLink(x->x)
                     .whereMerge(o -> {
                         o.t1.id().eq("1");
                         o.t2.id().eq(false, "1");
@@ -154,6 +178,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                     .where(false, (t1, t2, t3, t4, t5, t6, t7) -> {
                         t2.title().like("xx");
                     })
+                    .where(o->Assert.assertTrue(true))
+                    .where(false,o->o.id().eq("xx"))
                     .whereMerge(false, o -> {
                         o.t1.id().eq("xx");
                     })
@@ -165,6 +191,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                         t1.createTime().asc();
                         t2.createTime().desc(false);
                     })
+                    .orderBy(o->Assert.assertTrue(true))
+                    .orderBy(false,o->o.id().asc())
                     .orderByMerge(o -> {
                         o.t4.createTime().desc();
                     })
@@ -184,6 +212,9 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = join5().whereById("1")
+                    .asSchema(o->o)
+                    .asTable(o->o)
+                    .asTableLink(x->x)
                     .whereMerge(o -> {
                         o.t1.id().eq("1");
                         o.t2.id().eq(false, "1");
@@ -194,6 +225,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                     .where(false, (t1, t2, t3, t4, t5, t6) -> {
                         t2.title().like("xx");
                     })
+                    .where(o->Assert.assertTrue(true))
+                    .where(false,o->o.id().eq("xx"))
                     .whereMerge(false, o -> {
                         o.t1.id().eq("xx");
                     })
@@ -205,6 +238,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                         t1.createTime().asc();
                         t2.createTime().desc(false);
                     })
+                    .orderBy(o->Assert.assertTrue(true))
+                    .orderBy(false,o->o.id().asc())
                     .orderByMerge(o -> {
                         o.t4.createTime().desc();
                     })
@@ -224,6 +259,9 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = join6().whereById("1")
+                    .asSchema(o->o)
+                    .asTable(o->o)
+                    .asTableLink(x->x)
                     .whereMerge(o -> {
                         o.t1.id().eq("1");
                         o.t2.id().eq(false, "1");
@@ -234,6 +272,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                     .where(false, (t1, t2, t3, t4, t5) -> {
                         t2.title().like("xx");
                     })
+                    .where(o->Assert.assertTrue(true))
+                    .where(false,o->o.id().eq("xx"))
                     .whereMerge(false, o -> {
                         o.t1.id().eq("xx");
                     })
@@ -245,6 +285,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                         t1.createTime().asc();
                         t2.createTime().desc(false);
                     })
+                    .orderBy(o->Assert.assertTrue(true))
+                    .orderBy(false,o->o.id().asc())
                     .orderByMerge(o -> {
                         o.t4.createTime().desc();
                     })
@@ -264,6 +306,9 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = join7().whereById("1")
+                    .asSchema(o->o)
+                    .asTable(o->o)
+                    .asTableLink(x->x)
                     .whereMerge(o -> {
                         o.t1.id().eq("1");
                         o.t2.id().eq(false, "1");
@@ -274,6 +319,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                     .where(false, (t1, t2, t3, t4) -> {
                         t2.title().like("xx");
                     })
+                    .where(o->Assert.assertTrue(true))
+                    .where(false,o->o.id().eq("xx"))
                     .whereMerge(false, o -> {
                         o.t1.id().eq("xx");
                     })
@@ -285,6 +332,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                         t1.createTime().asc();
                         t2.createTime().desc(false);
                     })
+                    .orderBy(o->Assert.assertTrue(true))
+                    .orderBy(false,o->o.id().asc())
                     .orderByMerge(o -> {
                         o.t4.createTime().desc();
                     })
@@ -304,6 +353,9 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = join8().whereById("1")
+                    .asSchema(o->o)
+                    .asTable(o->o)
+                    .asTableLink(x->x)
                     .whereMerge(o -> {
                         o.t1.id().eq("1");
                         o.t2.id().eq(false, "1");
@@ -314,6 +366,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                     .where(false, (t1, t2, t3) -> {
                         t2.title().like("xx");
                     })
+                    .where(o->Assert.assertTrue(true))
+                    .where(false,o->o.id().eq("xx"))
                     .whereMerge(false, o -> {
                         o.t1.id().eq("xx");
                     })
@@ -325,6 +379,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                         t1.createTime().asc();
                         t2.createTime().desc(false);
                     })
+                    .orderBy(o->Assert.assertTrue(true))
+                    .orderBy(false,o->o.id().asc())
                     .orderByMerge(o -> {
                         o.t3.createTime().desc();
                     })
@@ -344,6 +400,9 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Topic> list = join9().whereById("1")
+                    .asSchema(o->o)
+                    .asTable(o->o)
+                    .asTableLink(x->x)
                     .whereMerge(o -> {
                         o.t1.id().eq("1");
                         o.t2.id().eq(false, "1");
@@ -354,6 +413,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                     .where(false, (t1, t2) -> {
                         t2.title().like("xx");
                     })
+                    .where(o->Assert.assertTrue(true))
+                    .where(false,o->o.id().eq("xx"))
                     .whereMerge(false, o -> {
                         o.t1.id().eq("xx");
                     })
@@ -365,6 +426,8 @@ public class EntityQueryAggregateTest2 extends BaseEntityQueryAggregateTest1{
                         t1.createTime().asc();
                         t2.createTime().desc(false);
                     })
+                    .orderBy(o->Assert.assertTrue(true))
+                    .orderBy(false,o->o.id().asc())
                     .orderByMerge(o -> {
                         o.t2.createTime().desc();
                     })

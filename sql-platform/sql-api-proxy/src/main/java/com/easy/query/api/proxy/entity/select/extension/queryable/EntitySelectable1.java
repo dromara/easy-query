@@ -99,6 +99,23 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      */
     <TR> Query<TR> selectColumn(SQLFuncExpression1<T1Proxy, PropTypeColumn<TR>> selectExpression);
 
+    /**
+     * 返回select类型不支持后续链式
+     *
+     * <blockquote><pre>
+     *     {@code
+     *          //如果您是枚举需要单独查询请转成integer或者具体数据库对应的值
+     *          //直接返回单个列如果是Enum类型的不支持
+     *         .select(ResultEntity.class)
+     *
+     *                 }
+     * </pre></blockquote>
+     * @param resultClass
+     * @return
+     * @param <TR>
+     */
+    <TR> Query<TR> select(Class<TR> resultClass);
+
 
 
     /**

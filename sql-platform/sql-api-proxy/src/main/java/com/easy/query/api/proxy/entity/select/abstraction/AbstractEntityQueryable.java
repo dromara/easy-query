@@ -216,6 +216,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return EasyObjectUtil.typeCastNullable(select);
     }
 
+    @Override
+    public <TR> Query<TR> select(Class<TR> resultClass) {
+        return entityQueryable.select(resultClass);
+    }
     //    @Override
 //    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression2<ProxyAsSelector<TRProxy, TR>, T1Proxy> selectExpression) {
 //
