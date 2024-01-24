@@ -21,6 +21,7 @@ import com.easy.query.core.proxy.core.accpet.PredicateEntityExpressionAcceptImpl
 import com.easy.query.core.proxy.impl.SQLAggregatePredicateImpl;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 
@@ -33,6 +34,7 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 public class ProxyEntitySQLContext implements EntitySQLContext {
     private final QueryRuntimeContext runtimeContext;
     private EntityExpressionAccept accept = EntityExpressionAccept.empty;
+    private SQLSelectAsExpression sqlSelectAsExpression = null;
 
     public ProxyEntitySQLContext(QueryRuntimeContext runtimeContext) {
 
@@ -71,7 +73,10 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
 
     @Override
     public void accept(SQLSelectAsExpression... selectAsExpressions) {
-        throw new UnsupportedOperationException();
+        if (sqlSelectAsExpression == null) {
+            sqlSelectAsExpression = SQLSelectAsExpression.empty;
+        }
+        sqlSelectAsExpression = sqlSelectAsExpression._concat(Select.of(selectAsExpressions));
     }
 
     @Override
@@ -106,7 +111,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
 
     @Override
     public SQLSelectAsExpression getSelectAsExpression() {
-        return null;
+        return sqlSelectAsExpression;
     }
 
     @Override

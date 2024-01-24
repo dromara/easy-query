@@ -179,6 +179,23 @@ public class QueryTest12 extends BaseTest {
             Assert.assertEquals("false(Boolean),111(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (topic, blog) -> topic.id().eq(blog.id()))
+                    .where((topic, blog) -> {
+                        topic.id().eq("111");
+                    })
+                    .select((topic, blog) -> topic.selectExpression(topic.FETCHER.id().title()))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),111(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
     }
 
 }
