@@ -27,14 +27,15 @@ public interface EntitySelectable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     /**
      * 请使用 select + Select.DRAFT.of
+     *
      * @param selectExpression
-     * @return
      * @param <TRProxy>
      * @param <TR>
+     * @return
      */
     @Deprecated
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression3<T1Proxy,T2Proxy,T3Proxy, DraftFetcher<TR,TRProxy>> selectExpression){
-        DraftFetcher<TR, TRProxy> draftFetcher = selectExpression.apply(get1Proxy(),get2Proxy(),get3Proxy());
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, DraftFetcher<TR, TRProxy>> selectExpression) {
+        DraftFetcher<TR, TRProxy> draftFetcher = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
         ClientQueryable<TR> select = getClientQueryable3().select(EasyObjectUtil.typeCastNullable(draftFetcher.getDraft().getClass()), columnAsSelector -> {
             draftFetcher.accept(columnAsSelector.getAsSelector());
         });
@@ -45,31 +46,43 @@ public interface EntitySelectable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     /**
      * 请使用 select + Select.DRAFT.of
+     *
      * @param selectExpression
-     * @return
      * @param <TRProxy>
      * @param <TR>
+     * @return
      */
     @Deprecated
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraftMerge(SQLFuncExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>, DraftFetcher<TR,TRProxy>> selectExpression){
-        return selectDraft((t1,t2,t3)->selectExpression.apply(new MergeTuple3<>(get1Proxy(),get2Proxy(),get3Proxy())));
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraftMerge(SQLFuncExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>, DraftFetcher<TR, TRProxy>> selectExpression) {
+        return selectDraft((t1, t2, t3) -> selectExpression.apply(new MergeTuple3<>(get1Proxy(), get2Proxy(), get3Proxy())));
     }
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR>  select(SQLFuncExpression3<T1Proxy,T2Proxy,T3Proxy, TRProxy> selectExpression){
 
-        TRProxy resultProxy = selectExpression.apply(get1Proxy(),get2Proxy(),get3Proxy());
-        Objects.requireNonNull(resultProxy,"select null result class");
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, TRProxy> selectExpression) {
+
+        TRProxy resultProxy = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
+        Objects.requireNonNull(resultProxy, "select null result class");
         SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
-        if(selectAsExpression==null){//全属性映射
-            ClientQueryable<TR> select = getClientQueryable3().select(resultProxy.getEntityClass());
+        if (selectAsExpression == null) {//全属性映射
+
+            ClientQueryable<TR> select = getClientQueryable3().select(resultProxy.getEntityClass(), (t1, t2, t3) -> {
+                if (resultProxy == get2Proxy()) {
+                    t2.columnAll();
+                } else if (resultProxy == get3Proxy()) {
+                    t3.columnAll();
+                } else {
+                    t1.columnAll();
+                }
+            });
             return new EasyEntityQueryable<>(resultProxy, select);
-        }else{
+        } else {
             ClientQueryable<TR> select = getClientQueryable3().select(resultProxy.getEntityClass(), columnAsSelector -> {
                 selectAsExpression.accept(columnAsSelector.getAsSelector());
             });
             return new EasyEntityQueryable<>(resultProxy, select);
         }
     }
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR>  selectMerge(SQLFuncExpression1<MergeTuple3<T1Proxy,T2Proxy,T3Proxy>, TRProxy> selectExpression){
-        return select((a,b,c)->selectExpression.apply(new MergeTuple3<>(a,b,c)));
+
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(SQLFuncExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>, TRProxy> selectExpression) {
+        return select((a, b, c) -> selectExpression.apply(new MergeTuple3<>(a, b, c)));
     }
 }

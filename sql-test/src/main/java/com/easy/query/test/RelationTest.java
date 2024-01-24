@@ -199,6 +199,12 @@ public class RelationTest extends BaseTest {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());
                     Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
                 }
+//                easyEntityQuery.queryable(SchoolStudent.class)
+//                        .where(o->{
+//                            o.schoolClass().id().eq()
+//                            o.schoolClasses(x->x.id().eq("xx"))
+
+//                        })
             }
 
             {

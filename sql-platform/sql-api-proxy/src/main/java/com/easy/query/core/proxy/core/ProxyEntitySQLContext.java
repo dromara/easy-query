@@ -106,7 +106,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
 
     @Override
     public SQLSelectAsExpression getSelectAsExpression() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
