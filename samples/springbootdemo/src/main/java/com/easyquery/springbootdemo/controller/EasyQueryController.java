@@ -1,9 +1,12 @@
 package com.easyquery.springbootdemo.controller;
 
+import com.easy.query.cache.core.EasyCacheClient;
 import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easyquery.springbootdemo.domain.BlogEntity;
+import com.easyquery.springbootdemo.domain.HelpCityEntity;
+import com.easyquery.springbootdemo.domain.HelpProvinceEntity;
 import com.easyquery.springbootdemo.domain.TestUserMysql0;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @FileName: EasyQueryController.java
@@ -25,6 +29,45 @@ import java.util.Arrays;
 public class EasyQueryController {
     @Autowired
     private EasyQueryClient easyQuery;
+    @Autowired
+    private EasyCacheClient easyCacheClient;
+    @GetMapping("/say")
+    @EasyQueryTrack
+    public Object say(@RequestParam(value = "aa",required = false) String aa) {
+        BlogEntity blogEntity = easyCacheClient.kvStorage(BlogEntity.class)
+                .firstOrNull(aa);
+        return blogEntity;
+    }
+    @GetMapping("/sayp")
+    @EasyQueryTrack
+    public Object sayp(@RequestParam(value = "aa",required = false) String aa) {
+        List<HelpProvinceEntity> all = easyCacheClient.allStorage(HelpProvinceEntity.class).getAll();
+        return all;
+    }
+    @GetMapping("/sayp1")
+    @EasyQueryTrack
+    public Object sayp1(@RequestParam(value = "aa",required = false) String aa) {
+        List<HelpProvinceEntity> all = easyCacheClient.allStorage(HelpProvinceEntity.class).getIn(Arrays.asList(aa));
+        return all;
+    }
+    @GetMapping("/sayp2")
+    @EasyQueryTrack
+    public Object sayp2(@RequestParam(value = "aa",required = false) String aa) {
+        HelpProvinceEntity all = easyCacheClient.allStorage(HelpProvinceEntity.class).firstOrNull(aa);
+        return all;
+    }
+    @GetMapping("/sayc1")
+    @EasyQueryTrack
+    public Object sayc1(@RequestParam(value = "aa",required = false) String aa) {
+        List<HelpCityEntity> all = easyCacheClient.multiStorage(HelpCityEntity.class).getAll(aa);
+        return all;
+    }
+    @GetMapping("/sayc2")
+    @EasyQueryTrack
+    public Object sayc2(@RequestParam(value = "aa",required = false) String aa,@RequestParam(value = "bb",required = false) String bb) {
+        HelpCityEntity allIndex = easyCacheClient.multiStorage(HelpCityEntity.class).firstOrNull(aa,bb);
+        return allIndex;
+    }
 
     @GetMapping("/sayHello")
     @EasyQueryTrack

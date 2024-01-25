@@ -25,12 +25,12 @@ public class ExistLogicDeleteStrategy extends AbstractLogicDeleteStrategy {
 
     @Override
     protected SQLExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder logicDeleteBuilder, String propertyName) {
-        return o -> o.eq(propertyName, true);
+        return o -> o.eq(propertyName, false);
     }
 
     @Override
     protected SQLExpression1<ColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, String propertyName) {
-        return o -> o.set(propertyName, false);
+        return o -> o.set(propertyName, true);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.easyquery.springbootdemo.domain;
 
+import com.easy.query.cache.core.CacheKvEntity;
+import com.easy.query.cache.core.annotation.CacheEntitySchema;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Table;
@@ -14,7 +16,8 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 @Table("testuser")
-public class TestUserMysql0 {
+@CacheEntitySchema
+public class TestUserMysql0 implements CacheKvEntity {
     @Column(value = "Id",primaryKey = true)
     private String id;
     @Column("Age")
@@ -55,5 +58,10 @@ public class TestUserMysql0 {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    @Override
+    public String cacheIdValue() {
+        return getId();
     }
 }

@@ -8,7 +8,6 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
@@ -61,7 +60,7 @@ public interface EntityFillable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
      * @param <TREntity>
      * @param <TProperty>
      */
-    default <TRProxyEntity extends ProxyEntity<TRProxyEntity, TREntity>, TREntity extends ProxyEntityAvailable<TREntity, TRProxyEntity>, TProperty> EntityQueryable<T1Proxy, T1> fillMany(SQLFuncExpression<EntityQueryable<TRProxyEntity, TREntity>> queryableSQLFuncExpression, SQLFuncExpression2<T1Proxy,TRProxyEntity, FillPredicate<TRProxyEntity,TREntity,T1Proxy,T1,TProperty>> predicateExpression, BiConsumer<T1, Collection<TREntity>> produce) {
+    default <TRProxyEntity extends ProxyEntity<TRProxyEntity, TREntity>, TREntity, TProperty> EntityQueryable<T1Proxy, T1> fillMany(SQLFuncExpression<EntityQueryable<TRProxyEntity, TREntity>> queryableSQLFuncExpression, SQLFuncExpression2<T1Proxy,TRProxyEntity, FillPredicate<TRProxyEntity,TREntity,T1Proxy,T1,TProperty>> predicateExpression, BiConsumer<T1, Collection<TREntity>> produce) {
         EntityQueryable<TRProxyEntity, TREntity> queryable = queryableSQLFuncExpression.apply();
         FillPredicate<TRProxyEntity, TREntity, T1Proxy, T1, TProperty> predicate = predicateExpression.apply(getQueryable().get1Proxy(), queryable.get1Proxy());
         EntityMetadata entityMetadata = queryable.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(getQueryable().queryClass());
@@ -104,7 +103,7 @@ public interface EntityFillable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
      * @param <TREntity>
      * @param <TProperty>
      */
-    default <TRProxyEntity extends ProxyEntity<TRProxyEntity, TREntity>, TREntity extends ProxyEntityAvailable<TREntity, TRProxyEntity>, TProperty> EntityQueryable<T1Proxy, T1> fillOne(SQLFuncExpression<EntityQueryable<TRProxyEntity, TREntity>> queryableSQLFuncExpression, SQLFuncExpression2<T1Proxy,TRProxyEntity, FillPredicate<TRProxyEntity,TREntity,T1Proxy,T1,TProperty>> predicateExpression, BiConsumer<T1, TREntity> produce) {
+    default <TRProxyEntity extends ProxyEntity<TRProxyEntity, TREntity>, TREntity, TProperty> EntityQueryable<T1Proxy, T1> fillOne(SQLFuncExpression<EntityQueryable<TRProxyEntity, TREntity>> queryableSQLFuncExpression, SQLFuncExpression2<T1Proxy,TRProxyEntity, FillPredicate<TRProxyEntity,TREntity,T1Proxy,T1,TProperty>> predicateExpression, BiConsumer<T1, TREntity> produce) {
         EntityQueryable<TRProxyEntity, TREntity> queryable = queryableSQLFuncExpression.apply();
         FillPredicate<TRProxyEntity, TREntity, T1Proxy, T1, TProperty> predicate = predicateExpression.apply(getQueryable().get1Proxy(), queryable.get1Proxy());
         EntityMetadata entityMetadata = queryable.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(getQueryable().queryClass());

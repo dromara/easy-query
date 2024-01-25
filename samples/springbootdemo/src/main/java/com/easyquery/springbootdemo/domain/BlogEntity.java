@@ -1,5 +1,7 @@
 package com.easyquery.springbootdemo.domain;
 
+import com.easy.query.cache.core.CacheKvEntity;
+import com.easy.query.cache.core.annotation.CacheEntitySchema;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Table;
@@ -20,7 +22,8 @@ import java.time.LocalDateTime;
 @Data
 @Table("t_blog")
 @EntityFileProxy
-public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogEntity , BlogEntityProxy> {
+@CacheEntitySchema
+public class BlogEntity extends BaseEntity implements CacheKvEntity,ProxyEntityAvailable<BlogEntity , BlogEntityProxy> {
 
     /**
      * 标题
@@ -67,5 +70,10 @@ public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogE
     @Override
     public Class<BlogEntityProxy> proxyTableClass() {
         return BlogEntityProxy.class;
+    }
+
+    @Override
+    public String cacheIdValue() {
+        return getId();
     }
 }

@@ -2,6 +2,8 @@ package com.easy.query.test;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
@@ -9,6 +11,7 @@ import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -195,6 +198,14 @@ public class QueryTest12 extends BaseTest {
             Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("false(Boolean),111(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
+
+
+
+            List<Draft1<String>> list1 = easyEntityQuery.queryable(Topic.class).select(o -> Select.DRAFT.of(o.id())).toList();
+
+            List<String> list2 = easyEntityQuery.queryable(Topic.class).selectColumn(o -> o.id()).toList();
+            List<LocalDateTime> list3 = easyEntityQuery.queryable(BlogEntity.class).selectColumn(o -> o.createTime()).toList();
+
         }
     }
 

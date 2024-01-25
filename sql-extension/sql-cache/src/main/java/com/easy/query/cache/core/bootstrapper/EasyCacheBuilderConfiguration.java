@@ -2,6 +2,7 @@ package com.easy.query.cache.core.bootstrapper;
 
 import com.easy.query.cache.core.EasyCacheClient;
 import com.easy.query.cache.core.EasyCacheOption;
+import com.easy.query.cache.core.EasyCacheStorageOption;
 import com.easy.query.cache.core.impl.DefaultEasyCacheClient;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
@@ -36,7 +37,8 @@ public class EasyCacheBuilderConfiguration {
 
 
     private void defaultConfiguration() {
-        replaceService(EasyCacheClient.class, DefaultEasyCacheClient.class);
+        replaceService(EasyCacheStorageOption.class)
+                .replaceService(EasyCacheClient.class, DefaultEasyCacheClient.class);
     }
 
     /**

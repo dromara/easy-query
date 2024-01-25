@@ -1,5 +1,6 @@
 package com.easy.query.test.dto;
 
+import com.easy.query.core.annotation.EntityProxy;
 import lombok.Data;
 import lombok.ToString;
 
@@ -11,6 +12,7 @@ import lombok.ToString;
  */
 @Data
 @ToString
+@EntityProxy
 public class CityVO {
     private String code;
     private String provinceCode;
