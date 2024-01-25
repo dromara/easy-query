@@ -89,7 +89,7 @@ public class EasyQueryController {
     @GetMapping("/sayp")
     @EasyQueryTrack
     public Object sayp(@RequestParam(value = "aa",required = false) String aa) {
-        List<HelpProvinceEntity> all = easyCacheClient.allStorage(HelpProvinceEntity.class).getAll();
+        List<HelpProvinceEntity> all = easyCacheClient.allStorage(HelpProvinceEntity.class).toList();
         return all;
     }
     @GetMapping("/sayp1")

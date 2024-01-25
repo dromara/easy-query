@@ -62,14 +62,14 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
     }
 
     @Override
-    public List<TEntity> getAll() {
+    public List<TEntity> toList() {
         List<Pair<String, TEntity>> caches = doGet(Collections.emptyList());
         Stream<TEntity> select = caches.stream().filter(o -> o.getObject2() != null).map(o -> o.getObject2());
         return filterResult(select).collect(Collectors.toList());
     }
 
     @Override
-    public List<String> getAllIndex() {
+    public List<String> toIndexList() {
         Set<String> indexs = doGetIndex();
         return new ArrayList<>(indexs);
     }
@@ -81,7 +81,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
     }
 
     @Override
-    public EasyPageResult<TEntity> getPage(int pageIndex, int pageSize) {
+    public EasyPageResult<TEntity> toPageResult(int pageIndex, int pageSize) {
         Set<String> indexs = doGetIndex();
         if (indexs.isEmpty()) {
             return new DefaultPageResult<>(0,new ArrayList<>(0));

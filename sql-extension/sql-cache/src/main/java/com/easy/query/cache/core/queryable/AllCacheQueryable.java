@@ -12,8 +12,8 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface AllCacheQueryable<TEntity extends CacheEntity> extends SingleCacheQueryable<TEntity>,CacheFilterQueryable<TEntity,AllCacheQueryable<TEntity>> {
-    List<TEntity> getAll();
-    List<String> getAllIndex();
+    List<TEntity> toList();
+    List<String> toIndexList();
     int count();
-    EasyPageResult<TEntity> getPage(int pageIndex, int pageSize);
+    EasyPageResult<TEntity> toPageResult(int pageIndex, int pageSize);
 }
