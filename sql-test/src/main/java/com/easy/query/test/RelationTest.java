@@ -253,7 +253,6 @@ public class RelationTest extends BaseTest {
                 //todo alias
                 List<SchoolStudentVO> list1 = easyEntityQuery.queryable(SchoolStudent.class)
                         .include((n, o) -> n.asQueryable(o.schoolClass()))
-                        .where(o -> o.schoolClass())
                         .select(o -> new SchoolStudentVOProxy().adapter(r -> {
                             r.selectAll(o);
                             r.schoolClass().setNavigate(o.schoolClass(), t -> new SchoolClassVOProxy());
