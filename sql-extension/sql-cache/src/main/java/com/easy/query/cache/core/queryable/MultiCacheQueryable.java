@@ -47,14 +47,14 @@ public interface MultiCacheQueryable<TEntity extends CacheMultiEntity> extends C
      * @return
      */
     TEntity firstOrDefault(String aggregateId, String id, TEntity def);
-    List<TEntity> getIn(String aggregateId, Collection<String> ids);
-    List<TEntity> getAll(String aggregateId);
-   default List<TEntity> getAll(Collection<String> aggregateIds){
+    List<TEntity> toList(String aggregateId, Collection<String> ids);
+    List<TEntity> toList(String aggregateId);
+   default List<TEntity> toList(Collection<String> aggregateIds){
        ArrayList<TEntity> result = new ArrayList<>();
        for (String aggregateId : aggregateIds) {
-           result.addAll(getAll(aggregateId));
+           result.addAll(toList(aggregateId));
        }
        return result;
    }
-    List<String> getAllIndex(String aggregateId);
+    List<String> toIndexList(String aggregateId);
 }

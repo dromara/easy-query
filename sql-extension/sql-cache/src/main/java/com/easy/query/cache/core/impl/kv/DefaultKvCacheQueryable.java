@@ -8,6 +8,7 @@ import com.easy.query.cache.core.impl.AbstractSingleCacheQueryable;
 import com.easy.query.cache.core.queryable.KvCacheQueryable;
 import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,7 +30,7 @@ public class DefaultKvCacheQueryable<TEntity extends CacheKvEntity> extends Abst
     }
 
     @Override
-    public List<TEntity> getIn(Collection<String> ids) {
+    public List<TEntity> toList(Collection<String> ids) {
         if(EasyCollectionUtil.isEmpty(ids)){
             return Collections.emptyList();
         }

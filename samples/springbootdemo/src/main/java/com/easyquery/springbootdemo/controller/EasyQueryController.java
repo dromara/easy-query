@@ -8,6 +8,7 @@ import com.easyquery.springbootdemo.domain.BlogEntity;
 import com.easyquery.springbootdemo.domain.HelpCityEntity;
 import com.easyquery.springbootdemo.domain.HelpProvinceEntity;
 import com.easyquery.springbootdemo.domain.TestUserMysql0;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +33,52 @@ public class EasyQueryController {
     private EasyQueryClient easyQuery;
     @Autowired
     private EasyCacheClient easyCacheClient;
+    @Autowired
+    private RedissonClient redissonClient;
+    @GetMapping("/say0")
+    @EasyQueryTrack
+    public Object say0(@RequestParam(value = "aa",required = false) String aa) {
+        List<Long> times=new ArrayList<>();
+
+        BlogEntity blogEntity2 = easyQuery.queryable(BlogEntity.class)
+                .whereById(aa)
+                .firstOrNull();
+
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 1000; i++) {
+                easyQuery.queryable(BlogEntity.class)
+                        .whereById(aa)
+                        .firstOrNull();
+            }
+            long end = System.currentTimeMillis();
+            times.add(end-start);
+            System.out.println("easy-query:"+(end-start));
+        }
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 1000; i++) {
+                BlogEntity blogEntity = easyCacheClient
+                        .kvStorage(BlogEntity.class)
+                        .firstOrNull(aa);
+            }
+            long end = System.currentTimeMillis();
+            times.add(end-start);
+            System.out.println("easy-cache:"+(end-start));
+        }
+        {
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 1000; i++) {
+                easyQuery.queryable(BlogEntity.class)
+                        .whereById(aa)
+                        .firstOrNull();
+            }
+            long end = System.currentTimeMillis();
+            times.add(end-start);
+            System.out.println("easy-query:"+(end-start));
+        }
+        return times;
+    }
     @GetMapping("/say")
     @EasyQueryTrack
     public Object say(@RequestParam(value = "aa",required = false) String aa) {
@@ -47,7 +95,7 @@ public class EasyQueryController {
     @GetMapping("/sayp1")
     @EasyQueryTrack
     public Object sayp1(@RequestParam(value = "aa",required = false) String aa) {
-        List<HelpProvinceEntity> all = easyCacheClient.allStorage(HelpProvinceEntity.class).getIn(Arrays.asList(aa));
+        List<HelpProvinceEntity> all = easyCacheClient.allStorage(HelpProvinceEntity.class).toList(Arrays.asList(aa));
         return all;
     }
     @GetMapping("/sayp2")
@@ -59,7 +107,7 @@ public class EasyQueryController {
     @GetMapping("/sayc1")
     @EasyQueryTrack
     public Object sayc1(@RequestParam(value = "aa",required = false) String aa) {
-        List<HelpCityEntity> all = easyCacheClient.multiStorage(HelpCityEntity.class).getAll(aa);
+        List<HelpCityEntity> all = easyCacheClient.multiStorage(HelpCityEntity.class).toList(aa);
         return all;
     }
     @GetMapping("/sayc2")

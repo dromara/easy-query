@@ -60,7 +60,7 @@ public interface SingleCacheQueryable<TEntity extends CacheEntity> extends Cache
      */
     TEntity firstOrDefault(String id, TEntity def);
 
-    List<TEntity> getIn(Collection<String> ids);
+    List<TEntity> toList(Collection<String> ids);
 
     boolean any(String id);
 }

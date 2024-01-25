@@ -7,5 +7,5 @@ package com.easy.query.cache.core;
  * @author xuejiaming
  */
 public interface CacheMultiEntity extends CacheEntity {
-    String cacheAggregateIdValue();
+    String cacheIndexId();
 }

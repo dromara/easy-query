@@ -35,15 +35,15 @@ public abstract class AbstractSingleCacheQueryable<TEntity extends CacheEntity> 
         if(EasyStringUtil.isBlank(id)){
             return def;
         }
-        List<TEntity> in = getIn(Collections.singletonList(id));
+        List<TEntity> in = toList(Collections.singletonList(id));
         if(in.isEmpty()){
             return null;
         }
-        return filterResult(in.stream()).findFirst().orElse(null);
+        return in.get(0);
     }
 
     @Override
-    public abstract List<TEntity> getIn(Collection<String> ids);
+    public abstract List<TEntity> toList(Collection<String> ids);
     protected List<Pair<String,TEntity>> defaultSelect(Collection<String> ids){
         return getEntities(ids).stream()
                 .map(this::getKeyAndEntity).collect(Collectors.toList());

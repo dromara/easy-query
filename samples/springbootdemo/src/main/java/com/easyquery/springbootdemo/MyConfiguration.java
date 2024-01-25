@@ -8,6 +8,7 @@ import com.easy.query.cache.core.bootstrapper.EasyCacheBootstrapper;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easyquery.springbootdemo.cache.DefaultEasyRedisManager;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.Codec;
@@ -56,7 +57,8 @@ public class MyConfiguration {
     public EasyCacheClient easyCacheClient(EasyQueryClient easyQueryClient,RedissonClient redissonClient){
         EasyCacheClient easyCacheClient = EasyCacheBootstrapper.defaultBuilderConfiguration()
                 .replaceService(EasyQueryClient.class,easyQueryClient)
-                .replaceService(EasyRedisManager.class, new DefaultEasyRedisManager(redissonClient)).build();
+                .replaceService(RedissonClient.class,redissonClient)
+                .replaceService(EasyRedisManager.class, DefaultEasyRedisManager.class).build();
         return easyCacheClient;
     }
 }

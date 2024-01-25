@@ -35,7 +35,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
     }
 
     @Override
-    public List<TEntity> getIn(Collection<String> ids) {
+    public List<TEntity> toList(Collection<String> ids) {
         if (EasyCollectionUtil.isEmpty(ids)) {
             return new ArrayList<>(0);
         }
@@ -55,7 +55,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
             return false;
         }
         if (hasFilter()) {
-            List<TEntity> in = getIn(indexs);
+            List<TEntity> in = toList(indexs);
             return EasyCollectionUtil.isNotEmpty(in);
         }
         return true;

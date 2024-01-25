@@ -46,7 +46,7 @@ public class HelpCityEntity extends BaseEntity implements CacheMultiEntity, Prox
 
 
     @Override
-    public String cacheAggregateIdValue() {
+    public String cacheIndexId() {
         return getProvinceId();
     }
 

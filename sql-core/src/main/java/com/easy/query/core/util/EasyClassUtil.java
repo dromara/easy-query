@@ -39,6 +39,13 @@ public class EasyClassUtil {
 
     private EasyClassUtil() {
     }
+    public static Class<?> getClassForName(String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static String getInstanceSimpleName(Object obj) {
         if(obj==null) {

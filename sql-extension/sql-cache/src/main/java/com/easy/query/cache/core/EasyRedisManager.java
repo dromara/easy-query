@@ -1,5 +1,7 @@
 package com.easy.query.cache.core;
 
+import com.easy.query.cache.core.base.ClearParameter;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -27,4 +29,6 @@ public interface EasyRedisManager {
      */
     <T> List<Pair<String,T>> cache(Class<T> clazz, String entityKey, Set<String> ids, long timeoutMillisSeconds, long nullValueTimeoutMillisSeconds,
                                    Function<Collection<String>,List<Pair<String,T>>> getDataFunc);
+
+    void clear(ClearParameter clearParameter);
 }

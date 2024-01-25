@@ -41,7 +41,7 @@ public class DefaultMultiCacheQueryable<TEntity extends CacheMultiEntity> extend
             return false;
         }
         if(hasFilter()){
-            List<TEntity> in = getIn(aggregateId, Collections.singletonList(id));
+            List<TEntity> in = toList(aggregateId, Collections.singletonList(id));
             return EasyCollectionUtil.isNotEmpty(in);
         }
         return true;
@@ -54,14 +54,14 @@ public class DefaultMultiCacheQueryable<TEntity extends CacheMultiEntity> extend
             return false;
         }
         if(hasFilter()){
-            List<TEntity> in = getIn(aggregateId, indexs);
+            List<TEntity> in = toList(aggregateId, indexs);
             return EasyCollectionUtil.isNotEmpty(in);
         }
         return true;
     }
 
     @Override
-    public List<TEntity> getIn(String aggregateId, Collection<String> ids) {
+    public List<TEntity> toList(String aggregateId, Collection<String> ids) {
         if (EasyCollectionUtil.isEmpty(ids)) {
             return Collections.emptyList();
         }
@@ -72,7 +72,7 @@ public class DefaultMultiCacheQueryable<TEntity extends CacheMultiEntity> extend
     }
 
     @Override
-    public List<TEntity> getAll(String aggregateId) {
+    public List<TEntity> toList(String aggregateId) {
         List<Pair<String, TEntity>> cache = doGet(aggregateId, Collections.emptyList());
         Stream<TEntity> select = cache.stream().filter(o -> o.getObject2() != null)
                 .map(o -> o.getObject2());
@@ -80,7 +80,7 @@ public class DefaultMultiCacheQueryable<TEntity extends CacheMultiEntity> extend
     }
 
     @Override
-    public List<String> getAllIndex(String aggregateId) {
+    public List<String> toIndexList(String aggregateId) {
         Set<String> indexs = doGetIndex(aggregateId);
         return new ArrayList<>(indexs);
     }

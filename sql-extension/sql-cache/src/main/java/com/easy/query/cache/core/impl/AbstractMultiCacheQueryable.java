@@ -36,7 +36,7 @@ public abstract class AbstractMultiCacheQueryable<TEntity extends CacheMultiEnti
         if(EasyStringUtil.isBlank(aggregateId)||EasyStringUtil.isBlank(id)){
             return def;
         }
-        List<TEntity> entities = getIn(aggregateId, Collections.singletonList(id));
+        List<TEntity> entities = toList(aggregateId, Collections.singletonList(id));
         if(entities.isEmpty()){
             return def;
         }
