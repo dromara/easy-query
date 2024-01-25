@@ -84,7 +84,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
     public EasyPageResult<TEntity> toPageResult(int pageIndex, int pageSize) {
         Set<String> indexs = doGetIndex();
         if (indexs.isEmpty()) {
-            return new DefaultPageResult<>(0,new ArrayList<>(0));
+            return new DefaultPageResult<>(0, new ArrayList<>(0));
         }
         int take = pageSize <= 0 ? 1 : pageSize;
         int index = pageIndex <= 0 ? 1 : pageIndex;
@@ -93,19 +93,23 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
         Stream<TEntity> select = caches.stream().filter(o -> o.getObject2() != null)
                 .map(o -> o.getObject2());
         List<TEntity> tCacheItems = filterResult(select).skip(skip).limit(take).collect(Collectors.toList());
-        return new DefaultPageResult<>(indexs.size(),tCacheItems);
+        return new DefaultPageResult<>(indexs.size(), tCacheItems);
     }
 
     protected List<Pair<String, TEntity>> doGet(Collection<String> ids) {
-        Set<String> indexs = doGetIndex();
-        if (indexs.isEmpty()) {
+        if(EasyCollectionUtil.isEmpty(ids)){
+            Set<String> indexs = doGetIndex();
+            if (indexs.isEmpty()) {
+                return Collections.emptyList();
+            }
+            Set<String> findIds = filterIdWhichIsQuery(indexs, ids);
+            if (findIds.size() > 0) {
+                return getCacheByIds(findIds);
+            }
             return Collections.emptyList();
+        }else{
+            return getCacheByIds(new HashSet<>(ids));
         }
-        Set<String> findIds = filterIdWhichIsQuery(indexs, ids);
-        if (findIds.size() > 0) {
-            return getCacheByIds(findIds);
-        }
-        return Collections.emptyList();
 
     }
 
@@ -113,7 +117,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
         if (EasyCollectionUtil.isEmpty(ids)) {
             return indexs;
         }
-        return ids.stream().filter(o-> EasyStringUtil.isNotBlank(o)&&indexs.contains(o)).collect(Collectors.toSet());
+        return ids.stream().filter(o -> EasyStringUtil.isNotBlank(o) && indexs.contains(o)).collect(Collectors.toSet());
     }
 
     protected Set<String> doGetIndex() {
@@ -170,4 +174,31 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
         }
         return this;
     }
+//
+//    @Override
+//    public TEntity firstOrDefault(String id, TEntity def) {
+//
+//        if (EasyStringUtil.isBlank(id)) {
+//            return def;
+//        }
+//        return doFirstOrDefault(id);
+//    }
+//
+//    private TEntity doFirstOrDefault(String id) {
+//        if (EasyStringUtil.isBlank(id)) {
+//            return null;
+//        }
+//        Set<String> idSet = Collections.singleton(id);
+//        List<Pair<String, TEntity>> caches = doFirstGet(idSet);
+//        Stream<TEntity> select = caches.stream().filter(o -> o.getObject2() != null && idSet.contains(o.getObject1()))
+//                .map(o -> o.getObject2());
+//        return filterResult(select).findFirst().orElse(null);
+//    }
+//
+//    private List<Pair<String, TEntity>> doFirstGet(Set<String> ids) {
+//        return easyRedisManager.cache(entityClass, getEntityKey(), ids, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(),
+//                otherIds -> {
+//                    return defaultSelect(otherIds);
+//                });
+//    }
 }

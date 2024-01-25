@@ -8,7 +8,6 @@ import com.easy.query.cache.core.impl.AbstractSingleCacheQueryable;
 import com.easy.query.cache.core.queryable.KvCacheQueryable;
 import com.easy.query.core.util.EasyCollectionUtil;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
