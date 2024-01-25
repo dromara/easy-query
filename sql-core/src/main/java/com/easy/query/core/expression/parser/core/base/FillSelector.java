@@ -11,5 +11,6 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 public interface FillSelector {
 
     <TREntity> ClientQueryable<TREntity> with(Class<TREntity> entityClass);
+    <TREntity> ClientQueryable<TREntity> adapter(Class<TREntity> entityClass, ClientQueryable<TREntity> queryable);
     FillSelector consumeNull(boolean consumeNull);
 }

@@ -30,8 +30,15 @@ public class FillSelectorImpl implements FillSelector {
     }
 
     @Override
+    public <TREntity> ClientQueryable<TREntity> adapter(Class<TREntity> entityClass, ClientQueryable<TREntity> queryable) {
+        fillParams.setOriginalEntityClass(entityClass);
+        return queryable.where(o->o.in(fillParams.getTargetProperty(),fillParams.getRelationIds()));
+    }
+
+    @Override
     public FillSelector consumeNull(boolean consumeNull) {
         fillParams.setConsumeNull(consumeNull);
         return this;
     }
+
 }
