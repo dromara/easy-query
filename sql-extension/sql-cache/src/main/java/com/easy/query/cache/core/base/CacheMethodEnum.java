@@ -23,6 +23,9 @@ public enum CacheMethodEnum {
     }
 
     public static CacheMethodEnum enumOfOrNull(Integer val){
+        return  enumOfOrDefault(val,null);
+    }
+    public static CacheMethodEnum enumOfOrDefault(Integer val,CacheMethodEnum def){
         if(val!=null){
             switch (val){
                 case 1:return UNKNOWN;
@@ -31,6 +34,6 @@ public enum CacheMethodEnum {
                 case 1<<3:return DELETE;
             }
         }
-        return  null;
+        return  def;
     }
 }

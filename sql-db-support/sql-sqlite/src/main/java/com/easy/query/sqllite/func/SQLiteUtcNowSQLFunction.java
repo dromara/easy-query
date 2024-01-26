@@ -15,7 +15,7 @@ public class SQLiteUtcNowSQLFunction extends AbstractSQLFunction {
     public static final SQLFunction INSTANCE=new SQLiteUtcNowSQLFunction();
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        return "current_timestamp";
+        return "CURRENT_TIMESTAMP";
     }
 
     @Override

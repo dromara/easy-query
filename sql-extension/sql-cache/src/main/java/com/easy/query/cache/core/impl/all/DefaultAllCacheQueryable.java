@@ -122,7 +122,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
 
     protected Set<String> doGetIndex() {
         Set<String> fields = new HashSet<>();
-        fields.add("INDEX");
+        fields.add(easyCacheOption.getCacheIndex());
         List<Pair<String, EasyCacheIndex>> cache = easyRedisManager.cache(EasyCacheIndex.class, getEntityKey(), fields, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(), ids -> {
             return getIndex(getCacheAllIndex());
         });
