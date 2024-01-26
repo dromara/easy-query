@@ -26,7 +26,7 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * <blockquote><pre>
      *     {@code
      *
-     * try(JdbcStreamResult<BlogEntity> streamResult = easyQuery.queryable(BlogEntity.class).toStreamResult()){
+     * try(JdbcStreamResult<BlogEntity> streamResult = easyQuery.queryable(BlogEntity.class).toStreamResult(100)){
      *
      *             int i = 0;
      *             for (BlogEntity blog : streamResult.getStreamIterable()) {

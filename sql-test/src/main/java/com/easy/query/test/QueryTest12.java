@@ -1,8 +1,12 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -207,6 +211,29 @@ public class QueryTest12 extends BaseTest {
             List<LocalDateTime> list3 = easyEntityQuery.queryable(BlogEntity.class).selectColumn(o -> o.createTime()).toList();
 
         }
+    }
+    @Test
+    public void testDraft21() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        EntityQueryable<Draft2Proxy<String, String>, Draft2<String, String>> draft2ProxyDraft2EntityQueryable = easyEntityQuery.queryable(BlogEntity.class)
+                .groupBy(o -> GroupKeys.TABLE1.of(o.content().subString(0, 8)))
+                .selectDraft(o -> Select.draft(
+                        o.key1(),
+                        o.join(o.group().id(), ",")
+                ));
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(draft2ProxyDraft2EntityQueryable, (a, b) -> a.id().eq(b.value1()))
+                .toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN (SELECT SUBSTR(t1.`content`,1,8) AS `value1`,GROUP_CONCAT(t1.`id` SEPARATOR ?) AS `value2` FROM `t_blog` t1 WHERE t1.`deleted` = ? GROUP BY SUBSTR(t1.`content`,1,8)) t3 ON t.`id` = t3.`value1` WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),false(Boolean),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
     }
 
 }

@@ -86,7 +86,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy> join对象的代理
      * @param <T3> join对象
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  leftJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  leftJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().leftJoin(joinQueryable.getClientQueryable(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
                 onExpression.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy().create(t1.getTable(), get1Proxy().getEntitySQLContext()));
@@ -165,10 +165,10 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy> join对象的代理
      * @param <T3> join对象
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().rightJoin(joinQueryable.getClientQueryable(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
-                onExpression.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy().create(t1.getTable(), get1Proxy().getEntitySQLContext()));
+                onExpression.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy().create(t2.getTable(), get1Proxy().getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy(), entityQueryable3);
@@ -244,10 +244,10 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy> join对象的代理
      * @param <T3> join对象
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().innerJoin(joinQueryable.getClientQueryable(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
-                onExpression.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy().create(t1.getTable(), get1Proxy().getEntitySQLContext()));
+                onExpression.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy().create(t2.getTable(), get1Proxy().getEntitySQLContext()));
             });
         });
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy(), entityQueryable3);
@@ -280,7 +280,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  leftJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  leftJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return leftJoin(joinQueryable, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
         });
@@ -312,7 +312,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return rightJoin(joinQueryable, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
         });
@@ -344,7 +344,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return innerJoin(joinQueryable, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
         });
