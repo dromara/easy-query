@@ -219,7 +219,7 @@ public class QueryTest12 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         EntityQueryable<Draft2Proxy<String, String>, Draft2<String, String>> draft2ProxyDraft2EntityQueryable = easyEntityQuery.queryable(BlogEntity.class)
                 .groupBy(o -> GroupKeys.TABLE1.of(o.content().subString(0, 8)))
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.join(o.group().id(), ",")
                 ));
@@ -234,6 +234,45 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals(",(String),false(Boolean),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
+    }
+
+    @Test
+    public void testDraft23(){
+        List<Draft1<LocalDateTime>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(o -> Select.DRAFT.of(
+                        o.createTime()
+                )).toList();
+        for (Draft1<LocalDateTime> localDateTimeDraft1 : list) {
+
+            LocalDateTime value1 = localDateTimeDraft1.getValue1();
+
+        }
+
+        List<Draft2<String, LocalDateTime>> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .select(o -> Select.DRAFT.of(
+                        o.id(),
+                        o.createTime().asAny()
+                )).toList();
+        for (Draft2<String, LocalDateTime> localDateTimeDraft1 : list1) {
+
+            String value1 = localDateTimeDraft1.getValue1();
+            LocalDateTime value2 = localDateTimeDraft1.getValue2();
+
+        }
+//        List<Map<String, Object>> list2 = easyEntityQuery.queryable(BlogEntity.class)
+//                .select(o -> {
+//                    MapProxy mapProxy = new MapProxy();
+//                    mapProxy.put("id", o.id());
+//                    mapProxy.put("title", o.title());
+//                    return mapProxy;
+//                })
+//                .where(o -> {
+//                    o.getColumn("title").eq("1");
+//                }).toList();
+//        for (Map<String, Object> stringObjectMap : list2) {
+//
+//            System.out.println(stringObjectMap);
+//        }
     }
 
 }

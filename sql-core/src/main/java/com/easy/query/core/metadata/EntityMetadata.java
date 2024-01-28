@@ -639,7 +639,7 @@ public class EntityMetadata {
     public String getColumnName(String propertyName) {
         ColumnMetadata columnMetadata = property2ColumnMap.get(propertyName);
         if (columnMetadata == null) {
-            throw new EasyQueryException(String.format("not found property:[%s] mapping column", propertyName));
+            throw new EasyQueryException(String.format("%s not found property:[%s] mapping column", EasyClassUtil.getSimpleName(entityClass),propertyName));
         }
         return columnMetadata.getName();
     }

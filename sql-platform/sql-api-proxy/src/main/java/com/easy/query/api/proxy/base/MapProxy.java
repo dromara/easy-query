@@ -35,8 +35,19 @@ public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String,Object>> 
         getEntitySQLContext().accept(new SQLColumnSetValueImpl(null, key, val));
     }
 
-    public <TProperty> void put(String key,PropTypeColumn<TProperty> val) {
+    public <TProperty> MapProxy put(String key,PropTypeColumn<TProperty> val) {
         getEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, key, val));
+        return this;
     }
+    public <TProperty> MapProxy put(PropTypeColumn<TProperty> val) {
+        getEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, val.getValue(), val));
+        return this;
+    }
+//    public SQLAnyColumn<MapProxy,Object> getColumn(String key){
+//        return getAnyColumn(key,Object.class);
+//    }
+//    public <TProperty> SQLAnyColumn<MapProxy,TProperty> getColumn(String key,Class<TProperty> propType){
+//        return getAnyColumn(key,propType);
+//    }
 
 }

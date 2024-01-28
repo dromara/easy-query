@@ -627,6 +627,22 @@ public class QueryTest10 extends BaseTest{
             System.out.println(list);
         }
 
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
+                    .orderBy(t -> {
+                        t.id().asc();
+                    })
+                    .select(o -> new MapProxy().put(o.title().nullOrDefault("1")).put(o.id()).put(o.stars())).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT IFNULL(t.`title`,?) AS `title`,t.`id` AS `id`,t.`stars` AS `stars` FROM `t_topic` t ORDER BY t.`id` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            listenerContextManager.clear();
+        }
+
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -971,7 +987,7 @@ public class QueryTest10 extends BaseTest{
 
         List<Draft2<String, String>> list2 = easyEntityQuery.queryable(BlogEntity.class)
                 .groupBy(o-> GroupKeys.TABLE1.of(o.content().subString(0,8)))
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.join(o.group().id(),",")
                 )).toList();

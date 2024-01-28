@@ -14,6 +14,11 @@ public class Draft2<T1, T2> extends AbstractDraft implements ProxyEntityAvailabl
     private T1 value1;
     private T2 value2;
 
+//    public Draft2(PropTypeColumn<T1> column1,PropTypeColumn<T2> column2){
+//
+//    }
+
+
     public T1 getValue1() {
         return value1;
     }

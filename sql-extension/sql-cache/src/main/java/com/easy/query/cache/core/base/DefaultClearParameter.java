@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 public class DefaultClearParameter implements ClearParameter {
-    private final String cacheId;
-    private final String cacheIndexId;
-    private final CacheMethodEnum cacheMethodEnum;
-    private final LocalDateTime beforeTime;
-    private final String entityName;
+    private  String cacheId;
+    private  String cacheIndexId;
+    private  CacheMethodEnum cacheMethodEnum;
+    private  LocalDateTime beforeTime;
+    private  String entityName;
 
     public DefaultClearParameter(String cacheId, String cacheIndexId, CacheMethodEnum cacheMethodEnum, LocalDateTime beforeTime, String entityName){
 
@@ -23,6 +23,7 @@ public class DefaultClearParameter implements ClearParameter {
         this.beforeTime = beforeTime;
         this.entityName = entityName;
     }
+    public DefaultClearParameter(){}
     @Override
     public String getCacheId() {
         return cacheId;
@@ -46,5 +47,25 @@ public class DefaultClearParameter implements ClearParameter {
     @Override
     public String getEntityName() {
         return entityName;
+    }
+
+    public void setCacheId(String cacheId) {
+        this.cacheId = cacheId;
+    }
+
+    public void setCacheIndexId(String cacheIndexId) {
+        this.cacheIndexId = cacheIndexId;
+    }
+
+    public void setCacheMethodEnum(CacheMethodEnum cacheMethodEnum) {
+        this.cacheMethodEnum = cacheMethodEnum;
+    }
+
+    public void setBeforeTime(LocalDateTime beforeTime) {
+        this.beforeTime = beforeTime;
+    }
+
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
     }
 }

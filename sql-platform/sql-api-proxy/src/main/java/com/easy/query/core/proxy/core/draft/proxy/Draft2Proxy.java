@@ -1,6 +1,5 @@
 package com.easy.query.core.proxy.core.draft.proxy;
 
-import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
@@ -13,7 +12,7 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public class Draft2Proxy<T1,T2> extends AbstractProxyEntity<Draft2Proxy<T1,T2>, Draft2<T1,T2>> {
+public class Draft2Proxy<T1,T2> extends AbstractDraftProxy<Draft2Proxy<T1,T2>, Draft2<T1,T2>> {
 
     private static final Class<Draft2> entityClass = Draft2.class;
 
@@ -22,6 +21,7 @@ public class Draft2Proxy<T1,T2> extends AbstractProxyEntity<Draft2Proxy<T1,T2>, 
     }
 
     public Draft2Proxy() {
+        super(2);
     }
 
     /**

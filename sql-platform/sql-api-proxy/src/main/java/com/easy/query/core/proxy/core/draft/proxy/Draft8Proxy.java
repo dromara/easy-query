@@ -1,8 +1,7 @@
 package com.easy.query.core.proxy.core.draft.proxy;
 
-import com.easy.query.core.proxy.AbstractProxyEntity;
-import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.core.draft.Draft8;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -13,7 +12,7 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public class Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8> extends AbstractProxyEntity<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, Draft8<T1,T2,T3,T4,T5,T6,T7,T8>> {
+public class Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8> extends AbstractDraftProxy<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, Draft8<T1,T2,T3,T4,T5,T6,T7,T8>> {
 
     private static final Class<Draft8> entityClass = Draft8.class;
 
@@ -22,6 +21,7 @@ public class Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8> extends AbstractProxyEntity<Dr
     }
 
     public Draft8Proxy() {
+        super(8);
     }
 
     /**
