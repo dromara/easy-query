@@ -2,10 +2,12 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.ColumnIgnore;
+import com.easy.query.core.annotation.EasyAssertMessage;
 import com.easy.query.core.annotation.Encryption;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Navigate;
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.annotation.ShardingDataSourceKey;
 import com.easy.query.core.annotation.ShardingExtraDataSourceKey;
 import com.easy.query.core.annotation.ShardingExtraTableKey;
@@ -61,6 +63,7 @@ import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.core.util.EasyUtil;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -96,6 +99,7 @@ public class EntityMetadata {
     private final Class<?> entityClass;
     private String tableName;
     private String schema;
+    private ErrorMessage errorMessage;
 
     public boolean isMultiTableMapping() {
         return shardingTablePropertyName != null;
@@ -150,7 +154,7 @@ public class EntityMetadata {
             entityMetadataType = EntityMetadataTypeEnum.BASIC_TYPE;
             return;
         }
-        if(EasyClassUtil.isEnumType(entityClass)){
+        if (EasyClassUtil.isEnumType(entityClass)) {
             entityMetadataType = EntityMetadataTypeEnum.BASIC_TYPE;
             return;
         }
@@ -167,6 +171,21 @@ public class EntityMetadata {
         if (table != null) {
             this.tableName = EasyStringUtil.defaultIfBank(table.value(), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
             this.schema = table.schema();
+        }
+        EasyAssertMessage easyAssertMessage = EasyClassUtil.getAnnotation(entityClass, EasyAssertMessage.class);
+        if (easyAssertMessage != null) {
+
+            this.errorMessage = new ErrorMessage(
+                    EasyStringUtil.isNotBlank(easyAssertMessage.firstNotNull())?easyAssertMessage.firstNotNull():easyAssertMessage.notNull(),
+                    EasyStringUtil.isNotBlank(easyAssertMessage.singleNotNull())?easyAssertMessage.singleNotNull():easyAssertMessage.notNull(),
+                    easyAssertMessage.singleMoreThan()
+            );
+        } else {
+            this.errorMessage = new ErrorMessage(
+                    EasyUtil.NOT_NULL,
+                    EasyUtil.NOT_NULL,
+                    EasyUtil.SINGLE_MORE_THAN
+            );
         }
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
 
@@ -277,25 +296,26 @@ public class EntityMetadata {
                 throw new EasyQueryInvalidOperationException("columnName:" + columnOption.getName() + ", repeat.");
             }
             if (columnOption.isTableEntity() && columnOption.isAutoSelect()) {
-                dataReader = new BeanDataReader(dataReader, new PropertyDataReader(new EntityResultColumnMetadata(columnAllIndex.incrementAndGet(), this,columnMetadata)));
+                dataReader = new BeanDataReader(dataReader, new PropertyDataReader(new EntityResultColumnMetadata(columnAllIndex.incrementAndGet(), this, columnMetadata)));
             }
         }
         return columnMetadata;
     }
 
 
-    private void processEnumValueConverter(ColumnOption columnOption,Class<?> propertyType,QueryConfiguration configuration){
-            //如果是默认的那么就通过自动关联的值转换处进行寻找
-            if(Enum.class.isAssignableFrom(propertyType)){
-                List<EnumValueAutoConverter<?, ?>> enumValueAutoConverters = configuration.getEnumValueAutoConverters();
-                for (EnumValueAutoConverter<?, ?> enumValueAutoConverter : enumValueAutoConverters) {
-                    if(enumValueAutoConverter.apply(entityClass,EasyObjectUtil.typeCastNullable(propertyType))){
-                        columnOption.setValueConverter(enumValueAutoConverter);
-                        break;
-                    }
+    private void processEnumValueConverter(ColumnOption columnOption, Class<?> propertyType, QueryConfiguration configuration) {
+        //如果是默认的那么就通过自动关联的值转换处进行寻找
+        if (Enum.class.isAssignableFrom(propertyType)) {
+            List<EnumValueAutoConverter<?, ?>> enumValueAutoConverters = configuration.getEnumValueAutoConverters();
+            for (EnumValueAutoConverter<?, ?> enumValueAutoConverter : enumValueAutoConverters) {
+                if (enumValueAutoConverter.apply(entityClass, EasyObjectUtil.typeCastNullable(propertyType))) {
+                    columnOption.setValueConverter(enumValueAutoConverter);
+                    break;
                 }
             }
+        }
     }
+
     private ColumnOption createColumnOption(Field field, PropertyDescriptor propertyDescriptor, boolean tableEntity, FastBeanProperty fastBeanProperty, QueryConfiguration configuration, FastBean fastBean, JdbcTypeHandlerManager jdbcTypeHandlerManager, boolean defaultAutoSelect) {
         NameConversion nameConversion = configuration.getNameConversion();
         String property = field.getName();
@@ -330,9 +350,9 @@ public class EntityMetadata {
                     throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion unknown");
                 }
                 columnOption.setValueConverter(valueConverter);
-            }else{
+            } else {
                 //如果是默认的那么就通过自动关联的值转换处进行寻找
-                processEnumValueConverter(columnOption,propertyDescriptor.getPropertyType(),configuration);
+                processEnumValueConverter(columnOption, propertyDescriptor.getPropertyType(), configuration);
             }
             Class<? extends ComplexPropType> complexPropTypeClass = column.complexPropType();
             if (Objects.equals(DefaultComplexPropType.class, complexPropTypeClass)) {
@@ -343,9 +363,9 @@ public class EntityMetadata {
                 columnOption.setComplexPropType(complexPropType);
             }
 
-        }else{
+        } else {
             //如果是默认的那么就通过自动关联的值转换处进行寻找
-            processEnumValueConverter(columnOption,propertyDescriptor.getPropertyType(),configuration);
+            processEnumValueConverter(columnOption, propertyDescriptor.getPropertyType(), configuration);
         }
 
         if (tableEntity) {
@@ -639,7 +659,7 @@ public class EntityMetadata {
     public String getColumnName(String propertyName) {
         ColumnMetadata columnMetadata = property2ColumnMap.get(propertyName);
         if (columnMetadata == null) {
-            throw new EasyQueryException(String.format("%s not found property:[%s] mapping column", EasyClassUtil.getSimpleName(entityClass),propertyName));
+            throw new EasyQueryException(String.format("%s not found property:[%s] mapping column", EasyClassUtil.getSimpleName(entityClass), propertyName));
         }
         return columnMetadata.getName();
     }
@@ -833,6 +853,7 @@ public class EntityMetadata {
 
     /**
      * 添加实际表和表所在的数据源
+     *
      * @param dataSource
      * @param actualTableName
      */
@@ -889,5 +910,9 @@ public class EntityMetadata {
 
     public boolean isHasValueObject() {
         return hasValueObject;
+    }
+
+    public @NotNull ErrorMessage getErrorMessage() {
+        return errorMessage;
     }
 }

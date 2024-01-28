@@ -22,6 +22,14 @@ public interface FirstAble<T> extends QueryAvailable<T> {
     T firstOrNull();
 
     /**
+     * 无参数方法默认抛出对象添加的{@link com.easy.query.core.annotation.EasyAssertMessage}
+     * @return
+     */
+    default T firstNotNull(){
+        return firstNotNull(null,null);
+    }
+
+    /**
      * 当未查询到结果 将会抛出 {@link EasyQueryFirstNotNullException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
      *

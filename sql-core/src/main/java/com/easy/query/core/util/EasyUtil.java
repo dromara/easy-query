@@ -27,6 +27,11 @@ import java.util.stream.Stream;
  */
 public class EasyUtil {
 
+    public static final String NOT_NULL = "query no element in result set.";
+    public static final String FIRST_NOT_NULL = "first not null query no element in result set.";
+    public static final String SINGLE_NOT_NULL = "single not null query no element in result set.";
+    public static final String SINGLE_MORE_THAN = "";//single query at most one element in result set.
+
 
     private static final int FLAG_SERIALIZABLE = 1;
 
@@ -62,7 +67,7 @@ public class EasyUtil {
     public static String getAnonymousPropertyName(SQLEntityAliasSegment sqlEntityProject, TableAvailable anonymousTable) {
         String alias = sqlEntityProject.getAlias();
         if (EasyStringUtil.isBlank(alias)) {
-            if(sqlEntityProject.getPropertyName()==null){
+            if (sqlEntityProject.getPropertyName() == null) {
                 throw new EasyQueryInvalidOperationException("sqlEntityProject propertyName cannot be null");
             }
             alias = sqlEntityProject.getTable().getEntityMetadata().getColumnNotNull(sqlEntityProject.getPropertyName()).getName();
@@ -103,6 +108,7 @@ public class EasyUtil {
 
     /**
      * 获取传入时间的当前所属季度的开始时间
+     *
      * @param dateTime
      * @return
      */
