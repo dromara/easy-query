@@ -17,6 +17,5 @@ public interface EasyCacheClient {
     <T extends CacheKvEntity> KvCacheQueryable<T> kvStorage(Class<T> entityClass);
     <T extends CacheMultiEntity> MultiCacheQueryable<T> multiStorage(Class<T> entityClass);
     <T extends CacheAllEntity> AllCacheQueryable<T> allStorage(Class<T> entityClass);
-    void clear(ClearParameter clearParameter);
 
 }

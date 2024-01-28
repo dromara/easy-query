@@ -106,7 +106,7 @@ public class DefaultMultiCacheQueryable<TEntity extends CacheMultiEntity> extend
     }
 
     private List<Pair<String, TEntity>> getCacheByIds(String aggregateId, Set<String> ids) {
-        return easyRedisManager.cache(entityClass, getEntityKey(), ids, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(), otherIds -> {
+        return easyCacheManager.cache(entityClass, getEntityKey(), ids, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(), otherIds -> {
             return toKeyAndEntity(getEntities(aggregateId, otherIds));
         });
     }
@@ -119,7 +119,7 @@ public class DefaultMultiCacheQueryable<TEntity extends CacheMultiEntity> extend
         Set<String> fields = new HashSet<>();
         fields.add(getMultiKey(aggregateId));
 
-        List<Pair<String, EasyCacheIndex>> cache = easyRedisManager.cache(EasyCacheIndex.class, getEntityKey(), fields, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(), ids -> {
+        List<Pair<String, EasyCacheIndex>> cache = easyCacheManager.cache(EasyCacheIndex.class, getEntityKey(), fields, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(), ids -> {
             return getIndex(aggregateId, getCacheAllIndex(aggregateId));
         });
         EasyCacheIndex v = cache.get(0).getObject2();

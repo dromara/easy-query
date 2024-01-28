@@ -9,21 +9,21 @@ import com.easy.query.core.api.client.EasyQueryClient;
  * @author xuejiaming
  */
 public class EasyCacheStorageOption {
-    private final EasyRedisManager easyRedisManager;
+    private final EasyCacheManager easyCacheManager;
     private final EasyCacheOption easyCacheOption;
     private final EasyQueryClient easyQueryClient;
 
     public EasyCacheStorageOption(
-            EasyRedisManager easyRedisManager,
+            EasyCacheManager easyCacheManager,
             EasyCacheOption easyCacheOption,
             EasyQueryClient easyQueryClient) {
-        this.easyRedisManager = easyRedisManager;
+        this.easyCacheManager = easyCacheManager;
         this.easyCacheOption = easyCacheOption;
         this.easyQueryClient = easyQueryClient;
     }
 
-    public EasyRedisManager getRedisManager() {
-        return easyRedisManager;
+    public EasyCacheManager getRedisManager() {
+        return easyCacheManager;
     }
 
     public EasyCacheOption getCacheOption() {

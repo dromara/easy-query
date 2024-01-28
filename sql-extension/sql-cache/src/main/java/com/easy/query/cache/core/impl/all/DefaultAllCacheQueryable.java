@@ -123,7 +123,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
     protected Set<String> doGetIndex() {
         Set<String> fields = new HashSet<>();
         fields.add(easyCacheOption.getCacheIndex());
-        List<Pair<String, EasyCacheIndex>> cache = easyRedisManager.cache(EasyCacheIndex.class, getEntityKey(), fields, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(), ids -> {
+        List<Pair<String, EasyCacheIndex>> cache = easyCacheManager.cache(EasyCacheIndex.class, getEntityKey(), fields, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(), ids -> {
             return getIndex(getCacheAllIndex());
         });
         EasyCacheIndex v = cache.get(0).getObject2();
@@ -131,7 +131,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
     }
 
     private List<Pair<String, TEntity>> getCacheByIds(Set<String> ids) {
-        return easyRedisManager.cache(entityClass, getEntityKey(), ids, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(), otherIds -> {
+        return easyCacheManager.cache(entityClass, getEntityKey(), ids, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(), otherIds -> {
             return toKeyAndEntity(getEntities(otherIds));
         });
     }

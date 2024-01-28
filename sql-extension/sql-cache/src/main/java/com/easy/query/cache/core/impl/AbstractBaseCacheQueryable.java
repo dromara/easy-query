@@ -3,7 +3,7 @@ package com.easy.query.cache.core.impl;
 import com.easy.query.cache.core.CacheEntity;
 import com.easy.query.cache.core.EasyCacheOption;
 import com.easy.query.cache.core.EasyCacheStorageOption;
-import com.easy.query.cache.core.EasyRedisManager;
+import com.easy.query.cache.core.EasyCacheManager;
 import com.easy.query.cache.core.Pair;
 import com.easy.query.cache.core.annotation.CacheEntitySchema;
 import com.easy.query.cache.core.base.CachePredicate;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
  */
 public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity>  implements CacheQueryable {
     protected final EasyCacheOption easyCacheOption;
-    protected final EasyRedisManager easyRedisManager;
+    protected final EasyCacheManager easyCacheManager;
     protected final EasyQueryClient easyQueryClient;
     protected final Class<TEntity> entityClass;
     protected final CacheEntitySchema cacheEntitySchema;
@@ -33,7 +33,7 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity>  i
     public AbstractBaseCacheQueryable(EasyCacheStorageOption easyCacheStorageOption, Class<TEntity> entityClass){
 
         this.easyCacheOption = easyCacheStorageOption.getCacheOption();
-        this.easyRedisManager = easyCacheStorageOption.getRedisManager();
+        this.easyCacheManager = easyCacheStorageOption.getRedisManager();
         this.easyQueryClient = easyCacheStorageOption.getEasyQueryClient();
         this.entityClass = entityClass;
         CacheEntitySchema cacheEntitySchema = EasyClassUtil.getAnnotation(entityClass, CacheEntitySchema.class);

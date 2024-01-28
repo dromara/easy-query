@@ -6,7 +6,7 @@ import com.easy.query.cache.core.CacheKvEntity;
 import com.easy.query.cache.core.CacheMultiEntity;
 import com.easy.query.cache.core.EasyCacheIndex;
 import com.easy.query.cache.core.EasyCacheOption;
-import com.easy.query.cache.core.EasyRedisManager;
+import com.easy.query.cache.core.EasyCacheManager;
 import com.easy.query.cache.core.Pair;
 import com.easy.query.cache.core.base.CacheMethodEnum;
 import com.easy.query.cache.core.base.ClearParameter;
@@ -35,12 +35,12 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class DefaultEasyRedisManager implements EasyRedisManager {
+public class DefaultEasyCacheManager implements EasyCacheManager {
     private final RedissonClient redissonClient;
     private final EasyQueryClient easyQueryClient;
     private final EasyCacheOption easyCacheOption;
 
-    public DefaultEasyRedisManager(RedissonClient redissonClient, EasyQueryClient easyQueryClient, EasyCacheOption easyCacheOption) {
+    public DefaultEasyCacheManager(RedissonClient redissonClient, EasyQueryClient easyQueryClient, EasyCacheOption easyCacheOption) {
         this.redissonClient = redissonClient;
         this.easyQueryClient = easyQueryClient;
         this.easyCacheOption = easyCacheOption;

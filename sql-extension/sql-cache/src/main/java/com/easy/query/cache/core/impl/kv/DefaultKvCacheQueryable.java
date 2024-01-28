@@ -42,7 +42,7 @@ public class DefaultKvCacheQueryable<TEntity extends CacheKvEntity> extends Abst
     protected List<Pair<String, TEntity>> doGet(Collection<String> ids){
         Set<String> needFinds = new HashSet<>(ids);
         if(!needFinds.isEmpty()){
-            return easyRedisManager.cache(entityClass, getEntityKey(), needFinds, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(),
+            return easyCacheManager.cache(entityClass, getEntityKey(), needFinds, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(),
                     otherIds -> {
                         return defaultSelect(otherIds);
                     });

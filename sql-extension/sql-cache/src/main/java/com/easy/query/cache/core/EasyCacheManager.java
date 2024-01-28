@@ -14,7 +14,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface EasyRedisManager {
+public interface EasyCacheManager {
     /**
      * 缓存获取是否存在没有就调用 getDataFunc
      * @param clazz
