@@ -28,6 +28,26 @@ public interface FirstResultAble<T> extends QueryAvailable<T> {
 
     /**
      * 无参数方法默认抛出对象添加的{@link com.easy.query.core.annotation.EasyAssertMessage}
+     *
+     * <blockquote><pre>
+     * {@code
+     *
+     * @EasyAssertMessage(
+     *         notNull = "未找到主题信息",
+     *         singleMoreThan = "找到多条主题信息"
+     * )
+     * public class Topic{}
+     *
+     *
+     * @EasyAssertMessage(
+     *         //notNull = "未找到主题信息",
+     *         firstNotNull = "未找到主题信息",
+     *         singleNotNull = "未找到主题信息",
+     *         singleMoreThan = "找到多条主题信息"
+     * )
+     * public class Topic{}
+     *                    }
+     * </pre></blockquote>
      * @param resultClass
      * @return
      * @param <TR>
