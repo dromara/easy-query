@@ -27,7 +27,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
 
 
     /**
-     * 请使用{@link #fetchBy}
+     * 请使用{@link #fetchBy(SQLFuncExpression1)}
      * 快速选择当前对象
      * <blockquote><pre>
      *     {@code

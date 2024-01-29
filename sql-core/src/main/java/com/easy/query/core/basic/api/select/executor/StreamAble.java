@@ -60,8 +60,20 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * @return
      * @param <TR>
      */
+    default <TR> TR streamBy(Function<Stream<T>,TR> fetcher,Integer fetchSize){
+       return streamBy(fetcher,statement -> {statement.setFetchSize(fetchSize);});
+    }
+
+    /**
+     * 请使用 {@link  #streamBy(Function, Integer)}
+     * @param fetcher
+     * @param fetchSize
+     * @return
+     * @param <TR>
+     */
+    @Deprecated
     default <TR> TR fetch(Function<Stream<T>,TR> fetcher,Integer fetchSize){
-       return fetch(fetcher,statement -> {statement.setFetchSize(fetchSize);});
+       return streamBy(fetcher,statement -> {statement.setFetchSize(fetchSize);});
     }
     /**
      * 直接拉取数据
@@ -69,7 +81,7 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * @return
      * @param <TR>
      */
-    default <TR> TR fetch(Function<Stream<T>,TR> fetcher, SQLConsumer<Statement> configurer){
+    default <TR> TR streamBy(Function<Stream<T>,TR> fetcher, SQLConsumer<Statement> configurer){
         try(JdbcStreamResult<T> streamResult = toStreamResult(configurer)){
             StreamIterable<T> streamIterable = streamResult.getStreamIterable();
             Stream<T> stream = StreamSupport.stream(streamIterable.spliterator(), false);
@@ -77,6 +89,18 @@ public interface StreamAble<T> extends QueryAvailable<T> {
         }catch (SQLException sqlException){
             throw new EasyQuerySQLCommandException(sqlException);
         }
+    }
+
+    /**
+     * 请使用 {@link  #streamBy(Function, Integer)}
+     * @param fetcher
+     * @param configurer
+     * @return
+     * @param <TR>
+     */
+    @Deprecated
+    default <TR> TR fetch(Function<Stream<T>,TR> fetcher, SQLConsumer<Statement> configurer){
+        return streamBy(fetcher,configurer);
     }
 
 }

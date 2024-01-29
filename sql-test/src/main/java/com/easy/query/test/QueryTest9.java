@@ -283,6 +283,76 @@ public class QueryTest9 extends BaseTest {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT  1  FROM `t_topic` WHERE `id` = ? LIMIT 1" , jdbcExecuteAfterArg.getBeforeArg().getSql());
         }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            Supplier<Exception> f = () -> {
+                try {
+                    listenerContextManager.startListen(listenerContext);
+                    easyEntityQuery.queryable(Topic.class)
+                            .whereById("xxxaassd")
+                            .required("xxxx");
+                } catch (Exception ex) {
+                    return ex;
+                } finally {
+                    listenerContextManager.clear();
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQueryRequiredException);
+            EasyQueryRequiredException myAppException = (EasyQueryRequiredException) exception;
+            Assert.assertEquals("xxxx" , myAppException.getMessage());
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT  1  FROM `t_topic` WHERE `id` = ? LIMIT 1" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            Supplier<Exception> f = () -> {
+                try {
+                    listenerContextManager.startListen(listenerContext);
+                    easyEntityQuery.queryable(Topic.class)
+                            .whereById("xxxaassd")
+                            .required(()->new RuntimeException("xxxx1"));
+                } catch (Exception ex) {
+                    return ex;
+                } finally {
+                    listenerContextManager.clear();
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            RuntimeException myAppException = (RuntimeException) exception;
+            Assert.assertEquals("xxxx1" , myAppException.getMessage());
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT  1  FROM `t_topic` WHERE `id` = ? LIMIT 1" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            Supplier<Exception> f = () -> {
+                try {
+                    listenerContextManager.startListen(listenerContext);
+                    easyEntityQuery.queryable(Topic.class)
+                            .required();
+                } catch (Exception ex) {
+                    return ex;
+                } finally {
+                    listenerContextManager.clear();
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNull(exception);
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT  1  FROM `t_topic` LIMIT 1" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
     }
 
     @Test
