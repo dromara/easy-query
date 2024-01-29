@@ -20,8 +20,8 @@ public interface Findable<T> extends QueryAvailable<T> {
      * 当未查询到结果返回null
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
      * @return 可为空的结果
-     * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键
-     * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键
+     * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键 所以VO查询必定报错
+     * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键 所以VO查询必定报错
      * @throws com.easy.query.core.exception.EasyQueryFindNotNullException 可以通过 {@link AssertExceptionFactory#createFindNotNullException(Query, String, String)} 自定义
      */
     @Nullable T findOrNull(Object id);
@@ -49,8 +49,8 @@ public interface Findable<T> extends QueryAvailable<T> {
      *                    }
      * </pre></blockquote>
      * @return 返回一个不能为空的结果
-     * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键
-     * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键
+     * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键 所以VO查询必定报错
+     * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键 所以VO查询必定报错
      * @throws com.easy.query.core.exception.EasyQueryFindNotNullException 可以通过 {@link AssertExceptionFactory#createFindNotNullException(Query, String, String)} 自定义
      */
     default @NotNull T findNotNull(Object id){
@@ -82,8 +82,8 @@ public interface Findable<T> extends QueryAvailable<T> {
      *
      * @param msg
      * @return 返回一个不能为空的结果
-     * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键
-     * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键
+     * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键 所以VO查询必定报错
+     * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键 所以VO查询必定报错
      * @throws com.easy.query.core.exception.EasyQueryFindNotNullException 可以通过 {@link AssertExceptionFactory#createFindNotNullException(Query, String, String)} 自定义
      */
     default @NotNull T findNotNull(Object id,String msg) {
@@ -116,8 +116,8 @@ public interface Findable<T> extends QueryAvailable<T> {
      * @param msg
      * @param code
      * @return 返回一个不能为空的结果
-     * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键
-     * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键
+     * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键 所以VO查询必定报错
+     * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键 所以VO查询必定报错
      * @throws com.easy.query.core.exception.EasyQueryFindNotNullException 可以通过 {@link AssertExceptionFactory#createFindNotNullException(Query, String, String)} 自定义
      */
     @NotNull T findNotNull(Object id,String msg, String code);
@@ -127,8 +127,8 @@ public interface Findable<T> extends QueryAvailable<T> {
      * @param id 主键
      * @param throwFunc 自定义结果
      * @return 返回一个不能为空的结果
-     * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键
-     * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键
+     * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键 所以VO查询必定报错
+     * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键 所以VO查询必定报错
      */
     @NotNull T findNotNull(Object id,Supplier<RuntimeException> throwFunc);
 }

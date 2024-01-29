@@ -30,6 +30,16 @@ public class DefaultAssertExceptionFactory implements AssertExceptionFactory {
     }
 
     @Override
+    public <T> RuntimeException createRequiredException(Query<T> query, String msg, String code) {
+        if (msg == null && code == null) {
+            EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(query.queryClass());
+            ErrorMessage errorMessage = entityMetadata.getErrorMessage();
+            return new EasyQueryRequiredException(errorMessage.getNotNull(), null);
+        }
+        return new EasyQueryRequiredException(msg, code);
+    }
+
+    @Override
     public <T> RuntimeException createFirstNotNullException(Query<T> query, String msg, String code) {
         if (msg == null && code == null) {
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(query.queryClass());

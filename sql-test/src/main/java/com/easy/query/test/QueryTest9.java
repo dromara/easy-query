@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryFindNotNullException;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
+import com.easy.query.core.exception.EasyQueryRequiredException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -256,6 +257,31 @@ public class QueryTest9 extends BaseTest {
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            Supplier<Exception> f = () -> {
+                try {
+                    listenerContextManager.startListen(listenerContext);
+                    easyEntityQuery.queryable(Topic.class)
+                            .whereById("xxxaassd")
+                            .required();
+                } catch (Exception ex) {
+                    return ex;
+                } finally {
+                    listenerContextManager.clear();
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQueryRequiredException);
+            EasyQueryRequiredException myAppException = (EasyQueryRequiredException) exception;
+            Assert.assertEquals("未找到主题信息" , myAppException.getMessage());
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT  1  FROM `t_topic` WHERE `id` = ? LIMIT 1" , jdbcExecuteAfterArg.getBeforeArg().getSql());
         }
     }
 

@@ -189,7 +189,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> fetcher(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression) {
+    public EntityQueryable<T1Proxy, T1> fetchBy(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression) {
         ClientQueryable<T1> select = entityQueryable.select(get1Proxy().getEntityClass(), columnSelector -> {
             SQLSelectExpression sqlSelect = selectExpression.apply(t1Proxy);
             sqlSelect.accept(columnSelector.getAsSelector());

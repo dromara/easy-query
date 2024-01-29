@@ -111,6 +111,21 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      * @return 如果有行数那么就就是返回true表示存在，否则返回false表示不存在
      */
     boolean any();
+   default void required(){
+        required(null,null);
+   }
+   default void required(String msg){
+        required(()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createRequiredException(this,msg,null));
+   }
+   default void required(String msg,String code){
+        required(()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createRequiredException(this,msg,code));
+   }
+   default void required(Supplier<RuntimeException> throwFunc){
+       boolean any = any();
+       if(!any){
+           throw throwFunc.get();
+       }
+   }
 
     /**
      * 当未查询到结果返回null

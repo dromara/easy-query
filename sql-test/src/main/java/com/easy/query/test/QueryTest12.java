@@ -2,15 +2,12 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.basic.jdbc.conn.EasyConnection;
-import com.easy.query.core.enums.conn.ConnectionStrategyEnum;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
-import com.easy.query.core.util.EasyJdbcExecutorUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;

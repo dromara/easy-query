@@ -27,16 +27,34 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
 
 
     /**
+     * 请使用{@link #fetchBy}
      * 快速选择当前对象
      * <blockquote><pre>
      *     {@code
      *          .fetcher(o -> o.FETCHER.id().name().phone().departName())
      *                 }
      * </pre></blockquote>
+     *
      * @param selectExpression 快速选择表达式
      * @return
      */
-    EntityQueryable<T1Proxy, T1> fetcher(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression);
+    @Deprecated
+    default EntityQueryable<T1Proxy, T1> fetcher(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression) {
+        return fetchBy(selectExpression);
+    }
+
+    /**
+     * 快速选择当前对象
+     * <blockquote><pre>
+     *     {@code
+     *          .fetchBy(o -> o.FETCHER.id().name().phone().departName())
+     *      }
+     * </pre></blockquote>
+     *
+     * @param selectExpression 快速选择表达式
+     * @return
+     */
+    EntityQueryable<T1Proxy, T1> fetchBy(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression);
 
 
     /**
@@ -70,10 +88,11 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *         }))
      *                 }
      * </pre></blockquote>
+     *
      * @param selectExpression 入参表达式返回需要转成需要的结果便于后续操作
+     * @param <TRProxy>        返回结果的对象代理类型
+     * @param <TR>             返回结果的对象类型
      * @return 返回新的结果操作表达式可以继续筛选处理
-     * @param <TRProxy> 返回结果的对象代理类型
-     * @param <TR> 返回结果的对象类型
      */
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression);
 
@@ -93,9 +112,10 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *
      *                 }
      * </pre></blockquote>
+     *
      * @param selectExpression
-     * @return
      * @param <TR>
+     * @return
      */
     <TR> Query<TR> selectColumn(SQLFuncExpression1<T1Proxy, PropTypeColumn<TR>> selectExpression);
 
@@ -110,9 +130,10 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *
      *                 }
      * </pre></blockquote>
+     *
      * @param resultClass
-     * @return
      * @param <TR>
+     * @return
      */
     <TR> Query<TR> select(Class<TR> resultClass);
 

@@ -13,6 +13,8 @@ public interface AssertExceptionFactory {
     @NotNull
     <T> RuntimeException createFindNotNullException(Query<T> query, String msg, String code);
     @NotNull
+    <T> RuntimeException createRequiredException(Query<T> query, String msg, String code);
+    @NotNull
     <T> RuntimeException createFirstNotNullException(Query<T> query, String msg, String code);
     @NotNull
     <T> RuntimeException createSingleNotNullException(Query<T> query,String msg, String code);
