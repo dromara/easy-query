@@ -205,6 +205,7 @@ public class QueryTest11 extends BaseTest {
                     .select(s -> new MapProxy().adapter(r -> {
                         r.put("id", s.id());
                         r.put("name", s.stars());
+//                        r.put("abc",s.createTime().dayOfWeek());
                     }))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
