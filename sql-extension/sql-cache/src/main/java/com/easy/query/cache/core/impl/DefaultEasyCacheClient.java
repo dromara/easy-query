@@ -4,7 +4,9 @@ import com.easy.query.cache.core.CacheAllEntity;
 import com.easy.query.cache.core.CacheKvEntity;
 import com.easy.query.cache.core.CacheMultiEntity;
 import com.easy.query.cache.core.EasyCacheClient;
+import com.easy.query.cache.core.EasyCacheManager;
 import com.easy.query.cache.core.EasyCacheStorageOption;
+import com.easy.query.cache.core.base.ClearParameter;
 import com.easy.query.cache.core.impl.all.DefaultAllCacheQueryable;
 import com.easy.query.cache.core.impl.kv.DefaultKvCacheQueryable;
 import com.easy.query.cache.core.impl.multi.DefaultMultiCacheQueryable;
@@ -21,12 +23,14 @@ import com.easy.query.core.inject.ServiceProvider;
  */
 public class DefaultEasyCacheClient implements EasyCacheClient {
     private final EasyCacheStorageOption easyCacheStorageOption;
+    private final EasyCacheManager easyCacheManager;
     private final ServiceProvider serviceProvider;
 
 
-    public DefaultEasyCacheClient(EasyCacheStorageOption easyCacheStorageOption, ServiceProvider serviceProvider){
+    public DefaultEasyCacheClient(EasyCacheStorageOption easyCacheStorageOption, EasyCacheManager easyCacheManager, ServiceProvider serviceProvider){
 
         this.easyCacheStorageOption = easyCacheStorageOption;
+        this.easyCacheManager = easyCacheManager;
         this.serviceProvider = serviceProvider;
     }
 
@@ -48,5 +52,9 @@ public class DefaultEasyCacheClient implements EasyCacheClient {
     @Override
     public <T extends CacheAllEntity> AllCacheQueryable<T> allStorage(Class<T> entityClass) {
         return new DefaultAllCacheQueryable<>(easyCacheStorageOption,entityClass);
+    }
+    @Override
+    public void clear(ClearParameter clearParameter) {
+        easyCacheManager.clear(clearParameter);
     }
 }
