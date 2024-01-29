@@ -1,11 +1,13 @@
 package com.easy.query.core.basic.api.select;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.basic.api.select.executor.MapAble;
 import com.easy.query.core.basic.api.select.executor.QueryExecutable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
@@ -165,6 +167,43 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
     default T singleNotNull(Supplier<RuntimeException> throwFunc){
         return singleNotNull(queryClass(),throwFunc);
     }
+
+
+
+    /**
+     * 当未查询到结果 将会抛出 {@link EasyQueryFirstNotNullException}
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
+     * <blockquote><pre>
+     * {@code
+     *
+     * @EasyAssertMessage(
+     *         notNull = "未找到主题信息"
+     * )
+     * public class Topic{}
+     *
+     *
+     * @EasyAssertMessage(
+     *         //notNull = "未找到主题信息",
+     *         findNotNull = "未找到主题信息",
+     *         firstNotNull = "未找到主题信息",
+     *         singleNotNull = "未找到主题信息",
+     *         singleMoreThan = "找到多条主题信息"
+     * )
+     * public class Topic{}
+     *                    }
+     * </pre></blockquote>
+     *
+     * @param msg
+     * @param code
+     * @return 返回一个不能为空的结果
+     * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键
+     * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键
+     * @throws com.easy.query.core.exception.EasyQueryFindNotNullException 可以通过 {@link AssertExceptionFactory#createFindNotNullException(Query, String, String)} 自定义
+     */
+    default @NotNull T findNotNull(Object id, String msg, String code){
+        return findNotNull(id,()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createFindNotNullException(this,msg,code));
+    }
+
     /**
      * 返回所有的查询结果集
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]

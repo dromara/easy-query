@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.exception.EasyQueryFindNotNullException;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
@@ -161,7 +162,7 @@ public class QueryTest9 extends BaseTest {
             Assert.assertNotNull(exception);
             Assert.assertTrue(exception instanceof EasyQuerySingleMoreElementException);
             EasyQuerySingleMoreElementException myAppException = (EasyQuerySingleMoreElementException) exception;
-            Assert.assertEquals("找到多条主题信息" , myAppException.getMessage());
+            Assert.assertEquals("single query at most one element in result set." , myAppException.getMessage());
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic`" , jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -185,10 +186,76 @@ public class QueryTest9 extends BaseTest {
             Assert.assertNotNull(exception);
             Assert.assertTrue(exception instanceof EasyQuerySingleMoreElementException);
             EasyQuerySingleMoreElementException myAppException = (EasyQuerySingleMoreElementException) exception;
-            Assert.assertEquals("找到多条主题信息" , myAppException.getMessage());
+            Assert.assertEquals("single query at most one element in result set." , myAppException.getMessage());
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic`" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            Supplier<Exception> f = () -> {
+                try {
+                    listenerContextManager.startListen(listenerContext);
+                    Topic topic = easyQuery.queryable(Topic.class)
+                            .findNotNull("xaaaaa");
+                } catch (Exception ex) {
+                    return ex;
+                } finally {
+                    listenerContextManager.clear();
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQueryFindNotNullException);
+            EasyQueryFindNotNullException myAppException = (EasyQueryFindNotNullException) exception;
+            Assert.assertEquals("未找到主题信息" , myAppException.getMessage());
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            Supplier<Exception> f = () -> {
+                try {
+                    listenerContextManager.startListen(listenerContext);
+                    Topic topic = easyQuery.queryable(Topic.class)
+                            .findOrNull("xaaaaa");
+                } catch (Exception ex) {
+                    return ex;
+                } finally {
+                    listenerContextManager.clear();
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNull(exception);
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            Supplier<Exception> f = () -> {
+                try {
+                    listenerContextManager.startListen(listenerContext);
+                    Topic topic = easyQuery.queryable(Topic.class)
+                            .findNotNull("xaaaaa","aaaa");
+                } catch (Exception ex) {
+                    return ex;
+                } finally {
+                    listenerContextManager.clear();
+                }
+                return null;
+            };
+            Exception exception = f.get();
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception instanceof EasyQueryFindNotNullException);
+            EasyQueryFindNotNullException myAppException = (EasyQueryFindNotNullException) exception;
+            Assert.assertEquals("aaaa" , myAppException.getMessage());
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
         }
     }
 

@@ -7,26 +7,14 @@ package com.easy.query.core.metadata;
  * @author xuejiaming
  */
 public class ErrorMessage {
-    private final String firstNotNull;
-    private final String singleNotNull;
-    private final String singleMoreThan;
 
-    public ErrorMessage(String firstNotNull, String singleNotNull, String singleMoreThan){
+    private final String notNull;
 
-        this.firstNotNull = firstNotNull;
-        this.singleNotNull = singleNotNull;
-        this.singleMoreThan = singleMoreThan;
+    public ErrorMessage(String notNull){
+        this.notNull = notNull;
     }
 
-    public String getFirstNotNull() {
-        return firstNotNull;
-    }
-
-    public String getSingleNotNull() {
-        return singleNotNull;
-    }
-
-    public String getSingleMoreThan() {
-        return singleMoreThan;
+    public String getNotNull() {
+        return notNull;
     }
 }

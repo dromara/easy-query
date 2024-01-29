@@ -34,6 +34,8 @@ import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
+import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
@@ -294,6 +296,33 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         TR result = firstOrNull(resultClass);
+        if (result == null) {
+            RuntimeException runtimeException = throwFunc.get();
+            assert runtimeException != null;
+            throw runtimeException;
+        }
+        return result;
+    }
+
+    @Override
+    public T1 findOrNull(Object id) {
+        setExecuteMethod(ExecuteMethodEnum.FIND);
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryClass());
+        Collection<String> keyProperties = entityMetadata.getKeyProperties();
+        if(EasyCollectionUtil.isEmpty(keyProperties)){
+            throw new EasyQueryNoPrimaryKeyException(EasyClassUtil.getSimpleName(queryClass()));
+        }
+        if(EasyCollectionUtil.isNotSingle(keyProperties)){
+            throw new EasyQueryMultiPrimaryKeyException(EasyClassUtil.getSimpleName(queryClass()));
+        }
+        List<T1> list = whereById(id).toList();
+
+        return EasyCollectionUtil.firstOrNull(list);
+    }
+
+    @Override
+    public T1 findNotNull(Object id, Supplier<RuntimeException> throwFunc) {
+        T1 result = findOrNull(id);
         if (result == null) {
             RuntimeException runtimeException = throwFunc.get();
             assert runtimeException != null;

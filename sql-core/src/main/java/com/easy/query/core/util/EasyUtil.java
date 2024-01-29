@@ -28,12 +28,10 @@ import java.util.stream.Stream;
 public class EasyUtil {
 
     public static final String NOT_NULL = "query no element in result set.";
+    public static final String FIND_NOT_NULL = "find not null query no element in result set.";
     public static final String FIRST_NOT_NULL = "first not null query no element in result set.";
     public static final String SINGLE_NOT_NULL = "single not null query no element in result set.";
     public static final String SINGLE_MORE_THAN = "";//single query at most one element in result set.
-
-
-    private static final int FLAG_SERIALIZABLE = 1;
 
     private EasyUtil() {
     }

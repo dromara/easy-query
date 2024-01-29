@@ -174,18 +174,9 @@ public class EntityMetadata {
         }
         EasyAssertMessage easyAssertMessage = EasyClassUtil.getAnnotation(entityClass, EasyAssertMessage.class);
         if (easyAssertMessage != null) {
-
-            this.errorMessage = new ErrorMessage(
-                    EasyStringUtil.isNotBlank(easyAssertMessage.firstNotNull())?easyAssertMessage.firstNotNull():easyAssertMessage.notNull(),
-                    EasyStringUtil.isNotBlank(easyAssertMessage.singleNotNull())?easyAssertMessage.singleNotNull():easyAssertMessage.notNull(),
-                    easyAssertMessage.singleMoreThan()
-            );
+            this.errorMessage = new ErrorMessage(easyAssertMessage.value());
         } else {
-            this.errorMessage = new ErrorMessage(
-                    EasyUtil.NOT_NULL,
-                    EasyUtil.NOT_NULL,
-                    EasyUtil.SINGLE_MORE_THAN
-            );
+            this.errorMessage = new ErrorMessage(EasyUtil.NOT_NULL);
         }
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
 

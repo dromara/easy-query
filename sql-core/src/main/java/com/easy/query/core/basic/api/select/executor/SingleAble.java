@@ -30,21 +30,9 @@ public interface SingleAble<T> extends QueryAvailable<T> {
      * <blockquote><pre>
      * {@code
      *
-     * @EasyAssertMessage(
-     *         notNull = "未找到主题信息",
-     *         singleMoreThan = "找到多条主题信息"
-     * )
+     * @EasyAssertMessage("未找到主题信息")
      * public class Topic{}
-     *
-     *
-     * @EasyAssertMessage(
-     *         //notNull = "未找到主题信息",
-     *         firstNotNull = "未找到主题信息",
-     *         singleNotNull = "未找到主题信息",
-     *         singleMoreThan = "找到多条主题信息"
-     * )
-     * public class Topic{}
-     *                    }
+     * }
      * </pre></blockquote>
      * @return
      */

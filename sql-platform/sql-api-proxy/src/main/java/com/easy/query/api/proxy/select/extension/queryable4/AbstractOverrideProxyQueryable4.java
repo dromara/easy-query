@@ -113,6 +113,15 @@ public abstract class AbstractOverrideProxyQueryable4<T1Proxy extends ProxyEntit
         return entityQueryable.singleNotNull(resultClass,throwFunc);
     }
     @Override
+    public T1 findOrNull(Object id) {
+        return entityQueryable.findOrNull(id);
+    }
+
+    @Override
+    public T1 findNotNull(Object id, Supplier<RuntimeException> throwFunc) {
+        return entityQueryable.findNotNull(id,throwFunc);
+    }
+    @Override
     public Map<String, Object> toMap() {
         return entityQueryable.toMap();
     }

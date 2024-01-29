@@ -113,9 +113,14 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
         return entityQueryable.firstNotNull(resultClass, msg, code);
     }
 
+
     @Override
     public <TR> TR singleOrNull(Class<TR> resultClass) {
         return entityQueryable.singleOrNull(resultClass);
+    }
+    @Override
+    public T1 findOrNull(Object id) {
+        return entityQueryable.findOrNull(id);
     }
 
     @Override
@@ -131,6 +136,10 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         return entityQueryable.singleNotNull(resultClass, throwFunc);
+    }
+    @Override
+    public T1 findNotNull(Object id, Supplier<RuntimeException> throwFunc) {
+        return entityQueryable.findNotNull(id,throwFunc);
     }
 
     @Override

@@ -128,6 +128,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     public <TR> TR singleOrNull(Class<TR> resultClass) {
         return entityQueryable.singleOrNull(resultClass);
     }
+    @Override
+    public T1 findOrNull(Object id) {
+        return entityQueryable.findOrNull(id);
+    }
+
 
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code) {
@@ -142,6 +147,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         return entityQueryable.singleNotNull(resultClass, throwFunc);
+    }
+    @Override
+    public T1 findNotNull(Object id, Supplier<RuntimeException> throwFunc) {
+        return entityQueryable.findNotNull(id,throwFunc);
     }
 
     @Override
