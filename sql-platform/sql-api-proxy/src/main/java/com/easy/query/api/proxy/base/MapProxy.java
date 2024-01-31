@@ -40,6 +40,10 @@ public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String,Object>> 
      */
     public MapProxy(String anonymousName,Class<?> packageWith,boolean entityFileProxy) {
     }
+    public MapProxy(String anonymousName,String moduleName,String packageName) {
+    }
+    public MapProxy(String anonymousName,String moduleName,String packageName,boolean entityFileProxy) {
+    }
 
     @Override
     public Class<Map<String,Object>> getEntityClass() {
