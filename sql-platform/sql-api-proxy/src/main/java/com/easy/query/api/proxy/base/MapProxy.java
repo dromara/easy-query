@@ -25,6 +25,22 @@ public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String,Object>> 
     public MapProxy() {
     }
 
+    /**
+     * 创建匿名对象
+     * @param anonymousName 匿名对象名称
+     * @param packageWith 和哪个字节在同一个包
+     */
+    public MapProxy(String anonymousName,Class<?> packageWith) {
+    }
+    /**
+     * 创建匿名对象
+     * @param anonymousName 匿名对象名称
+     * @param packageWith 和哪个字节在同一个包
+     * @param entityFileProxy 是否使用{@link com.easy.query.core.annotation.EntityFileProxy}默认不使用
+     */
+    public MapProxy(String anonymousName,Class<?> packageWith,boolean entityFileProxy) {
+    }
+
     @Override
     public Class<Map<String,Object>> getEntityClass() {
         return entityClass;
