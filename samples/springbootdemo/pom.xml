@@ -84,25 +84,25 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-core</artifactId>
-            <version>1.9.33</version>
+            <version>1.9.34</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-api4j</artifactId>
-            <version>1.9.33</version>
+            <version>1.9.34</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-springboot-starter</artifactId>
-            <version>1.9.33</version>
+            <version>1.9.34</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-cache</artifactId>
-            <version>1.9.33</version>
+            <version>1.9.34</version>
             <scope>compile</scope>
         </dependency>
 
