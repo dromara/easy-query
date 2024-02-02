@@ -730,6 +730,20 @@ public class QueryTest5 extends BaseTest {
             }).toSQL();
 
             Assert.assertEquals("SELECT SUM(DISTINCT IFNULL(t.`stars`,?)) AS `stars` FROM `t_topic` t", sql);
+//
+//            easyEntityQuery.queryable(Topic.class)
+//                    .where(topic -> topic.id().eq("123"))
+//                    .select(topic -> new AnonymousTypeNameProxy().adapter(r->{
+//        r.name().set(topic.createTime());
+//        r.age().set(topic.stars());
+//        })
+
+//)
+//            easyQueryClient.queryable(Topic.class)
+//                    .where(o->{
+//                        SQLFunc fx = o.fx();
+//                        o.eq(fx.nullOrDefault("id","12"),"123");
+//                    })
         }
         {
             String sql = easyQuery.queryable(Topic.class)

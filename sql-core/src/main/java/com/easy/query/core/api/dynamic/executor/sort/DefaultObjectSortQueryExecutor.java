@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class DefaultObjectSortQueryExecutor implements ObjectSortQueryExecutor{
     @Override
-    public void whereObject(ObjectSort objectSort, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+    public void orderByObject(ObjectSort objectSort, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         boolean strictMode = objectSort.useStrictMode();
 
         ObjectSortBuilderImpl orderByBuilder = new ObjectSortBuilderImpl();

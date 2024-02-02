@@ -10,5 +10,5 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
  * @author xuejiaming
  */
 public interface ObjectSortQueryExecutor {
-    void whereObject(ObjectSort objectSort, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    void orderByObject(ObjectSort objectSort, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
 }

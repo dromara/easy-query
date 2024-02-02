@@ -722,7 +722,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (condition) {
             Objects.requireNonNull(objectSort, "order by object param object sort can not be null");
             ObjectSortQueryExecutor objectSortQueryExecutor = entityQueryExpressionBuilder.getRuntimeContext().getObjectSortQueryExecutor();
-            objectSortQueryExecutor.whereObject(objectSort, entityQueryExpressionBuilder);
+            objectSortQueryExecutor.orderByObject(objectSort, entityQueryExpressionBuilder);
         }
         return this;
     }

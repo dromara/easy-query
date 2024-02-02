@@ -129,6 +129,19 @@ public class QueryTest extends BaseTest {
 
     @Test
     public void query2() {
+//        List<Object> condition=null;
+//        easyQuery.queryable(BlogEntity.class)
+//                .where(o -> {
+//                    if(1==2){
+//                        o.eq(BlogEntity::getId, "97");
+//                    }
+//                    if(2==2){
+//                        o.eq(BlogEntity::getContent, "97");
+//                    }
+//                    o.eq(BlogEntity::getUrl, "97");
+//                })
+
+
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "97"));
         String sql = queryable.toSQL();
