@@ -265,9 +265,15 @@ public class RelationTest extends BaseTest {
                 }
             }
             {
+                List<SchoolStudent> list2 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.schoolClass(),q->q.asNoTracking().disableLogicDelete())
+                        .toList();
+                List<SchoolStudent> list3 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.schoolClass(),20)
+                        .toList();
                 //todo alias
                 List<SchoolStudentVO> list1 = easyEntityQuery.queryable(SchoolStudent.class)
-                        .include((n, o) -> n.asQueryable(o.schoolClass()))
+                        .include(o->o.schoolClass())
                         .select(o -> new SchoolStudentVOProxy().adapter(r -> {
                             r.selectAll(o);
                             r.schoolClass().setNavigate(o.schoolClass());
@@ -330,6 +336,8 @@ public class RelationTest extends BaseTest {
             }
 
             {
+//                easyQueryClient.queryable(SchoolClass.class)
+//                        .include(o-> o.with("schoolStudents"))
                 List<SchoolClass> list1 = easyQuery.queryable(SchoolClass.class)
                         .include(o -> o.many(SchoolClass::getSchoolStudents, 1))
                         .toList();
