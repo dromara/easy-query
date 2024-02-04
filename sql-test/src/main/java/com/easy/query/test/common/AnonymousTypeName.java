@@ -1,17 +1,16 @@
 package com.easy.query.test.common;
 
-import java.time.LocalDateTime;
-import java.lang.Integer;
-
-import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.EasyAnonymous;
+import com.easy.query.core.annotation.EntityProxy;
+
+import java.time.LocalDateTime;
 
 /**
  * 这是匿名对象类型由easy-query插件生成请勿修改
  * easy-query-plugin automatic generation
  */
 @EntityProxy
-@EasyAnonymous(moduleName = "sql-test", packageName = "com.easy.query.test.common")
+@EasyAnonymous
 public class AnonymousTypeName {
 
     private LocalDateTime name;
