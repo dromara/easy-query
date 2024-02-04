@@ -16,4 +16,21 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface EasyAnonymous {
+    /**
+     * 匿名对象所属模块
+     * @return
+     */
+    String moduleName();
+
+    /**
+     * 匿名对象所属包名
+     * @return
+     */
+    String packageName();
+
+    /**
+     * 是否使用file代理
+     * @return
+     */
+    boolean entityFileProxy() default false;
 }
