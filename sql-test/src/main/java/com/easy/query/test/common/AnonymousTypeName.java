@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * easy-query-plugin automatic generation
  */
 @EntityProxy
-@EasyAnonymous
+@EasyAnonymous(moduleName = "sql-test", packageName = "com.easy.query.test.common")
 public class AnonymousTypeName {
 
     private LocalDateTime name;
