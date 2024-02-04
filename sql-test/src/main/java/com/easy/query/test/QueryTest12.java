@@ -249,6 +249,8 @@ public class QueryTest12 extends BaseTest {
             LocalDateTime value1 = localDateTimeDraft1.getValue1();
 
         }
+//        easyEntityQuery.queryable(BlogEntity.class)
+//                .select(b ->new UserNameAndId)
 
         List<Draft2<String, LocalDateTime>> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .select(o -> Select.DRAFT.of(

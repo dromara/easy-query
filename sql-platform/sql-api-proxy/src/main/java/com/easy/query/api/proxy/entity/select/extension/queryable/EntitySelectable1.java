@@ -95,9 +95,12 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @return 返回新的结果操作表达式可以继续筛选处理
      */
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression);
+//    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectAny(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression){
+//        return select(selectExpression);
+//    }
 
     /**
-     * 快速读取单列用于subQuery等查询
+     * 快速读取单列用于返回基本类型或者subQuery等查询
      * <blockquote><pre>
      *     {@code
      *          //如果您是枚举需要单独查询请转成integer或者具体数据库对应的值

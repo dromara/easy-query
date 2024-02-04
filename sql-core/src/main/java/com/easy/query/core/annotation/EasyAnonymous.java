@@ -16,7 +16,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface EasyAnonymous {
-    String moduleName();
-    String packageName();
-    boolean entityFileProxy() default false;
 }

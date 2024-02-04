@@ -3,10 +3,12 @@ package com.easy.query.api.proxy.entity.select.extension.queryable8;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DraftResult;
 import com.easy.query.core.common.tuple.MergeTuple8;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression8;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -98,5 +100,50 @@ public interface EntitySelectable8<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(SQLFuncExpression1<MergeTuple8<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy>, TRProxy> selectExpression) {
         return select((a, b, c, d, e, f, g, h) -> selectExpression.apply(new MergeTuple8<>(a, b, c, d, e, f, g, h)));
+    }
+    /**
+     * 快速读取单列用于返回基本类型或者subQuery等查询
+     * <blockquote><pre>
+     *     {@code
+     *          //如果您是枚举需要单独查询请转成integer或者具体数据库对应的值
+     *          //直接返回单个列如果是Enum类型的不支持
+     *         .selectColumn((t1,t2,t3,t4,t5,t6,t7,t8) -> t2.enumProp().toNumber(Integer.class))
+     *          //快速生成子查询
+     *          Query<Enum> query = easyEntityQuery.queryable(EntityClass.class).where(o -> o.id().eq("123" )).selectColumn((t1,t2,t3,t4,t5,t6,t7,t8) -> t1.enumProp());
+     *         List<EntityClass> list = easyEntityQuery.queryable(EntityClass.class).where(o -> {
+     *             o.enumProp().in(query);
+     *         }).toList();
+     *
+     *
+     *                 }
+     * </pre></blockquote>
+     *
+     * @param selectExpression
+     * @param <TR>
+     * @return
+     */
+    default <TR> Query<TR> selectColumn(SQLFuncExpression8<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, PropTypeColumn<TR>> selectExpression) {
+        PropTypeColumn<TR> column = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(),get8Proxy());
+        Objects.requireNonNull(column, "select column null result class");
+        ClientQueryable<?> select = getClientQueryable8().select(column.getPropertyType(), (t1, t2, t3, t4, t5, t6, t7 ,t8) -> {
+            if (t2.getTable() == column.getTable()) {
+                t2.column(column.getValue());
+            } else if (t3.getTable() == column.getTable()) {
+                t3.column(column.getValue());
+            } else if (t4.getTable() == column.getTable()) {
+                t4.column(column.getValue());
+            } else if (t5.getTable() == column.getTable()) {
+                t5.column(column.getValue());
+            } else if (t6.getTable() == column.getTable()) {
+                t6.column(column.getValue());
+            } else if (t7.getTable() == column.getTable()) {
+                t7.column(column.getValue());
+            }  else if (t8.getTable() == column.getTable()) {
+                t8.column(column.getValue());
+            } else {
+                t1.column(column.getValue());
+            }
+        });
+        return EasyObjectUtil.typeCastNullable(select);
     }
 }
