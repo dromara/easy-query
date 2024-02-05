@@ -68,7 +68,9 @@ public @interface Column {
 
     /**
      * 是否是大字段 true:是 false:否
+     * 如果需要默认不查询请使用{@link #autoSelect()}
      */
+    @Deprecated
     boolean large() default false;
 
     /**

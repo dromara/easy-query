@@ -240,6 +240,14 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     public <TR> Query<TR> select(Class<TR> resultClass) {
         return entityQueryable.select(resultClass);
     }
+
+//    @Override
+//    public <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression) {
+//        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy());
+//        return entityQueryable.select(resultClass, columnAsSelector -> {
+//            sqlSelectAsExpression.accept(columnAsSelector.getAsSelector());
+//        });
+//    }
     //    @Override
 //    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> ProxyQueryable<TRProxy, TR> select(TRProxy trProxy, SQLExpression2<ProxyAsSelector<TRProxy, TR>, T1Proxy> selectExpression) {
 //
