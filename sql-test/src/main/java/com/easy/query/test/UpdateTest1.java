@@ -91,6 +91,77 @@ public class UpdateTest1 extends BaseTest{
 
     }
     @Test
+    public void testUpdate1_2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Supplier<Exception> f = () -> {
+            try {
+                easyEntityQuery.updatable(Topic.class)
+                        .setColumns(o->{
+                            //o.title().set(o.stars());编译报错因为starts是Integer类型二title是String类型
+                            o.title().set(o.stars().toStr());
+                        })
+                        .asSchema(x->x+"_abc")
+                        .asTable(o->o+"_abc")
+                        .whereById("1")
+                        .executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `title` = CAST(`stars` AS CHAR) WHERE `id` = ?", easyQuerySQLStatementException.getSQL());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `title` = CAST(`stars` AS CHAR) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+    }
+    @Test
+    public void testUpdate1_3(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Supplier<Exception> f = () -> {
+            try {
+                easyEntityQuery.updatable(Topic.class)
+                        .setColumns(o->{
+                            o.title().set(o.stars().setPropertyType(String.class));
+                        })
+                        .asSchema(x->x+"_abc")
+                        .asTable(o->o+"_abc")
+                        .whereById("1")
+                        .executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `title` = `stars` WHERE `id` = ?", easyQuerySQLStatementException.getSQL());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `title` = `stars` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+    }
+    @Test
     public void testUpdate2(){
 
 

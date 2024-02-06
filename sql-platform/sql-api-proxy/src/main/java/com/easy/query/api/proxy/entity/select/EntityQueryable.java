@@ -60,6 +60,7 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
 
     ClientQueryable<T1> getClientQueryable();
 
+    @Deprecated
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy);
 
     @Override
