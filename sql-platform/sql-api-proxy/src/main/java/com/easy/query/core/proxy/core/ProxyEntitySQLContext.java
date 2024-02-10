@@ -6,6 +6,7 @@ import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.SQLOrderByExpression;
@@ -32,11 +33,13 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
  * @author xuejiaming
  */
 public class ProxyEntitySQLContext implements EntitySQLContext {
+    private final EntityExpressionBuilder entityExpressionBuilder;
     private final QueryRuntimeContext runtimeContext;
     private EntityExpressionAccept accept = EntityExpressionAccept.empty;
     private SQLSelectAsExpression sqlSelectAsExpression = null;
 
-    public ProxyEntitySQLContext(QueryRuntimeContext runtimeContext) {
+    public ProxyEntitySQLContext(EntityExpressionBuilder entityExpressionBuilder,QueryRuntimeContext runtimeContext) {
+        this.entityExpressionBuilder = entityExpressionBuilder;
 
         this.runtimeContext = runtimeContext;
     }
@@ -91,6 +94,11 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
             return ((PredicateEntityExpressionAccept) accept).getFilter();
         }
         return null;
+    }
+
+    @Override
+    public EntityExpressionBuilder getEntityExpressionBuilder() {
+        return entityExpressionBuilder;
     }
 
     @Override

@@ -37,6 +37,7 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
     protected boolean distinct;
     //    protected List<EntityQuerySQLExpression> includes;
     protected final List<EntityTableSQLExpression> tables = new ArrayList<>();
+    protected List<EntityTableSQLExpression> relationTables;
 
     public QuerySQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
         this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;
@@ -160,6 +161,19 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
     @Override
     public List<EntityTableSQLExpression> getTables() {
         return tables;
+    }
+
+    @Override
+    public List<EntityTableSQLExpression> getRelationTables() {
+        if (relationTables==null){
+            relationTables=new ArrayList<>();
+        }
+        return relationTables;
+    }
+
+    @Override
+    public boolean hasRelationTables() {
+        return EasyCollectionUtil.isNotEmpty(relationTables);
     }
 
     @Override
@@ -296,6 +310,11 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         easyQuerySQLExpression.setRows(this.rows);
         for (EntityTableSQLExpression table : this.tables) {
             easyQuerySQLExpression.getTables().add(table.cloneSQLExpression());
+        }
+        if(hasRelationTables()){
+            for (EntityTableSQLExpression relationTable : this.relationTables) {
+                easyQuerySQLExpression.getRelationTables().add(relationTable.cloneSQLExpression());
+            }
         }
         return easyQuerySQLExpression;
     }

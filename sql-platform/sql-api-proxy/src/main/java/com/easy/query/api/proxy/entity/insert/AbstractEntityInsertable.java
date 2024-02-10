@@ -27,7 +27,7 @@ public class AbstractEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> 
 
     public AbstractEntityInsertable(TProxy tProxy, ClientInsertable<T> clientInsertable) {
         this.clientInsertable = clientInsertable;
-        this.tProxy = tProxy.create(clientInsertable.getEntityInsertExpressionBuilder().getTable(0).getEntityTable(), getEntityInsertExpressionBuilder().getRuntimeContext());
+        this.tProxy = tProxy.create(clientInsertable.getEntityInsertExpressionBuilder().getTable(0).getEntityTable(),clientInsertable.getEntityInsertExpressionBuilder(), getEntityInsertExpressionBuilder().getRuntimeContext());
 
     }
 

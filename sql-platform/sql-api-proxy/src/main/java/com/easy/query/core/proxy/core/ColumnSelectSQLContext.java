@@ -6,6 +6,7 @@ import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.SQLOrderByExpression;
@@ -85,6 +86,11 @@ public class ColumnSelectSQLContext implements EntitySQLContext {
 
     @Override
     public Filter getFilter() {
+        return null;
+    }
+
+    @Override
+    public EntityExpressionBuilder getEntityExpressionBuilder() {
         return null;
     }
 

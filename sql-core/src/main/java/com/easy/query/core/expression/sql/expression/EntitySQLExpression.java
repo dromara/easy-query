@@ -13,9 +13,20 @@ import java.util.List;
  */
 public interface EntitySQLExpression extends SQLExpression {
     EntitySQLExpressionMetadata getExpressionMetadata();
+
     QueryRuntimeContext getRuntimeContext();
+
     List<EntityTableSQLExpression> getTables();
-    default EntityTableSQLExpression getTable(int index){
+
+    default List<EntityTableSQLExpression> getRelationTables() {
+        return null;
+    }
+
+    default boolean hasRelationTables() {
+        return false;
+    }
+
+    default EntityTableSQLExpression getTable(int index) {
         return getTables().get(index);
     }
 

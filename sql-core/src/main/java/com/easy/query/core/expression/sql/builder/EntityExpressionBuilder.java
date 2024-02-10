@@ -2,9 +2,12 @@ package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @Description: 文件说明
@@ -18,7 +21,15 @@ public interface EntityExpressionBuilder extends ExpressionBuilder {
     Class<?> getQueryClass();
     ExpressionContext getExpressionContext();
     QueryRuntimeContext getRuntimeContext();
+
+    /**
+     * 添加表
+     * @param tableExpression
+     */
     void addSQLEntityTableExpression(EntityTableExpressionBuilder tableExpression);
+    EntityTableExpressionBuilder addRelationEntityTableExpression(RelationTableKey relationTableKey, Function<RelationTableKey,EntityTableExpressionBuilder> tableExpressionSupplier);
+    Map<RelationTableKey,EntityTableExpressionBuilder> getRelationTables();
+    boolean hasRelationTables();
     List<EntityTableExpressionBuilder> getTables();
     default EntityTableExpressionBuilder getTable(int index){
         return getTables().get(index);

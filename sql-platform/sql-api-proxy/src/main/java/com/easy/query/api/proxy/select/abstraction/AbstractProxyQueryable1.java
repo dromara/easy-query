@@ -19,7 +19,7 @@ public abstract class AbstractProxyQueryable1<T1Proxy extends ProxyEntity<T1Prox
     public AbstractProxyQueryable1(T1Proxy t1Proxy, ClientQueryable<T1> entityQueryable) {
         super(entityQueryable);
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
-        this.t1Proxy = t1Proxy.create(sqlEntityExpressionBuilder.getTable(0).getEntityTable(),getRuntimeContext());
+        this.t1Proxy = t1Proxy.create(sqlEntityExpressionBuilder.getTable(0).getEntityTable(),sqlEntityExpressionBuilder,getRuntimeContext());
     }
 
     @Override

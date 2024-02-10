@@ -23,7 +23,7 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
 
     public AbstractExpressionDeletable(TProxy tProxy,ClientExpressionDeletable<T> expressionObjectDeletable) {
         this.expressionObjectDeletable = expressionObjectDeletable;
-        this.tProxy = tProxy.create(expressionObjectDeletable.getDeleteExpressionBuilder().getTable(0).getEntityTable(), getExpressionContext().getRuntimeContext());
+        this.tProxy = tProxy.create(expressionObjectDeletable.getDeleteExpressionBuilder().getTable(0).getEntityTable(),expressionObjectDeletable.getDeleteExpressionBuilder(), getExpressionContext().getRuntimeContext());
     }
 
     @Override

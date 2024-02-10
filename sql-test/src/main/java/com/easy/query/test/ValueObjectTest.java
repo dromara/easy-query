@@ -6,6 +6,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.test.dto.ValueCompanyDTO;
 import com.easy.query.test.entity.Company;
 import com.easy.query.test.entity.CompanyAddress;
 import com.easy.query.test.entity.CompanyCity;
@@ -771,6 +772,16 @@ public class ValueObjectTest extends BaseTest {
                     .select(o->o.column(o.t().address()).column(o.t().license().extra()))
                     .firstOrNull();
             Assert.assertNotNull(province12);
+        }
+        {
+
+            ValueCompanyDTO province12 = easyEntityQuery.queryable(ValueCompany.class)
+                    .where(o -> o.address().province().eq( "province1"))
+                    .select(ValueCompanyDTO.class)
+                    .firstOrNull();
+            Assert.assertNotNull(province12);
+            Assert.assertNotNull(province12.getAddress());
+            Assert.assertNotNull(province12.getAddress().getProvince());
         }
     }
 }

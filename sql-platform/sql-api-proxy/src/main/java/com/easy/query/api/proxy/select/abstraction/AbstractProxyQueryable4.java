@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.select.abstraction;
 
 import com.easy.query.api.proxy.select.extension.queryable4.AbstractOverrideProxyQueryable4;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
@@ -21,10 +22,11 @@ public abstract class AbstractProxyQueryable4<T1Proxy extends ProxyEntity<T1Prox
 
     public AbstractProxyQueryable4(T1Proxy t1Proxy, T2Proxy t2Proxy, T3Proxy t3Proxy, T4Proxy t4Proxy, ClientQueryable4<T1, T2, T3, T4> entityQueryable) {
         super(entityQueryable);
-        this.t1Proxy = t1Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(0).getEntityTable(),getRuntimeContext());
-        this.t2Proxy = t2Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(1).getEntityTable(),getRuntimeContext());
-        this.t3Proxy = t3Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(2).getEntityTable(),getRuntimeContext());
-        this.t4Proxy = t4Proxy.create(entityQueryable.getSQLEntityExpressionBuilder().getTable(3).getEntityTable(),getRuntimeContext());
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
+        this.t1Proxy = t1Proxy.create(sqlEntityExpressionBuilder.getTable(0).getEntityTable(),sqlEntityExpressionBuilder,getRuntimeContext());
+        this.t2Proxy = t2Proxy.create(sqlEntityExpressionBuilder.getTable(1).getEntityTable(),sqlEntityExpressionBuilder,getRuntimeContext());
+        this.t3Proxy = t3Proxy.create(sqlEntityExpressionBuilder.getTable(2).getEntityTable(),sqlEntityExpressionBuilder,getRuntimeContext());
+        this.t4Proxy = t4Proxy.create(sqlEntityExpressionBuilder.getTable(3).getEntityTable(),sqlEntityExpressionBuilder,getRuntimeContext());
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.Setter;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.SQLOrderByExpression;
@@ -29,6 +30,7 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 public interface EntitySQLContext {
     QueryRuntimeContext getRuntimeContext();
     @Nullable Filter getFilter();
+    @Nullable EntityExpressionBuilder getEntityExpressionBuilder();
     @Nullable AggregateFilter getAggregateFilter();
     @Nullable OrderSelector getOrderSelector();
     @Nullable

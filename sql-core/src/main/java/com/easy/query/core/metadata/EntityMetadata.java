@@ -126,8 +126,8 @@ public class EntityMetadata {
     private final List<PredicateFilterInterceptor> predicateFilterInterceptors = new ArrayList<>();
     private final List<EntityInterceptor> entityInterceptors = new ArrayList<>();
     private final List<UpdateSetInterceptor> updateSetInterceptors = new ArrayList<>();
-    private final LinkedHashMap<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
-    private final LinkedHashMap<String, NavigateMetadata> property2NavigateMap = new LinkedHashMap<>();
+    private final Map<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
+    private final Map<String, NavigateMetadata> property2NavigateMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
     private final List<String/*column name*/> generatedKeyColumns = new ArrayList<>(4);
     private final Map<String/*column name*/, ColumnMetadata> column2PropertyMap = new HashMap<>();
@@ -700,8 +700,11 @@ public class EntityMetadata {
         return property2ColumnMap.keySet();
     }
 
-    public LinkedHashMap<String, ColumnMetadata> getProperty2ColumnMap() {
+    public Map<String, ColumnMetadata> getProperty2ColumnMap() {
         return property2ColumnMap;
+    }
+    public Map<String, NavigateMetadata> getProperty2NavigateMap() {
+        return property2NavigateMap;
     }
 
     /**

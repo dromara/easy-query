@@ -24,14 +24,14 @@ public interface ProxyJoinable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     default <T7Proxy extends ProxyEntity<T7Proxy, T7>, T7> ProxyQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> leftJoin(T7Proxy joinProxy, SQLExpression1<MultiProxyFilter7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>> on) {
         ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> entityQueryable7 = getClientQueryable6().leftJoin(joinProxy.getEntityClass(), (t, t1, t2, t3, t4, t5, t6) -> {
-            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinProxy.create(t6.getTable(),getRuntimeContext())));
+            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinProxy.create(t6.getTable(),getClientQueryable6().getSQLEntityExpressionBuilder(), getRuntimeContext())));
         });
         return new EasyProxyQueryable7<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinProxy, entityQueryable7);
     }
 
     default <T7Proxy extends ProxyEntity<T7Proxy, T7>, T7> ProxyQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> leftJoin(ProxyQueryable<T7Proxy, T7> joinQueryable, SQLExpression1<MultiProxyFilter7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>> on) {
         ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> entityQueryable7 = getClientQueryable6().leftJoin(joinQueryable.getClientQueryable(), (t, t1, t2, t3, t4, t5, t6) -> {
-            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(), get6Proxy(), joinQueryable.get1Proxy().create(t6.getTable(),getRuntimeContext())));
+            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(), get6Proxy(), joinQueryable.get1Proxy().create(t6.getTable(),getClientQueryable6().getSQLEntityExpressionBuilder(), getRuntimeContext())));
         });
         return new EasyProxyQueryable7<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinQueryable.get1Proxy(), entityQueryable7);
 
@@ -39,7 +39,7 @@ public interface ProxyJoinable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     default <T7Proxy extends ProxyEntity<T7Proxy, T7>, T7> ProxyQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> rightJoin(T7Proxy joinProxy, SQLExpression1<MultiProxyFilter7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>> on) {
         ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> entityQueryable7 = getClientQueryable6().rightJoin(joinProxy.getEntityClass(), (t, t1, t2, t3, t4, t5, t6) -> {
-            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinProxy.create(t6.getTable(),getRuntimeContext())));
+            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinProxy.create(t6.getTable(),getClientQueryable6().getSQLEntityExpressionBuilder(), getRuntimeContext())));
         });
         return new EasyProxyQueryable7<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinProxy, entityQueryable7);
 
@@ -47,7 +47,7 @@ public interface ProxyJoinable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     default <T7Proxy extends ProxyEntity<T7Proxy, T7>, T7> ProxyQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> rightJoin(ProxyQueryable<T7Proxy, T7> joinQueryable, SQLExpression1<MultiProxyFilter7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>> on) {
         ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> entityQueryable7 = getClientQueryable6().rightJoin(joinQueryable.getClientQueryable(), (t, t1, t2, t3, t4, t5, t6) -> {
-            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(), get6Proxy(), joinQueryable.get1Proxy().create(t6.getTable(),getRuntimeContext())));
+            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(), get6Proxy(), joinQueryable.get1Proxy().create(t6.getTable(),getClientQueryable6().getSQLEntityExpressionBuilder(), getRuntimeContext())));
         });
         return new EasyProxyQueryable7<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinQueryable.get1Proxy(), entityQueryable7);
 
@@ -55,7 +55,7 @@ public interface ProxyJoinable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     default <T7Proxy extends ProxyEntity<T7Proxy, T7>, T7> ProxyQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> innerJoin(T7Proxy joinProxy, SQLExpression1<MultiProxyFilter7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>> on) {
         ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> entityQueryable7 = getClientQueryable6().innerJoin(joinProxy.getEntityClass(), (t, t1, t2, t3, t4, t5, t6) -> {
-            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinProxy.create(t6.getTable(),getRuntimeContext())));
+            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinProxy.create(t6.getTable(),getClientQueryable6().getSQLEntityExpressionBuilder(), getRuntimeContext())));
         });
         return new EasyProxyQueryable7<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinProxy, entityQueryable7);
 
@@ -63,7 +63,7 @@ public interface ProxyJoinable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     default <T7Proxy extends ProxyEntity<T7Proxy, T7>, T7> ProxyQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> innerJoin(ProxyQueryable<T7Proxy, T7> joinQueryable, SQLExpression1<MultiProxyFilter7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>> on) {
         ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> entityQueryable7 = getClientQueryable6().innerJoin(joinQueryable.getClientQueryable(), (t, t1, t2, t3, t4, t5, t6) -> {
-            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(), get6Proxy(), joinQueryable.get1Proxy().create(t6.getTable(),getRuntimeContext())));
+            on.apply(new MultiProxyFilter7Impl<>(t.getFilter(), get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(), get6Proxy(), joinQueryable.get1Proxy().create(t6.getTable(),getClientQueryable6().getSQLEntityExpressionBuilder(), getRuntimeContext())));
         });
         return new EasyProxyQueryable7<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy(),get6Proxy(), joinQueryable.get1Proxy(), entityQueryable7);
 

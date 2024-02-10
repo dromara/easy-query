@@ -30,12 +30,12 @@ public abstract class AbstractProxyQueryable6<T1Proxy extends ProxyEntity<T1Prox
     public AbstractProxyQueryable6(T1Proxy t1Proxy, T2Proxy t2Proxy, T3Proxy t3Proxy, T4Proxy t4Proxy, T5Proxy t5Proxy,T6Proxy t6Proxy, ClientQueryable6<T1, T2, T3, T4, T5, T6> entityQueryable) {
         super( entityQueryable);
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
-        this.t1Proxy = t1Proxy.create(sqlEntityExpressionBuilder.getTable(0).getEntityTable(),getRuntimeContext());
-        this.t2Proxy = t2Proxy.create(sqlEntityExpressionBuilder.getTable(1).getEntityTable(),getRuntimeContext());
-        this.t3Proxy = t3Proxy.create(sqlEntityExpressionBuilder.getTable(2).getEntityTable(),getRuntimeContext());
-        this.t4Proxy = t4Proxy.create(sqlEntityExpressionBuilder.getTable(3).getEntityTable(),getRuntimeContext());
-        this.t5Proxy = t5Proxy.create(sqlEntityExpressionBuilder.getTable(4).getEntityTable(),getRuntimeContext());
-        this.t6Proxy = t6Proxy.create(sqlEntityExpressionBuilder.getTable(5).getEntityTable(),getRuntimeContext());
+        this.t1Proxy = t1Proxy.create(sqlEntityExpressionBuilder.getTable(0).getEntityTable(),sqlEntityExpressionBuilder,getRuntimeContext());
+        this.t2Proxy = t2Proxy.create(sqlEntityExpressionBuilder.getTable(1).getEntityTable(),sqlEntityExpressionBuilder,getRuntimeContext());
+        this.t3Proxy = t3Proxy.create(sqlEntityExpressionBuilder.getTable(2).getEntityTable(),sqlEntityExpressionBuilder,getRuntimeContext());
+        this.t4Proxy = t4Proxy.create(sqlEntityExpressionBuilder.getTable(3).getEntityTable(),sqlEntityExpressionBuilder,getRuntimeContext());
+        this.t5Proxy = t5Proxy.create(sqlEntityExpressionBuilder.getTable(4).getEntityTable(),sqlEntityExpressionBuilder,getRuntimeContext());
+        this.t6Proxy = t6Proxy.create(sqlEntityExpressionBuilder.getTable(5).getEntityTable(),sqlEntityExpressionBuilder,getRuntimeContext());
     }
 
     @Override

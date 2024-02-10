@@ -10,7 +10,7 @@ import com.easy.query.core.util.EasyStringUtil;
  *
  * @author xuejiaming
  */
-public final class EntityTableAvailable implements TableAvailable {
+public class EntityTableAvailable implements TableAvailable {
     private final EntityMetadata entityMetadata;
     private final boolean hasSchema;
     private final boolean isAnonymous;

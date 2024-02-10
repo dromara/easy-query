@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.GroupBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
@@ -25,6 +26,7 @@ import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMet
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author xuejiaming
@@ -215,6 +217,22 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
                 tableExpression.setOn(on);
             }
         }
+
+        if(hasRelationTables()){
+            //todo 克隆
+            for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> relationTableKV : getRelationTables().entrySet()) {
+                RelationTableKey key = relationTableKV.getKey();
+                EntityTableExpressionBuilder value = relationTableKV.getValue();
+                EntityTableSQLExpression tableExpression = (EntityTableSQLExpression) toTableExpressionSQL(value, false);
+                easyQuerySQLExpression.getTables().add(tableExpression);
+                PredicateSegment on = getTableOnWithQueryFilter(value);
+                if (on != null && on.isNotEmpty()) {
+                    tableExpression.setOn(on);
+                }
+            }
+        }
+
+
         PredicateSegment where = getSQLWhereWithQueryFilter();
         if (where != null && where.isNotEmpty()) {
             easyQuerySQLExpression.setWhere(where);
@@ -283,6 +301,11 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         queryExpressionBuilder.setDistinct(this.distinct);
         for (EntityTableExpressionBuilder table : super.tables) {
             queryExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
+        }
+        if (super.relationTables != null) {
+            for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> relationTableKV : super.relationTables.entrySet()) {
+                queryExpressionBuilder.getRelationTables().put(relationTableKV.getKey(), relationTableKV.getValue().copyEntityTableExpressionBuilder());
+            }
         }
         return queryExpressionBuilder;
     }
