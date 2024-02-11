@@ -29,16 +29,17 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * @author xuejiaming
  * @FileName: ClassUtil.java
  * @Description: 文件说明
  * @Date: 2023/2/11 13:03
- * @author xuejiaming
  */
 public class EasyClassUtil {
-    private final static Log log= LogFactory.getLog(EasyClassUtil.class);
+    private final static Log log = LogFactory.getLog(EasyClassUtil.class);
 
     private EasyClassUtil() {
     }
+
     public static Class<?> getClassForName(String className) {
         try {
             return Class.forName(className);
@@ -48,17 +49,19 @@ public class EasyClassUtil {
     }
 
     public static String getInstanceSimpleName(Object obj) {
-        if(obj==null) {
+        if (obj == null) {
             return EasyStringUtil.EMPTY;
         }
         return getSimpleName(obj.getClass());
     }
+
     public static String getSimpleName(Class<?> clazz) {
         if (clazz == null) {
             return EasyStringUtil.EMPTY;
         }
         return clazz.getSimpleName();
     }
+
     public static String getFullName(Class<?> clazz) {
         if (clazz == null) {
             return EasyStringUtil.EMPTY;
@@ -75,10 +78,10 @@ public class EasyClassUtil {
         return null;
     }
 
-    public static Method getWriteMethodNotNull(FastBeanProperty prop, Class<?> type){
+    public static Method getWriteMethodNotNull(FastBeanProperty prop, Class<?> type) {
         Method writeMethod = getWriteMethodOrNull(prop, type);
-        if(writeMethod==null){
-            throw new EasyQueryException(EasyClassUtil.getSimpleName(type)+"."+prop.getName()+" cant get write method.");
+        if (writeMethod == null) {
+            throw new EasyQueryException(EasyClassUtil.getSimpleName(type) + "." + prop.getName() + " cant get write method.");
         }
         return writeMethod;
     }
@@ -86,6 +89,7 @@ public class EasyClassUtil {
     /**
      * 代码参考beetlsql
      * <a href="https://gitee.com/xiandafu/beetlsql/blob/master/sql-util/src/main/java/org/beetl/sql/clazz/kit/BeanKit.java">beetlsql</a>
+     *
      * @param prop
      * @param type
      * @return
@@ -104,12 +108,19 @@ public class EasyClassUtil {
             try {
                 writeMethod = type.getMethod(setMethodName, prop.getPropertyType());
             } catch (Exception e) {
-                log.error("get write method error:"+prop.getName(),e);
+                log.error("get write method error:" + prop.getName(), e);
                 //不存在set方法
                 return null;
             }
         }
         return writeMethod;
+    }
+
+    public static boolean isNumberType(Class<?> clazz) {
+        if (clazz.isPrimitive()) {
+            return true;
+        }
+        return Number.class.isAssignableFrom(clazz);
     }
 
     public static boolean isBasicType(Class<?> clazz) {
@@ -123,13 +134,14 @@ public class EasyClassUtil {
                     || clazz == BigDecimal.class || clazz == BigInteger.class || clazz == Boolean.class
                     || clazz == java.util.Date.class || clazz == java.sql.Date.class
                     || clazz == java.sql.Timestamp.class || clazz == java.time.LocalDateTime.class
-                    || clazz == java.time.LocalDate.class|| clazz == java.time.LocalTime.class);
+                    || clazz == java.time.LocalDate.class || clazz == java.time.LocalTime.class);
         } else {
             return false;
         }
     }
-    public static  Class<?> getObjectTypeWhenPrimitive(Class<?> propertyType){
-        if(propertyType.isPrimitive()){
+
+    public static Class<?> getObjectTypeWhenPrimitive(Class<?> propertyType) {
+        if (propertyType.isPrimitive()) {
             if (propertyType == boolean.class) {
                 return (Class<?>) Boolean.class;
             } else if (propertyType == byte.class) {
@@ -150,6 +162,7 @@ public class EasyClassUtil {
         }
         return propertyType;
     }
+
     public static boolean isEnumType(Class<?> clazz) {
         return clazz.isEnum();
     }
@@ -165,7 +178,7 @@ public class EasyClassUtil {
     }
 
     public static Map newMapInstanceOrNull(Class<?> clazz) {
-        if(Map.class.equals(clazz)){
+        if (Map.class.equals(clazz)) {
             return new LinkedCaseInsensitiveMap();
         }
         try {
@@ -184,7 +197,8 @@ public class EasyClassUtil {
         }
         return beanInfo.getPropertyDescriptors();
     }
-    public static PropertyDescriptor[] propertyDescriptorsRuntime(Class<?> c){
+
+    public static PropertyDescriptor[] propertyDescriptorsRuntime(Class<?> c) {
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(c, Object.class);
             return beanInfo.getPropertyDescriptors();
@@ -197,8 +211,9 @@ public class EasyClassUtil {
         LinkedHashMap<String, Field> fields = getAllFields0(clazz);
         return fields.values();
     }
-    private static LinkedHashMap<String,Field> getAllFields0(Class<?> clazz) {
-        LinkedHashMap<String,Field> fields = new LinkedHashMap<>();
+
+    private static LinkedHashMap<String, Field> getAllFields0(Class<?> clazz) {
+        LinkedHashMap<String, Field> fields = new LinkedHashMap<>();
         // 递归获取父类的所有Field
         Class<?> superClass = clazz.getSuperclass();
         if (superClass != null) {
@@ -207,7 +222,7 @@ public class EasyClassUtil {
         }
         // 获取当前类的所有Field
         for (Field declaredField : clazz.getDeclaredFields()) {
-            fields.put(declaredField.getName(),declaredField);
+            fields.put(declaredField.getName(), declaredField);
         }
         return fields;
     }
@@ -315,6 +330,7 @@ public class EasyClassUtil {
 
     /**
      * 代码参考beetlsql
+     *
      * @param result
      * @param requiredType
      * @return
@@ -352,10 +368,10 @@ public class EasyClassUtil {
     }
 
 
-
     public static boolean canInstance(int mod) {
         return !Modifier.isAbstract(mod) || !Modifier.isInterface(mod);
     }
+
     public static Class<? extends Collection> getCollectionImplType(Class<?> type) {
         if (canInstance(type.getModifiers())) {
             return (Class<? extends Collection>) type;
@@ -369,6 +385,6 @@ public class EasyClassUtil {
             return HashSet.class;
         }
 
-        throw new IllegalStateException("navigate not support type:"+getSimpleName(type));
+        throw new IllegalStateException("navigate not support type:" + getSimpleName(type));
     }
 }

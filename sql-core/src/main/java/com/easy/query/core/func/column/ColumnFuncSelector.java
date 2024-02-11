@@ -1,5 +1,6 @@
 package com.easy.query.core.func.column;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -20,4 +21,5 @@ public interface ColumnFuncSelector {
     ColumnFuncSelector format(Object valFormat);
     ColumnFuncSelector sql(SQLSegment sqlSegment);
     ColumnFuncSelector sqlFunc(SQLFunction sqlFunction);
+    ColumnFuncSelector subQuery(Query<?> subQuery);
 }

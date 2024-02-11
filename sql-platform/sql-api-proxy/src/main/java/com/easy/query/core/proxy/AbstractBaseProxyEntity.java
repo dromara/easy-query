@@ -23,7 +23,9 @@ import com.easy.query.core.proxy.columns.SQLBooleanColumn;
 import com.easy.query.core.proxy.columns.SQLDateTimeColumn;
 import com.easy.query.core.proxy.columns.SQLNavigateColumn;
 import com.easy.query.core.proxy.columns.SQLNumberColumn;
+import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.SQLStringColumn;
+import com.easy.query.core.proxy.columns.impl.EasySQLQueryable;
 import com.easy.query.core.proxy.columns.impl.SQLAnyColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLBooleanColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLDateTimeColumnImpl;
@@ -120,13 +122,13 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         return propertyProxy.create(entityTableExpressionBuilder.getEntityTable(), this.entitySQLContext);
     }
 
-    protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EasyEntityQueryable<TPropertyProxy, TProperty> getNavigates(String property, TPropertyProxy propertyProxy) {
+    protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLQueryable<TPropertyProxy, TProperty> getNavigates(String property, TPropertyProxy propertyProxy) {
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
         TableAvailable leftTable = getTable();
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
         ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)
                 .where(t -> t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary()));
-        return new EasyEntityQueryable<>(propertyProxy, clientQueryable);
+        return new EasySQLQueryable<>(this.getEntitySQLContext(),new EasyEntityQueryable<>(propertyProxy, clientQueryable));
     }
 }

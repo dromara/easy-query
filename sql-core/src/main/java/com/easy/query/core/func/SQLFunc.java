@@ -1,5 +1,6 @@
 package com.easy.query.core.func;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.column.ColumnFuncSelector;
@@ -125,6 +126,10 @@ public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,
         return constValue(o->o.value(val));
     }
     SQLFunction constValue(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    default SQLFunction subQueryValue(Query<?> query){
+        return subQueryValue(o->o.subQuery(query));
+    }
+    SQLFunction subQueryValue(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 取反

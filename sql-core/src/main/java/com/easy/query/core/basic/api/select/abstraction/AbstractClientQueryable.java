@@ -170,6 +170,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }
         return countSQLEntityExpressionBuilder;
     }
+//    private EntityQueryExpressionBuilder createSumQueryExpressionBuilder(Class<?> numberClass,String property) {
+//        EntityQueryExpressionBuilder queryExpressionBuilder = entityQueryExpressionBuilder.cloneEntityExpressionBuilder();
+//        EntityQueryExpressionBuilder countSQLEntityExpressionBuilder = EasySQLExpressionUtil.getCountEntityQueryExpression(queryExpressionBuilder, queryExpressionBuilder.isDistinct());
+//        if (countSQLEntityExpressionBuilder == null) {
+//            return cloneQueryable().select(numberClass,t->t.sqlFunc(t.fx().sum(property))).getSQLEntityExpressionBuilder();
+//        }
+//        return countSQLEntityExpressionBuilder;
+//    }
 
     @Override
     public ClientQueryable<Long> selectCount() {
@@ -183,6 +191,26 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             return cloneQueryable().select(numberClass, o -> o.sqlNativeSegment("COUNT(*)"));
         }
         return new EasyClientQueryable<>(numberClass, countQueryExpressionBuilder);
+    }
+
+    @Override
+    public <TNumber extends Number> ClientQueryable<TNumber> selectSum(Class<TNumber> numberClass, String property) {
+        return cloneQueryable().select(numberClass, o -> o.sqlFunc(o.fx().sum(property)));
+    }
+
+    @Override
+    public ClientQueryable<BigDecimal> selectAvg(String property) {
+        return cloneQueryable().select(BigDecimal.class, o -> o.sqlFunc(o.fx().avg(property)));
+    }
+
+    @Override
+    public <TMember> ClientQueryable<TMember> selectMax(Class<TMember> memberClass,String property) {
+        return cloneQueryable().select(memberClass, o -> o.sqlFunc(o.fx().max(property)));
+    }
+
+    @Override
+    public <TMember> ClientQueryable<TMember> selectMin(Class<TMember> memberClass,String property) {
+        return cloneQueryable().select(memberClass, o -> o.sqlFunc(o.fx().min(property)));
     }
 
     @Override

@@ -1,6 +1,11 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLColumn;
+
+import java.math.BigDecimal;
 
 /**
  * create time 2023/12/18 09:33
@@ -8,7 +13,7 @@ import com.easy.query.core.basic.api.select.Query;
  *
  * @author xuejiaming
  */
-public interface EntityCountable1<T1> {
+public interface EntityCountable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 
 
     /**
@@ -26,4 +31,10 @@ public interface EntityCountable1<T1> {
      * @param <TNumber> 返回结果类型
      */
     <TNumber extends Number> Query<TNumber> selectCount(Class<TNumber> numberClass);
+    <TMember extends Number> Query<TMember> selectSum(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy,TMember>> columnSelector);
+    <TMember extends Number> Query<BigDecimal> selectAvg(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy,TMember>> columnSelector);
+    <TMember> Query<TMember> selectMax(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy,TMember>> columnSelector);
+    <TMember> Query<TMember> selectMin(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy,TMember>> columnSelector);
+
+
 }

@@ -18,6 +18,6 @@ public class SubQueryParamExpressionImpl implements SubQueryParamExpression{
     }
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        return subQuery.cloneQueryable().toSQL(toSQLContext);
+        return "("+subQuery.cloneQueryable().toSQL(toSQLContext)+")";
     }
 }

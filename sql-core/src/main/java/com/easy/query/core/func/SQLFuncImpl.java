@@ -43,6 +43,7 @@ import com.easy.query.core.func.def.impl.ReplaceSQLFunction;
 import com.easy.query.core.func.def.impl.RightPadSQLFunction;
 import com.easy.query.core.func.def.impl.RoundSQLFunction;
 import com.easy.query.core.func.def.impl.StringCompareToSQLFunction;
+import com.easy.query.core.func.def.impl.SubQuerySQLFunction;
 import com.easy.query.core.func.def.impl.SubStringSQLFunction;
 import com.easy.query.core.func.def.impl.SumSQLFunction;
 import com.easy.query.core.func.def.impl.ToLowerSQLFunction;
@@ -168,6 +169,11 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction constValue(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new ConstSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction subQueryValue(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SubQuerySQLFunction(getColumnExpressions(sqlExpression));
     }
     //    @Override
 //    public SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {

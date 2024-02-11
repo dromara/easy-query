@@ -43,7 +43,7 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
         QueryStrategy<EntityQueryable<T1Proxy, T1>>,
         ClientEntityQueryableAvailable<T1>,
         EntityFilterable1<T1Proxy,T1>,
-        EntityCountable1<T1>,
+        EntityCountable1<T1Proxy,T1>,
         EntityFillable1<T1Proxy,T1>,
         EntityHavingable1<T1Proxy,T1>,
         EntityIncludeable1<T1Proxy,T1>,

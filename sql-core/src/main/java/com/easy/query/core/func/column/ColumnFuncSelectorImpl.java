@@ -1,5 +1,6 @@
 package com.easy.query.core.func.column;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -9,6 +10,7 @@ import com.easy.query.core.func.column.impl.ColumnFuncExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFuncFormatExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFuncValueExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFunctionExpressionImpl;
+import com.easy.query.core.func.column.impl.ColumnSubQueryExpressionImpl;
 
 import java.util.List;
 
@@ -74,5 +76,11 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
 //        sqlFunctionLeft.consume(new SQLNativeChainExpressionContextImpl(tableLeft,sqlNativeExpressionContextLeft));
 //        String sqlSegmentLeft = sqlFunctionLeft.sqlSegment(tableLeft);
 //        SQLNativePredicateImpl sqlNativePredicateLeft = new SQLNativePredicateImpl(runtimeContext, sqlSegmentLeft, sqlNativeExpressionContextLeft);
+    }
+
+    @Override
+    public ColumnFuncSelector subQuery(Query<?> subQuery) {
+        concatExpressions.add(new ColumnSubQueryExpressionImpl(subQuery));
+        return this;
     }
 }

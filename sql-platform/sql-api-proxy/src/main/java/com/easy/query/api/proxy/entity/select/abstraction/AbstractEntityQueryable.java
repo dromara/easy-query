@@ -42,6 +42,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
+import java.math.BigDecimal;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
@@ -186,6 +187,30 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TNumber extends Number> Query<TNumber> selectCount(Class<TNumber> numberClass) {
         return getClientQueryable().selectCount(numberClass);
+    }
+
+    @Override
+    public <TMember extends Number> Query<TMember> selectSum(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
+        SQLColumn<T1Proxy, TMember> sqlColumn = columnSelector.apply(get1Proxy());
+        return getClientQueryable().selectSum(EasyObjectUtil.typeCastNullable(sqlColumn.getPropertyType()),sqlColumn.getValue());
+    }
+
+    @Override
+    public <TMember extends Number> Query<BigDecimal> selectAvg(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
+        SQLColumn<T1Proxy, TMember> sqlColumn = columnSelector.apply(get1Proxy());
+        return getClientQueryable().selectAvg(sqlColumn.getValue());
+    }
+
+    @Override
+    public <TMember> Query<TMember> selectMax(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
+        SQLColumn<T1Proxy, TMember> sqlColumn = columnSelector.apply(get1Proxy());
+        return getClientQueryable().selectMax(EasyObjectUtil.typeCastNullable(sqlColumn.getPropertyType()),sqlColumn.getValue());
+    }
+
+    @Override
+    public <TMember> Query<TMember> selectMin(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
+        SQLColumn<T1Proxy, TMember> sqlColumn = columnSelector.apply(get1Proxy());
+        return getClientQueryable().selectMin(EasyObjectUtil.typeCastNullable(sqlColumn.getPropertyType()),sqlColumn.getValue());
     }
 
     @Override

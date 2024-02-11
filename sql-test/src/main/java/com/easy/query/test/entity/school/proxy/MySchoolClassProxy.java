@@ -3,6 +3,7 @@ package com.easy.query.test.entity.school.proxy;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.SQLStringColumn;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.test.entity.school.MySchoolClass;
@@ -44,7 +45,7 @@ public class MySchoolClassProxy extends AbstractProxyEntity < MySchoolClassProxy
      * 一对多 一个班级多个学生
      * {@link MySchoolClass#getSchoolStudents}
      */
-    public EasyEntityQueryable<MySchoolStudentProxy, MySchoolStudent> schoolStudents(){
+    public SQLQueryable<MySchoolStudentProxy, MySchoolStudent> schoolStudents(){
     return getNavigates("schoolStudents", new MySchoolStudentProxy());
 }
 
