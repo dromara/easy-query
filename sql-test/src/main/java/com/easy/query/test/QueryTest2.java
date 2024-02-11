@@ -46,7 +46,7 @@ public class QueryTest2 extends BaseTest {
 
         String sql = easyQueryClient.queryable(Topic.class)
                 .where(o -> {
-                    o.sqlNativeSegment("{0} = ({1})", c -> {
+                    o.sqlNativeSegment("{0} = {1}", c -> {
                         ClientQueryable<LocalDateTime> maxCreateTimeQuery = easyQueryClient.queryable(Topic.class)
                                 .select(LocalDateTime.class, x -> x.columnMax("createTime"));
                         c.expression(o, "createTime")
@@ -62,7 +62,7 @@ public class QueryTest2 extends BaseTest {
 
         List<Topic> list = easyQueryClient.queryable(Topic.class)
                 .where(o -> {
-                    o.sqlNativeSegment("{0} = ({1})", c -> {
+                    o.sqlNativeSegment("{0} = {1}", c -> {
                         ClientQueryable<LocalDateTime> maxCreateTimeQuery = easyQueryClient.queryable(Topic.class)
                                 .select(LocalDateTime.class, x -> x.columnMax("createTime" ));
                         c.expression(o, "createTime" )
@@ -1349,7 +1349,7 @@ public class QueryTest2 extends BaseTest {
                 }));
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .where(o -> o.eq(SysUser::getId, "123xxx").like(false, SysUser::getPhone, "133"))
-                .where(o->o.sqlNativeSegment("FIND_IN_SET({0},({1}))",c->{
+                .where(o->o.sqlNativeSegment("FIND_IN_SET({0},{1})",c->{
                     c.expression(SysUser::getId)
                             .expression(topicQueryable);
                 }));
@@ -1369,7 +1369,7 @@ public class QueryTest2 extends BaseTest {
         };
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .where(o -> o.eq(SysUser::getId, "123xxx").like(false, SysUser::getPhone, "133"))
-                .where(o->o.sqlNativeSegment("FIND_IN_SET({0},({1}))",c->{
+                .where(o->o.sqlNativeSegment("FIND_IN_SET({0},{1})",c->{
                     c.expression(SysUser::getId)
                             .expression(subQueryCreator.apply(o));
                 }));
@@ -1380,7 +1380,7 @@ public class QueryTest2 extends BaseTest {
     public void query13x_3() {
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .where(o -> o.eq(SysUser::getId, "123xxx").like(false, SysUser::getPhone, "133"))
-                .where(o->o.sqlNativeSegment("FIND_IN_SET({0},({1}))",c->{
+                .where(o->o.sqlNativeSegment("FIND_IN_SET({0},{1})",c->{
                     c.expression(SysUser::getId)
                             .expression(subQueryGenerator(o));
                 }));

@@ -307,7 +307,7 @@ public class FilterImpl implements Filter {
         SQLPredicateCompare predicateCompare = getReallyPredicateCompare(sqlPredicateCompare);
         String sqlSegment = sqlFunction.sqlSegment(table1);
         sqlNativeExpressionContext.expression(subQuery.cloneQueryable());
-        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment + " " + predicateCompare.getSQL() + " ({" + sqlFunction.paramMarks() + "})", sqlNativeExpressionContext));
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
         next();
     }
 
