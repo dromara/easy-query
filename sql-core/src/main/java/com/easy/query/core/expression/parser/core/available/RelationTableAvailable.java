@@ -10,4 +10,5 @@ import com.easy.query.core.expression.RelationTableKey;
  */
 public interface RelationTableAvailable extends TableAvailable{
     RelationTableKey getRelationTableKey();
+    TableAvailable getOriginalTable();
 }

@@ -1,7 +1,5 @@
 package com.easy.query.core.proxy;
 
-import java.util.function.Consumer;
-
 /**
  * create time 2023/6/21 23:37
  * 文件说明
@@ -10,5 +8,11 @@ import java.util.function.Consumer;
  */
 public interface ProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity>
         extends TableProxy<TProxy, TEntity> {
+    default String getNavValue(){
+        return null;
+    }
+    default void setNavValue(String val){
+
+    }
 
 }

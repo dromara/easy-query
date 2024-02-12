@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
@@ -10,6 +11,7 @@ import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComp
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
+import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
 import com.easy.query.core.proxy.impl.SQLNativeDraftImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -344,5 +346,8 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      */
     public SQLConstantValueAvailable SQLConstant(){
         return new SQLConstantValueAvailableImpl(this.getEntitySQLContext());
+    }
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(TPropertyProxy columnProxy) {
+        getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl(((RelationEntityTableAvailable)columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(),this));
     }
 }

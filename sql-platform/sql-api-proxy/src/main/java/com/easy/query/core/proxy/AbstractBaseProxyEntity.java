@@ -26,6 +26,7 @@ import com.easy.query.core.proxy.columns.SQLNumberColumn;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.SQLStringColumn;
 import com.easy.query.core.proxy.columns.impl.EasySQLQueryable;
+import com.easy.query.core.proxy.columns.impl.EmptySQLQueryable;
 import com.easy.query.core.proxy.columns.impl.SQLAnyColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLBooleanColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLDateTimeColumnImpl;
@@ -49,6 +50,17 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
 
     protected TableAvailable table;
     protected EntitySQLContext entitySQLContext = new ColumnSelectSQLContext();
+
+    private String propValue;
+    @Override
+    public String getNavValue() {
+        return propValue;
+    }
+
+    @Override
+    public void setNavValue(String val) {
+        this.propValue=val;
+    }
 
     @Override
     public TableAvailable getTable() {
@@ -98,6 +110,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     protected <TProperty> SQLAnyColumn<TProxy, TProperty> getAnyColumn(String property, @Nullable Class<TProperty> propType) {
         return new SQLAnyColumnImpl<>(entitySQLContext, table, property, propType);
     }
+    @Deprecated
 
     protected <TProperty> SQLNavigateColumn<TProxy, TProperty> getNavigate(String property, Class<TProperty> propType) {
         return new SQLNavigateColumnImpl<>(entitySQLContext, table, property, propType);
@@ -106,29 +119,45 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> TPropertyProxy getNavigate(String property, TPropertyProxy propertyProxy) {
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
-        Objects.requireNonNull(entityExpressionBuilder, "entityExpressionBuilder is null");
-        QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
-        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new RelationTableKey(table.getEntityClass(), propertyProxy.getEntityClass()), key -> {
-            EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(propertyProxy.getEntityClass());
-            RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key, entityMetadata, false);
-            TableExpressionBuilder tableExpressionBuilder = new TableExpressionBuilder(rightTable, MultiTableTypeEnum.LEFT_JOIN, runtimeContext);
-            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-            TableAvailable leftTable = getTable();
-            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-            andPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, navigateMetadata.getSelfPropertyOrPrimary(), rightTable, navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), SQLPredicateCompareEnum.EQ, runtimeContext));
-            tableExpressionBuilder.getOn().addPredicateSegment(andPredicateSegment);
-            return tableExpressionBuilder;
-        });
-        return propertyProxy.create(entityTableExpressionBuilder.getEntityTable(), this.entitySQLContext);
+        //vo
+        if(entityExpressionBuilder == null){
+            TPropertyProxy tPropertyProxy = propertyProxy.create(null, this.getEntitySQLContext());
+            tPropertyProxy.setNavValue(property);
+            return tPropertyProxy;
+        }else{
+
+            QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
+            EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new RelationTableKey(table.getEntityClass(), propertyProxy.getEntityClass()), key -> {
+                EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(propertyProxy.getEntityClass());
+                TableAvailable leftTable = getTable();
+                RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key,leftTable, entityMetadata, false);
+                TableExpressionBuilder tableExpressionBuilder = new TableExpressionBuilder(rightTable, MultiTableTypeEnum.LEFT_JOIN, runtimeContext);
+                AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+                NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
+                andPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, navigateMetadata.getSelfPropertyOrPrimary(), rightTable, navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), SQLPredicateCompareEnum.EQ, runtimeContext));
+                tableExpressionBuilder.getOn().addPredicateSegment(andPredicateSegment);
+                return tableExpressionBuilder;
+            });
+            TPropertyProxy tPropertyProxy = propertyProxy.create(entityTableExpressionBuilder.getEntityTable(), this.entitySQLContext);
+            tPropertyProxy.setNavValue(property);
+            return tPropertyProxy;
+        }
     }
 
     protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLQueryable<TPropertyProxy, TProperty> getNavigates(String property, TPropertyProxy propertyProxy) {
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
-        QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
-        TableAvailable leftTable = getTable();
-        NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-        ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)
-                .where(t -> t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary()));
-        return new EasySQLQueryable<>(this.getEntitySQLContext(),new EasyEntityQueryable<>(propertyProxy, clientQueryable));
+        EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
+        if(entityExpressionBuilder==null){
+            return new EmptySQLQueryable<>(this.entitySQLContext,getTable(),property);
+        }else{
+            QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
+            TableAvailable leftTable = getTable();
+            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
+            ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)
+                    .where(t -> t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary()));
+//            EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
+//            queryable.get1Proxy().setNavValue(property);
+            return new EasySQLQueryable<>(this.entitySQLContext, new EasyEntityQueryable<>(propertyProxy, clientQueryable),leftTable,property);
+        }
     }
 }

@@ -181,6 +181,7 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
      * @param <TSourcePropertyProxy> 对一或者对一类型代理
      * @param <TSourceProperty> 对一或者对一类型
      */
+    @Deprecated
     default < TSourcePropertyProxy extends ProxyEntity<TSourcePropertyProxy,TSourceProperty>,TSourceProperty extends ProxyEntityAvailable<TSourceProperty , TSourcePropertyProxy>>
     void setNavigate(SQLColumn<?,TSourceProperty> column) {
       setNavigate(column,null);
@@ -202,6 +203,7 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
      * @param <TSourcePropertyProxy> 对一或者对一类型代理
      * @param <TSourceProperty> 对一或者对一类型
      */
+    @Deprecated
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TSourcePropertyProxy extends ProxyEntity<TSourcePropertyProxy,TSourceProperty>,TSourceProperty extends ProxyEntityAvailable<TSourceProperty , TSourcePropertyProxy>>
     void setNavigate(SQLColumn<?,TSourceProperty> column
             , SQLFuncExpression1<TSourcePropertyProxy,TPropertyProxy> navigateSelectExpression) {

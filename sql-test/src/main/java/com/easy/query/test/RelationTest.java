@@ -276,7 +276,8 @@ public class RelationTest extends BaseTest {
                         .include(o->o.schoolClass())
                         .select(o -> new SchoolStudentVOProxy().adapter(r -> {
                             r.selectAll(o);
-                            r.schoolClass().setNavigate(o.schoolClass());
+//                            r.schoolClass().setNavigate(o.schoolClass());
+                            r.schoolClass0().set(o.schoolClass0());
                         }))
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {

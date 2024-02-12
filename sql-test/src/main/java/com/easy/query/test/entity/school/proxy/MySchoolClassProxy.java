@@ -1,6 +1,5 @@
 package com.easy.query.test.entity.school.proxy;
 
-import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
