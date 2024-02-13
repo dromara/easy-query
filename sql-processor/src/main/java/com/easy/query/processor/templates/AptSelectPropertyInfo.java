@@ -34,4 +34,5 @@ public class AptSelectPropertyInfo {
     public String getComment() {
         return comment;
     }
+
 }

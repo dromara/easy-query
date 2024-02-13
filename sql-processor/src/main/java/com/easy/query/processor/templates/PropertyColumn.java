@@ -12,6 +12,7 @@ import java.util.Map;
 public class PropertyColumn {
     private final String sqlColumnName;
     private final String propertyType;
+    private String navigateProxyName;
 
     private static Map<String, String> IMPORT_MAPPING = new HashMap<>();
 
@@ -55,5 +56,13 @@ public class PropertyColumn {
                 return "getAnyColumn";
         }
         return "get";
+    }
+
+    public String getNavigateProxyName() {
+        return navigateProxyName;
+    }
+
+    public void setNavigateProxyName(String navigateProxyName) {
+        this.navigateProxyName = navigateProxyName;
     }
 }

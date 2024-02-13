@@ -35,15 +35,34 @@ public class AptCreatorHelper {
                          .replace("@{proxyProperty}", property.getProxyPropertyName());
                  filedContent.append(fieldString);
              }else{
-                 String fieldString = AptConstant.FIELD_TEMPLATE
-                         .replace("@{entityClassProxy}", aptFileCompiler.getEntityClassProxyName())
-                         .replace("@{comment}", property.getComment())
-                         .replace("@{propertyType}", property.getPropertyType())
-                         .replace("@{property}", property.getPropertyName())
-                         .replace("@{proxyProperty}", property.getProxyPropertyName())
-                         .replace("@{SQLColumn}", property.getSqlColumn())
-                         .replace("@{sqlColumnMethod}", property.getSqlColumnMethod());
-                 filedContent.append(fieldString);
+                 if(property.isIncludeProperty()&&property.getNavigateProxyName()!=null){
+                     if(property.isIncludeManyProperty()){
+                         String fieldString = AptConstant.FIELD_NAVIGATES_TEMPLATE
+                                 .replace("@{propertyProxy}", property.getNavigateProxyName())
+                                 .replace("@{comment}", property.getComment())
+                                 .replace("@{propertyType}", property.getPropertyType())
+                                 .replace("@{property}", property.getPropertyName())
+                                 .replace("@{proxyProperty}", property.getProxyPropertyName());
+                         filedContent.append(fieldString);
+                     }else {
+                         String fieldString = AptConstant.FIELD_NAVIGATE_TEMPLATE
+                                 .replace("@{propertyProxy}", property.getNavigateProxyName())
+                                 .replace("@{comment}", property.getComment())
+                                 .replace("@{property}", property.getPropertyName())
+                                 .replace("@{proxyProperty}", property.getProxyPropertyName());
+                         filedContent.append(fieldString);
+                     }
+                 }else{
+                     String fieldString = AptConstant.FIELD_TEMPLATE
+                             .replace("@{entityClassProxy}", aptFileCompiler.getEntityClassProxyName())
+                             .replace("@{comment}", property.getComment())
+                             .replace("@{propertyType}", property.getPropertyType())
+                             .replace("@{property}", property.getPropertyName())
+                             .replace("@{proxyProperty}", property.getProxyPropertyName())
+                             .replace("@{SQLColumn}", property.getSqlColumn())
+                             .replace("@{sqlColumnMethod}", property.getSqlColumnMethod());
+                     filedContent.append(fieldString);
+                 }
              }
          }
          return filedContent.toString();

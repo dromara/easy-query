@@ -26,17 +26,21 @@ public class AptPropertyInfo{
      */
     private final String entityName;
     private final boolean valueObject;
+    private final boolean includeProperty;
+    private final boolean includeManyProperty;
     private final String sqlColumn;
     private final String sqlColumnMethod;
     private final String proxyPropertyName;
 
-    public AptPropertyInfo(String propertyName, PropertyColumn propertyColumn, String comment, String entityName,boolean valueObject,boolean includeProperty,String proxyPropertyName){
+    public AptPropertyInfo(String propertyName, PropertyColumn propertyColumn, String comment, String entityName,boolean valueObject,boolean includeProperty,boolean includeManyProperty,String proxyPropertyName){
 
         this.propertyName = propertyName;
         this.propertyColumn = propertyColumn;
         this.comment = comment;
         this.entityName = entityName;
         this.valueObject = valueObject;
+        this.includeProperty = includeProperty;
+        this.includeManyProperty = includeManyProperty;
         this.sqlColumn = includeProperty?"SQLNavigateColumn":propertyColumn.getSqlColumnName();
         this.sqlColumnMethod = includeProperty?"getNavigate":propertyColumn.getSQLColumnMethod();
         this.proxyPropertyName = proxyPropertyName;
@@ -61,6 +65,14 @@ public class AptPropertyInfo{
         return propertyColumn.getPropertyType();
     }
 
+    public String getPropertyShortType() {
+        String propertyType = propertyColumn.getPropertyType();
+        if(propertyType.contains(".")){
+            return propertyType.substring(propertyType.lastIndexOf(".")+1);
+        }
+        return propertyType;
+    }
+
     public String getEntityName() {
         return entityName;
     }
@@ -75,5 +87,17 @@ public class AptPropertyInfo{
 
     public String getSqlColumnMethod() {
         return sqlColumnMethod;
+    }
+
+    public boolean isIncludeProperty() {
+        return includeProperty;
+    }
+
+    public String getNavigateProxyName(){
+        return propertyColumn.getNavigateProxyName();
+    }
+
+    public boolean isIncludeManyProperty() {
+        return includeManyProperty;
     }
 }

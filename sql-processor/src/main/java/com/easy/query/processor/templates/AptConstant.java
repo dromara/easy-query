@@ -53,6 +53,20 @@ public class AptConstant {
             "    public @{SQLColumn}<@{entityClassProxy},@{propertyType}> @{proxyProperty}(){\n" +
             "        return @{sqlColumnMethod}(\"@{property}\",@{propertyType}.class);\n" +
             "    }";
+
+    public static final String FIELD_NAVIGATE_TEMPLATE = "\n" +
+            "    @{comment}\n" +
+            "    public @{propertyProxy} @{proxyProperty}(){\n" +
+            "        return getNavigate(\"@{property}\",new @{propertyProxy}());\n" +
+            "    }";
+    /**
+     * SQLQueryable<MySchoolStudentProxy, MySchoolStudent>
+     */
+    public static final String FIELD_NAVIGATES_TEMPLATE = "\n" +
+            "    @{comment}\n" +
+            "    public SQLQueryable<@{propertyProxy},@{propertyType}> @{proxyProperty}(){\n" +
+            "        return getNavigates(\"@{property}\",new @{propertyProxy}());\n" +
+            "    }";
     public static final String FIELD_VALUE_OBJECT_TEMPLATE = "\n" +
             "    @{comment}\n" +
             "    public @{entityClass}Proxy @{proxyProperty}() {\n" +

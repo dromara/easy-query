@@ -7,6 +7,7 @@ import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.ProxyProperty;
 import com.easy.query.core.annotation.ValueObject;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.processor.templates.AptCreatorHelper;
 import com.easy.query.processor.templates.AptFileCompiler;
@@ -360,6 +361,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
                 Navigate navigate = fieldElement.getAnnotation(Navigate.class);
                 boolean includeProperty = navigate != null;
+                boolean includeManyProperty = false;
 
                 ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
                 String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
@@ -375,10 +377,20 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 String fieldComment = getFiledComment(docComment, fieldName, propertyName);
                 PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType);
                 aptFileCompiler.addImports(propertyColumn.getImport());
-                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, proxyPropertyName));
                 if (includeProperty) {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
+                    String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType());
+                    if (navigatePropertyProxyFullName != null) {
+                        propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
+                    }
+                    if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
+                        includeManyProperty = true;
+                        aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLQueryable");
+                    }
                 }
+
+                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, includeManyProperty, proxyPropertyName));
+
                 if (valueObject != null) {
                     aptFileCompiler.addImports(fieldGenericType);
                     String valueObjectClassName = fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1);
@@ -415,6 +427,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
                 Navigate navigate = fieldElement.getAnnotation(Navigate.class);
                 boolean includeProperty = navigate != null;
+                boolean includeManyProperty = false;
                 ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
                 String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
                 TypeMirror type = fieldElement.asType();
@@ -428,12 +441,22 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 String fieldComment = getFiledComment(docComment, fieldName, propertyName);
                 PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType);
                 aptFileCompiler.addImports(propertyColumn.getImport());
-                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, proxyPropertyName));
+
                 if (!includeProperty) {
                     aptFileCompiler.getSelectorInfo().getProperties().add(new AptSelectPropertyInfo(propertyName, fieldComment, proxyPropertyName));
                 } else {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
+                    String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType());
+                    if (navigatePropertyProxyFullName != null) {
+                        propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
+                    }
+                    if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
+                        includeManyProperty = true;
+                        aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLQueryable");
+                    }
                 }
+                //todo
+                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, includeManyProperty, proxyPropertyName));
 
 
                 if (valueObject != null) {
@@ -447,6 +470,29 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
             }
         }
+    }
+
+    private String getNavigatePropertyProxyFullName(String fullClassName) {
+//        if(propertyColumn.getPropertyType().equals("com.easy.query.test.entity.school.MySchoolClass1")){
+        TypeElement typeElement = elementUtils.getTypeElement(fullClassName);
+        if (typeElement != null) {
+            EntityProxy annotation = typeElement.getAnnotation(EntityProxy.class);
+            if (annotation != null) {
+                if (EasyStringUtil.isBlank(annotation.value())) {
+                    return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "Proxy";
+                }
+                return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + annotation.value();
+            }
+            EntityFileProxy annotationFile = typeElement.getAnnotation(EntityFileProxy.class);
+            if (annotationFile != null) {
+                if (EasyStringUtil.isBlank(annotationFile.value())) {
+                    return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "Proxy";
+                }
+                return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + annotationFile.value();
+            }
+        }
+//        }
+        return null;
     }
 
     private String getFiledComment(String docComment, String className, String propertyName) {
@@ -472,7 +518,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             return "java.lang.Object";
         }
         String typeString = defTypeString(isDeclared, includeProperty, type);
-        if (typeString.contains("<") && typeString.contains(">")){
+        if (typeString.contains("<") && typeString.contains(">")) {
             return "java.lang.Object";
         }
 
@@ -482,9 +528,9 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
     private String defTypeString(boolean isDeclared, boolean includeProperty, TypeMirror type) {
 
         if (includeProperty) {
-            if(type instanceof DeclaredType){
+            if (type instanceof DeclaredType) {
                 List<? extends TypeMirror> typeArguments = ((DeclaredType) type).getTypeArguments();
-                if(typeArguments!=null&&typeArguments.size()==1){
+                if (typeArguments != null && typeArguments.size() == 1) {
                     return typeArguments.get(0).toString().trim();
                 }
             }
