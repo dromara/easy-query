@@ -79,12 +79,6 @@ public abstract class AbstractOverrideEntityQueryable5<T1Proxy extends ProxyEnti
     }
 
     @Override
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty,TPropertyProxy>> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> include(boolean condition, SQLFuncExpression2<ProxyEntityNavigateInclude<T1, T1Proxy>, T1Proxy, EntityQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
-        super.include(condition, navigateIncludeSQLExpression);
-        return getQueryable5();
-    }
-
-    @Override
     public EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> limit(boolean condition, long offset, long rows) {
         super.limit(condition, offset, rows);
         return getQueryable5();

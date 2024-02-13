@@ -86,14 +86,6 @@ public interface OverrideEntityQueryable2<T1Proxy extends ProxyEntity<T1Proxy, T
     EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderBy(boolean condition, SQLExpression1<T1Proxy> selectExpression);
 
     @Override
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> include(SQLFuncExpression2<ProxyEntityNavigateInclude<T1, T1Proxy>, T1Proxy, EntityQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
-        return include(true, navigateIncludeSQLExpression);
-    }
-
-    @Override
-    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> include(boolean condition, SQLFuncExpression2<ProxyEntityNavigateInclude<T1, T1Proxy>, T1Proxy, EntityQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression);
-
-    @Override
     default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> limit(long rows) {
         return limit(true, rows);
     }

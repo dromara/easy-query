@@ -1,20 +1,14 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable2.override;
 
-import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.abstraction.AbstractEntityQueryable;
 import com.easy.query.api.proxy.entity.select.extension.queryable2.EntityQueryable2Available;
-import com.easy.query.api.proxy.sql.ProxyEntityNavigateInclude;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.core.proxy.SQLGroupByExpression;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -72,12 +66,6 @@ public abstract class AbstractOverrideEntityQueryable2<T1Proxy extends ProxyEnti
     @Override
     public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> having(boolean condition, SQLExpression1<T1Proxy> predicateExpression) {
         super.having(condition, predicateExpression);
-        return getQueryable2();
-    }
-
-    @Override
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty  extends ProxyEntityAvailable<TProperty,TPropertyProxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> include(boolean condition, SQLFuncExpression2<ProxyEntityNavigateInclude<T1, T1Proxy>, T1Proxy, EntityQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
-        super.include(condition, navigateIncludeSQLExpression);
         return getQueryable2();
     }
 

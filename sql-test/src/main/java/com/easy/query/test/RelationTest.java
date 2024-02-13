@@ -18,7 +18,6 @@ import com.easy.query.test.entity.school.dto.SchoolClassExtendsVO;
 import com.easy.query.test.entity.school.dto.SchoolClassVO;
 import com.easy.query.test.entity.school.dto.SchoolStudentVO;
 import com.easy.query.test.entity.school.dto.SchoolTeacherVO;
-import com.easy.query.test.entity.school.dto.proxy.SchoolClassVOProxy;
 import com.easy.query.test.entity.school.dto.proxy.SchoolStudentVOProxy;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
@@ -189,12 +188,7 @@ public class RelationTest extends BaseTest {
             }
             {
                 List<SchoolStudent> list1 = easyEntityQuery.queryable(SchoolStudent.class)
-                        .include((o, t) -> {
-//                            SQLNavigateColumn<SchoolStudentProxy, SchoolClass> schoolStudentProxySchoolClassSQLNavigateColumn = t.schoolClass();
-//                            Class<SchoolClass> schoolClassClass = schoolStudentProxySchoolClassSQLNavigateColumn.navigateClass();
-//                            EntityQueryable<SchoolClassProxy, SchoolClass> queryable = entityQuery.queryable(schoolClassClass);
-                            return o.asQueryable(t.schoolClass(), 1);
-                        })
+                        .include(t->t.schoolClass())
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());
@@ -212,7 +206,7 @@ public class RelationTest extends BaseTest {
                 SchoolStudentProxy table1 = SchoolStudentProxy.createTable();
                 SchoolClassProxy table2 = SchoolClassProxy.createTable();
                 List<SchoolStudent> list1 = easyProxyQuery.queryable(table1)
-                        .include(i -> i.one(table1.schoolClass(), table2))
+                        .include(i -> i.one(table1.schoolClass()))
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());
@@ -252,10 +246,10 @@ public class RelationTest extends BaseTest {
             {
                 //todo alias
                 List<SchoolStudentVO> list1 = easyEntityQuery.queryable(SchoolStudent.class)
-                        .include((n, o) -> n.asQueryable(o.schoolClass()))
+                        .include(o->o.schoolClass())
                         .select(o -> new SchoolStudentVOProxy().adapter(r -> {
                             r.selectAll(o);
-                            r.schoolClass().setNavigate(o.schoolClass(), t -> new SchoolClassVOProxy());
+                            r.schoolClass().set(o.schoolClass());
                         }))
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {
@@ -277,7 +271,7 @@ public class RelationTest extends BaseTest {
                         .select(o -> new SchoolStudentVOProxy().adapter(r -> {
                             r.selectAll(o);
 //                            r.schoolClass().setNavigate(o.schoolClass());
-                            r.schoolClass0().set(o.schoolClass0());
+                            r.schoolClass().set(o.schoolClass());
                         }))
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {
