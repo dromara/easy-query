@@ -5,6 +5,7 @@ import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
@@ -348,6 +349,9 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return new SQLConstantValueAvailableImpl(this.getEntitySQLContext());
     }
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(TPropertyProxy columnProxy) {
-        getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl(((RelationEntityTableAvailable)columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(),this));
+        set(columnProxy,null);
+    }
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLFuncExpression1<ProxyEntity<TPropertyProxy, TProperty>, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
+        getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable)columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(),columnProxy,navigateSelectExpression));
     }
 }

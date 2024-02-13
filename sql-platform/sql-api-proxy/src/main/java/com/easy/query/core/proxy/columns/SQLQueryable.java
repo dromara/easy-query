@@ -86,6 +86,9 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
 
 
     default  <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(SQLQueryable<TPropertyProxy,TProperty> columnProxy) {
-        getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl(getOriginalTable(), columnProxy.getNavValue(), getNavValue(), getQueryable().get1Proxy()));
+        set(columnProxy,null);
+    }
+    default  <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(SQLQueryable<TPropertyProxy,TProperty> columnProxy,SQLFuncExpression1<ProxyEntity<TPropertyProxy, TProperty>, ProxyEntity<T1Proxy, T1>> navigateSelectExpression) {
+        getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy.getQueryable().get1Proxy(),navigateSelectExpression));
     }
 }

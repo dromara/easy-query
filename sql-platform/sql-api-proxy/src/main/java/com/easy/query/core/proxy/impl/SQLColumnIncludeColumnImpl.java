@@ -16,6 +16,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
  *
  * @author xuejiaming
  */
+@Deprecated
 public class SQLColumnIncludeColumnImpl<TProperty, TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TSourcePropertyProxy extends ProxyEntity<TSourcePropertyProxy, TSourceProperty>, TSourceProperty extends ProxyEntityAvailable<TSourceProperty, TSourcePropertyProxy>> implements SQLColumnSetExpression {
     private final TableAvailable table;
     private final String selfProperty;
