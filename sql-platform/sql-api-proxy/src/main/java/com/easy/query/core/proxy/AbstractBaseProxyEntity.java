@@ -5,6 +5,7 @@ import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
@@ -155,6 +156,18 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
             ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)
                     .where(t -> t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary()));
+            if(navigateMetadata.getRelationType()== RelationTypeEnum.ManyToMany){
+                ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
+                clientQueryable.where(x->{
+                    x.and(()->{
+                        ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
+                            m.eq(x, navigateMetadata.getTargetMappingProperty(), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext));
+                            m.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperty(), navigateMetadata.getSelfPropertyOrPrimary());
+                        }).limit(1);
+                        x.exists(subMappingQueryable);
+                    });
+                });
+            }
 //            EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
 //            queryable.get1Proxy().setNavValue(property);
             return new EasySQLQueryable<>(this.entitySQLContext, new EasyEntityQueryable<>(propertyProxy, clientQueryable),leftTable,property);

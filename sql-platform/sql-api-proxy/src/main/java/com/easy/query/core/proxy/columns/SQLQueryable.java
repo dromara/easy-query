@@ -38,18 +38,31 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     default void exists(SQLExpression1<T1Proxy> whereExpression) {
         getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(getQueryable().where(whereExpression).limit(1).select("1"))));
     }
+    default void exists() {
+        exists(x->{});
+    }
 
     default void notExists(SQLExpression1<T1Proxy> whereExpression) {
         getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(getQueryable().where(whereExpression).limit(1).select("1"))));
+    }
+
+    default void notExists() {
+        notExists(x->{});
     }
 
     default ColumnFunctionComparableNumberChainExpression<Long> count(SQLExpression1<T1Proxy> whereExpression) {
         Query<Long> longQuery = getQueryable().where(whereExpression).selectCount();
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryValue(longQuery), Long.class);
     }
+    default ColumnFunctionComparableNumberChainExpression<Long> count() {
+       return count(x->{});
+    }
     default ColumnFunctionComparableNumberChainExpression<Integer> intCount(SQLExpression1<T1Proxy> whereExpression) {
         Query<Integer> longQuery = getQueryable().where(whereExpression).selectCount(Integer.class);
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryValue(longQuery), Integer.class);
+    }
+    default ColumnFunctionComparableNumberChainExpression<Integer> intCount() {
+        return intCount(x->{});
     }
     default <TMember extends Number> ColumnFunctionComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy,TMember>> columnSelector) {
         Query<TMember> sumQuery = getQueryable().selectSum(columnSelector);
