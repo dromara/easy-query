@@ -101,7 +101,9 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
             Object targetRelationId = mappingRow.get(targetColumnName);
             Collection<TNavigateEntity> targetEntities = resultMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
             Collection<TNavigateEntity> targets = targetToManyMap.get(targetRelationId);
-            targetEntities.addAll(targets);
+            if(EasyCollectionUtil.isNotEmpty(targets)){
+                targetEntities.addAll(targets);
+            }
         }
         return resultMap;
     }
