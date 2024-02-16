@@ -125,7 +125,7 @@ public class Relation2Test extends BaseTest {
 
         List<MySchoolClass> list = easyEntityQuery.queryable(MySchoolClass.class)
                 .where(m -> {
-                    m.schoolStudents().exists(x->x.name().like("123"));
+                    m.schoolStudents().any(x->x.name().like("123"));
 //                    m.id().setNavigate();
 //                    m.schoolStudents().where(x->x.name().like("123")).selectCount().
 //                    m.SQLConstant().valueOf(1L).gt(m.schoolStudents().where(x->x.name().like("123")).selectCount());

@@ -56,12 +56,12 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
     }
 
     @Override
-    public void exists(SQLExpression1<T1Proxy> whereExpression) {
+    public void any(SQLExpression1<T1Proxy> whereExpression) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void notExists(SQLExpression1<T1Proxy> whereExpression) {
+    public void none(SQLExpression1<T1Proxy> whereExpression) {
         throw new UnsupportedOperationException();
     }
 

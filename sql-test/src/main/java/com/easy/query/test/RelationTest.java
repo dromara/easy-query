@@ -784,7 +784,7 @@ public class RelationTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<SchoolClass> hasXiaoMingClass = easyEntityQuery.queryable(SchoolClass.class)
-                    .where(s -> s.schoolStudents().exists(x -> x.name().like("小明")))
+                    .where(s -> s.schoolStudents().any(x -> x.name().like("小明")))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -798,7 +798,7 @@ public class RelationTest extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<SchoolClass> hasXiaoMingClass = easyEntityQuery.queryable(SchoolClass.class)
-                    .where(s -> s.schoolStudents().exists(x -> {
+                    .where(s -> s.schoolStudents().any(x -> {
                         x.name().like("小明");
                         x.classId().like("13");
                     }))
@@ -834,7 +834,7 @@ public class RelationTest extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<SchoolClass> studentAddressInXXRoadClasses = easyEntityQuery.queryable(SchoolClass.class)
-                .where(s -> s.schoolStudents().exists(
+                .where(s -> s.schoolStudents().any(
                         x -> x.schoolStudentAddress().address().like("xx路")
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -850,7 +850,7 @@ public class RelationTest extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<SchoolClass> studentAddressInXXRoadClasses = easyEntityQuery.queryable(SchoolClass.class)
-                .where(s -> s.schoolStudents().exists(
+                .where(s -> s.schoolStudents().any(
                         x -> {
                             x.schoolStudentAddress().address().like("xx路");
                             x.name().like("小明");
@@ -871,7 +871,7 @@ public class RelationTest extends BaseTest {
         List<SchoolClass> studentAddressInXXRoadClasses = easyEntityQuery.queryable(SchoolClass.class)
                 .where(s -> s.schoolStudents()
                         .where(x -> x.schoolStudentAddress().address().like("xx路"))
-                        .where(x -> x.name().like("小明")).exists()
+                        .where(x -> x.name().like("小明")).any()
                 ).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -887,7 +887,7 @@ public class RelationTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<SchoolClass> x1 = easyEntityQuery.queryable(SchoolClass.class)
                 .where(s -> s.schoolTeachers()
-                        .exists(x -> x.name().like("x"))).toList();
+                        .any(x -> x.name().like("x"))).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE EXISTS (SELECT 1 FROM `school_teacher` t1 WHERE t1.`id` = t.`id` AND EXISTS (SELECT 1 FROM `school_class_teacher` t2 WHERE t2.`teacher_id` = t1.`id` AND t2.`class_id` = t.`id` LIMIT 1) AND t1.`name` LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -909,5 +909,43 @@ public class RelationTest extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE (SELECT COUNT(*) FROM `school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("张%(String),5(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+    @Test
+    public void schoolTest8() {
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<SchoolClass> hasXiaoMingClass = easyEntityQuery.queryable(SchoolClass.class)
+                    .where(s -> s.schoolStudents().where(x -> {
+                        x.name().like("小明");
+                        x.classId().like("13");
+                    }).none())
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE NOT ( EXISTS (SELECT 1 FROM `school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ? AND t1.`class_id` LIKE ? LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%小明%(String),%13%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<SchoolClass> hasXiaoMingClass = easyEntityQuery.queryable(SchoolClass.class)
+                    .where(s -> s.schoolStudents().none(x -> {
+                        x.name().like("小明");
+                        x.classId().like("13");
+                    }))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE NOT ( EXISTS (SELECT 1 FROM `school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ? AND t1.`class_id` LIKE ? LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%小明%(String),%13%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
     }
 }

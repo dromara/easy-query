@@ -35,19 +35,27 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
         return this;
     }
 
-    default void exists(SQLExpression1<T1Proxy> whereExpression) {
+    /**
+     * 存在任意一个满足条件
+     * @param whereExpression
+     */
+    default void any(SQLExpression1<T1Proxy> whereExpression) {
         getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(getQueryable().where(whereExpression).limit(1).select("1"))));
     }
-    default void exists() {
-        exists(x->{});
+
+    /**
+     * 存在任意一个满足条件
+     */
+    default void any() {
+        any(x->{});
     }
 
-    default void notExists(SQLExpression1<T1Proxy> whereExpression) {
-        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(getQueryable().where(whereExpression).limit(1).select("1"))));
+    default void none(SQLExpression1<T1Proxy> whereExpression) {
+        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.none(getQueryable().where(whereExpression).limit(1).select("1"))));
     }
 
-    default void notExists() {
-        notExists(x->{});
+    default void none() {
+        none(x->{});
     }
 
     default ColumnFunctionComparableNumberChainExpression<Long> count(SQLExpression1<T1Proxy> whereExpression) {

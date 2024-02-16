@@ -150,6 +150,7 @@ public interface Filter extends SQLNative<Filter> {
 
 
     <T2> Filter notExists(Query<T2> subQuery);
+    <T2> Filter none(Query<T2> subQuery);
 
     /**
      * 自定义范围

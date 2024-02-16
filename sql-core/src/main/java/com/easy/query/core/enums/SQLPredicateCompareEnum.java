@@ -22,7 +22,7 @@ public enum SQLPredicateCompareEnum implements SQLPredicateCompare {
     IS_NOT_NULL("IS NOT NULL"),
 
     EXISTS("EXISTS"),
-    NOT_EXISTS("NOT EXISTS"),;
+    NOT_EXISTS("NOT EXISTS");
     private final String compare;
 
     SQLPredicateCompareEnum(String compare){

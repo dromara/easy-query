@@ -19,6 +19,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnExistsSubQueryPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnInSubQueryPredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnNoneSubQueryPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnNullAssertPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnTrueOrFalsePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
@@ -367,6 +368,14 @@ public class FilterImpl implements Filter {
         nextPredicateSegment.setPredicate(new ColumnExistsSubQueryPredicate(existsQuery, getReallyPredicateCompare(sqlPredicateCompare), runtimeContext));
         next();
     }
+    private <T2> void subQueryNone(Query<T2> subQuery) {
+
+        extract(subQuery);
+        Query<T2> noneQuery = subQuery.cloneQueryable().select("1");
+
+        nextPredicateSegment.setPredicate(new ColumnNoneSubQueryPredicate(noneQuery, runtimeContext));
+        next();
+    }
 
     @Override
     public <TProperty> Filter in(TableAvailable table, String property, Query<TProperty> subQuery) {
@@ -414,6 +423,14 @@ public class FilterImpl implements Filter {
     public <T2> Filter notExists(Query<T2> subQuery) {
         if (conditionAppend(null, null, subQuery)) {
             subQueryExists(subQuery, SQLPredicateCompareEnum.NOT_EXISTS);
+        }
+        return this;
+    }
+
+    @Override
+    public <T2> Filter none(Query<T2> subQuery) {
+        if (conditionAppend(null, null, subQuery)) {
+            subQueryNone(subQuery);
         }
         return this;
     }
