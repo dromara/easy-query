@@ -332,6 +332,17 @@ public class RelationTest extends BaseTest {
                     Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
                 }
             }
+            {
+//                easyQueryClient.queryable(SchoolClass.class)
+//                        .include(o-> o.with("schoolStudents"))
+                List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(o -> o.schoolStudents())
+                        .toList();
+                for (SchoolClass schoolClass : list1) {
+                    Assert.assertNotNull(schoolClass.getSchoolStudents());
+                    Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
+                }
+            }
 
             {
 //                easyQueryClient.queryable(SchoolClass.class)

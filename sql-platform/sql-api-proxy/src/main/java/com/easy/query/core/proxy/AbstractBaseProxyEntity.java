@@ -168,9 +168,9 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                     });
                 });
             }
-//            EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
-//            queryable.get1Proxy().setNavValue(property);
-            return new EasySQLQueryable<>(this.entitySQLContext, new EasyEntityQueryable<>(propertyProxy, clientQueryable),leftTable,property);
+            EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
+            queryable.get1Proxy().setNavValue(property);
+            return new EasySQLQueryable<>(this.entitySQLContext, queryable,leftTable);
         }
     }
 }

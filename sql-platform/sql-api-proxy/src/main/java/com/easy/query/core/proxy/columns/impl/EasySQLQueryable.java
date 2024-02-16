@@ -16,14 +16,12 @@ public class EasySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> impl
     private final EntitySQLContext entitySQLContext;
     private final EasyEntityQueryable<T1Proxy, T1> easyEntityQueryable;
     private final TableAvailable originalTable;
-    private final String navValue;
 
-    public EasySQLQueryable(EntitySQLContext entitySQLContext,EasyEntityQueryable<T1Proxy, T1> easyEntityQueryable,TableAvailable originalTable,String navValue){
+    public EasySQLQueryable(EntitySQLContext entitySQLContext,EasyEntityQueryable<T1Proxy, T1> easyEntityQueryable,TableAvailable originalTable){
 
         this.entitySQLContext = entitySQLContext;
         this.easyEntityQueryable = easyEntityQueryable;
         this.originalTable = originalTable;
-        this.navValue = navValue;
     }
     @Override
     public EntitySQLContext getEntitySQLContext() {
@@ -42,6 +40,6 @@ public class EasySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> impl
 
     @Override
     public String getNavValue() {
-        return navValue;
+        return easyEntityQueryable.get1Proxy().getNavValue();
     }
 }
