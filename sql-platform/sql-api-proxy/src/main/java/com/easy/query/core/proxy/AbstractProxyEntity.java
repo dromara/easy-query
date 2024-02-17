@@ -216,6 +216,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * COUNT(*)
      * @return 返回类型为Integer
      */
+    @Deprecated
     public ColumnFunctionComparableNumberChainExpression<Integer> intCount() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null,f->{
             return f.count(c->{});
