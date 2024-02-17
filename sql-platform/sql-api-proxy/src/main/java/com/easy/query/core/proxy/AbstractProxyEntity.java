@@ -65,7 +65,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 支持where having order
-     * 请使用{@link com.easy.query.core.proxy.core.Expression#sql(String)}
+     * 请使用{@link #expression()}或者{@link Expression#sql(String)}
      * @param sqlSegment
      */
     @Deprecated
@@ -75,7 +75,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 支持where having order
-     * 请使用{@link com.easy.query.core.proxy.core.Expression#sql(String, SQLExpression1)}
+     * 请使用{@link #expression()}或者{@link Expression#sql(String, SQLExpression1)}
      *
      * @param sqlSegment
      * @param contextConsume
@@ -87,7 +87,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 支持where having order
-     * 请使用{@link com.easy.query.core.proxy.core.Expression#sql(boolean, String, SQLExpression1)}
+     * 请使用{@link #expression()}或者{@link Expression#sql(boolean, String, SQLExpression1)}
      *
      * @param condition
      * @param sqlSegment
@@ -103,7 +103,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 返回group或者selectDraft自定义sql片段
-     * 请使用{@link com.easy.query.core.proxy.core.Expression#sqlType(String)}
+     * 请使用{@link #expression()}或者{@link Expression#sqlType(String)}
      * <blockquote><pre>
      * {@code
      *
@@ -124,7 +124,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 返回group或者selectDraft自定义sql片段
-     * 请使用{@link com.easy.query.core.proxy.core.Expression#sqlType(String,SQLExpression1)}
+     * 请使用{@link #expression()}或者{@link Expression#sqlType(String,SQLExpression1)}
      * <blockquote><pre>
      * {@code
      *
@@ -153,7 +153,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 返回子查询
-     * 请使用 {@link com.easy.query.core.proxy.core.Expression#subQuery(SQLFuncExpression)}
+     * 请使用 {@link #expression()}或者{@link Expression#subQuery(SQLFuncExpression)}
      * <blockquote><pre>
      * {@code
      *      o.subQuery(()->{
@@ -182,7 +182,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * 请使用{@link Expression#now()}
+     * 请使用{@link #expression()}或者{@link Expression#now()}
      * @return
      */
     @Deprecated
@@ -191,7 +191,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * 请使用{@link Expression#utcNow()}
+     * 请使用{@link #expression()}或者{@link Expression#utcNow()}
      * @return
      */
     @Deprecated
@@ -200,7 +200,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * 请使用{@link Expression#count()}
+     * 请使用{@link #expression()}或者{@link Expression#count()}
      * COUNT(*)
      * @return 返回类型为Long
      */
@@ -212,7 +212,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * 请使用{@link Expression#intCount()}
+     * 请使用{@link #expression()}或者{@link Expression#intCount()}
      * COUNT(*)
      * @return 返回类型为Integer
      */
@@ -321,7 +321,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * {@link Expression#exists(Supplier)}
+     * {@link #expression()}或者{@link Expression#exists(Supplier)}
      * where exists(....)
      * @param subQueryFunc 子查询创建方法
      */
@@ -331,7 +331,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * {@link Expression#exists(boolean,Supplier)}
+     * {@link #expression()}或者{@link Expression#exists(boolean,Supplier)}
      * where exists(....)
      * @param condition 为true是exists生效
      * @param subQueryFunc 子查询创建方法
@@ -344,7 +344,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * {@link Expression#notExists(Supplier)}
+     * {@link #expression()}或者{@link Expression#notExists(Supplier)}
      * where not exists(....)
      * @param subQueryFunc 子查询创建方法
      */
@@ -355,7 +355,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
 
     /**
-     * {@link Expression#notExists(boolean, Supplier)}
+     * {@link #expression()}或者{@link Expression#notExists(boolean, Supplier)}
      * where exists(....)
      * @param condition 为true是not exists生效
      * @param subQueryFunc 子查询创建方法
@@ -377,7 +377,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * {@link Expression#constant()}
+     * {@link #expression()}或者{@link Expression#constant()}
      * 创建常量值用于比较或者处理
      * @return 数据库常量值构建方法
      */
