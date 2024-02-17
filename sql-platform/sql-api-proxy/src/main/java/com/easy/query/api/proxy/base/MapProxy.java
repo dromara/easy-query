@@ -27,22 +27,17 @@ public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String,Object>> 
 
     /**
      * 创建匿名对象
-     * @param anonymousName 匿名对象名称
-     * @param packageWith 和哪个字节在同一个包
+     * @param anonymousClass 生成的匿名对象
      */
-    public MapProxy(String anonymousName,Class<?> packageWith) {
+    public MapProxy(Class<?> anonymousClass) {
     }
+
     /**
      * 创建匿名对象
-     * @param anonymousName 匿名对象名称
-     * @param packageWith 和哪个字节在同一个包
+     * @param anonymousClass 生成的匿名对象
      * @param entityFileProxy 是否使用{@link com.easy.query.core.annotation.EntityFileProxy}默认不使用
      */
-    public MapProxy(String anonymousName,Class<?> packageWith,boolean entityFileProxy) {
-    }
-    public MapProxy(String anonymousName,String subPackageName,boolean entityFileProxy) {
-    }
-    public MapProxy(String anonymousName,String moduleName,String fullPackageName,boolean entityFileProxy) {
+    public MapProxy(Class<?> anonymousClass,boolean entityFileProxy) {
     }
 
     @Override

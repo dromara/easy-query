@@ -336,5 +336,24 @@ public class QueryTest12 extends BaseTest {
 //            System.out.println(stringObjectMap);
 //        }
     }
+    @Test
+    public void testOr26() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    b.or(() -> {
+                        b.id().eq("123");
+                        b.createTime().le(LocalDateTime.of(2021, 1, 1, 1, 1));
+                    });
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`id` = ? OR `create_time` <= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(String),2021-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+    }
 
 }

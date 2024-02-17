@@ -10,6 +10,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
@@ -503,7 +504,7 @@ public class QueryTest11 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<TopicTypeTest1> list = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.createTime().ge(o._now().plusMonths(-3));
+            o.createTime().ge(o.expression().now().plusMonths(-3));
         }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -655,7 +656,7 @@ public class QueryTest11 extends BaseTest {
 //        年份，月份;
 
         List<Draft3<Integer, Integer, Integer>> list = easyEntityQuery.queryable(BlogEntity.class)
-                .where(o -> o.createTime().gt(o._now().plusMonths(-3)))
+                .where(o -> o.createTime().gt(Expression.of(o).now().plusMonths(-3)))
                 .groupBy(o -> {
                     return GroupKeys.TABLE1.of(o.createTime().year(), o.createTime().month());
                 })

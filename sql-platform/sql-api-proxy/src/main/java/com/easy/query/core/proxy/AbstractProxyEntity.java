@@ -8,6 +8,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
@@ -64,29 +65,35 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 支持where having order
+     * 请使用{@link com.easy.query.core.proxy.core.Expression#sql(String)}
      * @param sqlSegment
      */
+    @Deprecated
     public void executeSQL(String sqlSegment){
         executeSQL(sqlSegment, c->{});
     }
 
     /**
      * 支持where having order
+     * 请使用{@link com.easy.query.core.proxy.core.Expression#sql(String, SQLExpression1)}
      *
      * @param sqlSegment
      * @param contextConsume
      */
+    @Deprecated
     public void executeSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
         executeSQL(true,sqlSegment,contextConsume);
     }
 
     /**
      * 支持where having order
+     * 请使用{@link com.easy.query.core.proxy.core.Expression#sql(boolean, String, SQLExpression1)}
      *
      * @param condition
      * @param sqlSegment
      * @param contextConsume
      */
+    @Deprecated
     public void executeSQL(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
         if(condition){
             getEntitySQLContext()._executeNativeSql(sqlSegment,contextConsume);
@@ -96,6 +103,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 返回group或者selectDraft自定义sql片段
+     * 请使用{@link com.easy.query.core.proxy.core.Expression#sqlType(String)}
      * <blockquote><pre>
      * {@code
      *
@@ -109,12 +117,14 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * @param sqlSegment
      * @return
      */
+    @Deprecated
     public PropTypeColumn<Object> sql(String sqlSegment) {
         return sql(sqlSegment, c->{});
     }
 
     /**
      * 返回group或者selectDraft自定义sql片段
+     * 请使用{@link com.easy.query.core.proxy.core.Expression#sqlType(String,SQLExpression1)}
      * <blockquote><pre>
      * {@code
      *
@@ -129,6 +139,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * @param contextConsume 片段参数
      * @return 返回元素sql片段
      */
+    @Deprecated
     public PropTypeColumn<Object> sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         return new SQLNativeDraftImpl((alias, f) -> {
             f.sqlNativeSegment(sqlSegment, c -> {
@@ -142,6 +153,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 返回子查询
+     * 请使用 {@link com.easy.query.core.proxy.core.Expression#subQuery(SQLFuncExpression)}
      * <blockquote><pre>
      * {@code
      *      o.subQuery(()->{
@@ -153,6 +165,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * @return
      * @param <TSubQuery>
      */
+    @Deprecated
     public <TSubQuery> PropTypeColumn<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
         Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
         return new SQLDraftAsSelectImpl<>((alias, f)->{
@@ -168,18 +181,30 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return new SQLSelectKeysImpl(this.getEntitySQLContext(),getTable());
     }
 
+    /**
+     * 请使用{@link Expression#now()}
+     * @return
+     */
+    @Deprecated
     public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> _now() {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::now,LocalDateTime.class);
-    }
-
-    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> _utcNow() {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),this.getTable(), null, SQLFunc::utcNow,LocalDateTime.class);
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),null, null, SQLFunc::now,LocalDateTime.class);
     }
 
     /**
+     * 请使用{@link Expression#utcNow()}
+     * @return
+     */
+    @Deprecated
+    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> _utcNow() {
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),null, null, SQLFunc::utcNow,LocalDateTime.class);
+    }
+
+    /**
+     * 请使用{@link Expression#count()}
      * COUNT(*)
      * @return 返回类型为Long
      */
+    @Deprecated
     public ColumnFunctionComparableNumberChainExpression<Long> count() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null, f->{
             return f.count(c->{});
@@ -187,6 +212,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
+     * 请使用{@link Expression#intCount()}
      * COUNT(*)
      * @return 返回类型为Integer
      */
@@ -294,18 +320,22 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
+     * {@link Expression#exists(Supplier)}
      * where exists(....)
      * @param subQueryFunc 子查询创建方法
      */
+    @Deprecated
     public void exists(Supplier<Query<?>> subQueryFunc) {
         exists(true, subQueryFunc);
     }
 
     /**
+     * {@link Expression#exists(boolean,Supplier)}
      * where exists(....)
      * @param condition 为true是exists生效
      * @param subQueryFunc 子查询创建方法
      */
+    @Deprecated
     public void exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(subQueryFunc.get())));
@@ -313,19 +343,23 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
+     * {@link Expression#notExists(Supplier)}
      * where not exists(....)
      * @param subQueryFunc 子查询创建方法
      */
+    @Deprecated
     public void notExists(Supplier<Query<?>> subQueryFunc) {
         notExists(true, subQueryFunc);
     }
 
 
     /**
+     * {@link Expression#notExists(boolean, Supplier)}
      * where exists(....)
      * @param condition 为true是not exists生效
      * @param subQueryFunc 子查询创建方法
      */
+    @Deprecated
     public void notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
@@ -342,11 +376,16 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
+     * {@link Expression#constant()}
      * 创建常量值用于比较或者处理
      * @return 数据库常量值构建方法
      */
+    @Deprecated
     public SQLConstantValueAvailable SQLConstant(){
         return new SQLConstantValueAvailableImpl(this.getEntitySQLContext());
+    }
+    public Expression expression(){
+        return Expression.of(entitySQLContext);
     }
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(TPropertyProxy columnProxy) {
         set(columnProxy,null);
