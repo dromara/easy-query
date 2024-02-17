@@ -382,6 +382,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType());
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
+                    }else{
+                        fieldComment+="apt提示无法获取导航属性代理:"+propertyColumn.getPropertyType();
                     }
                     if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
                         includeManyProperty = true;
@@ -449,6 +451,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType());
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
+                    }else{
+                        fieldComment+="apt提示无法获取导航属性代理:"+propertyColumn.getPropertyType();
                     }
                     if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
                         includeManyProperty = true;
