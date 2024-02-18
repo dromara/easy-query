@@ -43,11 +43,11 @@ public class AnonymousUnionQuerySQLExpressionImpl implements AnonymousUnionEntit
         EntityQuerySQLExpression firstQuerySQLExpression = iterator.next();
         String unionSQL = " " + sqlUnion.getSQL() + " ";
         StringBuilder sql = new StringBuilder();
-        sql.append(firstQuerySQLExpression.toSQL(toSQLContext));
+        sql.append(" (").append(firstQuerySQLExpression.toSQL(toSQLContext)).append(") ");
         while(iterator.hasNext()){
             sql.append(unionSQL);
             EntityQuerySQLExpression querySQLExpression = iterator.next();
-            sql.append(querySQLExpression.toSQL(toSQLContext));
+            sql.append(" (").append(querySQLExpression.toSQL(toSQLContext)).append(") ");
         }
         return sql.toString();
     }

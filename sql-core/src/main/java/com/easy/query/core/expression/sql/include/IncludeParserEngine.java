@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.include;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -15,5 +16,5 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface IncludeParserEngine {
-    <TR> IncludeParserResult process(EntityQueryExpressionBuilder mainEntityQueryExpressionBuilder, EntityMetadata entityMetadata, List<TR> result, SQLFuncExpression1<IncludeNavigateParams, ClientQueryable<?>> includeExpression);
+    <TR> IncludeParserResult process(EntityQueryExpressionBuilder mainEntityQueryExpressionBuilder, EntityMetadata entityMetadata, List<TR> result, SQLFuncExpression1<IncludeNavigateParams, SQLFuncExpression<ClientQueryable<?>>> includeExpression);
 }

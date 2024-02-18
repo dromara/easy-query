@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.parser.core.base;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.metadata.IncludeNavigateParams;
 
 /**
  * create time 2023/6/18 10:43
@@ -9,7 +10,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
  * @author xuejiaming
  */
 public interface NavigateInclude<T1> {
-
+    IncludeNavigateParams getIncludeNavigateParams();
     default <TREntity> ClientQueryable<TREntity> with(String property){
         return with(property,null);
     }

@@ -26,9 +26,8 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         this.runtimeContext = runtimeContext;
         this.includeNavigateParams = includeNavigateParams;
     }
+    private NavigateMetadata withBefore(String property, Integer groupSize){
 
-    @Override
-    public <TREntity> ClientQueryable<TREntity> with(String property,Integer groupSize) {
         if(groupSize!=null&&groupSize<1){
             throw new IllegalArgumentException("include group size < 1");
         }
@@ -36,8 +35,6 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         includeNavigateParams.setNavigateMetadata(navigateMetadata);
         includeNavigateParams.setTable(this.entityTable);
         includeNavigateParams.setRelationGroupSize(groupSize);
-        Class<?> navigatePropertyType = navigateMetadata.getNavigatePropertyType();
-        ClientQueryable<TREntity> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
         RelationTypeEnum relationType = navigateMetadata.getRelationType();
         //添加多对多中间表
         if(RelationTypeEnum.ManyToMany==relationType){
@@ -46,6 +43,26 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
                     .select(o -> o.column(navigateMetadata.getSelfMappingProperty()).column(navigateMetadata.getTargetMappingProperty()));
             includeNavigateParams.setMappingQueryable(mappingQueryable);
         }
-        return queryable.where(o->o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),includeNavigateParams.getRelationIds()));
+        return navigateMetadata;
+    }
+
+    @Override
+    public IncludeNavigateParams getIncludeNavigateParams() {
+        return includeNavigateParams;
+    }
+
+    @Override
+    public <TREntity> ClientQueryable<TREntity> with(String property,Integer groupSize) {
+        NavigateMetadata navigateMetadata = withBefore(property, groupSize);
+        Class<?> navigatePropertyType = navigateMetadata.getNavigatePropertyType();
+        return runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
+
+//        return queryable.where(o->{
+//            if(includeNavigateParams.isLimit()){
+//                o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),includeNavigateParams.getRelationId());
+//            }else{
+//                o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),includeNavigateParams.getRelationIds());
+//            }
+//        });
     }
 }

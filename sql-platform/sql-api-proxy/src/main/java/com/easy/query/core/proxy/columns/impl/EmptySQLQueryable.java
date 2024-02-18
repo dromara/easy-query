@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.columns.impl;
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -51,7 +52,22 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
     }
 
     @Override
+    public void reply(EntityQueryable<T1Proxy, T1> queryable) {
+
+    }
+
+    @Override
     public SQLQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SQLQueryable<T1Proxy, T1> limit(long rows) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SQLQueryable<T1Proxy, T1> limit(long offset, long rows) {
         throw new UnsupportedOperationException();
     }
 

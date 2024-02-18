@@ -18,6 +18,7 @@ public class IncludeNavigateParams {
     private ClientQueryable<?> mappingQueryable;
     private TableAvailable table;
     private Integer relationGroupSize;
+    private boolean limit;
     public IncludeNavigateParams(){
         relationIds =new ArrayList<>();
     }
@@ -59,5 +60,13 @@ public class IncludeNavigateParams {
             return defGroupSize;
         }
         return this.relationGroupSize;
+    }
+
+    public boolean isLimit() {
+        return limit;
+    }
+
+    public void setLimit(boolean limit) {
+        this.limit = limit;
     }
 }

@@ -32,7 +32,7 @@ public class MyJdbcListener implements JdbcExecutorListener {
         ListenerContext listenContext = listenerContextManager.getListenContext();
         if(listenContext!=null){
             listenContext.setJdbcExecuteAfterArg(afterArg);
-            listenerContextManager.clear();
+//            listenerContextManager.clear();
         }
     }
 }

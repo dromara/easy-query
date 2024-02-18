@@ -383,7 +383,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
                     }else{
-                        fieldComment+="apt提示无法获取导航属性代理:"+propertyColumn.getPropertyType();
+                        fieldComment+="\n//apt提示无法获取导航属性代理:"+propertyColumn.getPropertyType();
                     }
                     if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
                         includeManyProperty = true;
@@ -452,7 +452,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
                     }else{
-                        fieldComment+="apt提示无法获取导航属性代理:"+propertyColumn.getPropertyType();
+                        fieldComment+="\n//apt提示无法获取导航属性代理:"+propertyColumn.getPropertyType();
                     }
                     if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
                         includeManyProperty = true;

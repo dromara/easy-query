@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.include;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class IncludeParseContext {
     private PropertySetterCaller<Object> navigatePropertySetter;
 
     private ClientQueryable<?> includeQueryable;
+    private SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression;
     private ClientQueryable<?> includeMappingQueryable;
 
     private List<Map<String, Object>> mappingRows;
@@ -105,5 +107,13 @@ public class IncludeParseContext {
 
     public void setNavigatePropertySetter(PropertySetterCaller<Object> navigatePropertySetter) {
         this.navigatePropertySetter = navigatePropertySetter;
+    }
+
+    public SQLFuncExpression<ClientQueryable<?>> getIncludeQueryableExpression() {
+        return includeQueryableExpression;
+    }
+
+    public void setIncludeQueryableExpression(SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression) {
+        this.includeQueryableExpression = includeQueryableExpression;
     }
 }

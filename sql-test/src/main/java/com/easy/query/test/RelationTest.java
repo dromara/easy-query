@@ -155,6 +155,21 @@ public class RelationTest extends BaseTest {
         List<String> ids = Arrays.asList("1", "2", "3");
         try {
             relationInit(ids);
+
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(o -> o.schoolStudents().limit(2))
+                        .toList();
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT t1.`id`,t1.`class_id`,t1.`name` FROM ( (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`class_id` = ? LIMIT 2) ) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
             {
                 List<SchoolStudent> list = easyQuery.queryable(SchoolStudent.class).toList();
                 Assert.assertEquals(3, list.size());
@@ -337,6 +352,9 @@ public class RelationTest extends BaseTest {
 //                        .include(o-> o.with("schoolStudents"))
                 List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
                         .includes(o -> o.schoolStudents())
+                        .toList();
+                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(o -> o.schoolStudents().where(x->x.name().like("123")))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
