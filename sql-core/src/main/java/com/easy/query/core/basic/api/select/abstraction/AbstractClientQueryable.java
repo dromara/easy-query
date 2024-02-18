@@ -1031,7 +1031,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             return firstQueryable.unionAll(otherQueryable);
                         }
                     }
-                    return clientQueryable.where(o->o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),relationIds));
+                    return clientQueryable.cloneQueryable().where(o->o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),relationIds));
                 };
 //                NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
 //                navigateMetadata.getNavigatePropertyType()

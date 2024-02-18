@@ -171,6 +171,20 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.clear();
             }
             {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(o -> o.schoolStudents().limit(2),1)
+                        .toList();
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT `id`,`class_id`,`name` FROM `school_student` WHERE `class_id` IN (?) LIMIT 2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
+            {
                 List<SchoolStudent> list = easyQuery.queryable(SchoolStudent.class).toList();
                 Assert.assertEquals(3, list.size());
                 for (SchoolStudent schoolStudent : list) {
