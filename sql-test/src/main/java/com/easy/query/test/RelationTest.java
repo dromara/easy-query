@@ -162,7 +162,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
 
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents().limit(2))
+                        .includes(o -> o.schoolStudents(),x->x.limit(2))
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -176,7 +176,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
 
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents().limit(2),1)
+                        .includes(o -> o.schoolStudents(),x->x.limit(2),1)
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

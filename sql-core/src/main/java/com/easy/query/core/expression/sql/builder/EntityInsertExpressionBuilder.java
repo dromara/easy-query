@@ -3,6 +3,8 @@ package com.easy.query.core.expression.sql.builder;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
 
+import java.util.Collection;
+
 /**
  * @author xuejiaming
  * @Description: 文件说明
@@ -11,8 +13,8 @@ import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
 public interface EntityInsertExpressionBuilder extends EntityExpressionBuilder, EntityToExpressionBuilder,EntityColumnConfigurerExpressionBuilder {
     SQLBuilderSegment getColumns();
     SQLBuilderSegment getDuplicateKeyUpdateColumns();
-    String getDuplicateKey();
-    void setDuplicateKey(String duplicateKey);
+    Collection<String> getDuplicateKeys();
+    void addDuplicateKey(String duplicateKey);
     @Override
     default EntityInsertSQLExpression toExpression() {
         return toExpression(null);

@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -18,7 +19,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      * <blockquote><pre>
      * {@code
      * easyEntityQuery.queryable(SchoolStudent.class)
-     *                         .include(o->o.schoolClass()，q->q.where(x->x.name().like("123)))
+     *                         .include(o->o.schoolClass())
      *                    }
      * </pre></blockquote>
      * @param navigateIncludeSQLExpression
@@ -27,7 +28,43 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      * @param <TProperty>
      */
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression) {
-        return includes(navigateIncludeSQLExpression, null);
+        return includes(navigateIncludeSQLExpression, o -> {
+        }, null);
+    }
+
+    /**
+     * <blockquote><pre>
+     * {@code
+     * easyEntityQuery.queryable(SchoolStudent.class)
+     *                         .include(o->o.schoolClass(),100)
+     *                    }
+     * </pre></blockquote>
+     * @param navigateIncludeSQLExpression
+     * @param groupSize
+     * @return
+     * @param <TPropertyProxy>
+     * @param <TProperty>
+     */
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, Integer groupSize) {
+        return includes(navigateIncludeSQLExpression, o -> {
+        }, groupSize);
+    }
+
+    /**
+     * <blockquote><pre>
+     * {@code
+     * easyEntityQuery.queryable(SchoolStudent.class)
+     *                         .include(o->o.schoolClass()，q->q.where(x->x.name().like("123)))
+     *                    }
+     * </pre></blockquote>
+     * @param navigateIncludeSQLExpression
+     * @param includeAdapterExpression
+     * @return
+     * @param <TPropertyProxy>
+     * @param <TProperty>
+     */
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression) {
+        return includes(navigateIncludeSQLExpression, includeAdapterExpression, null);
     }
 
     /**
@@ -38,10 +75,11 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      *                    }
      * </pre></blockquote>
      * @param navigateIncludeSQLExpression
+     * @param includeAdapterExpression
      * @param groupSize
      * @return
      * @param <TPropertyProxy>
      * @param <TProperty>
      */
-   <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, Integer groupSize);
+    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize);
 }

@@ -20,6 +20,7 @@ import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -49,15 +50,14 @@ public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder 
     }
 
     @Override
-    public String getDuplicateKey() {
+    public Collection<String> getDuplicateKeys() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setDuplicateKey(String duplicateKey) {
+    public void addDuplicateKey(String duplicateKey) {
         throw new UnsupportedOperationException();
     }
-
 
     private void checkTable() {
         int tableCount = getTables().size();

@@ -16,12 +16,10 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
-import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -63,7 +61,7 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
             TableAvailable entityTable = easyTableSQLExpression.getEntityTable();
             Collection<String> keyProperties = entityMetadata.getKeyProperties();
 
-            String constraintPropertyName =  getConstraintPropertyName(keyProperties);
+            Collection<String> constraintPropertyNames = getConstraintPropertyName(keyProperties);
 
             StringBuilder duplicateKeyUpdateSql = new StringBuilder();
             SQLBuilderSegment realDuplicateKeyUpdateColumns = getRealDuplicateKeyUpdateColumns();
@@ -75,7 +73,7 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
                 }
                 InsertUpdateSetColumnSQLSegment sqlEntitySegment = (InsertUpdateSetColumnSQLSegment) sqlSegment;
                 String propertyName = sqlEntitySegment.getPropertyName();
-                if(Objects.equals(propertyName,constraintPropertyName)||keyProperties.contains(propertyName)||!duplicateKeyUpdateColumnsSet.contains(propertyName)){
+                if(constraintPropertyNames.contains(propertyName)||keyProperties.contains(propertyName)||!duplicateKeyUpdateColumnsSet.contains(propertyName)){
                     continue;
                 }
                 if(duplicateKeyUpdateSql.length()!=0){
@@ -85,9 +83,15 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
                 duplicateKeyUpdateSql.append(quoteName).append(" = ").append("EXCLUDED.").append(quoteName);
             }
             if(duplicateKeyUpdateSql.length()>0){
-                String keyColumnName = entityTable.getColumnName(constraintPropertyName);
-                String quoteKeyName = EasySQLExpressionUtil.getQuoteName(runtimeContext, keyColumnName);
-                sql.append(" ON CONFLICT (").append(quoteKeyName).append(") DO UPDATE SET ")
+                sql.append(" ON CONFLICT (");
+                Iterator<String> constraintPropertyIterator = constraintPropertyNames.iterator();
+                String firstConstraintProperty = constraintPropertyIterator.next();
+                sql.append(getQuoteName(entityTable,runtimeContext,firstConstraintProperty));
+                while (constraintPropertyIterator.hasNext()){
+                    String nextConstraintProperty = constraintPropertyIterator.next();
+                    sql.append(",").append(getQuoteName(entityTable,runtimeContext,nextConstraintProperty));
+                }
+                sql.append(") DO UPDATE SET ")
                         .append(duplicateKeyUpdateSql);
             }
         }
@@ -95,15 +99,15 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
         return sql.toString();
     }
 
-    protected String getConstraintPropertyName(Collection<String> keyProperties){
+    private String getQuoteName(TableAvailable entityTable,QueryRuntimeContext runtimeContext, String constraintProperty){
+        String keyColumnName = entityTable.getColumnName(constraintProperty);
+        return  EasySQLExpressionUtil.getQuoteName(runtimeContext, keyColumnName);
+    }
 
-        boolean noDuplicateKey = EasyStringUtil.isBlank(duplicateKey);
-        if(noDuplicateKey){
-            if(EasyCollectionUtil.isNotSingle(keyProperties)){
-                throw new EasyQueryInvalidOperationException("not found single key, cant use:"+EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE.name());
-            }
-            return EasyCollectionUtil.first(keyProperties);
+    protected Collection<String> getConstraintPropertyName(Collection<String> keyProperties){
+        if(EasyCollectionUtil.isEmpty(duplicateKeys)){
+            return keyProperties;
         }
-        return duplicateKey;
+        return duplicateKeys;
     }
 }

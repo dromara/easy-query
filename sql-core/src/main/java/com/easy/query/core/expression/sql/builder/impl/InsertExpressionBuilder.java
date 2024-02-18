@@ -24,6 +24,7 @@ import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ import java.util.Set;
  */
 public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder implements EntityInsertExpressionBuilder {
     protected final SQLBuilderSegment columns;
-    protected String duplicateKey;
+    protected Collection<String> duplicateKeys;
     protected SQLBuilderSegment duplicateKeyUpdateColumns;
     protected Map<String, ColumnConfigurerContext> columnConfigurers;
 
@@ -59,17 +60,20 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         }
         return duplicateKeyUpdateColumns;
     }
-
     @Override
-    public String getDuplicateKey() {
-        return duplicateKey;
+    public Collection<String> getDuplicateKeys() {
+        return duplicateKeys;
     }
 
     @Override
-    public void setDuplicateKey(String duplicateKey) {
-        this.duplicateKey = duplicateKey;
+    public void addDuplicateKey(String duplicateKey) {
+        if(duplicateKeys==null){
+            duplicateKeys=new ArrayList<>();
+        }
+        if(!duplicateKeys.contains(duplicateKey)){
+            duplicateKeys.add(duplicateKey);
+        }
     }
-
 
     private void checkTable() {
         int tableCount = getTables().size();
@@ -168,7 +172,11 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
             throw new EasyQueryException("not found insert columns :" + EasyClassUtil.getSimpleName(table.getEntityClass()));
         }
         insertCloneColumns.copyTo(easyInsertSQLExpression.getColumns());
-        easyInsertSQLExpression.setDuplicateKey(duplicateKey);
+        if(duplicateKeys!=null){
+            for (String duplicateKey : duplicateKeys) {
+                easyInsertSQLExpression.addDuplicateKey(duplicateKey);
+            }
+        }
         if (EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)) {
             duplicateKeyUpdateColumns.copyTo(easyInsertSQLExpression.getDuplicateKeyUpdateColumns());
         }
@@ -184,7 +192,11 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
         if (EasySQLSegmentUtil.isNotEmpty(getColumns())) {
             getColumns().copyTo(insertExpressionBuilder.getColumns());
         }
-        insertExpressionBuilder.setDuplicateKey(duplicateKey);
+        if(duplicateKeys!=null){
+            for (String duplicateKey : duplicateKeys) {
+                insertExpressionBuilder.addDuplicateKey(duplicateKey);
+            }
+        }
         if (EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)) {
             duplicateKeyUpdateColumns.copyTo(insertExpressionBuilder.getDuplicateKeyUpdateColumns());
         }

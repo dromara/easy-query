@@ -8,6 +8,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
+import java.util.Collection;
 import java.util.function.Function;
 
 /**
@@ -115,12 +116,12 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate(String constraintProperty) {
+    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties) {
         return this;
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate(String constraintProperty, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
+    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         return this;
     }
 

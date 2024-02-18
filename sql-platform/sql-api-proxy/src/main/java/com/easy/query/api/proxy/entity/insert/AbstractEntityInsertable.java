@@ -5,13 +5,14 @@ import com.easy.query.api.proxy.sql.impl.ProxyColumnConfigurerImpl;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.builder.impl.FetchSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectExpression;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -144,20 +145,28 @@ public class AbstractEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> 
     }
 
     @Override
-    public EntityInsertable<TProxy, T> onConflictDoUpdate(SQLFuncExpression1<TProxy, SQLColumn<TProxy, ?>> constraintPropertyExpression) {
-        SQLColumn<TProxy, ?> constraintColumn = constraintPropertyExpression.apply(tProxy);
-        clientInsertable.onConflictDoUpdate(constraintColumn.getValue());
+    public EntityInsertable<TProxy, T> onConflictDoUpdate(SQLFuncExpression1<TProxy, SQLSelectExpression> constraintPropertyExpression) {
+        SQLSelectExpression columnExpression = constraintPropertyExpression.apply(tProxy);
+        Collection<String> constraintProperties = parseConstraintProperties(columnExpression);
+        clientInsertable.onConflictDoUpdate(constraintProperties);
         return this;
     }
 
     @Override
-    public EntityInsertable<TProxy, T> onConflictDoUpdate(SQLFuncExpression1<TProxy, SQLColumn<TProxy, ?>> constraintPropertyExpression, SQLFuncExpression1<TProxy, SQLSelectExpression> updatePropertyExpression) {
-        SQLColumn<TProxy, ?> constraintColumn = constraintPropertyExpression.apply(tProxy);
-        clientInsertable.onConflictDoUpdate(constraintColumn.getValue(),s->{
+    public EntityInsertable<TProxy, T> onConflictDoUpdate(SQLFuncExpression1<TProxy, SQLSelectExpression> constraintPropertyExpression, SQLFuncExpression1<TProxy, SQLSelectExpression> updatePropertyExpression) {
+        SQLSelectExpression columnExpression = constraintPropertyExpression.apply(tProxy);
+        Collection<String> constraintProperties = parseConstraintProperties(columnExpression);
+        clientInsertable.onConflictDoUpdate(constraintProperties,s->{
             SQLSelectExpression sqlSelectExpression = updatePropertyExpression.apply(tProxy);
             sqlSelectExpression.accept(s.getOnlySelector());
         });
         return this;
+    }
+    private Collection<String> parseConstraintProperties(SQLSelectExpression sqlSelectExpression){
+        ArrayList<String> properties = new ArrayList<>();
+        FetchSelector fetchSelector = new FetchSelector(properties);
+        sqlSelectExpression.accept(fetchSelector);
+        return properties;
     }
 
     @Override

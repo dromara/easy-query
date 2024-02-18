@@ -1,7 +1,9 @@
 package com.easy.query.test;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.school.MySchoolClass;
 import com.easy.query.test.entity.school.MySchoolStudent;
 import com.easy.query.test.listener.ListenerContext;
@@ -207,5 +209,8 @@ public class Relation2Test extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_school_class` t WHERE (SELECT MAX(t1.`name`) FROM `my_school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%1234%(String),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+
+
+
     }
 }

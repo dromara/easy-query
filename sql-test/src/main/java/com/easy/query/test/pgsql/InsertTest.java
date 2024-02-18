@@ -5,6 +5,7 @@ import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.TopicAuto;
+import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -113,5 +114,14 @@ public class InsertTest extends PgSQLBaseTest {
         EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onConflictDoUpdate(TopicAuto::getTitle);
         String sql = insertable.toSQL(topicAuto);
         Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"title\") DO UPDATE SET \"stars\" = EXCLUDED.\"stars\", \"create_time\" = EXCLUDED.\"create_time\"",sql);
+
+
+        com.easy.query.api.proxy.entity.insert.EntityInsertable<TopicAutoProxy, TopicAuto> topicAutoProxyTopicAutoEntityInsertable =
+                entityQuery.insertable(topicAuto)
+                .onConflictDoUpdate(o -> o.FETCHER.id().stars(), o -> o.FETCHER.id().title());
+        String sql1 = topicAutoProxyTopicAutoEntityInsertable.toSQL(topicAuto);
+
+        Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"id\",\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\"",sql1);
+
     }
 }

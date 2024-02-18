@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
@@ -33,7 +34,8 @@ public class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
     protected final List<EntityTableSQLExpression> tables = new ArrayList<>(1);
     protected final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
 
-    protected String duplicateKey;
+//    protected String duplicateKey;
+    protected List<String> duplicateKeys;
     protected SQLBuilderSegment duplicateKeyUpdateColumns;
 
     public InsertSQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression table) {
@@ -61,13 +63,18 @@ public class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
     }
 
     @Override
-    public String getDuplicateKey() {
-        return duplicateKey;
+    public @Nullable List<String> getDuplicateKeys() {
+        return duplicateKeys;
     }
 
     @Override
-    public void setDuplicateKey(String duplicateKey) {
-        this.duplicateKey = duplicateKey;
+    public void addDuplicateKey(String duplicateKey) {
+        if (duplicateKeys == null) {
+            duplicateKeys = new ArrayList<>();
+        }
+        if(!duplicateKeys.contains(duplicateKey)){
+            duplicateKeys.add(duplicateKey);
+        }
     }
 
     @Override
@@ -118,7 +125,11 @@ public class InsertSQLExpressionImpl implements EntityInsertSQLExpression {
         if (EasySQLSegmentUtil.isNotEmpty(duplicateKeyUpdateColumns)) {
             duplicateKeyUpdateColumns.copyTo(easyInsertSQLExpression.getDuplicateKeyUpdateColumns());
         }
-        easyInsertSQLExpression.setDuplicateKey(duplicateKey);
+        if(EasyCollectionUtil.isNotEmpty(duplicateKeys)){
+            for (String duplicateKey : duplicateKeys) {
+                easyInsertSQLExpression.addDuplicateKey(duplicateKey);
+            }
+        }
         return easyInsertSQLExpression;
     }
 

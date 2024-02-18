@@ -24,6 +24,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -171,14 +172,14 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate(String constraintProperty) {
-        doOnDuplicateKeyUpdate(constraintProperty, null);
+    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
+        doOnDuplicateKeyUpdate(constraintProperties, setColumnSelector);
         return this;
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate(String constraintProperty, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
-        doOnDuplicateKeyUpdate(constraintProperty, setColumnSelector);
+    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties) {
+        doOnDuplicateKeyUpdate(constraintProperties, null);
         return this;
     }
 
@@ -200,9 +201,13 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
         return this;
     }
 
-    private void doOnDuplicateKeyUpdate(String constraintProperty, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
+    private void doOnDuplicateKeyUpdate(Collection<String> constraintProperties, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         insertOrUpdateBehavior();
-        entityInsertExpressionBuilder.setDuplicateKey(constraintProperty);
+        if(EasyCollectionUtil.isNotEmpty(constraintProperties)){
+            for (String constraintProperty : constraintProperties) {
+                entityInsertExpressionBuilder.addDuplicateKey(constraintProperty);
+            }
+        }
         entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns().clear();
         if (setColumnSelector != null) {
             ColumnOnlySelectorImpl<T> columnUpdateSetSelector = new ColumnOnlySelectorImpl<>(entityTableExpressionBuilder.getEntityTable(), new OnlySelectorImpl(entityInsertExpressionBuilder.getRuntimeContext(),entityInsertExpressionBuilder.getExpressionContext(), entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns()));
