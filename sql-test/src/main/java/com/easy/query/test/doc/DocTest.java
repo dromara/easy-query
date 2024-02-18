@@ -601,7 +601,7 @@ public class DocTest extends BaseTest {
                     .toPageResult(1, 20);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t WHERE t.`title` LIKE ? AND t.`create_time` >= ? ORDER BY t.`id` ASC,t.`create_time` DESC LIMIT 20" , jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("%123%(String),2022-02-01T03:04(LocalDateTime)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }

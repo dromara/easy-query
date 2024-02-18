@@ -600,7 +600,7 @@ public class QueryTest11 extends BaseTest {
         List<TopicCount> list = select1.unionAll(select2, select3).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t6.`type` AS `type`,t6.`count` AS `count` FROM (SELECT 'type1' AS `type`,COUNT(t.`id`) AS `count` FROM `t_topic` t WHERE t.`title` = ? UNION ALL SELECT 'type2' AS `type`,COUNT(t2.`id`) AS `count` FROM `t_topic` t2 WHERE t2.`title` = ? UNION ALL SELECT 'type3' AS `type`,COUNT(t4.`id`) AS `count` FROM `t_topic` t4 WHERE t4.`title` = ?) t6", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t6.`type` AS `type`,t6.`count` AS `count` FROM ( (SELECT 'type1' AS `type`,COUNT(t.`id`) AS `count` FROM `t_topic` t WHERE t.`title` = ?)  UNION ALL  (SELECT 'type2' AS `type`,COUNT(t2.`id`) AS `count` FROM `t_topic` t2 WHERE t2.`title` = ?)  UNION ALL  (SELECT 'type3' AS `type`,COUNT(t4.`id`) AS `count` FROM `t_topic` t4 WHERE t4.`title` = ?) ) t6", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -633,7 +633,7 @@ public class QueryTest11 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t6.`value1` AS `value1`,t6.`value2` AS `value2` FROM (SELECT ? AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t WHERE t.`title` = ? UNION ALL SELECT ? AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t2 WHERE t2.`title` = ? UNION ALL SELECT ? AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t4 WHERE t4.`title` = ?) t6", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t6.`value1` AS `value1`,t6.`value2` AS `value2` FROM ( (SELECT ? AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t WHERE t.`title` = ?)  UNION ALL  (SELECT ? AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t2 WHERE t2.`title` = ?)  UNION ALL  (SELECT ? AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t4 WHERE t4.`title` = ?) ) t6", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("type1(String),123(String),type2(String),123(String),type3(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -758,7 +758,7 @@ public class QueryTest11 extends BaseTest {
                 .where(o -> o.id().isNotNull())
                 .asTreeCTE(o -> o.id(), o -> o.stars())
                 .toSQL();
-        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL UNION ALL SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t", sql);
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL)  UNION ALL  (SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`) )  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t", sql);
     }
 
     @Test
