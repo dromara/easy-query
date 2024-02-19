@@ -1020,15 +1020,18 @@ public class RelationTest extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<String> list = easyEntityQuery.queryable(SchoolStudent.class)
+        easyEntityQuery.queryable(SchoolStudent.class)
                 .where(s -> s.name().like("123"))
-                .select(s -> new StringProxy(s.schoolClass().name())).toList();
+                .select(s -> new StringProxy(s.schoolClass().name().toLower())).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t1.`name` FROM `school_student` t LEFT JOIN `school_class` t1 ON t.`class_id` = t1.`id` WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
+        List<String> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                .where(s -> s.schoolClass().name().like("123"))
+                .select(s -> s.schoolClass().name()).toList();
     }
 
     @Test

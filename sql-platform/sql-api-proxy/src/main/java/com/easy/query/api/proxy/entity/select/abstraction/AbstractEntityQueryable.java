@@ -242,6 +242,21 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
                 setDraftPropTypes(select,resultProxy);
                 return new EasyEntityQueryable<>(resultProxy, select);
             }else{
+//                if(resultProxy instanceof SQLColumn){
+//                    SQLColumn<?,TR> resultProxy1 = (SQLColumn<?,TR>) resultProxy;
+//                    String value = resultProxy1.getValue();
+//                    ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass(), columnAsSelector -> {
+//                        columnAsSelector.getAsSelector().column(tableOrNull,value);
+//                    });
+//                    setDraftPropTypes(select,resultProxy);
+//                    return new EasyEntityQueryable<>(resultProxy, select);
+//                }else{
+//                    ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass(), columnAsSelector -> {
+//                        columnAsSelector.getAsSelector().columnAll(tableOrNull);
+//                    });
+//                    setDraftPropTypes(select,resultProxy);
+//                    return new EasyEntityQueryable<>(resultProxy, select);
+//                }
                 ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass(), columnAsSelector -> {
                     columnAsSelector.getAsSelector().columnAll(tableOrNull);
                 });
