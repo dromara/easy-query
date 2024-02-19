@@ -12,5 +12,4 @@ import com.easy.query.core.proxy.predicate.DSLPropertyOnlyAssertPredicate;
 public interface SQLStringColumn<TProxy, TProperty> extends SQLObjectColumn<TProxy,TProperty>,
         DSLPropertyOnlyAssertPredicate<TProperty>,
         ColumnStringFunctionAvailable<TProperty> {
-
 }

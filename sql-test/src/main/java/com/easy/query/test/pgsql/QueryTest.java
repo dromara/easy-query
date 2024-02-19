@@ -247,4 +247,15 @@ public void query10() {
                 .executeRows();
     }
 
+//    @Test
+//     public void test1(){
+//         entityQuery.updatable(Topic.class)
+//                 .setColumns(t -> {
+//                     t.title().set(
+//                             t.title().subString(1,10).concat(x->x.concatWith("123"))
+//                     );
+//                 }).asTable("a123123")
+//                 .whereById("123zzzxxx")
+//                 .executeRows();
+//     }
 }

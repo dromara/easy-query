@@ -18,8 +18,10 @@ import java.lang.annotation.Target;
 public @interface EntityProxy {
     /**
      * 设置代理实例对象名称比如'SysUserProxy'
+     * 不建议设置别名
      * @return
      */
+    @Deprecated
     String value() default "";
 
     /**

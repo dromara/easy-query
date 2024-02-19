@@ -70,6 +70,11 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     }
 
     @Override
+    public TableAvailable getTableOrNull() {
+        return table;
+    }
+
+    @Override
     public EntitySQLContext getEntitySQLContext() {
         Objects.requireNonNull(entitySQLContext, "cant found entitySQLContext in sql context");
         return entitySQLContext;

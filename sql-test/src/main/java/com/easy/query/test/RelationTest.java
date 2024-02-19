@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.sql.impl.FillPredicate;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -990,5 +991,58 @@ public class RelationTest extends BaseTest {
             Assert.assertEquals("%小明%(String),%13%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
+//        easyQueryClient.updatable(Topic.class)
+//                .setSQLSegment("name","subString({0},1)",c->c.expression("name"))
+//        easyEntityQuery.updatable(Topic.class)
+//                .setColumns(t -> {
+//                    t.title().set(t.title().subString(1,10).concat(x->x.concatWith("123")));
+//                }).asTable("a123123")
+//                .whereById("123zzzxxx")
+//                .executeRows();
+    }
+
+    @Test
+    public void testSub(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SchoolClass> list = easyEntityQuery.queryable(SchoolStudent.class)
+                .where(s -> s.name().like("123"))
+                .select(s -> s.schoolClass()).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`name` FROM `school_student` t LEFT JOIN `school_class` t1 ON t.`class_id` = t1.`id` WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testSub1(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<String> list = easyEntityQuery.queryable(SchoolStudent.class)
+                .where(s -> s.name().like("123"))
+                .select(s -> new StringProxy(s.schoolClass().name())).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`name` FROM `school_student` t LEFT JOIN `school_class` t1 ON t.`class_id` = t1.`id` WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+    }
+
+    @Test
+    public void testSub2(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SchoolStudent> list = easyEntityQuery.queryable(SchoolStudent.class)
+                .where(s -> s.name().like("123"))
+                .select(s -> s.schoolStudentAddress().schoolStudent()).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`id`,t2.`class_id`,t2.`name` FROM `school_student` t LEFT JOIN `school_student_address` t1 ON t.`id` = t1.`student_id` LEFT JOIN `school_student` t2 ON t1.`student_id` = t2.`id` WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }

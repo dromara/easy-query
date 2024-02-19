@@ -12,10 +12,10 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
  * @author xuejiaming
  */
 public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProperty> {
-    private final EntitySQLContext entitySQLContext;
-    private final TableAvailable table;
-    private final String property;
-    private  Class<?> propType;
+    protected final EntitySQLContext entitySQLContext;
+    protected final TableAvailable table;
+    protected final String property;
+    protected  Class<?> propType;
 
     public SQLColumnImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property,@Nullable Class<TProperty> propType) {
         this.entitySQLContext = entitySQLContext;

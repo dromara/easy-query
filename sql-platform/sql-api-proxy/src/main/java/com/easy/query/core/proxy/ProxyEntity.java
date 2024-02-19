@@ -1,5 +1,8 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.core.annotation.Nullable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+
 /**
  * create time 2023/6/21 23:37
  * 文件说明
@@ -8,6 +11,9 @@ package com.easy.query.core.proxy;
  */
 public interface ProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity>
         extends TableProxy<TProxy, TEntity> {
+
+    @Nullable
+    TableAvailable getTableOrNull();
     default String getNavValue(){
         return null;
     }

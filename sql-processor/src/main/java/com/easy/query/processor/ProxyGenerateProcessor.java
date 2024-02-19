@@ -379,7 +379,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 aptFileCompiler.addImports(propertyColumn.getImport());
                 if (includeProperty) {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
-                    String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType());
+                    String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType(), navigate.propIsProxy());
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
                     }else{
@@ -448,7 +448,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     aptFileCompiler.getSelectorInfo().getProperties().add(new AptSelectPropertyInfo(propertyName, fieldComment, proxyPropertyName));
                 } else {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
-                    String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType());
+                    String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType(), navigate.propIsProxy());
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
                     }else{
@@ -476,27 +476,34 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         }
     }
 
-    private String getNavigatePropertyProxyFullName(String fullClassName) {
+    private String getNavigatePropertyProxyFullName(String fullClassName,boolean propIsProxy) {
 //        if(propertyColumn.getPropertyType().equals("com.easy.query.test.entity.school.MySchoolClass1")){
         TypeElement typeElement = elementUtils.getTypeElement(fullClassName);
         if (typeElement != null) {
             EntityProxy annotation = typeElement.getAnnotation(EntityProxy.class);
             if (annotation != null) {
                 if (EasyStringUtil.isBlank(annotation.value())) {
-                    return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "Proxy";
+                    return getDefaultClassProxyName(fullClassName);
                 }
                 return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + annotation.value();
             }
             EntityFileProxy annotationFile = typeElement.getAnnotation(EntityFileProxy.class);
             if (annotationFile != null) {
                 if (EasyStringUtil.isBlank(annotationFile.value())) {
-                    return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "Proxy";
+                    return getDefaultClassProxyName(fullClassName);
                 }
                 return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + annotationFile.value();
             }
         }
+        if(propIsProxy){
+            return getDefaultClassProxyName(fullClassName);
+        }
 //        }
         return null;
+    }
+
+    private String getDefaultClassProxyName(String fullClassName){
+        return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "Proxy";
     }
 
     private String getFiledComment(String docComment, String className, String propertyName) {

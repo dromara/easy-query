@@ -27,6 +27,7 @@ import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.UpdateSetSQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsTrackPropertyPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsPropertyPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnNullAssertPredicate;
 import com.easy.query.core.expression.segment.impl.ColumnVersionPropertySegmentImpl;
@@ -425,15 +426,22 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
     protected void buildWhereByProperty(PredicateSegment where, TrackContext trackContext, String propertyName, Object entity, EntityTableExpressionBuilder tableExpressionBuilder, boolean nullAssert) {
         if (entity != null) {
-            Object predicateValue = getPredicateValue(entity, trackContext, propertyName, tableExpressionBuilder.getEntityMetadata());
-            if (nullAssert && predicateValue == null) {
+            EntityPredicateValue predicateValue = getPredicateValue(entity, trackContext, propertyName, tableExpressionBuilder.getEntityMetadata());
+            if (nullAssert && predicateValue.getPredicateValue() == null) {
                 ColumnNullAssertPredicate columnPredicate = new ColumnNullAssertPredicate(tableExpressionBuilder.getEntityTable(), propertyName, SQLPredicateCompareEnum.IS_NULL, runtimeContext);
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPredicate);
                 where.addPredicateSegment(andPredicateSegment);
             } else {
-                ColumnEqualsPropertyPredicate columnPropertyPredicate = new ColumnEqualsPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, runtimeContext);
-                AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPropertyPredicate);
-                where.addPredicateSegment(andPredicateSegment);
+                if(predicateValue.isTrack()){
+                    //如果是追踪应该使用track的original属性
+                    ColumnEqualsTrackPropertyPredicate columnPropertyPredicate = new ColumnEqualsTrackPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, runtimeContext);
+                    AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPropertyPredicate);
+                    where.addPredicateSegment(andPredicateSegment);
+                }else{
+                    ColumnEqualsPropertyPredicate columnPropertyPredicate = new ColumnEqualsPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, runtimeContext);
+                    AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPropertyPredicate);
+                    where.addPredicateSegment(andPredicateSegment);
+                }
             }
         } else {
             ColumnEqualsPropertyPredicate columnPropertyPredicate = new ColumnEqualsPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, runtimeContext);
@@ -442,7 +450,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         }
     }
 
-    protected Object getPredicateValue(Object entity, TrackContext trackContext, String propertyName, EntityMetadata entityMetadata) {
+    protected EntityPredicateValue getPredicateValue(Object entity, TrackContext trackContext, String propertyName, EntityMetadata entityMetadata) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
 //        Property<Object, ?> beanGetter = columnMetadata.getGetterCaller();
         if (trackContext != null) {
@@ -450,12 +458,14 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             if (trackEntityState != null) {
                 Object originalEntity = trackEntityState.getOriginalValue();
                 if (originalEntity != null) {
-                    return EasyBeanUtil.getPropertyValue(originalEntity,entityMetadata,columnMetadata);
+                    Object predicateValue = EasyBeanUtil.getPropertyValue(originalEntity, entityMetadata, columnMetadata);
+                    return new EntityPredicateValue(true,predicateValue);
 //                    return beanGetter.apply(originalEntity);
                 }
             }
         }
-        return EasyBeanUtil.getPropertyValue(entity,entityMetadata,columnMetadata);
+        Object predicateValue = EasyBeanUtil.getPropertyValue(entity, entityMetadata, columnMetadata);
+        return new EntityPredicateValue(false,predicateValue);
 //        return beanGetter.apply(entity);
     }
 

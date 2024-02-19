@@ -1579,4 +1579,37 @@ public class UpdateTest extends BaseTest {
             listenerContextManager.clear();
         }
     }
+
+
+    @Test
+    public void updateTrackParameterTest1() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String newTitle = "test123" + new Random().nextInt(100);
+        String oldTitle=null;
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        try {
+
+            trackManager.begin();
+            Topic topic = easyQuery.queryable(Topic.class)
+                    .asTracking()
+                    .where(o -> o.eq(Topic::getId, "7")).firstNotNull("未找到对应的数据");
+            oldTitle=topic.getTitle();
+            topic.setTitle(newTitle);
+            easyQuery.updatable(topic)
+                    .asTable("aaaxxx")
+                    .whereColumns(o->o.columnKeys().column(Topic::getTitle))
+                    .executeRows();
+        }catch (Exception ex){
+            Assert.assertNotNull(ex);
+        }finally {
+            trackManager.release();
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `aaaxxx` SET `title` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(newTitle+"(String),7(String),"+ oldTitle+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 }

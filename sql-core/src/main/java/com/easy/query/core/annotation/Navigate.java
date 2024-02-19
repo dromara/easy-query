@@ -52,4 +52,10 @@ public @interface Navigate {
      * @return
      */
     String targetMappingProperty() default "";
+
+    /**
+     * 属性是否是代理对象
+     * @return
+     */
+    boolean propIsProxy() default true;
 }
