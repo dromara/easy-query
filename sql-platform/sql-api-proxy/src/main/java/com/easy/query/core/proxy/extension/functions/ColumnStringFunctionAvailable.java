@@ -5,6 +5,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
@@ -31,6 +32,22 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         ColumnFunctionCastDateTimeAvailable<TProperty>,
         ColumnFunctionCastBooleanAvailable<TProperty> {
 
+    /**
+     * 链接表列
+     * @param propTypeColumn
+     * @return
+     */
+    default ColumnFunctionComparableStringChainExpression<TProperty> concat(PropTypeColumn<String> propTypeColumn) {
+        return concat(x->x.expression(propTypeColumn));
+    }
+    /**
+     * 链接常量
+     * @param value
+     * @return
+     */
+    default ColumnFunctionComparableStringChainExpression<TProperty> concat(String value) {
+        return concat(x->x.value(value));
+    }
     /**
      * 链接多个片段可以是表列,函数,片段,常量
      * @param stringExpressions

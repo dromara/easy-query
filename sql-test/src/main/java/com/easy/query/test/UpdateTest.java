@@ -1612,4 +1612,67 @@ public class UpdateTest extends BaseTest {
         Assert.assertEquals(newTitle+"(String),7(String),"+ oldTitle+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+    @Test
+    public void updateSetFuncTest1() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+            easyEntityQuery.updatable(Topic.class)
+                    .setColumns(t -> {
+                        t.title().set(t.title().subString(1,10).concat(t.id()));
+                    }).asTable("a123123")
+                    .whereById("123zzzxxx")
+                    .executeRows();
+        }catch (Exception ex){
+            Assert.assertNotNull(ex);
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `a123123` SET `title` = CONCAT(SUBSTR(`title`,2,10),`id`) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123zzzxxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void updateSetFuncTest2() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+            easyEntityQuery.updatable(Topic.class)
+                    .setColumns(t -> {
+                        t.title().set(t.title().subString(1,10).concat("123"));
+                    }).asTable("a123123")
+                    .whereById("123zzzxxx")
+                    .executeRows();
+        }catch (Exception ex){
+            Assert.assertNotNull(ex);
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `a123123` SET `title` = CONCAT(SUBSTR(`title`,2,10),?) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),123zzzxxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void updateSetFuncTest3() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+            easyEntityQuery.updatable(Topic.class)
+                    .setColumns(t -> {
+                        t.title().set(t.title().subString(1,10).concat(t.id().toLower()));
+                    }).asTable("a123123")
+                    .whereById("123zzzxxx")
+                    .executeRows();
+        }catch (Exception ex){
+            Assert.assertNotNull(ex);
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `a123123` SET `title` = CONCAT(SUBSTR(`title`,2,10),LOWER(`id`)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123zzzxxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 }

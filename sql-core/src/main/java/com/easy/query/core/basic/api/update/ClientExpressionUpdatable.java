@@ -5,11 +5,13 @@ import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.func.SQLFunction;
 
 import java.util.Collection;
 
@@ -106,6 +108,16 @@ public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpress
     }
     ClientExpressionUpdatable<T> setSQLSegment(boolean condition, String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume);
     // endregion
+
+    default ClientExpressionUpdatable<T> setSQLFunction(String property, SQLFunction sqlFunction){
+        return setSQLFunction(true,property,sqlFunction);
+    }
+   default ClientExpressionUpdatable<T> setSQLFunction(boolean condition, String property, SQLFunction sqlFunction){
+       TableAvailable table = getColumnSetter().getTable();
+       return setSQLSegment(condition,property,sqlFunction.sqlSegment(table),c->{
+           sqlFunction.consume(c.getSQLNativeChainExpressionContext());
+       });
+   }
 
     default ClientExpressionUpdatable<T> where(SQLExpression1<WherePredicate<T>> whereExpression) {
         return where(true, whereExpression);
