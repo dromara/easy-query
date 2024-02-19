@@ -22,13 +22,13 @@ public class ConcatExpressionSelectorImpl implements ConcatExpressionSelector{
         this.columnFuncSelector = columnFuncSelector;
     }
     @Override
-    public ConcatExpressionSelector concatWith(String val) {
+    public ConcatExpressionSelector value(String val) {
         columnFuncSelector.value(val);
         return this;
     }
 
     @Override
-    public ConcatExpressionSelector concatWith(PropTypeColumn<String> propTypeColumn) {
+    public ConcatExpressionSelector expression(PropTypeColumn<String> propTypeColumn) {
         if(propTypeColumn instanceof DSLSQLFunctionAvailable){
             DSLSQLFunctionAvailable functionAvailable = (DSLSQLFunctionAvailable) propTypeColumn;
             SQLFunction sqlFunction = functionAvailable.func().apply(sqlFunc);

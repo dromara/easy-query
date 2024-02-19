@@ -995,7 +995,7 @@ public class RelationTest extends BaseTest {
 //                .setSQLSegment("name","subString({0},1)",c->c.expression("name"))
 //        easyEntityQuery.updatable(Topic.class)
 //                .setColumns(t -> {
-//                    t.title().set(t.title().subString(1,10).concat(x->x.concatWith("123")));
+//                    t.title().set(t.title().subString(1,10).concat(x->x.value("123")));
 //                }).asTable("a123123")
 //                .whereById("123zzzxxx")
 //                .executeRows();

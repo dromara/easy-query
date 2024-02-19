@@ -54,7 +54,7 @@ public class TodoSingleRecord extends BaseEntity implements Serializable, ProxyE
     @Navigate(value = RelationTypeEnum.OneToMany
             , mappingClass = TodoExecutors.class
             , selfProperty = "todoId"
-            , targetProperty = "todoId")
+            , targetProperty = "todoId",propIsProxy = false)
     private List<TodoExecutors> todoExecutorsList;
 
     /**
@@ -63,7 +63,7 @@ public class TodoSingleRecord extends BaseEntity implements Serializable, ProxyE
     @Navigate(value = RelationTypeEnum.OneToMany
             , mappingClass = TodoExecutors.class
             , selfProperty = "todoId"
-            , targetProperty = "todoId")
+            , targetProperty = "todoId",propIsProxy = false)
     private List<TodoExecutors> todoExecutorsJoinList;
 
 
