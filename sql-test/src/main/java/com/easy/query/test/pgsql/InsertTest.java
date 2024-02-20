@@ -115,13 +115,29 @@ public class InsertTest extends PgSQLBaseTest {
         String sql = insertable.toSQL(topicAuto);
         Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"title\") DO UPDATE SET \"stars\" = EXCLUDED.\"stars\", \"create_time\" = EXCLUDED.\"create_time\"",sql);
 
+        {
 
-        com.easy.query.api.proxy.entity.insert.EntityInsertable<TopicAutoProxy, TopicAuto> topicAutoProxyTopicAutoEntityInsertable =
-                entityQuery.insertable(topicAuto)
-                .onConflictDoUpdate(o -> o.FETCHER.id().stars(), o -> o.FETCHER.id().title());
-        String sql1 = topicAutoProxyTopicAutoEntityInsertable.toSQL(topicAuto);
+            com.easy.query.api.proxy.entity.insert.EntityInsertable<TopicAutoProxy, TopicAuto> topicAutoProxyTopicAutoEntityInsertable =
+                    entityQuery.insertable(topicAuto)
+                            .onConflictDoUpdate(o -> o.FETCHER.id().stars(), o -> o.FETCHER.id().title());
+            String sql1 = topicAutoProxyTopicAutoEntityInsertable.toSQL(topicAuto);
 
-        Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"id\",\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\"",sql1);
+            Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"id\",\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\"",sql1);
 
+        }
+        {
+
+            com.easy.query.api.proxy.entity.insert.EntityInsertable<TopicAutoProxy, TopicAuto> topicAutoProxyTopicAutoEntityInsertable =
+                    entityQuery.insertable(topicAuto)
+                            .onConflictDoUpdate(o -> o.FETCHER.id().stars(), o -> o.FETCHER.allFields());
+            String sql1 = topicAutoProxyTopicAutoEntityInsertable.toSQL(topicAuto);
+
+            Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"id\",\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\", \"create_time\" = EXCLUDED.\"create_time\"",sql1);
+
+//            long l = entityQuery.insertable(topicAuto)
+//                    .asTable("xxxaaa")
+//                    .onConflictDoUpdate(o -> o.FETCHER.id().stars(), o -> o.FETCHER.allFields())
+//                    .executeRows();
+        }
     }
 }

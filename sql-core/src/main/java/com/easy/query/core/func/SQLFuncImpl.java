@@ -10,6 +10,7 @@ import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
+import com.easy.query.core.func.def.enums.NumberCalcEnum;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.func.def.impl.AbsSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
@@ -38,6 +39,7 @@ import com.easy.query.core.func.def.impl.NotEmptySQLFunction;
 import com.easy.query.core.func.def.impl.NotSQLFunction;
 import com.easy.query.core.func.def.impl.NowSQLFunction;
 import com.easy.query.core.func.def.impl.NullDefaultSQLFunction;
+import com.easy.query.core.func.def.impl.NumberCalcSQLFunction;
 import com.easy.query.core.func.def.impl.OrderByNullsModeSQLFunction;
 import com.easy.query.core.func.def.impl.ReplaceSQLFunction;
 import com.easy.query.core.func.def.impl.RightPadSQLFunction;
@@ -282,5 +284,10 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc, OrderByModeEnum orderByModeEnum) {
         return new OrderByNullsModeSQLFunction(getColumnExpressions(sqlExpression),asc,orderByModeEnum);
+    }
+
+    @Override
+    public SQLFunction numberCalc(SQLExpression1<ColumnFuncSelector> sqlExpression, NumberCalcEnum numberCalcEnum) {
+        return new NumberCalcSQLFunction(getColumnExpressions(sqlExpression),numberCalcEnum);
     }
 }

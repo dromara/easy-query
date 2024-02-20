@@ -12,7 +12,7 @@ import com.easy.query.core.func.def.enums.OrderByModeEnum;
  *
  * @author xuejiaming
  */
-public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,SQLMathFunc{
+public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,SQLMathFunc,SQLNumberFunc{
     /**
      * 如果property对应的值为null则返回def值
      * o.nullOrDefault("title","123")

@@ -2,9 +2,11 @@ package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -19,12 +21,14 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
     private final TableAvailable entityTable;
     private final QueryRuntimeContext runtimeContext;
     private final IncludeNavigateParams includeNavigateParams;
+    private final ExpressionContext expressionContext;
 
-    public NavigateIncludeImpl(TableAvailable table, QueryRuntimeContext runtimeContext, IncludeNavigateParams includeNavigateParams) {
+    public NavigateIncludeImpl(TableAvailable table, QueryRuntimeContext runtimeContext, IncludeNavigateParams includeNavigateParams, ExpressionContext expressionContext) {
 
         this.entityTable = table;
         this.runtimeContext = runtimeContext;
         this.includeNavigateParams = includeNavigateParams;
+        this.expressionContext = expressionContext;
     }
     private NavigateMetadata withBefore(String property, Integer groupSize){
 
@@ -55,8 +59,10 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
     public <TREntity> ClientQueryable<TREntity> with(String property,Integer groupSize) {
         NavigateMetadata navigateMetadata = withBefore(property, groupSize);
         Class<?> navigatePropertyType = navigateMetadata.getNavigatePropertyType();
-        return runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
-
+        boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
+        ClientQueryable<TREntity> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
+        //支持tracking传递
+        return tracking?queryable.asTracking():queryable.asNoTracking();
 //        return queryable.where(o->{
 //            if(includeNavigateParams.isLimit()){
 //                o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),includeNavigateParams.getRelationId());

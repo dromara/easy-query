@@ -3,7 +3,10 @@ package com.easy.query.core.proxy.extension.functions;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
+import com.easy.query.core.func.def.enums.NumberCalcEnum;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
@@ -28,7 +31,6 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     /**
      * 计算平均值返回 BigDecimal
      *
-     * @param <T>
      * @return 计算平均值返回 AVG(age)
      */
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> avg() {
@@ -366,6 +368,74 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                 return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Truncate);
             }
         }, BigDecimal.class);
+    }
+
+    /**
+     * 加法
+     * @param other
+     * @return
+     * @param <TOtherProperty>
+     */
+    default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> add(PropTypeColumn<TOtherProperty> other) {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            return fx.numberCalc(o->{
+                sqlFunctionExpression(fx,o,this);
+                sqlFunctionExpression(fx,o,other);
+            }, NumberCalcEnum.NUMBER_ADD);
+        }, getPropertyType());
+    }
+    static <TProperty> void sqlFunctionExpression(SQLFunc fx,ColumnFuncSelector columnFuncSelector,PropTypeColumn<TProperty> parameter){
+        if (parameter instanceof DSLSQLFunctionAvailable) {
+            SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) parameter).func().apply(fx);
+            columnFuncSelector.sqlFunc(sqlFunction);
+        } else {
+            columnFuncSelector.column(parameter.getTable(), parameter.getValue());
+        }
+    }
+
+    /**
+     * 减法
+     * @param other
+     * @return
+     * @param <TOtherProperty>
+     */
+    default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> subtract(PropTypeColumn<TOtherProperty> other) {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            return fx.numberCalc(o->{
+                sqlFunctionExpression(fx,o,this);
+                sqlFunctionExpression(fx,o,other);
+            }, NumberCalcEnum.NUMBER_SUBTRACT);
+        }, getPropertyType());
+    }
+
+    /**
+     * 乘法
+     * @param other
+     * @return
+     * @param <TOtherProperty>
+     */
+    default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> multiply(PropTypeColumn<TOtherProperty> other) {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            return fx.numberCalc(o->{
+                sqlFunctionExpression(fx,o,this);
+                sqlFunctionExpression(fx,o,other);
+            }, NumberCalcEnum.NUMBER_MULTIPLY);
+        }, getPropertyType());
+    }
+
+    /**
+     * 除法
+     * @param other
+     * @return
+     * @param <TOtherProperty>
+     */
+    default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> devide(PropTypeColumn<TOtherProperty> other) {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            return fx.numberCalc(o->{
+                sqlFunctionExpression(fx,o,this);
+                sqlFunctionExpression(fx,o,other);
+            }, NumberCalcEnum.NUMBER_DEVIDE);
+        }, getPropertyType());
     }
 
     @Override

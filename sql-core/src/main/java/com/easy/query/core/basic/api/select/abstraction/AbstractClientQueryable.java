@@ -1008,13 +1008,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public <TProperty> ClientQueryable<T1> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
         if (condition) {
-
             SQLFuncExpression1<IncludeNavigateParams, SQLFuncExpression<ClientQueryable<?>>> includeQueryableExpression = includeNavigateParams -> {
                 NavigateInclude<T1> navigateInclude = getSQLExpressionProvider1().getNavigateInclude(includeNavigateParams);
                 ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
                 boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
                 includeNavigateParams.setLimit(hasLimit);
                 NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
+
                 SQLFuncExpression<ClientQueryable<?>> queryableExpression= ()->{
                     List<Object> relationIds = includeNavigateParams.getRelationIds();
                     if(hasLimit){
