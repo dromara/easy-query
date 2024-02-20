@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.BigDecimalProxy;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -391,6 +392,20 @@ public class QueryTest12 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT (SUM(t.`score`) - SUM(t.`score`)) AS `score` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+    }
+    @Test
+    public void testNum3() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BigDecimal> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .select(b -> new BigDecimalProxy(b.score().sum().subtract(b.score().sum()))).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (SUM(t.`score`) - SUM(t.`score`)) FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
