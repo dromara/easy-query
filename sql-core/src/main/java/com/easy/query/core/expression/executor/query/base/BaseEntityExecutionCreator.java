@@ -20,7 +20,7 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
+public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator {
     protected final String dataSource;
     protected final EntityExpressionBuilder entityExpressionBuilder;
     protected final List<Object> entities;
@@ -35,7 +35,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     }
     @Override
     protected List<ExecutionUnit> createExecutionUnits() {
-        if(!Objects.equals(ExecuteMethodEnum.DELETE,executorContext.getExecuteMethod())){
+        if (!Objects.equals(ExecuteMethodEnum.DELETE, executorContext.getExecuteMethod())) {
 //            //是否单个对象运行sql
 //            boolean allColumns = EasySQLExpressionUtil.sqlExecuteStrategyIsAllColumns(entityExpressionBuilder.getExpressionContext(), executorContext);
 //            if (!allColumns || updateSingleEntityRun()) {
@@ -60,9 +60,9 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
         for (Object entity : entities) {
             EntitySQLExpression expression = createEasySQLExpression(entity);
             //todo 根据sql聚合或者根据sql顺序聚合
-            ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, Collections.singletonList(entity), getFillAutoIncrement(),null);
+            ExecutionUnit executionUnit = createExecutionUnit(dataSource, expression, Collections.singletonList(entity), getFillAutoIncrement(), null);
             //开启追踪的情况下update可能没有可以更新的数据那么就不会生成sql
-            if(EasyStringUtil.isNotBlank(executionUnit.getSQLRouteUnit().getSQL())){
+            if (EasyStringUtil.isNotBlank(executionUnit.getSQLRouteUnit().getSQL())) {
                 routeExecutionUnits.add(executionUnit);
             }
         }
@@ -70,22 +70,24 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator{
     }
 
     @Override
-    protected boolean useEntityBatch(){
+    protected boolean useEntityBatch() {
 
-        if(entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH)){
+        if (entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH)) {
             return false;
         }
-        int entitySize =entities.size();
+        int entitySize = entities.size();
         return entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_BATCH)
                 ||
-                EasySQLExpressionUtil.entityExecuteBatch(entitySize,executorContext);
+                EasySQLExpressionUtil.entityExecuteBatch(entitySize, executorContext);
     }
 
     private List<ExecutionUnit> createMultiExecutionUnits() {
         EntitySQLExpression expression = entityExpressionBuilder.toExpression();
-        ExecutionUnit executionUnit = createExecutionUnit(dataSource,expression, entities, getFillAutoIncrement(),null);
+        ExecutionUnit executionUnit = createExecutionUnit(dataSource, expression, entities, getFillAutoIncrement(), null);
         return Collections.singletonList(executionUnit);
     }
+
     protected abstract EntitySQLExpression createEasySQLExpression(Object entity);
+
     protected abstract boolean getFillAutoIncrement();
 }

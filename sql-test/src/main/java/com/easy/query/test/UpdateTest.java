@@ -32,6 +32,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1610,6 +1611,76 @@ public class UpdateTest extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("UPDATE `aaaxxx` SET `title` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals(newTitle+"(String),7(String),"+ oldTitle+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void updateTrackParameterTest2() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String newTitle = "test123" + new Random().nextInt(100);
+        String oldTitle=null;
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        try {
+
+            trackManager.begin();
+            Topic topic = easyQuery.queryable(Topic.class)
+                    .asTracking()
+                    .where(o -> o.eq(Topic::getId, "7")).firstNotNull("未找到对应的数据");
+            oldTitle=topic.getTitle();
+            topic.setTitle(newTitle);
+            Topic topic1 = easyQuery.queryable(Topic.class)
+                    .asNoTracking()
+                    .where(o -> o.eq(Topic::getId, "8")).firstNotNull("未找到对应的数据");
+            topic1.setTitle(newTitle);
+            easyQuery.updatable(Arrays.asList(topic,topic1))
+                    .asTable("aaaxxx")
+                    .whereColumns(o->o.columnKeys().column(Topic::getTitle))
+                    .executeRows();
+        }catch (Exception ex){
+            Assert.assertNotNull(ex);
+        }finally {
+            trackManager.release();
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `aaaxxx` SET `title` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(newTitle+"(String),7(String),"+ oldTitle+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void updateTrackParameterTest3() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String newTitle = "test123" + new Random().nextInt(100);
+        String oldTitle=null;
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        try {
+
+            trackManager.begin();
+            Topic topic = easyQuery.queryable(Topic.class)
+                    .asTracking()
+                    .where(o -> o.eq(Topic::getId, "7")).firstNotNull("未找到对应的数据");
+            oldTitle=topic.getTitle();
+            topic.setTitle(newTitle);
+            Topic topic1 = easyQuery.queryable(Topic.class)
+                    .asNoTracking()
+                    .where(o -> o.eq(Topic::getId, "8")).firstNotNull("未找到对应的数据");
+            topic1.setTitle(newTitle);
+            easyQuery.updatable(Arrays.asList(topic1,topic))
+                    .asTable("aaaxxx")
+                    .whereColumns(o->o.columnKeys().column(Topic::getTitle))
+                    .executeRows();
+        }catch (Exception ex){
+            Assert.assertNotNull(ex);
+        }finally {
+            trackManager.release();
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `aaaxxx` SET `stars` = ?,`create_time` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("108(Integer),2023-06-01T10:48:05(LocalDateTime),8(String),"+newTitle+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
     @Test
