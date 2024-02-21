@@ -19,9 +19,9 @@ import java.io.Serializable;
  */
 public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity> extends BeanProxy, EntitySQLTableOwner<TEntity>, EntitySQLContextAvailable, Serializable {
 
-    default boolean _isDefault() {
-        return getTable() == null;
-    }
+//    default boolean _isDefault() {
+//        return getTable() == null;
+//    }
 
     Class<TEntity> getEntityClass();
 
