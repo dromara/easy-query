@@ -283,7 +283,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     public <TR> Query<TR> selectColumn(SQLFuncExpression1<T1Proxy, PropTypeColumn<TR>> selectExpression) {
         PropTypeColumn<TR> column = selectExpression.apply(get1Proxy());
         Objects.requireNonNull(column, "select column null result class");
-        ClientQueryable<?> select = clientQueryable.select(column.getPropertyType(), o -> o.column(column.getValue()));
+
+        ClientQueryable<?> select = clientQueryable.select(column.getPropertyType(), o -> {
+            PropTypeColumn.selectColumn(o.getAsSelector(),column);
+        });
         return EasyObjectUtil.typeCastNullable(select);
     }
 

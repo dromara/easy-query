@@ -1,7 +1,9 @@
 package com.easy.query.processor.templates;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2023/11/8 16:38
@@ -11,13 +13,13 @@ import java.util.List;
  */
 public class AptValueObjectInfo {
     private final String entityName;
-    private final List<AptPropertyInfo> properties;
+    private final Map<String,AptPropertyInfo> propertieMap;
     private final List<AptValueObjectInfo> children;
 
     public AptValueObjectInfo(String entityName){
 
         this.entityName = entityName;
-        this.properties = new ArrayList<>();
+        this.propertieMap = new LinkedHashMap<>();
         this.children = new ArrayList<>();
     }
 
@@ -34,7 +36,11 @@ public class AptValueObjectInfo {
      * @return
      */
     public List<AptPropertyInfo> getProperties() {
-        return properties;
+        return new ArrayList<>(propertieMap.values());
+    }
+
+    public void addProperties(AptPropertyInfo aptPropertyInfo){
+        propertieMap.put(aptPropertyInfo.getProxyPropertyName(),aptPropertyInfo);
     }
 
     /**

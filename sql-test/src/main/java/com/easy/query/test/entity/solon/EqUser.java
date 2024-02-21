@@ -1,9 +1,13 @@
 package com.easy.query.test.entity.solon;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.LogicDelete;
+import com.easy.query.core.annotation.ProxyProperty;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.solon.proxy.EqUserProxy;
 import lombok.Data;
 
 import java.util.Date;
@@ -16,7 +20,8 @@ import java.util.Date;
  */
 @Table("sys_user")
 @Data
-public class EqUser extends User {
+@EntityProxy
+public class EqUser extends User implements ProxyEntityAvailable<EqUser, EqUserProxy> {
 
     /**
      * serialVersionUID
@@ -37,6 +42,7 @@ public class EqUser extends User {
     /**
      * 账号
      */
+    @ProxyProperty("_accc")
     private String account;
 
     /**
@@ -124,4 +130,10 @@ public class EqUser extends User {
      * 备注
      */
     private String remark;
+
+
+    @Override
+    public Class<EqUserProxy> proxyTableClass() {
+        return EqUserProxy.class;
+    }
 }

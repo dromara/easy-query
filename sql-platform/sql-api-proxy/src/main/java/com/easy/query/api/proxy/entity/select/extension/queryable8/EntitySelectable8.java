@@ -126,23 +126,7 @@ public interface EntitySelectable8<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         PropTypeColumn<TR> column = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(),get8Proxy());
         Objects.requireNonNull(column, "select column null result class");
         ClientQueryable<?> select = getClientQueryable8().select(column.getPropertyType(), (t1, t2, t3, t4, t5, t6, t7 ,t8) -> {
-            if (t2.getTable() == column.getTable()) {
-                t2.column(column.getValue());
-            } else if (t3.getTable() == column.getTable()) {
-                t3.column(column.getValue());
-            } else if (t4.getTable() == column.getTable()) {
-                t4.column(column.getValue());
-            } else if (t5.getTable() == column.getTable()) {
-                t5.column(column.getValue());
-            } else if (t6.getTable() == column.getTable()) {
-                t6.column(column.getValue());
-            } else if (t7.getTable() == column.getTable()) {
-                t7.column(column.getValue());
-            }  else if (t8.getTable() == column.getTable()) {
-                t8.column(column.getValue());
-            } else {
-                t1.column(column.getValue());
-            }
+            PropTypeColumn.selectColumn(t1.getAsSelector(),column);
         });
         return EasyObjectUtil.typeCastNullable(select);
     }

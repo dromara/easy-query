@@ -12,6 +12,7 @@ import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
@@ -220,6 +221,15 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
         String columnAsName = propertyAlias == null ? null : getResultColumnName(propertyAlias).getColumnAsName();
         CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(sqlColumnSegment, columnAsName, runtimeContext);
         sqlBuilderSegment.append(sqlColumnAsSegment);
+        return this;
+    }
+
+    @Override
+    public AsSelector sqlFunc(TableAvailable table, SQLFunction sqlFunction) {
+            String sqlSegment = sqlFunction.sqlSegment(table);
+            sqlNativeSegment(sqlSegment, context->{
+                sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,context));
+            });
         return this;
     }
 }

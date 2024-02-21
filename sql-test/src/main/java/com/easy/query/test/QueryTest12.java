@@ -5,6 +5,7 @@ import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
@@ -408,7 +409,50 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("SELECT (SUM(t.`score`) - SUM(t.`score`)) FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+        List<BigDecimal> list = easyEntityQuery.queryable(BlogEntity.class)
+                .selectColumn(b ->b.star().multiply(b.score()).add(b.score())).toList();
+    }
+    @Test
+    public void testNum4() {
 
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BigDecimal> list = easyEntityQuery.queryable(BlogEntity.class)
+                .selectColumn(b ->b.star().multiply(b.score()).add(b.score())).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT ((t.`star` * t.`score`) + t.`score`) FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testNum5() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BigDecimal> list = easyEntityQuery.queryable(BlogEntity.class)
+                .selectColumn(b ->b.star().multiply(b.score()).add(100)).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT ((t.`star` * t.`score`) + ?) FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("100(Integer),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testNum6() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BigDecimal> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    SQLMathExpression.floor(b.score()).eq(BigDecimal.ZERO);
+                })
+                .selectColumn(b ->b.star().multiply(b.score()).add(100)).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT ((t.`star` * t.`score`) + ?) FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("100(Integer),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
 }

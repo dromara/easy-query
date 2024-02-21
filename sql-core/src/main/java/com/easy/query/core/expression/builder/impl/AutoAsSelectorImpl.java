@@ -85,6 +85,11 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
     }
 
     @Override
+    public AsSelector sqlFunc(TableAvailable table, SQLFunction sqlFunction) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public AsSelector columnFunc(TableAvailable table, String property, SQLFunction sqlFunction, String propertyAlias, SQLActionExpression sqlActionExpression) {
         throw new UnsupportedOperationException();
     }

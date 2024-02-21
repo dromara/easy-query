@@ -69,8 +69,8 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
     }
 
     @Override
-    public ColumnFuncSelector sqlFunc(SQLFunction sqlFunction) {
-        concatExpressions.add(new ColumnFunctionExpressionImpl(sqlFunction));
+    public ColumnFuncSelector sqlFunc(TableAvailable table,SQLFunction sqlFunction) {
+        concatExpressions.add(new ColumnFunctionExpressionImpl(table,sqlFunction));
         return this;
 //        SQLNativeExpressionContextImpl sqlNativeExpressionContextLeft = new SQLNativeExpressionContextImpl(null,runtimeContext);
 //        sqlFunctionLeft.consume(new SQLNativeChainExpressionContextImpl(tableLeft,sqlNativeExpressionContextLeft));

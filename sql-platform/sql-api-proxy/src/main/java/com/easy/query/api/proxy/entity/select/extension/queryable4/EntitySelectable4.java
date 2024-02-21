@@ -116,15 +116,7 @@ public interface EntitySelectable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         PropTypeColumn<TR> column = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
         Objects.requireNonNull(column, "select column null result class");
         ClientQueryable<?> select = getClientQueryable4().select(column.getPropertyType(), (t1, t2, t3, t4) -> {
-            if (t2.getTable() == column.getTable()) {
-                t2.column(column.getValue());
-            } else if (t3.getTable() == column.getTable()) {
-                t3.column(column.getValue());
-            } else if (t4.getTable() == column.getTable()) {
-                t4.column(column.getValue());
-            } else {
-                t1.column(column.getValue());
-            }
+            PropTypeColumn.selectColumn(t1.getAsSelector(),column);
         });
         return EasyObjectUtil.typeCastNullable(select);
     }

@@ -182,4 +182,7 @@ public interface AsSelector extends SQLNative<AsSelector>, RuntimeContextAvailab
 
     //    <T extends SQLFunction> void columnAppendSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias);
     AsSelector sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias);
+
+
+    AsSelector sqlFunc(TableAvailable table, SQLFunction sqlFunction);
 }

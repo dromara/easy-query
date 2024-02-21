@@ -457,7 +457,7 @@ public class QueryTest11 extends BaseTest {
         Integer integer = list.get(0);
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`topic_type` FROM `t_topic_type` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT CAST(t.`topic_type` AS SIGNED) FROM `t_topic_type` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }

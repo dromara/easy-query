@@ -1,5 +1,6 @@
 package com.easy.query.core.func.column;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunction;
 
 /**
@@ -9,5 +10,6 @@ import com.easy.query.core.func.SQLFunction;
  * @author xuejiaming
  */
 public interface ColumnFunctionExpression extends ColumnExpression{
+    TableAvailable getTableOrNull();
     SQLFunction getSQLFunction();
 }

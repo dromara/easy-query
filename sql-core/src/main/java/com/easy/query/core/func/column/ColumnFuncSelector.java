@@ -20,6 +20,9 @@ public interface ColumnFuncSelector {
 //    ColumnFuncSelector sqlParameter(SQLParameter sqlParameter);
     ColumnFuncSelector format(Object valFormat);
     ColumnFuncSelector sql(SQLSegment sqlSegment);
-    ColumnFuncSelector sqlFunc(SQLFunction sqlFunction);
+   default ColumnFuncSelector sqlFunc(SQLFunction sqlFunction){
+       return sqlFunc(null,sqlFunction);
+   }
+    ColumnFuncSelector sqlFunc(TableAvailable table,SQLFunction sqlFunction);
     ColumnFuncSelector subQuery(Query<?> subQuery);
 }

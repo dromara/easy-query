@@ -1,7 +1,9 @@
 package com.easy.query.test.pgsql;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft7;
 import com.easy.query.core.proxy.sql.Select;
@@ -227,11 +229,10 @@ public void query10() {
         Assert.assertEquals(-2, (long) value6);
         Long value7 = draft3.getValue7();
         Assert.assertEquals(-3, (long) value7);
-
         Draft7<Long, Long, Long, Long, Long, Long, Long> draft4 = entityQuery.queryable(BlogEntity.class)
                 .whereById(id)
                 .selectDraft(o -> Select.draft(
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days).abs(),
+                        SQLMathExpression.abs(o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days)),
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Seconds),

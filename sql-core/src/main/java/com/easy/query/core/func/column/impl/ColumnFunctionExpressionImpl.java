@@ -1,5 +1,6 @@
 package com.easy.query.core.func.column.impl;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFunctionExpression;
 
@@ -10,12 +11,20 @@ import com.easy.query.core.func.column.ColumnFunctionExpression;
  * @author xuejiaming
  */
 public class ColumnFunctionExpressionImpl implements ColumnFunctionExpression {
+    private final TableAvailable table;
     private final SQLFunction sqlFunction;
 
-    public ColumnFunctionExpressionImpl(SQLFunction sqlFunction){
+    public ColumnFunctionExpressionImpl(TableAvailable table,SQLFunction sqlFunction){
+        this.table = table;
 
         this.sqlFunction = sqlFunction;
     }
+
+    @Override
+    public TableAvailable getTableOrNull() {
+        return table;
+    }
+
     @Override
     public SQLFunction getSQLFunction() {
         return sqlFunction;

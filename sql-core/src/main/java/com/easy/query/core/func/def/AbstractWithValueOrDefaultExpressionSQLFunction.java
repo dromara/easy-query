@@ -51,7 +51,7 @@ public abstract class AbstractWithValueOrDefaultExpressionSQLFunction extends Ab
             List<ColumnExpression> columnCopyExpressions = new ArrayList<>(columnExpressions);
             columnCopyExpressions.add(new ColumnFuncValueExpressionImpl(value));
             SQLFunction valueOrDefaultSQLFunction = createValueOrDefaultSQLFunction(columnCopyExpressions);
-            ColumnFunctionExpressionImpl columnFunctionExpression = new ColumnFunctionExpressionImpl(valueOrDefaultSQLFunction);
+            ColumnFunctionExpressionImpl columnFunctionExpression = new ColumnFunctionExpressionImpl(null,valueOrDefaultSQLFunction);
             columnExpressions.clear();
             columnExpressions.add(columnFunctionExpression);
         }

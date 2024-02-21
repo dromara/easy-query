@@ -14,6 +14,7 @@ import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComp
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
+import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
 import com.easy.query.core.proxy.impl.SQLNativeDraftImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -372,8 +373,8 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * @return 数据库常量值构建方法
      */
     @Deprecated
-    public SQLConstantValueAvailable SQLParameter(){
-        return new SQLConstantValueAvailableImpl(this.getEntitySQLContext());
+    public SQLConstantExpression SQLParameter(){
+        return new SQLConstantExpressionImpl(this.getEntitySQLContext());
     }
 
     /**
@@ -382,8 +383,8 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * @return 数据库常量值构建方法
      */
     @Deprecated
-    public SQLConstantValueAvailable SQLConstant(){
-        return new SQLConstantValueAvailableImpl(this.getEntitySQLContext());
+    public SQLConstantExpression SQLConstant(){
+        return new SQLConstantExpressionImpl(this.getEntitySQLContext());
     }
     public Expression expression(){
         return Expression.of(entitySQLContext);

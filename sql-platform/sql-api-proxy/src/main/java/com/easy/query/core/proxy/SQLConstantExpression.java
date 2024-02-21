@@ -26,7 +26,7 @@ import java.util.Date;
  *
  * @author xuejiaming
  */
-public interface SQLConstantValueAvailable extends EntitySQLContextAvailable {
+public interface SQLConstantExpression extends EntitySQLContextAvailable {
 
     default ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> valueOf(LocalDateTime val) {
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), null, null,  f -> f.constValue(val), LocalDateTime.class);
@@ -60,6 +60,9 @@ public interface SQLConstantValueAvailable extends EntitySQLContextAvailable {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), null, null,  f -> f.constValue(val), String.class);
     }
 
+    default <TNumber extends Number> ColumnFunctionComparableNumberChainExpression<TNumber> valueOf(Number val) {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null,  f -> f.constValue(val), BigDecimal.class);
+    }
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> valueOf(BigDecimal val) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null,  f -> f.constValue(val), BigDecimal.class);
     }

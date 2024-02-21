@@ -342,7 +342,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
     private void fillValueObject(String parentProperty, AptValueObjectInfo aptValueObjectInfo, Element fieldClassElement, AptFileCompiler aptFileCompiler, Set<String> ignoreProperties) {
         String entityName = aptValueObjectInfo.getEntityName();
-        for (Element fieldElement : fieldClassElement.getEnclosedElements()) {
+        List<? extends Element> enclosedElements = fieldClassElement.getEnclosedElements();
+        for (Element fieldElement : enclosedElements) {
             if (ElementKind.FIELD == fieldElement.getKind()) {
 
                 Set<Modifier> modifiers = fieldElement.getModifiers();
@@ -391,7 +392,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     }
                 }
 
-                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, includeManyProperty, proxyPropertyName));
+                aptValueObjectInfo.addProperties(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, includeManyProperty, proxyPropertyName));
 
                 if (valueObject != null) {
                     aptFileCompiler.addImports(fieldGenericType);
@@ -407,7 +408,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
     private void fillPropertyAndColumns(AptFileCompiler aptFileCompiler, AptValueObjectInfo aptValueObjectInfo, TypeElement classElement, Set<String> ignoreProperties) {
 
-        for (Element fieldElement : classElement.getEnclosedElements()) {
+        List<? extends Element> enclosedElements = classElement.getEnclosedElements();
+        for (Element fieldElement : enclosedElements) {
 
             //all fields
             if (ElementKind.FIELD == fieldElement.getKind()) {
@@ -445,7 +447,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 aptFileCompiler.addImports(propertyColumn.getImport());
 
                 if (!includeProperty) {
-                    aptFileCompiler.getSelectorInfo().getProperties().add(new AptSelectPropertyInfo(propertyName, fieldComment, proxyPropertyName));
+                    aptFileCompiler.getSelectorInfo().addProperties(new AptSelectPropertyInfo(propertyName, fieldComment, proxyPropertyName));
                 } else {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
                     String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType(), navigate.propIsProxy());
@@ -460,7 +462,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     }
                 }
                 //todo
-                aptValueObjectInfo.getProperties().add(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, includeManyProperty, proxyPropertyName));
+                aptValueObjectInfo.addProperties(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, includeManyProperty, proxyPropertyName));
 
 
                 if (valueObject != null) {

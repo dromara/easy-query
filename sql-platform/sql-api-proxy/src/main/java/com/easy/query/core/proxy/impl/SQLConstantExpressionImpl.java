@@ -1,5 +1,6 @@
-package com.easy.query.core.proxy;
+package com.easy.query.core.proxy.impl;
 
+import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 
 /**
@@ -8,12 +9,12 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
  *
  * @author xuejiaming
  */
-public class SQLConstantValueAvailableImpl implements SQLConstantValueAvailable {
+public class SQLConstantExpressionImpl implements SQLConstantExpression {
 
 
     private final EntitySQLContext entitySQLContext;
 
-    public SQLConstantValueAvailableImpl(EntitySQLContext entitySQLContext) {
+    public SQLConstantExpressionImpl(EntitySQLContext entitySQLContext) {
         this.entitySQLContext = entitySQLContext;
     }
 

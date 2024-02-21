@@ -18,71 +18,72 @@ import com.easy.query.core.proxy.columns.SQLDateTimeColumn;
  *
  * @author xuejiaming
  */
-public class TopicProxy extends AbstractProxyEntity < TopicProxy, Topic > {
+public class TopicProxy extends AbstractProxyEntity<TopicProxy, Topic> {
 
-    private static final Class < Topic > entityClass = Topic .class;
+    private static final Class<Topic> entityClass = Topic.class;
 
-    public static TopicProxy createTable () {
-        return new TopicProxy ();
+    public static TopicProxy createTable() {
+        return new TopicProxy();
     }
 
-    public TopicProxy () {
+    public TopicProxy() {
     }
 
     /**
      * {@link Topic#getId}
      */
-    public SQLStringColumn < TopicProxy, java.lang.String> id(){
-    return getStringColumn("id", java.lang.String.class);
-}
+    public SQLStringColumn<TopicProxy, java.lang.String> id() {
+        return getStringColumn("id", java.lang.String.class);
+    }
 
     /**
      * {@link Topic#getStars}
      */
-    public SQLNumberColumn < TopicProxy, java.lang.Integer> stars(){
-    return getNumberColumn("stars", java.lang.Integer.class);
-}
+    public SQLNumberColumn<TopicProxy, java.lang.Integer> stars() {
+        return getNumberColumn("stars", java.lang.Integer.class);
+    }
 
     /**
      * {@link Topic#getTitle}
      */
-    public SQLStringColumn < TopicProxy, java.lang.String> title(){
-    return getStringColumn("title", java.lang.String.class);
-}
+    public SQLStringColumn<TopicProxy, java.lang.String> title() {
+        return getStringColumn("title", java.lang.String.class);
+    }
 
     /**
      * {@link Topic#getCreateTime}
      */
-    public SQLDateTimeColumn < TopicProxy, java.time.LocalDateTime> createTime(){
-    return getDateTimeColumn("createTime", java.time.LocalDateTime.class);
-}
+    public SQLDateTimeColumn<TopicProxy, java.time.LocalDateTime> createTime() {
+        return getDateTimeColumn("createTime", java.time.LocalDateTime.class);
+    }
 
     /**
      * {@link Topic#getAlias}
      */
-    public SQLStringColumn < TopicProxy, java.lang.String> alias(){
-    return getStringColumn("alias", java.lang.String.class);
-}
+    public SQLStringColumn<TopicProxy, java.lang.String> alias() {
+        return getStringColumn("alias", java.lang.String.class);
+    }
 
 
     @Override
-    public Class < Topic > getEntityClass () {
+    public Class<Topic> getEntityClass() {
         return entityClass;
     }
 
 
     /**
      * 数据库列的简单获取
+     *
      * @return
      */
-    public TopicProxyFetcher FETCHER = new TopicProxyFetcher (this, null, SQLSelectAsExpression.empty);
+    public TopicProxyFetcher FETCHER = new TopicProxyFetcher(this, null, SQLSelectAsExpression.empty);
 
 
     public static class TopicProxyFetcher extends AbstractFetcher<TopicProxy, Topic, TopicProxyFetcher> {
 
-        public TopicProxyFetcher (TopicProxy proxy, TopicProxyFetcher prev, SQLSelectAsExpression sqlSelectAsExpression) {
-        super(proxy, prev, sqlSelectAsExpression);
-    }
+        public TopicProxyFetcher(TopicProxy proxy, TopicProxyFetcher prev, SQLSelectAsExpression sqlSelectAsExpression) {
+            super(proxy, prev, sqlSelectAsExpression);
+        }
 
 
         /**
@@ -122,12 +123,8 @@ public class TopicProxy extends AbstractProxyEntity < TopicProxy, Topic > {
 
 
         @Override
-        protected TopicProxyFetcher createFetcher(
-            TopicProxy cp,
-            AbstractFetcher<TopicProxy, Topic, TopicProxyFetcher> prev,
-            SQLSelectAsExpression sqlSelectExpression
-        ) {
-            return new TopicProxyFetcher (cp, this, sqlSelectExpression);
+        protected TopicProxyFetcher createFetcher(TopicProxy cp, AbstractFetcher<TopicProxy, Topic, TopicProxyFetcher> prev, SQLSelectAsExpression sqlSelectExpression) {
+            return new TopicProxyFetcher(cp, this, sqlSelectExpression);
         }
     }
 

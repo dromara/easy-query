@@ -5,13 +5,13 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.SQLConstantValueAvailable;
-import com.easy.query.core.proxy.SQLConstantValueAvailableImpl;
+import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
+import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
 import com.easy.query.core.proxy.impl.SQLNativeDraftImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -213,7 +213,7 @@ public class Expression {
      * 创建常量值用于比较或者处理
      * @return 数据库常量值构建方法
      */
-    public SQLConstantValueAvailable constant(){
-        return new SQLConstantValueAvailableImpl(entitySQLContext);
+    public SQLConstantExpression constant(){
+        return new SQLConstantExpressionImpl(entitySQLContext);
     }
 }

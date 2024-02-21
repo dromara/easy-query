@@ -1059,6 +1059,21 @@ public class RelationTest extends BaseTest {
         Assert.assertEquals("SELECT LOWER(t1.`name`) FROM `school_student` t LEFT JOIN `school_class` t1 ON t.`class_id` = t1.`id` WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+    @Test
+    public void testSub4(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
 
+        easyEntityQuery.queryable(SchoolStudent.class)
+                .where(s -> {
+                    s.name().like("123");
+                })
+                .selectColumn(s -> s.schoolClass().name().toLower()).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT LOWER(t1.`name`) FROM `school_student` t LEFT JOIN `school_class` t1 ON t.`class_id` = t1.`id` WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }

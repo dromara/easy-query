@@ -4,6 +4,7 @@ import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
 import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContextImpl;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
