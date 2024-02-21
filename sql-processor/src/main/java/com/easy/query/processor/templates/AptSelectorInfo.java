@@ -29,6 +29,6 @@ public class AptSelectorInfo {
         return new ArrayList<>(propertieMap.values());
     }
     public void addProperties(AptSelectPropertyInfo aptSelectPropertyInfo){
-        this.propertieMap.put(aptSelectPropertyInfo.getProxyPropertyName(),aptSelectPropertyInfo);
+        this.propertieMap.putIfAbsent(aptSelectPropertyInfo.getPropertyName(),aptSelectPropertyInfo);
     }
 }

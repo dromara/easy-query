@@ -40,7 +40,7 @@ public class AptValueObjectInfo {
     }
 
     public void addProperties(AptPropertyInfo aptPropertyInfo){
-        propertieMap.put(aptPropertyInfo.getProxyPropertyName(),aptPropertyInfo);
+        propertieMap.putIfAbsent(aptPropertyInfo.getPropertyName(),aptPropertyInfo);
     }
 
     /**
