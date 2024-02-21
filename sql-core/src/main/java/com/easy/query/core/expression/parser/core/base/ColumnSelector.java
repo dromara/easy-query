@@ -1,10 +1,12 @@
 package com.easy.query.core.expression.parser.core.base;
 
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.SQLFxAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 
 /**
@@ -19,6 +21,7 @@ public interface ColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLProperty
     }
 
     ColumnSelector<T1> column(String property);
+
 
     /**
      * 请使用 sqlSegment

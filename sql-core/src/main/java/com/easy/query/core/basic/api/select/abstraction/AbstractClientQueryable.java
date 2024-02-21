@@ -37,6 +37,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.expression.builder.core.SelectorColumn;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.include.IncludeProcessor;
@@ -82,6 +83,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.FillParams;
+import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
@@ -206,12 +208,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public <TMember> ClientQueryable<TMember> selectMax(Class<TMember> memberClass,String property) {
+    public <TMember> ClientQueryable<TMember> selectMax(Class<TMember> memberClass, String property) {
         return cloneQueryable().select(memberClass, o -> o.sqlFunc(o.fx().max(property)));
     }
 
     @Override
-    public <TMember> ClientQueryable<TMember> selectMin(Class<TMember> memberClass,String property) {
+    public <TMember> ClientQueryable<TMember> selectMin(Class<TMember> memberClass, String property) {
         return cloneQueryable().select(memberClass, o -> o.sqlFunc(o.fx().min(property)));
     }
 
@@ -339,10 +341,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         setExecuteMethod(ExecuteMethodEnum.FIND);
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryClass());
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
-        if(EasyCollectionUtil.isEmpty(keyProperties)){
+        if (EasyCollectionUtil.isEmpty(keyProperties)) {
             throw new EasyQueryNoPrimaryKeyException(EasyClassUtil.getSimpleName(queryClass()));
         }
-        if(EasyCollectionUtil.isNotSingle(keyProperties)){
+        if (EasyCollectionUtil.isNotSingle(keyProperties)) {
             throw new EasyQueryMultiPrimaryKeyException(EasyClassUtil.getSimpleName(queryClass()));
         }
         List<T1> list = whereById(id).toList();
@@ -542,7 +544,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (expressionContext.hasIncludes()) {
             IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
             IncludeParserEngine includeParserEngine = runtimeContext.getIncludeParserEngine();
-            for (SQLFuncExpression1<IncludeNavigateParams, SQLFuncExpression<ClientQueryable<?>>> include : expressionContext.getIncludes()) {
+            for (IncludeNavigateExpression include : expressionContext.getIncludes()) {
 
                 IncludeParserResult includeParserResult = includeParserEngine.process(this.entityQueryExpressionBuilder, entityMetadata, result, include);
 
@@ -620,6 +622,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public ClientQueryable<T1> select(SQLExpression1<ColumnSelector<T1>> selectExpression) {
         ColumnSelector<T1> sqlColumnSelector = getSQLExpressionProvider1().getColumnSelector(entityQueryExpressionBuilder.getProjects());
         selectExpression.apply(sqlColumnSelector);
+        processorIncludeRelationProperty(sqlColumnSelector.getSelector());
         if (EasyCollectionUtil.isSingle(entityQueryExpressionBuilder.getTables())) {
             return this;
         }
@@ -633,8 +636,30 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getProjects())) {
             SQLExpression1<ColumnAsSelector<T1, TR>> selectAllExpression = ColumnAsSelector::columnAll;
             selectAllExpression.apply(sqlColumnSelector);
+        } else {
+            processorIncludeRelationProperty(sqlColumnSelector.getAsSelector());
         }
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
+    }
+
+    /**
+     * 如果存在include那么就需要对select的结果进行补齐关联id
+     *
+     * @param selectorColumn
+     */
+    private void processorIncludeRelationProperty(SelectorColumn<?> selectorColumn) {
+        ExpressionContext expressionContext = getSQLEntityExpressionBuilder().getExpressionContext();
+        boolean hasIncludes = expressionContext.hasIncludes();
+        if (hasIncludes) {
+            TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
+            for (IncludeNavigateExpression includeNavigateExpression : expressionContext.getIncludes()) {
+                IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
+                if (includeNavigateParams.getTable() == entityTable) {
+                    String selfPropertyOrPrimary = includeNavigateParams.getNavigateMetadata().getSelfPropertyOrPrimary();
+                    selectorColumn.columnIfAbsent(entityTable, selfPropertyOrPrimary);
+                }
+            }
+        }
     }
 
     @Override
@@ -1008,44 +1033,40 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public <TProperty> ClientQueryable<T1> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
         if (condition) {
-            SQLFuncExpression1<IncludeNavigateParams, SQLFuncExpression<ClientQueryable<?>>> includeQueryableExpression = includeNavigateParams -> {
-                NavigateInclude<T1> navigateInclude = getSQLExpressionProvider1().getNavigateInclude(includeNavigateParams);
-                ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
-                boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
-                includeNavigateParams.setLimit(hasLimit);
-                NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
+            IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
 
-                SQLFuncExpression<ClientQueryable<?>> queryableExpression= ()->{
-                    List<Object> relationIds = includeNavigateParams.getRelationIds();
-                    if(hasLimit){
-                        if(EasyCollectionUtil.isNotSingle(relationIds)){
-                            Iterator<Object> iterator = relationIds.iterator();
-                            Object firstRelationId = iterator.next();
-                            ClientQueryable<TProperty> firstQueryable=getRelationLimitQueryable(clientQueryable,navigateMetadata,firstRelationId);
-                            ArrayList<ClientQueryable<TProperty>> otherQueryable = new ArrayList<>();
-                            while(iterator.hasNext()){
-                                Object nextRelationId = iterator.next();
-                                ClientQueryable<TProperty> nextQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, nextRelationId);
-                                otherQueryable.add(nextQueryable);
-                            }
-                            return firstQueryable.unionAll(otherQueryable);
+            NavigateInclude<T1> navigateInclude = getSQLExpressionProvider1().getNavigateInclude(includeNavigateParams);
+            ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
+            boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
+            includeNavigateParams.setLimit(hasLimit);
+            NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
+            SQLFuncExpression<ClientQueryable<?>> queryableExpression = () -> {
+                List<Object> relationIds = includeNavigateParams.getRelationIds();
+                if (hasLimit) {
+                    if (EasyCollectionUtil.isNotSingle(relationIds)) {
+                        Iterator<Object> iterator = relationIds.iterator();
+                        Object firstRelationId = iterator.next();
+                        ClientQueryable<TProperty> firstQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, firstRelationId);
+                        ArrayList<ClientQueryable<TProperty>> otherQueryable = new ArrayList<>();
+                        while (iterator.hasNext()) {
+                            Object nextRelationId = iterator.next();
+                            ClientQueryable<TProperty> nextQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, nextRelationId);
+                            otherQueryable.add(nextQueryable);
                         }
+                        return firstQueryable.unionAll(otherQueryable);
                     }
-                    return clientQueryable.cloneQueryable().where(o->o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),relationIds));
-                };
-//                NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
-//                navigateMetadata.getNavigatePropertyType()
-                return queryableExpression;
+                }
+                return clientQueryable.cloneQueryable().where(o -> o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationIds));
             };
-            entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(includeQueryableExpression);
+            entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
         }
         return this;
     }
 
-    private <TProperty> ClientQueryable<TProperty> getRelationLimitQueryable(ClientQueryable<TProperty> clientQueryable,NavigateMetadata navigateMetadata,Object relationId){
+    private <TProperty> ClientQueryable<TProperty> getRelationLimitQueryable(ClientQueryable<TProperty> clientQueryable, NavigateMetadata navigateMetadata, Object relationId) {
 
         ClientQueryable<TProperty> firstQueryable = clientQueryable.cloneQueryable();
-        firstQueryable.where(o->o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),relationId));
+        firstQueryable.where(o -> o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationId));
         return firstQueryable;
     }
 

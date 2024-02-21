@@ -78,18 +78,6 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
         }, getPropertyType());
     }
 
-
-    /**
-     * 请使用 nullOrDefault
-     * @param value
-     * @return
-     * @param <T>
-     */
-    @Deprecated
-    default TChain nullDefault(TProperty value) {
-        return nullOrDefault(value);
-    }
-
     default TChain nullOrDefault(TProperty value) {
         return nullOrDefault(o -> o.value(_toFunctionSerializeValue(value)));
     }
@@ -114,17 +102,6 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
                 });
             }
         }, getPropertyType());
-    }
-
-    /**
-     * 请使用 nullOrDefault
-     * @param selector
-     * @return
-     * @param <T>
-     */
-    @Deprecated
-    default <T> TChain nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
-        return nullOrDefault(selector);
     }
 
 

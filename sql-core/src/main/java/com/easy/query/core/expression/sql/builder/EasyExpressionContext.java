@@ -1,6 +1,5 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -11,15 +10,13 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilter;
-import com.easy.query.core.expression.lambda.SQLFuncExpression;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
-import com.easy.query.core.metadata.IncludeNavigateParams;
+import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
@@ -52,7 +49,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private boolean sharding;
     private boolean hasSubQuery;
     private ValueFilter valueFilter;
-    private List<SQLFuncExpression1<IncludeNavigateParams, SQLFuncExpression<ClientQueryable<?>>>> includes;
+    private List<IncludeNavigateExpression> includes;
     private List<FillExpression> fills;
     private List<ExpressionBuilder> declareExpressions;
     private Consumer<Object> forEachConfigurer;
@@ -249,7 +246,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
 
     @Override
-    public List<SQLFuncExpression1<IncludeNavigateParams, SQLFuncExpression<ClientQueryable<?>>>> getIncludes() {
+    public List<IncludeNavigateExpression> getIncludes() {
         if (includes == null) {
             includes = new ArrayList<>();
         }

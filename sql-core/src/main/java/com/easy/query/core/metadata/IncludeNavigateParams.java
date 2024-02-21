@@ -1,5 +1,6 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
@@ -23,7 +24,7 @@ public class IncludeNavigateParams {
         relationIds =new ArrayList<>();
     }
 
-    public List<Object> getRelationIds() {
+    public @NotNull List<Object> getRelationIds() {
         return relationIds;
     }
 

@@ -60,6 +60,11 @@ public class FetchSelector implements Selector {
     }
 
     @Override
+    public Selector columnIfAbsent(TableAvailable table, String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Selector columnAll(TableAvailable table) {
         throw new UnsupportedOperationException();
     }

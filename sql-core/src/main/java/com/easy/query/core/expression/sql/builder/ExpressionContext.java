@@ -1,20 +1,17 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
-import com.easy.query.core.expression.lambda.SQLFuncExpression;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
-import com.easy.query.core.metadata.IncludeNavigateParams;
+import com.easy.query.core.metadata.IncludeNavigateExpression;
 
 import java.util.List;
 import java.util.Map;
@@ -69,7 +66,7 @@ public interface ExpressionContext {
 
 
     //todo inculde expression repeart
-    List<SQLFuncExpression1<IncludeNavigateParams, SQLFuncExpression<ClientQueryable<?>>>> getIncludes();
+    List<IncludeNavigateExpression> getIncludes();
     boolean hasIncludes();
 
     List<FillExpression> getFills();

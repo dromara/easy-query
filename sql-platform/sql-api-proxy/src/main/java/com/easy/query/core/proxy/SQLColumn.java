@@ -3,7 +3,6 @@ package com.easy.query.core.proxy;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.columns.impl.SQLAnyColumnImpl;
 import com.easy.query.core.proxy.extension.ColumnComparableExpression;
-import com.easy.query.core.proxy.predicate.DSLPropertyOnlyAssertPredicate;
 import com.easy.query.core.proxy.set.DSLColumnSet;
 import com.easy.query.core.util.EasyObjectUtil;
 

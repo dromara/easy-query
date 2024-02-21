@@ -18,6 +18,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
@@ -40,9 +41,9 @@ import java.util.stream.Collectors;
  */
 public class DefaultIncludeParserEngine implements IncludeParserEngine {
     @Override
-    public <TR> IncludeParserResult process(EntityQueryExpressionBuilder mainEntityQueryExpressionBuilder, EntityMetadata entityMetadata, List<TR> result, SQLFuncExpression1<IncludeNavigateParams, SQLFuncExpression<ClientQueryable<?>>> includeExpression) {
-        IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
-        SQLFuncExpression<ClientQueryable<?>> queryableExpression = includeExpression.apply(includeNavigateParams);
+    public <TR> IncludeParserResult process(EntityQueryExpressionBuilder mainEntityQueryExpressionBuilder, EntityMetadata entityMetadata, List<TR> result, IncludeNavigateExpression includeExpression) {
+        IncludeNavigateParams includeNavigateParams = includeExpression.getIncludeNavigateParams();
+        SQLFuncExpression<ClientQueryable<?>> queryableExpression = includeExpression.getSqlFuncExpression();
         NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
         if (navigateMetadata == null) {
             throw new EasyQueryInvalidOperationException("navigateMetadata is null");
@@ -74,6 +75,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         ColumnMetadata selfRelationColumn = entityMetadata.getColumnNotNull(includeParseContext.getSelfProperty());
         Property<Object, ?> relationPropertyGetter = selfRelationColumn.getGetterCaller();
         List<Object> relationIds = result.stream().map(relationPropertyGetter::apply)
+                .filter(Objects::nonNull)
                 .distinct()
                 .collect(Collectors.toList());
 

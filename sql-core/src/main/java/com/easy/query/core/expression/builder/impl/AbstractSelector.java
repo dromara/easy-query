@@ -142,6 +142,24 @@ public abstract class AbstractSelector<TChain> {
         });
         return castChain();
     }
+    public TChain columnIfAbsent(TableAvailable table, String property) {
+        for (SQLSegment sqlSegment : sqlBuilderSegment.getSQLSegments()) {
+            if (sqlSegment instanceof SQLEntitySegment) {
+                SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
+                boolean sameTableAndProperty = Objects.equals(sqlEntitySegment.getTable(), table) &&
+                        (
+                                Objects.equals(sqlEntitySegment.getPropertyName(), property)
+                                        ||
+                                        (sqlEntitySegment.getPropertyName().contains(".") && sqlEntitySegment.getPropertyName().startsWith(property + "."))
+                        );
+                if(sameTableAndProperty){
+                    return castChain();
+                }
+            }
+        }
+        column(table,property);
+        return castChain();
+    }
 
     public TChain columnAll(TableAvailable table) {
         if (table.isAnonymous()) {

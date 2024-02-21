@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.builder;
 
 import com.easy.query.core.expression.builder.core.SQLNative;
+import com.easy.query.core.expression.builder.core.SelectorColumn;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -12,7 +13,7 @@ import com.easy.query.core.func.SQLFunction;
  *
  * @author xuejiaming
  */
-public interface Selector extends SQLNative<Selector>, RuntimeContextAvailable {
+public interface Selector extends SelectorColumn<Selector>,SQLNative<Selector>, RuntimeContextAvailable {
 
     /**
      * 快速选择之前group的列,不需要重新再写一遍
@@ -23,14 +24,12 @@ public interface Selector extends SQLNative<Selector>, RuntimeContextAvailable {
     Selector groupKeys(int index);
 
     Selector columnKeys(TableAvailable table);
-    Selector column(TableAvailable table, String property);
     Selector columnAs(TableAvailable table, String property,String propertyAlias);
 
     Selector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction);
 
     Selector columnFunc(TableAvailable table, SQLFunction sqlFunction, String propertyAlias);
 
-    Selector columnIgnore(TableAvailable table, String property);
 
     Selector columnAll(TableAvailable table);
 }

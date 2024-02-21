@@ -13,7 +13,7 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
  *
  * @author xuejiaming
  */
-public interface DSLPropertyOnlyAssertPredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
+public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
     default void isEmpty() {
          isEmpty(true);
     }

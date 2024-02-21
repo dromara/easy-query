@@ -5,7 +5,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.extension.functions.ColumnStringFunctionAvailable;
 import com.easy.query.core.proxy.impl.SQLAggregateNativeSQLPredicateImpl;
-import com.easy.query.core.proxy.predicate.DSLPropertyOnlyAssertPredicate;
+import com.easy.query.core.proxy.predicate.DSLStringAssertPredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -17,7 +17,7 @@ import com.easy.query.core.util.EasyObjectUtil;
  */
 public interface ColumnFunctionComparableStringChainExpression<T> extends ColumnFunctionComparableObjectChainExpression<T>,
         ColumnStringFunctionAvailable<T>,
-        DSLPropertyOnlyAssertPredicate<T>,
+        DSLStringAssertPredicate<T>,
         DSLSQLFunctionAvailable {
 
     @Override

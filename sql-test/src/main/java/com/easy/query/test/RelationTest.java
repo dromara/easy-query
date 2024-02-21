@@ -161,6 +161,24 @@ public class RelationTest extends BaseTest {
 
                 ListenerContext listenerContext = new ListenerContext();
                 listenerContextManager.startListen(listenerContext);
+                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(s -> s.schoolStudents())
+                        .fetchBy(s -> s.FETCHER.name())
+                        .toList();
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT `id`,`class_id`,`name` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+                String sql1 = easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(s -> s.schoolStudents())
+                        .fetchBy(s -> s.FETCHER.name()).toSQL();
+                Assert.assertEquals("SELECT t.`name`,t.`id` FROM `school_class` t",sql1);
+            }
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
 
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
                         .includes(o -> o.schoolStudents(),x->x.limit(2))

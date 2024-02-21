@@ -3,6 +3,7 @@ package com.easy.query.core.expression.builder;
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.builder.core.SQLNative;
+import com.easy.query.core.expression.builder.core.SelectorColumn;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
@@ -25,14 +26,13 @@ import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
  *
  * @author xuejiaming
  */
-public interface AsSelector extends SQLNative<AsSelector>, RuntimeContextAvailable {
+public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelector>, RuntimeContextAvailable {
 
     ExpressionContext getExpressionContext();
 
     EntityQueryExpressionBuilder getEntityQueryExpressionBuilder();
 
     AsSelector columnKeys(TableAvailable table);
-    AsSelector column(TableAvailable table, String property);
 
     /**
      * 快速选择之前group的列,不需要重新再写一遍
@@ -61,8 +61,6 @@ public interface AsSelector extends SQLNative<AsSelector>, RuntimeContextAvailab
      * @return
      */
     AsSelector columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression);
-
-    AsSelector columnIgnore(TableAvailable table, String property);
 
     /**
      * 映射到TR的所有列上,按ColumnName进行映射,如果TR上没有对应的列名那么将不会映射查询列
