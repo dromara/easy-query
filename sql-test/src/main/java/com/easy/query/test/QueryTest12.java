@@ -505,6 +505,13 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND FIND_IN_SET(t.`title`,(SELECT GROUP_CONCAT(t1.`title` SEPARATOR ?) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND FLOOR(t1.`score`) = ?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),,(String),false(Boolean),0(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+
+
+//        List<String> list = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(b -> {
+//                    SQLMathExpression.floor(b.score()).eq(BigDecimal.ZERO);
+//                })
+//                .selectColumn(b -> b.score().asAny().join(",")).toList();
     }
 
 
