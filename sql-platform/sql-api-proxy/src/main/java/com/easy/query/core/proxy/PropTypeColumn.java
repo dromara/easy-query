@@ -21,7 +21,7 @@ public interface PropTypeColumn<TProperty> extends PropTypeSetColumn<TProperty>{
             SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) column).func().apply(asSelector.getRuntimeContext().fx());
             asSelector.sqlFunc(column.getTable(),sqlFunction);
         }else{
-            asSelector.column(column.getTable(),column.getValue());
+            column.accept(asSelector);
         }
     }
     static <TR> void columnFuncSelector(ColumnFuncSelector columnFuncSelector, PropTypeColumn<TR> column){

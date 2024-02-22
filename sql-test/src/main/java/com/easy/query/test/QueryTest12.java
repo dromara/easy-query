@@ -3,9 +3,11 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.BigDecimalProxy;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLMathExpression;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
@@ -452,6 +454,56 @@ public class QueryTest12 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT ((t.`star` * t.`score`) + ?) FROM `t_blog` t WHERE t.`deleted` = ? AND FLOOR(t.`score`) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("100(Integer),false(Boolean),0(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testNum7() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Query<String> objectQuery = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    SQLMathExpression.floor(b.score()).eq(BigDecimal.ZERO);
+                })
+                .selectColumn(b -> b.expression().sqlType("GROUP_CONCAT({0})", c -> c.expression(b.title())).setPropertyType(String.class));
+        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    Expression expression = b.expression();
+                    expression.sql("FIND_IN_SET({0},{1})", c -> {
+                        c.expression(b.title());
+                        c.expression(objectQuery);
+                    });
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND FIND_IN_SET(t.`title`,(SELECT GROUP_CONCAT(t1.`title`) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND FLOOR(t1.`score`) = ?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),false(Boolean),0(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testNum8() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Query<String> objectQuery = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    SQLMathExpression.floor(b.score()).eq(BigDecimal.ZERO);
+                })
+                .selectColumn(b -> b.title().join(","));
+        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    Expression expression = b.expression();
+                    expression.sql("FIND_IN_SET({0},{1})", c -> {
+                        c.expression(b.title());
+                        c.expression(objectQuery);
+                    });
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND FIND_IN_SET(t.`title`,(SELECT GROUP_CONCAT(t1.`title` SEPARATOR ?) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND FLOOR(t1.`score`) = ?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),,(String),false(Boolean),0(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 

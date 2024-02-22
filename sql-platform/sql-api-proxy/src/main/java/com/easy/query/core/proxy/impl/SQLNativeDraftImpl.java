@@ -1,6 +1,9 @@
 package com.easy.query.core.proxy.impl;
 
+import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
+import com.easy.query.core.expression.builder.OnlySelector;
+import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.builder.core.SQLNativeAble;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -43,6 +46,22 @@ public class SQLNativeDraftImpl implements PropTypeColumn<Object>{
     public void accept(GroupSelector s) {
         selectorConsumer.accept(null,s);
     }
+
+    @Override
+    public void accept(AsSelector s) {
+        selectorConsumer.accept(null,s);
+    }
+
+    @Override
+    public void accept(Selector s) {
+        selectorConsumer.accept(null,s);
+    }
+
+    @Override
+    public void accept(OnlySelector s) {
+        selectorConsumer.accept(null,s);
+    }
+
 
     @Override
     public TableAvailable getTable() {
