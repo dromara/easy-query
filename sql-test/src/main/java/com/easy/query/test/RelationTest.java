@@ -202,7 +202,12 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
                 System.out.println("------------------");
                 List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents(),x->x.include(y->y.schoolStudentAddress()))
+                        //返回班级下的所有学生 班级和学生是一对多
+                        .includes(s -> s.schoolStudents(),x->{
+                            //返回学生下的所有学生地址 学生和学生地址是一对一
+                            x.include(y->y.schoolStudentAddress());
+                        })
+                        //返回班级下面的所有老师 老师和班级多对多
                         .includes(s -> s.schoolTeachers())
                         .select(SchoolClassVO.class)
                         .toList();
