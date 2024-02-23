@@ -17,6 +17,7 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.school.MySchoolStudent;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -514,5 +515,67 @@ public class QueryTest12 extends BaseTest {
 //                .selectColumn(b -> b.score().asAny().join(",")).toList();
     }
 
+    @Test
+    public void testOrSub1(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    b.or(()->{
+                        Expression expression = b.expression();
+                        expression.sql("FIND_IN_SET({0},{1})", c -> {
+                            c.expression(b.title());
+                            c.expression(easyEntityQuery.queryable(BlogEntity.class)
+                                            .where(x->{
+                                                x.id().eq("1");
+                                                x.title().eq("2");
+                                            })
+                                    .selectColumn(x -> x.title().join(",")));
+                        });
+                        b.score().gt(BigDecimal.valueOf(1));
+                    });
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND (FIND_IN_SET(t.`title`,(SELECT GROUP_CONCAT(t1.`title` SEPARATOR ?) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = ? AND t1.`title` = ?)) OR t.`score` > ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),,(String),false(Boolean),1(String),2(String),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testFetchSub2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<MySchoolStudent> list = easyEntityQuery.queryable(MySchoolStudent.class)
+                .where(m -> m.name().like("123"))
+                .fetchBy(b -> b.FETCHER.allFields()
+                        ._concat(b.schoolClass().FETCHER.id().name())
+                        ._concat(b.schoolStudentAddress().FETCHER.address()))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name`,t1.`id`,t1.`name`,t2.`address` FROM `my_school_student` t LEFT JOIN `my_school_class` t1 ON t.`class_id` = t1.`id` LEFT JOIN `school_student_address` t2 ON t.`id` = t2.`student_id` WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testFetchSub3(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<MySchoolStudent> list = easyEntityQuery.queryable(MySchoolStudent.class)
+                .where(m -> m.name().like("123"))
+                .fetchBy(b -> b.FETCHER.allFields()
+                        ._concat(b.schoolClass().FETCHER.id().name())
+                        ._concat(b.schoolStudentAddress().FETCHER.address()))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name`,t1.`id`,t1.`name`,t2.`address` FROM `my_school_student` t LEFT JOIN `my_school_class` t1 ON t.`class_id` = t1.`id` LEFT JOIN `school_student_address` t2 ON t.`id` = t2.`student_id` WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 
 }

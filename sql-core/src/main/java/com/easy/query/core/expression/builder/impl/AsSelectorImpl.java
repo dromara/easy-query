@@ -155,6 +155,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
                     sqlBuilderSegment.append(columnSegment);
                 }
             }
+            autoColumnInclude(tableBuilder.getEntityTable(),entityMetadata);
         }
         return this;
     }

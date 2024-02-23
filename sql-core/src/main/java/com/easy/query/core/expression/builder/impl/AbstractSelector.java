@@ -23,6 +23,9 @@ import com.easy.query.core.expression.sql.builder.SQLAnonymousUnionEntityQueryEx
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.IncludeNavigateExpression;
+import com.easy.query.core.metadata.IncludeNavigateParams;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -127,6 +130,29 @@ public abstract class AbstractSelector<TChain> {
         return castChain();
     }
 
+    protected void autoColumnInclude(TableAvailable table,EntityMetadata targetEntityMetadata){
+        if(expressionContext.hasIncludes()){
+            //如果手动设置过includeMap则不自动设置
+            boolean hasColumnIncludeMaps = expressionContext.hasColumnIncludeMaps();
+            if(hasColumnIncludeMaps){
+                return;
+            }
+            for (IncludeNavigateExpression includeNavigateExpression : expressionContext.getIncludes()) {
+                IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
+                if (includeNavigateParams.getTable() == table) {
+                    NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
+                    String navigateAutoMappingPropertyName = navigateMetadata.getPropertyName();
+                    if(targetEntityMetadata.getNavigateOrNull(navigateAutoMappingPropertyName)!=null){
+                        columnInclude(table,navigateAutoMappingPropertyName,navigateAutoMappingPropertyName,s->{
+                            TableAvailable entityTable = s.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
+                            s.columnAll(entityTable);
+                        });
+                    }
+                }
+            }
+        }
+    }
+
     public TChain columnIgnore(TableAvailable table, String property) {
         sqlBuilderSegment.getSQLSegments().removeIf(sqlSegment -> {
             if (sqlSegment instanceof SQLEntitySegment) {
@@ -177,15 +203,8 @@ public abstract class AbstractSelector<TChain> {
             Collection<ColumnMetadata> columns = entityMetadata.getColumns();
             for (ColumnMetadata columnMetadata : columns) {
                 appendColumnMetadata(table, columnMetadata, queryLargeColumn, true, true, null);
-//                if (!columnMetadata.isAutoSelect()) {
-//                    continue;
-//                }
-//                if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
-//                    continue;
-//                }
-//                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, runtimeContext, null);
-//                sqlBuilderSegment.append(columnSegment);
             }
+            autoColumnInclude(table,entityMetadata);
         }
         return castChain();
     }

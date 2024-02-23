@@ -392,7 +392,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(TPropertyProxy columnProxy) {
         set(columnProxy,null);
     }
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLFuncExpression1<ProxyEntity<TPropertyProxy, TProperty>, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable)columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(),columnProxy,navigateSelectExpression));
     }
 }

@@ -501,7 +501,7 @@ public class QueryTest9 extends BaseTest {
                 .orderBy((a, b) -> {
                     a.title().asc();
                 })
-                .fetcher(o -> o.FETCHER.title().stars())
+                .fetchBy(o -> o.FETCHER.title().stars())
                 .firstOrNull();
         List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
@@ -955,7 +955,7 @@ public class QueryTest9 extends BaseTest {
                         o.createTime().format("yyyy/MM/dd" ).eq("2023/01/02" );
                         o.id().nullOrDefault("yyyy/MM/dd2" ).eq("xxx1" );
                     })
-                    .fetcher(o -> o.FETCHER
+                    .fetchBy(o -> o.FETCHER
                             .allFieldsExclude(o.id(), o.title())
                             .id().as(o.title())
                             .id())
@@ -1220,7 +1220,7 @@ public class QueryTest9 extends BaseTest {
                     o.id().in(ids);
                     o.id().notIn(ids);
                 })
-                .fetcher(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
+                .fetchBy(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND 1 = 2 AND 1 = 1" , jdbcExecuteAfterArg.getBeforeArg().getSql());

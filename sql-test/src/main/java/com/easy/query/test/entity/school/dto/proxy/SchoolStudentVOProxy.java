@@ -13,96 +13,90 @@ import com.easy.query.test.entity.school.dto.SchoolStudentVO;
  *
  * @author xuejiaming
  */
-public class SchoolStudentVOProxy extends AbstractProxyEntity < SchoolStudentVOProxy, SchoolStudentVO > {
+public class SchoolStudentVOProxy extends AbstractProxyEntity<SchoolStudentVOProxy, SchoolStudentVO> {
 
-    private static final Class < SchoolStudentVO > entityClass = SchoolStudentVO .class;
+    private static final Class<SchoolStudentVO> entityClass = SchoolStudentVO.class;
 
-    public static SchoolStudentVOProxy createTable (){
-        return new SchoolStudentVOProxy ();
+    public static SchoolStudentVOProxy createTable() {
+        return new SchoolStudentVOProxy();
     }
 
-    public SchoolStudentVOProxy (){
-    }
-
-    /**
-     *{@link SchoolStudentVO#getId}
-     */
-    public SQLStringColumn < SchoolStudentVOProxy, java.lang.String> id(){
-    return getStringColumn("id", java.lang.String.class);
-}
-
-    /**
-     *{@link SchoolStudentVO#getClassId}
-     */
-    public SQLStringColumn < SchoolStudentVOProxy, java.lang.String> classId(){
-    return getStringColumn("classId", java.lang.String.class);
-}
-
-    /**
-     *{@link SchoolStudentVO#getName}
-     */
-    public SQLStringColumn < SchoolStudentVOProxy, java.lang.String> name(){
-    return getStringColumn("name", java.lang.String.class);
-}
-
-    /**
-     *{@link SchoolStudentVO#getSchoolClass}
-     */
-    public com . easy . query . test . entity . school . dto . proxy . SchoolClassVOProxy schoolClass() {
-        return getNavigate(
-            "schoolClass",
-            new com . easy . query . test . entity . school . dto . proxy . SchoolClassVOProxy ()
-        );
+    public SchoolStudentVOProxy() {
     }
 
     /**
-     *{@link SchoolStudentVO#getSchoolStudentAddress}
+     * {@link SchoolStudentVO#getId}
      */
-    public com . easy . query . test . entity . school . dto . proxy . SchoolStudentAddressVOProxy schoolStudentAddress() {
-        return getNavigate(
-            "schoolStudentAddress",
-            new com . easy . query . test . entity . school . dto . proxy . SchoolStudentAddressVOProxy ()
-        );
+    public SQLStringColumn<SchoolStudentVOProxy, java.lang.String> id() {
+        return getStringColumn("id", java.lang.String.class);
+    }
+
+    /**
+     * {@link SchoolStudentVO#getClassId}
+     */
+    public SQLStringColumn<SchoolStudentVOProxy, java.lang.String> classId() {
+        return getStringColumn("classId", java.lang.String.class);
+    }
+
+    /**
+     * {@link SchoolStudentVO#getName}
+     */
+    public SQLStringColumn<SchoolStudentVOProxy, java.lang.String> name() {
+        return getStringColumn("name", java.lang.String.class);
+    }
+
+    /**
+     * {@link SchoolStudentVO#getSchoolClass}
+     */
+    public com.easy.query.test.entity.school.dto.proxy.SchoolClassVOProxy schoolClass() {
+        return getNavigate("schoolClass", new com.easy.query.test.entity.school.dto.proxy.SchoolClassVOProxy());
+    }
+
+    /**
+     * {@link SchoolStudentVO#getSchoolStudentAddress}
+     */
+    public com.easy.query.test.entity.school.dto.proxy.SchoolStudentAddressVOProxy schoolStudentAddress() {
+        return getNavigate("schoolStudentAddress", new com.easy.query.test.entity.school.dto.proxy.SchoolStudentAddressVOProxy());
     }
 
 
     @Override
-    public Class < SchoolStudentVO > getEntityClass (){
+    public Class<SchoolStudentVO> getEntityClass() {
         return entityClass;
     }
 
 
     /**
      * 数据库列的简单获取
+     *
      * @return
      */
-    public SchoolStudentVOProxyFetcher FETCHER =
-        new SchoolStudentVOProxyFetcher (this, null, SQLSelectAsExpression.empty);
+    public SchoolStudentVOProxyFetcher FETCHER = new SchoolStudentVOProxyFetcher(this, null, SQLSelectAsExpression.empty);
 
 
     public static class SchoolStudentVOProxyFetcher extends AbstractFetcher<SchoolStudentVOProxy, SchoolStudentVO, SchoolStudentVOProxyFetcher> {
 
-        public SchoolStudentVOProxyFetcher (SchoolStudentVOProxy proxy, SchoolStudentVOProxyFetcher prev, SQLSelectAsExpression sqlSelectAsExpression){
-        super(proxy, prev, sqlSelectAsExpression);
-    }
+        public SchoolStudentVOProxyFetcher(SchoolStudentVOProxy proxy, SchoolStudentVOProxyFetcher prev, SQLSelectAsExpression sqlSelectAsExpression) {
+            super(proxy, prev, sqlSelectAsExpression);
+        }
 
 
         /**
-         *{@link SchoolStudentVO#getId}
+         * {@link SchoolStudentVO#getId}
          */
         public SchoolStudentVOProxyFetcher id() {
             return add(getProxy().id());
         }
 
         /**
-         *{@link SchoolStudentVO#getClassId}
+         * {@link SchoolStudentVO#getClassId}
          */
         public SchoolStudentVOProxyFetcher classId() {
             return add(getProxy().classId());
         }
 
         /**
-         *{@link SchoolStudentVO#getName}
+         * {@link SchoolStudentVO#getName}
          */
         public SchoolStudentVOProxyFetcher name() {
             return add(getProxy().name());
@@ -110,12 +104,8 @@ public class SchoolStudentVOProxy extends AbstractProxyEntity < SchoolStudentVOP
 
 
         @Override
-        protected SchoolStudentVOProxyFetcher createFetcher(
-            SchoolStudentVOProxy cp,
-            AbstractFetcher<SchoolStudentVOProxy, SchoolStudentVO, SchoolStudentVOProxyFetcher> prev,
-            SQLSelectAsExpression sqlSelectExpression
-        ) {
-            return new SchoolStudentVOProxyFetcher (cp, this, sqlSelectExpression);
+        protected SchoolStudentVOProxyFetcher createFetcher(SchoolStudentVOProxy cp, AbstractFetcher<SchoolStudentVOProxy, SchoolStudentVO, SchoolStudentVOProxyFetcher> prev, SQLSelectAsExpression sqlSelectExpression) {
+            return new SchoolStudentVOProxyFetcher(cp, this, sqlSelectExpression);
         }
     }
 

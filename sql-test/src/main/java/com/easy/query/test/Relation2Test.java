@@ -208,4 +208,17 @@ public class Relation2Test extends BaseTest {
         Assert.assertEquals("%1234%(String),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+//    @Test
+//    public void test11() {
+//
+//        ListenerContext listenerContext = new ListenerContext();
+//        listenerContextManager.startListen(listenerContext);
+//        List<MySchoolClass> list = easyEntityQuery.queryable(MySchoolClass.class)
+//                .includes(m -> m.schoolStudents().where(x->x.name().like("123"))).toList();
+//        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_school_class` t WHERE (SELECT MAX(t1.`name`) FROM `my_school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("%1234%(String),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//        listenerContextManager.clear();
+//    }
 }

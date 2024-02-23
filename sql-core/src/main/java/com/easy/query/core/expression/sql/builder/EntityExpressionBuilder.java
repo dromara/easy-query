@@ -28,6 +28,7 @@ public interface EntityExpressionBuilder extends ExpressionBuilder {
      */
     void addSQLEntityTableExpression(EntityTableExpressionBuilder tableExpression);
     EntityTableExpressionBuilder addRelationEntityTableExpression(RelationTableKey relationTableKey, Function<RelationTableKey,EntityTableExpressionBuilder> tableExpressionSupplier);
+//    EntityTableExpressionBuilder removeRelationEntityTableExpression(RelationTableKey relationTableKey);
     Map<RelationTableKey,EntityTableExpressionBuilder> getRelationTables();
     boolean hasRelationTables();
     List<EntityTableExpressionBuilder> getTables();

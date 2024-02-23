@@ -126,7 +126,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
         //vo
-        if(entityExpressionBuilder == null){
+        if(entityExpressionBuilder == null || entitySQLContext.methodIsInclude()){
             TPropertyProxy tPropertyProxy = propertyProxy.create(null, this.getEntitySQLContext());
             tPropertyProxy.setNavValue(property);
             return tPropertyProxy;
@@ -154,7 +154,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
         if(entityExpressionBuilder==null){
-            return new EmptySQLQueryable<>(this.entitySQLContext,getTable(),property);
+            return new EmptySQLQueryable<>(this.entitySQLContext,null,property);
         }else{
             QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
             TableAvailable leftTable = getTable();

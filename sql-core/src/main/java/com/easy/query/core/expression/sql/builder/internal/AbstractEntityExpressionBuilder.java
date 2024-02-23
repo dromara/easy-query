@@ -7,7 +7,6 @@ import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.util.EasyMapUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -63,21 +62,37 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
         if (relationTables == null) {
             relationTables = new LinkedHashMap<>();
         }
-       return  EasyMapUtil.computeIfAbsent(relationTables, relationTableKey, k -> {
-            EntityTableExpressionBuilder tableExpression = tableExpressionSupplier.apply(k);
+        EntityTableExpressionBuilder entityTableExpressionBuilder = relationTables.get(relationTableKey);
+        if (entityTableExpressionBuilder != null) {
+            return entityTableExpressionBuilder;
+        }
+        EntityTableExpressionBuilder tableExpression = tableExpressionSupplier.apply(relationTableKey);
 
-            if (tableExpression.getEntityTable().getEntityMetadata().isSharding()) {
-                expressionContext.useSharding();
-            }
-            expressionContext.getTableContext().addTable(tableExpression.getEntityTable());
-            if (tableExpression.getEntityTable() instanceof RelationEntityTableAvailable) {
-                return tableExpression;
-            } else {
-                throw new UnsupportedOperationException();
-            }
-        });
-
+        //涉及到后续移除问题
+        if (tableExpression.getEntityTable().getEntityMetadata().isSharding()) {
+            expressionContext.useSharding();
+        }
+        expressionContext.getTableContext().addTable(tableExpression.getEntityTable());
+        if (tableExpression.getEntityTable() instanceof RelationEntityTableAvailable) {
+            relationTables.put(relationTableKey,tableExpression);
+            return tableExpression;
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
+//
+//    @Override
+//    public EntityTableExpressionBuilder removeRelationEntityTableExpression(RelationTableKey relationTableKey) {
+//        if (relationTables == null) {
+//            return null;
+//        }
+//        EntityTableExpressionBuilder entityTableExpressionBuilder = relationTables.get(relationTableKey);
+//        if (entityTableExpressionBuilder != null) {
+//            relationTables.remove(relationTableKey);
+//            return entityTableExpressionBuilder;
+//        }
+//        return null;
+//    }
 
     @Override
     public List<EntityTableExpressionBuilder> getTables() {
@@ -85,16 +100,16 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     }
 
     @Override
-    public Map<RelationTableKey,EntityTableExpressionBuilder> getRelationTables() {
+    public Map<RelationTableKey, EntityTableExpressionBuilder> getRelationTables() {
         if (relationTables == null) {
-            relationTables=new LinkedHashMap<>();
+            relationTables = new LinkedHashMap<>();
         }
         return relationTables;
     }
 
     @Override
     public boolean hasRelationTables() {
-        return relationTables!=null&&!relationTables.isEmpty();
+        return relationTables != null && !relationTables.isEmpty();
     }
 
     @Override

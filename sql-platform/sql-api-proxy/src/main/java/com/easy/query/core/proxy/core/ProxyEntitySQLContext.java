@@ -15,6 +15,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.accpet.AggregatePredicateEntityExpressionAccept;
 import com.easy.query.core.proxy.core.accpet.AggregatePredicateEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
+import com.easy.query.core.proxy.core.accpet.IncludeEntityExpressionAccept;
 import com.easy.query.core.proxy.core.accpet.OrderByEntityExpressionAccept;
 import com.easy.query.core.proxy.core.accpet.OrderByEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.PredicateEntityExpressionAccept;
@@ -107,6 +108,11 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
             return ((AggregatePredicateEntityExpressionAccept) accept).getAggregateFilter();
         }
         return null;
+    }
+
+    @Override
+    public boolean methodIsInclude() {
+        return accept instanceof IncludeEntityExpressionAccept;
     }
 
     @Override

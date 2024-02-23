@@ -20,9 +20,9 @@ public class SQLColumnIncludeColumn2Impl<TPropertyProxy extends ProxyEntity<TPro
     private final String selfProperty;
     private final String aliasProperty;
     private final ProxyEntity<TPropertyProxy, TProperty> columnProxy;
-    private final SQLFuncExpression1<ProxyEntity<TPropertyProxy, TProperty>, ProxyEntity<TProxy, TEntity>> navigateSelectExpression;
+    private final SQLFuncExpression1<TPropertyProxy, ProxyEntity<TProxy, TEntity>> navigateSelectExpression;
 
-    public SQLColumnIncludeColumn2Impl(TableAvailable table, String selfProperty, String aliasProperty,ProxyEntity<TPropertyProxy, TProperty> columnProxy, SQLFuncExpression1<ProxyEntity<TPropertyProxy, TProperty>, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
+    public SQLColumnIncludeColumn2Impl(TableAvailable table, String selfProperty, String aliasProperty,ProxyEntity<TPropertyProxy, TProperty> columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
         this.table = table;
         this.selfProperty = selfProperty;
         this.aliasProperty = aliasProperty;

@@ -11,8 +11,8 @@ import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
+import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
@@ -119,14 +119,14 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
             return columnAll0(tableExpressionBuilder);
         }
     }
-    private AsSelector columnAll0(EntityTableExpressionBuilder table) {
-        if (table instanceof AnonymousEntityTableExpressionBuilder) {
-            columnAnonymousAll((AnonymousEntityTableExpressionBuilder) table);
+    private AsSelector columnAll0(EntityTableExpressionBuilder tableExpressionBuilder) {
+        if (tableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
+            columnAnonymousAll((AnonymousEntityTableExpressionBuilder) tableExpressionBuilder);
         } else {
             //只查询当前对象返回结果属性名称匹配
             boolean queryLargeColumn = entityQueryExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
             EntityMetadata targetEntityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
-            EntityMetadata sourceEntityMetadata = table.getEntityMetadata();
+            EntityMetadata sourceEntityMetadata = tableExpressionBuilder.getEntityMetadata();
 
             Collection<String> sourceProperties = sourceEntityMetadata.getProperties();
             for (String property : sourceProperties) {
@@ -149,11 +149,12 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
                     String targetColumnName = targetColumnMetadata.getName();
                     //如果当前属性和查询对象属性一致那么就返回对应的列名，对应的列名如果不一样就返回对应返回结果对象的属性上的列名
                     String alias = Objects.equals(sourceColumnName, targetColumnName) ? null : targetColumnName;
-                    ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), sourceColumnMetadata, entityQueryExpressionBuilder.getRuntimeContext(), alias);
+                    ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(tableExpressionBuilder.getEntityTable(), sourceColumnMetadata, entityQueryExpressionBuilder.getRuntimeContext(), alias);
                     sqlBuilderSegment.append(columnSegment);
                 }
 
             }
+            autoColumnInclude(tableExpressionBuilder.getEntityTable(),targetEntityMetadata);
         }
         return this;
     }

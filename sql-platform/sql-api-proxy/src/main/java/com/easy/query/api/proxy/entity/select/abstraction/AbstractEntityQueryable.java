@@ -38,6 +38,7 @@ import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
+import com.easy.query.core.proxy.core.ValueHolder;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
 import com.easy.query.core.proxy.core.draft.proxy.DraftProxy;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -222,11 +223,6 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             sqlSelect.accept(columnSelector.getAsSelector());
         });
         return new EasyEntityQueryable<>(get1Proxy(), select);
-//        ClientQueryable<T1> select = entityQueryable.select(columnSelector -> {
-//            SQLSelectExpression sqlSelect = selectExpression.apply(t1Proxy);
-//            sqlSelect.accept(columnSelector.getSelector());
-//        });
-//        return new EasyEntityQueryable<>(t1Proxy, select);
     }
 
     @Override
@@ -298,8 +294,14 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
         T1Proxy proxy = getQueryable().get1Proxy();
-        TPropertyProxy navigateColumn = navigateIncludeSQLExpression.apply(proxy);
-        return include0(navigateColumn, includeAdapterExpression, groupSize);
+        ValueHolder<TPropertyProxy> valueHolder = new ValueHolder<>();
+        proxy.getEntitySQLContext()._include(()->{
+            TPropertyProxy navigateColumn=navigateIncludeSQLExpression.apply(proxy);
+            valueHolder.setValue(navigateColumn);
+        });
+
+//        getSQLEntityExpressionBuilder().removeRelationEntityTableExpression(new RelationTableKey(proxy.getEntityClass(),navigateColumn.getEntityClass()));
+        return include0(valueHolder.getValue(), includeAdapterExpression, groupSize);
     }
 
     @Override

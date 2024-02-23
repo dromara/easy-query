@@ -100,6 +100,11 @@ public class ColumnSelectSQLContext implements EntitySQLContext {
     }
 
     @Override
+    public boolean methodIsInclude() {
+        return false;
+    }
+
+    @Override
     public OrderSelector getOrderSelector() {
         return null;
     }
