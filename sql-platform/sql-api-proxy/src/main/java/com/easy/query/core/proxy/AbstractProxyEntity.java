@@ -201,30 +201,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * 请使用{@link #expression()}或者{@link Expression#count()}
-     * COUNT(*)
-     * @return 返回类型为Long
-     */
-    @Deprecated
-    public ColumnFunctionComparableNumberChainExpression<Long> count() {
-        return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null, f->{
-            return f.count(c->{});
-        }, Long.class);
-    }
-
-    /**
-     * 请使用{@link #expression()}或者{@link Expression#intCount()}
-     * COUNT(*)
-     * @return 返回类型为Integer
-     */
-    @Deprecated
-    public ColumnFunctionComparableNumberChainExpression<Integer> intCount() {
-        return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null,f->{
-            return f.count(c->{});
-        }, Integer.class);
-    }
-
-    /**
      * 查询表所有属性字段,如果前面已经单独查询了那么会追加下去
      *
      * <blockquote><pre>

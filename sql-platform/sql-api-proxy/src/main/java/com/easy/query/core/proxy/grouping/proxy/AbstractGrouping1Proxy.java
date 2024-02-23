@@ -7,11 +7,13 @@ import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLGroupByExpression;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.ColumnObjectFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.ColumnStringFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;
@@ -40,8 +42,28 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
         return tSourceProxy;
     }
 
+    /**
+     * 请使用{@link #expression()}或者{@link Expression#count()}
+     * COUNT(*)
+     * @return 返回类型为Long
+     */
+    public ColumnFunctionComparableNumberChainExpression<Long> count() {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null, f->{
+            return f.count(c->{});
+        }, Long.class);
+    }
     public <TProperty> ColumnFunctionComparableNumberChainExpression<Long> count(ColumnObjectFunctionAvailable<TProperty, ?> column) {
         return column.count();
+    }
+    /**
+     * 请使用{@link #expression()}或者{@link Expression#intCount()}
+     * COUNT(*)
+     * @return 返回类型为Integer
+     */
+    public ColumnFunctionComparableNumberChainExpression<Integer> intCount() {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(getEntitySQLContext(),null,null,f->{
+            return f.count(c->{});
+        }, Integer.class);
     }
     public <TProperty> ColumnFunctionComparableNumberChainExpression<Integer> intCount(ColumnObjectFunctionAvailable<TProperty, ?> column) {
         return column.intCount();
