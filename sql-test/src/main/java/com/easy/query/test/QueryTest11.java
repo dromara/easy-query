@@ -615,19 +615,19 @@ public class QueryTest11 extends BaseTest {
                 .where(o -> o.title().eq("123"))
                 .selectDraft(o -> Select.draft(
                         o.SQLParameter().valueOf("type1"),
-                        o.count()
+                        o.expression().count()
                 ));
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select2 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("123"))
                 .selectDraft(o -> Select.draft(
                         o.SQLParameter().valueOf("type2"),
-                        o.count()
+                        o.expression().count()
                 ));
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select3 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("123"))
                 .selectDraft(o -> Select.draft(
                         o.SQLParameter().valueOf("type3"),
-                        o.count()
+                        o.expression().count()
                 ));
         List<Draft2<String, Long>> list1 = select1.unionAll(select2, select3).toList();
 
