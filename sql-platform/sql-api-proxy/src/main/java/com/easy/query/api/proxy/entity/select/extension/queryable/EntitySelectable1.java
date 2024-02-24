@@ -11,11 +11,13 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLSelectExpression;
+import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
 import com.easy.query.core.proxy.sql.Select;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * create time 2023/8/16 08:47
@@ -103,6 +105,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @return
      */
     <TR> Query<TR> selectColumn(SQLFuncExpression1<T1Proxy, PropTypeColumn<TR>> selectExpression);
+    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> Query<List<TR>> selectColumns(SQLFuncExpression1<T1Proxy, SQLQueryable<TRProxy,TR>> selectExpression);
 
     /**
      * 返回select类型不支持后续链式

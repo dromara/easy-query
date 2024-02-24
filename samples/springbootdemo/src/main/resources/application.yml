@@ -20,16 +20,14 @@ spring:
       initial-size: 10
       max-active: 100
 
-
-logging:
-  level:
-    com.easy.query.core: debug
-
 easy-query:
   enable: true
   database: mysql
   name-conversion: underlined
   start-time-job: true
+  print-sql: true
+  keep-native-style: true
+
 
 easy-query-track:
   # 默认就是true

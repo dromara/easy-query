@@ -48,18 +48,35 @@
             <artifactId>druid-spring-boot-starter</artifactId>
             <version>1.2.15</version>
         </dependency>
-        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.alibaba/druid &ndash;&gt;-->
-        <!--        <dependency>-->
-        <!--            <groupId>com.alibaba</groupId>-->
-        <!--            <artifactId>druid</artifactId>-->
-        <!--            <version>1.2.15</version>-->
-        <!--        </dependency>-->
         <!-- mysql驱动 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.31</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.18</version>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-processor</artifactId>
+            <version>1.10.16</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-springboot-starter</artifactId>
+            <version>1.10.16</version>
+            <scope>compile</scope>
+        </dependency>
+        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.alibaba/druid &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.alibaba</groupId>-->
+        <!--            <artifactId>druid</artifactId>-->
+        <!--            <version>1.2.15</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.furyio</groupId>
             <artifactId>fury-core</artifactId>
@@ -76,29 +93,18 @@
         <!--            <version>0.9.12</version>-->
         <!--            <scope>compile</scope>-->
         <!--        </dependency>-->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.18</version>
-        </dependency>
-        <dependency>
-            <groupId>com.easy-query</groupId>
-            <artifactId>sql-core</artifactId>
-            <version>1.10.16</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.easy-query</groupId>
-            <artifactId>sql-api4j</artifactId>
-            <version>1.10.16</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.easy-query</groupId>
-            <artifactId>sql-springboot-starter</artifactId>
-            <version>1.10.16</version>
-            <scope>compile</scope>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.easy-query</groupId>-->
+        <!--            <artifactId>sql-core</artifactId>-->
+        <!--            <version>1.10.16</version>-->
+        <!--            <scope>compile</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.easy-query</groupId>-->
+        <!--            <artifactId>sql-api4j</artifactId>-->
+        <!--            <version>1.10.16</version>-->
+        <!--            <scope>compile</scope>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-cache</artifactId>

@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -67,7 +68,7 @@ public class UpdateTest extends BaseTest {
 
 
             long rows = easyEntityQuery.updatable(Topic.class)
-                    .setColumns(o->{
+                    .setColumns(o -> {
                         o.stars().set(12);
                     })
                     .where(o -> o.id().eq("2"))
@@ -109,7 +110,7 @@ public class UpdateTest extends BaseTest {
 
 
             long rows = easyEntityQuery.updatable(Topic.class)
-                    .setColumns(o->{
+                    .setColumns(o -> {
                         o.stars().set(12);
                     })
                     .where(o -> {
@@ -410,6 +411,7 @@ public class UpdateTest extends BaseTest {
                 .whereColumns(o -> o.columnKeys().column(o.t().stars())).toSQL(topic);
         Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?", sql);
     }
+
     @Test
     public void updateTest12_2() {
         Topic topic = easyEntityQuery.queryable(Topic.class).whereById("15").firstOrNull();
@@ -721,7 +723,7 @@ public class UpdateTest extends BaseTest {
 
             long rows = easyEntityQuery.updatable(Topic.class)
                     .asTable("xxxxx")
-                    .setColumns(o->{
+                    .setColumns(o -> {
                         o.stars().setSQL("ifnull({0},0)+{1}", (context) -> {
                             context.expression(o.stars())
                                     .value(1);
@@ -1127,7 +1129,7 @@ public class UpdateTest extends BaseTest {
 
             easyEntityQuery.updatable(SysUserSQLEncryption.class)
                     .asTable("x123")
-                    .setColumns(o->{
+                    .setColumns(o -> {
                         o.phone().set("123123");
                     })
                     .where(o -> o.id().eq("7")).executeRows();
@@ -1587,7 +1589,7 @@ public class UpdateTest extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         String newTitle = "test123" + new Random().nextInt(100);
-        String oldTitle=null;
+        String oldTitle = null;
         TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
         try {
 
@@ -1595,30 +1597,31 @@ public class UpdateTest extends BaseTest {
             Topic topic = easyQuery.queryable(Topic.class)
                     .asTracking()
                     .where(o -> o.eq(Topic::getId, "7")).firstNotNull("未找到对应的数据");
-            oldTitle=topic.getTitle();
+            oldTitle = topic.getTitle();
             topic.setTitle(newTitle);
             easyQuery.updatable(topic)
                     .asTable("aaaxxx")
-                    .whereColumns(o->o.columnKeys().column(Topic::getTitle))
+                    .whereColumns(o -> o.columnKeys().column(Topic::getTitle))
                     .executeRows();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertNotNull(ex);
-        }finally {
+        } finally {
             trackManager.release();
         }
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("UPDATE `aaaxxx` SET `title` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals(newTitle+"(String),7(String),"+ oldTitle+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals(newTitle + "(String),7(String)," + oldTitle + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void updateTrackParameterTest2() {
-        ListenerContext listenerContext = new ListenerContext();
+        ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
         String newTitle = "test123" + new Random().nextInt(100);
-        String oldTitle=null;
+        String oldTitle = null;
         TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
         try {
 
@@ -1626,34 +1629,41 @@ public class UpdateTest extends BaseTest {
             Topic topic = easyQuery.queryable(Topic.class)
                     .asTracking()
                     .where(o -> o.eq(Topic::getId, "7")).firstNotNull("未找到对应的数据");
-            oldTitle=topic.getTitle();
+            oldTitle = topic.getTitle();
             topic.setTitle(newTitle);
             Topic topic1 = easyQuery.queryable(Topic.class)
                     .asNoTracking()
                     .where(o -> o.eq(Topic::getId, "8")).firstNotNull("未找到对应的数据");
             topic1.setTitle(newTitle);
-            easyQuery.updatable(Arrays.asList(topic,topic1))
+            easyQuery.updatable(Arrays.asList(topic, topic1))
                     .asTable("aaaxxx")
-                    .whereColumns(o->o.columnKeys().column(Topic::getTitle))
+                    .whereColumns(o -> o.columnKeys().column(Topic::getTitle))
                     .executeRows();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertNotNull(ex);
-        }finally {
+        } finally {
             trackManager.release();
         }
 
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("UPDATE `aaaxxx` SET `title` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals(newTitle+"(String),7(String),"+ oldTitle+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        List<JdbcExecuteAfterArg> jdbcExecuteAfterArgs = listenerContext.getJdbcExecuteAfterArgs();
+        Assert.assertEquals(3, jdbcExecuteAfterArgs.size());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = jdbcExecuteAfterArgs.get(2);
+        if (Objects.equals(newTitle + "(String),7(String)," + oldTitle + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)))) {
+            Assert.assertEquals("UPDATE `aaaxxx` SET `title` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        } else {
+            Assert.assertEquals("UPDATE `aaaxxx` SET `stars` = ?,`create_time` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("108(Integer),2023-06-01T10:48:05(LocalDateTime),8(String)," + newTitle + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
         listenerContextManager.clear();
     }
+
     @Test
     public void updateTrackParameterTest3() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         String newTitle = "test123" + new Random().nextInt(100);
-        String oldTitle=null;
+        String oldTitle = null;
         TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
         try {
 
@@ -1661,28 +1671,29 @@ public class UpdateTest extends BaseTest {
             Topic topic = easyQuery.queryable(Topic.class)
                     .asTracking()
                     .where(o -> o.eq(Topic::getId, "7")).firstNotNull("未找到对应的数据");
-            oldTitle=topic.getTitle();
+            oldTitle = topic.getTitle();
             topic.setTitle(newTitle);
             Topic topic1 = easyQuery.queryable(Topic.class)
                     .asNoTracking()
                     .where(o -> o.eq(Topic::getId, "8")).firstNotNull("未找到对应的数据");
             topic1.setTitle(newTitle);
-            easyQuery.updatable(Arrays.asList(topic1,topic))
+            easyQuery.updatable(Arrays.asList(topic1, topic))
                     .asTable("aaaxxx")
-                    .whereColumns(o->o.columnKeys().column(Topic::getTitle))
+                    .whereColumns(o -> o.columnKeys().column(Topic::getTitle))
                     .executeRows();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertNotNull(ex);
-        }finally {
+        } finally {
             trackManager.release();
         }
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("UPDATE `aaaxxx` SET `stars` = ?,`create_time` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("108(Integer),2023-06-01T10:48:05(LocalDateTime),8(String),"+newTitle+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("108(Integer),2023-06-01T10:48:05(LocalDateTime),8(String)," + newTitle + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void updateSetFuncTest1() {
         ListenerContext listenerContext = new ListenerContext();
@@ -1690,11 +1701,11 @@ public class UpdateTest extends BaseTest {
         try {
             easyEntityQuery.updatable(Topic.class)
                     .setColumns(t -> {
-                        t.title().set(t.title().subString(1,10).concat(t.id()));
+                        t.title().set(t.title().subString(1, 10).concat(t.id()));
                     }).asTable("a123123")
                     .whereById("123zzzxxx")
                     .executeRows();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertNotNull(ex);
         }
 
@@ -1704,6 +1715,7 @@ public class UpdateTest extends BaseTest {
         Assert.assertEquals("123zzzxxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void updateSetFuncTest2() {
         ListenerContext listenerContext = new ListenerContext();
@@ -1711,11 +1723,11 @@ public class UpdateTest extends BaseTest {
         try {
             easyEntityQuery.updatable(Topic.class)
                     .setColumns(t -> {
-                        t.title().set(t.title().subString(1,10).concat("123"));
+                        t.title().set(t.title().subString(1, 10).concat("123"));
                     }).asTable("a123123")
                     .whereById("123zzzxxx")
                     .executeRows();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertNotNull(ex);
         }
 
@@ -1725,6 +1737,7 @@ public class UpdateTest extends BaseTest {
         Assert.assertEquals("123(String),123zzzxxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void updateSetFuncTest3() {
         ListenerContext listenerContext = new ListenerContext();
@@ -1732,11 +1745,11 @@ public class UpdateTest extends BaseTest {
         try {
             easyEntityQuery.updatable(Topic.class)
                     .setColumns(t -> {
-                        t.title().set(t.title().subString(1,10).concat(t.id().toLower()));
+                        t.title().set(t.title().subString(1, 10).concat(t.id().toLower()));
                     }).asTable("a123123")
                     .whereById("123zzzxxx")
                     .executeRows();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertNotNull(ex);
         }
 

@@ -1,5 +1,6 @@
 package com.easyquery.springbootdemo.controller;
 
+import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.cache.core.EasyCacheClient;
 import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -31,6 +32,8 @@ import java.util.List;
 public class EasyQueryController {
     @Autowired
     private EasyQueryClient easyQuery;
+    @Autowired
+    private EasyEntityQuery easyEntityQuery;
     @Autowired
     private EasyCacheClient easyCacheClient;
     @Autowired

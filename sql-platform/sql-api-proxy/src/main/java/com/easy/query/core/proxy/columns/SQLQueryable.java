@@ -8,6 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
+import com.easy.query.core.proxy.columns.impl.EasySQLPredicateQueryable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
@@ -25,16 +26,16 @@ import java.math.BigDecimal;
  *
  * @author xuejiaming
  */
-public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable {
+public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable {//,ProxyEntity<T1Proxy,T1>
     EasyEntityQueryable<T1Proxy, T1> getQueryable();
 
     TableAvailable getOriginalTable();
 
     String getNavValue();
 
-    default SQLQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
+    default SQLPredicateQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
         getQueryable().where(whereExpression);
-        return this;
+        return new EasySQLPredicateQueryable<>(this);
     }
 
     /**

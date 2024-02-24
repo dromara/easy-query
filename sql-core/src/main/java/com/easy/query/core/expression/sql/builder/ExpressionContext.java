@@ -90,5 +90,4 @@ public interface ExpressionContext {
 
     void setDraftPropTypes(Class<?>[] propTypes);
     Class<?>[] getDraftPropTypes();
-
 }
