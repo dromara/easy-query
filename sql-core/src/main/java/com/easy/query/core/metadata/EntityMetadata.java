@@ -726,7 +726,7 @@ public class EntityMetadata {
     public NavigateMetadata getNavigateNotNull(String propertyName) {
         NavigateMetadata navigateMetadata = getNavigateOrNull(propertyName);
         if (navigateMetadata == null) {
-            throw new EasyQueryException(String.format("not found property:[%s] mapping navigate", propertyName));
+            throw new EasyQueryException(String.format(EasyClassUtil.getSimpleName(entityClass) +" not found property:[%s] mapping navigate", propertyName));
         }
         return navigateMetadata;
     }
@@ -735,6 +735,9 @@ public class EntityMetadata {
         return property2NavigateMap.get(propertyName);
     }
 
+    public Collection<NavigateMetadata> getNavigateMetadatas(){
+        return property2NavigateMap.values();
+    }
     public ColumnMetadata getColumnNotNull(String propertyName) {
         ColumnMetadata columnMetadata = getColumnOrNull(propertyName);
         if (columnMetadata == null) {

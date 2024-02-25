@@ -16,6 +16,7 @@ import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
@@ -23,6 +24,8 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -39,8 +42,10 @@ import java.math.BigDecimal;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -51,22 +56,84 @@ import java.util.stream.Collectors;
  *
  * @author xuejiaming
  */
-public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements EntityQueryable<ListProxy<TProxy,TEntity>, List<TEntity>> {
+public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> {
 
     private final ClientQueryable<?> queryable;
     private final ListProxy<TProxy, TEntity> listProxy;
     private final String navValue;
     private final NavigateMetadata navigateMetadata;
     private final QueryRuntimeContext runtimeContext;
+    private final Property<Object, ?> navigateGetter;
 
-    public EasySelectManyQueryable(ClientQueryable<?> queryable,ListProxy<TProxy,TEntity> listProxy, String navValue) {
+    public EasySelectManyQueryable(ClientQueryable<?> queryable, ListProxy<TProxy, TEntity> listProxy, String navValue) {
 
-        this.queryable = queryable;
         this.listProxy = listProxy;
         this.navValue = navValue;
         this.runtimeContext = queryable.getSQLEntityExpressionBuilder().getRuntimeContext();
-        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
-        this.navigateMetadata = entityMetadataManager.getEntityMetadata(queryable.queryClass()).getNavigateNotNull(navValue);
+        EntityMetadata entityMetadata = listProxy.getSqlQueryable().getOriginalTable().getEntityMetadata();
+        if (Objects.equals(entityMetadata.getEntityClass(), queryable.queryClass())) {
+            this.navigateMetadata = entityMetadata.getNavigateNotNull(navValue);
+            this.navigateGetter = this.navigateMetadata.getGetter();
+            this.queryable = queryable;
+        } else {
+            ExpressionContext expressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
+            //如果没有include默认include
+            if (!expressionContext.hasIncludes()) {
+                EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+                EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
+                String[] navValueSplit = navValue.split("\\.");
+                String firstNavValue = navValueSplit[0];
+                NavigateMetadata currentNavigateMetadata = queryEntityMetadata.getNavigateNotNull(firstNavValue);
+                EntityMetadata currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
+                for (int i = 1; i < navValueSplit.length - 1; i++) {
+                    String currentNavValue = navValueSplit[i];
+                    currentNavigateMetadata = currentEntityMetadata.getNavigateNotNull(currentNavValue);
+                    currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
+                }
+                String targetPropertyOrPrimary = currentNavigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
+                NavigateMetadata navigateMetadataResult = currentEntityMetadata.getNavigateNotNull(navValueSplit[navValueSplit.length - 1]);
+                this.navigateMetadata = navigateMetadataResult;
+                this.navigateGetter = navigateMetadataResult.getGetter();
+                this.queryable = queryable.select(currentEntityMetadata.getEntityClass(), o -> o.getAsSelector().column(listProxy.getSqlQueryable().getOriginalTable(), targetPropertyOrPrimary))
+                        .include(t -> t.with(navValueSplit[navValueSplit.length - 1]));
+            } else {
+                //如果存在include那么就只能一张表一张表走
+                EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+                EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
+                String[] navValueSplit = navValue.split("\\.");
+                String firstNavValue = navValueSplit[0];
+                NavigateMetadata currentNavigateMetadata = queryEntityMetadata.getNavigateNotNull(firstNavValue);
+                EntityMetadata currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
+                List<Property<Object, ?>> replyExpressions = new ArrayList<>();
+                replyExpressions.add(currentNavigateMetadata.getGetter());
+                for (int i = 1; i < navValueSplit.length - 1; i++) {
+                    String currentNavValue = navValueSplit[i];
+                    currentNavigateMetadata = currentEntityMetadata.getNavigateNotNull(currentNavValue);
+                    currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
+                    replyExpressions.add(currentNavigateMetadata.getGetter());
+                }
+                NavigateMetadata navigateMetadataResult = currentEntityMetadata.getNavigateNotNull(navValueSplit[navValueSplit.length - 1]);
+                replyExpressions.add(navigateMetadataResult.getGetter());
+                this.navigateMetadata = navigateMetadataResult;
+                this.navigateGetter = obj -> {
+                    if (obj == null) {
+                        return null;
+                    }
+                    Iterator<Property<Object, ?>> iterator = replyExpressions.iterator();
+                    Property<Object, ?> first = iterator.next();
+                    Object value = first.apply(obj);
+                    while (iterator.hasNext()) {
+                        if (value != null) {
+                            value = iterator.next().apply(value);
+                        } else {
+                            return null;
+                        }
+                    }
+                    return value;
+                };
+                this.queryable = queryable;
+            }
+        }
     }
 
     @Override
@@ -132,7 +199,7 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     @Override
     public <TR> String toSQL(Class<TR> resultClass, ToSQLContext toSQLContext) {
-        return queryable.toSQL(resultClass,toSQLContext);
+        return queryable.toSQL(resultClass, toSQLContext);
     }
 
     @Override
@@ -170,7 +237,7 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
-        Object entity = queryable.firstNotNull(resultClass,throwFunc);
+        Object entity = queryable.firstNotNull(resultClass, throwFunc);
         return getNavigates(entity);
     }
 
@@ -217,7 +284,7 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
-        Object entity = queryable.singleNotNull(resultClass,throwFunc);
+        Object entity = queryable.singleNotNull(resultClass, throwFunc);
         return getNavigates(entity);
     }
 
@@ -238,7 +305,7 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     @Override
     public EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> cloneQueryable() {
-        return new EasySelectManyQueryable<>(queryable.cloneQueryable(),listProxy,navValue);
+        return new EasySelectManyQueryable<>(queryable.cloneQueryable(), listProxy, navValue);
     }
 
     @Override
@@ -482,7 +549,8 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
         throw new UnsupportedOperationException();
     }
-//
+
+    //
 //    @Override
 //    public Query<List<TEntity>> cloneQueryable() {
 //        return new EasySelectManyQueryable<>(queryable.cloneQueryable(),navValue);
@@ -556,7 +624,7 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 //
     private <TResult> TResult getNavigates(Object entity) {
         if (entity != null) {
-            Collection<?> values = EasyObjectUtil.typeCastNullable(navigateMetadata.getGetter().apply(entity));
+            Collection<?> values = EasyObjectUtil.typeCastNullable(navigateGetter.apply(entity));
             if (values == null) {
                 return null;
             }

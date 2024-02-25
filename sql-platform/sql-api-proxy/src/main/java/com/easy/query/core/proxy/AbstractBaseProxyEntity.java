@@ -145,7 +145,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 return tableExpressionBuilder;
             });
             TPropertyProxy tPropertyProxy = propertyProxy.create(entityTableExpressionBuilder.getEntityTable(), this.entitySQLContext);
-            tPropertyProxy.setNavValue(property);
+            tPropertyProxy.setNavValue(getFullNavValue(property));
             return tPropertyProxy;
         }
     }
@@ -174,8 +174,15 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 });
             }
             EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
-            queryable.get1Proxy().setNavValue(property);
+            queryable.get1Proxy().setNavValue(getFullNavValue(property));
             return new EasySQLQueryable<>(this.entitySQLContext, queryable,leftTable);
         }
+    }
+    private String getFullNavValue(String navValue){
+        String parentNavValue = getNavValue();
+        if(parentNavValue==null){
+            return navValue;
+        }
+        return parentNavValue+"."+navValue;
     }
 }
