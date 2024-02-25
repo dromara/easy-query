@@ -124,6 +124,11 @@ public abstract class AbstractSelector<TChain> {
     }
 
     public TChain columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression) {
+//        TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
+//        if(expressionContext.getIncludes().stream().noneMatch(o->o.getIncludeNavigateParams().getTable()==entityTable&&Objects.equals(o.getIncludeNavigateParams().getNavigateMetadata().getPropertyName(),selfProperty))){
+//            //不存在就自动columnInclude
+//
+//        }
 //        NavigateMetadata navigateMetadata = table.getEntityMetadata().getNavigateNotNull(selfProperty);
         Map<String, ColumnIncludeExpression> propertyColumnIncludeExpressionMap = expressionContext.getColumnIncludeMaps().computeIfAbsent(table, k -> new HashMap<>());
         propertyColumnIncludeExpressionMap.put(selfProperty, new ColumnIncludeExpression(table, selfProperty, aliasProperty, includeSelectorExpression));
