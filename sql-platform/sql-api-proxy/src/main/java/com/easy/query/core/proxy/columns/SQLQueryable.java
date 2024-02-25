@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.columns;
 
+import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -126,5 +127,9 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
 
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(SQLQueryable<TPropertyProxy, TProperty> columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<T1Proxy, T1>> navigateSelectExpression) {
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(columnProxy.getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy.getQueryable().get1Proxy(), navigateSelectExpression));
+    }
+
+    default ListProxy<T1Proxy,T1> toList(){
+        return new ListProxy<>(this);
     }
 }
