@@ -577,5 +577,37 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+    @Test
+    public void testLogicDeleteRecentlyTable(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(BlogEntity.class, (b, b2) -> b.id().eq(b2.id()))
+                .tableLogicDelete(() -> false)
+                .where((b1, b2) -> b1.title().like("123"))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `t_blog` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND t.`title` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testLogicDeleteRecentlyTable1(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .tableLogicDelete(() -> false)
+                .leftJoin(BlogEntity.class, (b, b2) -> b.id().eq(b2.id()))
+                .where((b1, b2) -> b1.title().like("123"))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`title` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 
 }

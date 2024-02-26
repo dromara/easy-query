@@ -16,6 +16,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/8/16 07:52
@@ -224,6 +225,11 @@ public abstract class AbstractOverrideClientQueryable4<T1, T2, T3, T4> extends A
     @Override
     public ClientQueryable4<T1, T2, T3,T4> filterConfigure(ValueFilter valueFilter) {
         super.filterConfigure(valueFilter);
+        return getClientQueryable4();
+    }
+    @Override
+    public ClientQueryable4<T1, T2, T3,T4> tableLogicDelete(Supplier<Boolean> tableLogicDel) {
+        super.tableLogicDelete(tableLogicDel);
         return getClientQueryable4();
     }
 }

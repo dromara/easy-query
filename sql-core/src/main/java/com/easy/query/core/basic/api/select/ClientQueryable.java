@@ -5,6 +5,7 @@ import com.easy.query.core.basic.api.internal.FilterConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
+import com.easy.query.core.basic.api.internal.TableLogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.extension.queryable.Aggregatable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Countable1;
@@ -36,6 +37,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
         Interceptable<ClientQueryable<T1>>,
         LogicDeletable<ClientQueryable<T1>>,
         TableReNameable<ClientQueryable<T1>>,
+        TableLogicDeletable<ClientQueryable<T1>>,
         QueryStrategy<ClientQueryable<T1>>,
         FilterConfigurable<ClientQueryable<T1>>,
         Aggregatable1<T1>,

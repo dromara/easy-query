@@ -53,7 +53,9 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
 
             if (useLogicDelete(entityMetadata)) {
                 SQLExpression1<WherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
-                logicDeleteQueryFilterExpression.apply(sqlPredicate);
+                if(logicDeleteQueryFilterExpression!=null){
+                    logicDeleteQueryFilterExpression.apply(sqlPredicate);
+                }
             }
             if(!isQuery()){
                 if (entityMetadata.hasVersionColumn()) {

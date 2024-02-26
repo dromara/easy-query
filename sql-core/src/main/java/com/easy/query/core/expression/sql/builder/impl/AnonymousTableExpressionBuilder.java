@@ -12,6 +12,7 @@ import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author xuejiaming
@@ -53,6 +54,11 @@ public class AnonymousTableExpressionBuilder extends TableExpressionBuilder impl
 
     @Override
     public void setSchemaAs(Function<String, String> schemaAs) {
+    }
+
+    @Override
+    public void setTableLogicDelete(Supplier<Boolean> tableLogicDel) {
+
     }
 
     @Override

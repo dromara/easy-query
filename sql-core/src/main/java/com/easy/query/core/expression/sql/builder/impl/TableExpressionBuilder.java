@@ -13,6 +13,7 @@ import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author xuejiaming
@@ -26,6 +27,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     protected final MultiTableTypeEnum multiTableType;
     protected final QueryRuntimeContext runtimeContext;
     protected PredicateSegment on;
+    protected Supplier<Boolean> tableLogicDel;
     protected Function<String, String> tableNameAs;
     protected Function<String, String> schemaAs;
     protected Function<String, String> linkAs;
@@ -52,6 +54,11 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     }
 
     @Override
+    public void setTableLogicDelete(Supplier<Boolean> tableLogicDel) {
+        this.tableLogicDel =tableLogicDel;
+    }
+
+    @Override
     public void setSchemaAs(Function<String, String> schemaAs) {
         this.schemaAs = schemaAs;
     }
@@ -68,10 +75,23 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public SQLExpression1<WherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
-        if (getEntityMetadata().enableLogicDelete()) {
-            return getEntityMetadata().getLogicDeleteMetadata().getLogicDeletePredicateFilterExpression();
+        Boolean logicDel = tableLogicDelValue();
+        if(logicDel==null || logicDel){
+            if (getEntityMetadata().enableLogicDelete()) {
+                return getEntityMetadata().getLogicDeleteMetadata().getLogicDeletePredicateFilterExpression();
+            }
         }
         return null;
+    }
+    private Boolean tableLogicDelValue(){
+        if(this.tableLogicDel==null){
+            return null;
+        }
+        Boolean logicDel = tableLogicDel.get();
+        if(logicDel==null){
+            return null;
+        }
+        return logicDel;
     }
 
     @Override
@@ -93,6 +113,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
         tableExpressionBuilder.setTableNameAs(this.tableNameAs);
         tableExpressionBuilder.setSchemaAs(this.schemaAs);
         tableExpressionBuilder.setTableLinkAs(this.linkAs);
+        tableExpressionBuilder.setTableLogicDelete(this.tableLogicDel);
         return tableExpressionBuilder;
     }
 

@@ -12,6 +12,7 @@ import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/8/16 07:52
@@ -192,6 +193,11 @@ public abstract class AbstractOverrideEntityQueryable4<T1Proxy extends ProxyEnti
     @Override
     public EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> filterConfigure(ValueFilter valueFilter) {
         super.filterConfigure(valueFilter);
+        return getQueryable4();
+    }
+    @Override
+    public EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> tableLogicDelete(Supplier<Boolean> tableLogicDel) {
+        super.tableLogicDelete(tableLogicDel);
         return getQueryable4();
     }
 }

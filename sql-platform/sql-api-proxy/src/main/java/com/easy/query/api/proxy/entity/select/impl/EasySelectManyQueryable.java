@@ -516,7 +516,11 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     @Override
     public <TR> Query<TR> select(Class<TR> resultClass) {
+        throw new UnsupportedOperationException();
+    }
 
+    @Override
+    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass) {
         throw new UnsupportedOperationException();
     }
 
@@ -631,6 +635,11 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
             return EasyObjectUtil.typeCastNullable(new ArrayList<>(values));
         }
         return null;
+    }
+
+    @Override
+    public EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> tableLogicDelete(Supplier<Boolean> tableLogicDel) {
+        throw new UnsupportedOperationException();
     }
 //
 //    @Override

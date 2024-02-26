@@ -1,21 +1,18 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable5.override;
 
-import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable5;
 import com.easy.query.api.proxy.entity.select.abstraction.AbstractEntityQueryable;
 import com.easy.query.api.proxy.entity.select.extension.queryable5.EntityQueryable5Available;
-import com.easy.query.api.proxy.sql.ProxyEntityNavigateInclude;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable5;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.ProxyEntityAvailable;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/8/16 07:52
@@ -195,6 +192,11 @@ public abstract class AbstractOverrideEntityQueryable5<T1Proxy extends ProxyEnti
     @Override
     public EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> filterConfigure(ValueFilter valueFilter) {
         super.filterConfigure(valueFilter);
+        return getQueryable5();
+    }
+    @Override
+    public EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> tableLogicDelete(Supplier<Boolean> tableLogicDel) {
+        super.tableLogicDelete(tableLogicDel);
         return getQueryable5();
     }
 }

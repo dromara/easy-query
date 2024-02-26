@@ -7,6 +7,7 @@ import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @FileName: EntityTableSegment.java
@@ -18,6 +19,7 @@ public interface EntityTableExpressionBuilder extends TableExpressionBuilder {
     EntityMetadata getEntityMetadata();
 
     void setTableNameAs(Function<String, String> tableNameAs);
+    void setTableLogicDelete(Supplier<Boolean> tableLogicDel);
 
     void setSchemaAs(Function<String, String> schemaAs);
     void setTableLinkAs(Function<String, String> linkAs);

@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select.extension.queryable;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
@@ -36,6 +37,7 @@ public interface Selectable1<T1> {
      * @return
      */
     <TR> ClientQueryable<TR> select(Class<TR> resultClass);
+    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass);
 
     /**
      * 设置返回对象，返回对象会根据selectExpression映射相同列名

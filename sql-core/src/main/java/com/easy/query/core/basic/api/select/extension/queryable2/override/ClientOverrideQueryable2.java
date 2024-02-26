@@ -15,6 +15,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/8/16 08:12
@@ -210,6 +211,7 @@ public interface ClientOverrideQueryable2<T1, T2> extends ClientQueryable<T1> {
     @Override
     ClientQueryable2<T1, T2> asTable(Function<String, String> tableNameAs);
 
+
     @Override
     default ClientQueryable2<T1, T2> asSchema(String schema) {
         return asSchema(old -> schema);
@@ -236,4 +238,7 @@ public interface ClientOverrideQueryable2<T1, T2> extends ClientQueryable<T1> {
 
     @Override
     ClientQueryable2<T1, T2> filterConfigure(ValueFilter valueFilter);
+
+    @Override
+    ClientQueryable2<T1, T2> tableLogicDelete(Supplier<Boolean> tableLogicDel);
 }

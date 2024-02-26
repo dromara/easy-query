@@ -122,6 +122,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @return
      */
     <TR> Query<TR> select(Class<TR> resultClass);
+    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass);
 //    <TR> Query<TR> select(Class<TR> resultClass,SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression);
 
 

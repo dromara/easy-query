@@ -74,6 +74,7 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
         return this;
     }
 
+
     @Override
     public ClientEntityDeletable<T> allowDeleteStatement(boolean allow) {
         entityDeleteExpressionBuilder.getExpressionContext().deleteThrow(!allow);

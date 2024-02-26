@@ -15,6 +15,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/8/16 08:12
@@ -235,4 +236,6 @@ public interface ClientOverrideQueryable6<T1, T2, T3, T4, T5, T6> extends Client
 
     @Override
     ClientQueryable6<T1, T2, T3, T4, T5, T6> filterConfigure(ValueFilter valueFilter);
+    @Override
+    ClientQueryable6<T1, T2, T3, T4, T5, T6> tableLogicDelete(Supplier<Boolean> tableLogicDel);
 }

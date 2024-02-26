@@ -14,6 +14,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
 import com.easy.query.core.basic.api.select.JdbcResultWrap;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.executor.MethodQuery;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
@@ -26,6 +27,8 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterabl
 import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
+import com.easy.query.core.common.IncludeCirculateChecker;
+import com.easy.query.core.common.IncludePath;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
@@ -74,6 +77,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePre
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
@@ -82,6 +86,7 @@ import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.FillParams;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
@@ -687,6 +692,44 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
 
+    @Override
+    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass) {
+        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+        EntityMetadata resultEntityMetadata = entityMetadataManager.getEntityMetadata(resultClass);
+        EntityTableExpressionBuilder table = getSQLEntityExpressionBuilder().getTable(0);
+        TableAvailable entityTable = table.getEntityTable();
+        EntityMetadata entityMetadata = entityTable.getEntityMetadata();
+        selectAutoInclude0(entityMetadataManager,this,entityMetadata,resultEntityMetadata,null);
+
+        return select(resultClass);
+    }
+
+    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker) {
+        Collection<NavigateMetadata> resultNavigateMetadatas = resultEntityMetadata.getNavigateMetadatas();
+        if(EasyCollectionUtil.isEmpty(resultNavigateMetadatas)){
+            return;
+        }
+        for (NavigateMetadata resultNavigateMetadata : resultNavigateMetadatas) {
+            NavigateMetadata entityNavigateMetadata = entityMetadata.getNavigateOrNull(resultNavigateMetadata.getPropertyName());
+            if (entityNavigateMetadata == null) {
+                continue;
+            }
+            IncludeCirculateChecker circulateChecker = includeCirculateChecker == null ? new IncludeCirculateChecker() : includeCirculateChecker;
+            if(circulateChecker.includePathRepeat(new IncludePath(entityMetadata.getEntityClass(),resultEntityMetadata.getEntityClass(),resultNavigateMetadata.getPropertyName()))){
+                continue;
+            }
+
+            clientQueryable
+                    .include(t -> {
+                        ClientQueryable<Object> with = t.with(resultNavigateMetadata.getPropertyName());
+                        EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
+                        EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
+                        selectAutoInclude0(entityMetadataManager,with, entityEntityMetadata,navigateEntityMetadata,circulateChecker);
+                        return with;
+                    });
+        }
+    }
+
     private <TR> void selectOnly(Class<TR> resultClass) {
         SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression = ColumnAsSelector::columnAll;
         ColumnAsSelector<T1, TR> sqlColumnSelector = getSQLExpressionProvider1().getAutoColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
@@ -1243,6 +1286,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public ClientQueryable<T1> filterConfigure(ValueFilter valueFilter) {
         entityQueryExpressionBuilder.getExpressionContext().filterConfigure(valueFilter);
+        return this;
+    }
+
+    @Override
+    public ClientQueryable<T1> tableLogicDelete(Supplier<Boolean> tableLogicDel) {
+        entityQueryExpressionBuilder.getRecentlyTable().setTableLogicDelete(tableLogicDel);
         return this;
     }
 }
