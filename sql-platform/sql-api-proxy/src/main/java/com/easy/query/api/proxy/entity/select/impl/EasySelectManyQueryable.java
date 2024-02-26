@@ -434,13 +434,13 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
     }
 
     @Override
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> include(SQLFuncExpression1<ListProxy<TProxy, TEntity>, TPropertyProxy> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
-        return this;
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> include(boolean condition,SQLFuncExpression1<ListProxy<TProxy, TEntity>, TPropertyProxy> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> includes(SQLFuncExpression1<ListProxy<TProxy, TEntity>, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
-        return this;
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> includes(boolean condition,SQLFuncExpression1<ListProxy<TProxy, TEntity>, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
