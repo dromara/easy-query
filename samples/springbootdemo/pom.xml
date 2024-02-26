@@ -62,13 +62,13 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-processor</artifactId>
-            <version>1.10.19</version>
+            <version>1.10.20</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-springboot-starter</artifactId>
-            <version>1.10.19</version>
+            <version>1.10.20</version>
             <scope>compile</scope>
         </dependency>
         <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.alibaba/druid &ndash;&gt;-->
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-cache</artifactId>
-            <version>1.10.19</version>
+            <version>1.10.20</version>
             <scope>compile</scope>
         </dependency>
 
