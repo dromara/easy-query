@@ -579,7 +579,7 @@ public class QueryTest10 extends BaseTest{
                     .queryable(BlogEntity.class)
                     .selectDraft(t -> Select.draft(t.id(),
                             t.createTime(),
-                            t.sql("1").setPropertyType(String.class)
+                            t.expression().sqlType("1").setPropertyType(String.class)
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -598,7 +598,7 @@ public class QueryTest10 extends BaseTest{
                     .queryable(BlogEntity.class)
                     .selectDraft(t -> Select.draft(t.id(),
                             t.createTime(),
-                            t.sql("IFNULL({0},'1')", c -> c.keepStyle().expression(t.title())).setPropertyType(String.class)
+                            t.expression().sqlType("IFNULL({0},'1')", c -> c.keepStyle().expression(t.title())).setPropertyType(String.class)
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

@@ -3,8 +3,10 @@ package com.easy.query.core.func;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.func.def.impl.NativeSegmentSQLFunction;
 
 /**
  * create time 2023/10/5 22:12
@@ -153,4 +155,7 @@ public interface SQLFunc extends AggregateSQLFunc,SQLStringFunc,SQLDateTimeFunc,
     }
 
     SQLFunction not(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    default SQLFunction nativeSql(String sqlSegemnt,SQLExpression1<SQLNativeChainExpressionContext> consume){
+        return new NativeSegmentSQLFunction(sqlSegemnt,consume);
+    }
 }

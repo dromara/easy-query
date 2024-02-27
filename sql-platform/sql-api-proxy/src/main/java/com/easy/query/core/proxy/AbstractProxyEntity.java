@@ -10,20 +10,16 @@ import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
 import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
-import com.easy.query.core.proxy.impl.SQLNativeDraftImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsEntryImpl;
 import com.easy.query.core.proxy.impl.SQLSelectIgnoreImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
-import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
@@ -102,55 +98,55 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
 
-    /**
-     * 返回group或者selectDraft自定义sql片段
-     * 请使用{@link #expression()}或者{@link Expression#sqlType(String)}
-     * <blockquote><pre>
-     * {@code
-     *
-     *  .select((t, t1, t2) -> new QueryVOProxy() {{
-     *      t.sql("now()");
-     *      //指定返回类型给draft类型进行明确
-     *      //t.sql("now()").setPropertyType(String.class);
-     *  }}).toList();
-     * }
-     * </blockquote></pre>
-     * @param sqlSegment
-     * @return
-     */
-    @Deprecated
-    public PropTypeColumn<Object> sql(String sqlSegment) {
-        return sql(sqlSegment, c->{});
-    }
+//    /**
+//     * 返回group或者selectDraft自定义sql片段
+//     * 请使用{@link #expression()}或者{@link Expression#sqlType(String)}
+//     * <blockquote><pre>
+//     * {@code
+//     *
+//     *  .select((t, t1, t2) -> new QueryVOProxy() {{
+//     *      t.sql("now()");
+//     *      //指定返回类型给draft类型进行明确
+//     *      //t.sql("now()").setPropertyType(String.class);
+//     *  }}).toList();
+//     * }
+//     * </blockquote></pre>
+//     * @param sqlSegment
+//     * @return
+//     */
+//    @Deprecated
+//    public PropTypeColumn<Object> sql(String sqlSegment) {
+//        return sql(sqlSegment, c->{});
+//    }
 
-    /**
-     * 返回group或者selectDraft自定义sql片段
-     * 请使用{@link #expression()}或者{@link Expression#sqlType(String,SQLExpression1)}
-     * <blockquote><pre>
-     * {@code
-     *
-     *  .select((t, t1, t2) -> new QueryVOProxy() {{
-     *      t.sql("IFNull({0},{1})",c->c.expression(t.id()).value("1"));
-     *      //指定返回类型给draft类型进行明确
-     *      //t.sql("IFNull({0},{1})",c->c.expression(t.id()).value("1")).setPropertyType(String.class);
-     *  }}).toList();
-     * }
-     * </blockquote></pre>
-     * @param sqlSegment 片段
-     * @param contextConsume 片段参数
-     * @return 返回元素sql片段
-     */
-    @Deprecated
-    public PropTypeColumn<Object> sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        return new SQLNativeDraftImpl((alias, f) -> {
-            f.sqlNativeSegment(sqlSegment, c -> {
-                if (alias != null) {
-                    c.setPropertyAlias(alias);
-                }
-                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
-            });
-        });
-    }
+//    /**
+//     * 返回group或者selectDraft自定义sql片段
+//     * 请使用{@link #expression()}或者{@link Expression#sqlType(String,SQLExpression1)}
+//     * <blockquote><pre>
+//     * {@code
+//     *
+//     *  .select((t, t1, t2) -> new QueryVOProxy() {{
+//     *      t.sql("IFNull({0},{1})",c->c.expression(t.id()).value("1"));
+//     *      //指定返回类型给draft类型进行明确
+//     *      //t.sql("IFNull({0},{1})",c->c.expression(t.id()).value("1")).setPropertyType(String.class);
+//     *  }}).toList();
+//     * }
+//     * </blockquote></pre>
+//     * @param sqlSegment 片段
+//     * @param contextConsume 片段参数
+//     * @return 返回元素sql片段
+//     */
+//    @Deprecated
+//    public PropTypeColumn<Object> sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+//        return new SQLNativeDraftImpl(entitySQLContext,(alias, f) -> {
+//            f.sqlNativeSegment(sqlSegment, c -> {
+//                if (alias != null) {
+//                    c.setPropertyAlias(alias);
+//                }
+//                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
+//            });
+//        });
+//    }
 
     /**
      * 返回子查询

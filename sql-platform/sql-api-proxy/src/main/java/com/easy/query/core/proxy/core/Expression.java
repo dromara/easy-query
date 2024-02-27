@@ -13,7 +13,7 @@ import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctio
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
-import com.easy.query.core.proxy.impl.SQLNativeDraftImpl;
+import com.easy.query.core.proxy.impl.SQLNativeSegmentExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
@@ -30,25 +30,28 @@ import java.util.function.Supplier;
 public class Expression {
     private final EntitySQLContext entitySQLContext;
 
-    private Expression(EntitySQLContext entitySQLContext){
+    private Expression(EntitySQLContext entitySQLContext) {
 
         this.entitySQLContext = entitySQLContext;
     }
-    public static Expression of(EntitySQLContext entitySQLContext){
+
+    public static Expression of(EntitySQLContext entitySQLContext) {
         return new Expression(entitySQLContext);
     }
-    public static Expression of(EntitySQLContextAvailable entitySQLContextAvailable){
+
+    public static Expression of(EntitySQLContextAvailable entitySQLContextAvailable) {
         return new Expression(entitySQLContextAvailable.getEntitySQLContext());
     }
 
 
-
     /**
      * 支持where having order
+     *
      * @param sqlSegment
      */
-    public void sql(String sqlSegment){
-        sql(sqlSegment, c->{});
+    public void sql(String sqlSegment) {
+        sql(sqlSegment, c -> {
+        });
     }
 
     /**
@@ -57,8 +60,8 @@ public class Expression {
      * @param sqlSegment
      * @param contextConsume
      */
-    public void sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
-        sql(true,sqlSegment,contextConsume);
+    public void sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+        sql(true, sqlSegment, contextConsume);
     }
 
     /**
@@ -68,12 +71,11 @@ public class Expression {
      * @param sqlSegment
      * @param contextConsume
      */
-    public void sql(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
-        if(condition){
-            entitySQLContext._executeNativeSql(sqlSegment,contextConsume);
+    public void sql(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+        if (condition) {
+            entitySQLContext._executeNativeSql(sqlSegment, contextConsume);
         }
     }
-
 
 
     /**
@@ -88,11 +90,13 @@ public class Expression {
      *  }}).toList();
      * }
      * </blockquote></pre>
+     *
      * @param sqlSegment
      * @return
      */
     public PropTypeColumn<Object> sqlType(String sqlSegment) {
-        return sqlType(sqlSegment, c->{});
+        return sqlType(sqlSegment, c -> {
+        });
     }
 
     /**
@@ -107,18 +111,14 @@ public class Expression {
      *  }}).toList();
      * }
      * </blockquote></pre>
-     * @param sqlSegment 片段
+     *
+     * @param sqlSegment     片段
      * @param contextConsume 片段参数
      * @return 返回元素sql片段
      */
     public PropTypeColumn<Object> sqlType(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        return new SQLNativeDraftImpl((alias, f) -> {
-            f.sqlNativeSegment(sqlSegment, c -> {
-                if (alias != null) {
-                    c.setPropertyAlias(alias);
-                }
-                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
-            });
+        return new SQLNativeSegmentExpressionImpl(entitySQLContext, sqlSegment, c -> {
+            contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c.getSQLNativeExpressionContext()));
         });
     }
 
@@ -132,47 +132,55 @@ public class Expression {
      *      })
      *  }
      * </pre></blockquote>
+     *
      * @param subQueryableFunc 创建子查询方法
-     * @return
      * @param <TSubQuery>
+     * @return
      */
     public <TSubQuery> PropTypeColumn<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
         Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
-        return new SQLDraftAsSelectImpl<>((alias, f)->{
-            f.columnSubQueryAs(()->subQueryQuery, alias);
-        },subQueryQuery.queryClass());
+        return new SQLDraftAsSelectImpl<>((alias, f) -> {
+            f.columnSubQueryAs(() -> subQueryQuery, alias);
+        }, subQueryQuery.queryClass());
     }
 
 
     public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> now() {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(entitySQLContext,null, null, SQLFunc::now,LocalDateTime.class);
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(entitySQLContext, null, null, SQLFunc::now, LocalDateTime.class);
     }
 
     public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> utcNow() {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(entitySQLContext,null, null, SQLFunc::utcNow,LocalDateTime.class);
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(entitySQLContext, null, null, SQLFunc::utcNow, LocalDateTime.class);
     }
+
     /**
      * COUNT(*)
+     *
      * @return 返回类型为Long
      */
     public ColumnFunctionComparableNumberChainExpression<Long> count() {
-        return new ColumnFunctionComparableNumberChainExpressionImpl<>(entitySQLContext,null,null, f->{
-            return f.count(c->{});
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(entitySQLContext, null, null, f -> {
+            return f.count(c -> {
+            });
         }, Long.class);
     }
+
     /**
      * COUNT(*)
+     *
      * @return 返回类型为Integer
      */
     public ColumnFunctionComparableNumberChainExpression<Integer> intCount() {
-        return new ColumnFunctionComparableNumberChainExpressionImpl<>(entitySQLContext,null,null,f->{
-            return f.count(c->{});
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(entitySQLContext, null, null, f -> {
+            return f.count(c -> {
+            });
         }, Integer.class);
     }
 
 
     /**
      * where exists(....)
+     *
      * @param subQueryFunc 子查询创建方法
      */
     public void exists(Supplier<Query<?>> subQueryFunc) {
@@ -181,7 +189,8 @@ public class Expression {
 
     /**
      * where exists(....)
-     * @param condition 为true是exists生效
+     *
+     * @param condition    为true是exists生效
      * @param subQueryFunc 子查询创建方法
      */
     public void exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
@@ -192,6 +201,7 @@ public class Expression {
 
     /**
      * where not exists(....)
+     *
      * @param subQueryFunc 子查询创建方法
      */
     public void notExists(Supplier<Query<?>> subQueryFunc) {
@@ -201,7 +211,8 @@ public class Expression {
 
     /**
      * where exists(....)
-     * @param condition 为true是not exists生效
+     *
+     * @param condition    为true是not exists生效
      * @param subQueryFunc 子查询创建方法
      */
     public void notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
@@ -209,11 +220,13 @@ public class Expression {
             entitySQLContext.accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
         }
     }
+
     /**
      * 创建常量值用于比较或者处理
+     *
      * @return 数据库常量值构建方法
      */
-    public SQLConstantExpression constant(){
+    public SQLConstantExpression constant() {
         return new SQLConstantExpressionImpl(entitySQLContext);
     }
 }

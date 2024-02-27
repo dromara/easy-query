@@ -1059,7 +1059,7 @@ easyEntityQuery.queryable(Topic.class)
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
-                        t.sql("SUBSTR({0},2,2)",c->c.expression(t.title())),
+                        t.expression().sqlType("SUBSTR({0},2,2)",c->c.expression(t.title())),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 )).toList();
 
@@ -1083,7 +1083,7 @@ easyEntityQuery.queryable(Topic.class)
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
-                        t.sql("SUBSTR({0},2,2)", c -> c.expression(t.title())).setPropertyType(String.class),
+                        t.expression().sqlType("SUBSTR({0},2,2)", c -> c.expression(t.title())).setPropertyType(String.class),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
                 .selectDraft(o -> Select.draft(
@@ -1118,7 +1118,7 @@ easyEntityQuery.queryable(Topic.class)
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
-                        t.sql("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022,1,1,1,2))).setPropertyType(LocalDateTime.class),
+                        t.expression().sqlType("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022,1,1,1,2))).setPropertyType(LocalDateTime.class),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
                 .selectDraft(o -> Select.draft(

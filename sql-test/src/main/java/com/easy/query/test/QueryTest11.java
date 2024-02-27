@@ -164,7 +164,7 @@ public class QueryTest11 extends BaseTest {
                         });
                     })
                     .select(o -> new BlogEntityProxy().adapter(r -> {
-                        PropTypeColumn<BigDecimal> integerPropTypeColumn = o.sql("1").setPropertyType(BigDecimal.class);
+                        PropTypeColumn<BigDecimal> integerPropTypeColumn = o.expression().sqlType("1").setPropertyType(BigDecimal.class);
                         r.score().set(integerPropTypeColumn);
                     })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
