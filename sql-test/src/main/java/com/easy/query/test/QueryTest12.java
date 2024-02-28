@@ -878,8 +878,8 @@ public class QueryTest12 extends BaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT (CASE WHEN t.`id` = ? THEN ? ELSE ? END) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND IFNULL((CASE WHEN t.`title` = t.`id` THEN ? ELSE ? END),?) = IFNULL(t.`title`,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean),1(Integer),2(String),xx(String),yy(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT SUM((CASE WHEN t.`id` = ? THEN ? ELSE ? END)) AS `star`,MIN(case t.`score` when ? then 1 else 0 end) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),0(Integer),1(Integer),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
