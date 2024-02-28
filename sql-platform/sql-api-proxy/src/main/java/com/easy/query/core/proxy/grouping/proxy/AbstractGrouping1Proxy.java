@@ -36,12 +36,23 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
     }
 
     /**
+     * 请使用{@link #groupTable()}
      * 当仅单表是group就是当前表
      * 如果是多表下比如join下那么groups就是MergeTuple2-10最多10个如有需要可以提交issue或者自行扩展
      *
      * @return
      */
+    @Deprecated
     public TSourceProxy group() {
+        return tSourceProxy;
+    }
+
+    /**
+     * 当仅单表是group就是当前表
+     * 如果是多表下比如join下那么groups就是MergeTuple2-10最多10个如有需要可以提交issue或者自行扩展
+     * @return
+     */
+    public TSourceProxy groupTable() {
         return tSourceProxy;
     }
 

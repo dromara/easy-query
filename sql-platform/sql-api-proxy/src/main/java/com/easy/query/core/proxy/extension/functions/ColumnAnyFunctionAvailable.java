@@ -262,11 +262,11 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
-    default <T extends BigDecimal> ColumnFunctionComparableAnyChainExpression<T> sum() {
+    default <T extends Number> ColumnFunctionComparableAnyChainExpression<T> sum() {
         return sum(false);
     }
 
-    default <T extends BigDecimal> ColumnFunctionComparableAnyChainExpression<T> sum(boolean distinct) {
+    default <T extends Number> ColumnFunctionComparableAnyChainExpression<T> sum(boolean distinct) {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
@@ -277,6 +277,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<TProperty> abs() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -290,6 +291,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, getPropertyType());
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<Integer> sign() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -303,6 +305,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, Integer.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> floor() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -316,6 +319,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> ceiling() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -329,6 +333,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> round() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -342,6 +347,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> round(int decimals) {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -355,6 +361,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> exp() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -368,6 +375,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> log() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -381,6 +389,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> log10() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -394,6 +403,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> pow() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -407,6 +417,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> pow(BigDecimal exponent) {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -420,6 +431,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> sqrt() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -433,6 +445,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> cos() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -446,6 +459,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> sin() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -459,6 +473,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> tan() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -472,6 +487,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> acos() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -485,6 +501,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> asin() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -498,6 +515,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> atan() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -511,6 +529,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> atan2() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -524,6 +543,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
+    @Deprecated
     default ColumnFunctionComparableAnyChainExpression<BigDecimal> truncate() {
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
