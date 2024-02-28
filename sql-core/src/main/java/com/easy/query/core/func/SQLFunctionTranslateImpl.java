@@ -31,6 +31,10 @@ public class SQLFunctionTranslateImpl implements SQLFunctionTranslate {
             }
             String sqlSegment = sqlFunction.sqlSegment(defTable);
             sqlFunction.consume(new SQLNativeChainExpressionContextImpl(defTable,sqlNativeExpressionContext));
+            if(sqlFunction instanceof SQLLazyFunction){
+                SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
+                return runtimeContext.getSQLSegmentFactory().createSQLNativeLazySegment(runtimeContext,expressionContext,sqlLazyFunction,sqlSegement->sqlSegement, sqlNativeExpressionContext);
+            }
             return runtimeContext.getSQLSegmentFactory().createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
         });
 

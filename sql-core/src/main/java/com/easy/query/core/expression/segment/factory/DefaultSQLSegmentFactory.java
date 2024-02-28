@@ -11,6 +11,7 @@ import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
+import com.easy.query.core.expression.segment.SQLLazySegement;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
@@ -28,15 +29,18 @@ import com.easy.query.core.expression.segment.impl.OrderBySQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderFuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
+import com.easy.query.core.expression.segment.impl.SQLNativeLazySegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectCountDistinctSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SubQueryColumnSegmentImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * create time 2023/5/30 12:18
@@ -73,6 +77,11 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     @Override
     public SQLNativeSegment createSQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpression sqlNativeExpression) {
         return new SQLNativeSegmentImpl(runtimeContext,columnConst,sqlNativeExpression);
+    }
+
+    @Override
+    public SQLNativeSegment createSQLNativeLazySegment(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLLazySegement sqlLazySegement, Function<String, String> sqlSegementFunction, SQLNativeExpression sqlNativeExpression) {
+        return new SQLNativeLazySegmentImpl(runtimeContext,expressionContext,sqlLazySegement,sqlSegementFunction,sqlNativeExpression);
     }
 
     @Override

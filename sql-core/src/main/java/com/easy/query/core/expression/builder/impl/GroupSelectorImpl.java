@@ -7,6 +7,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
@@ -114,6 +115,13 @@ public class GroupSelectorImpl implements GroupSelector {
                 .toSQLSegment(entityQueryExpressionBuilder.getExpressionContext(), table, runtimeContext, null);
         FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, null, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), null);
         sqlSegmentBuilder.append(funcColumnSegment);
+        return this;
+    }
+
+    @Override
+    public GroupSelector sqlSegmentAs(CloneableSQLSegment sqlColumnSegment) {
+        CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(sqlColumnSegment, null, runtimeContext);
+        sqlSegmentBuilder.append(sqlColumnAsSegment);
         return this;
     }
 

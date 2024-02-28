@@ -4,8 +4,8 @@
 //import com.easy.query.core.expression.builder.GroupSelector;
 //import com.easy.query.core.expression.builder.OnlySelector;
 //import com.easy.query.core.expression.builder.Selector;
-//import com.easy.query.core.expression.builder.core.SQLNativeAble;
 //import com.easy.query.core.expression.parser.core.available.TableAvailable;
+//import com.easy.query.core.expression.segment.CloneableSQLSegment;
 //import com.easy.query.core.func.SQLFunc;
 //import com.easy.query.core.func.SQLFunction;
 //import com.easy.query.core.proxy.PropTypeColumn;
@@ -14,7 +14,6 @@
 //import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 //import com.easy.query.core.util.EasyObjectUtil;
 //
-//import java.util.function.BiConsumer;
 //import java.util.function.Function;
 //
 ///**
@@ -23,16 +22,16 @@
 // *
 // * @author xuejiaming
 // */
-//public class SQLNativeDraftImpl implements PropTypeColumn<Object>, DSLSQLFunctionAvailable {
+//public class SQLFunctionPropTypeColumnImpl implements PropTypeColumn<Object>, DSLSQLFunctionAvailable {
 //
 //
 //    private final EntitySQLContext entitySQLContext;
-//    private final BiConsumer<String, SQLNativeAble> selectorConsumer;
+//    private final SQLFunction sqlFunction;
 //    private Class<?> propType;
 //
-//    public SQLNativeDraftImpl(EntitySQLContext entitySQLContext,BiConsumer<String, SQLNativeAble> selectorConsumer){
+//    public SQLFunctionPropTypeColumnImpl(EntitySQLContext entitySQLContext, SQLFunction sqlFunction){
 //        this.entitySQLContext = entitySQLContext;
-//        this.selectorConsumer = selectorConsumer;
+//        this.sqlFunction = sqlFunction;
 //
 //        this.propType = Object.class;
 //    }
@@ -40,32 +39,32 @@
 //    @Override
 //    public SQLSelectAsExpression as(String propertyAlias) {
 //        return new SQLSelectAsImpl(s -> {
-//            selectorConsumer.accept(propertyAlias,s);
+//            s.s
 //        }, s -> {
-//            selectorConsumer.accept(propertyAlias,s);
+//           s.sqlSegmentAs(sqlSegment,propertyAlias);
 //        }, s -> {
-//            throw new UnsupportedOperationException();
+//            s.sqlSegmentAs(sqlSegment);
 //        });
 //    }
 //
 //    @Override
 //    public void accept(GroupSelector s) {
-//        selectorConsumer.accept(null,s);
+//        s.sqlSegmentAs(sqlSegment);
 //    }
 //
 //    @Override
 //    public void accept(AsSelector s) {
-//        selectorConsumer.accept(null,s);
+//        s.sqlSegmentAs(sqlSegment);
 //    }
 //
 //    @Override
 //    public void accept(Selector s) {
-//        selectorConsumer.accept(null,s);
+//        s.sqlSegmentAs(sqlSegment);
 //    }
 //
 //    @Override
 //    public void accept(OnlySelector s) {
-//        selectorConsumer.accept(null,s);
+//        s.sqlSegmentAs(sqlSegment);
 //    }
 //
 //
@@ -102,6 +101,6 @@
 //
 //    @Override
 //    public Function<SQLFunc, SQLFunction> func() {
-//        return null;
+//        return sqlFunc -> sqlFunction;
 //    }
 //}

@@ -1,9 +1,13 @@
 package com.easy.query.core.proxy.predicate;
 
+import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
  * create time 2023/12/2 14:18
@@ -42,10 +46,7 @@ public interface DSLOtherPredicate<TProperty> extends TablePropColumn, EntitySQL
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), column.getTable(), column.getValue())));
         }
-        
     }
-
-
 
     default <TProxy,TProp> void ne(SQLColumn<TProxy,TProp> column) {
          ne(true, column);

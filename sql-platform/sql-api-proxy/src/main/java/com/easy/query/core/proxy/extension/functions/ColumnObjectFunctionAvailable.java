@@ -103,6 +103,14 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
             }
         }, getPropertyType());
     }
+//    default CaseWhenThenEntityBuilder<TChain> caseWhen(SQLActionExpression sqlActionExpression){
+//        CaseWhenEntityBuilder<TChain> caseWhenEntityBuilder = new CaseWhenEntityBuilder<>(getEntitySQLContext(), sqlFunction -> {
+//            return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+//                return sqlFunction;
+//            }, getPropertyType());
+//        });
+//        return new CaseWhenThenEntityBuilder<>(caseWhenEntityBuilder,sqlActionExpression);
+//    }
 
 
     default ColumnFunctionComparableBooleanChainExpression<Boolean> equalsWith(TProperty value){

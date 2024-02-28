@@ -191,6 +191,11 @@ public abstract class AbstractSelector<TChain> {
         column(table,property);
         return castChain();
     }
+    public TChain sqlSegmentAs(CloneableSQLSegment sqlColumnSegment) {
+        CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(sqlColumnSegment, null, runtimeContext);
+        sqlBuilderSegment.append(sqlColumnAsSegment);
+        return castChain();
+    }
 
     public TChain columnAll(TableAvailable table) {
         if (table.isAnonymous()) {

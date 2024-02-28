@@ -1,6 +1,9 @@
 package com.easy.query.core.proxy.core;
 
+import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
+import com.easy.query.api.proxy.extension.casewhen.CaseWhenThenEntityBuilder;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.func.SQLFunc;
@@ -228,5 +231,9 @@ public class Expression {
      */
     public SQLConstantExpression constant() {
         return new SQLConstantExpressionImpl(entitySQLContext);
+    }
+
+    public CaseWhenThenEntityBuilder caseWhen(SQLActionExpression sqlActionExpression){
+        return new CaseWhenEntityBuilder(entitySQLContext).caseWhen(sqlActionExpression);
     }
 }

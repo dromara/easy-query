@@ -5,6 +5,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -91,6 +92,13 @@ public class OnlySelectorImpl implements OnlySelector {
             }
             return false;
         });
+        return this;
+    }
+
+    @Override
+    public OnlySelector sqlSegmentAs(CloneableSQLSegment sqlColumnSegment) {
+        CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(sqlColumnSegment, null, runtimeContext);
+        sqlSegmentBuilder.append(sqlColumnAsSegment);
         return this;
     }
 

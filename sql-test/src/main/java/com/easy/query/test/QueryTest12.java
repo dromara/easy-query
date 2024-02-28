@@ -12,6 +12,7 @@ import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -651,6 +652,205 @@ public class QueryTest12 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT MIN(case t.`score` when ? then 1 else 0 end) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testSelectPropTypeColumn3(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    b.title().eq(
+                           b.title().subString(1,2)
+                    );
+                })
+                .select(b -> {
+                    BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                    ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> b.id().eq("123"))
+                            .then(1)
+                            .elseEnd("2").setPropertyType(BigDecimal.class);
+
+                    blogEntityProxy.score().set(caseWhen);
+                    return blogEntityProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (CASE WHEN t.`id` = ? THEN ? ELSE ? END) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND  t.`title` = SUBSTR(t.`title`,2,2)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testSelectPropTypeColumn4(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    b.title().eq(
+                           b.title().subString(1,2)
+                    );
+                })
+                .select(b -> {
+                    BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                    ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
+                        b.id().eq("123");
+                    }).then(1).elseEnd("2").setPropertyType(BigDecimal.class);
+                    blogEntityProxy.score().set(caseWhen);
+
+                    return blogEntityProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (CASE WHEN t.`id` = ? THEN ? ELSE ? END) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND  t.`title` = SUBSTR(t.`title`,2,2)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testSelectPropTypeColumn5(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    Expression expression = b.expression();
+                    b.title().eq(
+                            expression.caseWhen(()->{
+                                b.title().eq(b.id());
+                            }).then(1).elseEnd("2")
+                    );
+                })
+                .select(b -> {
+                    BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                    ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
+                        b.id().eq("123");
+                    }).then(1).elseEnd("2").setPropertyType(BigDecimal.class);
+                    blogEntityProxy.score().set(caseWhen);
+
+                    return blogEntityProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (CASE WHEN t.`id` = ? THEN ? ELSE ? END) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND  t.`title` = (CASE WHEN t.`title` = t.`id` THEN ? ELSE ? END)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean),1(Integer),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testSelectPropTypeColumn6(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    Expression expression = b.expression();
+                    expression.caseWhen(()->{
+                        b.title().eq(b.id());
+                    }).then(1).elseEnd("2").eq(b.title());
+                })
+                .select(b -> {
+                    BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                    ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
+                        b.id().eq("123");
+                    }).then(1).elseEnd("2").setPropertyType(BigDecimal.class);
+                    blogEntityProxy.score().set(caseWhen);
+
+                    return blogEntityProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (CASE WHEN t.`id` = ? THEN ? ELSE ? END) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND (CASE WHEN t.`title` = t.`id` THEN ? ELSE ? END) = t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean),1(Integer),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testSelectPropTypeColumn7(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    Expression expression = b.expression();
+                    expression.caseWhen(()->{
+                        b.title().eq(b.id());
+                    }).then(1).elseEnd("2").nullOrDefault("xx").eq(b.title().nullOrDefault("yy"));
+                })
+                .select(b -> {
+                    BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                    ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
+                        b.id().eq("123");
+                    }).then(1).elseEnd("2").setPropertyType(BigDecimal.class);
+                    blogEntityProxy.score().set(caseWhen);
+
+                    return blogEntityProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (CASE WHEN t.`id` = ? THEN ? ELSE ? END) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND IFNULL((CASE WHEN t.`title` = t.`id` THEN ? ELSE ? END),?) = IFNULL(t.`title`,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean),1(Integer),2(String),xx(String),yy(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testSelectPropTypeColumn8(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    Expression expression = b.expression();
+                    b.title().nullOrDefault("yy").eq(
+                            expression.caseWhen(()->{
+                                b.title().eq(b.id());
+                            }).then(1).elseEnd("2").nullOrDefault("xx")
+                    );
+                })
+                .select(b -> {
+                    BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                    blogEntityProxy.score().set(
+                            b.expression().caseWhen(() -> {
+                                b.id().eq("123");
+                            }).then(1).elseEnd("2")
+                    );
+
+                    return blogEntityProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (CASE WHEN t.`id` = ? THEN ? ELSE ? END) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND IFNULL(t.`title`,?) = IFNULL((CASE WHEN t.`title` = t.`id` THEN ? ELSE ? END),?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean),yy(String),1(Integer),2(String),xx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testSelectPropTypeColumn9(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    Expression expression = b.expression();
+                    b.title().nullOrDefault("yy").eq(
+                            expression.caseWhen(()->{
+                                b.or(()->{
+                                    b.title().eq(b.id());
+                                    b.title().like("123");
+                                });
+                            }).then(1).elseEnd("2").nullOrDefault("xx")
+                    );
+                })
+                .select(b -> {
+                    BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                    blogEntityProxy.score().set(
+                            b.expression().caseWhen(() -> {
+                                b.id().eq("123");
+                            }).then(1).elseEnd("2")
+                    );
+
+                    return blogEntityProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (CASE WHEN t.`id` = ? THEN ? ELSE ? END) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND IFNULL(t.`title`,?) = IFNULL((CASE WHEN (t.`title` = t.`id` OR t.`title` LIKE ?) THEN ? ELSE ? END),?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean),yy(String),%123%(String),1(Integer),2(String),xx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 

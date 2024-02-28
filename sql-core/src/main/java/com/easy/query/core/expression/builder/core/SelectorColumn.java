@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.builder.core;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 
 /**
  * create time 2024/2/21 22:48
@@ -13,4 +14,5 @@ public interface SelectorColumn<TChain> {
     TChain columnIgnore(TableAvailable table, String property);
 
     TChain columnIfAbsent(TableAvailable table, String property);
+    TChain sqlSegmentAs(CloneableSQLSegment sqlColumnSegment);
 }

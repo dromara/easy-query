@@ -1,6 +1,8 @@
 package com.easy.query.core.func.column;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -60,6 +62,11 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
     public ColumnFuncSelector format(Object valFormat) {
         concatExpressions.add(new ColumnFuncFormatExpressionImpl(valFormat));
         return this;
+    }
+
+    @Override
+    public ColumnFuncSelector predicate(SQLExpression1<Filter> filterExpression) {
+        return null;
     }
 
     @Override

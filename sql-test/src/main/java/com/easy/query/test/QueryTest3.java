@@ -948,7 +948,7 @@ public class QueryTest3 extends BaseTest {
         ExpressionContext expressionContext = select.getSQLEntityExpressionBuilder().getExpressionContext();
         ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(expressionContext.getTableContext());
         String sql = select.toSQL(toSQLContext);
-        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? AND t.`stars` >= ? THEN ? WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END AS `title` FROM `t_topic` t WHERE t.`title` LIKE ? ORDER BY t.`create_time` ASC,t.`id` ASC" , sql);
+        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? AND t.`stars` >= ? THEN ? WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END) AS `title` FROM `t_topic` t WHERE t.`title` LIKE ? ORDER BY t.`create_time` ASC,t.`id` ASC" , sql);
         Assert.assertEquals(9, toSQLContext.getParameters().size());
         Assert.assertEquals("123" , toSQLContext.getParameters().get(0).getValue());
         Assert.assertEquals(1, toSQLContext.getParameters().get(1).getValue());
@@ -983,7 +983,7 @@ public class QueryTest3 extends BaseTest {
                         }
                 )
                 .toSQL();
-        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
+        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END) AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
 
         List<Topic> list = easyProxyQuery.queryable(TopicProxy.createTable())
                 .where(o -> o.like(o.t().title(), "someTitle" ))
@@ -1018,7 +1018,7 @@ public class QueryTest3 extends BaseTest {
                         }
                 )
                 .toSQL();
-        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
+        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE ? END) AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -1037,7 +1037,7 @@ public class QueryTest3 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE ? END) AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals(1, jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
         Assert.assertEquals("123(String),456(String),222(String),222(String),%someTitle%(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
@@ -1061,7 +1061,7 @@ public class QueryTest3 extends BaseTest {
                         }
                 )
                 .toSQL();
-        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE t.`id` END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
+        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE t.`id` END) AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
 
     }
 
@@ -1080,7 +1080,7 @@ public class QueryTest3 extends BaseTest {
                         .column("id" )
                 )
                 .toSQL();
-        Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
+        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END) AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
         List<Topic> list = easyQueryClient.queryable(Topic.class)
                 .where(t -> t.like("title" , "someTitle" ))
                 .select(Topic.class, t -> t
@@ -1111,7 +1111,7 @@ public class QueryTest3 extends BaseTest {
                             .column(Topic::getId)
                     )
                     .toSQL();
-            Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
+            Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END) AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
             List<Topic> list = easyQuery.queryable(Topic.class)
                     .where(t -> t.like(Topic::getTitle, "someTitle" ))
                     .select(Topic.class, t -> t
@@ -1140,7 +1140,7 @@ public class QueryTest3 extends BaseTest {
                             .column(Topic::getId)
                     )
                     .toSQL();
-            Assert.assertEquals("SELECT CASE WHEN t.`title` = ? AND t1.`star` <= ? THEN ? WHEN t.`title` = ? AND t1.`star` >= ? THEN ? ELSE ? END AS `title`,t.`id` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`title` LIKE ?" , sql);
+            Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? AND t1.`star` <= ? THEN ? WHEN t.`title` = ? AND t1.`star` >= ? THEN ? ELSE ? END) AS `title`,t.`id` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`title` LIKE ?" , sql);
             List<Topic> list = easyQuery.queryable(Topic.class)
                     .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                     .where(t -> t.like(Topic::getTitle, "someTitle" ))
@@ -1173,7 +1173,7 @@ public class QueryTest3 extends BaseTest {
                             .column(Topic::getId)
                     )
                     .toSQL();
-            Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t.`id` WHEN t.`title` = ? THEN ? ELSE t.`id` END AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
+            Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN t.`id` WHEN t.`title` = ? THEN ? ELSE t.`id` END) AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
             List<Topic> list = easyQuery.queryable(Topic.class)
                     .where(t -> t.like(Topic::getTitle, "someTitle" ))
                     .select(Topic.class, t -> t
@@ -1202,7 +1202,7 @@ public class QueryTest3 extends BaseTest {
                             .column(Topic::getId)
                     )
                     .toSQL();
-            Assert.assertEquals("SELECT CASE WHEN t.`title` = ? THEN t1.`id` WHEN t.`title` = ? THEN ? ELSE t.`id` END AS `title`,t.`id` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ?" , sql);
+            Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN t1.`id` WHEN t.`title` = ? THEN ? ELSE t.`id` END) AS `title`,t.`id` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`title` LIKE ?" , sql);
             List<Topic> list = easyQuery.queryable(Topic.class)
                     .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
                     .where(t -> t.like(Topic::getTitle, "someTitle" ))
@@ -1232,7 +1232,7 @@ public class QueryTest3 extends BaseTest {
                             .column(Topic::getId)
                     )
                     .toSQL();
-            Assert.assertEquals("SELECT CASE WHEN t.`title` = ? AND t1.`star` <= ? THEN t1.`id` WHEN t.`title` = ? AND t1.`star` >= ? THEN ? ELSE t1.`order` END AS `title`,t.`id` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`title` LIKE ?" , sql);
+            Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? AND t1.`star` <= ? THEN t1.`id` WHEN t.`title` = ? AND t1.`star` >= ? THEN ? ELSE t1.`order` END) AS `title`,t.`id` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`title` LIKE ?" , sql);
             List<Topic> list = easyQuery.queryable(Topic.class)
                     .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
                     .where(t -> t.like(Topic::getTitle, "someTitle" ))
