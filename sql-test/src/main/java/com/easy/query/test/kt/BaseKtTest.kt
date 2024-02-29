@@ -1,5 +1,7 @@
 package com.easy.query.test.kt
 
+import com.easy.query.api.proxy.client.DefaultEasyEntityQuery
+import com.easy.query.api.proxy.client.EasyEntityQuery
 import com.easy.query.api.proxy.client.EasyProxyQuery
 import com.easy.query.api4j.client.EasyQuery
 import com.easy.query.api4kt.client.DefaultEasyKtQuery
@@ -9,6 +11,7 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper
 import com.easy.query.core.configuration.EasyQueryShardingOption
 import com.easy.query.core.logging.LogFactory
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration
+import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration
 import com.zaxxer.hikari.HikariDataSource
 
 open class BaseKtTest {
@@ -18,6 +21,7 @@ open class BaseKtTest {
         var dataSource: HikariDataSource? = null
         var easyQueryClient: EasyQueryClient? = null
         var easyKtQuery: EasyKtQuery? = null
+        var easyEntityQuery: EasyEntityQuery? = null
         init {
             // 在这里编写静态初始化代码
             LogFactory.useStdOutLogging();
@@ -30,11 +34,13 @@ open class BaseKtTest {
             hikariDataSource.maximumPoolSize = 20;
             LogFactory.useStdOutLogging();
 
+
             easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(hikariDataSource)
                 .useDatabaseConfigure(MySQLDatabaseConfiguration())
                 .build()
             easyKtQuery= DefaultEasyKtQuery(easyQueryClient);
+            easyEntityQuery= DefaultEasyEntityQuery(easyQueryClient);
         }
 
         // 伴生对象的其他成员（可以包括属性、方法等）

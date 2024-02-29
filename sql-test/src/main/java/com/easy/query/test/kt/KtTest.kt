@@ -463,5 +463,6 @@ class KtTest : BaseKtTest() {
             "SELECT t.`id`,t1.`title` FROM `t_blog` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`title` WHERE t.`deleted` = ? AND t.`score` = ?",
             toSQL
         );
+
     }
 }

@@ -949,7 +949,11 @@ public class QueryTest12 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
+
                     Expression expression = b.expression();
+
+                    expression.sql("",c->{});
+
                     b.title().nullOrDefault("yy").eq(
                             expression.caseWhen(() -> {
                                 b.or(() -> {
