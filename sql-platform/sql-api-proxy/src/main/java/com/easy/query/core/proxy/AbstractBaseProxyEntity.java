@@ -159,8 +159,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
             TableAvailable leftTable = getTable();
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-            ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)
-                    .where(t -> t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary()));
+            ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)                    ;
             if(navigateMetadata.getRelationType()== RelationTypeEnum.ManyToMany){
                 ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
                 clientQueryable.where(x->{
@@ -172,6 +171,8 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                         x.exists(subMappingQueryable);
                     });
                 });
+            }else{
+                clientQueryable.where(t -> t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary()));
             }
             EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
             queryable.get1Proxy().setNavValue(getFullNavValue(property));

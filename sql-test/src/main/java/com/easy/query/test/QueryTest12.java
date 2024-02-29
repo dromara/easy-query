@@ -951,9 +951,6 @@ public class QueryTest12 extends BaseTest {
                 .where(b -> {
 
                     Expression expression = b.expression();
-
-                    expression.sql("",c->{});
-
                     b.title().nullOrDefault("yy").eq(
                             expression.caseWhen(() -> {
                                 b.or(() -> {
@@ -1001,6 +998,7 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("金%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testDoc2() {
         ListenerContext listenerContext = new ListenerContext();
@@ -1018,6 +1016,7 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("金%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testDoc3() {
         ListenerContext listenerContext = new ListenerContext();
@@ -1035,12 +1034,15 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("%绍兴市%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testDoc4() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
+
         List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
                 .where(s -> {
+
                     s.schoolStudents().where(stu -> {
                         stu.name().likeMatchLeft("金");
                     }).count().eq(5L);
@@ -1049,6 +1051,29 @@ public class QueryTest12 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE (SELECT COUNT(*) FROM `school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("金%(String),5(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+
+    @Test
+    public void testDoc5(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
+                .where(s -> {
+                    s.schoolTeachers().any(teacher->{
+                        teacher.or(()->{
+                            teacher.name().like("123");
+                            teacher.name().like("456");
+                        });
+                    });
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE EXISTS (SELECT 1 FROM `school_teacher` t1 WHERE EXISTS (SELECT 1 FROM `school_class_teacher` t2 WHERE t2.`teacher_id` = t1.`id` AND t2.`class_id` = t.`id` LIMIT 1) AND (t1.`name` LIKE ? OR t1.`name` LIKE ?) LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String),%456%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
