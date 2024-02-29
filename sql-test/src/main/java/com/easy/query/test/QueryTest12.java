@@ -20,6 +20,7 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.school.MySchoolStudent;
+import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -158,6 +159,7 @@ public class QueryTest12 extends BaseTest {
             listenerContextManager.clear();
         }
     }
+
     @Test
     public void testJoinSelect() {
 
@@ -215,7 +217,6 @@ public class QueryTest12 extends BaseTest {
             listenerContextManager.clear();
 
 
-
             List<Draft1<String>> list1 = easyEntityQuery.queryable(Topic.class).select(o -> Select.DRAFT.of(o.id())).toList();
 
             List<String> list2 = easyEntityQuery.queryable(Topic.class).selectColumn(o -> o.id()).toList();
@@ -223,6 +224,7 @@ public class QueryTest12 extends BaseTest {
 
         }
     }
+
     @Test
     public void testDraft21() {
 
@@ -251,12 +253,13 @@ public class QueryTest12 extends BaseTest {
                     MapProxy result = new MapProxy();
                     result.selectAll(b1);
                     result.selectIgnores(b1.createTime());
-                    result.put("xx",t2.createTime());
+                    result.put("xx", t2.createTime());
                     return result;
                 })
                 .toList();
 
     }
+
     @Test
     public void testMap1() {
 
@@ -268,7 +271,7 @@ public class QueryTest12 extends BaseTest {
                 .select((b1, t2) -> {
                     MapProxy result = new MapProxy();
                     result.selectAll(b1);
-                    result.put("xx",t2.createTime());
+                    result.put("xx", t2.createTime());
                     return result;
                 })
                 .toList();
@@ -279,6 +282,7 @@ public class QueryTest12 extends BaseTest {
         listenerContextManager.clear();
 
     }
+
     @Test
     public void testMap2() {
 
@@ -291,7 +295,7 @@ public class QueryTest12 extends BaseTest {
                     MapProxy result = new MapProxy();
                     result.selectAll(b1);
                     result.selectIgnores(b1.createTime());
-                    result.put("xx",t2.createTime());
+                    result.put("xx", t2.createTime());
                     return result;
                 })
                 .toList();
@@ -304,7 +308,7 @@ public class QueryTest12 extends BaseTest {
     }
 
     @Test
-    public void testDraft23(){
+    public void testDraft23() {
 
 
         List<Draft1<LocalDateTime>> list = easyEntityQuery.queryable(BlogEntity.class)
@@ -345,6 +349,7 @@ public class QueryTest12 extends BaseTest {
 //            System.out.println(stringObjectMap);
 //        }
     }
+
     @Test
     public void testOr26() {
 
@@ -364,13 +369,14 @@ public class QueryTest12 extends BaseTest {
         listenerContextManager.clear();
 
     }
+
     @Test
     public void testNum1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
-                .select(b -> new BlogEntityProxy().adapter(r->{
+                .select(b -> new BlogEntityProxy().adapter(r -> {
                     r.score().set(
                             b.expression().sqlType("SUM({0})-SUM({1})", c -> {
                                 c.expression(b.score()).expression(b.score());
@@ -384,13 +390,14 @@ public class QueryTest12 extends BaseTest {
         listenerContextManager.clear();
 
     }
+
     @Test
     public void testNum2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
-                .select(b -> new BlogEntityProxy().adapter(r->{
+                .select(b -> new BlogEntityProxy().adapter(r -> {
                     r.score().set(
                             b.score().sum().subtract(b.score().sum())
                     );
@@ -402,6 +409,7 @@ public class QueryTest12 extends BaseTest {
         listenerContextManager.clear();
 
     }
+
     @Test
     public void testNum3() {
 
@@ -415,34 +423,37 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
         List<BigDecimal> list = easyEntityQuery.queryable(BlogEntity.class)
-                .selectColumn(b ->b.star().multiply(b.score()).add(b.score())).toList();
+                .selectColumn(b -> b.star().multiply(b.score()).add(b.score())).toList();
     }
+
     @Test
     public void testNum4() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BigDecimal> list = easyEntityQuery.queryable(BlogEntity.class)
-                .selectColumn(b ->b.star().multiply(b.score()).add(b.score())).toList();
+                .selectColumn(b -> b.star().multiply(b.score()).add(b.score())).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT ((t.`star` * t.`score`) + t.`score`) FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testNum5() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BigDecimal> list = easyEntityQuery.queryable(BlogEntity.class)
-                .selectColumn(b ->b.star().multiply(b.score()).add(100)).toList();
+                .selectColumn(b -> b.star().multiply(b.score()).add(100)).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT ((t.`star` * t.`score`) + ?) FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("100(Integer),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testNum6() {
 
@@ -452,13 +463,14 @@ public class QueryTest12 extends BaseTest {
                 .where(b -> {
                     SQLMathExpression.floor(b.score()).eq(BigDecimal.ZERO);
                 })
-                .selectColumn(b ->b.star().multiply(b.score()).add(100)).toList();
+                .selectColumn(b -> b.star().multiply(b.score()).add(100)).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT ((t.`star` * t.`score`) + ?) FROM `t_blog` t WHERE t.`deleted` = ? AND FLOOR(t.`score`) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("100(Integer),false(Boolean),0(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testNum7() {
 
@@ -484,6 +496,7 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("false(Boolean),false(Boolean),0(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testNum8() {
 
@@ -518,22 +531,22 @@ public class QueryTest12 extends BaseTest {
     }
 
     @Test
-    public void testOrSub1(){
+    public void testOrSub1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
-                    b.or(()->{
+                    b.or(() -> {
                         Expression expression = b.expression();
                         expression.sql("FIND_IN_SET({0},{1})", c -> {
                             c.expression(b.title());
                             c.expression(easyEntityQuery.queryable(BlogEntity.class)
-                                            .where(x->{
-                                                x.id().eq("1");
-                                                x.title().eq("2");
-                                            })
+                                    .where(x -> {
+                                        x.id().eq("1");
+                                        x.title().eq("2");
+                                    })
                                     .selectColumn(x -> x.title().join(",")));
                         });
                         b.score().gt(BigDecimal.valueOf(1));
@@ -545,8 +558,9 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("false(Boolean),,(String),false(Boolean),1(String),2(String),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testFetchSub2(){
+    public void testFetchSub2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -562,8 +576,9 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testFetchSub3(){
+    public void testFetchSub3() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -579,8 +594,9 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testLogicDeleteRecentlyTable(){
+    public void testLogicDeleteRecentlyTable() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -595,8 +611,9 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testLogicDeleteRecentlyTable1(){
+    public void testLogicDeleteRecentlyTable1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -611,8 +628,9 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testSelectPropTypeColumn1(){
+    public void testSelectPropTypeColumn1() {
 //        SQLProxyFunc.caseWhenBuilder()
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -633,8 +651,9 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("1(Integer),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testSelectPropTypeColumn2(){
+    public void testSelectPropTypeColumn2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -654,15 +673,16 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("1(Integer),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testSelectPropTypeColumn3(){
+    public void testSelectPropTypeColumn3() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
                     b.title().eq(
-                           b.title().subString(1,2)
+                            b.title().subString(1, 2)
                     );
                 })
                 .select(b -> {
@@ -680,15 +700,16 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testSelectPropTypeColumn4(){
+    public void testSelectPropTypeColumn4() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
                     b.title().eq(
-                           b.title().subString(1,2)
+                            b.title().subString(1, 2)
                     );
                 })
                 .select(b -> {
@@ -706,8 +727,9 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testSelectPropTypeColumn5(){
+    public void testSelectPropTypeColumn5() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -715,7 +737,7 @@ public class QueryTest12 extends BaseTest {
                 .where(b -> {
                     Expression expression = b.expression();
                     b.title().eq(
-                            expression.caseWhen(()->{
+                            expression.caseWhen(() -> {
                                 b.title().eq(b.id());
                             }).then(1).elseEnd("2")
                     );
@@ -735,15 +757,16 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean),1(Integer),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testSelectPropTypeColumn6(){
+    public void testSelectPropTypeColumn6() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
                     Expression expression = b.expression();
-                    expression.caseWhen(()->{
+                    expression.caseWhen(() -> {
                         b.title().eq(b.id());
                     }).then(1).elseEnd("2").eq(b.title());
                 })
@@ -762,15 +785,16 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean),1(Integer),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testSelectPropTypeColumn7(){
+    public void testSelectPropTypeColumn7() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
                     Expression expression = b.expression();
-                    expression.caseWhen(()->{
+                    expression.caseWhen(() -> {
                         b.title().eq(b.id());
                     }).then(1).elseEnd("2").nullOrDefault("xx").eq(b.title().nullOrDefault("yy"));
                 })
@@ -789,8 +813,9 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("123(String),1(Integer),2(String),false(Boolean),1(Integer),2(String),xx(String),yy(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testSelectPropTypeColumn8(){
+    public void testSelectPropTypeColumn8() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -798,7 +823,7 @@ public class QueryTest12 extends BaseTest {
                 .where(b -> {
                     Expression expression = b.expression();
                     b.title().nullOrDefault("yy").eq(
-                            expression.caseWhen(()->{
+                            expression.caseWhen(() -> {
                                 b.title().eq(b.id());
                             }).then(1).elseEnd("2").nullOrDefault("xx")
                     );
@@ -821,7 +846,7 @@ public class QueryTest12 extends BaseTest {
     }
 
     @Test
-    public void testSelectPropTypeColumn9(){
+    public void testSelectPropTypeColumn9() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -829,8 +854,8 @@ public class QueryTest12 extends BaseTest {
                 .where(b -> {
                     Expression expression = b.expression();
                     b.title().nullOrDefault("yy").eq(
-                            expression.caseWhen(()->{
-                                b.or(()->{
+                            expression.caseWhen(() -> {
+                                b.or(() -> {
                                     b.title().eq(b.id());
                                     b.title().like("123");
                                 });
@@ -856,7 +881,7 @@ public class QueryTest12 extends BaseTest {
 
 
     @Test
-    public void testSelectPropTypeColumn10(){
+    public void testSelectPropTypeColumn10() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -866,7 +891,7 @@ public class QueryTest12 extends BaseTest {
                     Expression expression = b.expression();
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                     blogEntityProxy.star().set(
-                            expression.caseWhen(()->b.groupTable().id().eq("123"))
+                            expression.caseWhen(() -> b.groupTable().id().eq("123"))
                                     .then(1).elseEnd(0)
                                     .sum()
                     );
@@ -880,6 +905,146 @@ public class QueryTest12 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT SUM((CASE WHEN t.`id` = ? THEN ? ELSE ? END)) AS `star`,MIN(case t.`score` when ? then 1 else 0 end) AS `score` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),1(Integer),0(Integer),1(Integer),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testSelectPropTypeColumn11() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    Expression expression = b.expression();
+                    b.title().nullOrDefault("yy").eq(
+                            expression.caseWhen(() -> {
+                                b.or(() -> {
+                                    b.title().eq(b.id());
+                                    b.title().like("123");
+                                });
+                            }).then(b.score().nullOrDefault(BigDecimal.valueOf(12))).elseEnd("2").nullOrDefault("xx")
+                    );
+                })
+                .select(b -> {
+                    Expression expression = b.expression();
+                    BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                    blogEntityProxy.star().set(
+                            expression.caseWhen(() -> b.id().eq("123"))
+                                    .then(b.score()).elseEnd(0)
+                                    .sum()
+                    );
+                    return blogEntityProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT SUM((CASE WHEN t.`id` = ? THEN t.`score` ELSE ? END)) AS `star` FROM `t_blog` t WHERE t.`deleted` = ? AND IFNULL(t.`title`,?) = IFNULL((CASE WHEN (t.`title` = t.`id` OR t.`title` LIKE ?) THEN IFNULL(t.`score`,?) ELSE ? END),?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),0(Integer),false(Boolean),yy(String),%123%(String),12(BigDecimal),2(String),xx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testSelectPropTypeColumn12() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    Expression expression = b.expression();
+                    b.title().nullOrDefault("yy").eq(
+                            expression.caseWhen(() -> {
+                                b.or(() -> {
+                                    b.title().eq(b.id());
+                                    b.title().like("123");
+                                });
+                            }).then(
+                                    b.score().nullOrDefault(BigDecimal.valueOf(12))
+                            ).elseEnd(
+                                    b.score().nullOrDefault(BigDecimal.valueOf(13))
+                            ).nullOrDefault("xx")
+                    );
+                })
+                .select(b -> {
+                    Expression expression = b.expression();
+                    BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                    blogEntityProxy.star().set(
+                            expression.caseWhen(() -> b.id().eq("123"))
+                                    .then(b.score()).elseEnd(b.status().multiply(1))
+                                    .sum()
+                    );
+                    return blogEntityProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT SUM((CASE WHEN t.`id` = ? THEN t.`score` ELSE (t.`status` * ?) END)) AS `star` FROM `t_blog` t WHERE t.`deleted` = ? AND IFNULL(t.`title`,?) = IFNULL((CASE WHEN (t.`title` = t.`id` OR t.`title` LIKE ?) THEN IFNULL(t.`score`,?) ELSE IFNULL(t.`score`,?) END),?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),false(Boolean),yy(String),%123%(String),12(BigDecimal),13(BigDecimal),xx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testDoc1() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
+                .where(s -> {
+                    s.schoolStudents().any(stu -> {
+                        stu.name().likeMatchLeft("金");
+                    });
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE EXISTS (SELECT 1 FROM `school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("金%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDoc2() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
+                .where(s -> {
+                    s.schoolStudents().none(stu -> {
+                        stu.name().likeMatchLeft("金");
+                    });
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE NOT ( EXISTS (SELECT 1 FROM `school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ? LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("金%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDoc3() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
+                .where(s -> {
+                    s.schoolStudents().any(stu -> {
+                        stu.schoolStudentAddress().address().like("绍兴市");
+                    });
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE EXISTS (SELECT 1 FROM `school_student` t1 LEFT JOIN `school_student_address` t2 ON t1.`id` = t2.`student_id` WHERE t1.`class_id` = t.`id` AND t2.`address` LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%绍兴市%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDoc4() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
+                .where(s -> {
+                    s.schoolStudents().where(stu -> {
+                        stu.name().likeMatchLeft("金");
+                    }).count().eq(5L);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE (SELECT COUNT(*) FROM `school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("金%(String),5(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 

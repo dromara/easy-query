@@ -9,6 +9,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstSQLParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
+import com.easy.query.core.expression.segment.scec.expression.SQLSegmentParamExpressionImpl;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.impl.CaseWhenSQLFunction;
@@ -36,6 +37,10 @@ public class CaseWhenBuilderExpression {
         whens.add(new Tuple2<>(predicate,new ColumnConstSQLParameterExpressionImpl(then)));
         return this;
     }
+    public CaseWhenBuilderExpression caseWhen(SQLExpression1<Filter> predicate, ParamExpression paramExpression){
+        whens.add(new Tuple2<>(predicate,paramExpression));
+        return this;
+    }
     public CaseWhenBuilderExpression caseWhenColumn(SQLExpression1<Filter> predicate, TableAvailable table, String property){
         whens.add(new Tuple2<>(predicate,new ColumnPropertyExpressionImpl(table,property)));
         return this;
@@ -45,6 +50,9 @@ public class CaseWhenBuilderExpression {
     }
     public SQLFunction elseEnd(Object elseValue){
         return new CaseWhenSQLFunction(whens,new ColumnConstSQLParameterExpressionImpl(elseValue));
+    }
+    public SQLFunction elseEnd(ParamExpression paramExpression){
+        return new CaseWhenSQLFunction(whens,paramExpression);
     }
     public SQLFunction elseEndColumn(TableAvailable table, String property){
         return new CaseWhenSQLFunction(whens,new ColumnPropertyExpressionImpl(table,property));
