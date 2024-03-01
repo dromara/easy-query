@@ -16,6 +16,7 @@ import com.easy.query.core.metadata.IncludeNavigateExpression;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -90,4 +91,8 @@ public interface ExpressionContext {
 
     void setDraftPropTypes(Class<?>[] propTypes);
     Class<?>[] getDraftPropTypes();
+
+    void setRelationLogicDelete(Function<Class<?>,Boolean> relationLogicDelete);
+    boolean hasRelationLogicDelete();
+    Function<Class<?>,Boolean> getRelationLogicDelete();
 }

@@ -6,7 +6,6 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable2;
-import com.easy.query.api.proxy.entity.select.impl.EasySelectManyQueryable;
 import com.easy.query.api.proxy.sql.ProxyFilter;
 import com.easy.query.api.proxy.sql.ProxySelector;
 import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
@@ -45,7 +44,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
-import com.easy.query.core.proxy.core.draft.proxy.DraftProxy;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -236,13 +235,9 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression) {
         TRProxy resultProxy = selectExpression.apply(get1Proxy());
         Objects.requireNonNull(resultProxy, "select null result class");
+
         if (resultProxy instanceof ListProxy) {
-            ListProxy<TRProxy, TR> listProxy = (ListProxy<TRProxy, TR>) resultProxy;
-            SQLQueryable<TRProxy, TR> sqlQueryable = listProxy.getSqlQueryable();
-            Objects.requireNonNull(sqlQueryable, "select columns null result class");
-            EntityQueryable<ListProxy<TRProxy, TR>, List<TR>> listProxyListEntityQueryable = new EasySelectManyQueryable<>(getClientQueryable(), listProxy, sqlQueryable.getNavValue());
-            return EasyObjectUtil.typeCastNullable(listProxyListEntityQueryable);
-//            return new EasyColumnsQueryable<>(getClientQueryable(), sqlQueryable.getNavValue());
+            return Select.selectList((ListProxy<TRProxy, TR>) resultProxy,getQueryable().getClientQueryable());
         }
 
         SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
@@ -250,30 +245,25 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             TableAvailable tableOrNull = resultProxy.getTableOrNull();
             if (tableOrNull == null) {
                 ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass());
-                setDraftPropTypes(select, resultProxy);
+
+                Select.setDraftPropTypes(select, resultProxy);
                 return new EasyEntityQueryable<>(resultProxy, select);
             } else {
                 ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass(), columnAsSelector -> {
                     columnAsSelector.getAsSelector().columnAll(tableOrNull);
                 });
-                setDraftPropTypes(select, resultProxy);
+                Select.setDraftPropTypes(select, resultProxy);
                 return new EasyEntityQueryable<>(resultProxy, select);
             }
         } else {
             ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass(), columnAsSelector -> {
                 selectAsExpression.accept(columnAsSelector.getAsSelector());
             });
-            setDraftPropTypes(select, resultProxy);
+            Select.setDraftPropTypes(select, resultProxy);
             return new EasyEntityQueryable<>(resultProxy, select);
         }
     }
 
-    private <TR, TRProxy> void setDraftPropTypes(ClientQueryable<TR> select, TRProxy trProxy) {
-        if (trProxy instanceof DraftProxy) {
-            DraftProxy draftProxy = (DraftProxy) trProxy;
-            select.getSQLEntityExpressionBuilder().getExpressionContext().setDraftPropTypes(draftProxy.getDraftPropTypes());
-        }
-    }
 
     @Override
     public <TR> Query<TR> selectColumn(SQLFuncExpression1<T1Proxy, PropTypeColumn<TR>> selectExpression) {

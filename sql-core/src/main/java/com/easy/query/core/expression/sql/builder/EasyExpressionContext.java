@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -56,6 +57,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     private Map<TableAvailable, Map<String, ColumnIncludeExpression>> columnIncludeMaps;
     private Class<?>[] propTypes;
+    private Function<Class<?>, Boolean> relationLogicDelete;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -361,5 +363,20 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public Class<?>[] getDraftPropTypes() {
         return this.propTypes;
+    }
+
+    @Override
+    public void setRelationLogicDelete(Function<Class<?>, Boolean> relationLogicDelete) {
+        this.relationLogicDelete=relationLogicDelete;
+    }
+
+    @Override
+    public boolean hasRelationLogicDelete() {
+        return this.relationLogicDelete!=null;
+    }
+
+    @Override
+    public Function<Class<?>, Boolean> getRelationLogicDelete() {
+        return this.relationLogicDelete;
     }
 }

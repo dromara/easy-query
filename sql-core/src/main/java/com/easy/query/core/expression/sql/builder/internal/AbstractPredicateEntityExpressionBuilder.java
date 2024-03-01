@@ -5,6 +5,8 @@ import com.easy.query.core.basic.extension.interceptor.PredicateFilterIntercepto
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.RelationTableAvailable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
@@ -49,13 +51,11 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
             EntityMetadata entityMetadata = table.getEntityMetadata();
             PredicateSegment predicateSegment = new AndPredicateSegment(true);
             SQLExpressionInvokeFactory easyQueryLambdaFactory = getRuntimeContext().getSQLExpressionInvokeFactory();
-            WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(table.getEntityTable(), this, predicateSegment);
+            TableAvailable entityTable = table.getEntityTable();
+            WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(entityTable, this, predicateSegment);
 
             if (useLogicDelete(entityMetadata)) {
-                SQLExpression1<WherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
-                if(logicDeleteQueryFilterExpression!=null){
-                    logicDeleteQueryFilterExpression.apply(sqlPredicate);
-                }
+                invokeTableLogicDelete(table,sqlPredicate);
             }
             if(!isQuery()){
                 if (entityMetadata.hasVersionColumn()) {
@@ -95,5 +95,33 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
             }
         }
         return originalPredicate;
+    }
+
+
+    private Boolean relationLogicDelete(RelationTableAvailable relationTable) {
+        if (!this.expressionContext.hasRelationLogicDelete()) {
+            return null;
+        }
+        return this.expressionContext.getRelationLogicDelete().apply(relationTable.getEntityClass());
+    }
+
+    private void invokeTableLogicDelete(EntityTableExpressionBuilder table,WherePredicate<Object> sqlPredicate){
+        TableAvailable entityTable = table.getEntityTable();
+        //是否存在关联关系的逻辑删除
+        if(expressionContext.hasRelationLogicDelete()){
+            if(entityTable instanceof RelationTableAvailable){
+                RelationTableAvailable relationTable = (RelationTableAvailable) entityTable;
+                //如果存在着现货区存在的判定结果
+                Boolean relationLogicDel = relationLogicDelete(relationTable);
+                //如果结果为false那么表示不使用逻辑删除
+                if(relationLogicDel != null && !relationLogicDel){
+                    return;
+                }
+            }
+        }
+        SQLExpression1<WherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
+        if(logicDeleteQueryFilterExpression!=null){
+            logicDeleteQueryFilterExpression.apply(sqlPredicate);
+        }
     }
 }

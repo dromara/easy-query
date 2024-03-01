@@ -11,6 +11,8 @@ import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
@@ -140,7 +142,13 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 TableExpressionBuilder tableExpressionBuilder = new TableExpressionBuilder(rightTable, MultiTableTypeEnum.LEFT_JOIN, runtimeContext);
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
                 NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
+
                 andPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, navigateMetadata.getSelfPropertyOrPrimary(), rightTable, navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), SQLPredicateCompareEnum.EQ, runtimeContext));
+                if(navigateMetadata.hasPredicateFilterExpression()){
+                    SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
+                    WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(rightTable, entityExpressionBuilder, andPredicateSegment);
+                    navigateMetadata.predicateFilterApply(sqlPredicate);
+                }
                 tableExpressionBuilder.getOn().addPredicateSegment(andPredicateSegment);
                 return tableExpressionBuilder;
             });
@@ -167,12 +175,16 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                         ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
                             m.eq(x, navigateMetadata.getTargetMappingProperty(), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext));
                             m.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperty(), navigateMetadata.getSelfPropertyOrPrimary());
+                            navigateMetadata.predicateFilterApply(m);
                         }).limit(1);
                         x.exists(subMappingQueryable);
                     });
                 });
             }else{
-                clientQueryable.where(t -> t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary()));
+                clientQueryable.where(t -> {
+                    t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary());
+                    navigateMetadata.predicateFilterApply(t);
+                });
             }
             EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
             queryable.get1Proxy().setNavValue(getFullNavValue(property));

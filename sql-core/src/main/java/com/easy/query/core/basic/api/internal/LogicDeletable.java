@@ -2,7 +2,7 @@ package com.easy.query.core.basic.api.internal;
 
 /**
  * create time 2023/4/1 22:02
- * 文件说明
+ * 不具备传递性
  *
  * @author xuejiaming
  */

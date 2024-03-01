@@ -33,6 +33,9 @@ import com.easy.query.core.basic.extension.interceptor.UpdateSetInterceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
+import com.easy.query.core.basic.extension.navigate.DefaultNavigateExtraFilterStrategy;
+import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
+import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
@@ -53,6 +56,8 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
@@ -206,7 +211,7 @@ public class EntityMetadata {
             }
             Navigate navigate = field.getAnnotation(Navigate.class);
             if (navigate != null) {
-                createNavigateMetadata(tableEntity, navigate, field, fastBean, fastBeanProperty, property);
+                createNavigateMetadata(tableEntity, navigate, field, fastBean, fastBeanProperty, property, configuration);
                 continue;
             } else {
                 ValueObject valueObject = field.getAnnotation(ValueObject.class);
@@ -234,7 +239,7 @@ public class EntityMetadata {
         }
     }
 
-    private void createNavigateMetadata(boolean tableEntity, Navigate navigate, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property) {
+    private void createNavigateMetadata(boolean tableEntity, Navigate navigate, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
 
         String selfProperty = tableEntity ? navigate.selfProperty() : null;
         String targetProperty = tableEntity ? navigate.targetProperty() : null;
@@ -246,9 +251,21 @@ public class EntityMetadata {
 
         Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
         PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
-        NavigateMetadata navigateMetadata = new NavigateMetadata(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty, beanGetter, beanSetter);
+        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty);
 
         if (tableEntity) {
+            Class<? extends NavigateExtraFilterStrategy> extraFilterStrategyClass = navigate.extraFilterStrategy();
+            if (!Objects.equals(DefaultNavigateExtraFilterStrategy.class, extraFilterStrategyClass)) {
+                NavigateExtraFilterStrategy navigateExtraFilterStrategy = configuration.getNavigateExtraFilterStrategy(extraFilterStrategyClass);
+                if (navigateExtraFilterStrategy == null) {
+                    throw new EasyQueryInvalidOperationException("not found navigate extra filter strategy:[" + EasyClassUtil.getSimpleName(extraFilterStrategyClass) + "]");
+                }
+                SQLExpression1<WherePredicate<?>> predicateFilterExpression = navigateExtraFilterStrategy.getPredicateFilterExpression(new NavigateBuilder(navigateOption));
+                if (predicateFilterExpression != null) {
+                    navigateOption.setPredicateFilterExpression(predicateFilterExpression);
+                }
+            }
+
             if (RelationTypeEnum.ManyToMany == relationType) {
                 if (Objects.equals(Object.class, navigate.mappingClass())) {
                     throw new IllegalArgumentException("relation type many to many map class not default");
@@ -259,11 +276,13 @@ public class EntityMetadata {
                 if (EasyStringUtil.isBlank(navigate.targetMappingProperty())) {
                     throw new IllegalArgumentException("relation type many to many target mapping property is empty");
                 }
-                navigateMetadata.setMappingClass(navigate.mappingClass());
-                navigateMetadata.setSelfMappingProperty(navigate.selfMappingProperty());
-                navigateMetadata.setTargetMappingProperty(navigate.targetMappingProperty());
+                navigateOption.setMappingClass(navigate.mappingClass());
+                navigateOption.setSelfMappingProperty(navigate.selfMappingProperty());
+                navigateOption.setTargetMappingProperty(navigate.targetMappingProperty());
             }
         }
+        NavigateMetadata navigateMetadata = new NavigateMetadata(navigateOption, beanGetter, beanSetter);
+
         property2NavigateMap.put(property, navigateMetadata);
     }
 
@@ -514,7 +533,7 @@ public class EntityMetadata {
             }
             Navigate navigate = field.getAnnotation(Navigate.class);
             if (navigate != null) {
-                createNavigateMetadata(true, navigate, field, fastBean, fastBeanProperty, property);
+                createNavigateMetadata(true, navigate, field, fastBean, fastBeanProperty, property, configuration);
                 continue;
             } else {
                 ValueObject valueObject = field.getAnnotation(ValueObject.class);
@@ -703,6 +722,7 @@ public class EntityMetadata {
     public Map<String, ColumnMetadata> getProperty2ColumnMap() {
         return property2ColumnMap;
     }
+
     public Map<String, NavigateMetadata> getProperty2NavigateMap() {
         return property2NavigateMap;
     }
@@ -726,7 +746,7 @@ public class EntityMetadata {
     public NavigateMetadata getNavigateNotNull(String propertyName) {
         NavigateMetadata navigateMetadata = getNavigateOrNull(propertyName);
         if (navigateMetadata == null) {
-            throw new EasyQueryException(String.format(EasyClassUtil.getSimpleName(entityClass) +" not found property:[%s] mapping navigate", propertyName));
+            throw new EasyQueryException(String.format(EasyClassUtil.getSimpleName(entityClass) + " not found property:[%s] mapping navigate", propertyName));
         }
         return navigateMetadata;
     }
@@ -735,9 +755,10 @@ public class EntityMetadata {
         return property2NavigateMap.get(propertyName);
     }
 
-    public Collection<NavigateMetadata> getNavigateMetadatas(){
+    public Collection<NavigateMetadata> getNavigateMetadatas() {
         return property2NavigateMap.values();
     }
+
     public ColumnMetadata getColumnNotNull(String propertyName) {
         ColumnMetadata columnMetadata = getColumnOrNull(propertyName);
         if (columnMetadata == null) {

@@ -16,6 +16,7 @@ import com.easy.query.core.metadata.IncludeNavigateExpression;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -229,6 +230,21 @@ public class EmptyExpressionContext implements ExpressionContext{
 
     @Override
     public Class<?>[] getDraftPropTypes() {
+        return null;
+    }
+
+    @Override
+    public void setRelationLogicDelete(Function<Class<?>, Boolean> relationLogicDelete) {
+
+    }
+
+    @Override
+    public boolean hasRelationLogicDelete() {
+        return false;
+    }
+
+    @Override
+    public Function<Class<?>, Boolean> getRelationLogicDelete() {
         return null;
     }
 }

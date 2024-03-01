@@ -99,4 +99,9 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
     public <TMember> ColumnFunctionComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public SQLQueryable<T1Proxy, T1> useLogicDelete(boolean enable) {
+        return this;
+    }
 }

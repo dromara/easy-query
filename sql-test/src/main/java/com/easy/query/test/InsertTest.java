@@ -10,6 +10,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.CustomIncrement;
 import com.easy.query.test.entity.SysUserSQLEncryption;
@@ -360,6 +361,7 @@ public class InsertTest extends BaseTest {
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
                 .whereByIds(Arrays.asList("500", "300", "400")).executeRows();
+        List<List<BlogEntity>> partition = EasyCollectionUtil.partition(r, 200);
         long l2 = easyQuery.insertable(r).batch().executeRows();
         Assert.assertEquals(-6, l2);
         easyQuery.deletable(BlogEntity.class)

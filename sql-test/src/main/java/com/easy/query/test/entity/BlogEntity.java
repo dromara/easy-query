@@ -2,7 +2,9 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityFileProxy;
+import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import lombok.Getter;
@@ -11,12 +13,13 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
+ * @author xuejiaming
  * @FileName: BlogEntity.java
  * @Description: 文件说明
  * @Date: 2023/3/16 17:23
- * @author xuejiaming
  */
 
 @Getter
@@ -24,7 +27,7 @@ import java.time.LocalDateTime;
 @Table("t_blog")
 @EntityFileProxy
 @ToString
-public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogEntity , BlogEntityProxy> {
+public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogEntity, BlogEntityProxy> {
 
     /**
      * 标题
@@ -67,6 +70,9 @@ public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogE
      * 是否置顶
      */
     private Boolean top;
+
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = "title")
+    private List<SysUser> users;
 
     @Override
     public Class<BlogEntityProxy> proxyTableClass() {

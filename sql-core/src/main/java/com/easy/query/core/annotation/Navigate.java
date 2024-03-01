@@ -1,5 +1,7 @@
 package com.easy.query.core.annotation;
 
+import com.easy.query.core.basic.extension.navigate.DefaultNavigateExtraFilterStrategy;
+import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.enums.RelationTypeEnum;
 
 import java.lang.annotation.Documented;
@@ -58,4 +60,5 @@ public @interface Navigate {
      * @return
      */
     boolean propIsProxy() default true;
+    Class<? extends NavigateExtraFilterStrategy> extraFilterStrategy() default DefaultNavigateExtraFilterStrategy.class;
 }

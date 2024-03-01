@@ -7,6 +7,7 @@ import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
+import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.sql.starter.config.JdbcTypeHandlerReplaceConfigurer;
@@ -108,6 +109,9 @@ public class EasyQueryStarterInitializeAutoConfiguration {
 
         for (Map.Entry<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackEntry : easyQueryInitializeOption.getValueUpdateAtomicTrackMap().entrySet()) {
             configuration.applyValueUpdateAtomicTrack(valueUpdateAtomicTrackEntry.getValue());
+        }
+        for (Map.Entry<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyEntry : easyQueryInitializeOption.getNavigateExtraFilterStrategyMap().entrySet()) {
+            configuration.applyNavigateExtraFilterStrategy(navigateExtraFilterStrategyEntry.getValue());
         }
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         for (Map.Entry<String, TableRoute<?>> tableRouteEntry : easyQueryInitializeOption.getTableRouteMap().entrySet()) {

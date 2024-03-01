@@ -1,8 +1,8 @@
 package com.easy.query.core.configuration;
 
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
-import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.conversion.EnumValueAutoConverter;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
@@ -12,6 +12,7 @@ import com.easy.query.core.basic.extension.logicdel.impl.BooleanLogicDeleteStrat
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateTimeLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.impl.LongTimestampLogicDeleteStrategy;
+import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.basic.extension.track.update.IntegerNotNullValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.LongNotNullValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
@@ -59,6 +60,7 @@ public class QueryConfiguration {
     //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
     private Map<String, Interceptor> interceptorMap = new ConcurrentHashMap<>();
     private Map<String, LogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends NavigateExtraFilterStrategy>, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EncryptionStrategy>, EncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends VersionStrategy>, VersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ShardingInitializer>, ShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
@@ -133,6 +135,16 @@ public class QueryConfiguration {
             throw new EasyQueryException("global logic delete strategy:" + strategy + ",repeat");
         }
         globalLogicDeleteStrategyMap.put(strategy, globalLogicDeleteStrategy);
+    }
+    public void applyNavigateExtraFilterStrategy(NavigateExtraFilterStrategy navigateExtraFilterStrategy) {
+        Objects.requireNonNull(navigateExtraFilterStrategy,"navigateExtraFilterStrategy is null");
+        if (navigateExtraFilterStrategyMap.containsKey(navigateExtraFilterStrategy.getClass())) {
+            throw new EasyQueryException("navigate extra filter strategy:" + EasyClassUtil.getSimpleName(navigateExtraFilterStrategy.getClass()) + ",repeat");
+        }
+        navigateExtraFilterStrategyMap.put(navigateExtraFilterStrategy.getClass(), navigateExtraFilterStrategy);
+    }
+    public NavigateExtraFilterStrategy getNavigateExtraFilterStrategy(Class<? extends NavigateExtraFilterStrategy> strategy) {
+        return navigateExtraFilterStrategyMap.get(strategy);
     }
 
     /**

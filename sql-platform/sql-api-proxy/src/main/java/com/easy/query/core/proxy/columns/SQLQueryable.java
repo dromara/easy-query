@@ -2,6 +2,7 @@ package com.easy.query.core.proxy.columns;
 
 import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
+import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -27,12 +28,13 @@ import java.math.BigDecimal;
  *
  * @author xuejiaming
  */
-public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable {//,ProxyEntity<T1Proxy,T1>
+public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable, LogicDeletable<SQLQueryable<T1Proxy, T1>> {//,ProxyEntity<T1Proxy,T1>
     EasyEntityQueryable<T1Proxy, T1> getQueryable();
 
     TableAvailable getOriginalTable();
 
     String getNavValue();
+
 
     default SQLPredicateQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
         getQueryable().where(whereExpression);
@@ -47,6 +49,7 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     default void any(SQLExpression1<T1Proxy> whereExpression) {
         where(whereExpression).any();
     }
+
 
     /**
      * 存在任意一个满足条件

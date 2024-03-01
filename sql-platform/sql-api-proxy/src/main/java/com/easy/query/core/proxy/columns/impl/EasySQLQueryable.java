@@ -1,11 +1,12 @@
 package com.easy.query.core.proxy.columns.impl;
 
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+
+import java.util.function.Supplier;
 
 /**
  * create time 2024/2/11 22:23
@@ -45,4 +46,9 @@ public class EasySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> impl
         return easyEntityQueryable.get1Proxy().getNavValue();
     }
 
+    @Override
+    public SQLQueryable<T1Proxy, T1> useLogicDelete(boolean enable) {
+        easyEntityQueryable.useLogicDelete(enable);
+        return this;
+    }
 }

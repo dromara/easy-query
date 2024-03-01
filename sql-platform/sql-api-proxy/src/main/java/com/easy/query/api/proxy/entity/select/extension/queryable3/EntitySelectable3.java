@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable3;
 
+import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -8,11 +9,13 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DraftResult;
 import com.easy.query.core.common.tuple.MergeTuple3;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression3;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Objects;
@@ -58,28 +61,42 @@ public interface EntitySelectable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraftMerge(SQLFuncExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>, DraftFetcher<TR, TRProxy>> selectExpression) {
         return selectDraft((t1, t2, t3) -> selectExpression.apply(new MergeTuple3<>(get1Proxy(), get2Proxy(), get3Proxy())));
     }
-
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, TRProxy> selectExpression) {
 
         TRProxy resultProxy = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
         Objects.requireNonNull(resultProxy, "select null result class");
+
+        if (resultProxy instanceof ListProxy) {
+            return Select.selectList((ListProxy<TRProxy, TR>) resultProxy,getClientQueryable3());
+        }
         SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
         if (selectAsExpression == null) {//全属性映射
+            TableAvailable tableOrNull = resultProxy.getTableOrNull();
+            if (tableOrNull == null) {
 
-            ClientQueryable<TR> select = getClientQueryable3().select(resultProxy.getEntityClass(), (t1, t2, t3) -> {
-                if (resultProxy == get2Proxy()) {
-                    t2.columnAll();
-                } else if (resultProxy == get3Proxy()) {
-                    t3.columnAll();
-                } else {
-                    t1.columnAll();
-                }
-            });
-            return new EasyEntityQueryable<>(resultProxy, select);
+                ClientQueryable<TR> select = getClientQueryable3().select(resultProxy.getEntityClass(), (t1, t2, t3) -> {
+                    if (resultProxy == get2Proxy()) {
+                        t2.columnAll();
+                    } else if (resultProxy == get3Proxy()) {
+                        t3.columnAll();
+                    } else {
+                        t1.columnAll();
+                    }
+                });
+                Select.setDraftPropTypes(select, resultProxy);
+                return new EasyEntityQueryable<>(resultProxy, select);
+            } else {
+                ClientQueryable<TR> select = getClientQueryable3().select(resultProxy.getEntityClass(), columnAsSelector -> {
+                    columnAsSelector.getAsSelector().columnAll(tableOrNull);
+                });
+                Select.setDraftPropTypes(select, resultProxy);
+                return new EasyEntityQueryable<>(resultProxy, select);
+            }
         } else {
             ClientQueryable<TR> select = getClientQueryable3().select(resultProxy.getEntityClass(), columnAsSelector -> {
                 selectAsExpression.accept(columnAsSelector.getAsSelector());
             });
+            Select.setDraftPropTypes(select, resultProxy);
             return new EasyEntityQueryable<>(resultProxy, select);
         }
     }

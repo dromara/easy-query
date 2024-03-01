@@ -55,7 +55,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public void setTableLogicDelete(Supplier<Boolean> tableLogicDel) {
-        this.tableLogicDel =tableLogicDel;
+        this.tableLogicDel = tableLogicDel;
     }
 
     @Override
@@ -75,23 +75,20 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
 
     @Override
     public SQLExpression1<WherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
-        Boolean logicDel = tableLogicDelValue();
-        if(logicDel==null || logicDel){
-            if (getEntityMetadata().enableLogicDelete()) {
+        if (getEntityMetadata().enableLogicDelete()) {
+            Boolean logicDel = tableLogicDelValue();
+            if (logicDel == null || logicDel) {
                 return getEntityMetadata().getLogicDeleteMetadata().getLogicDeletePredicateFilterExpression();
             }
         }
         return null;
     }
-    private Boolean tableLogicDelValue(){
-        if(this.tableLogicDel==null){
+
+    private Boolean tableLogicDelValue() {
+        if (this.tableLogicDel == null) {
             return null;
         }
-        Boolean logicDel = tableLogicDel.get();
-        if(logicDel==null){
-            return null;
-        }
-        return logicDel;
+        return tableLogicDel.get();
     }
 
     @Override

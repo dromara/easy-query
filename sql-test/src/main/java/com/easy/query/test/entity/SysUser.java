@@ -3,11 +3,15 @@ package com.easy.query.test.entity;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Encryption;
 import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.entity.proxy.SysUserProxy;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * create time 2023/3/25 10:55
@@ -27,6 +31,12 @@ public class SysUser extends BaseEntity implements ProxyEntityAvailable<SysUser 
     @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)
     @Column(large = true)
     private String address;
+
+    @Navigate(value = RelationTypeEnum.OneToMany, targetProperty = "title")
+    private List<BlogEntity> blogs;
+
+    @Navigate(value = RelationTypeEnum.OneToOne)
+    private BlogEntity myBlog;
 
     @Override
     public Class<SysUserProxy> proxyTableClass() {

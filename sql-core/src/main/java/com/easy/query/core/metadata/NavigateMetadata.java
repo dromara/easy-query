@@ -4,6 +4,8 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.util.EasyStringUtil;
 
 /**
@@ -36,26 +38,25 @@ public class NavigateMetadata {
     private final String targetProperty;
     private final Property<Object, ?> getter;
     private final PropertySetterCaller<Object> setter;
-    private Class<?> mappingClass;
-    private String selfMappingProperty;
-    private String targetMappingProperty;
+    private final Class<?> mappingClass;
+    private final String selfMappingProperty;
+    private final String targetMappingProperty;
+    private final SQLExpression1<WherePredicate<?>> predicateFilterExpression;
 
-    public NavigateMetadata(EntityMetadata entityMetadata,
-                            String propertyName,
-                            Class<?> navigateOriginalPropertyType,
-                            Class<?> navigatePropertyType,
-                            RelationTypeEnum relationType,
-                            String selfProperty,
-                            String targetProperty,
+    public NavigateMetadata(NavigateOption navigateOption,
                             Property<Object, ?> getter,
                             PropertySetterCaller<Object> setter) {
-        this.entityMetadata = entityMetadata;
-        this.propertyName = propertyName;
-        this.navigateOriginalPropertyType = navigateOriginalPropertyType;
-        this.navigatePropertyType = navigatePropertyType;
-        this.relationType = relationType;
-        this.selfProperty = selfProperty;
-        this.targetProperty = targetProperty;
+        this.entityMetadata = navigateOption.getEntityMetadata();
+        this.propertyName = navigateOption.getPropertyName();
+        this.navigateOriginalPropertyType = navigateOption.getNavigateOriginalPropertyType();
+        this.navigatePropertyType = navigateOption.getNavigatePropertyType();
+        this.relationType = navigateOption.getRelationType();
+        this.selfProperty = navigateOption.getSelfProperty();
+        this.targetProperty = navigateOption.getTargetProperty();
+        this.mappingClass = navigateOption.getMappingClass();
+        this.selfMappingProperty = navigateOption.getSelfMappingProperty();
+        this.targetMappingProperty = navigateOption.getTargetMappingProperty();
+        this.predicateFilterExpression = navigateOption.getPredicateFilterExpression();
         this.getter = getter;
         this.setter = setter;
     }
@@ -108,25 +109,16 @@ public class NavigateMetadata {
         return mappingClass;
     }
 
-    public void setMappingClass(Class<?> mappingClass) {
-        this.mappingClass = mappingClass;
-    }
 
     public String getSelfMappingProperty() {
         return selfMappingProperty;
     }
 
-    public void setSelfMappingProperty(String selfMappingProperty) {
-        this.selfMappingProperty = selfMappingProperty;
-    }
 
     public String getTargetMappingProperty() {
         return targetMappingProperty;
     }
 
-    public void setTargetMappingProperty(String targetMappingProperty) {
-        this.targetMappingProperty = targetMappingProperty;
-    }
 
     public Property<Object, ?> getGetter() {
         return getter;
@@ -140,5 +132,18 @@ public class NavigateMetadata {
     public ColumnMetadata getSelfRelationColumn() {
         String selfPropertyName = getSelfPropertyOrPrimary();
         return entityMetadata.getColumnNotNull(selfPropertyName);
+    }
+
+    public SQLExpression1<WherePredicate<?>> getPredicateFilterExpression() {
+        return predicateFilterExpression;
+    }
+    public boolean hasPredicateFilterExpression() {
+        return predicateFilterExpression!=null;
+    }
+
+    public void predicateFilterApply(WherePredicate<?> wherePredicate){
+        if(predicateFilterExpression!=null){
+            predicateFilterExpression.apply(wherePredicate);
+        }
     }
 }
