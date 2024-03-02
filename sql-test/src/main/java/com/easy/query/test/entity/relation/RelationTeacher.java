@@ -29,7 +29,7 @@ public class RelationTeacher implements ProxyEntityAvailable<RelationTeacher , R
     /**
      * book type=2
      */
-    @Navigate(value = RelationTypeEnum.OneToMany,targetProperty ="userId",extraFilterStrategy = BookNavigateExtraFilterStrategy.class)
+    @Navigate(value = RelationTypeEnum.OneToMany,targetProperty ="userId", extraFilter = BookNavigateExtraFilterStrategy.class)
     private List<RelationBook> books;
 
     @Override

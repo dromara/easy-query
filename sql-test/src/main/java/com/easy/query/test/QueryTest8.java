@@ -1108,6 +1108,11 @@ public class QueryTest8 extends BaseTest {
     }
     @Test
      public void testNativeSql(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
         List<BlogEntity> list1 = easyQuery.queryable(BlogEntity.class)
                 .where(o -> {
                     o.sqlNativeSegment("date_format({0},''%y%m%d'') <= date_format({1},''%y%m%d'')", c -> {
@@ -1116,7 +1121,11 @@ public class QueryTest8 extends BaseTest {
                                 .expression(BlogEntity::getPublishTime).value("2023-01-01 00:00:00");
                     });
                 }).toList();
-        System.out.println("111");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND date_format(`publish_time`,'%y%m%d') <= date_format(?,'%y%m%d')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2023-01-01 00:00:00(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
 }

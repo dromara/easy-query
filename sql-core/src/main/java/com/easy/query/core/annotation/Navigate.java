@@ -60,5 +60,5 @@ public @interface Navigate {
      * @return
      */
     boolean propIsProxy() default true;
-    Class<? extends NavigateExtraFilterStrategy> extraFilterStrategy() default DefaultNavigateExtraFilterStrategy.class;
+    Class<? extends NavigateExtraFilterStrategy> extraFilter() default DefaultNavigateExtraFilterStrategy.class;
 }

@@ -254,7 +254,7 @@ public class EntityMetadata {
         NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty);
 
         if (tableEntity) {
-            Class<? extends NavigateExtraFilterStrategy> extraFilterStrategyClass = navigate.extraFilterStrategy();
+            Class<? extends NavigateExtraFilterStrategy> extraFilterStrategyClass = navigate.extraFilter();
             if (!Objects.equals(DefaultNavigateExtraFilterStrategy.class, extraFilterStrategyClass)) {
                 NavigateExtraFilterStrategy navigateExtraFilterStrategy = configuration.getNavigateExtraFilterStrategy(extraFilterStrategyClass);
                 if (navigateExtraFilterStrategy == null) {

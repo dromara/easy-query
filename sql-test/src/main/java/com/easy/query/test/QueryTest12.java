@@ -22,6 +22,7 @@ import com.easy.query.test.entity.BlogEntity2;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.relation.RelationUser;
 import com.easy.query.test.entity.school.MySchoolStudent;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
@@ -1276,35 +1277,50 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("1(String),%123%(String),%AdUseaKyj6EpwMyX7l1RQw==%(String),false(Boolean),%1233%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
-//    @Test
-//    public void testDoc16(){
-//        ListenerContext listenerContext = new ListenerContext();
-//        listenerContextManager.startListen(listenerContext);
-//
-////        List<RelationUser> users = easyEntityQuery.queryable(RelationUser.class)
-////                .where(r -> r.historyBooks().any(book -> {
-////                    book.name().like("小学");
-////                }))
-////                .toList();
-//
-//
-////        List<RelationTeacher> users = easyEntityQuery.queryable(RelationTeacher.class)
-////                .where(r -> r.books().any(book -> {
-////                    book.name().like("老师的书");
-////                }))
-////                .toList();
-////        List<RelationUser> users = easyEntityQuery.queryable(RelationUser.class)
-////                .where(r -> r.books().any(book -> {
-////                    book.name().like("小学");
-////                }))
-////                .toList();
-//
-//        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-//        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-//        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t INNER JOIN `easy-query-test`.`t_sys_user` t1 ON t.`id` = ? AND t.`id` = t1.`id` AND (t.`title` LIKE ? OR t1.`id_card` LIKE ?) WHERE t.`deleted` = ? AND t.`title` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//        Assert.assertEquals("1(String),%123%(String),%AdUseaKyj6EpwMyX7l1RQw==%(String),false(Boolean),%1233%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//        listenerContextManager.clear();
-//    }
+    @Test
+    public void testDoc16(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<RelationUser> users = easyEntityQuery.queryable(RelationUser.class)
+                    .where(r -> r.historyBooks().any(book -> {
+                        book.name().like("小学");
+                    }))
+                    .toList();
+        }catch (Exception ex){
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `relation_user` t WHERE EXISTS (SELECT 1 FROM `relation_book` t1 WHERE t1.`user_id` = t.`id` AND t1.`create_time` <= ? AND t1.`name` LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2022-01-01T00:00(LocalDateTime),%小学%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDoc17(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<RelationUser> users = easyEntityQuery.queryable(RelationUser.class)
+                    .where(r -> r.teachers().any(book -> {
+                        book.name().like("小学");
+                    }))
+                    .toList();
+        }catch (Exception ex){
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `relation_user` t WHERE EXISTS (SELECT 1 FROM `relation_teacher` t1 WHERE EXISTS (SELECT 1 FROM `relation_route` t2 WHERE t2.`second_id` = t1.`id` AND t2.`first_id` = t.`id` AND t2.`type` = ? LIMIT 1) AND t1.`name` LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),%小学%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 
     @Test
      public void testDraftInteger(){
@@ -1326,13 +1342,7 @@ public class QueryTest12 extends BaseTest {
             String value2 = bigDecimalStringDraft2.getValue2();
             BigDecimal value1 = bigDecimalStringDraft2.getValue1();
         }
-        List<Draft2<String, String>> list = easyEntityQuery.queryable(BlogEntity2.class)
-                .leftJoin(SysUser.class, (b, s2) -> b.id().eq(s2.id()))
-                .leftJoin(Topic.class, (b, s2, s3) -> s3.id().eq(b.id()))
-                .select((b1, s2, t3) -> Select.DRAFT.of(
-                        s2.id(),
-                        s2.username()
-                )).toList();
+
     }
 
 }

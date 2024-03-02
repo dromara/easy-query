@@ -29,6 +29,9 @@ public class BookNavigateExtraFilterStrategy implements NavigateExtraFilterStrat
                 LocalDateTime histroy = LocalDateTime.of(2022, 1, 1, 0, 0);
                 return o->o.le("createTime",histroy);
             }
+            if(Objects.equals("teachers",propertyName)){
+                return o->o.eq("type",1);
+            }
             return o->o.eq("bookType",1);
         }
         return o->o.eq("bookType",2);

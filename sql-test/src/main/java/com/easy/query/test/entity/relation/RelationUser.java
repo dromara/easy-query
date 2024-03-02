@@ -28,13 +28,20 @@ public class RelationUser implements ProxyEntityAvailable<RelationUser , com.eas
     /**
      * book type=1
      */
-    @Navigate(value = RelationTypeEnum.OneToMany,targetProperty ="userId",extraFilterStrategy = BookNavigateExtraFilterStrategy.class)
+    @Navigate(value = RelationTypeEnum.OneToMany,targetProperty ="userId", extraFilter = BookNavigateExtraFilterStrategy.class)
     private List<RelationBook> books;
     /**
      * 时间2022年以前的
      */
-    @Navigate(value = RelationTypeEnum.OneToMany,targetProperty ="userId",extraFilterStrategy = BookNavigateExtraFilterStrategy.class)
+    @Navigate(value = RelationTypeEnum.OneToMany,targetProperty ="userId", extraFilter = BookNavigateExtraFilterStrategy.class)
     private List<RelationBook> historyBooks;
+
+    @Navigate(value = RelationTypeEnum.ManyToMany,
+            mappingClass = RelationRoute.class
+            ,selfMappingProperty = "firstId"
+            ,targetMappingProperty = "secondId",
+    extraFilter = BookNavigateExtraFilterStrategy.class)
+    private List<RelationTeacher> teachers;
 
     @Override
     public Class<com.easy.query.test.entity.relation.proxy.RelationUserProxy> proxyTableClass() {
