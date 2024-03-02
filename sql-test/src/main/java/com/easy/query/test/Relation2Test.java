@@ -28,7 +28,7 @@ public class Relation2Test extends BaseTest {
                 .where(m -> m.schoolStudentAddress().id().eq("1")).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `my_school_student` t LEFT JOIN `school_student_address` t1 ON t.`id` = t1.`student_id` WHERE t1.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `my_school_student` t LEFT JOIN `school_student_address` t1 ON t1.`student_id` = t.`id` WHERE t1.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -43,7 +43,7 @@ public class Relation2Test extends BaseTest {
                 .orderBy(m -> m.schoolStudentAddress().id().asc()).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `my_school_student` t LEFT JOIN `school_student_address` t1 ON t.`id` = t1.`student_id` WHERE t1.`id` LIKE ? ORDER BY t1.`id` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `my_school_student` t LEFT JOIN `school_student_address` t1 ON t1.`student_id` = t.`id` WHERE t1.`id` LIKE ? ORDER BY t1.`id` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -61,7 +61,7 @@ public class Relation2Test extends BaseTest {
                 .orderBy(m -> m.schoolStudentAddress().id().asc()).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `my_school_student` t LEFT JOIN `school_student_address` t1 ON t.`id` = t1.`student_id` LEFT JOIN `my_school_class` t2 ON t.`class_id` = t2.`id` WHERE t1.`id` LIKE ? AND t2.`name` LIKE ? ORDER BY t1.`id` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `my_school_student` t LEFT JOIN `school_student_address` t1 ON t1.`student_id` = t.`id` LEFT JOIN `my_school_class` t2 ON t2.`id` = t.`class_id` WHERE t1.`id` LIKE ? AND t2.`name` LIKE ? ORDER BY t1.`id` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%1%(String),%2%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -78,7 +78,7 @@ public class Relation2Test extends BaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `my_school_student` t LEFT JOIN `my_school_class` t1 ON t.`class_id` = t1.`id` WHERE t.`name` LIKE ? AND t1.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `my_school_student` t LEFT JOIN `my_school_class` t1 ON t1.`id` = t.`class_id` WHERE t.`name` LIKE ? AND t1.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%小明%(String),一班(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }

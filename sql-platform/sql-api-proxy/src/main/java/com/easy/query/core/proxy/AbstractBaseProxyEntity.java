@@ -6,7 +6,6 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -14,7 +13,6 @@ import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
@@ -143,12 +141,14 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
                 NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
 
-                andPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, navigateMetadata.getSelfPropertyOrPrimary(), rightTable, navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), SQLPredicateCompareEnum.EQ, runtimeContext));
-                if(navigateMetadata.hasPredicateFilterExpression()){
-                    SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
-                    WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(rightTable, entityExpressionBuilder, andPredicateSegment);
-                    navigateMetadata.predicateFilterApply(sqlPredicate);
-                }
+                SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
+                WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(rightTable, entityExpressionBuilder, andPredicateSegment);
+                sqlPredicate.and(()->{
+                    sqlPredicate.eq(true,new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary());
+                    if(navigateMetadata.hasPredicateFilterExpression()){
+                        navigateMetadata.predicateFilterApply(sqlPredicate);
+                    }
+                });
                 tableExpressionBuilder.getOn().addPredicateSegment(andPredicateSegment);
                 return tableExpressionBuilder;
             });
@@ -182,8 +182,10 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 });
             }else{
                 clientQueryable.where(t -> {
-                    t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary());
-                    navigateMetadata.predicateFilterApply(t);
+                    t.and(()->{
+                        t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary());
+                        navigateMetadata.predicateFilterApply(t);
+                    });
                 });
             }
             EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);

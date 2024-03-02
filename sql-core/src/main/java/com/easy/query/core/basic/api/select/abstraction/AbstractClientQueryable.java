@@ -1100,8 +1100,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     }
                 }
                 return clientQueryable.cloneQueryable().where(o -> {
-                    o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationIds);
-                    navigateMetadata.predicateFilterApply(o);
+                    o.and(()->{
+                        o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationIds);
+                        navigateMetadata.predicateFilterApply(o);
+                    });
                 });
             };
             entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
@@ -1113,8 +1115,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         ClientQueryable<TProperty> firstQueryable = clientQueryable.cloneQueryable();
         firstQueryable.where(o -> {
-            o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationId);
-            navigateMetadata.predicateFilterApply(o);
+           o.and(()->{
+               o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationId);
+               navigateMetadata.predicateFilterApply(o);
+           });
         });
         return firstQueryable;
     }
