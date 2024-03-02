@@ -2,8 +2,10 @@ package com.easy.query.core.proxy.sql;
 
 import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasySelectManyQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -477,12 +479,45 @@ public class Select {
         }
     }
 
-    public static <TQueryable,TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectList(ListProxy<TRProxy, TR> listProxy, TQueryable queryable){
+    public static <TQueryable, TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectList(ListProxy<TRProxy, TR> listProxy, TQueryable queryable) {
 
+        SQLQueryable<TRProxy, TR> sqlQueryable = listProxy.getSqlQueryable();
+        Objects.requireNonNull(sqlQueryable, "select columns null result class");
+        EntityQueryable<ListProxy<TRProxy, TR>, List<TR>> listProxyListEntityQueryable = new EasySelectManyQueryable<>(EasyObjectUtil.typeCastNullable(queryable), listProxy, sqlQueryable.getNavValue());
+        return EasyObjectUtil.typeCastNullable(listProxyListEntityQueryable);
+    }
+
+    public static <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxy(TRProxy resultProxy, ClientQueryable<?> queryable) {
+
+        Objects.requireNonNull(resultProxy, "select null result class");
+        if (resultProxy instanceof ListProxy) {
+            ListProxy<TRProxy, TR> listProxy = (ListProxy<TRProxy, TR>) resultProxy;
             SQLQueryable<TRProxy, TR> sqlQueryable = listProxy.getSqlQueryable();
             Objects.requireNonNull(sqlQueryable, "select columns null result class");
-            EntityQueryable<ListProxy<TRProxy, TR>, List<TR>> listProxyListEntityQueryable = new EasySelectManyQueryable<>(EasyObjectUtil.typeCastNullable(queryable), listProxy, sqlQueryable.getNavValue());
+            EntityQueryable<ListProxy<TRProxy, TR>, List<TR>> listProxyListEntityQueryable = new EasySelectManyQueryable<>(queryable, listProxy, sqlQueryable.getNavValue());
             return EasyObjectUtil.typeCastNullable(listProxyListEntityQueryable);
+        }
 
+        SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
+        if (selectAsExpression == null) {//全属性映射
+            TableAvailable tableOrNull = resultProxy.getTableOrNull();
+            if (tableOrNull == null) {
+                ClientQueryable<TR> select = queryable.select(resultProxy.getEntityClass());
+                Select.setDraftPropTypes(select, resultProxy);
+                return new EasyEntityQueryable<>(resultProxy, select);
+            } else {
+                ClientQueryable<TR> select = queryable.select(resultProxy.getEntityClass(), columnAsSelector -> {
+                    columnAsSelector.getAsSelector().columnAll(tableOrNull);
+                });
+                Select.setDraftPropTypes(select, resultProxy);
+                return new EasyEntityQueryable<>(resultProxy, select);
+            }
+        } else {
+            ClientQueryable<TR> select = queryable.select(resultProxy.getEntityClass(), columnAsSelector -> {
+                selectAsExpression.accept(columnAsSelector.getAsSelector());
+            });
+            Select.setDraftPropTypes(select, resultProxy);
+            return new EasyEntityQueryable<>(resultProxy, select);
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable8;
 
-import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -9,11 +8,9 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DraftResult;
 import com.easy.query.core.common.tuple.MergeTuple8;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression8;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -70,49 +67,7 @@ public interface EntitySelectable8<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression8<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, TRProxy> selectExpression) {
 
         TRProxy resultProxy = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy());
-        Objects.requireNonNull(resultProxy, "select null result class");
-        if (resultProxy instanceof ListProxy) {
-            return Select.selectList((ListProxy<TRProxy, TR>) resultProxy,getClientQueryable8());
-        }
-        SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
-        if (selectAsExpression == null) {//全属性映射
-            TableAvailable tableOrNull = resultProxy.getTableOrNull();
-            if (tableOrNull == null) {
-                ClientQueryable<TR> select = getClientQueryable8().select(resultProxy.getEntityClass(), (t1, t2, t3, t4, t5, t6, t7, t8) -> {
-                    if (resultProxy == get2Proxy()) {
-                        t2.columnAll();
-                    } else if (resultProxy == get3Proxy()) {
-                        t3.columnAll();
-                    } else if (resultProxy == get4Proxy()) {
-                        t4.columnAll();
-                    } else if (resultProxy == get5Proxy()) {
-                        t5.columnAll();
-                    } else if (resultProxy == get6Proxy()) {
-                        t6.columnAll();
-                    } else if (resultProxy == get7Proxy()) {
-                        t7.columnAll();
-                    } else if (resultProxy == get8Proxy()) {
-                        t8.columnAll();
-                    } else {
-                        t1.columnAll();
-                    }
-                });
-                Select.setDraftPropTypes(select, resultProxy);
-                return new EasyEntityQueryable<>(resultProxy, select);
-            } else {
-                ClientQueryable<TR> select = getClientQueryable8().select(resultProxy.getEntityClass(), columnAsSelector -> {
-                    columnAsSelector.getAsSelector().columnAll(tableOrNull);
-                });
-                Select.setDraftPropTypes(select, resultProxy);
-                return new EasyEntityQueryable<>(resultProxy, select);
-            }
-        } else {
-            ClientQueryable<TR> select = getClientQueryable8().select(resultProxy.getEntityClass(), columnAsSelector -> {
-                selectAsExpression.accept(columnAsSelector.getAsSelector());
-            });
-            Select.setDraftPropTypes(select, resultProxy);
-            return new EasyEntityQueryable<>(resultProxy, select);
-        }
+        return Select.selectProxy(resultProxy,getClientQueryable8());
     }
 
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(SQLFuncExpression1<MergeTuple8<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy>, TRProxy> selectExpression) {

@@ -1,6 +1,5 @@
 package com.easy.query.api.proxy.entity.select.abstraction;
 
-import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
@@ -28,7 +27,6 @@ import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -40,7 +38,6 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLGroupByExpression;
-import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
@@ -234,34 +231,37 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression) {
         TRProxy resultProxy = selectExpression.apply(get1Proxy());
-        Objects.requireNonNull(resultProxy, "select null result class");
-
-        if (resultProxy instanceof ListProxy) {
-            return Select.selectList((ListProxy<TRProxy, TR>) resultProxy,getQueryable().getClientQueryable());
-        }
-
-        SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
-        if (selectAsExpression == null) {//全属性映射
-            TableAvailable tableOrNull = resultProxy.getTableOrNull();
-            if (tableOrNull == null) {
-                ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass());
-
-                Select.setDraftPropTypes(select, resultProxy);
-                return new EasyEntityQueryable<>(resultProxy, select);
-            } else {
-                ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass(), columnAsSelector -> {
-                    columnAsSelector.getAsSelector().columnAll(tableOrNull);
-                });
-                Select.setDraftPropTypes(select, resultProxy);
-                return new EasyEntityQueryable<>(resultProxy, select);
-            }
-        } else {
-            ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass(), columnAsSelector -> {
-                selectAsExpression.accept(columnAsSelector.getAsSelector());
-            });
-            Select.setDraftPropTypes(select, resultProxy);
-            return new EasyEntityQueryable<>(resultProxy, select);
-        }
+        return Select.selectProxy(resultProxy,getClientQueryable());
+//
+//
+//        Objects.requireNonNull(resultProxy, "select null result class");
+//
+//        if (resultProxy instanceof ListProxy) {
+//            return Select.selectList((ListProxy<TRProxy, TR>) resultProxy,getQueryable().getClientQueryable());
+//        }
+//
+//        SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
+//        if (selectAsExpression == null) {//全属性映射
+//            TableAvailable tableOrNull = resultProxy.getTableOrNull();
+//            if (tableOrNull == null) {
+//                ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass());
+//
+//                Select.setDraftPropTypes(select, resultProxy);
+//                return new EasyEntityQueryable<>(resultProxy, select);
+//            } else {
+//                ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass(), columnAsSelector -> {
+//                    columnAsSelector.getAsSelector().columnAll(tableOrNull);
+//                });
+//                Select.setDraftPropTypes(select, resultProxy);
+//                return new EasyEntityQueryable<>(resultProxy, select);
+//            }
+//        } else {
+//            ClientQueryable<TR> select = getClientQueryable().select(resultProxy.getEntityClass(), columnAsSelector -> {
+//                selectAsExpression.accept(columnAsSelector.getAsSelector());
+//            });
+//            Select.setDraftPropTypes(select, resultProxy);
+//            return new EasyEntityQueryable<>(resultProxy, select);
+//        }
     }
 
 

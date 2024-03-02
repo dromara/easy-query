@@ -69,40 +69,7 @@ public interface EntitySelectable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression2<T1Proxy, T2Proxy, TRProxy> selectExpression) {
 
         TRProxy resultProxy = selectExpression.apply(get1Proxy(), get2Proxy());
-        Objects.requireNonNull(resultProxy, "select null result class");
-
-
-        if (resultProxy instanceof ListProxy) {
-            return Select.selectList((ListProxy<TRProxy, TR>) resultProxy,getClientQueryable2());
-        }
-
-        SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
-        if (selectAsExpression == null) {//全属性映射
-            TableAvailable tableOrNull = resultProxy.getTableOrNull();
-            if (tableOrNull == null) {
-                ClientQueryable<TR> select = getClientQueryable2().select(resultProxy.getEntityClass(), (t1, t2) -> {
-                    if (resultProxy == get2Proxy()) {
-                        t2.columnAll();
-                    } else {
-                        t1.columnAll();
-                    }
-                });
-                Select.setDraftPropTypes(select, resultProxy);
-                return new EasyEntityQueryable<>(resultProxy, select);
-            } else {
-                ClientQueryable<TR> select = getClientQueryable2().select(resultProxy.getEntityClass(), columnAsSelector -> {
-                    columnAsSelector.getAsSelector().columnAll(tableOrNull);
-                });
-                Select.setDraftPropTypes(select, resultProxy);
-                return new EasyEntityQueryable<>(resultProxy, select);
-            }
-        } else {
-            ClientQueryable<TR> select = getClientQueryable2().select(resultProxy.getEntityClass(), columnAsSelector -> {
-                selectAsExpression.accept(columnAsSelector.getAsSelector());
-            });
-            Select.setDraftPropTypes(select, resultProxy);
-            return new EasyEntityQueryable<>(resultProxy, select);
-        }
+        return Select.selectProxy(resultProxy,getClientQueryable2());
     }
 
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(SQLFuncExpression1<MergeTuple2<T1Proxy, T2Proxy>, TRProxy> selectExpression) {
