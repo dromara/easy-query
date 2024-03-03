@@ -102,4 +102,9 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
     public ClientEntityDeletable<T> ignoreVersion(boolean ignored) {
         return this;
     }
+
+    @Override
+    public ClientEntityDeletable<T> batch(boolean use) {
+        return this;
+    }
 }

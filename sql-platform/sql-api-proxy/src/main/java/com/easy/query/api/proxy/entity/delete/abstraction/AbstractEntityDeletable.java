@@ -118,4 +118,10 @@ public abstract class AbstractEntityDeletable<TProxy extends ProxyEntity<TProxy,
         entityObjectDeletable.asTableLink(linkAs);
         return this;
     }
+
+    @Override
+    public EntityDeletable<TProxy, T> batch(boolean use) {
+        entityObjectDeletable.batch(use);
+        return this;
+    }
 }

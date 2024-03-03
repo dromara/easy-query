@@ -16,6 +16,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Supplier;
@@ -430,6 +431,39 @@ public class DeleteTest extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("UPDATE `t_blog123abc` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("true(Boolean),false(Boolean),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testBatchDelete(){
+        ArrayList<Topic> topics = new ArrayList<>();
+        {
+            Topic topic = new Topic();
+            topic.setId("123pppxxx");
+            topic.setTitle("123123");
+            topic.setStars(2);
+            topics.add(topic);
+        }
+        {
+            Topic topic = new Topic();
+            topic.setId("123pppxxx1");
+            topic.setTitle("1231231");
+            topic.setStars(1);
+            topics.add(topic);
+        }
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.deletable(topics)
+                .batch().executeRows();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("DELETE FROM `t_topic` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(2,jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
+        Assert.assertEquals("123pppxxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("123pppxxx1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(1)));
         listenerContextManager.clear();
     }
 }
