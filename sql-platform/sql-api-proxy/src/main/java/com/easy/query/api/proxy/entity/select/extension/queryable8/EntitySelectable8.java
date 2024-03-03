@@ -47,7 +47,7 @@ public interface EntitySelectable8<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
             draftFetcher.accept(columnAsSelector.getAsSelector());
         });
         TRProxy draftProxy = draftFetcher.getDraftProxy();
-        select.getSQLEntityExpressionBuilder().getExpressionContext().setDraftPropTypes(draftFetcher.getDraftPropTypes());
+        select.getSQLEntityExpressionBuilder().getExpressionContext().setResultPropTypes(draftFetcher.getDraftPropTypes());
         return new EasyEntityQueryable<>(draftProxy, select);
     }
 

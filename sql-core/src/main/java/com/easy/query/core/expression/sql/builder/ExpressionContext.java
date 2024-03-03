@@ -89,8 +89,8 @@ public interface ExpressionContext {
     boolean hasDeclareExpressions();
 
 
-    void setDraftPropTypes(Class<?>[] propTypes);
-    Class<?>[] getDraftPropTypes();
+    void setResultPropTypes(Class<?>[] propTypes);
+    Class<?>[] getResultPropTypes();
 
     void setRelationLogicDelete(Function<Class<?>,Boolean> relationLogicDelete);
     boolean hasRelationLogicDelete();

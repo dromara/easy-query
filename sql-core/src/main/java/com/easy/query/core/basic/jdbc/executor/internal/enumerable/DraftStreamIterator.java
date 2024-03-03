@@ -36,7 +36,7 @@ public class DraftStreamIterator extends AbstractMapToStreamIterator<DraftResult
     }
 
     private @Nullable Class<?> getDraftPropType(int index) {
-        Class<?>[] draftPropTypes = context.getExpressionContext().getDraftPropTypes();
+        Class<?>[] draftPropTypes = context.getExpressionContext().getResultPropTypes();
         if (draftPropTypes != null) {
             return draftPropTypes[index];
         }

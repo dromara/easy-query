@@ -10,11 +10,12 @@ import java.util.Map;
 
 /**
  * create time 2023/6/29 09:22
- * 文件说明
+ * 建议使用{@link MapTypeProxy}
  *
  * @author xuejiaming
  */
-public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String,Object>> {
+@Deprecated
+public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String,Object>>{
 
     private static final Class<Map<String,Object>> entityClass = EasyObjectUtil.typeCastNullable(Map.class);
 
@@ -23,21 +24,6 @@ public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String,Object>> 
     }
 
     public MapProxy() {
-    }
-
-    /**
-     * 创建匿名对象
-     * @param anonymousClass 生成的匿名对象
-     */
-    public MapProxy(Class<?> anonymousClass) {
-    }
-
-    /**
-     * 创建匿名对象
-     * @param anonymousClass 生成的匿名对象
-     * @param entityFileProxy 是否使用{@link com.easy.query.core.annotation.EntityFileProxy}默认不使用
-     */
-    public MapProxy(Class<?> anonymousClass,boolean entityFileProxy) {
     }
 
     @Override
@@ -58,7 +44,8 @@ public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String,Object>> 
         getEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, val.getValue(), val));
         return this;
     }
-//    public SQLAnyColumn<MapProxy,Object> getColumn(String key){
+
+    //    public SQLAnyColumn<MapProxy,Object> getColumn(String key){
 //        return getAnyColumn(key,Object.class);
 //    }
 //    public <TProperty> SQLAnyColumn<MapProxy,TProperty> getColumn(String key,Class<TProperty> propType){

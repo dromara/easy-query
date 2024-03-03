@@ -151,10 +151,10 @@ public class EntityMetadata {
 
     public void init(ServiceProvider serviceProvider) {
 
-        if (Map.class.isAssignableFrom(entityClass)) {
-            entityMetadataType = EntityMetadataTypeEnum.MAP;
-            return;
-        }
+//        if (Map.class.isAssignableFrom(entityClass)) {
+//            entityMetadataType = EntityMetadataTypeEnum.MAP;
+//            return;
+//        }
         if (EasyClassUtil.isBasicType(entityClass)) {
             entityMetadataType = EntityMetadataTypeEnum.BASIC_TYPE;
             return;

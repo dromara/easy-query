@@ -134,7 +134,14 @@ public class ColumnMetadata {
         this.entityMetadata = columnOption.getEntityMetadata();
         this.name = columnOption.getName();
         this.property = columnOption.getProperty();
-        this.propertyType = columnOption.getProperty().getPropertyType();
+        PropertyDescriptor propertyDescriptor = columnOption.getProperty();
+        if(propertyDescriptor!=null){
+            this.propertyType = propertyDescriptor.getPropertyType();
+            this.primitive = propertyType.isPrimitive();
+        }else{
+            this.propertyType = Object.class;
+            this.primitive = false;
+        }
         this.propertyName = columnOption.getFullPropertyName();
         this.primary = columnOption.isPrimary();
         this.generatedKey = columnOption.isGeneratedKey();
@@ -150,7 +157,6 @@ public class ColumnMetadata {
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
         this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
         this.generatedSQLColumnGenerator = columnOption.getGeneratedKeySQLColumnGenerator();
-        this.primitive = propertyType.isPrimitive();
 
         if (columnOption.getGetterCaller() == null) {
             throw new IllegalArgumentException("not found " + EasyClassUtil.getSimpleName(columnOption.getEntityMetadata().getEntityClass()) + "." + propertyName + " getter caller");

@@ -1,6 +1,5 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable2;
 
-import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -9,11 +8,9 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DraftResult;
 import com.easy.query.core.common.tuple.MergeTuple2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -44,7 +41,7 @@ public interface EntitySelectable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
             draftFetcher.accept(columnAsSelector.getAsSelector());
         });
         TRProxy draftProxy = draftFetcher.getDraftProxy();
-        select.getSQLEntityExpressionBuilder().getExpressionContext().setDraftPropTypes(draftFetcher.getDraftPropTypes());
+        select.getSQLEntityExpressionBuilder().getExpressionContext().setResultPropTypes(draftFetcher.getDraftPropTypes());
         return new EasyEntityQueryable<>(draftProxy, select);
     }
 

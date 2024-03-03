@@ -4,6 +4,8 @@ import com.easy.query.core.common.cache.Cache;
 import com.easy.query.core.common.cache.DefaultMemoryCache;
 import com.easy.query.core.inject.ServiceProvider;
 
+import java.util.Map;
+
 /**
  * @FileName: DefaultMetadataManager.java
  * @Description: 文件说明
@@ -34,6 +36,11 @@ public class DefaultEntityMetadataManager implements EntityMetadataManager {
 //        if(tableName==null){
 //            throw new JDQCException(String.format("当前对象不是数据库对象:[%s]",entityClass.getSimpleName()));
 //        }
+        if(Map.class.isAssignableFrom(entityClass)){
+            return entityMetadataCache.computeIfAbsent(entityClass,key->{
+                return new MapEntityMetadata(Map.class);
+            });
+        }
 
         EntityMetadata entityMetadata = new EntityMetadata(entityClass);
         entityMetadata.init(serviceProvider);

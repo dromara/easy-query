@@ -1342,7 +1342,16 @@ public class QueryTest12 extends BaseTest {
             String value2 = bigDecimalStringDraft2.getValue2();
             BigDecimal value1 = bigDecimalStringDraft2.getValue1();
         }
-
+//        List<SchoolStudent> list = easyEntityQuery.queryable(SchoolStudent.class)
+//                .where(s -> {
+//                    if (false) {
+//                        s.schoolStudentAddress().address().like("123");
+//                    }
+//                }).toList();
+//        List<SchoolStudent> list2 = easyEntityQuery.queryable(SchoolStudent.class)
+//                .where(s -> {
+//                    s.schoolStudentAddress().address().like("123");
+//                }).toList();
     }
 
 }

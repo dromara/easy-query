@@ -1,11 +1,13 @@
 package com.easy.query.core.proxy.sql;
 
 import com.easy.query.api.proxy.base.ListProxy;
+import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasySelectManyQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -473,9 +475,17 @@ public class Select {
 
 
     public static <TR, TRProxy> void setDraftPropTypes(ClientQueryable<TR> select, TRProxy trProxy) {
+        ExpressionContext expressionContext = select.getSQLEntityExpressionBuilder().getExpressionContext();
         if (trProxy instanceof DraftProxy) {
             DraftProxy draftProxy = (DraftProxy) trProxy;
-            select.getSQLEntityExpressionBuilder().getExpressionContext().setDraftPropTypes(draftProxy.getDraftPropTypes());
+            expressionContext.setResultPropTypes(draftProxy.getDraftPropTypes());
+        } else if(trProxy instanceof MapTypeProxy){
+            MapTypeProxy mapTypeProxy = (MapTypeProxy) trProxy;
+            expressionContext.setResultPropTypes(mapTypeProxy._getResultPropTypes().toArray(new Class[0]));
+        } else{
+            if(expressionContext.getResultPropTypes()!=null){
+                expressionContext.setResultPropTypes(null);
+            }
         }
     }
 

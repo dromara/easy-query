@@ -356,12 +356,12 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public void setDraftPropTypes(Class<?>[] propTypes) {
+    public void setResultPropTypes(Class<?>[] propTypes) {
         this.propTypes=propTypes;
     }
 
     @Override
-    public Class<?>[] getDraftPropTypes() {
+    public Class<?>[] getResultPropTypes() {
         return this.propTypes;
     }
 

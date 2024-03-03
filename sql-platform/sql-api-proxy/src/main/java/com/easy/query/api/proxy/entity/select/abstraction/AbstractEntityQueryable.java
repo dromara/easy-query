@@ -431,7 +431,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             draftFetcher.accept(columnAsSelector.getAsSelector());
         });
         TRProxy draftProxy = draftFetcher.getDraftProxy();
-        select.getSQLEntityExpressionBuilder().getExpressionContext().setDraftPropTypes(draftFetcher.getDraftPropTypes());
+        select.getSQLEntityExpressionBuilder().getExpressionContext().setResultPropTypes(draftFetcher.getDraftPropTypes());
         return new EasyEntityQueryable<>(draftProxy, select);
     }
 

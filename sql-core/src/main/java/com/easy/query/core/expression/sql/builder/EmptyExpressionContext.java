@@ -224,12 +224,12 @@ public class EmptyExpressionContext implements ExpressionContext{
     }
 
     @Override
-    public void setDraftPropTypes(Class<?>[] propTypes) {
+    public void setResultPropTypes(Class<?>[] propTypes) {
 
     }
 
     @Override
-    public Class<?>[] getDraftPropTypes() {
+    public Class<?>[] getResultPropTypes() {
         return null;
     }
 
