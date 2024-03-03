@@ -57,6 +57,7 @@ public class AptCreatorHelper {
                              .replace("@{entityClassProxy}", aptFileCompiler.getEntityClassProxyName())
                              .replace("@{comment}", property.getComment())
                              .replace("@{propertyType}", property.getPropertyType())
+                             .replace("@{propertyTypeClass}", property.getPropertyTypeClass())
                              .replace("@{property}", property.getPropertyName())
                              .replace("@{proxyProperty}", property.getProxyPropertyName())
                              .replace("@{SQLColumn}", property.getSqlColumn())

@@ -51,7 +51,7 @@ public class AptConstant {
     public static final String FIELD_TEMPLATE = "\n" +
             "    @{comment}\n" +
             "    public @{SQLColumn}<@{entityClassProxy},@{propertyType}> @{proxyProperty}(){\n" +
-            "        return @{sqlColumnMethod}(\"@{property}\",@{propertyType}.class);\n" +
+            "        return @{sqlColumnMethod}(\"@{property}\",@{propertyTypeClass});\n" +
             "    }";
 
     public static final String FIELD_NAVIGATE_TEMPLATE = "\n" +

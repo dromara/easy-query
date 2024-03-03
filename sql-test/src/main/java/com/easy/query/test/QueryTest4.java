@@ -151,6 +151,7 @@ public class QueryTest4 extends BaseTest {
         Assert.assertEquals(4565, (int) topicTypeJsonValue2.getAge());
 
         Assert.assertEquals(TopicTypeEnum.CLASSER.getCode(), topicTypeVO.getTopicType());
+
     }
 
     @Test

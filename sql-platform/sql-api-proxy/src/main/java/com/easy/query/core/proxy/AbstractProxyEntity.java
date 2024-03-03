@@ -20,6 +20,7 @@ import com.easy.query.core.proxy.impl.SQLSelectAsEntryImpl;
 import com.easy.query.core.proxy.impl.SQLSelectIgnoreImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
@@ -95,6 +96,9 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         if(condition){
             getEntitySQLContext()._executeNativeSql(sqlSegment,contextConsume);
         }
+    }
+    protected <T, N> N __cast(T original){
+        return EasyObjectUtil.typeCastNullable(original);
     }
 
 

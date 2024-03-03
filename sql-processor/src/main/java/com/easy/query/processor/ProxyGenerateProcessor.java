@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -434,6 +435,9 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean includeManyProperty = false;
                 ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
                 String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
+                if(Objects.equals("title3",propertyName)){
+                    System.out.println("111");
+                }
                 TypeMirror type = fieldElement.asType();
                 boolean isGeneric = type.getKind() == TypeKind.TYPEVAR;
                 boolean isDeclared = type.getKind() == TypeKind.DECLARED;
@@ -532,7 +536,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         }
         String typeString = defTypeString(isDeclared, includeProperty, type);
         if (typeString.contains("<") && typeString.contains(">")) {
-            return "java.lang.Object";
+            return type.toString().trim();
         }
 
         return TYPE_MAPPING.getOrDefault(typeString, typeString);

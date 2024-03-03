@@ -25,6 +25,7 @@ import com.easy.query.test.dto.proxy.TopicSubQueryBlogProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeArrayJson;
+import com.easy.query.test.entity.TopicTypeArrayJson2;
 import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
@@ -39,6 +40,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -869,10 +871,12 @@ public class QueryTest11 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
+            TopicTypeJsonValue topicTypeJsonValue1 = new TopicTypeJsonValue();
+            topicTypeJsonValue1.setName("123");
             List<Topic> list3 = easyEntityQuery.queryable(TopicTypeArrayJson.class)
                     .where(o -> {
                         o.title2().likeRaw("123");
-                        o.title2().eq("123");
+                        o.title2().eq(Collections.singletonList(topicTypeJsonValue1));
                         o.title().likeRaw("456");
                         TopicTypeJsonValue topicTypeJsonValue = new TopicTypeJsonValue();
                         topicTypeJsonValue.setAge(1);
@@ -888,8 +892,12 @@ public class QueryTest11 extends BaseTest {
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`title`,t.`id`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') FROM `t_topic_type_array` t WHERE t.`title2` LIKE ? AND t.`title2` = ? AND t.`title` LIKE ? AND t.`title` = ? AND t.`id` = ? ORDER BY t.`title2` ASC" , jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%123%(String),\"123\"(String),%456%(String),{\"age\":1,\"name\":\"1\"}(String),1(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("%123%(String),[{\"age\":null,\"name\":\"123\"}](String),%456%(String),{\"age\":1,\"name\":\"1\"}(String),1(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
+            easyEntityQuery.queryable(TopicTypeArrayJson2.class)
+                    .where(t -> {
+                        t.title3().eq(new Integer[1]);
+                    });
         }
 
         {

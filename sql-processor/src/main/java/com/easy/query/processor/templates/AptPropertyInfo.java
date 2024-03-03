@@ -64,6 +64,9 @@ public class AptPropertyInfo{
     public String getPropertyType() {
         return propertyColumn.getPropertyType();
     }
+    public String getPropertyTypeClass() {
+        return propertyColumn.getPropertyTypeClass(includeProperty);
+    }
 
     public String getPropertyShortType() {
         String propertyType = propertyColumn.getPropertyType();

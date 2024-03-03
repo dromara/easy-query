@@ -2,6 +2,7 @@ package com.easy.query.processor.templates;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * create time 2023/12/24 14:57
@@ -36,6 +37,14 @@ public class PropertyColumn {
 
     public String getPropertyType() {
         return propertyType;
+    }
+    public String getPropertyTypeClass(boolean includeProperty) {
+        if(!includeProperty){
+            if(Objects.equals("SQLAnyColumn",sqlColumnName)){
+                return "__cast(Object.class)";
+            }
+        }
+        return propertyType+".class";
     }
 
     public String getImport() {
