@@ -5,7 +5,6 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableBooleanChainExpression;
@@ -83,34 +82,18 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
     default TChain nullOrDefault(PropTypeColumn<TProperty> propTypeColumn) {
         return nullOrDefault(x->{
-            processPropTypeColumn(x,propTypeColumn);
+            PropTypeColumn.columnFuncSelector(x.getColumnConcatSelector(),propTypeColumn);
         });
     }
 
     default TChain nullOrDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
         return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.nullOrDefault(o -> {
-                    o.sqlFunc(sqlFunction);
-                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
-                });
-            } else {
-                return fx.nullOrDefault(o -> {
-                    o.column(this.getTable(), this.getValue());
-                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
-                });
-            }
+            return fx.nullOrDefault(o -> {
+                PropTypeColumn.columnFuncSelector(o,this);
+                selector.apply(new ProxyColumnFuncSelectorImpl(o));
+            });
         }, getPropertyType());
     }
-//    default CaseWhenThenEntityBuilder<TChain> caseWhen(SQLActionExpression sqlActionExpression){
-//        CaseWhenEntityBuilder<TChain> caseWhenEntityBuilder = new CaseWhenEntityBuilder<>(getEntitySQLContext(), sqlFunction -> {
-//            return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-//                return sqlFunction;
-//            }, getPropertyType());
-//        });
-//        return new CaseWhenThenEntityBuilder<>(caseWhenEntityBuilder,sqlActionExpression);
-//    }
 
 
     default ColumnFunctionComparableBooleanChainExpression<Boolean> equalsWith(TProperty value){
@@ -118,37 +101,15 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
     default ColumnFunctionComparableBooleanChainExpression<Boolean> equalsWith(PropTypeColumn<TProperty> propTypeColumn){
         return equalsWith(x->{
-            processPropTypeColumn(x,propTypeColumn);
+            PropTypeColumn.columnFuncSelector(x.getColumnConcatSelector(),propTypeColumn);
         });
-    }
-
-    static <T> void processPropTypeColumn(ProxyColumnFuncSelector proxyColumnFuncSelector,PropTypeColumn<T> propTypeColumn){
-        if(propTypeColumn instanceof SQLColumn){
-            SQLColumn<?, ?> sqlColumn = (SQLColumn<?, ?>) propTypeColumn;
-            proxyColumnFuncSelector.column(sqlColumn);
-        }else if(propTypeColumn instanceof DSLSQLFunctionAvailable){
-            DSLSQLFunctionAvailable typeColumn = (DSLSQLFunctionAvailable) propTypeColumn;
-            SQLFunc fx = propTypeColumn.getEntitySQLContext().getRuntimeContext().fx();
-            SQLFunction sqlFunction = typeColumn.func().apply(fx);
-            proxyColumnFuncSelector.sqlFunc(sqlFunction);
-        }else{
-            throw new UnsupportedOperationException();
-        }
     }
     default ColumnFunctionComparableBooleanChainExpression<Boolean> equalsWith(SQLExpression1<ProxyColumnFuncSelector> selector){
         return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.equalsWith(o -> {
-                    o.sqlFunc(sqlFunction);
-                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
-                });
-            } else {
-                return fx.equalsWith(o -> {
-                    o.column(this.getTable(), this.getValue());
-                    selector.apply(new ProxyColumnFuncSelectorImpl(o));
-                });
-            }
+            return fx.equalsWith(o -> {
+                PropTypeColumn.columnFuncSelector(o,this);
+                selector.apply(new ProxyColumnFuncSelectorImpl(o));
+            });
         }, Boolean.class);
     }
 

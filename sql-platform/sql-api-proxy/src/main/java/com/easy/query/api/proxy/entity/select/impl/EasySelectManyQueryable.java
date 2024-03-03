@@ -33,6 +33,7 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLGroupByExpression;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
@@ -516,6 +517,12 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     @Override
     public <TR> Query<TR> select(Class<TR> resultClass) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression1<ListProxy<TProxy, TEntity>, SQLSelectAsExpression> selectExpression) {
+
         throw new UnsupportedOperationException();
     }
 

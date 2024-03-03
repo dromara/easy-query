@@ -10,6 +10,7 @@ import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
 import com.easy.query.core.proxy.sql.Select;
@@ -23,7 +24,7 @@ import java.util.Collections;
  *
  * @author xuejiaming
  */
-public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>{
+public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 
     /**
      * 快速选择当前对象
@@ -36,7 +37,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @param selectExpression 快速选择表达式
      * @return
      */
-   EntityQueryable<T1Proxy, T1> fetchBy(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression);
+    EntityQueryable<T1Proxy, T1> fetchBy(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression);
 
 
     /**
@@ -122,6 +123,9 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @return
      */
     <TR> Query<TR> select(Class<TR> resultClass);
+
+    <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression);
+
     <TR> Query<TR> selectAutoInclude(Class<TR> resultClass);
 //    <TR> Query<TR> select(Class<TR> resultClass,SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression);
 

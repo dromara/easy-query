@@ -11,6 +11,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression5;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -65,6 +66,12 @@ public interface EntitySelectable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
         TRProxy resultProxy = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy());
         return Select.selectProxy(resultProxy,getClientQueryable5());
+    }
+    default <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression5<T1Proxy, T2Proxy,T3Proxy,T4Proxy,T5Proxy, SQLSelectAsExpression> selectExpression) {
+        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(),get3Proxy(),get4Proxy(),get5Proxy());
+        return getClientQueryable5().select(resultClass, columnAsSelector -> {
+            sqlSelectAsExpression.accept(columnAsSelector.getAsSelector());
+        });
     }
 
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, TRProxy> selectExpression) {

@@ -11,6 +11,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression9;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -68,12 +69,20 @@ public interface EntitySelectable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy, TRProxy> selectExpression) {
 
         TRProxy resultProxy = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy());
-        return Select.selectProxy(resultProxy,getClientQueryable9());
+        return Select.selectProxy(resultProxy, getClientQueryable9());
+    }
+
+    default <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy, SQLSelectAsExpression> selectExpression) {
+        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy());
+        return getClientQueryable9().select(resultClass, columnAsSelector -> {
+            sqlSelectAsExpression.accept(columnAsSelector.getAsSelector());
+        });
     }
 
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(SQLFuncExpression1<MergeTuple9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy>, TRProxy> selectExpression) {
         return select((a, b, c, d, e, f, g, h, i) -> selectExpression.apply(new MergeTuple9<>(a, b, c, d, e, f, g, h, i)));
     }
+
     /**
      * 快速读取单列用于返回基本类型或者subQuery等查询
      * <blockquote><pre>
@@ -95,11 +104,11 @@ public interface EntitySelectable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <TR>
      * @return
      */
-    default <TR> Query<TR> selectColumn(SQLFuncExpression9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy ,T9Proxy, PropTypeColumn<TR>> selectExpression) {
-        PropTypeColumn<TR> column = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(),get8Proxy(),get9Proxy());
+    default <TR> Query<TR> selectColumn(SQLFuncExpression9<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy, T9Proxy, PropTypeColumn<TR>> selectExpression) {
+        PropTypeColumn<TR> column = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy(), get7Proxy(), get8Proxy(), get9Proxy());
         Objects.requireNonNull(column, "select column null result class");
-        ClientQueryable<?> select = getClientQueryable9().select(column.getPropertyType(), (t1, t2, t3, t4, t5, t6, t7 ,t8 ,t9) -> {
-            PropTypeColumn.selectColumn(t1.getAsSelector(),column);
+        ClientQueryable<?> select = getClientQueryable9().select(column.getPropertyType(), (t1, t2, t3, t4, t5, t6, t7, t8, t9) -> {
+            PropTypeColumn.selectColumn(t1.getAsSelector(), column);
         });
         return EasyObjectUtil.typeCastNullable(select);
     }

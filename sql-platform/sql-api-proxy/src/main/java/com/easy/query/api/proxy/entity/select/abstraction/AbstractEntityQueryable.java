@@ -38,6 +38,7 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLGroupByExpression;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
@@ -289,15 +290,15 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
+    public <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression) {
+        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy());
+        return getClientQueryable().select(resultClass, columnAsSelector -> {
+            sqlSelectAsExpression.accept(columnAsSelector.getAsSelector());
+        });
+    }
+
+    @Override
     public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass) {
-//        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
-//        EntityMetadata resultEntityMetadata = entityMetadataManager.getEntityMetadata(resultClass);
-//        EntityTableExpressionBuilder table = getSQLEntityExpressionBuilder().getTable(0);
-//        TableAvailable entityTable = table.getEntityTable();
-//        EntityMetadata entityMetadata = entityTable.getEntityMetadata();
-//
-//        selectAutoInclude0(entityMetadataManager,clientQueryable,entityMetadata,resultEntityMetadata);
-//
         return clientQueryable.selectAutoInclude(resultClass);
     }
 

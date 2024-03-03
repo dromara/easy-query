@@ -74,12 +74,16 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum(boolean distinct) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.sum(sqlFunction).distinct(distinct);
-            } else {
-                return fx.sum(this.getValue()).distinct(distinct);
-            }
+//            return PropTypeColumn.columnFuncSelector();
+//            if (this instanceof DSLSQLFunctionAvailable) {
+//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+//                return fx.sum(sqlFunction).distinct(distinct);
+//            } else {
+//                return fx.sum(this.getValue()).distinct(distinct);
+//            }
+            return fx.sum(x->{
+                PropTypeColumn.columnFuncSelector(x,this);
+            }).distinct(distinct);
         }, getPropertyType());
     }
 
@@ -89,38 +93,44 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> sumBigDecimal(boolean distinct) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.sum(sqlFunction).distinct(distinct);
-            } else {
-                return fx.sum(this.getValue()).distinct(distinct);
-            }
+//            if (this instanceof DSLSQLFunctionAvailable) {
+//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+//                return fx.sum(sqlFunction).distinct(distinct);
+//            } else {
+//                return fx.sum(this.getValue()).distinct(distinct);
+//            }
+            return fx.sum(x->{
+                PropTypeColumn.columnFuncSelector(x,this);
+            }).distinct(distinct);
         }, BigDecimal.class);
     }
 
     /**
      * 计算绝对值
-     * 请使用{@link SQLMatchExpression}
+     * 请使用{@link SQLMathExpression}
      *
      * @return 计算绝对值
      */
     @Deprecated
     default ColumnFunctionComparableNumberChainExpression<TProperty> abs() {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Abs);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Abs);
-            }
+//            if (this instanceof DSLSQLFunctionAvailable) {
+//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+//                return fx.math(o -> {
+//                    o.sqlFunc(sqlFunction);
+//                }, MathMethodEnum.Abs);
+//            } else {
+//                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Abs);
+//            }
+            return fx.math(o -> {
+                PropTypeColumn.columnFuncSelector(o,this);
+            }, MathMethodEnum.Abs);
         }, getPropertyType());
     }
 
     /**
      *
-     * 请使用{@link SQLMatchExpression}
+     * 请使用{@link SQLMathExpression}
      * @return
      */
     @Deprecated
@@ -138,7 +148,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     /**
-     * 请使用{@link SQLMatchExpression}
+     * 请使用{@link SQLMathExpression}
      * @return
      */
     @Deprecated
@@ -156,7 +166,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     /**
-     * 请使用{@link SQLMatchExpression}
+     * 请使用{@link SQLMathExpression}
      * @return
      */
     @Deprecated
@@ -174,7 +184,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     /**
-     * 请使用{@link SQLMatchExpression}
+     * 请使用{@link SQLMathExpression}
      * @return
      */
     @Deprecated
@@ -192,7 +202,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     /**
-     * 请使用{@link SQLMatchExpression}
+     * 请使用{@link SQLMathExpression}
      * @return
      */
     @Deprecated
@@ -210,7 +220,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     /**
-     * 请使用{@link SQLMatchExpression}
+     * 请使用{@link SQLMathExpression}
      * @return
      */
     @Deprecated
@@ -228,7 +238,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     /**
-     * 请使用{@link SQLMatchExpression}
+     * 请使用{@link SQLMathExpression}
      * @return
      */
     @Deprecated

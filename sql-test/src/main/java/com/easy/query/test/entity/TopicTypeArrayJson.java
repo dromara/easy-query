@@ -32,7 +32,7 @@ public class TopicTypeArrayJson implements ProxyEntityAvailable<TopicTypeArrayJs
     private TopicTypeJsonValue title;
     @Column(conversion = JsonConverter.class, complexPropType = TopicTypeTitle2ComplexType.class)
     private List<TopicTypeJsonValue> title2;
-    private Integer[] title3;
+//    private Integer[] title3;
     private Integer topicType;
     private LocalDateTime createTime;
 
