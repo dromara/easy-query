@@ -10,30 +10,12 @@ import com.easy.query.core.proxy.PropTypeColumn;
  */
 public interface ConcatExpressionSelector {
     /**
-     * 请使用{@link #value(String)}
-     * @param val
-     * @return
-     */
-    @Deprecated
-    default ConcatExpressionSelector concatWith(String val){
-        return value(val);
-    }
-    /**
      * 可以是值
      * @param val 值
      * @return 返回当前选择器
      */
     ConcatExpressionSelector value(String val);
 
-    /**
-     * 请使用{@link #expression(PropTypeColumn)}
-     * @param propTypeColumn 列或者函数
-     * @return 返回当前选择器
-     */
-    @Deprecated
-   default ConcatExpressionSelector concatWith(PropTypeColumn<String> propTypeColumn){
-       return expression(propTypeColumn);
-   }
 
     /**
      * 可以是函数也可以是列

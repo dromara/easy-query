@@ -564,8 +564,8 @@ public class QueryTest11 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<TopicTypeTest1> list3 = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
             o.id().concat(c -> {
-                c.concatWith(o.title());
-                c.concatWith(o.title().subString(1, 2));
+                c.expression(o.title());
+                c.expression(o.title().subString(1, 2));
             }).eq("123");
 
         }).toList();

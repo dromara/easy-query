@@ -34,6 +34,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 链接表列
+     * 调整顺序可以使用{@link com.easy.query.core.proxy.core.Expression#concat(PropTypeColumn[])}
      * @param propTypeColumn
      * @return
      */
@@ -42,6 +43,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
     /**
      * 链接常量
+     * 调整顺序可以使用{@link com.easy.query.core.proxy.core.Expression#concat(PropTypeColumn[])}
      * @param value
      * @return
      */
@@ -50,6 +52,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
     /**
      * 链接多个片段可以是表列,函数,片段,常量
+     * 调整顺序可以使用{@link com.easy.query.core.proxy.core.Expression#concat(PropTypeColumn[])}
      * @param stringExpressions
      * @return
      */
@@ -58,18 +61,10 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             stringExpressions.apply(new ConcatExpressionSelectorImpl(getEntitySQLContext().getRuntimeContext().fx(),o));
         };
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.concat(o -> {
-                    o.sqlFunc(sqlFunction);
-                    selector.apply(o);
-                });
-            } else {
-                return fx.concat(o -> {
-                    o.column(this.getTable(), this.getValue());
-                    selector.apply(o);
-                });
-            }
+            return fx.concat(o -> {
+                PropTypeColumn.columnFuncSelector(o,this);
+                selector.apply(o);
+            });
         }, String.class);
     }
 

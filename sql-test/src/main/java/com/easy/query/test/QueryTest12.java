@@ -7,6 +7,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
@@ -1284,6 +1285,7 @@ public class QueryTest12 extends BaseTest {
 
         try {
 
+
             List<RelationUser> users = easyEntityQuery.queryable(RelationUser.class)
                     .where(r -> r.historyBooks().any(book -> {
                         book.name().like("小学");
@@ -1352,6 +1354,72 @@ public class QueryTest12 extends BaseTest {
 //                .where(s -> {
 //                    s.schoolStudentAddress().address().like("123");
 //                }).toList();
+    }
+    @Test
+    public void testDoc18(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .where(s -> {
+                    Expression expression = s.expression();
+                    expression.concat(x->{
+                        x.value(",").expression(s.idCard()).value(",");
+                    }).like(",2,");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE CONCAT(?,`id_card`,?) LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),,(String),%,2,%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDoc19(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .where(s -> {
+                    Expression expression = s.expression();
+                    SQLConstantExpression constant = expression.constant();
+                    expression.concat(
+                            constant.valueOf(","),
+                            s.idCard(),
+                            constant.valueOf(",")
+                    ).like(",2,");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE CONCAT(?,`id_card`,?) LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),,(String),%,2,%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDoc20(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .where(s -> {
+                    Expression expression = s.expression();
+                    SQLConstantExpression constant = expression.constant();
+                    expression.concat(
+                            constant.valueOf(1),
+                            s.idCard().toNumber(Integer.class),
+                            constant.valueOf(2)
+                    ).like(",2,");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE CONCAT(?,CAST(`id_card` AS SIGNED),?) LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),2(Integer),%,2,%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
 }

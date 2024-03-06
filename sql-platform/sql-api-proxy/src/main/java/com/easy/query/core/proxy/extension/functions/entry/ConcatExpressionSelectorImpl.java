@@ -32,7 +32,7 @@ public class ConcatExpressionSelectorImpl implements ConcatExpressionSelector{
         if(propTypeColumn instanceof DSLSQLFunctionAvailable){
             DSLSQLFunctionAvailable functionAvailable = (DSLSQLFunctionAvailable) propTypeColumn;
             SQLFunction sqlFunction = functionAvailable.func().apply(sqlFunc);
-            columnFuncSelector.sqlFunc(sqlFunction);
+            columnFuncSelector.sqlFunc(propTypeColumn.getTable(),sqlFunction);
         }else {
             columnFuncSelector.column(propTypeColumn.getTable(), propTypeColumn.getValue());
         }

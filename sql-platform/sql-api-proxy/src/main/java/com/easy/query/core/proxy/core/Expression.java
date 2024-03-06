@@ -10,16 +10,21 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
+import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
+import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
 import com.easy.query.core.proxy.impl.SQLNativeSegmentExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.time.LocalDateTime;
 import java.util.function.Supplier;
@@ -233,7 +238,40 @@ public class Expression {
         return new SQLConstantExpressionImpl(entitySQLContext);
     }
 
-    public CaseWhenThenEntityBuilder caseWhen(SQLActionExpression sqlActionExpression){
+    public CaseWhenThenEntityBuilder caseWhen(SQLActionExpression sqlActionExpression) {
         return new CaseWhenEntityBuilder(entitySQLContext).caseWhen(sqlActionExpression);
+    }
+
+    public ColumnFunctionComparableStringChainExpression<String> concat(SQLExpression1<ConcatExpressionSelector> stringExpressions) {
+        return new ColumnFunctionComparableStringChainExpressionImpl<>(entitySQLContext, null, null, fx -> {
+            return fx.concat(o -> {
+                stringExpressions.apply(new ConcatExpressionSelectorImpl(entitySQLContext.getRuntimeContext().fx(), o));
+            });
+        }, String.class);
+    }
+
+    /**
+     *
+     * <blockquote><pre>
+     * {@code
+     *  // CONCAT(?,CAST(`id_card` AS SIGNED),?) LIKE ?
+     *  Expression expression = s.expression();
+     *  SQLConstantExpression constant = expression.constant();
+     *  expression.concat(
+     *      constant.valueOf(1),
+     *      s.idCard().toNumber(Integer.class),
+     *      constant.valueOf(2)
+     *  ).like(",2,");
+     *    }
+     * </pre></blockquote>
+     * @param expressions 表达式
+     * @return
+     */
+    public ColumnFunctionComparableStringChainExpression<String> concat(PropTypeColumn<?>... expressions) {
+        return concat(x -> {
+            for (PropTypeColumn<?> expression : expressions) {
+                x.expression(EasyObjectUtil.typeCastNullable(expression));
+            }
+        });
     }
 }

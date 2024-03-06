@@ -13,6 +13,7 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQueryTableNotInSQLContextException;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUserSQLEncryption;
@@ -1712,6 +1713,30 @@ public class UpdateTest extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("UPDATE `a123123` SET `title` = CONCAT(SUBSTR(`title`,2,10),`id`) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123zzzxxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void updateSetFuncTest1_1() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+            easyEntityQuery.updatable(Topic.class)
+                    .setColumns(t -> {
+                        Expression expression = t.expression();
+                        t.title().set(
+                                expression.concat(o->o.expression(t.id()).expression(t.title().subString(1, 10)))
+                        );
+                    }).asTable("a123123")
+                    .whereById("123zzzxxx")
+                    .executeRows();
+        } catch (Exception ex) {
+            Assert.assertNotNull(ex);
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `a123123` SET `title` = CONCAT(`id`,SUBSTR(`title`,2,10)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123zzzxxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
