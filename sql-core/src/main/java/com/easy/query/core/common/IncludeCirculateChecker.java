@@ -11,14 +11,12 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class IncludeCirculateChecker {
-    private final Class<?> rootClass;
     private Set<IncludePath> includePaths = new HashSet<>();
-    public IncludeCirculateChecker(Class<?> rootClass){
+    public IncludeCirculateChecker(){
 
-        this.rootClass = rootClass;
     }
 
     public boolean includePathRepeat(IncludePath includePath) {
-        return Objects.equals(rootClass,includePath.getTo()) || !includePaths.add(includePath);
+        return !includePaths.add(includePath);
     }
 }
