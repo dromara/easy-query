@@ -709,13 +709,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if(EasyCollectionUtil.isEmpty(resultNavigateMetadatas)){
             return;
         }
+        //循环引用检查
+        IncludeCirculateChecker circulateChecker = includeCirculateChecker == null ? new IncludeCirculateChecker(resultEntityMetadata.getEntityClass()) : includeCirculateChecker;
+
         for (NavigateMetadata resultNavigateMetadata : resultNavigateMetadatas) {
             NavigateMetadata entityNavigateMetadata = entityMetadata.getNavigateOrNull(resultNavigateMetadata.getPropertyName());
             if (entityNavigateMetadata == null) {
                 continue;
             }
-            IncludeCirculateChecker circulateChecker = includeCirculateChecker == null ? new IncludeCirculateChecker() : includeCirculateChecker;
-            if(circulateChecker.includePathRepeat(new IncludePath(entityMetadata.getEntityClass(),resultEntityMetadata.getEntityClass(),resultNavigateMetadata.getPropertyName()))){
+            if(circulateChecker.includePathRepeat(new IncludePath(entityNavigateMetadata.getNavigatePropertyType(),resultNavigateMetadata.getNavigatePropertyType(),resultNavigateMetadata.getPropertyName()))){
                 continue;
             }
 

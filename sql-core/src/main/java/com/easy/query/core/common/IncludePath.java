@@ -32,4 +32,8 @@ public class IncludePath {
     public int hashCode() {
         return Objects.hash(from, to, property);
     }
+
+    public Class<?> getTo() {
+        return to;
+    }
 }

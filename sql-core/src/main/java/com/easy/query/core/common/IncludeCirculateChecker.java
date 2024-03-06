@@ -1,6 +1,7 @@
 package com.easy.query.core.common;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -10,9 +11,14 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class IncludeCirculateChecker {
+    private final Class<?> rootClass;
     private Set<IncludePath> includePaths = new HashSet<>();
+    public IncludeCirculateChecker(Class<?> rootClass){
+
+        this.rootClass = rootClass;
+    }
 
     public boolean includePathRepeat(IncludePath includePath) {
-        return !includePaths.add(includePath);
+        return Objects.equals(rootClass,includePath.getTo()) || !includePaths.add(includePath);
     }
 }
