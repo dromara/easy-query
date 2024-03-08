@@ -1587,11 +1587,11 @@ public class UpdateTest extends BaseTest {
 
     @Test
     public void updateTrackParameterTest1() {
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
         String newTitle = "test123" + new Random().nextInt(100);
         String oldTitle = null;
         TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
         try {
 
             trackManager.begin();

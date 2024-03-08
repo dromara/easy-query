@@ -172,3 +172,37 @@ create table t_test_inc
     title varchar(50) not null comment '标题',
     create_time datetime not null comment '创建时间'
 )comment '主题表id自增';
+
+
+
+
+create table t_test_user
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    name varchar(32)  null comment '名称',
+    password varchar(32)  null comment '密码'
+)comment '测试用户';
+
+create table t_test_role
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    name varchar(32)  null comment '名称',
+    remark varchar(32)  null comment '备注'
+)comment '测试角色';
+
+
+create table t_test_route
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    name varchar(32)  null comment '名称',
+    request_path varchar(32)  null comment '请求路径'
+)comment '测试路由';
+
+
+create table t_test_join
+(
+    first_id varchar(32) not null comment 'id' ,
+    second_id varchar(32) not null comment 'id',
+    type int not null comment '关联表多对多',
+    primary key(first_id,second_id,type)
+)comment 'join通用多对多表';

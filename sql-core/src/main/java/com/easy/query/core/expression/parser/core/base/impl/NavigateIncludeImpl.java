@@ -43,7 +43,10 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         //添加多对多中间表
         if(RelationTypeEnum.ManyToMany==relationType){
             ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
-            ClientQueryable<?> mappingQueryable = mappingQuery.where(t -> t.in(navigateMetadata.getSelfMappingProperty(), includeNavigateParams.getRelationIds()))
+            ClientQueryable<?> mappingQueryable = mappingQuery.where(t -> {
+                        t.in(navigateMetadata.getSelfMappingProperty(), includeNavigateParams.getRelationIds());
+                        navigateMetadata.predicateFilterApply(t);
+                    })
                     .select(o -> o.column(navigateMetadata.getSelfMappingProperty()).column(navigateMetadata.getTargetMappingProperty()));
             includeNavigateParams.setMappingQueryable(mappingQueryable);
         }

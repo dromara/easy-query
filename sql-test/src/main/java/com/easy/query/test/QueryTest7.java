@@ -577,6 +577,38 @@ public class QueryTest7 extends BaseTest {
 
     @Test
     public void testCTE5() {
+//        List<Topic> list = easyQuery.queryable(Topic.class)
+//                .where(t -> t.eq(Topic::getId, "123"))
+//                .select(t -> t.columnAll().columnIgnore(Topic::getTitle))
+//                .toList();
+//
+//        List<BlogEntityVO1> list4 = easyQuery.queryable(Topic.class)
+//                .where(t -> t.eq(Topic::getId, "123"))
+//                .select(BlogEntityVO1.class)
+//                .toList();
+//
+//        List<Topic> list1 = easyQuery.queryable(Topic.class)
+//                .where(t -> t.eq(Topic::getId, "123"))
+//                .select(t -> t.columns(Arrays.asList(Topic::getId,Topic::getTitle,Topic::getCreateTime)))
+//                .toList();
+//
+//        List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
+//                .where(t -> t.id().eq("123"))
+//                .fetchBy(t -> t.FETCHER.id().title().createTime()).toList();
+//
+//
+//
+//
+//        List<BlogEntityVO1> list3 = easyEntityQuery.queryable(Topic.class)
+//                .leftJoin(SysUser.class, (t, s2) -> t.id().eq(s2.id()))
+//                .where((t1, s2) -> {
+//                    t1.title().like("123");
+//                })
+//                .select(BlogEntityVO1.class, (t1, s2) -> Select.of(
+//                        t1.FETCHER.id().title().createTime(),
+//                        s2.FETCHER.phone().username()
+//                )).toList();
+
         String sql = easyQuery
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull(Topic::getId))
@@ -585,6 +617,18 @@ public class QueryTest7 extends BaseTest {
                 })
                 .toSQL();
         Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL)  UNION ALL  (SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`stars`) )  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t WHERE t.`cte_deep` <= ?", sql);
+    }
+    @Test
+    public void testCTE6() {
+        String sql = easyEntityQuery
+                .queryable(Topic.class)
+                .where(o -> o.id().isNotNull())
+                .asTreeCTE(o->o.id(), o->o.title(), o -> {
+                    o.setLimitDeep(0);
+                })
+                .toSQL();
+        System.out.println(sql);
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL)  UNION ALL  (SELECT t2.`cte_deep` + 1 AS `cte_deep`,t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t2.`id` = t3.`title`) )  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t WHERE t.`cte_deep` <= ?", sql);
     }
 
     @Test

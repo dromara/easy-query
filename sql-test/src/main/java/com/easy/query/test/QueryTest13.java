@@ -33,7 +33,6 @@ public class QueryTest13 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         MapKey<String> blogId = MapKeys.stringKey("blogId");
         MapKey<Integer> blogCount = MapKeys.integerKey("blogCount");
-
 //        easyEntityQuery.getRuntimeContext().getEntityMetadataManager().getEntityMetadata()
         List<Topic> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {

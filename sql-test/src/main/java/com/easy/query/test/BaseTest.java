@@ -38,6 +38,7 @@ import com.easy.query.test.entity.TopicShardingDataSource;
 import com.easy.query.test.entity.TopicShardingDataSourceTime;
 import com.easy.query.test.entity.TopicShardingTime;
 import com.easy.query.test.entity.relation.BookNavigateExtraFilterStrategy;
+import com.easy.query.test.entity.testrelation.JoinType;
 import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
@@ -170,6 +171,7 @@ public abstract class BaseTest {
         configuration.applyInterceptor(new Topic1Interceptor());
         configuration.applyInterceptor(new MyTenantInterceptor());
         configuration.applyNavigateExtraFilterStrategy(new BookNavigateExtraFilterStrategy());
+        configuration.applyNavigateExtraFilterStrategy(new JoinType());
 //        configuration.applyShardingInitializer(new FixShardingInitializer());
         configuration.applyShardingInitializer(new DataSourceAndTableShardingInitializer());
         configuration.applyShardingInitializer(new TopicShardingShardingInitializer());

@@ -33,6 +33,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -1104,7 +1105,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 return clientQueryable.cloneQueryable().where(o -> {
                     o.and(()->{
                         o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationIds);
-                        navigateMetadata.predicateFilterApply(o);
+                        if(navigateMetadata.getRelationType()!= RelationTypeEnum.ManyToMany){
+                            navigateMetadata.predicateFilterApply(o);
+                        }
+//                        navigateMetadata.predicateFilterApply(o);
                     });
                 });
             };
@@ -1119,7 +1123,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         firstQueryable.where(o -> {
            o.and(()->{
                o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationId);
-               navigateMetadata.predicateFilterApply(o);
+               if(navigateMetadata.getRelationType()!= RelationTypeEnum.ManyToMany){
+                   navigateMetadata.predicateFilterApply(o);
+               }
+//               navigateMetadata.predicateFilterApply(o);
            });
         });
         return firstQueryable;
