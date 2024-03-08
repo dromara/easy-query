@@ -42,6 +42,25 @@ public class SQLColumnIncludeColumn2Impl<TPropertyProxy extends ProxyEntity<TPro
 
     @Override
     public void accept(AsSelector s) {
+
+//        if(navigateSelectExpression!=null){
+//
+//            for (IncludeNavigateExpression includeNavigateExpression : expressionContext.getIncludes()) {
+//                IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
+//                if (includeNavigateParams.getTable() == table) {
+//                    NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
+//                    String navigateAutoMappingPropertyName = navigateMetadata.getPropertyName();
+//                    if(targetEntityMetadata.getNavigateOrNull(navigateAutoMappingPropertyName)!=null){
+//                        columnInclude(table,navigateAutoMappingPropertyName,navigateAutoMappingPropertyName,s->{
+//                            TableAvailable entityTable = s.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
+//                            s.columnAll(entityTable);
+//                        });
+//                    }
+//                }
+//            }
+//            s.columnInclude(table)
+//        }
+
         s.columnInclude(table, selfProperty, aliasProperty, is -> {
             TableAvailable entityTable = is.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
 

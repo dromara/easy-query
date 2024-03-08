@@ -1,12 +1,10 @@
 package com.easy.query.core.proxy.columns.impl;
 
-import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-
-import java.util.function.Supplier;
 
 /**
  * create time 2024/2/11 22:23
@@ -16,10 +14,10 @@ import java.util.function.Supplier;
  */
 public class EasySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> implements SQLQueryable<T1Proxy, T1> {
     private final EntitySQLContext entitySQLContext;
-    private final EasyEntityQueryable<T1Proxy, T1> easyEntityQueryable;
+    private final EntityQueryable<T1Proxy, T1> easyEntityQueryable;
     private final TableAvailable originalTable;
 
-    public EasySQLQueryable(EntitySQLContext entitySQLContext, EasyEntityQueryable<T1Proxy, T1> easyEntityQueryable, TableAvailable originalTable) {
+    public EasySQLQueryable(EntitySQLContext entitySQLContext, EntityQueryable<T1Proxy, T1> easyEntityQueryable, TableAvailable originalTable) {
 
         this.entitySQLContext = entitySQLContext;
         this.easyEntityQueryable = easyEntityQueryable;
@@ -32,7 +30,7 @@ public class EasySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> impl
     }
 
     @Override
-    public EasyEntityQueryable<T1Proxy, T1> getQueryable() {
+    public EntityQueryable<T1Proxy, T1> getQueryable() {
         return easyEntityQueryable;
     }
 

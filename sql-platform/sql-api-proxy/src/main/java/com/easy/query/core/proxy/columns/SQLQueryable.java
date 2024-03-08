@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.columns;
 
 import com.easy.query.api.proxy.base.ListProxy;
-import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -29,7 +29,8 @@ import java.math.BigDecimal;
  * @author xuejiaming
  */
 public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable, LogicDeletable<SQLQueryable<T1Proxy, T1>> {//,ProxyEntity<T1Proxy,T1>
-    EasyEntityQueryable<T1Proxy, T1> getQueryable();
+
+    EntityQueryable<T1Proxy, T1> getQueryable();
 
     TableAvailable getOriginalTable();
 
@@ -132,7 +133,12 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(columnProxy.getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy.getQueryable().get1Proxy(), navigateSelectExpression));
     }
 
-    default ListProxy<T1Proxy,T1> toList(){
+    default ListProxy<T1Proxy, T1> toList() {
         return new ListProxy<>(this);
     }
+
+//    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLQueryable<TPropertyProxy, TProperty> select(SQLFuncExpression1<T1Proxy, TPropertyProxy> selectColumnExpression) {
+//        EntityQueryable<TPropertyProxy, TProperty> select = this.getQueryable().select(selectColumnExpression);
+//        return new EasySQLQueryable<>(this.getEntitySQLContext(), select, this.getOriginalTable());
+//    }
 }

@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.columns.impl;
 
-import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -37,7 +37,7 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
     }
 
     @Override
-    public EasyEntityQueryable<T1Proxy, T1> getQueryable() {
+    public EntityQueryable<T1Proxy, T1> getQueryable() {
         throw new UnsupportedOperationException();
     }
 
