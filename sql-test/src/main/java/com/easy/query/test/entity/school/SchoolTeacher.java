@@ -32,6 +32,7 @@ public class SchoolTeacher implements ProxyEntityAvailable<SchoolTeacher , Schoo
             , selfMappingProperty = "teacherId"
             , targetProperty = "id"
             , targetMappingProperty = "classId")
+
     private List<SchoolClass> schoolClasses;
 
     @Override

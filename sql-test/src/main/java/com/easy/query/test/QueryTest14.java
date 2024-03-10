@@ -308,6 +308,7 @@ public class QueryTest14 extends BaseTest{
                     .select(t -> {
                         TestUserDTO1Proxy result = new TestUserDTO1Proxy();
                         result.selectAll(t);
+
                         result.roles().set(t.roles(), role -> {
                             TestRoleDTO1Proxy r = new TestRoleDTO1Proxy();
                             r.selectAll(role);
@@ -317,6 +318,8 @@ public class QueryTest14 extends BaseTest{
                         return result;
                     })
                     .toList();
+
+
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
             Assert.assertEquals(5,listenerContext.getJdbcExecuteAfterArgs().size());
             {
