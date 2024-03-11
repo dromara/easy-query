@@ -9,6 +9,8 @@ import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLAssertAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLFunctionAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLLikeAggregatePredicate;
+import com.easy.query.core.proxy.predicate.aggregate.DSLLikeFunctionAggregatePredicate;
+import com.easy.query.core.proxy.predicate.aggregate.DSLLikeOtherAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLOtherAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLRangeAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSubQueryAggregatePredicate;
@@ -26,7 +28,9 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
         DSLValueAggregatePredicate<T>,
         DSLLikeAggregatePredicate<T>,
         DSLFunctionAggregatePredicate<T>,
+        DSLLikeFunctionAggregatePredicate<T>,
         DSLOtherAggregatePredicate<T>,
+        DSLLikeOtherAggregatePredicate<T>,
         DSLSubQueryAggregatePredicate<T>,
         DSLValuesAggregatePredicate<T>,
         DSLRangeAggregatePredicate<T>,

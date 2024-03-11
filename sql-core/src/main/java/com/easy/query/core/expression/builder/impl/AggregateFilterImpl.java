@@ -2,6 +2,7 @@ package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.builder.AggregateFilter;
@@ -14,12 +15,15 @@ import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnTrueOrFalsePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
+import com.easy.query.core.expression.segment.condition.predicate.SQLNativeLazyPredicateImpl;
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredicateImpl;
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativesPredicateImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.SQLLazyFunction;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
@@ -35,12 +39,14 @@ public class AggregateFilterImpl implements AggregateFilter {
     private final QueryRuntimeContext runtimeContext;
     protected final PredicateSegment rootPredicateSegment;
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
+    private final ExpressionContext expressionContext;
     protected PredicateSegment nextPredicateSegment;
 
     public AggregateFilterImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, PredicateSegment predicateSegment) {
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
 
         this.runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
+        this.expressionContext = entityQueryExpressionBuilder.getExpressionContext();
         this.rootPredicateSegment = predicateSegment;
         this.nextPredicateSegment = new AndPredicateSegment();
     }
@@ -145,6 +151,86 @@ public class AggregateFilterImpl implements AggregateFilter {
         nextAnd();
         return this;
     }
+
+
+    @Override
+    public AggregateFilter like(TableAvailable leftTable, String property1, Object val, boolean like, SQLLikeEnum sqlLike) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        SQLFunction likeSQLFunction = runtimeContext.fx().like(x -> {
+            x.column(leftTable, property1)
+                    .value(val);
+        },like,sqlLike);
+        return getLikePredicateFilter(leftTable, sqlNativeExpressionContext, likeSQLFunction);
+    }
+
+    @Override
+    public AggregateFilter like(TableAvailable leftTable, SQLFunction sqlFunction, Object val, boolean like, SQLLikeEnum sqlLike) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        SQLFunction likeSQLFunction = runtimeContext.fx().like(x -> {
+            x.sqlFunc(leftTable, sqlFunction)
+                    .value(val);
+        },like,sqlLike);
+        return getLikePredicateFilter(leftTable, sqlNativeExpressionContext, likeSQLFunction);
+    }
+
+    @Override
+    public AggregateFilter like(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2, boolean like, SQLLikeEnum sqlLike) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        SQLFunction likeSQLFunction = runtimeContext.fx().like(x -> {
+            x.column(leftTable, property1)
+                    .column(rightTable, property2);
+        },like,sqlLike);
+        return getLikePredicateFilter(leftTable, sqlNativeExpressionContext, likeSQLFunction);
+    }
+
+    @Override
+    public AggregateFilter like(TableAvailable leftTable, String property1, TableAvailable rightTable, SQLFunction sqlFunction, boolean like, SQLLikeEnum sqlLike) {
+
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        SQLFunction likeSQLFunction = runtimeContext.fx().like(x -> {
+            x.column(leftTable, property1)
+                    .sqlFunc(rightTable, sqlFunction);
+        },like,sqlLike);
+        return getLikePredicateFilter(leftTable, sqlNativeExpressionContext, likeSQLFunction);
+    }
+
+    @Override
+    public AggregateFilter like(TableAvailable leftTable, SQLFunction sqlFunction, TableAvailable rightTable, String property2, boolean like, SQLLikeEnum sqlLike) {
+
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        SQLFunction likeSQLFunction = runtimeContext.fx().like(x -> {
+            x.sqlFunc(leftTable, sqlFunction)
+                    .column(rightTable, property2);
+        },like,sqlLike);
+        return getLikePredicateFilter(leftTable, sqlNativeExpressionContext, likeSQLFunction);
+    }
+
+    @Override
+    public AggregateFilter like(TableAvailable leftTable, SQLFunction sqlFunction1, TableAvailable rightTable, SQLFunction sqlFunction2, boolean like, SQLLikeEnum sqlLike) {
+
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        SQLFunction likeSQLFunction = runtimeContext.fx().like(x -> {
+            x.sqlFunc(leftTable, sqlFunction1)
+                    .sqlFunc(rightTable, sqlFunction2);
+        },like,sqlLike);
+        return getLikePredicateFilter(leftTable, sqlNativeExpressionContext, likeSQLFunction);
+    }
+
+    private AggregateFilter getLikePredicateFilter(TableAvailable leftTable, SQLNativeExpressionContextImpl sqlNativeExpressionContext, SQLFunction likeSQLFunction) {
+        likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(leftTable, sqlNativeExpressionContext));
+        if (likeSQLFunction instanceof SQLLazyFunction) {
+            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) likeSQLFunction;
+            nextPredicateSegment.setPredicate(new SQLNativeLazyPredicateImpl(runtimeContext, expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment, sqlNativeExpressionContext));
+        } else {
+            String sqlSegment = likeSQLFunction.sqlSegment(leftTable);
+            nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment, sqlNativeExpressionContext));
+        }
+        nextAnd();
+        return this;
+    }
+
+
+
 
     @Override
     public AggregateFilter sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {

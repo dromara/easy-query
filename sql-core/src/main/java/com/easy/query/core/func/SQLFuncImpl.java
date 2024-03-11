@@ -1,5 +1,6 @@
 package com.easy.query.core.func;
 
+import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -31,6 +32,7 @@ import com.easy.query.core.func.def.impl.EqualsWithSQLFunction;
 import com.easy.query.core.func.def.impl.JoinSQLFunction;
 import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
+import com.easy.query.core.func.def.impl.LikeSQLFunction;
 import com.easy.query.core.func.def.impl.MathSQLFunction;
 import com.easy.query.core.func.def.impl.MaxSQLFunction;
 import com.easy.query.core.func.def.impl.MinSQLFunction;
@@ -289,5 +291,14 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction numberCalc(SQLExpression1<ColumnFuncSelector> sqlExpression, NumberCalcEnum numberCalcEnum) {
         return new NumberCalcSQLFunction(getColumnExpressions(sqlExpression),numberCalcEnum);
+    }
+
+    @Override
+    public SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean like, SQLLikeEnum sqlLike) {
+        LikeSQLFunction likeSQLFunction = new LikeSQLFunction(getColumnExpressions(sqlExpression), sqlLike);
+        if(!like){
+            return not(x->x.sqlFunc(likeSQLFunction));
+        }
+        return likeSQLFunction;
     }
 }

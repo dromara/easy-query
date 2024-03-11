@@ -203,6 +203,10 @@ public interface Filter extends SQLNative<Filter> {
      */
     Filter compareSelf(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2, SQLPredicateCompare sqlPredicateCompare);
 
+    Filter like(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2,boolean like, SQLLikeEnum sqlLike);
+    Filter like(TableAvailable leftTable, String property1, TableAvailable rightTable, SQLFunction sqlFunction,boolean like, SQLLikeEnum sqlLike);
+    Filter like(TableAvailable leftTable, SQLFunction sqlFunction, TableAvailable rightTable, String property2,boolean like, SQLLikeEnum sqlLike);
+    Filter like(TableAvailable leftTable, SQLFunction sqlFunction1, TableAvailable rightTable, SQLFunction sqlFunction2,boolean like, SQLLikeEnum sqlLike);
 
     /**
      * 大于 column > val

@@ -2,6 +2,8 @@ package com.easy.query.test;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.testrelation.TestJoinEntity;
 import com.easy.query.test.entity.testrelation.TestRoleEntity;
 import com.easy.query.test.entity.testrelation.TestRouteEntity;
@@ -411,5 +413,102 @@ public class QueryTest14 extends BaseTest{
 //                    .toList();
 //        }
 
+    }
+
+    @Test
+    public void  testLikeColumn(){
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                    .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
+                    .where((b1, t2) -> {
+                        b1.id().like(t2.id());
+
+                    }).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND t.`id` LIKE CONCAT('%',t1.`id`,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                    .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
+                    .where((b1, t2) -> {
+                        b1.id().notLike(t2.id());
+
+                    }).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND (NOT t.`id` LIKE CONCAT('%',t1.`id`,'%'))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                    .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
+                    .where((b1, t2) -> {
+                        b1.id().notLike(t2.id());
+
+                    }).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND t.`id` LIKE CONCAT('%',SUBSTR(t1.`id`,2,2),'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+
+            List<BlogEntity> list2 = easyEntityQuery.queryable(BlogEntity.class)
+                    .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
+                    .where((b1, t2) -> {
+                        b1.id().like(t2.id().subString(1, 2));
+
+                    }).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND IFNULL(t.`id`,?) LIKE CONCAT('%',SUBSTR(t1.`id`,2,2),'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<BlogEntity> list23= easyEntityQuery.queryable(BlogEntity.class)
+                    .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
+                    .where((b1, t2) -> {
+                        b1.id().nullOrDefault("123").like(t2.id().subString(1, 2));
+
+                    }).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ? AND IFNULL(t.`id`,?) LIKE CONCAT('%',SUBSTR(t1.`id`,2,2),'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
     }
 }

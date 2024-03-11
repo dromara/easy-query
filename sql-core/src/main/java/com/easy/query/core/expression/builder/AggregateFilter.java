@@ -2,6 +2,7 @@ package com.easy.query.core.expression.builder;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnFunction;
@@ -28,6 +29,13 @@ public interface AggregateFilter extends SQLNative<AggregateFilter> {
     AggregateFilter func(TableAvailable table, SQLFunction sqlFunction,SQLPredicateCompare sqlPredicateAssert);
     <TProperty> AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, Query<TProperty> subQuery);
     <TProperty> AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, Collection<TProperty> collections);
+
+    AggregateFilter like(TableAvailable leftTable, String property1, Object val,boolean like, SQLLikeEnum sqlLike);
+    AggregateFilter like(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2,boolean like, SQLLikeEnum sqlLike);
+    AggregateFilter like(TableAvailable leftTable, String property1, TableAvailable rightTable, SQLFunction sqlFunction,boolean like, SQLLikeEnum sqlLike);
+    AggregateFilter like(TableAvailable leftTable, SQLFunction sqlFunction, Object val,boolean like, SQLLikeEnum sqlLike);
+    AggregateFilter like(TableAvailable leftTable, SQLFunction sqlFunction, TableAvailable rightTable, String property2,boolean like, SQLLikeEnum sqlLike);
+    AggregateFilter like(TableAvailable leftTable, SQLFunction sqlFunction1, TableAvailable rightTable, SQLFunction sqlFunction2,boolean like, SQLLikeEnum sqlLike);
     default <TProperty> AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, TProperty[] arrays){
         return func(table,sqlFunction,compare, Arrays.asList(arrays));
     }

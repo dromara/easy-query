@@ -1,6 +1,7 @@
 package com.easy.query.core.func;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
@@ -176,4 +177,5 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
     default SQLFunction nativeSql(String sqlSegemnt, SQLExpression1<SQLNativeChainExpressionContext> consume) {
         return new NativeSegmentSQLFunction(sqlSegemnt, consume);
     }
+     SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean like, SQLLikeEnum sqlLike);
 }

@@ -1,5 +1,6 @@
 package com.easy.query.pgsql.func;
 
+import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFuncImpl;
@@ -107,5 +108,14 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction math(SQLExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
         return new PgSQLMathSQLFunction(getColumnExpressions(sqlExpression),mathMethodEnum);
+    }
+
+    @Override
+    public SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike) {
+        PgSQLLikeSQLFunction likeSQLFunction = new PgSQLLikeSQLFunction(getColumnExpressions(sqlExpression), sqlLike);
+        if(!like){
+            return not(x->x.sqlFunc(likeSQLFunction));
+        }
+        return likeSQLFunction;
     }
 }

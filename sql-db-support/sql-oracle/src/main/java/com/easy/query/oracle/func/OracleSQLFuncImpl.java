@@ -1,5 +1,6 @@
 package com.easy.query.oracle.func;
 
+import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFuncImpl;
@@ -126,5 +127,14 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc, OrderByModeEnum orderByModeEnum) {
         return new OracleOrderByNullsModeSQLFunction(getColumnExpressions(sqlExpression),asc,orderByModeEnum);
+    }
+
+    @Override
+    public SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike) {
+        OracleLikeSQLFunction likeSQLFunction = new OracleLikeSQLFunction(getColumnExpressions(sqlExpression), sqlLike);
+        if(!like){
+            return not(x->x.sqlFunc(likeSQLFunction));
+        }
+        return likeSQLFunction;
     }
 }

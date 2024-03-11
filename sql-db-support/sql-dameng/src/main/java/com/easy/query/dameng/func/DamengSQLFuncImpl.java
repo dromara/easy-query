@@ -1,5 +1,6 @@
 package com.easy.query.dameng.func;
 
+import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFuncImpl;
@@ -117,5 +118,14 @@ public class DamengSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction math(SQLExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
         return new DamengMathSQLFunction(getColumnExpressions(sqlExpression),mathMethodEnum);
+    }
+
+    @Override
+    public SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike) {
+        DamengLikeSQLFunction likeSQLFunction = new DamengLikeSQLFunction(getColumnExpressions(sqlExpression), sqlLike);
+        if(!like){
+            return not(x->x.sqlFunc(likeSQLFunction));
+        }
+        return likeSQLFunction;
     }
 }

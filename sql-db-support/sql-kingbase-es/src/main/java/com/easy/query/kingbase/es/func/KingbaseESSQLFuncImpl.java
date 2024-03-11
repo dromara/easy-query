@@ -1,5 +1,6 @@
 package com.easy.query.kingbase.es.func;
 
+import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFuncImpl;
@@ -105,5 +106,14 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction math(SQLExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
         return new KingbaseESMathSQLFunction(getColumnExpressions(sqlExpression),mathMethodEnum);
+    }
+
+    @Override
+    public SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike) {
+        KingbaseESLikeSQLFunction likeSQLFunction = new KingbaseESLikeSQLFunction(getColumnExpressions(sqlExpression), sqlLike);
+        if(!like){
+            return not(x->x.sqlFunc(likeSQLFunction));
+        }
+        return likeSQLFunction;
     }
 }

@@ -3,7 +3,9 @@ package com.easy.query.core.proxy.extension;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.predicate.DSLAssertPredicate;
 import com.easy.query.core.proxy.predicate.DSLFunctionPredicate;
+import com.easy.query.core.proxy.predicate.DSLLikeFunctionPredicate;
 import com.easy.query.core.proxy.predicate.DSLLikePredicate;
+import com.easy.query.core.proxy.predicate.DSLLikeOtherPredicate;
 import com.easy.query.core.proxy.predicate.DSLOtherPredicate;
 import com.easy.query.core.proxy.predicate.DSLRangePredicate;
 import com.easy.query.core.proxy.predicate.DSLSubQueryPredicate;
@@ -24,5 +26,7 @@ public interface ColumnComparableExpression<T> extends SQLSelectAsExpression
         , DSLSubQueryPredicate<T>
         , DSLRangePredicate<T>
         , DSLOtherPredicate<T>
-        , DSLFunctionPredicate<T> {
+        , DSLLikeOtherPredicate<T>
+        , DSLFunctionPredicate<T>
+        , DSLLikeFunctionPredicate<T> {
 }

@@ -520,6 +520,62 @@ public class FilterImpl implements Filter {
     }
 
     @Override
+    public Filter like(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2,boolean like, SQLLikeEnum sqlLike) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        SQLFunction likeSQLFunction = runtimeContext.fx().like(x -> {
+            x.column(leftTable, property1)
+                    .column(rightTable, property2);
+        },like,sqlLike);
+        return getLikePredicateFilter(leftTable, sqlNativeExpressionContext, likeSQLFunction);
+    }
+
+    @Override
+    public Filter like(TableAvailable leftTable, String property1, TableAvailable rightTable, SQLFunction sqlFunction, boolean like, SQLLikeEnum sqlLike) {
+
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        SQLFunction likeSQLFunction = runtimeContext.fx().like(x -> {
+            x.column(leftTable, property1)
+                    .sqlFunc(rightTable, sqlFunction);
+        },like,sqlLike);
+        return getLikePredicateFilter(leftTable, sqlNativeExpressionContext, likeSQLFunction);
+    }
+
+    @Override
+    public Filter like(TableAvailable leftTable, SQLFunction sqlFunction, TableAvailable rightTable, String property2, boolean like, SQLLikeEnum sqlLike) {
+
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        SQLFunction likeSQLFunction = runtimeContext.fx().like(x -> {
+            x.sqlFunc(leftTable, sqlFunction)
+                    .column(rightTable, property2);
+        },like,sqlLike);
+        return getLikePredicateFilter(leftTable, sqlNativeExpressionContext, likeSQLFunction);
+    }
+
+    @Override
+    public Filter like(TableAvailable leftTable, SQLFunction sqlFunction1, TableAvailable rightTable, SQLFunction sqlFunction2, boolean like, SQLLikeEnum sqlLike) {
+
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        SQLFunction likeSQLFunction = runtimeContext.fx().like(x -> {
+            x.sqlFunc(leftTable, sqlFunction1)
+                    .sqlFunc(rightTable, sqlFunction2);
+        },like,sqlLike);
+        return getLikePredicateFilter(leftTable, sqlNativeExpressionContext, likeSQLFunction);
+    }
+
+    private Filter getLikePredicateFilter(TableAvailable leftTable, SQLNativeExpressionContextImpl sqlNativeExpressionContext, SQLFunction likeSQLFunction) {
+        likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(leftTable, sqlNativeExpressionContext));
+        if (likeSQLFunction instanceof SQLLazyFunction) {
+            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) likeSQLFunction;
+            nextPredicateSegment.setPredicate(new SQLNativeLazyPredicateImpl(runtimeContext, expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment, sqlNativeExpressionContext));
+        } else {
+            String sqlSegment = likeSQLFunction.sqlSegment(leftTable);
+            nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(runtimeContext, sqlSegment, sqlNativeExpressionContext));
+        }
+        next();
+        return this;
+    }
+
+    @Override
     public <TProperty> Filter subQueryFilter(TableAvailable table, String property, Query<TProperty> subQuery, SQLPredicateCompare sqlPredicateCompare) {
         if (conditionAppend(table, property, subQuery)) {
             subQueryFilter0(table, property, subQuery, sqlPredicateCompare);

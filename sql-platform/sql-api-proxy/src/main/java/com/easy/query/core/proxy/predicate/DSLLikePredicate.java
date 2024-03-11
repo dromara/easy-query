@@ -1,7 +1,6 @@
 package com.easy.query.core.proxy.predicate;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
-import com.easy.query.core.basic.jdbc.parameter.SQLRawParameter;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
