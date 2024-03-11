@@ -45,6 +45,11 @@ public class EasySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> impl
     }
 
     @Override
+    public T1Proxy getProxy() {
+        return easyEntityQueryable.get1Proxy();
+    }
+
+    @Override
     public SQLQueryable<T1Proxy, T1> useLogicDelete(boolean enable) {
         easyEntityQueryable.useLogicDelete(enable);
         return this;

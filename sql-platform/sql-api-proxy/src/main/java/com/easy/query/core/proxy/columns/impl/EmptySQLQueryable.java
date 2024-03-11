@@ -22,14 +22,12 @@ import java.math.BigDecimal;
  */
 public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> implements SQLQueryable<T1Proxy, T1> {
     private final EntitySQLContext entitySQLContext;
-    private final TableAvailable originalTable;
-    private final String navValue;
+    private final T1Proxy t1Proxy;
 
-    public EmptySQLQueryable(EntitySQLContext entitySQLContext,TableAvailable originalTable,String navValue){
+    public EmptySQLQueryable(EntitySQLContext entitySQLContext,T1Proxy t1Proxy){
 
         this.entitySQLContext = entitySQLContext;
-        this.originalTable = originalTable;
-        this.navValue = navValue;
+        this.t1Proxy = t1Proxy;
     }
     @Override
     public EntitySQLContext getEntitySQLContext() {
@@ -43,12 +41,17 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
 
     @Override
     public TableAvailable getOriginalTable() {
-        return originalTable;
+        return null;
     }
 
     @Override
     public String getNavValue() {
-        return navValue;
+        return t1Proxy.getNavValue();
+    }
+
+    @Override
+    public T1Proxy getProxy() {
+        return t1Proxy;
     }
 
     @Override

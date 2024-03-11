@@ -35,6 +35,7 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     TableAvailable getOriginalTable();
 
     String getNavValue();
+    T1Proxy getProxy();
 
 
     default SQLPredicateQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
