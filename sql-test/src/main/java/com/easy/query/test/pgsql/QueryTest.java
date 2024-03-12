@@ -1,13 +1,17 @@
 package com.easy.query.test.pgsql;
 
+import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api4j.select.Queryable;
-import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft7;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.Topic;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,6 +37,7 @@ public class QueryTest extends PgSQLBaseTest {
         Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND \"id\" = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
         Assert.assertNull(blogEntity);
+
     }
 
     @Test

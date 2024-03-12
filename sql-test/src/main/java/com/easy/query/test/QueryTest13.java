@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapTypeProxy;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -40,6 +41,35 @@ public class QueryTest13 extends BaseTest {
                 })
                 .groupBy(b -> GroupKeys.TABLE1.of(b.id()))
                 .select(group -> new MapTypeProxy().put(blogId, group.key1()).put(blogCount, group.intCount()))
+                .leftJoin(Topic.class, (g, topic) -> {
+                    g.get(blogId).eq(topic.id());
+                })
+                .where((g, topic) -> {
+                    g.get(blogCount).le(123);
+                }).select((g, topic) -> topic).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM (SELECT t.`id` AS `blogId`,COUNT(*) AS `blogCount` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`star` > ? GROUP BY t.`id`) t1 LEFT JOIN `t_topic` t2 ON t1.`blogId` = t2.`id` WHERE t1.`blogCount` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void orderTest1_1() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        MapKey<String> blogId = MapKeys.stringKey("blogId");
+        MapKey<Integer> blogCount = MapKeys.integerKey("blogCount");
+
+        EntityQueryable<MapTypeProxy, Map<String, Object>> groupAndCount = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    b.star().gt(1);
+                })
+                .groupBy(b -> GroupKeys.TABLE1.of(b.id()))
+                .select(group -> new MapTypeProxy().put(blogId, group.key1()).put(blogCount, group.intCount()));
+
+//        easyEntityQuery.getRuntimeContext().getEntityMetadataManager().getEntityMetadata()
+        List<Topic> list = groupAndCount
                 .leftJoin(Topic.class, (g, topic) -> {
                     g.get(blogId).eq(topic.id());
                 })

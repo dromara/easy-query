@@ -399,7 +399,6 @@ public class QueryTest12 extends BaseTest {
 
     @Test
     public void testNum2() {
-
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
