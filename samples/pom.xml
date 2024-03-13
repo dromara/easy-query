@@ -17,6 +17,7 @@
         <module>console-demo</module>
         <module>easy-query-solon-web</module>
         <module>solon-sharding-demo</module>
+        <module>multi-datasource-demo</module>
     </modules>
 
     <properties>

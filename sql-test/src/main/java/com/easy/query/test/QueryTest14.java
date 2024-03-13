@@ -5,6 +5,7 @@ import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -12,8 +13,10 @@ import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.BlogPartitionEntityVO;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.proxy.BlogPartitionEntityVOProxy;
 import com.easy.query.test.entity.testrelation.TestJoinEntity;
 import com.easy.query.test.entity.testrelation.TestRoleEntity;
 import com.easy.query.test.entity.testrelation.TestRouteEntity;
@@ -588,7 +591,7 @@ public class QueryTest14 extends BaseTest{
         List<Map<String, Object>> list = easyEntityQuery.queryable(SysUser.class)
                 .leftJoin(Topic.class, (s, t2) -> s.id().eq(t2.id()))
                 .where((s1, t2) -> s1.id().eq("1"))
-                .select((s1, t2) -> new MapTypeProxy().selectAll(s1).selectExpression(t2.title().as("123")))
+                .select((s1, t2) -> new MapTypeProxy().selectAll(s1).selectExpression(t2.title().as("abc")))
                 .toList();
 
         List<Draft1<String>> list1 = easyEntityQuery.queryable(SysUser.class)
@@ -615,23 +618,23 @@ public class QueryTest14 extends BaseTest{
 
     }
 
-//    @Test
-//    public void test(){
-//        List<BlogPartitionEntityVO> list = easyEntityQuery.queryable(BlogEntity.class)
-//                .where(b -> b.star().lt(12))
-//                .select(b -> {
-//                    Expression expression = b.expression();
-//                    BlogPartitionEntityVOProxy r = new BlogPartitionEntityVOProxy();
-//                    r.selectAll(b);
-//                    r.num().set(
-//                            expression.sqlType("ROW_NUMBER() OVER(PARTITION BY {0} ORDER BY {1} DESC)", c -> c.expression(b.title()).expression(b.score()))
-//                                    .setPropertyType(Integer.class)
-//                    );
-//                    return r;
-//                })
-//                .where(b -> b.num().lt(1))
-//                .toList();
-//    }
+    @Test
+    public void test(){
+        List<BlogPartitionEntityVO> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> b.star().lt(12))
+                .select(b -> {
+                    Expression expression = b.expression();
+                    BlogPartitionEntityVOProxy r = new BlogPartitionEntityVOProxy();
+                    r.selectAll(b);
+                    r.num().set(
+                            expression.sqlType("ROW_NUMBER() OVER(PARTITION BY {0} ORDER BY {1} DESC)", c -> c.expression(b.title()).expression(b.score()))
+                                    .setPropertyType(Integer.class)
+                    );
+                    return r;
+                })
+                .where(b -> b.num().lt(1))
+                .toList();
+    }
 
     @Test
      public void test2(){

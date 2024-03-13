@@ -123,6 +123,25 @@ public class QueryTest13 extends BaseTest {
     }
     @Test
     public void testMultiSelect(){
+//        {
+//
+//            EntityQueryProxyManager.create(SysUser.class);
+//            long start = System.currentTimeMillis();
+//            for (int i = 0; i < 100000; i++) {
+//                SysUserProxy sysUserProxy = EntityQueryProxyManager.create(SysUser.class);
+//            }
+//            long end = System.currentTimeMillis();
+//            System.out.println("EntityQueryProxyManager耗时:"+(end-start)+"(ms)");
+//        }
+//        {
+//
+//            long start = System.currentTimeMillis();
+//            for (int i = 0; i < 100000; i++) {
+//                SysUserProxy sysUserProxy = new SysUserProxy();
+//            }
+//            long end = System.currentTimeMillis();
+//            System.out.println("new Proxy耗时:"+(end-start)+"(ms)");
+//        }
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -133,6 +152,8 @@ public class QueryTest13 extends BaseTest {
                         b1.FETCHER.id().content().createTime().as("createTime"),
                         s2.FETCHER.address().idCard()
                 )).toList();
+
+
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`content`,t.`create_time` AS `create_time`,t1.`address`,t1.`id_card` FROM `t_blog` t LEFT JOIN `easy-query-test`.`t_sys_user` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
