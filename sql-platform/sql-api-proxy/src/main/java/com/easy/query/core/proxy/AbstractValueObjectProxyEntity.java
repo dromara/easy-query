@@ -53,6 +53,9 @@ public abstract class AbstractValueObjectProxyEntity<TProxy, TProperty> implemen
         return entitySQLContext;
     }
 
+    protected <T, N> N __cast(T original){
+        return EasyObjectUtil.typeCastNullable(original);
+    }
     protected <TPropertyProxy extends SQLColumn<TProxy, TVProperty>, TVProperty> TPropertyProxy getValueObject(TPropertyProxy propertyProxy) {
         return propertyProxy;
     }
