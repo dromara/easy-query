@@ -12,7 +12,12 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 public interface ProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity>
         extends TableProxy<TProxy, TEntity> {
 
+    /**
+     * 请使用getTable
+     * @return
+     */
     @Nullable
+    @Deprecated
     TableAvailable getTableOrNull();
     default String getNavValue(){
         return null;

@@ -46,6 +46,8 @@ public class QueryTest4 extends BaseTest {
                     .select(LocalDateTime.class, x -> x.columnMax(Topic::getCreateTime));
             String sql = easyQuery.queryable(Topic.class)
                     .where(o -> {
+//                        o.getWherePredicate().in("id", Arrays.asList("1","2"));
+
                         o.eq(Topic::getCreateTime, maxCreateTimeQuery);
                         o.eq(Topic::getCreateTime, "1");
                     }).toSQL();
