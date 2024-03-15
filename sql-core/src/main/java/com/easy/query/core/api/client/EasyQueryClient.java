@@ -13,8 +13,8 @@ import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -54,6 +54,11 @@ public interface EasyQueryClient {
     long sqlExecute(String sql, List<Object> parameters);
 
     <T> ClientQueryable<T> queryable(Class<T> clazz);
+    default ClientQueryable<Map<String,Object>> queryable(String tableName){
+        return EasyObjectUtil.typeCastNullable(
+                queryable(Map.class).asTable(tableName)
+        );
+    }
 
     <T> ClientQueryable<T> queryable(ClientQueryable<T> queryable);
 

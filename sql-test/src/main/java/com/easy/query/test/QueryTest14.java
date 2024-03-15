@@ -656,4 +656,36 @@ public class QueryTest14 extends BaseTest{
             Assert.assertEquals("SELECT t.\"id\",t.\"stars\",t.\"title\",t.\"create_time\" FROM \"t_topic\" t LEFT JOIN \"t_blog\" t1 ON t1.\"deleted\" = ? AND t.\"id\" = t1.\"id\" WHERE t.\"id\" LIKE ('%'||TO_CHAR(t1.\"title\")||'%')",sql);
      }
 
+     @Test
+     public void testMapQuery(){
+         {
+
+             ListenerContext listenerContext = new ListenerContext();
+             listenerContextManager.startListen(listenerContext);
+
+             List<Map> list = easyQueryClient.queryable(Map.class)
+                     .asTable("t_topic").where(m -> m.eq("id", 1))
+                     .toList();
+             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+             Assert.assertEquals("SELECT * FROM `t_topic` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+             Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+             listenerContextManager.clear();
+         }
+         {
+
+             ListenerContext listenerContext = new ListenerContext();
+             listenerContextManager.startListen(listenerContext);
+
+             List<Map<String, Object>> list = easyQueryClient.queryable("t_topic")
+                     .where(m -> m.eq("id", 1))
+                     .toList();
+             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+             Assert.assertEquals("SELECT * FROM `t_topic` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+             Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+             listenerContextManager.clear();
+         }
+     }
+
 }
