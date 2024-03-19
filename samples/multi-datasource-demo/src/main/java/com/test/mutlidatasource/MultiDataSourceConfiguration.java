@@ -14,6 +14,7 @@ import com.easy.query.sql.starter.conn.SpringDataSourceUnitFactory;
 import com.test.mutlidatasource.core.DefaultEasyMultiEntityQuery;
 import com.test.mutlidatasource.core.EasyMultiEntityQuery;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,6 +34,18 @@ public class MultiDataSourceConfiguration {
         HashMap<String, EasyEntityQuery> extra = new HashMap<>();
         extra.put("ds2",easyEntityQuery2);
         return new DefaultEasyMultiEntityQuery(easyEntityQuery,extra);
+    }
+
+    /**
+     * 不是spring接管的datasource那么事务将不会生效
+     * @return
+     */
+    @Bean("xxx")
+    public DataSource dataSource2(){
+        return DataSourceBuilder.create().driverClassName("")
+                .url("")
+                .username("")
+                .password("").build();
     }
     @Bean("ds2")
     public EasyEntityQuery easyQuery(/*注入您自己的多数据源datasource*/@Qualifier("xxx")DataSource dataSource) {
