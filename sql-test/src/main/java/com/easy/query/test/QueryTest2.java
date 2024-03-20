@@ -9,7 +9,7 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.common.ValueHolder;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.util.EasySQLUtil;
@@ -865,9 +865,9 @@ public class QueryTest2 extends BaseTest {
     public void groupTest10_1() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.notLikeMatchLeft(BlogEntity::getId, "id").notLikeMatchLeft(true, BlogEntity::getContent, "content").notLikeMatchLeft(false, BlogEntity::getTitle, "title"));
-        ValueHolder<ToSQLContext> toSQLContextValueHolder = new ValueHolder<>();
-        String sql = queryable.toSQL(toSQLContextValueHolder);
-        ToSQLContext toSQLContext = toSQLContextValueHolder.getValue();
+        ToSQLResult sqlResult = queryable.toSQLResult();
+        String sql = sqlResult.getSql();
+        ToSQLContext toSQLContext = sqlResult.getSqlContext();
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` NOT LIKE ? AND `content` NOT LIKE ?", sql);
         List<SQLParameter> parameters = toSQLContext.getParameters();
         Assert.assertEquals(3, parameters.size());

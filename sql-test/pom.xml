@@ -5,7 +5,7 @@
     <parent>
         <artifactId>easy-query-all</artifactId>
         <groupId>com.easy-query</groupId>
-        <version>1.10.38</version>
+        <version>1.10.39</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-api4kt</artifactId>
-            <version>1.10.38</version>
+            <version>1.10.39</version>
             <scope>compile</scope>
         </dependency>
         <!-- mysql驱动 -->
