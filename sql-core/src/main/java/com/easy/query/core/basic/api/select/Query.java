@@ -6,6 +6,7 @@ import com.easy.query.core.basic.api.select.executor.QueryExecutable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
@@ -68,6 +69,18 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      */
 
     default String toSQL(ToSQLContext toSQLContext) {
+        return toSQL(queryClass(), toSQLContext);
+    }
+
+    /**
+     * 传入生成sql的上下文用来获取生成sql后的表达式内部的参数
+     * @param valueHolder
+     * @return
+     */
+
+    default String toSQL(ValueHolder<ToSQLContext> valueHolder) {
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        valueHolder.setValue(toSQLContext);
         return toSQL(queryClass(), toSQLContext);
     }
 

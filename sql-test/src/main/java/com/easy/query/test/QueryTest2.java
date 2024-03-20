@@ -9,6 +9,7 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.util.EasySQLUtil;
@@ -832,6 +833,41 @@ public class QueryTest2 extends BaseTest {
                 .where(o -> o.notLikeMatchLeft(BlogEntity::getId, "id").notLikeMatchLeft(true, BlogEntity::getContent, "content").notLikeMatchLeft(false, BlogEntity::getTitle, "title"));
         ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
         String sql = queryable.toSQL(toSQLContext);
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` NOT LIKE ? AND `content` NOT LIKE ?", sql);
+        List<SQLParameter> parameters = toSQLContext.getParameters();
+        Assert.assertEquals(3, parameters.size());
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(0);
+            Assert.assertTrue(sqlParameter1 instanceof EasyConstSQLParameter);
+            EasyConstSQLParameter sqlParameter11 = (EasyConstSQLParameter) sqlParameter1;
+            Assert.assertEquals("deleted", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals(false, sqlParameter11.getValue());
+        }
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(1);
+            Assert.assertTrue(sqlParameter1 instanceof ConstLikeSQLParameter);
+            ConstLikeSQLParameter sqlParameter11 = (ConstLikeSQLParameter) sqlParameter1;
+            Assert.assertEquals("id", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals("id%", sqlParameter11.getValue());
+        }
+        {
+
+            SQLParameter sqlParameter1 = parameters.get(2);
+            Assert.assertTrue(sqlParameter1 instanceof ConstLikeSQLParameter);
+            ConstLikeSQLParameter sqlParameter11 = (ConstLikeSQLParameter) sqlParameter1;
+            Assert.assertEquals("content", sqlParameter11.getPropertyNameOrNull());
+            Assert.assertEquals("content%", sqlParameter11.getValue());
+        }
+    }
+    @Test
+    public void groupTest10_1() {
+        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+                .where(o -> o.notLikeMatchLeft(BlogEntity::getId, "id").notLikeMatchLeft(true, BlogEntity::getContent, "content").notLikeMatchLeft(false, BlogEntity::getTitle, "title"));
+        ValueHolder<ToSQLContext> toSQLContextValueHolder = new ValueHolder<>();
+        String sql = queryable.toSQL(toSQLContextValueHolder);
+        ToSQLContext toSQLContext = toSQLContextValueHolder.getValue();
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` NOT LIKE ? AND `content` NOT LIKE ?", sql);
         List<SQLParameter> parameters = toSQLContext.getParameters();
         Assert.assertEquals(3, parameters.size());

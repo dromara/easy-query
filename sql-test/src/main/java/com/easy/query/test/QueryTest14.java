@@ -6,6 +6,8 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
@@ -658,6 +660,41 @@ public class QueryTest14 extends BaseTest{
 
      @Test
      public void testMapQuery(){
+
+         String sql = easyQueryClient.queryable("t_topic")
+                 .select(Map.class, t -> {
+                     t.columnAs("col001", "姓名");
+                     t.columnAs("col002", "年龄");
+                     t.sqlFuncAs(
+                             t.fx().dateTimeFormat("create_time", "yyyy-MM-dd"),
+                             "创建时间"
+                     );
+                     t.sqlFuncAs(
+                             t.fx().count(x->x.format(1)),
+                             "c1"
+                     );
+                     t.columnCountAs("id","c2");
+                 }).toSQL();
+         System.out.println(sql);
+
+         String sql1 = easyQueryClient.queryable("t_topic")
+                 .groupBy(t -> t.column("col001"))
+                 .select(Map.class, t -> {
+                     t.columnAs("col001", "姓名");
+                     t.sqlFuncAs(
+                             t.fx().join("col002", ","),
+                             "年龄集合"
+                     );
+                 }).toSQL();
+         System.out.println(sql1);
+
+         List<Draft2<String, String>> list1 = easyEntityQuery.queryable(Topic.class)
+                 .groupBy(t -> GroupKeys.TABLE1.of(t.title()))
+                 .select(group -> Select.DRAFT.of(
+                         group.key1(),
+                         group.groupTable().id().join(",")
+                 )).toList();
+
          {
 
              ListenerContext listenerContext = new ListenerContext();
@@ -676,10 +713,11 @@ public class QueryTest14 extends BaseTest{
 //             columns.add("id");
 //             easyQueryClient.queryable(Map.class)
 //                     .asTable("t_topic").where(m -> m.eq("id", 1))
-//                     .select(m ->{
+//                     .select(String.class,m ->{
 //                         for (String column : columns) {
 //                             m.column(column);
 //                         }
+//                         m.sqlNativeSegment("id as 'a123'");
 //                     });
          }
          {
