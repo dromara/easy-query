@@ -6,6 +6,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * create time 2023/7/15 20:07
@@ -69,5 +70,18 @@ public class IncludeNavigateParams {
 
     public void setLimit(boolean limit) {
         this.limit = limit;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IncludeNavigateParams that = (IncludeNavigateParams) o;
+        return Objects.equals(navigateMetadata, that.navigateMetadata) && Objects.equals(table, that.table);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(navigateMetadata, table);
     }
 }

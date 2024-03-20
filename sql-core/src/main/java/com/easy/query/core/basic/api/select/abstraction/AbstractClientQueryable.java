@@ -550,7 +550,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (expressionContext.hasIncludes()) {
             IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
             IncludeParserEngine includeParserEngine = runtimeContext.getIncludeParserEngine();
-            for (IncludeNavigateExpression include : expressionContext.getIncludes()) {
+            for (IncludeNavigateExpression include : expressionContext.getIncludes().values()) {
 
                 IncludeParserResult includeParserResult = includeParserEngine.process(this.entityQueryExpressionBuilder, entityMetadata, result, include);
 
@@ -658,7 +658,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         boolean hasIncludes = expressionContext.hasIncludes();
         if (hasIncludes) {
             TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
-            for (IncludeNavigateExpression includeNavigateExpression : expressionContext.getIncludes()) {
+            for (IncludeNavigateExpression includeNavigateExpression : expressionContext.getIncludes().values()) {
                 IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
                 if (includeNavigateParams.getTable() == entityTable) {
                     String selfPropertyOrPrimary = includeNavigateParams.getNavigateMetadata().getSelfPropertyOrPrimary();
@@ -1112,7 +1112,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     });
                 });
             };
-            entityQueryExpressionBuilder.getExpressionContext().getIncludes().add(new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
+            entityQueryExpressionBuilder.getExpressionContext().getIncludes().put(includeNavigateParams.getNavigateMetadata(),new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
         }
         return this;
     }

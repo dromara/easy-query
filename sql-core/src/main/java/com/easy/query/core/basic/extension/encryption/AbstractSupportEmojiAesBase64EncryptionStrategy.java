@@ -52,7 +52,7 @@ public abstract class AbstractSupportEmojiAesBase64EncryptionStrategy  implement
     }
 
     /**
-     * 非中文占用1 如果用非中文来查询需要4个字符才可以查询
+     * 非中文占用1 如果用非中文来查询需要4个字节才可以查询
      * @return
      */
     public int otherCharOccupancyLength(){

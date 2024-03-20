@@ -671,6 +671,16 @@ public class QueryTest14 extends BaseTest{
              Assert.assertEquals("SELECT * FROM `t_topic` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
              Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
              listenerContextManager.clear();
+//             ArrayList<String> columns = new ArrayList<>();
+//             columns.add("name");
+//             columns.add("id");
+//             easyQueryClient.queryable(Map.class)
+//                     .asTable("t_topic").where(m -> m.eq("id", 1))
+//                     .select(m ->{
+//                         for (String column : columns) {
+//                             m.column(column);
+//                         }
+//                     });
          }
          {
 

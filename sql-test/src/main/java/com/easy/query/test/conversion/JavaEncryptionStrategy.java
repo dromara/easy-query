@@ -1,9 +1,6 @@
 package com.easy.query.test.conversion;
 
-import com.easy.query.core.basic.extension.encryption.AbstractAesBase64EncryptionStrategy;
-
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import com.easy.query.core.basic.extension.encryption.AbstractUnSupportEmojiAesBase64EncryptionStrategy;
 
 /**
  * create time 2023/8/12 21:23
@@ -11,7 +8,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author xuejiaming
  */
-public class JavaEncryptionStrategy extends AbstractAesBase64EncryptionStrategy {
+public class JavaEncryptionStrategy extends AbstractUnSupportEmojiAesBase64EncryptionStrategy {
     @Override
     public String getIv() {
         return "1234567890123456";

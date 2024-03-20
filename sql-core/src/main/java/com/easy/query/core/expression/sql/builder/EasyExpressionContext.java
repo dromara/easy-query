@@ -17,10 +17,12 @@ import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInte
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,10 +31,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
+ * create time 2023/3/3 23:06
+ * 表达式上下文用于记录当前表达式的行为和表信息
+ *
  * @author xuejiaming
- * @FileName: EasyQueryExpressionContext.java
- * @Description: 文件说明
- * @Date: 2023/3/3 23:06
  */
 public class EasyExpressionContext implements ExpressionContext {
     private final QueryRuntimeContext runtimeContext;
@@ -50,7 +52,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private boolean sharding;
     private boolean hasSubQuery;
     private ValueFilter valueFilter;
-    private List<IncludeNavigateExpression> includes;
+    private Map<NavigateMetadata, IncludeNavigateExpression> includes;
     private List<FillExpression> fills;
     private List<ExpressionBuilder> declareExpressions;
     private Consumer<Object> forEachConfigurer;
@@ -234,7 +236,7 @@ public class EasyExpressionContext implements ExpressionContext {
         }
         this.hasSubQuery = true;
         tableContext.extract(otherExpressionContext.getTableContext());
-        if(otherExpressionContext.hasDeclareExpressions()){
+        if (otherExpressionContext.hasDeclareExpressions()) {
             for (ExpressionBuilder declareExpression : otherExpressionContext.getDeclareExpressions()) {
                 getDeclareExpressions().add(declareExpression);
             }
@@ -248,9 +250,9 @@ public class EasyExpressionContext implements ExpressionContext {
 
 
     @Override
-    public List<IncludeNavigateExpression> getIncludes() {
+    public Map<NavigateMetadata, IncludeNavigateExpression> getIncludes() {
         if (includes == null) {
-            includes = new ArrayList<>();
+            includes = new LinkedHashMap<>();
         }
         return includes;
     }
@@ -327,7 +329,7 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.sharding = this.sharding;
         easyExpressionContext.hasSubQuery = this.hasSubQuery;
         if (hasIncludes()) {
-            easyExpressionContext.getIncludes().addAll(this.includes);
+            easyExpressionContext.getIncludes().putAll(this.includes);
         }
         if (hasFills()) {
             easyExpressionContext.getFills().addAll(this.fills);
@@ -335,8 +337,8 @@ public class EasyExpressionContext implements ExpressionContext {
         if (hasColumnIncludeMaps()) {
             easyExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
         }
-        if(this.propTypes!=null){
-            easyExpressionContext.propTypes=new Class<?>[this.propTypes.length];
+        if (this.propTypes != null) {
+            easyExpressionContext.propTypes = new Class<?>[this.propTypes.length];
             System.arraycopy(this.propTypes, 0, easyExpressionContext.propTypes, 0, this.propTypes.length);
         }
         return easyExpressionContext;
@@ -344,8 +346,8 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public List<ExpressionBuilder> getDeclareExpressions() {
-        if(declareExpressions==null){
-            declareExpressions=new ArrayList<>();
+        if (declareExpressions == null) {
+            declareExpressions = new ArrayList<>();
         }
         return declareExpressions;
     }
@@ -357,7 +359,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public void setResultPropTypes(Class<?>[] propTypes) {
-        this.propTypes=propTypes;
+        this.propTypes = propTypes;
     }
 
     @Override
@@ -367,12 +369,12 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public void setRelationLogicDelete(Function<Class<?>, Boolean> relationLogicDelete) {
-        this.relationLogicDelete=relationLogicDelete;
+        this.relationLogicDelete = relationLogicDelete;
     }
 
     @Override
     public boolean hasRelationLogicDelete() {
-        return this.relationLogicDelete!=null;
+        return this.relationLogicDelete != null;
     }
 
     @Override

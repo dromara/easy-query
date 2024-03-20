@@ -37,6 +37,13 @@ public interface Selectable1<T1> {
      * @return
      */
     <TR> ClientQueryable<TR> select(Class<TR> resultClass);
+
+    /**
+     * 自动构建dto结果会自动执行include,如果您有独立的include那么会覆盖掉之前的以当前的为准
+     * @param resultClass 返回的结果类型
+     * @return 返回一个可以获取结果的表达式
+     * @param <TR> 返回结果的泛型类型
+     */
     <TR> Query<TR> selectAutoInclude(Class<TR> resultClass);
 
     /**

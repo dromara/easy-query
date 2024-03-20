@@ -12,6 +12,7 @@ import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
+import com.easy.query.core.metadata.NavigateMetadata;
 
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,7 @@ public interface ExpressionContext {
 
 
     //todo inculde expression repeart
-    List<IncludeNavigateExpression> getIncludes();
+    Map<NavigateMetadata,IncludeNavigateExpression> getIncludes();
     boolean hasIncludes();
 
     List<FillExpression> getFills();

@@ -142,7 +142,7 @@ public abstract class AbstractSelector<TChain> {
             if(hasColumnIncludeMaps){
                 return;
             }
-            for (IncludeNavigateExpression includeNavigateExpression : expressionContext.getIncludes()) {
+            for (IncludeNavigateExpression includeNavigateExpression : expressionContext.getIncludes().values()) {
                 IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
                 if (includeNavigateParams.getTable() == table) {
                     NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();

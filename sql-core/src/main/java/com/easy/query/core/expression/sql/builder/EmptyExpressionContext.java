@@ -12,6 +12,7 @@ import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
+import com.easy.query.core.metadata.NavigateMetadata;
 
 import java.util.List;
 import java.util.Map;
@@ -164,7 +165,7 @@ public class EmptyExpressionContext implements ExpressionContext{
     }
 
     @Override
-    public List<IncludeNavigateExpression> getIncludes() {
+    public Map<NavigateMetadata,IncludeNavigateExpression> getIncludes() {
         return null;
     }
 
