@@ -2,10 +2,14 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
+import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -37,6 +41,7 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -830,6 +835,60 @@ public class QueryTest14 extends BaseTest {
             Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
+    }
+
+    @Test
+    public void test1x(){
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .toList();
+        list.forEach(o->o.setStatus(1));
+        easyEntityQuery.updatable(list)
+                .setColumns(b -> b.FETCHER.status())
+                .executeRows();
+    }
+    @Test
+    @EasyQueryTrack//如果默认配置defaultTrack=true那么springboot下只需要添加这个注解
+    public void test1x2(){
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .toList();
+        list.forEach(o->o.setStatus(1));
+        easyEntityQuery.updatable(list)
+//                .setColumns(b -> b.FETCHER.status())
+                .executeRows();
+    }
+    @Test
+    @EasyQueryTrack//springboot下只需要添加这个注解
+    public void test1x23(){
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .asTracking()//如果默认配置defaultTrack=false那么可以手动使用tracking来实现数据追踪
+                .toList();
+        list.forEach(o->o.setStatus(1));
+        easyEntityQuery.updatable(list)
+//                .setColumns(b -> b.FETCHER.status())
+                .executeRows();
+
+
+        easyEntityQuery.updatable(BlogEntity.class)
+                .setColumns(b -> b.status().set(1))
+                .where(b -> b.id().in(Collections.emptyList()))
+                .executeRows();
+        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> b.id().in(Collections.emptyList()))
+                .toList();
+
+
+        List<BlogEntity> blogEntities = updateAndReturn(BlogEntity.class, b -> b.status().set(1), b ->b.id().eq("1"));
+    }
+
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> List<T>
+    updateAndReturn(Class<T> entityClass, SQLExpression1<TProxy> columnSetExpression,SQLExpression1<TProxy> whereExpression){
+        easyEntityQuery.updatable(entityClass)
+                .setColumns(columnSetExpression)
+                .where(whereExpression)
+                .executeRows();
+        return easyEntityQuery.queryable(entityClass)
+                .where(whereExpression)
+                .toList();
     }
 
 }

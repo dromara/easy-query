@@ -86,19 +86,6 @@ public class OracleInsertSQLExpression extends InsertSQLExpressionImpl {
                 sqlColumns.add(columnNameWithOwner);
                 mergeAliasSql.append(sqlEntitySegment.toSQL(toSQLContext)).append(" AS ").append(columnNameWithOwner);
             }
-//
-//            Iterator<SQLSegment> iterator = columns.getSQLSegments().iterator();
-//            SQLSegment firstColumn = iterator.next();
-//
-//            String firstColumnNameWIthOwner =getColumnNameWithOwner(firstColumn, toSQLContext);
-//            sqlColumns.add(firstColumnNameWIthOwner);
-//            sql.append(firstColumn.toSQL(toSQLContext)).append(" AS ").append(firstColumnNameWIthOwner);
-//            while (iterator.hasNext()) {
-//                SQLSegment next = iterator.next();
-//                String columnNameWithOwner = getColumnNameWithOwner(next, toSQLContext);
-//                sqlColumns.add(columnNameWithOwner);
-//                sql.append(",").append(next.toSQL(toSQLContext)).append(" AS ").append(columnNameWithOwner);
-//            }
             sql.append(mergeAliasSql);
             sql.append(" FROM DUAL ) t2 ");
             sql.append("ON (");
