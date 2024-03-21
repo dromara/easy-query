@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -578,6 +579,17 @@ public class InsertTest extends BaseTest {
 
     @Test
     public void mapInsertTest1() {
+        {
+
+        Map<String, Object> stringObjectHashMap = new LinkedHashMap<>();
+        stringObjectHashMap.put("id", 123);
+        stringObjectHashMap.put("name", "小明");
+            String sql = easyQuery.mapInsertable(Collections.emptyMap())
+                    .asTable("aaaaa")
+                    .toSQL(stringObjectHashMap);
+            Assert.assertEquals("INSERT INTO `aaaaa` (`id`,`name`) VALUES (?,?)", sql);
+
+        }
         try {
             Map<String, Object> stringObjectHashMap = new LinkedHashMap<>();
             stringObjectHashMap.put("id", 123);

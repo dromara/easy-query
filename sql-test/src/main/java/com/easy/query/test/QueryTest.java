@@ -83,7 +83,6 @@ public class QueryTest extends BaseTest {
 //easyQuery.queryable(Topic.class)
 //        .select(t -> t.sqlNativeSegment("GROUP_CONCAT({0} SEPARATOR ',')",c->c.expression(Topic::getTitle)))
 //        .toList();
-
         Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
                 .where(o -> o.eq(SysUser::getId, "123xxx"));
         String sql = queryable.toSQL();
