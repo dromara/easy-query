@@ -20,7 +20,7 @@ public class AptConstant {
             " * 当前文件是easy-query自动生成的请不要随意修改\n" +
             " * 如果出现属性冲突请使用@ProxyProperty进行重命名\n" +
             " *\n" +
-            " * @author xuejiaming\n" +
+            " * @author easy-query\n" +
             " */\n" +
             "public class @{entityClassProxy} extends AbstractProxyEntity<@{entityClassProxy}, @{entityClass}> {\n" +
             "\n" +

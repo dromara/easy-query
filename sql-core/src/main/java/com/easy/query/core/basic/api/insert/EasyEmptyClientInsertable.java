@@ -144,4 +144,9 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     public ClientInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         return this;
     }
+
+    @Override
+    public ClientInsertable<T> onConflictThen(SQLExpression1<ColumnOnlySelector<T>> updateSetSelector, Collection<String> constraintProperties) {
+        return this;
+    }
 }

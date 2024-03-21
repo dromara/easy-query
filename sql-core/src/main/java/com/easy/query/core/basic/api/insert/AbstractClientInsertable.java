@@ -22,6 +22,7 @@ import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -155,6 +156,12 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
         return this;
     }
 
+    @Override
+    public ClientInsertable<T> onConflictThen(SQLExpression1<ColumnOnlySelector<T>> updateSetSelector, Collection<String> constraintProperties) {
+        onConflictThen0(constraintProperties, updateSetSelector);
+        return this;
+    }
+
     private void insertOrIgnoreBehavior() {
         entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE);
         entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE);
@@ -167,51 +174,58 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate() {
-        doOnDuplicateKeyUpdate(null, null);
+        onConflictThen0(null, null);
         return this;
     }
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
-        doOnDuplicateKeyUpdate(constraintProperties, setColumnSelector);
+        onConflictThen0(constraintProperties, setColumnSelector);
         return this;
     }
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties) {
-        doOnDuplicateKeyUpdate(constraintProperties, null);
+        onConflictThen0(constraintProperties, null);
         return this;
     }
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
-        doOnDuplicateKeyUpdate(null, setColumnSelector);
+        onConflictThen0(null, setColumnSelector);
         return this;
     }
 
     @Override
     public ClientInsertable<T> onDuplicateKeyUpdate() {
-        doOnDuplicateKeyUpdate(null, null);
+        onConflictThen0(null, null);
         return this;
     }
 
     @Override
     public ClientInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
-        doOnDuplicateKeyUpdate(null, setColumnSelector);
+        onConflictThen0(null, setColumnSelector);
         return this;
     }
 
-    private void doOnDuplicateKeyUpdate(Collection<String> constraintProperties, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
-        insertOrUpdateBehavior();
-        if(EasyCollectionUtil.isNotEmpty(constraintProperties)){
+    private void onConflictThen0(Collection<String> constraintProperties, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
+
+        if (EasyCollectionUtil.isNotEmpty(constraintProperties)) {
             for (String constraintProperty : constraintProperties) {
                 entityInsertExpressionBuilder.addDuplicateKey(constraintProperty);
             }
         }
         entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns().clear();
         if (setColumnSelector != null) {
-            ColumnOnlySelectorImpl<T> columnUpdateSetSelector = new ColumnOnlySelectorImpl<>(entityTableExpressionBuilder.getEntityTable(), new OnlySelectorImpl(entityInsertExpressionBuilder.getRuntimeContext(),entityInsertExpressionBuilder.getExpressionContext(), entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns()));
+            ColumnOnlySelectorImpl<T> columnUpdateSetSelector = new ColumnOnlySelectorImpl<>(entityTableExpressionBuilder.getEntityTable(), new OnlySelectorImpl(entityInsertExpressionBuilder.getRuntimeContext(), entityInsertExpressionBuilder.getExpressionContext(), entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns()));
             setColumnSelector.apply(columnUpdateSetSelector);
+            if(EasySQLSegmentUtil.isNotEmpty(entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns())){
+                insertOrUpdateBehavior();
+            }else{
+                insertOrIgnoreBehavior();
+            }
+        } else {
+            insertOrIgnoreBehavior();
         }
 
     }
@@ -230,7 +244,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public ClientInsertable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression) {
-        columnConfigureExpression.apply(new ColumnConfigurerImpl<>(entityTableExpressionBuilder.getEntityTable(),new ConfigurerImpl(entityInsertExpressionBuilder)));
+        columnConfigureExpression.apply(new ColumnConfigurerImpl<>(entityTableExpressionBuilder.getEntityTable(), new ConfigurerImpl(entityInsertExpressionBuilder)));
         return this;
     }
 

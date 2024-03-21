@@ -7,12 +7,21 @@ package com.easy.query.core.basic.api.internal;
  * @author xuejiaming
  */
 public interface SQLOnDuplicateKeyIgnore<TChain> {
+
     /**
-     * 部分数据库不支持
+     * 请使用 onConflictThen
      * @return
      */
+    @Deprecated
     TChain onDuplicateKeyIgnore();
+
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     default TChain onConflictDoNothing(){
         return onDuplicateKeyIgnore();
     }
+
 }

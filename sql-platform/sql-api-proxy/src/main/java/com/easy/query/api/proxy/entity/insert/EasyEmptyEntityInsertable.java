@@ -111,6 +111,11 @@ public class EasyEmptyEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T>
     }
 
     @Override
+    public EntityInsertable<TProxy, T> onConflictThen(SQLFuncExpression1<TProxy, SQLSelectExpression> updateSetSelector, SQLFuncExpression1<TProxy, SQLSelectExpression> constraintPropertySelector) {
+        return this;
+    }
+
+    @Override
     public EntityInsertable<TProxy, T> onConflictDoUpdate() {
         return this;
     }

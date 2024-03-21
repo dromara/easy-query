@@ -11,12 +11,37 @@ import com.easy.query.core.proxy.SQLSelectExpression;
  * @author xuejiaming
  */
 public interface ProxyEntityOnDuplicateKeyUpdate<TProxy extends ProxyEntity<TProxy,T>,T, TChain> {
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     TChain onConflictDoUpdate();
 
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     TChain onConflictDoUpdate(SQLFuncExpression1<TProxy,SQLSelectExpression> constraintPropertyExpression);
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     TChain onConflictDoUpdate(SQLFuncExpression1<TProxy,SQLSelectExpression> constraintPropertyExpression, SQLFuncExpression1<TProxy, SQLSelectExpression> updatePropertyExpression);
 
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     TChain onDuplicateKeyUpdate();
 
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     TChain onDuplicateKeyUpdate(SQLFuncExpression1<TProxy, SQLSelectExpression> updatePropertyExpression);
 }

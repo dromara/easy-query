@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.insert;
 
+import com.easy.query.core.basic.api.internal.SQLConflictThenable;
 import com.easy.query.core.basic.api.internal.SQLOnDuplicateKeyUpdate;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
@@ -12,7 +13,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public interface ClientInsertable<T> extends Insertable<T, ClientInsertable<T>>, SQLOnDuplicateKeyUpdate<T,ClientInsertable<T>> {
+public interface ClientInsertable<T> extends Insertable<T, ClientInsertable<T>>, SQLOnDuplicateKeyUpdate<T,ClientInsertable<T>>, SQLConflictThenable<T,ClientInsertable<T>> {
     @Override
     ClientInsertable<T> insert(T entity);
     ClientInsertable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression);

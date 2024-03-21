@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.entity.insert;
 
+import com.easy.query.api.proxy.internal.ProxyEntityConflictThenable;
 import com.easy.query.api.proxy.internal.ProxyEntityOnDuplicateKeyUpdate;
 import com.easy.query.api.proxy.sql.ProxyColumnConfigurer;
 import com.easy.query.core.basic.api.insert.Insertable;
@@ -14,7 +15,9 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public interface EntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> extends Insertable<T, EntityInsertable<TProxy,T>> , ProxyEntityOnDuplicateKeyUpdate<TProxy,T,EntityInsertable<TProxy,T>> {
+public interface EntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> extends Insertable<T, EntityInsertable<TProxy,T>>
+        , ProxyEntityOnDuplicateKeyUpdate<TProxy,T,EntityInsertable<TProxy,T>>
+        , ProxyEntityConflictThenable<TProxy,T,EntityInsertable<TProxy,T>> {
     @Override
     EntityInsertable<TProxy,T> insert(T entity);
 

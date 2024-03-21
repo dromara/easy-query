@@ -13,19 +13,61 @@ import java.util.Collections;
  * @author xuejiaming
  */
 public interface SQLOnDuplicateKeyUpdate<T, TChain> {
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     TChain onConflictDoUpdate();
 
+
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
    default TChain onConflictDoUpdate(String constraintProperty){
        return onConflictDoUpdate(Collections.singletonList(constraintProperty));
    }
+
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     TChain onConflictDoUpdate(Collection<String> constraintProperties);
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
    default TChain onConflictDoUpdate(String constraintProperty, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector){
        return onConflictDoUpdate(Collections.singletonList(constraintProperty),setColumnSelector);
    }
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     TChain onConflictDoUpdate(Collection<String> constraintProperties, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector);
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     TChain onConflictDoUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector);
 
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     TChain onDuplicateKeyUpdate();
 
+    /**
+     * 请使用 onConflictThen
+     * @return
+     */
+    @Deprecated
     TChain onDuplicateKeyUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector);
 }

@@ -657,6 +657,22 @@ public class InsertTest extends BaseTest {
             topicAuto.setTitle("title" + 999);
             topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
             Assert.assertNull(topicAuto.getId());
+            String sql = easyEntityQuery.insertable(topicAuto)
+                    .asTableLink(o -> o + "1")
+                    .onConflictThen(o->o.FETCHER.stars().title())
+                    .toSQL(topicAuto);
+
+
+            Assert.assertEquals("INSERT INTO 1`t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`)", sql);
+
+        }
+        {
+
+            TopicAuto topicAuto = new TopicAuto();
+            topicAuto.setStars(999);
+            topicAuto.setTitle("title" + 999);
+            topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
+            Assert.assertNull(topicAuto.getId());
             EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).asTableLink(o -> o + "1").onDuplicateKeyUpdate(t -> t.column(TopicAuto::getStars).column(TopicAuto::getTitle));
             String sql = insertable.toSQL(topicAuto);
             Assert.assertEquals("INSERT INTO 1`t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`)", sql);
