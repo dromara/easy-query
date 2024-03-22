@@ -251,13 +251,13 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     @Override
     public <TR> TR firstOrNull(Class<TR> resultClass) {
-        Object entity = queryable.firstOrNull(resultClass);
+        Object entity = queryable.firstOrNull(queryable.queryClass());
         return getNavigates(entity);
     }
 
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
-        Object entity = queryable.firstNotNull(resultClass, throwFunc);
+        Object entity = queryable.firstNotNull(queryable.queryClass(), throwFunc);
         return getNavigates(entity);
     }
 
@@ -298,13 +298,13 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     @Override
     public <TR> TR singleOrNull(Class<TR> resultClass) {
-        Object entity = queryable.singleOrNull(resultClass);
+        Object entity = queryable.singleOrNull(queryable.queryClass());
         return getNavigates(entity);
     }
 
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
-        Object entity = queryable.singleNotNull(resultClass, throwFunc);
+        Object entity = queryable.singleNotNull(queryable.queryClass(), throwFunc);
         return getNavigates(entity);
     }
 
