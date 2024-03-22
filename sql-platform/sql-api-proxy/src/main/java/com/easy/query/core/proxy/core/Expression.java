@@ -85,6 +85,10 @@ public class Expression {
         }
     }
 
+//    public SQLExecutor sqlExecutor(String sqlSegment){
+//        return new SQLExecutor(this,sqlSegment);
+//    }
+
 
     /**
      * 返回group或者selectDraft自定义sql片段
@@ -129,6 +133,7 @@ public class Expression {
             contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c.getSQLNativeExpressionContext()));
         });
     }
+
 
 
     /**

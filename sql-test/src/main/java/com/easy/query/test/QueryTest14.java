@@ -2,14 +2,10 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -41,7 +37,6 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -836,6 +831,35 @@ public class QueryTest14 extends BaseTest {
             listenerContextManager.clear();
         }
     }
+
+//    @Test
+//    public void testxx(){
+//
+//
+//        ListenerContext listenerContext = new ListenerContext();
+//        listenerContextManager.startListen(listenerContext);
+//
+//
+//        List<TopicTypeVO> list2 = easyEntityQuery.queryable(SysUser.class)
+//                .leftJoin(Topic.class, (s, t2) -> s.id().eq(t2.id()))
+//                .where((s1, t2) -> {
+//                    s1.id().eq("1");
+//                    s1.expression().sqlExecutor("{0} = IFNULL({1},1)")
+//                                    .expression(s1.id())
+//                                            .expression(t2.title())
+//                            .executeSQL();
+//                })
+//                .select((s1, t2) -> new TopicTypeVOProxy().adapter(r -> {
+//                    r.id().set(
+//                            s1.expression().sqlType("IFNULL({0},2)", c -> c.expression(s1.idCard())).setPropertyType(String.class)
+//                    );
+//                })).toList();
+//        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//        Assert.assertEquals("SELECT * FROM `t_topic` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//        listenerContextManager.clear();
+//    }
 
 //    @Test
 //    public void test1x(){
