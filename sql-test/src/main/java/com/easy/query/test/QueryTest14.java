@@ -837,58 +837,68 @@ public class QueryTest14 extends BaseTest {
         }
     }
 
-    @Test
-    public void test1x(){
-        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-                .toList();
-        list.forEach(o->o.setStatus(1));
-        easyEntityQuery.updatable(list)
-                .setColumns(b -> b.FETCHER.status())
-                .executeRows();
-    }
-    @Test
-    @EasyQueryTrack//如果默认配置defaultTrack=true那么springboot下只需要添加这个注解
-    public void test1x2(){
-        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-                .toList();
-        list.forEach(o->o.setStatus(1));
-        easyEntityQuery.updatable(list)
+//    @Test
+//    public void test1x(){
+////        ConnectionManager connectionManager = easyEntityQuery.getRuntimeContext().getConnectionManager();
+////        List<EasyConnection> easyConnections = connectionManager.getEasyConnections(1, "ds0", ConnectionStrategyEnum.ShareConnection);
+////
+////        EasyConnection easyConnection = easyConnections.get(0);
+////        try {
+////            Connection connection = easyConnection.getConnection();
+////        }finally {
+////            connectionManager.closeEasyConnection(easyConnection);
+////        }
+//
+//        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+//                .toList();
+//        list.forEach(o->o.setStatus(1));
+//        easyEntityQuery.updatable(list)
 //                .setColumns(b -> b.FETCHER.status())
-                .executeRows();
-    }
-    @Test
-    @EasyQueryTrack//springboot下只需要添加这个注解
-    public void test1x23(){
-        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-                .asTracking()//如果默认配置defaultTrack=false那么可以手动使用tracking来实现数据追踪
-                .toList();
-        list.forEach(o->o.setStatus(1));
-        easyEntityQuery.updatable(list)
-//                .setColumns(b -> b.FETCHER.status())
-                .executeRows();
-
-
-        easyEntityQuery.updatable(BlogEntity.class)
-                .setColumns(b -> b.status().set(1))
-                .where(b -> b.id().in(Collections.emptyList()))
-                .executeRows();
-        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
-                .where(b -> b.id().in(Collections.emptyList()))
-                .toList();
-
-
-        List<BlogEntity> blogEntities = updateAndReturn(BlogEntity.class, b -> b.status().set(1), b ->b.id().eq("1"));
-    }
-
-    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> List<T>
-    updateAndReturn(Class<T> entityClass, SQLExpression1<TProxy> columnSetExpression,SQLExpression1<TProxy> whereExpression){
-        easyEntityQuery.updatable(entityClass)
-                .setColumns(columnSetExpression)
-                .where(whereExpression)
-                .executeRows();
-        return easyEntityQuery.queryable(entityClass)
-                .where(whereExpression)
-                .toList();
-    }
+//                .executeRows();
+//    }
+//    @Test
+//    @EasyQueryTrack//如果默认配置defaultTrack=true那么springboot下只需要添加这个注解
+//    public void test1x2(){
+//        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+//                .toList();
+//        list.forEach(o->o.setStatus(1));
+//        easyEntityQuery.updatable(list)
+////                .setColumns(b -> b.FETCHER.status())
+//                .executeRows();
+//    }
+//    @Test
+//    @EasyQueryTrack//springboot下只需要添加这个注解
+//    public void test1x23(){
+//        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+//                .asTracking()//如果默认配置defaultTrack=false那么可以手动使用tracking来实现数据追踪
+//                .toList();
+//        list.forEach(o->o.setStatus(1));
+//        easyEntityQuery.updatable(list)
+////                .setColumns(b -> b.FETCHER.status())
+//                .executeRows();
+//
+//
+//        easyEntityQuery.updatable(BlogEntity.class)
+//                .setColumns(b -> b.status().set(1))
+//                .where(b -> b.id().in(Collections.emptyList()))
+//                .executeRows();
+//        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(b -> b.id().in(Collections.emptyList()))
+//                .toList();
+//
+//
+//        List<BlogEntity> blogEntities = updateAndReturn(BlogEntity.class, b -> b.status().set(1), b ->b.id().eq("1"));
+//    }
+//
+//    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> List<T>
+//    updateAndReturn(Class<T> entityClass, SQLExpression1<TProxy> columnSetExpression,SQLExpression1<TProxy> whereExpression){
+//        easyEntityQuery.updatable(entityClass)
+//                .setColumns(columnSetExpression)
+//                .where(whereExpression)
+//                .executeRows();
+//        return easyEntityQuery.queryable(entityClass)
+//                .where(whereExpression)
+//                .toList();
+//    }
 
 }

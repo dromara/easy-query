@@ -275,6 +275,7 @@ public class QueryTest extends BaseTest {
             Assert.assertEquals("http://blog.easy-query.com/" + indexStr, blog.getUrl());
             Assert.assertEquals(i, (int) blog.getStar());
             Assert.assertEquals(0, new BigDecimal("1.2").compareTo(blog.getScore()));
+            System.out.println("---------------"+i);
             Assert.assertEquals(i % 3 == 0 ? 0 : 1, (int) blog.getStatus());
             Assert.assertEquals(0, new BigDecimal("1.2").multiply(BigDecimal.valueOf(i)).compareTo(blog.getOrder()));
             Assert.assertEquals(i % 2 == 0, blog.getIsTop());

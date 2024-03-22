@@ -24,6 +24,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -72,38 +73,36 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
         this.navValue = navValue;
         this.runtimeContext = queryable.getSQLEntityExpressionBuilder().getRuntimeContext();
         EntityMetadata entityMetadata = listProxy.getSqlQueryable().getOriginalTable().getEntityMetadata();
-
-        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
-        EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
-        //select auto include
-//        selectAutoInclude0(entityMetadataManager,queryable,queryEntityMetadata,navValue);
         if (Objects.equals(entityMetadata.getEntityClass(), queryable.queryClass())) {
+            selectAutoInclude0(runtimeContext.getEntityMetadataManager(),queryable,entityMetadata,navValue);
             this.navigateMetadata = entityMetadata.getNavigateNotNull(navValue);
             this.navigateGetter = this.navigateMetadata.getGetter();
             this.queryable = queryable;
         } else {
-//            //如果没有include默认include
-//            if (!expressionContext.hasIncludes()) {
-//                EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
-//                String[] navValueSplit = navValue.split("\\.");
-//                String firstNavValue = navValueSplit[0];
-//                NavigateMetadata currentNavigateMetadata = queryEntityMetadata.getNavigateNotNull(firstNavValue);
-//                EntityMetadata currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
-//                for (int i = 1; i < navValueSplit.length; i++) {
-//                    String currentNavValue = navValueSplit[i];
-//                    currentNavigateMetadata = currentEntityMetadata.getNavigateNotNull(currentNavValue);
-//                    currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
-//                }
-//                String targetPropertyOrPrimary = currentNavigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
-//                NavigateMetadata navigateMetadataResult = currentEntityMetadata.getNavigateNotNull(navValueSplit[navValueSplit.length - 1]);
-//                this.navigateMetadata = navigateMetadataResult;
-//                this.navigateGetter = navigateMetadataResult.getGetter();
-//                this.queryable = queryable.select(currentEntityMetadata.getEntityClass(), o -> o.getAsSelector().column(listProxy.getSqlQueryable().getOriginalTable(), targetPropertyOrPrimary))
-//                        .include(t -> t.with(navValueSplit[navValueSplit.length - 1]));
-//            } else {
+            ExpressionContext expressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
+            //如果没有include默认include
+            if (!expressionContext.hasIncludes()) {
+                EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+                EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
+                String[] navValueSplit = navValue.split("\\.");
+                String firstNavValue = navValueSplit[0];
+                NavigateMetadata currentNavigateMetadata = queryEntityMetadata.getNavigateNotNull(firstNavValue);
+                EntityMetadata currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
+                for (int i = 1; i < navValueSplit.length - 1; i++) {
+                    String currentNavValue = navValueSplit[i];
+                    currentNavigateMetadata = currentEntityMetadata.getNavigateNotNull(currentNavValue);
+                    currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
+                }
+                String targetPropertyOrPrimary = currentNavigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
+                NavigateMetadata navigateMetadataResult = currentEntityMetadata.getNavigateNotNull(navValueSplit[navValueSplit.length - 1]);
+                this.navigateMetadata = navigateMetadataResult;
+                this.navigateGetter = navigateMetadataResult.getGetter();
+                this.queryable = queryable.select(currentEntityMetadata.getEntityClass(), o -> o.getAsSelector().column(listProxy.getSqlQueryable().getOriginalTable(), targetPropertyOrPrimary))
+                        .include(t -> t.with(navValueSplit[navValueSplit.length - 1]));
+            } else {
                 //如果存在include那么就只能一张表一张表走
-//                EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
-//                EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
+                EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+                EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
                 String[] navValueSplit = navValue.split("\\.");
                 String firstNavValue = navValueSplit[0];
                 NavigateMetadata currentNavigateMetadata = queryEntityMetadata.getNavigateNotNull(firstNavValue);
@@ -136,11 +135,9 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
                     return value;
                 };
                 this.queryable = queryable;
-//            }
+            }
         }
-    }
-
-    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager,ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata,String navigateProperties) {
+    }private void selectAutoInclude0(EntityMetadataManager entityMetadataManager,ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata,String navigateProperties) {
         if(EasyStringUtil.isBlank(navigateProperties)){
             return;
         }
@@ -254,13 +251,13 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     @Override
     public <TR> TR firstOrNull(Class<TR> resultClass) {
-        Object entity = queryable.firstOrNull(queryable.queryClass());
+        Object entity = queryable.firstOrNull(resultClass);
         return getNavigates(entity);
     }
 
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
-        Object entity = queryable.firstNotNull(queryable.queryClass(), throwFunc);
+        Object entity = queryable.firstNotNull(resultClass, throwFunc);
         return getNavigates(entity);
     }
 
@@ -301,13 +298,13 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     @Override
     public <TR> TR singleOrNull(Class<TR> resultClass) {
-        Object entity = queryable.singleOrNull(queryable.queryClass());
+        Object entity = queryable.singleOrNull(resultClass);
         return getNavigates(entity);
     }
 
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
-        Object entity = queryable.singleNotNull(queryable.queryClass(), throwFunc);
+        Object entity = queryable.singleNotNull(resultClass, throwFunc);
         return getNavigates(entity);
     }
 

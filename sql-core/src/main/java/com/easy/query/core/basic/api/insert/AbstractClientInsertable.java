@@ -174,7 +174,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate() {
-        onConflictThen0(null, null);
+        onConflictThen0(null, x->x.columnAll());
         return this;
     }
 
@@ -186,7 +186,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties) {
-        onConflictThen0(constraintProperties, null);
+        onConflictThen0(constraintProperties, x->x.columnAll());
         return this;
     }
 
@@ -198,7 +198,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public ClientInsertable<T> onDuplicateKeyUpdate() {
-        onConflictThen0(null, null);
+        onConflictThen0(null, x->x.columnAll());
         return this;
     }
 

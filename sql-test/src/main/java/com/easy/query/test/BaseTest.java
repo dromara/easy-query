@@ -194,7 +194,7 @@ public abstract class BaseTest {
     }
 
     public static void initData() {
-
+        easyQuery.deletable(BlogEntity.class).where(o->o.isNotBank(BlogEntity::getId)).disableLogicDelete().allowDeleteStatement(true).executeRows();
         boolean any = easyQuery.queryable(BlogEntity.class).any();
         if (!any) {
 
