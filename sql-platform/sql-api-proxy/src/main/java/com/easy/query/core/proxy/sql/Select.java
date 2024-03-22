@@ -504,6 +504,7 @@ public class Select {
             ListProxy<TRProxy, TR> listProxy = (ListProxy<TRProxy, TR>) resultProxy;
             SQLQueryable<TRProxy, TR> sqlQueryable = listProxy.getSqlQueryable();
             Objects.requireNonNull(sqlQueryable, "select columns null result class");
+
             EntityQueryable<ListProxy<TRProxy, TR>, List<TR>> listProxyListEntityQueryable = new EasySelectManyQueryable<>(queryable, listProxy, sqlQueryable.getNavValue());
             return EasyObjectUtil.typeCastNullable(listProxyListEntityQueryable);
         }
