@@ -6,5 +6,5 @@ package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
  *
  * @author xuejiaming
  */
-public interface StreamIterable<T> extends Iterable<T> {
+public interface StreamIterable<T> extends Iterable<T>{
 }

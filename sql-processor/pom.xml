@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.easy-query</groupId>
         <artifactId>easy-query-all</artifactId>
-        <version>1.10.41</version>
+        <version>1.10.42</version>
     </parent>
 
     <artifactId>sql-processor</artifactId>

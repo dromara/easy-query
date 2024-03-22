@@ -587,6 +587,7 @@ public class QueryTest14 extends BaseTest {
             Assert.assertEquals("false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
+
     }
 
     @Test
@@ -725,6 +726,29 @@ public class QueryTest14 extends BaseTest {
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("MERGE INTO \"t_topic_auto\" t1 USING (SELECT ? AS \"stars\",? AS \"title\",? AS \"create_time\" FROM DUAL ) t2 ON (t1.\"id\" = t2.\"id\") WHEN MATCHED THEN UPDATE SET t1.\"stars\" = t2.\"stars\",t1.\"title\" = t2.\"title\" WHEN NOT MATCHED THEN INSERT (\"stars\",\"title\",\"create_time\") VALUES (t2.\"stars\",t2.\"title\",t2.\"create_time\")", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("999(Integer),title999(String),2020-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                TopicAuto topicAuto = new TopicAuto();
+                topicAuto.setStars(999);
+                topicAuto.setTitle("title" + 999);
+                topicAuto.setCreateTime(LocalDateTime.of(2020,1,1,1,1));
+                Assert.assertNull(topicAuto.getId());
+                long l = defaultEasyEntityQuery.insertable(topicAuto)
+                        .onConflictThen(o -> o.FETCHER.allFields())
+                        .executeRows();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("MERGE INTO \"t_topic_auto\" t1 USING (SELECT ? AS \"stars\",? AS \"title\",? AS \"create_time\" FROM DUAL ) t2 ON (t1.\"id\" = t2.\"id\") WHEN MATCHED THEN UPDATE SET t1.\"stars\" = t2.\"stars\",t1.\"title\" = t2.\"title\",t1.\"create_time\" = t2.\"create_time\" WHEN NOT MATCHED THEN INSERT (\"stars\",\"title\",\"create_time\") VALUES (t2.\"stars\",t2.\"title\",t2.\"create_time\")", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("999(Integer),title999(String),2020-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -924,5 +948,11 @@ public class QueryTest14 extends BaseTest {
 //                .where(whereExpression)
 //                .toList();
 //    }
+
+    @Test
+    public void testClose(){
+        List<Map<String, Object>> maps = easyEntityQuery.sqlQueryMap("select * from t_topic");
+        System.out.println(maps);
+    }
 
 }

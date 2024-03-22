@@ -17,6 +17,7 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
     private final ExecutorContext executorContext;
     private final ResultMetadata<T> resultMetadata;
     private final JdbcCommand<QueryExecuteResult> command;
+    private QueryExecuteResult queryExecuteResult;
 
     public DefaultJdbcStreamResultSet(ExecutorContext executorContext, ResultMetadata<T> resultMetadata, JdbcCommand<QueryExecuteResult> command){
         this.executorContext = executorContext;
@@ -25,7 +26,10 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
     }
     @Override
     public StreamIterable<T> getStreamIterable()  throws SQLException {
-        return new DefaultStreamIterable<>(executorContext,resultMetadata,command.execute().getStreamResultSet());
+        if(queryExecuteResult==null){
+            this.queryExecuteResult=command.execute();
+        }
+        return new DefaultStreamIterable<>(executorContext,resultMetadata,this.queryExecuteResult.getStreamResultSet());
     }
 
     @Override
@@ -36,5 +40,8 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
     @Override
     public void close() throws SQLException {
         command.close();
+        if(this.queryExecuteResult!=null){
+            this.queryExecuteResult.close();
+        }
     }
 }
