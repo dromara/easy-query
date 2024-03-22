@@ -37,6 +37,7 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -953,6 +954,11 @@ public class QueryTest14 extends BaseTest {
     public void testClose(){
         List<Map<String, Object>> maps = easyEntityQuery.sqlQueryMap("select * from t_topic");
         System.out.println(maps);
+        List<String> list = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
+                .orderByObject(new QueryTest3.UISort(new HashMap<>()))
+                .selectColumn((b1, t2) -> b1.id()).toList();
+
     }
 
 }
