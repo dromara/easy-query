@@ -6,11 +6,6 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -1041,25 +1036,25 @@ public class QueryTest14 extends BaseTest {
 //        List<Map<String, Object>> list = tTopic1.toList();
 
 
-        List<Map<String, Object>> list = easyQueryClient.mapQueryable()
-                .asTable("t_topic1")
-                .join(MultiTableTypeEnum.LEFT_JOIN, f -> {
-                    EntitySQLTableOwner<?> table1 = f.getTableOwner(1);
-                    WherePredicate<?> wherePredicate = f.getWherePredicate(0);
-                    wherePredicate.eq(table1, "id", "id");
-                })
-                .asTable("t_topic2")
-                .where(f->{
-                    WherePredicate<?> wherePredicate = f.getWherePredicate(1);
-                    wherePredicate.eq("name","456");
-                })
-                .select(f->{
-                    ColumnSelector<?> selector = f.getSelector(0);
-                    ColumnAsSelector<?, ?> asSelector = f.getAsSelector(1);
-                    selector.column("id");
-                    asSelector.columnAs("name","name123");
-                })
-                .toList();
+//        List<Map<String, Object>> list = easyQueryClient.mapQueryable()
+//                .asTable("t_topic1")
+//                .join(MultiTableTypeEnum.LEFT_JOIN, f -> {
+//                    EntitySQLTableOwner<?> table1 = f.getTableOwner(1);
+//                    WherePredicate<?> wherePredicate = f.getWherePredicate(0);
+//                    wherePredicate.eq(table1, "id", "id");
+//                })
+//                .asTable("t_topic2")
+//                .where(f->{
+//                    WherePredicate<?> wherePredicate = f.getWherePredicate(1);
+//                    wherePredicate.eq("name","456");
+//                })
+//                .select(f->{
+//                    ColumnSelector<?> selector = f.getSelector(0);
+//                    ColumnAsSelector<?, ?> asSelector = f.getAsSelector(1);
+//                    selector.column("id");
+//                    asSelector.columnAs("name","name123");
+//                })
+//                .toList();
 //        List<Map<String, Object>> list1 = easyQueryClient.mapQueryable()
 //                .asTable("t_topic1")
 //                .join(MultiTableTypeEnum.LEFT_JOIN,
