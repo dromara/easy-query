@@ -2,6 +2,7 @@ package com.easy.query.core.api.client;
 
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
+import com.easy.query.core.basic.api.flat.MapQueryable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -60,7 +61,8 @@ public interface EasyQueryClient {
         );
     }
 
-    <T> ClientQueryable<T> queryable(ClientQueryable<T> queryable);
+
+    MapQueryable mapQueryable();
 
    default  <T> ClientQueryable<T> queryable(String sql, Class<T> clazz){
        return queryable(sql,clazz,Collections.emptyList());

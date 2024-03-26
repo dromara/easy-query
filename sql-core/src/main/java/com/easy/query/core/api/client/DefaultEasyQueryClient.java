@@ -3,6 +3,8 @@ package com.easy.query.core.api.client;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
+import com.easy.query.core.basic.api.flat.MapQueryable;
+import com.easy.query.core.basic.api.flat.impl.DefaultMapQueryable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -17,7 +19,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -63,13 +65,14 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
     }
 
     @Override
-    public <T> ClientQueryable<T> queryable(ClientQueryable<T> queryable) {
-        return null;
+    public <T> ClientQueryable<T> queryable(String sql, Class<T> clazz, Collection<Object> sqlParams) {
+        return easySQLApiFactory.createQueryable(sql, sqlParams, clazz, runtimeContext);
     }
 
     @Override
-    public <T> ClientQueryable<T> queryable(String sql, Class<T> clazz, Collection<Object> sqlParams) {
-        return easySQLApiFactory.createQueryable(sql, sqlParams, clazz, runtimeContext);
+    public MapQueryable mapQueryable() {
+        ClientQueryable<Map> queryable = easySQLApiFactory.createQueryable(Map.class, runtimeContext);
+        return new DefaultMapQueryable(EasyObjectUtil.typeCastNullable(queryable));
     }
 
     @Override
