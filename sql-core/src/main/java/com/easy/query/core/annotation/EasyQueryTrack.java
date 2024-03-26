@@ -21,7 +21,10 @@ import java.lang.annotation.RetentionPolicy;
 public @interface EasyQueryTrack {
     /**
      * 是否开启 默认开启
+     * 这个属性没有存在的意义因为加了注解表示就是要开启的所以不会有加了注解还要关闭的情况并且因为无法动态控制所以这个属性的意义不大
+     * 先保留后续删除
      */
+    @Deprecated
     boolean enable() default true;
 
     /**

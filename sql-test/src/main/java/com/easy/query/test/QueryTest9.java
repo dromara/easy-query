@@ -1166,7 +1166,7 @@ public class QueryTest9 extends BaseTest {
                 }).select(o -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(o.key1());
                     r.star().set(o.intCount());
-                    r.title().set(o.max(o.group().id()));
+                    r.title().set(o.group().id().max());
                 })).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

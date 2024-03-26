@@ -112,6 +112,14 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
         }, Integer.class);
     }
 
+    /**
+     * 请使用 id().max()
+     * @param column
+     * @return
+     * @param <TProperty>
+     * @param <TChain>
+     */
+    @Deprecated
     public <TProperty, TChain extends PropTypeColumn<TProperty>> PropTypeColumn<TProperty> max(PropTypeColumn<TProperty> column) {
         if (column instanceof ColumnObjectFunctionAvailable) {
             ColumnObjectFunctionAvailable<TProperty, TChain> column1 = (ColumnObjectFunctionAvailable<TProperty, TChain>) column;
@@ -134,6 +142,14 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
 //        return column.sum();
 //    }
 
+    /**
+     * 请使用 id().min()
+     * @param column
+     * @return
+     * @param <TProperty>
+     * @param <TChain>
+     */
+    @Deprecated
     public <TProperty, TChain extends PropTypeColumn<TProperty>> PropTypeColumn<TProperty> min(PropTypeColumn<TProperty> column) {
         if (column instanceof ColumnObjectFunctionAvailable) {
             ColumnObjectFunctionAvailable<TProperty, TChain> column1 = (ColumnObjectFunctionAvailable<TProperty, TChain>) column;
@@ -146,6 +162,13 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
         }, column.getPropertyType());
     }
 
+    /**
+     * 请使用 age().sum()
+     * @param column
+     * @return
+     * @param <TProperty>
+     */
+    @Deprecated
     public <TProperty extends Number> ColumnFunctionComparableNumberChainExpression<TProperty> sum(PropTypeColumn<TProperty> column) {
         if (column instanceof ColumnNumberFunctionAvailable) {
             ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
@@ -159,6 +182,13 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
     }
 
 
+    /**
+     * 请使用 age().sumBigDecimal()
+     * @param column
+     * @return
+     * @param <TProperty>
+     */
+    @Deprecated
     public <TProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> sumBigDecimal(PropTypeColumn<TProperty> column) {
         if (column instanceof ColumnNumberFunctionAvailable) {
             ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
@@ -177,6 +207,14 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
 //    public <TProperty> ColumnFunctionComparableNumberChainExpression<BigDecimal> avg(ColumnNumberFunctionAvailable<TProperty> column) {
 //        return column.avg();
 //    }
+
+    /**
+     * 请使用 age().avg()
+     * @param column
+     * @return
+     * @param <TProperty>
+     */
+    @Deprecated
     public <TProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> avg(PropTypeColumn<TProperty> column) {
         if (column instanceof ColumnNumberFunctionAvailable) {
             ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
@@ -189,9 +227,26 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
         }, BigDecimal.class);
     }
 
+    /**
+     * 请使用 age().join(",")
+     * @param column
+     * @param delimiter
+     * @return
+     * @param <TProperty>
+     */
+    @Deprecated
     public <TProperty> ColumnFunctionComparableStringChainExpression<String> join(ColumnStringFunctionAvailable<TProperty> column, String delimiter) {
         return column.join(delimiter);
     }
+
+    /**
+     * 请使用 age().join(",")
+     * @param column
+     * @param delimiter
+     * @return
+     * @param <TProperty>
+     */
+    @Deprecated
     public <TProperty> ColumnFunctionComparableStringChainExpression<String> join(PropTypeColumn<TProperty> column, String delimiter) {
         if (column instanceof ColumnStringFunctionAvailable) {
             ColumnStringFunctionAvailable<TProperty> funcColumn = (ColumnStringFunctionAvailable<TProperty>) column;

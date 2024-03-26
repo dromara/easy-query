@@ -67,6 +67,30 @@ public class MyTest1 extends BaseTest {
     }
 
     @Test
+    public void testDraft1_1() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<String, Integer>> list2 = easyEntityQuery.queryable(BlogEntity.class)
+                .where(o -> {
+                    o.title().length().eq(123);
+//                    o.createTime().
+//                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
+                })
+                .groupBy(o -> GroupKeys.TABLE1.of(o.content()))
+                .selectDraft(o -> Select.draft(
+                        o.key1(),
+                        o.groupTable().content().length()
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`content` AS `value1`,CHAR_LENGTH(t.`content`) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND CHAR_LENGTH(t.`title`) = ? GROUP BY t.`content`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
     public void testDraft2() {
 
         ListenerContext listenerContext = new ListenerContext();
@@ -501,7 +525,7 @@ public class MyTest1 extends BaseTest {
 
             List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.title().isNotNull())
-                    .select(o -> new TopicSubQueryBlogProxy().adapter(r->{
+                    .select(o -> new TopicSubQueryBlogProxy().adapter(r -> {
                         r.selectAll(o);
                         r.blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
                     })).toList();
@@ -523,7 +547,7 @@ public class MyTest1 extends BaseTest {
 
             List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.title().isNotNull())
-                    .select(o -> new TopicSubQueryBlogProxy().adapter(r->{
+                    .select(o -> new TopicSubQueryBlogProxy().adapter(r -> {
 
                         r.selectAll(o);
                         r.blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class)
@@ -680,6 +704,89 @@ public class MyTest1 extends BaseTest {
         listenerContextManager.clear();
     }
 
+    @Test
+    public void testSelect6_1() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogGroupIdAndName> list = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().isNotNull();
+                    o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
+                })
+                .select(o -> new BlogEntityProxy() {
+                    {
+                        id().set(o.title());
+                        title().set(o.title().subString(1, 2));
+//                        content().set(o.title().subString(1, 2).asAny().toStr());
+                    }
+                })
+                .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
+                .select(BlogGroupIdAndName.class, group -> Select.of(
+                        group.key1().as(BlogGroupIdAndName::getId),
+                        group.count().as(BlogGroupIdAndName::getIdCount)
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id` AS `id`,COUNT(*) AS `id_count` FROM (SELECT t.`title` AS `id`,SUBSTR(t.`title`,2,2) AS `title` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testSelect6_2() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogGroupIdAndName> list = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    o.title().isNotNull();
+                    o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
+                })
+                .select(o -> new BlogEntityProxy() {
+                    {
+                        id().set(o.title());
+                        title().set(o.title().subString(1, 2));
+//                        content().set(o.title().subString(1, 2).asAny().toStr());
+                    }
+                })
+                .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
+                .select(BlogGroupIdAndName.class, group -> Select.of(
+                        group.key1().as(BlogGroupIdAndName::getId),
+                        group.groupTable().id().min().as(BlogGroupIdAndName::getIdCount)
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id` AS `id`,MIN(t1.`id`) AS `id_count` FROM (SELECT t.`title` AS `id`,SUBSTR(t.`title`,2,2) AS `title` FROM `t_topic` t WHERE t.`title` IS NOT NULL AND t.`create_time` <= ?) t1 GROUP BY t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testSelect6_3() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogGroupIdAndName> list = easyEntityQuery.queryable(Topic.class)
+                .asTracking()
+                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                .where((t, b2) -> {
+                    t.title().isNotNull();
+                    t.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
+                })
+                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(t1.id(), b2.star()))
+                .select(group -> new BlogGroupIdAndNameProxy().adapter(r -> {
+                    r.id().set(group.key1());
+                    r.idCount().set(group.groupTable().t2.id().count());
+                })).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t1.`id`) AS `id_count` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`title` IS NOT NULL AND t.`create_time` <= ? GROUP BY t.`id`,t1.`star`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
     private <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>, TProperty> void set(TResult val) {
 
     }
@@ -773,7 +880,7 @@ public class MyTest1 extends BaseTest {
 
         List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().isNotNull())
-                .select(o -> new TopicSubQueryBlogProxy().adapter(r->{
+                .select(o -> new TopicSubQueryBlogProxy().adapter(r -> {
 
                     r.selectAll(o);
                     r.blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
@@ -798,9 +905,9 @@ public class MyTest1 extends BaseTest {
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
                 .groupBy(o -> GroupKeys.TABLE1.of(o.title().subString(1, 2)))
-                .select(g -> new BlogEntityProxy().adapter(r->{
+                .select(g -> new BlogEntityProxy().adapter(r -> {
 
-                   r.id().set(g.key1());
+                    r.id().set(g.key1());
                     r.star().set(g.intCount(g.group().title().subString(1, 2)));
                 })).toList();
 
@@ -829,7 +936,7 @@ public class MyTest1 extends BaseTest {
                 .groupBy(o -> {
                     return GroupKeys.TABLE1.of(o.value1());
                 })
-                .select(g -> new BlogEntityProxy().adapter(r->{
+                .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(g.key1());
                     r.star().set(g.intCount(g.group().value2()));
                 })).toList();
@@ -860,7 +967,7 @@ public class MyTest1 extends BaseTest {
                     return GroupKeys.TABLE1.of(o.value1());
                 })
                 .orderBy(o -> o.key1().asc())
-                .select(g -> new BlogEntityProxy().adapter(r->{
+                .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(g.key1());
                     r.star().set(g.intCount(g.group().value2()));
                 })).toList();
@@ -890,7 +997,7 @@ public class MyTest1 extends BaseTest {
                 .groupBy(o -> {
                     return GroupKeys.TABLE1.of(o.value1());
                 })
-                .select(g -> new BlogEntityProxy().adapter(r->{
+                .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.selectExpression();
                     r.id().set(g.key1());
                     r.star().set(g.intCount(g.group().value2()));
@@ -918,7 +1025,7 @@ public class MyTest1 extends BaseTest {
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
                 .groupBy(o -> GroupKeys.TABLE1.of(o.title().subString(1, 2)))
-                .select(g -> new BlogEntityProxy().adapter(r->{
+                .select(g -> new BlogEntityProxy().adapter(r -> {
 
                     r.id().set(g.key1());
                     r.title().set(
@@ -1009,11 +1116,12 @@ public class MyTest1 extends BaseTest {
 
         for (Draft2<String, Long> stringLongDraft2 : list) {
 
-            if("12".equals(stringLongDraft2.getValue1())){
-                Assert.assertEquals(97L,(long)stringLongDraft2.getValue2());
+            if ("12".equals(stringLongDraft2.getValue1())) {
+                Assert.assertEquals(97L, (long) stringLongDraft2.getValue2());
             }
         }
     }
+
     @Test
 
     public void testGroup19() {
@@ -1045,6 +1153,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals("0(BigDecimal),false(Boolean),0(BigDecimal),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
 
     public void testGroup20() {
@@ -1052,14 +1161,14 @@ public class MyTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-easyEntityQuery.queryable(Topic.class)
+        easyEntityQuery.queryable(Topic.class)
                 .leftJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                 .where((t, t1) -> {
                     t.id().isNotNull();
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
-                        t.expression().sqlType("SUBSTR({0},2,2)",c->c.expression(t.title())),
+                        t.expression().sqlType("SUBSTR({0},2,2)", c -> c.expression(t.title())),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 )).toList();
 
@@ -1069,6 +1178,7 @@ easyEntityQuery.queryable(Topic.class)
         Assert.assertEquals("0(BigDecimal),false(Boolean),0(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
 
     public void testGroup21() {
@@ -1104,6 +1214,7 @@ easyEntityQuery.queryable(Topic.class)
         }
 
     }
+
     @Test
 
     public void testGroup22() {
@@ -1118,7 +1229,7 @@ easyEntityQuery.queryable(Topic.class)
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
-                        t.expression().sqlType("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022,1,1,1,2))).setPropertyType(LocalDateTime.class),
+                        t.expression().sqlType("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022, 1, 1, 1, 2))).setPropertyType(LocalDateTime.class),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
                 .selectDraft(o -> Select.draft(

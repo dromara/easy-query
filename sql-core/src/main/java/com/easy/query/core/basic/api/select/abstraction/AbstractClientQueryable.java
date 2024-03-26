@@ -18,6 +18,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.executor.MethodQuery;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
@@ -1239,6 +1240,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     @Override
     public ClientQueryable<T1> asTracking() {
+        TrackManager trackManager = runtimeContext.getTrackManager();
+
+        if(!trackManager.currentThreadTracking()){
+            log.warn("current thread context tracking is not available,plz ensure use annotation [@EasyQueryTrack] or [runtimeContext.getTrackManager().begin()]");
+        }
         entityQueryExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_TRACKING);
         return this;
     }
