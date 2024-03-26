@@ -41,7 +41,11 @@ public class SQLSelectAsEntryImpl implements SQLSelectAsExpression {
 
     @Override
     public void accept(AsSelector s) {
-        s.columnAs(table,property,alias);
+        if(alias==null){
+            s.column(table,property);
+        }else{
+            s.columnAs(table,property,alias);
+        }
     }
 
     @Override

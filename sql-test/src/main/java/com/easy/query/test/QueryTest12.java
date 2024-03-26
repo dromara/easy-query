@@ -3,6 +3,7 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.BigDecimalProxy;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
@@ -1419,6 +1420,33 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE CONCAT(?,CAST(`id_card` AS SIGNED),?) LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),2(Integer),%,2,%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+    @Test
+    public void testDoc21(){
+        ClientQueryable<Map> select1 = easyQueryClient.queryable("t_topic")
+                .leftJoin(easyQueryClient.queryable("t_topic1"), (t1, t2) -> t1.eq(t2, "id", "id"))
+                .select(Map.class, (t1, t2) -> {
+                    t1.column("id");
+                    t1.column("name");
+                    t2.column("age");
+                });
+
+        ClientQueryable<Map> select2 = easyQueryClient.queryable("t_topic")
+                .leftJoin(easyQueryClient.queryable("t_topic1"), (t1, t2) -> t1.eq(t2, "id", "id"))
+                .select(Map.class, (t1, t2) -> {
+                    t1.column("id");
+                    t1.column("name");
+                    t2.column("age");
+                });
+        String sql = select1.leftJoin(select2, (t1, t2) -> t1.eq(t2, "id", "id"))
+                .where((t1, t2) -> t1.eq("name", 2))
+                .select(Map.class,(t1, t2) -> {
+                    t2.column("name");
+                    t1.column("id");
+                })
+                .toSQL();
+        System.out.println(sql);
+
     }
 
 }

@@ -1,8 +1,10 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.api.proxy.util.EasyPropertyLambdaUtil;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.builder.Selector;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
@@ -108,6 +110,9 @@ public interface SQLSelectExpression extends TablePropColumn{
         }, s -> {
             throw new UnsupportedOperationException();
         });
+    }
+    default <TEntity,TR> SQLSelectAsExpression as(Property<TEntity,TR> propertyAlias) {
+        return as(EasyPropertyLambdaUtil.getPropertyName(propertyAlias));
     }
 
     default SQLSelectExpression _concat(SQLSelectExpression... sqlSelectAses) {

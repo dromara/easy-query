@@ -15,6 +15,7 @@ import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.MultiColumnEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
@@ -31,6 +32,7 @@ import com.easy.query.test.entity.testrelation.vo.proxy.TestUserDTO1Proxy;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
+import com.easy.query.test.vo.BlogEntityVO1;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -954,10 +956,56 @@ public class QueryTest14 extends BaseTest {
     public void testClose(){
         List<Map<String, Object>> maps = easyEntityQuery.sqlQueryMap("select * from t_topic");
         System.out.println(maps);
-        List<String> list = easyEntityQuery.queryable(BlogEntity.class)
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntityVO1> list = easyEntityQuery.queryable(BlogEntity.class)
                 .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
                 .orderByObject(new QueryTest3.UISort(new HashMap<>()))
-                .selectColumn((b1, t2) -> b1.id()).toList();
+                .select(BlogEntityVO1.class, (b1, t2) -> Select.of(
+                        t2.FETCHER.allFields(),
+                        b1.FETCHER.order().as(BlogEntityVO1::getTop)
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`order` AS `top` FROM `t_blog` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+
+    @Test
+    public void testDynamicTable(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+
+            LocalDateTime star = LocalDateTime.of(2022,1,1,1,1);
+            LocalDateTime end = LocalDateTime.of(2023,1,1,1,1);
+            String tableTail = false ? "_cold" : "_hot";
+            List<MultiColumnEntity> list = easyEntityQuery.queryable(MultiColumnEntity.class)
+                    .asTable(o -> o + tableTail)
+                    .where(m -> {
+                        if (star != null) {
+                            m.col8().toDateTime(LocalDateTime.class).gt(star);
+                        }
+                        if (end != null) {
+                            m.col9().toDateTime(LocalDateTime.class).lt(end);
+                        }
+                    })
+                    .select("*").toList();
+        }catch (Exception ignored){
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT * FROM `multi_hot` WHERE CAST(`col8` AS DATETIME) > ? AND CAST(`col9` AS DATETIME) < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2022-01-01T01:01(LocalDateTime),2023-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+
 
     }
 

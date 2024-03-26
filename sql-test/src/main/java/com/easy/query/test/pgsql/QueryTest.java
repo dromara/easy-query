@@ -1,17 +1,12 @@
 package com.easy.query.test.pgsql;
 
-import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api4j.select.Queryable;
-import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft7;
 import com.easy.query.core.proxy.sql.Select;
-import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
-import com.easy.query.test.entity.Topic;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -253,15 +248,4 @@ public void query10() {
                 .executeRows();
     }
 
-//    @Test
-//     public void test1(){
-//         entityQuery.updatable(Topic.class)
-//                 .setColumns(t -> {
-//                     t.title().set(
-//                             t.title().subString(1,10).concat(x->x.concatWith("123"))
-//                     );
-//                 }).asTable("a123123")
-//                 .whereById("123zzzxxx")
-//                 .executeRows();
-//     }
 }
