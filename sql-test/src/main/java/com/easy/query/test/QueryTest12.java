@@ -404,6 +404,7 @@ public class QueryTest12 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .select(b -> new BlogEntityProxy().adapter(r -> {
+//                    r.score().set(r.id().setPropertyType(BigDecimal.class));
                     r.score().set(
                             b.score().sum().subtract(b.score().sum())
                     );

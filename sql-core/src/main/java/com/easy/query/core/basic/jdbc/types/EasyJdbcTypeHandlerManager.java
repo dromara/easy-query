@@ -23,6 +23,7 @@ import com.easy.query.core.basic.jdbc.types.handler.ShortTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.StringTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.TimeTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.TimestampTypeHandler;
+import com.easy.query.core.basic.jdbc.types.handler.UUIDTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.UtilDateTypeHandler;
 
 import java.math.BigDecimal;
@@ -35,6 +36,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -66,6 +68,7 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     private static final UtilDateTypeHandler utilDateTypeHandler = new UtilDateTypeHandler();
     private static final TimestampTypeHandler timestampTypeHandler = new TimestampTypeHandler();
     private static final TimeTypeHandler timeTypeHandler = new TimeTypeHandler();
+    private static final JdbcTypeHandler uuidTypeHandler=new UUIDTypeHandler();
     private static final JdbcTypeHandler DEFAULT_HANDLER=new ObjectTypeHandler();
     private static final Map<Class<?>, JdbcTypeHandler> handlers=new ConcurrentHashMap<>();
     static{
@@ -97,6 +100,7 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
         handlers.put(LocalDateTime.class,localDateTimeHandler);
         handlers.put(LocalDate.class, localDateHandler);
         handlers.put(LocalTime.class, localTimeTypeHandler);
+        handlers.put(UUID.class, uuidTypeHandler);
     }
 
     @Override
