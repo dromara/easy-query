@@ -5,6 +5,7 @@ package com.easy.query.core.context;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
+import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
@@ -71,6 +72,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ObjectSortQueryExecutor objectSortQueryExecutor;
     private final JdbcExecutorListener jdbcExecutorListener;
     private final AssertExceptionFactory assertExceptionFactory;
+    private final SQLParameterPrintFormat sqlParameterPrintFormat;
     private final SQLFunc sqlFunc;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
@@ -103,6 +105,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           ObjectSortQueryExecutor objectSortQueryExecutor,
                                           JdbcExecutorListener jdbcExecutorListener,
                                           AssertExceptionFactory assertExceptionFactory,
+                                          SQLParameterPrintFormat sqlParameterPrintFormat,
                                           SQLFunc sqlFunc) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
@@ -134,6 +137,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.objectSortQueryExecutor = objectSortQueryExecutor;
         this.jdbcExecutorListener = jdbcExecutorListener;
         this.assertExceptionFactory = assertExceptionFactory;
+        this.sqlParameterPrintFormat = sqlParameterPrintFormat;
         this.sqlFunc = sqlFunc;
     }
 
@@ -291,5 +295,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public AssertExceptionFactory getAssertExceptionFactory() {
         return assertExceptionFactory;
+    }
+
+    @Override
+    public SQLParameterPrintFormat getSQLParameterPrintFormat() {
+        return sqlParameterPrintFormat;
     }
 }

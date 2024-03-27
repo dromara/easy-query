@@ -3,6 +3,7 @@ package com.easy.query.core.context;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
+import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
@@ -74,4 +75,5 @@ public interface QueryRuntimeContext {
     SQLFunc fx();
     JdbcExecutorListener getJdbcExecutorListener();
     AssertExceptionFactory getAssertExceptionFactory();
+    SQLParameterPrintFormat getSQLParameterPrintFormat();
 }
