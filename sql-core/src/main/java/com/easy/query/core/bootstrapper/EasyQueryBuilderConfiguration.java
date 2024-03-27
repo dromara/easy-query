@@ -165,10 +165,15 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EasyTimeJobManager.class, DefaultEasyTimeJobManager.class)
                 .replaceService(IncludeProcessorFactory.class, EasyIncludeProcessorFactory.class)
                 .replaceService(IncludeParserEngine.class, DefaultIncludeParserEngine.class)
+                //whereObject的默认实现
                 .replaceService(WhereObjectQueryExecutor.class, DefaultWhereObjectQueryExecutor.class)
+                //orderByObject的默认实现
                 .replaceService(ObjectSortQueryExecutor.class, DefaultObjectSortQueryExecutor.class)
+                //jdbc执行的监听用于统计耗时sql
                 .replaceService(JdbcExecutorListener.class, EmptyJdbcExecutorListener.class)
+                //断言错误的异常工厂(firstNotNull singleNotNull findNotNull...)
                 .replaceService(AssertExceptionFactory.class, DefaultAssertExceptionFactory.class)
+                //sql参数打印格式化
                 .replaceService(SQLParameterPrintFormat.class, DefaultSQLParameterPrintFormat.class)
                 .replaceService(SQLFunc.class, SQLFuncImpl.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
