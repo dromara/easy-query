@@ -1008,6 +1008,15 @@ public class QueryTest14 extends BaseTest {
     }
     @Test
     public void testDynamicTable2(){
+        List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
+                .asAlias("topic")
+                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                .asAlias("blog")
+                .where((t1, b2) -> {
+                    t1.id().eq("123");
+                    b2.title().eq("123");
+                })
+                .toList();
 
 //        QueryRuntimeContext runtimeContext = easyQueryClient.getRuntimeContext();
 //        ClientQueryable<Map<String, Object>> tTopic1 = easyQueryClient.queryable("t_topic1");
@@ -1034,14 +1043,24 @@ public class QueryTest14 extends BaseTest {
 //        WherePredicateImpl<?> t1WherePredicate = new WherePredicateImpl<>(table.getEntityTable(), mainTableProvider.getOnWhereFilterContext());
 //        t1WherePredicate.eq("id",123);
 //        List<Map<String, Object>> list = tTopic1.toList();
-
-
+//easyQueryClient.queryable(Topic.class)
+//        .leftJoin(BlogEntity.class,(t, b2) -> {
+//            WherePredicate<Topic> t1 = t;
+//            WherePredicate<BlogEntity> b21 = b2;
+//            t1.eq(b21,"id","id");
+//        })
+//        .where((t1, b2) -> {
+//            WherePredicate<BlogEntity> b21 = b2;
+//            b21.eq("name","456");
+//        });
+//        MapQueryable tTopic1 = easyQueryClient.mapQueryable()
+//                .asTable("t_topic1");
 //        List<Map<String, Object>> list = easyQueryClient.mapQueryable()
 //                .asTable("t_topic1")
-//                .join(MultiTableTypeEnum.LEFT_JOIN, f -> {
-//                    EntitySQLTableOwner<?> table1 = f.getTableOwner(1);
-//                    WherePredicate<?> wherePredicate = f.getWherePredicate(0);
-//                    wherePredicate.eq(table1, "id", "id");
+//                .join(MultiTableTypeEnum.LEFT_JOIN,tTopic1, f -> {
+//                    WherePredicate<?> t1 = f.getWherePredicate(0);
+//                    WherePredicate<?> t2 = f.getWherePredicate(1);
+//                    t1.eq(t2, "id", "id");
 //                })
 //                .asTable("t_topic2")
 //                .where(f->{
@@ -1055,6 +1074,26 @@ public class QueryTest14 extends BaseTest {
 //                    asSelector.columnAs("name","name123");
 //                })
 //                .toList();
+//
+//easyQueryClient.queryable(Topic.class)
+//        .leftJoin(BlogEntity.class,(t1, t2) -> {})
+//        .where((t1, b2) -> {
+//
+//        })
+
+//        easyQueryClient.queryable(Topic.class)
+//                .leftJoin(BlogEntity.class,(t, b2) -> {
+//                    WherePredicate<Topic> t1 = t;
+//                    EntitySQLTableOwner<BlogEntity> b21 = b2;
+//                    t1.eq(b21,"id","id");
+//                });
+//        easyQueryClient.mapQueryable()
+//                .asTable("t_topic1")
+//                .join(MultiTableTypeEnum.LEFT_JOIN, f -> {
+//                    WherePredicate<?> wherePredicate = f.getWherePredicate(0);
+//                    EntitySQLTableOwner<?> table1 = f.getTableOwner(1);
+//                    wherePredicate.eq(table1, "id", "id");
+//                });
 //        List<Map<String, Object>> list1 = easyQueryClient.mapQueryable()
 //                .asTable("t_topic1")
 //                .join(MultiTableTypeEnum.LEFT_JOIN,

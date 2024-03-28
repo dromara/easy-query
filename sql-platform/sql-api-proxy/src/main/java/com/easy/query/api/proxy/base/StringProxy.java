@@ -17,7 +17,7 @@ public class StringProxy extends AbstractBasicProxyEntity<StringProxy, String> {
     }
     private static final Class<String> entityClass = String.class;
 
-    private StringProxy() {
+    public StringProxy() {
     }
 
 

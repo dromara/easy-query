@@ -19,6 +19,7 @@ import com.easy.query.test.entity.school.SchoolStudentExtendsVO;
 import com.easy.query.test.entity.school.SchoolTeacher;
 import com.easy.query.test.entity.school.dto.SchoolClassExtendsVO;
 import com.easy.query.test.entity.school.dto.SchoolClassOnlyVO;
+import com.easy.query.test.entity.school.dto.SchoolClassTeachIdsVO;
 import com.easy.query.test.entity.school.dto.SchoolClassVO;
 import com.easy.query.test.entity.school.dto.SchoolStudentOnlyVO;
 import com.easy.query.test.entity.school.dto.SchoolStudentVO;
@@ -159,6 +160,18 @@ public class RelationTest extends BaseTest {
         List<String> ids = Arrays.asList("1", "2", "3");
         try {
             relationInit(ids);
+            {
+
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+
+                List<SchoolClassTeachIdsVO> list = easyEntityQuery.queryable(SchoolClass.class)
+//                        .includes(s -> s.schoolTeachers(),x->x.selectColumn(y->y.id()))
+                        .selectAutoInclude(SchoolClassTeachIdsVO.class)
+                        .toList();
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+                Assert.assertEquals(3,listenerContext.getJdbcExecuteAfterArgs().size());
+            }
             {
                 ListenerContext listenerContext = new ListenerContext(true);
                 listenerContextManager.startListen(listenerContext);
