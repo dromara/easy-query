@@ -67,7 +67,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
             return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext);
         }else{
             DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext,ignoreAlias());
-            columnValueSQLConverter.columnConvert(table,columnMetadata,sqlPropertyConverter,runtimeContext);
+            columnValueSQLConverter.selectConvert(table,columnMetadata,sqlPropertyConverter,runtimeContext);
             return sqlPropertyConverter.toSQL(toSQLContext);
         }
     }

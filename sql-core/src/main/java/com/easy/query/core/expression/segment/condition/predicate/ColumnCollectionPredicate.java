@@ -53,7 +53,8 @@ public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredi
         } else {
 
             ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(propertyName);
-            String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext, table, propertyName, toSQLContext);
+
+            String sqlColumnSegment = getSQLColumnSegment(columnMetadata,toSQLContext);
             String compareSQL = compare.getSQL();
             StringBuilder sql = new StringBuilder();
             sql.append(sqlColumnSegment).append(" ").append(compareSQL).append(" (");
@@ -69,6 +70,18 @@ public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredi
             sql.append(")");
             return sql.toString();
         }
+    }
+
+    private String getSQLColumnSegment(ColumnMetadata columnMetadata,ToSQLContext toSQLContext){
+
+        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+        if(columnValueSQLConverter==null){
+            return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext, table, propertyName, toSQLContext);
+        }
+
+        DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
+        columnValueSQLConverter.propertyColumnConvert(table,columnMetadata,sqlPropertyConverter,runtimeContext);
+        return sqlPropertyConverter.toSQL(toSQLContext);
     }
 
     private String getSQLParameterSegment(SQLParameter sqlParameter,ColumnMetadata columnMetadata,ToSQLContext toSQLContext){

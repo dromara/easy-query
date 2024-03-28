@@ -57,7 +57,7 @@ public abstract class AbstractExpressionSQLFunction extends AbstractSQLFunction 
             ColumnFunctionExpression columnFunctionExpression = (ColumnFunctionExpression) columnExpression;
             TableAvailable tableOrNull = columnFunctionExpression.getTableOrNull();
             TableAvailable sqlFunctionTable = tableOrNull == null ? context.getDefaultTable() : tableOrNull;
-            SQLSegment sqlSegment = new SQLFunctionTranslateImpl(columnFunctionExpression.getSQLFunction()).toSQLSegment(context.getExpressionContext(), sqlFunctionTable, context.getExpressionContext().getRuntimeContext(),null);
+            SQLSegment sqlSegment = new SQLFunctionTranslateImpl(columnFunctionExpression.getSQLFunction()).toSQLSegment(context.getExpressionContext(), sqlFunctionTable, context.getRuntimeContext(),null);
             context.sql(sqlSegment);
         }else if(columnExpression instanceof ColumnSubQueryExpression){
             ColumnSubQueryExpression columnSubQueryExpression = (ColumnSubQueryExpression) columnExpression;

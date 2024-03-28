@@ -33,6 +33,7 @@ import java.util.Objects;
 public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContext {
     protected final List<ParamExpression> expressions = new ArrayList<>();
     protected final ExpressionContext expressionContext;
+    private final QueryRuntimeContext runtimeContext;
     private String alias;
     private EntityMetadata resultEntityMetadata;
     private boolean keep;
@@ -45,6 +46,7 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
 
         Objects.requireNonNull(runtimeContext, "runtimeContext cannot be null");
         this.expressionContext = expressionContext;
+        this.runtimeContext = runtimeContext;
         this.keep = runtimeContext.getQueryConfiguration().getEasyQueryOption().isKeepNativeStyle();
         this.nativePropertyInfo=false;
     }
@@ -52,6 +54,11 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
     @Override
     public ExpressionContext getExpressionContext() {
         return expressionContext;
+    }
+
+    @Override
+    public QueryRuntimeContext getRuntimeContext() {
+        return runtimeContext;
     }
 
     public void expression(TableAvailable table, String property) {

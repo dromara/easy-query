@@ -206,3 +206,13 @@ create table t_test_join
     type int not null comment '关联表多对多',
     primary key(first_id,second_id,type)
 )comment 'join通用多对多表';
+
+
+
+create table t_user_extra
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    first_name varchar(32)  null comment '姓',
+    last_name varchar(32)  null comment '名',
+    birthday datetime  null comment '生日'
+)comment '用户额外信息表';

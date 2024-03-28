@@ -19,7 +19,7 @@ public class MySQLAesEncryptColumnValueSQLConverter implements ColumnValueSQLCon
      */
     private static final String SECRET="1234567890123456";
     @Override
-    public void columnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void selectConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
 //        Dialect dialect = runtimeContext.getQueryConfiguration().getDialect();
         sqlPropertyConverter.sqlNativeSegment("AES_DECRYPT(from_base64({0}),{1})",context->{
            context

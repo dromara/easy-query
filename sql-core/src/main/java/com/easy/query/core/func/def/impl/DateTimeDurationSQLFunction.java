@@ -29,10 +29,10 @@ public class DateTimeDurationSQLFunction extends AbstractExpressionSQLFunction {
             throw new IllegalArgumentException("date time duration sql arguments != 2");
         }
         switch (durationEnum){
-            case Days:return "timestampdiff(day, {1}, {0})";
-            case Hours:return "timestampdiff(hour, {1}, {0})";
-            case Minutes:return "timestampdiff(minute, {1}, {0})";
-            case Seconds:return "timestampdiff(second, {1}, {0})";
+            case Days:return "timestampdiff(DAY, {1}, {0})";
+            case Hours:return "timestampdiff(HOUR, {1}, {0})";
+            case Minutes:return "timestampdiff(MINUTE, {1}, {0})";
+            case Seconds:return "timestampdiff(SECOND, {1}, {0})";
         }
         throw new UnsupportedOperationException("不支持当前函数DateTimeDurationSQLFunction:"+ durationEnum);
     }

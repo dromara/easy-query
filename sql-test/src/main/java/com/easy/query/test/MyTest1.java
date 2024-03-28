@@ -464,7 +464,7 @@ public class MyTest1 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT timestampdiff(day, t.`update_time`, t.`create_time`) AS `value1`,timestampdiff(hour, t.`update_time`, t.`create_time`) AS `value2`,timestampdiff(minute, t.`update_time`, t.`create_time`) AS `value3`,timestampdiff(second, t.`update_time`, t.`create_time`) AS `value4`,timestampdiff(day, date_add(t.`create_time`, interval (?) microsecond), t.`create_time`) AS `value5`,timestampdiff(second, date_add(t.`create_time`, interval (?) microsecond), t.`create_time`) AS `value6`,timestampdiff(minute, date_add(t.`create_time`, interval (?) microsecond), t.`create_time`) AS `value7` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT timestampdiff(DAY, t.`update_time`, t.`create_time`) AS `value1`,timestampdiff(HOUR, t.`update_time`, t.`create_time`) AS `value2`,timestampdiff(MINUTE, t.`update_time`, t.`create_time`) AS `value3`,timestampdiff(SECOND, t.`update_time`, t.`create_time`) AS `value4`,timestampdiff(DAY, date_add(t.`create_time`, interval (?) microsecond), t.`create_time`) AS `value5`,timestampdiff(SECOND, date_add(t.`create_time`, interval (?) microsecond), t.`create_time`) AS `value6`,timestampdiff(MINUTE, date_add(t.`create_time`, interval (?) microsecond), t.`create_time`) AS `value7` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("86400000000(Long),2000000(Long),180000000(Long),false(Boolean),123456zz9(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
@@ -504,7 +504,7 @@ public class MyTest1 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id` AS `value1`,t.`title` AS `value2`,t.`create_time` AS `value3`,(SELECT t2.`title` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`id` = t.`id`) AS `value4` FROM `t_topic` t WHERE t.`title` LIKE ? AND EXISTS (SELECT 1 FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AND timestampdiff(day, ?, t.`create_time`) <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id` AS `value1`,t.`title` AS `value2`,t.`create_time` AS `value3`,(SELECT t2.`title` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`id` = t.`id`) AS `value4` FROM `t_topic` t WHERE t.`title` LIKE ? AND EXISTS (SELECT 1 FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AND timestampdiff(DAY, ?, t.`create_time`) <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),%123%(String),false(Boolean),2021-01-01T01:01(LocalDateTime),0(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 

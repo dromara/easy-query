@@ -13,7 +13,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
  */
 public class DefaultColumnValueSQLConverter implements ColumnValueSQLConverter{
     @Override
-    public void columnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void selectConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
 
     }
 

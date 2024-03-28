@@ -40,14 +40,17 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
         SQLParameter sqlParameter = getParameter();
         ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(propertyName);
         ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext);
         if(columnValueSQLConverter==null){
+            String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext);
             EasySQLUtil.addParameter(toSQLContext, sqlParameter);
             return sqlColumnSegment + " " + compare.getSQL() + " ?";
         }else{
             DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
-            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlPropertyConverter,runtimeContext);
-            String valSQLParameter = sqlPropertyConverter.toSQL(toSQLContext);
+            DefaultSQLPropertyConverter sqlValueConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
+            columnValueSQLConverter.propertyColumnConvert(table,columnMetadata,sqlPropertyConverter,runtimeContext);
+            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlValueConverter,runtimeContext);
+            String sqlColumnSegment = sqlPropertyConverter.toSQL(toSQLContext);
+            String valSQLParameter = sqlValueConverter.toSQL(toSQLContext);
             return sqlColumnSegment + " " + compare.getSQL() + " "+valSQLParameter;
         }
     }

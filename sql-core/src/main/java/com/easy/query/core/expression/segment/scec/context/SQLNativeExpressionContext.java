@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.segment.scec.context;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
@@ -19,6 +20,7 @@ import java.util.Collection;
 public interface SQLNativeExpressionContext extends SQLNativeExpression {
 
     ExpressionContext getExpressionContext();
+    QueryRuntimeContext getRuntimeContext();
     void expression(TableAvailable table, String property);
     void columnName(TableAvailable table, String columnName);
     <TEntity> void expression(Query<TEntity> subQuery);

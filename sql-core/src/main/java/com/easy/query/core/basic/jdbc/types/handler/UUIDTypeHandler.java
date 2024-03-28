@@ -5,7 +5,6 @@ import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
 
 import java.sql.SQLException;
-import java.util.UUID;
 
 /**
  * @FileName: BigDecimalTypeHandler.java
@@ -22,6 +21,7 @@ public class UUIDTypeHandler implements JdbcTypeHandler {
 
     @Override
     public void setParameter(EasyParameter parameter) throws SQLException {
-        parameter.getPs().setString(parameter.getIndex(),(String) parameter.getValue());
+        Object value = parameter.getValue();
+        parameter.getPs().setString(parameter.getIndex(), value==null? null :value.toString() );
     }
 }
