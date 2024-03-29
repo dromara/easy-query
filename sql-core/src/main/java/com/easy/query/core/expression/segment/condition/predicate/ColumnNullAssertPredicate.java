@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -27,7 +28,8 @@ public class ColumnNullAssertPredicate implements Predicate {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext,true,false);
         return sqlColumnSegment +" "+ compare.getSQL();
     }
 

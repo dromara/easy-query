@@ -10,4 +10,9 @@ public class MapColumnMetadata extends ColumnMetadata{
     public MapColumnMetadata(ColumnOption columnOption) {
         super(columnOption);
     }
+
+    @Override
+    public String getPropertyName() {
+        return super.getName();
+    }
 }

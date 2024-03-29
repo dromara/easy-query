@@ -22,7 +22,7 @@ import javax.sql.DataSource;
 public class XPluginImpl implements Plugin {
     @Override
     public void start(AppContext context) {
-        String logClass = context.cfg().getProperty(CommonConstant.TAG + "." + "log-class");
+        String logClass = context.cfg().getProperty(CommonConstant.TAG + ".log-class");
         initLogging(logClass);
         // 事件监听，用于时实初始化
         context.subWrapsOfType(DataSource.class, bw -> {

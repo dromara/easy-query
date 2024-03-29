@@ -332,6 +332,7 @@ public class EntityMetadata {
         Column column = field.getAnnotation(Column.class);
         boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
         boolean autoSelect = column == null ? defaultAutoSelect : column.autoSelect();
+        boolean realColumn = column == null ? true : column.realColumn();
         String columnName = hasColumnName ? column.value() : nameConversion.convert(property);
         ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName);
 //            if (column != null) {
@@ -339,6 +340,7 @@ public class EntityMetadata {
 //            }
         columnOption.setProperty(propertyDescriptor);
         columnOption.setAutoSelect(autoSelect);
+        columnOption.setRealColumn(realColumn);
 
         Encryption encryption = field.getAnnotation(Encryption.class);
         if (encryption != null) {

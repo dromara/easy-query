@@ -3,6 +3,7 @@ package com.easy.query.core.expression.segment.scec.expression;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -22,6 +23,16 @@ public final class ColumnPropertyExpressionImpl implements ColumnPropertyParamEx
 
     @Override
     public String toSQL(QueryRuntimeContext runtimeContext, ToSQLContext toSQLContext) {
-        return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext, table, property, toSQLContext);
+
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        if(columnMetadata.isRealColumn()){
+            return EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext, table, columnMetadata.getName(), toSQLContext);
+        }
+//        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+//        if(columnValueSQLConverter==null){
+//            return EasySQLExpressionUtil.getSQLOwnerColumn(runtimeContext, table, columnMetadata.getName(), toSQLContext);
+//        }
+//        return new ColumnSegmentImpl(table,columnMetadata,runtimeContext).toSQL(toSQLContext);
+        return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext,true,false);
     }
 }

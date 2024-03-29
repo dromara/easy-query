@@ -29,7 +29,7 @@ public class OrderColumnSegmentImpl extends ColumnSegmentImpl implements OrderBy
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
 
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext,true,false);
         StringBuilder sql = new StringBuilder().append(sqlColumnSegment);
         if (getOrderByAsc()) {
             sql.append(" ").append(SQLKeywordEnum.ASC.toSQL());

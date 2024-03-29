@@ -42,7 +42,7 @@ public abstract class AbstractInsertUpdateSetColumnSQLSegmentImpl {
             return "?";
         }else{
             DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
-            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlPropertyConverter,runtimeContext);
+            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlPropertyConverter,runtimeContext,false);
             return sqlPropertyConverter.toSQL(toSQLContext);
         }
     }

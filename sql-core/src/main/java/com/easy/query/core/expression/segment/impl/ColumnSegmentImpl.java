@@ -1,9 +1,7 @@
 package com.easy.query.core.expression.segment.impl;
 
-import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
-import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -61,19 +59,14 @@ public class ColumnSegmentImpl implements ColumnSegment {
     }
 
     private String getSQLOwnerColumn(ToSQLContext toSQLContext){
-
-        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
-        if(columnValueSQLConverter==null){
-            return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext);
-        }else{
-            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext,ignoreAlias());
-            columnValueSQLConverter.selectConvert(table,columnMetadata,sqlPropertyConverter,runtimeContext);
-            return sqlPropertyConverter.toSQL(toSQLContext);
-        }
+        return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext,ignoreAlias(),true);
     }
 
     protected boolean ignoreAlias(){
-        return alias != null;
+        if(alias != null){
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -36,16 +36,13 @@ public class ColumnEqualsTrackPropertyPredicate implements Predicate,ValuePredic
         PropertyTrackSQLParameter sqlParameter = new PropertyTrackSQLParameter(table, propertyName,runtimeContext);
         ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(propertyName);
         ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext,true,false);
         if(columnValueSQLConverter==null){
-            String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext);
             EasySQLUtil.addParameter(toSQLContext, sqlParameter);
             return sqlColumnSegment + " = ?";
         }else{
-            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
             DefaultSQLPropertyConverter sqlValueConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
-            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlValueConverter,runtimeContext);
-            columnValueSQLConverter.propertyColumnConvert(table,columnMetadata,sqlPropertyConverter,runtimeContext);
-            String sqlColumnSegment = sqlPropertyConverter.toSQL(toSQLContext);
+            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlValueConverter,runtimeContext,true);
             String valSQLParameter = sqlValueConverter.toSQL(toSQLContext);
             return sqlColumnSegment + " = "+valSQLParameter;
         }

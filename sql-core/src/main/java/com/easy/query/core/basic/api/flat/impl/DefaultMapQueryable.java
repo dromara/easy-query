@@ -263,7 +263,8 @@ public class DefaultMapQueryable implements MapQueryable {
     @Override
     public MapQueryable select(SQLExpression1<MapSelector> selectExpression) {
         selectExpression.apply(new MapSelectorImpl(this.queryable));
-        return this;
+        ClientQueryable<Map<String, Object>> anonymousQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(queryClass, this.queryable.getSQLEntityExpressionBuilder());
+        return new DefaultMapQueryable(anonymousQueryable);
     }
 
     @Override

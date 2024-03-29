@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -28,7 +29,9 @@ public class UpdateColumnSetSelfSegmentImpl implements InsertUpdateSetColumnSQLS
     }
     @Override
     public String getColumnNameWithOwner(ToSQLContext toSQLContext) {
-        return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,leftTable,leftPropertyName,toSQLContext);
+        ColumnMetadata columnMetadata = leftTable.getEntityMetadata().getColumnNotNull(leftPropertyName);
+        return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, leftTable, columnMetadata, toSQLContext,true,false);
+//        return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,leftTable,leftPropertyName,toSQLContext);
     }
 
     @Override
@@ -38,7 +41,9 @@ public class UpdateColumnSetSelfSegmentImpl implements InsertUpdateSetColumnSQLS
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,rightTable,rightPropertyName,toSQLContext);
+        ColumnMetadata columnMetadata = rightTable.getEntityMetadata().getColumnNotNull(rightPropertyName);
+        return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, rightTable, columnMetadata, toSQLContext,true,false);
+//        return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,rightTable,rightPropertyName,toSQLContext);
     }
 
     @Override

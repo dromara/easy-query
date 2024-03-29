@@ -7,6 +7,7 @@ import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.impl.AbstractSQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -47,7 +48,8 @@ public class SQLNativeColumnSetPredicate extends AbstractSQLNativeSegmentImpl im
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        String column =  EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
-        return column +" "+getOperator().getSQL()+" "+ super.toSQL(toSQLContext);
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext,true,false);
+        return sqlColumnSegment +" "+getOperator().getSQL()+" "+ super.toSQL(toSQLContext);
     }
 }

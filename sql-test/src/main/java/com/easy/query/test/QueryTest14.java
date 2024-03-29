@@ -3,9 +3,13 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.flat.MapQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -1008,15 +1012,72 @@ public class QueryTest14 extends BaseTest {
     }
     @Test
     public void testDynamicTable2(){
-        List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
-                .asAlias("topic")
-                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
-                .asAlias("blog")
-                .where((t1, b2) -> {
-                    t1.id().eq("123");
-                    b2.title().eq("123");
-                })
-                .toList();
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+
+
+            MapQueryable bbb = easyQueryClient.mapQueryable().asTable("bbb");
+            List<Map<String, Object>> list = easyQueryClient.mapQueryable()
+                    .asTable("aaa")
+                    .select(o -> {
+                        ColumnAsSelector<?, ?> asSelector = o.getAsSelector(0);
+                        asSelector.column("id");
+                    }).join(MultiTableTypeEnum.LEFT_JOIN, bbb, f -> {
+                        WherePredicate<?> wherePredicate1 = f.getWherePredicate(0);
+                        WherePredicate<?> wherePredicate2 = f.getWherePredicate(1);
+                        wherePredicate1.eq(wherePredicate2, "id", "id");
+
+                    }).toList();
+        }catch (Exception ignored){
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id` AS `id` FROM (SELECT t.`id` AS `id` FROM `aaa` t) t1 LEFT JOIN (SELECT * FROM `bbb` t2) t3 ON t1.`id` = t3.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("2022-01-01T01:01(LocalDateTime),2023-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+//        List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
+//                .asAlias("topic")
+//                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+//                .asAlias("blog")
+//                .where((t1, b2) -> {
+//                    t1.id().eq("123");
+//                    b2.title().eq("123");
+//                })
+//                .toList();
+
+//        List<Topic> list = easyQueryClient.queryable(Topic.class)
+//                .where(t -> {
+//                    t.sqlNativeSegment("STR_TO_DATE({0},'%Y-%m-%d-%H-%i-%s.%f') > STR_TO_DATE({1},'%Y-%m-%d-%H-%i-%s.%f')", c -> {
+//                        c.keepStyle();
+//                        c.expression("createTime").expression("createTime");
+//                    });
+//                }).toList();
+//        Class<Map<String,Object>> result= EasyObjectUtil.typeCastNullable(Map.class);
+//        EasyPageResult<Map<String,Object>> pageResult = easyQueryClient.queryable(Topic.class)
+////                .where(t -> {
+////                    t.sqlNativeSegment("STR_TO_DATE({0},'%Y-%m-%d-%H-%i-%s.%f') > STR_TO_DATE({1},'%Y-%m-%d-%H-%i-%s.%f')", c -> {
+////                        c.keepStyle();
+////                        c.expression("createTime").expression("createTime");
+////                    });
+////                })
+//                .select(result)
+//                .toPageResult(1, 2);
+//        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+//                .where(t -> {
+//                    Expression expression = t.expression();
+//                    expression.sql("STR_TO_DATE({0},'%Y-%m-%d-%H-%i-%s.%f') > STR_TO_DATE({1},'%Y-%m-%d-%H-%i-%s.%f')",c->{
+//                        c.keepStyle();
+//                        SQLNativeExpressionContext propContext = c.getSQLNativeExpressionContext();
+//                        propContext.expression(t.getTable(),"createTime");
+//                        propContext.expression(t.getTable(),"createTime");
+//                    });
+//                }).toList();
+
+
 
 //        QueryRuntimeContext runtimeContext = easyQueryClient.getRuntimeContext();
 //        ClientQueryable<Map<String, Object>> tTopic1 = easyQueryClient.queryable("t_topic1");

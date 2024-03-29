@@ -25,6 +25,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
+import com.easy.query.core.metadata.MapEntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -112,7 +113,8 @@ public abstract class AbstractSelector<TChain> {
     }
     public TChain column(TableAvailable table, String property) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        appendColumnMetadata(table, columnMetadata, true, false, false, null);
+        String alias = table.getEntityMetadata() instanceof MapEntityMetadata ? property : null;
+        appendColumnMetadata(table, columnMetadata, true, false, false, alias);
         return castChain();
     }
 

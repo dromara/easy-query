@@ -30,12 +30,12 @@ public class UserExtra implements ProxyEntityAvailable<UserExtra , UserExtraProx
     private LocalDateTime birthday;
     @InsertIgnore
     @UpdateIgnore
-    @Column(sqlConversion = FullNameColumnValueSQLConverter.class)
+    @Column(sqlConversion = FullNameColumnValueSQLConverter.class,realColumn = false)
     private String fullName;
 
     @InsertIgnore
     @UpdateIgnore
-    @Column(sqlConversion = UserAgeColumnValueSQLConverter.class)
+    @Column(sqlConversion = UserAgeColumnValueSQLConverter.class,realColumn = false)
     private Integer age;
 
     @Override

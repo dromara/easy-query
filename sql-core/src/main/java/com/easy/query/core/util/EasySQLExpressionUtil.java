@@ -10,6 +10,8 @@ import com.easy.query.core.basic.api.select.ClientQueryable6;
 import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
+import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -363,8 +365,22 @@ public class EasySQLExpressionUtil {
         return getSQLOwnerColumn(runtimeContext, table, columnName, toSQLContext);
     }
 
-    public static String getSQLOwnerColumnMetadata(QueryRuntimeContext runtimeContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext) {
-        return getSQLOwnerColumn(runtimeContext, table, columnMetadata.getName(), toSQLContext);
+//    public static String getSQLOwnerColumnMetadata(QueryRuntimeContext runtimeContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext) {
+//        return getSQLOwnerColumn(runtimeContext, table, columnMetadata.getName(), toSQLContext);
+//    }
+    public static String getSQLOwnerColumnMetadata(QueryRuntimeContext runtimeContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext,boolean ignoreAlias,boolean inSelect) {
+        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+        if(columnValueSQLConverter==null){
+            return getSQLOwnerColumn(runtimeContext, table, columnMetadata.getName(), toSQLContext);
+        }else{
+            DefaultSQLPropertyConverter defaultSQLPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext, ignoreAlias);
+            if(inSelect){
+                columnValueSQLConverter.selectColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,runtimeContext);
+            }else{
+                columnValueSQLConverter.propertyColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,runtimeContext);
+            }
+            return defaultSQLPropertyConverter.toSQL(toSQLContext);
+        }
     }
 
     public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String columnName, ToSQLContext toSQLContext) {

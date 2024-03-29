@@ -30,6 +30,11 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
  */
 public interface EntitySQLContext {
     QueryRuntimeContext getRuntimeContext();
+
+    /**
+     * 仅在where内可以获取否则为null
+     * @return
+     */
     @Nullable Filter getFilter();
     @Nullable EntityExpressionBuilder getEntityExpressionBuilder();
     @Nullable AggregateFilter getAggregateFilter();

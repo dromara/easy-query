@@ -20,12 +20,13 @@ import com.easy.query.core.metadata.ColumnMetadata;
  */
 public class UserAgeColumnValueSQLConverter implements ColumnValueSQLConverter {
     @Override
-    public void selectConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction durationDay = fx.duration(x->x.sqlFunc(fx.now()).column(table,"birthday"), DateTimeDurationEnum.Days);
         SQLFunction sqlFunction = fx.numberCalc(x -> x.sqlFunc(durationDay).value(365), NumberCalcEnum.NUMBER_DEVIDE);
         SQLFunction ageSQLFunction = fx.math(x -> x.sqlFunc(sqlFunction), MathMethodEnum.Ceiling);
         String sqlSegment = ageSQLFunction.sqlSegment(table);
+
         sqlPropertyConverter.sqlNativeSegment(sqlSegment,context->{
             ageSQLFunction.consume(context.getSQLNativeChainExpressionContext());
             context.setAlias(columnMetadata.getName());
@@ -47,7 +48,7 @@ public class UserAgeColumnValueSQLConverter implements ColumnValueSQLConverter {
     }
 
     @Override
-    public void valueConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void valueConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext,boolean isCompareValue) {
         sqlPropertyConverter.sqlNativeSegment("{0}",context->{
             context.value(sqlParameter);
         });

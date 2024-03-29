@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -32,8 +33,10 @@ public class ColumnWithColumnPredicate implements Predicate {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
 
-        String sqlColumnSegment1 =  EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,leftTable,leftPropertyName,toSQLContext);
-        String sqlColumnSegment2 =  EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,rightTable,rightPropertyName,toSQLContext);
+        ColumnMetadata leftColumnMetadata = leftTable.getEntityMetadata().getColumnNotNull(leftPropertyName);
+        String sqlColumnSegment1 = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, leftTable, leftColumnMetadata, toSQLContext,true,false);
+        ColumnMetadata rightColumnMetadata = rightTable.getEntityMetadata().getColumnNotNull(rightPropertyName);
+        String sqlColumnSegment2 = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, rightTable, rightColumnMetadata, toSQLContext,true,false);
         return sqlColumnSegment1 +" "+ compare.getSQL() + " "+sqlColumnSegment2;
     }
 

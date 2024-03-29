@@ -45,6 +45,7 @@ public final class ColumnOption {
     private boolean supportQueryLike = false;
     private boolean large = false;
     private boolean autoSelect = true;
+    private boolean realColumn = true;
 
     private ValueConverter<?, ?> valueConverter;
     private ComplexPropType complexPropType;
@@ -265,5 +266,13 @@ public final class ColumnOption {
 
     public void setBeanConstructorCreator(Supplier<Object> beanConstructorCreator) {
         this.beanConstructorCreator = beanConstructorCreator;
+    }
+
+    public boolean isRealColumn() {
+        return realColumn;
+    }
+
+    public void setRealColumn(boolean realColumn) {
+        this.realColumn = realColumn;
     }
 }

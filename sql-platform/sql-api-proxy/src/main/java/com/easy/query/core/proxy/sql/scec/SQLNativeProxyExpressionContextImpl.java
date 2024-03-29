@@ -73,4 +73,9 @@ public class SQLNativeProxyExpressionContextImpl implements SQLNativeProxyExpres
         sqlConstExpressionContext.messageFormat();
         return this;
     }
+
+    @Override
+    public SQLNativeExpressionContext getSQLNativeExpressionContext() {
+        return sqlConstExpressionContext;
+    }
 }

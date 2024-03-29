@@ -18,31 +18,27 @@ public interface ColumnValueSQLConverter {
 
     /**
      * select查询
+     *
      * @param table
      * @param columnMetadata
      * @param sqlPropertyConverter
      */
-    void selectConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext);
+    void selectColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext);
 
-    /**
-     * 当前属性如何转成对应的列来使用
-     * @param table
-     * @param columnMetadata
-     * @param sqlPropertyConverter
-     * @param runtimeContext
-     */
     default void propertyColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext){
-        sqlPropertyConverter.sqlNativeSegment("{0}",c->c.expression(new SimpleSQLTableOwner(table),columnMetadata.getName()));
+        sqlPropertyConverter.sqlNativeSegment("{0}",c->c.expression(new SimpleSQLTableOwner(table),columnMetadata.getPropertyName()));
     }
 
     /**
      * insert update entity
      * update set
      * where
+     *
      * @param table
      * @param columnMetadata
      * @param sqlParameter
      * @param sqlPropertyConverter
+     * @param isCompareValue
      */
-    void valueConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata,@NotNull SQLParameter sqlParameter,@NotNull SQLPropertyConverter sqlPropertyConverter,@NotNull QueryRuntimeContext runtimeContext);
+    void valueConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLParameter sqlParameter, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext, boolean isCompareValue);
 }
