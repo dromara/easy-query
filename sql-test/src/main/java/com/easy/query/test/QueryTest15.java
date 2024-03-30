@@ -204,11 +204,17 @@ public class QueryTest15 extends BaseTest {
 
     @Test
     public void test7() {
+        LocalDateTime of = LocalDateTime.of(2020, 1, 2, 3, 4);
+//        EntityQueryable<TopicProxy, Topic> queryable = easyEntityQuery.queryable(Topic.class);
+//        ClientQueryable<Topic> clientQueryable = queryable.getClientQueryable();
+//        clientQueryable.where(x->{
+//            x.eq("createTime",of);
+//        });
+//        List<Topic> list1 = queryable.toList();
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        LocalDateTime of = LocalDateTime.of(2020, 1, 2, 3, 4);
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
                     Filter filter = t.getEntitySQLContext().getFilter();

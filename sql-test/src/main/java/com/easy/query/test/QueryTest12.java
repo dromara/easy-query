@@ -1286,6 +1286,15 @@ public class QueryTest12 extends BaseTest {
 
         try {
 
+//            List<Map<String, Object>> list = easyEntityQuery.queryable(RelationUser.class)
+//                    .where(r -> r.historyBooks().any(book -> {
+//                        book.name().like("小学");
+//                    }))
+//                    .select(r -> new MapProxy().adapter(x -> {
+//                        x.put("id", r.id());
+//                        x.put("idC", r.historyBooks().count());
+//                    }))
+//                    .toList();
 
             List<RelationUser> users = easyEntityQuery.queryable(RelationUser.class)
                     .where(r -> r.historyBooks().any(book -> {
@@ -1293,7 +1302,7 @@ public class QueryTest12 extends BaseTest {
                     }))
                     .toList();
         }catch (Exception ex){
-
+            System.out.println(ex);
         }
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

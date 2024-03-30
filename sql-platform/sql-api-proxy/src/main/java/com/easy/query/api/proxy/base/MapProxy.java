@@ -10,11 +10,10 @@ import java.util.Map;
 
 /**
  * create time 2023/6/29 09:22
- * 建议使用{@link MapTypeProxy}
  *
  * @author xuejiaming
  */
-@Deprecated
+//@Deprecated
 public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String,Object>>{
 
     private static final Class<Map<String,Object>> entityClass = EasyObjectUtil.typeCastNullable(Map.class);
