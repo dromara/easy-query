@@ -1364,6 +1364,23 @@ public class QueryTest14 extends BaseTest {
                 Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 listenerContextManager.clear();
             }
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                try {
+
+                    List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                            .where(b -> b.id().eq("123")).orderBy(b -> b.star().asc()).limit(10).toList();
+                } catch (Exception ignore) {
+                }
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT rt.* FROM (SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND \"id\" = ? ORDER BY \"star\" ASC) rt WHERE ROWNUM < 11", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
         }
     }
 

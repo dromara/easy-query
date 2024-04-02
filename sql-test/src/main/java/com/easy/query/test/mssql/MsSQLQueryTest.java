@@ -144,6 +144,12 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     @Test
     public void query9(){
 
+//        {
+//
+//            List<Map> list = easyQuery.queryable("select * from t_order", Map.class)
+//                    .limit(10,20).toList();
+//        }
+
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 

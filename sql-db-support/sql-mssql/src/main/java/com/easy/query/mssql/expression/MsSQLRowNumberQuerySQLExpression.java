@@ -78,7 +78,9 @@ public class MsSQLRowNumberQuerySQLExpression extends MsSQLQuerySQLExpression {
                             sql.append(" ORDER BY ").append(this.group.toSQL(toSQLContext));
                         } else {
                             SQLBuilderSegment columnOrder = getPrimaryKeyOrFirstColumnOrder(firstTable.getEntityTable());
-                            sql.append(" ORDER BY ").append(columnOrder.toSQL(toSQLContext));
+                            if(columnOrder!=null){
+                                sql.append(" ORDER BY ").append(columnOrder.toSQL(toSQLContext));
+                            }
                         }
                     }
                 } else {

@@ -1,7 +1,6 @@
 package com.easy.query.mssql.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -112,7 +111,9 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
                     sql.append(" ORDER BY ").append(this.group.toSQL(toSQLContext));
                 } else {
                     SQLBuilderSegment columnOrder = getPrimaryKeyOrFirstColumnOrder(firstTable.getEntityTable());
-                    sql.append(" ORDER BY ").append(columnOrder.toSQL(toSQLContext));
+                    if(columnOrder!=null){
+                        sql.append(" ORDER BY ").append(columnOrder.toSQL(toSQLContext));
+                    }
                 }
             }
 
@@ -142,6 +143,9 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
     protected SQLBuilderSegment getPrimaryKeyOrFirstColumnOrder(TableAvailable table) {
         OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
         String property = getPrimaryKeyOrFirstColumn(table);
+        if(property==null){
+            return null;
+        }
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         orderBySQLBuilderSegment.append(new ColumnSegmentImpl(table, columnMetadata, getRuntimeContext()));
         return orderBySQLBuilderSegment;
@@ -152,7 +156,8 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
         if (EasyCollectionUtil.isEmpty(keyProperties)) {
             Collection<String> properties = table.getEntityMetadata().getProperties();
             if(EasyCollectionUtil.isEmpty(properties)){
-                throw new EasyQueryInvalidOperationException("no property mapping to column");
+                return null;
+//                throw new EasyQueryInvalidOperationException("no property mapping to column");
             }
             return EasyCollectionUtil.first(properties);
         } else {

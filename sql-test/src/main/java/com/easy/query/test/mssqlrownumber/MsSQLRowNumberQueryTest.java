@@ -26,6 +26,14 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
 
     @Test
     public void query0() {
+//
+//
+//        {
+//
+//            List<Map> list = easyQuery.queryable("select * from t_order", Map.class)
+//                    .limit(10,20).toList();
+//        }
+
         Queryable<MsSQLMyTopic> queryable = easyQuery.queryable(MsSQLMyTopic.class)
                 .where(o -> o.eq(MsSQLMyTopic::getId, "123xxx"));
         String sql = queryable.toSQL();
