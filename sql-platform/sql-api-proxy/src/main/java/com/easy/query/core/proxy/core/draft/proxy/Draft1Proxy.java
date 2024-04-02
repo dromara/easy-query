@@ -29,7 +29,7 @@ public class Draft1Proxy<T1> extends AbstractDraftProxy<Draft1Proxy<T1>, Draft1<
      * {@link Draft1#getValue1}
      */
     public SQLAnyColumn<Draft1Proxy<T1>, T1> value1() {
-        return getAnyColumn("value1",null);
+        return getAnyColumn("value1",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[0]));
     }
 
 

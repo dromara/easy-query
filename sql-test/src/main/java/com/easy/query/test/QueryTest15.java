@@ -1,16 +1,31 @@
 package com.easy.query.test;
 
+import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.flat.MapQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.segment.scec.expression.FormatValueParamExpressionImpl;
+import com.easy.query.core.extension.casewhen.CaseWhenBuilderExpression;
+import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.UserExtra;
 import com.easy.query.test.listener.ListenerContext;
+import com.mysql.cj.jdbc.MysqlDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -227,4 +242,103 @@ public class QueryTest15 extends BaseTest {
 
         listenerContextManager.clear();
     }
+
+    @Test
+    public void test8(){
+        EasyQueryClient queryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(new MysqlDataSource())
+                .optionConfigure(op -> {
+                    op.setPrintSql(false);
+                    op.setKeepNativeStyle(true);
+                })
+                .useDatabaseConfigure(new MySQLDatabaseConfiguration())
+                .build();
+        MapQueryable mapQuery_film = queryClient.mapQueryable().asTable("film").cloneQueryable();
+        MapQueryable mapQueryable_film = mapQuery_film.cloneQueryable();
+        MapQueryable mapQueryable_language = queryClient.mapQueryable().asTable("language")
+                .select(f -> {
+                    ColumnAsSelector<?, ?> tableColumns = f.getAsSelector(0);
+                    tableColumns.columnAs("language_id", "language_id");
+                    tableColumns.columnAs("name", "name");
+                });
+        MapQueryable mapQueryable_filmText = queryClient.mapQueryable().asTable("film_Text").select(f ->
+        {
+            ColumnAsSelector<?, ?> table = f.getAsSelector(0);
+            table.columnAs("film_id", "film_id");
+            table.columnAs("text", "text");
+        });
+        MapQueryable mapquery1 = mapQueryable_film.join(MultiTableTypeEnum.LEFT_JOIN, mapQueryable_language, f -> {
+            EntitySQLTableOwner<?> table_language = f.getTableOwner(1);
+            WherePredicate<?> table_film_where = f.getWherePredicate(0);
+            table_film_where.eq(table_language, "language_id", "language_id");
+        }).select(f -> {
+            ColumnAsSelector<?, ?> columnAsSelector_left = f.getAsSelector(0);
+            ColumnAsSelector<?, ?> columnAsSelector_right = f.getAsSelector(1);
+            columnAsSelector_left.columnAs("film_id", "film_id");
+            columnAsSelector_left.columnAs("title", "title");
+            columnAsSelector_right.columnAs("name", "name");
+        }).asAlias("query1");
+        MapQueryable mapquery2 = mapQuery_film.join(MultiTableTypeEnum.LEFT_JOIN, mapQueryable_language, f -> {
+            EntitySQLTableOwner<?> filmtTable = f.getTableOwner(1);
+            WherePredicate<?> where = f.getWherePredicate(0);
+            where.eq(filmtTable, "film_id", "film_id");
+        }).select(f -> {
+            ColumnAsSelector<?, ?> asSelector = f.getAsSelector(0);
+            asSelector
+            .columnAs("film_id", "film_id")
+                    .columnAs("text","text");
+            SQLFunc fx = asSelector.fx();
+//            SQLFunction concat = fx.concat(x->{
+//                x.column("id");
+//                x.format("','");
+//                x.column("name");
+//
+//                SQLFunction concat1 = fx.concat("id", "name");
+//
+//
+//                x.sqlFunc(concat1);
+//            });
+
+
+            CaseWhenBuilderExpression caseWhenBuilderExpression = new CaseWhenBuilderExpression(asSelector.getRuntimeContext(), asSelector.getExpressionContext());
+            SQLFunction sqlFunction = caseWhenBuilderExpression.caseWhen(x -> {
+                x.sqlNativeSegment("{0} = {1}",c->{
+                    c.expression(asSelector.getTable(), "id");
+                    c.format("'1'");
+                });
+            }, new FormatValueParamExpressionImpl("1")).elseEnd(new FormatValueParamExpressionImpl("NULL"));
+            DistinctDefaultSQLFunction sum = fx.sum(sqlFunction);
+
+
+            asSelector.sqlFunc(sum);
+        });//.asAlias("query2");
+        mapquery1.join(MultiTableTypeEnum.LEFT_JOIN,mapquery2,f->{
+            EntitySQLTableOwner<?> rightTable = f.getTableOwner(1);
+            WherePredicate<?> where = f.getWherePredicate(0);
+            where.eq(rightTable,"film_id","film_id");
+        }).asAlias("query2");
+        String sql123=mapquery1.toSQL();
+        System.out.println(sql123);
+
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    t.expression().sql("{0} in ({1})", c -> c.expression(t.id()).collection(Arrays.asList("1", "2")));
+                }).toList();
+
+        Query<Number> numberQuery = easyEntityQuery.queryable(Topic.class)
+                .selectColumn(t -> t.stars().sum());
+
+
+    }
+
+    @Test
+    public void testxxx(){
+
+        Query<Integer> integerQuery = easyEntityQuery.queryable(Topic.class)
+                .select(t -> Select.DRAFT.of(t.stars()))
+                .selectSum(i -> i.value1());
+
+        System.out.println(1);
+    }
+
 }

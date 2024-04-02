@@ -62,6 +62,7 @@ public class OracleQuerySQLExpression  extends QuerySQLExpressionImpl {
 
         sql.append(this.projects.toSQL(toSQLContext));
         boolean hasOrderBy = this.order != null && this.order.isNotEmpty();
+        boolean hasGroup = this.group != null && this.group.isNotEmpty();
         if (!hasOrderBy && offset > 0) {
             sql.append(", ROWNUM AS ").append(rowNum);
         }
@@ -89,7 +90,7 @@ public class OracleQuerySQLExpression  extends QuerySQLExpressionImpl {
                 sql.append(whereSQL);
             }
         }
-        if (!hasOrderBy && (offset > 0 || rows > 0)) {
+        if (!hasOrderBy &&!hasGroup && (offset > 0 || rows > 0)) {
             if(!hasWhere){
                 sql.append(" WHERE ROWNUM < ");
             }else{
@@ -98,7 +99,7 @@ public class OracleQuerySQLExpression  extends QuerySQLExpressionImpl {
             sql.append(offset+rows+1);
         }
         boolean onlyWhere = true;
-        if (this.group != null && this.group.isNotEmpty()) {
+        if (hasGroup) {
             onlyWhere = false;
             sql.append(" GROUP BY ").append(this.group.toSQL(toSQLContext));
         }
@@ -111,7 +112,7 @@ public class OracleQuerySQLExpression  extends QuerySQLExpressionImpl {
             sql.append(" ORDER BY ").append(this.order.toSQL(toSQLContext));
         }
 
-        if(!hasOrderBy){
+        if(!hasOrderBy&&!hasGroup ){
             if(offset>0){
                 sql.insert(0, "SELECT rt.* FROM(").append(") rt WHERE rt.").append(rowNum).append(" > ").append(offset);
             }

@@ -23,6 +23,7 @@ import com.easy.query.test.entity.MultiColumnEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.testrelation.TestJoinEntity;
 import com.easy.query.test.entity.testrelation.TestRoleEntity;
 import com.easy.query.test.entity.testrelation.TestRouteEntity;
@@ -665,6 +666,110 @@ public class QueryTest14 extends BaseTest {
         DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         {
 
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                try {
+
+                    List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                            .where(b -> b.id().eq("123"))
+                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .select(group -> {
+                                BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                                blogEntityProxy.title().set(group.key1());
+                                blogEntityProxy.star().set(group.groupTable().id().intCount());
+                                return blogEntityProxy;
+                            }).limit(10).toList();
+                } catch (Exception ignore) {
+                }
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT rt.* FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") rt WHERE ROWNUM < 11", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
+
+
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                try {
+
+                    List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                            .where(b -> b.id().eq("123"))
+                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .select(group -> {
+                                BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                                blogEntityProxy.title().set(group.key1());
+                                blogEntityProxy.star().set(group.groupTable().id().intCount());
+                                return blogEntityProxy;
+                            }).limit(20,10).toList();
+                } catch (Exception ignore) {
+                }
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\", ROWNUM AS \"__rownum__\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
+        }
+
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                try {
+
+                    List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                            .where(b -> b.id().eq("123"))
+                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .select(group -> {
+                                BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                                blogEntityProxy.title().set(group.key1());
+                                blogEntityProxy.star().set(group.groupTable().id().intCount());
+                                return blogEntityProxy;
+                            }).orderBy(b -> b.star().asc()).limit(20,10).toList();
+                } catch (Exception ignore) {
+                }
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t1.\"title\" AS \"title\",t1.\"star\" AS \"star\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") t1 ORDER BY t1.\"star\" ASC) rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
+
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                try {
+
+                    List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                            .where(b -> b.id().eq("123"))
+                            .orderBy(b -> b.star().asc())
+                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .select(group -> {
+                                BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                                blogEntityProxy.title().set(group.key1());
+                                blogEntityProxy.star().set(group.groupTable().id().intCount());
+                                return blogEntityProxy;
+                            }).limit(20,10).toList();
+                } catch (Exception ignore) {
+                }
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\" ORDER BY t.\"star\" ASC) rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
+        {
+
 
             String sql = defaultEasyEntityQuery
                     .queryable(Topic.class)
@@ -1195,6 +1300,71 @@ public class QueryTest14 extends BaseTest {
 //                .toList();
 
 
+    }
+    @Test
+
+    public void testOracle(){
+
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(2);
+                    op.setMaxShardingQueryLimit(1);
+                })
+                .useDatabaseConfigure(new OracleDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .build();
+        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+        {
+
+
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                try {
+
+                    List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                            .where(b -> b.id().eq("123"))
+                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .select(group -> {
+                                BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                                blogEntityProxy.title().set(group.key1());
+                                blogEntityProxy.star().set(group.groupTable().id().intCount());
+                                return blogEntityProxy;
+                            }).limit(20,10).toList();
+                } catch (Exception ignore) {
+                }
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\", ROWNUM AS \"__rownum__\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
+
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                try {
+
+                    List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                            .where(b -> b.id().eq("123")).orderBy(b -> b.star().asc()).limit(20,10).toList();
+                } catch (Exception ignore) {
+                }
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND \"id\" = ? ORDER BY \"star\" ASC) rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
+        }
     }
 
 

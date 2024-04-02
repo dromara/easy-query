@@ -28,56 +28,56 @@ public class Draft9Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9> extends AbstractDraftProxy<
      * {@link Draft9#getValue1}
      */
     public SQLAnyColumn<Draft9Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9>, T1> value1() {
-        return getAnyColumn("value1",null);
+        return getAnyColumn("value1",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[0]));
     }
 
     /**
      * {@link Draft9#getValue2()}
      */
     public SQLAnyColumn<Draft9Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9>, T2> value2() {
-        return getAnyColumn("value2",null);
+        return getAnyColumn("value2",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[1]));
     }
     /**
      * {@link Draft9#getValue3()}
      */
     public SQLAnyColumn<Draft9Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9>, T3> value3() {
-        return getAnyColumn("value3",null);
+        return getAnyColumn("value3",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[2]));
     }
     /**
      * {@link Draft9#getValue4()}
      */
     public SQLAnyColumn<Draft9Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9>, T4> value4() {
-        return getAnyColumn("value4",null);
+        return getAnyColumn("value4",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[3]));
     }
     /**
      * {@link Draft9#getValue5()}
      */
     public SQLAnyColumn<Draft9Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9>, T5> value5() {
-        return getAnyColumn("value5",null);
+        return getAnyColumn("value5",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[4]));
     }
     /**
      * {@link Draft9#getValue6()}
      */
     public SQLAnyColumn<Draft9Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9>, T6> value6() {
-        return getAnyColumn("value6",null);
+        return getAnyColumn("value6",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[5]));
     }
     /**
      * {@link Draft9#getValue7()}
      */
     public SQLAnyColumn<Draft9Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9>, T7> value7() {
-        return getAnyColumn("value7",null);
+        return getAnyColumn("value7",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[6]));
     }
     /**
      * {@link Draft9#getValue8()}
      */
     public SQLAnyColumn<Draft9Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9>, T8> value8() {
-        return getAnyColumn("value8",null);
+        return getAnyColumn("value8",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[7]));
     }
     /**
      * {@link Draft9#getValue9()}
      */
     public SQLAnyColumn<Draft9Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9>, T9> value9() {
-        return getAnyColumn("value9",null);
+        return getAnyColumn("value9",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[8]));
     }
 
 

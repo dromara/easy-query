@@ -28,20 +28,20 @@ public class Draft3Proxy<T1,T2,T3> extends AbstractDraftProxy<Draft3Proxy<T1,T2,
      * {@link Draft3#getValue1}
      */
     public SQLAnyColumn<Draft3Proxy<T1,T2,T3>, T1> value1() {
-        return getAnyColumn("value1",null);
+        return getAnyColumn("value1",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[0]));
     }
 
     /**
      * {@link Draft3#getValue2()}
      */
     public SQLAnyColumn<Draft3Proxy<T1,T2,T3>, T2> value2() {
-        return getAnyColumn("value2",null);
+        return getAnyColumn("value2",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[1]));
     }
     /**
      * {@link Draft3#getValue3()}
      */
     public SQLAnyColumn<Draft3Proxy<T1,T2,T3>, T3> value3() {
-        return getAnyColumn("value3",null);
+        return getAnyColumn("value3",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[2]));
     }
 
 

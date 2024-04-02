@@ -28,32 +28,32 @@ public class Draft5Proxy<T1,T2,T3,T4,T5> extends AbstractDraftProxy<Draft5Proxy<
      * {@link Draft5#getValue1}
      */
     public SQLAnyColumn<Draft5Proxy<T1,T2,T3,T4,T5>, T1> value1() {
-        return getAnyColumn("value1",null);
+        return getAnyColumn("value1",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[0]));
     }
 
     /**
      * {@link Draft5#getValue2()}
      */
     public SQLAnyColumn<Draft5Proxy<T1,T2,T3,T4,T5>, T2> value2() {
-        return getAnyColumn("value2",null);
+        return getAnyColumn("value2",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[1]));
     }
     /**
      * {@link Draft5#getValue3()}
      */
     public SQLAnyColumn<Draft5Proxy<T1,T2,T3,T4,T5>, T3> value3() {
-        return getAnyColumn("value3",null);
+        return getAnyColumn("value3",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[2]));
     }
     /**
      * {@link Draft5#getValue4()}
      */
     public SQLAnyColumn<Draft5Proxy<T1,T2,T3,T4,T5>, T4> value4() {
-        return getAnyColumn("value4",null);
+        return getAnyColumn("value4",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[3]));
     }
     /**
      * {@link Draft5#getValue5()}
      */
     public SQLAnyColumn<Draft5Proxy<T1,T2,T3,T4,T5>, T5> value5() {
-        return getAnyColumn("value5",null);
+        return getAnyColumn("value5",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[4]));
     }
 
 

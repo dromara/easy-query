@@ -28,14 +28,14 @@ public class Draft2Proxy<T1,T2> extends AbstractDraftProxy<Draft2Proxy<T1,T2>, D
      * {@link Draft2#getValue1}
      */
     public SQLAnyColumn<Draft2Proxy<T1,T2>, T1> value1() {
-        return getAnyColumn("value1",null);
+        return getAnyColumn("value1",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[0]));
     }
 
     /**
      * {@link Draft2#getValue2()}
      */
     public SQLAnyColumn<Draft2Proxy<T1,T2>, T2> value2() {
-        return getAnyColumn("value2",null);
+        return getAnyColumn("value2",EasyObjectUtil.typeCastNullable(getDraftPropTypes()[1]));
     }
 
 
