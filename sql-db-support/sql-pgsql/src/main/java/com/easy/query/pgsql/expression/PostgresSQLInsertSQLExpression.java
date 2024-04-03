@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * create time 2023/5/17 22:36
@@ -61,7 +62,7 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
             TableAvailable entityTable = easyTableSQLExpression.getEntityTable();
             Collection<String> keyProperties = entityMetadata.getKeyProperties();
 
-            Collection<String> constraintPropertyNames = getConstraintPropertyName(keyProperties);
+            Collection<String> constraintPropertyNames = getConstraintPropertyName(entityMetadata,keyProperties);
 
             StringBuilder duplicateKeyUpdateSql = new StringBuilder();
             SQLBuilderSegment realDuplicateKeyUpdateColumns = getRealDuplicateKeyUpdateColumns();
@@ -104,10 +105,18 @@ public class PostgresSQLInsertSQLExpression extends InsertSQLExpressionImpl {
         return  EasySQLExpressionUtil.getQuoteName(runtimeContext, keyColumnName);
     }
 
-    protected Collection<String> getConstraintPropertyName(Collection<String> keyProperties){
-        if(EasyCollectionUtil.isEmpty(duplicateKeys)){
-            return keyProperties;
+    protected Collection<String> getConstraintPropertyName(EntityMetadata entityMetadata, Collection<String> keyProperties) {
+        if (EasyCollectionUtil.isEmpty(duplicateKeys)) {
+            return getConstraintPropertyName0(entityMetadata,keyProperties);
         }
-        return duplicateKeys;
+        return getConstraintPropertyName0(entityMetadata,duplicateKeys);
+    }
+
+    private Collection<String> getConstraintPropertyName0(EntityMetadata entityMetadata, Collection<String> columns) {
+        Set<String> constraintKeys = columns.stream().filter(o -> !entityMetadata.getColumnNotNull(o).isGeneratedKey()).collect(Collectors.toSet());
+        if (EasyCollectionUtil.isEmpty(constraintKeys)) {
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " no constraint property");
+        }
+        return constraintKeys;
     }
 }

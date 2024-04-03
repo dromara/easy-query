@@ -122,7 +122,7 @@ public class InsertTest extends PgSQLBaseTest {
                             .onConflictDoUpdate(o -> o.FETCHER.id().stars(), o -> o.FETCHER.id().title());
             String sql1 = topicAutoProxyTopicAutoEntityInsertable.toSQL(topicAuto);
 
-            Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"id\",\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\"",sql1);
+            Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\"",sql1);
 
         }
         {
@@ -132,7 +132,7 @@ public class InsertTest extends PgSQLBaseTest {
                             .onConflictDoUpdate(o -> o.FETCHER.id().stars(), o -> o.FETCHER.allFields());
             String sql1 = topicAutoProxyTopicAutoEntityInsertable.toSQL(topicAuto);
 
-            Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"id\",\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\", \"create_time\" = EXCLUDED.\"create_time\"",sql1);
+            Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\", \"create_time\" = EXCLUDED.\"create_time\"",sql1);
 
 //            long l = entityQuery.insertable(topicAuto)
 //                    .asTable("xxxaaa")

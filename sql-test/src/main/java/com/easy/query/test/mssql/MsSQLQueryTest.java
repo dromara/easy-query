@@ -143,7 +143,8 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     }
     @Test
     public void query9(){
-
+//        String sql = easyQuery.queryable("select * from t_order", Map.class)
+//                .limit(10, 20).toSQL();
 //        {
 //
 //            List<Map> list = easyQuery.queryable("select * from t_order", Map.class)

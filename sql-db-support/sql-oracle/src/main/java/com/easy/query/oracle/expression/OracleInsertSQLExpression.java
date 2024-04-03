@@ -60,7 +60,7 @@ public class OracleInsertSQLExpression extends InsertSQLExpressionImpl {
 
             Collection<String> keyProperties = entityMetadata.getKeyProperties();
 
-            Collection<String> constraintPropertyNames = getConstraintPropertyName(keyProperties);
+            Collection<String> constraintPropertyNames = getConstraintPropertyName(entityMetadata, keyProperties);
             Set<String> duplicateKeyUpdateColumnsSet = getColumnsSet(columns);
 
             StringBuilder sql = new StringBuilder("MERGE INTO ");
@@ -74,10 +74,10 @@ public class OracleInsertSQLExpression extends InsertSQLExpressionImpl {
                     throw new EasyQueryInvalidOperationException("insert not support:" + EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE.name() + ",column type:" + EasyClassUtil.getSimpleName(sqlSegment.getClass()));
                 }
                 InsertUpdateSetColumnSQLSegment sqlEntitySegment = (InsertUpdateSetColumnSQLSegment) sqlSegment;
-                String propertyName = sqlEntitySegment.getPropertyName();
-                if (constraintPropertyNames.contains(propertyName) || keyProperties.contains(propertyName) || !duplicateKeyUpdateColumnsSet.contains(propertyName)) {
-                    continue;
-                }
+//                String propertyName = sqlEntitySegment.getPropertyName();
+//                if (constraintPropertyNames.contains(propertyName) || keyProperties.contains(propertyName) || !duplicateKeyUpdateColumnsSet.contains(propertyName)) {
+//                    continue;
+//                }
                 if (mergeAliasSql.length() != 0) {
                     mergeAliasSql.append(",");
                 }
@@ -140,10 +140,18 @@ public class OracleInsertSQLExpression extends InsertSQLExpressionImpl {
         return EasySQLExpressionUtil.getQuoteName(runtimeContext, keyColumnName);
     }
 
-    protected Collection<String> getConstraintPropertyName(Collection<String> keyProperties) {
+    protected Collection<String> getConstraintPropertyName(EntityMetadata entityMetadata, Collection<String> keyProperties) {
         if (EasyCollectionUtil.isEmpty(duplicateKeys)) {
-            return keyProperties;
+            return getConstraintPropertyName0(entityMetadata,keyProperties);
         }
-        return duplicateKeys;
+        return getConstraintPropertyName0(entityMetadata,duplicateKeys);
+    }
+
+    private Collection<String> getConstraintPropertyName0(EntityMetadata entityMetadata, Collection<String> columns) {
+        Set<String> constraintKeys = columns.stream().filter(o -> !entityMetadata.getColumnNotNull(o).isGeneratedKey()).collect(Collectors.toSet());
+        if (EasyCollectionUtil.isEmpty(constraintKeys)) {
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " no constraint property");
+        }
+        return constraintKeys;
     }
 }
