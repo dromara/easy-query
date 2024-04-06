@@ -160,6 +160,16 @@ public class RelationTest extends BaseTest {
         try {
             relationInit(ids);
             {
+//                 easyEntityQuery.queryable(User.class)
+//                    .select(s ->  s.roles()._discard().resources())
+//                         .toList()
+
+                List<SchoolTeacher> list = easyEntityQuery.queryable(SchoolStudent.class)
+                        .select(s ->  s.schoolClass().schoolTeachers().toList())
+                        .firstNotNull();
+                System.out.println("1");
+            }
+            {
 
 //                ListenerContext listenerContext = new ListenerContext(true);
 //                listenerContextManager.startListen(listenerContext);

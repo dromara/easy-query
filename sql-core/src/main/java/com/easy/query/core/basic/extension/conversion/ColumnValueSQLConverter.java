@@ -38,7 +38,7 @@ public interface ColumnValueSQLConverter {
      * @param columnMetadata
      * @param sqlParameter
      * @param sqlPropertyConverter
-     * @param isCompareValue
+     * @param isCompareValue 当前值是用于比较还是存储
      */
     void valueConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLParameter sqlParameter, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext, boolean isCompareValue);
 }
