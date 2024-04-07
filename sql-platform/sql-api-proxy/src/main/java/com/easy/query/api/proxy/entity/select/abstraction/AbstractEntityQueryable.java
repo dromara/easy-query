@@ -30,9 +30,6 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -298,31 +295,31 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass) {
-        return clientQueryable.selectAutoInclude(resultClass);
+    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass,boolean replace) {
+        return clientQueryable.selectAutoInclude(resultClass,replace);
     }
 
-    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata) {
-        Collection<NavigateMetadata> resultNavigateMetadatas = resultEntityMetadata.getNavigateMetadatas();
-        if(EasyCollectionUtil.isEmpty(resultNavigateMetadatas)){
-            return;
-        }
-        for (NavigateMetadata resultNavigateMetadata : resultNavigateMetadatas) {
-            NavigateMetadata entityNavigateMetadata = entityMetadata.getNavigateOrNull(resultNavigateMetadata.getPropertyName());
-            if (entityNavigateMetadata == null) {
-                continue;
-            }
-
-            clientQueryable
-                    .include(t -> {
-                        ClientQueryable<Object> with = t.with(resultNavigateMetadata.getPropertyName());
-                        EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
-                        EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
-                        selectAutoInclude0(entityMetadataManager,with, entityEntityMetadata,navigateEntityMetadata);
-                        return with;
-                    });
-        }
-    }
+//    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata) {
+//        Collection<NavigateMetadata> resultNavigateMetadatas = resultEntityMetadata.getNavigateMetadatas();
+//        if(EasyCollectionUtil.isEmpty(resultNavigateMetadatas)){
+//            return;
+//        }
+//        for (NavigateMetadata resultNavigateMetadata : resultNavigateMetadatas) {
+//            NavigateMetadata entityNavigateMetadata = entityMetadata.getNavigateOrNull(resultNavigateMetadata.getPropertyName());
+//            if (entityNavigateMetadata == null) {
+//                continue;
+//            }
+//
+//            clientQueryable
+//                    .include(t -> {
+//                        ClientQueryable<Object> with = t.with(resultNavigateMetadata.getPropertyName());
+//                        EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
+//                        EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
+//                        selectAutoInclude0(entityMetadataManager,with, entityEntityMetadata,navigateEntityMetadata);
+//                        return with;
+//                    });
+//        }
+//    }
 
     @Override
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {

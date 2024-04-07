@@ -695,20 +695,20 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass) {
+    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, boolean replace) {
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         EntityMetadata resultEntityMetadata = entityMetadataManager.getEntityMetadata(resultClass);
         EntityTableExpressionBuilder table = getSQLEntityExpressionBuilder().getTable(0);
         TableAvailable entityTable = table.getEntityTable();
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
-        selectAutoInclude0(entityMetadataManager,this,entityMetadata,resultEntityMetadata,null);
+        selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null,replace);
 
         return select(resultClass);
     }
 
-    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker) {
+    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, boolean replace) {
         Collection<NavigateMetadata> resultNavigateMetadatas = resultEntityMetadata.getNavigateMetadatas();
-        if(EasyCollectionUtil.isEmpty(resultNavigateMetadatas)){
+        if (EasyCollectionUtil.isEmpty(resultNavigateMetadatas)) {
             return;
         }
 
@@ -719,16 +719,17 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             }
             //循环引用检查
             IncludeCirculateChecker circulateChecker = includeCirculateChecker == null ? new IncludeCirculateChecker() : includeCirculateChecker;
-            if(circulateChecker.includePathRepeat(new IncludePath(entityNavigateMetadata.getNavigatePropertyType(),resultNavigateMetadata.getNavigatePropertyType(),resultNavigateMetadata.getPropertyName()))){
+            if (circulateChecker.includePathRepeat(new IncludePath(entityNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getPropertyName()))) {
                 continue;
             }
 
             clientQueryable
                     .include(t -> {
+                        t.getIncludeNavigateParams().setReplace(replace);
                         ClientQueryable<Object> with = t.with(resultNavigateMetadata.getPropertyName());
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
-                        selectAutoInclude0(entityMetadataManager,with, entityEntityMetadata,navigateEntityMetadata,circulateChecker);
+                        selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, replace);
                         return with;
                     });
         }
@@ -1090,7 +1091,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             SQLFuncExpression<ClientQueryable<?>> queryableExpression = () -> {
                 List<Object> relationIds = includeNavigateParams.getRelationIds();
                 if (hasLimit) {
-                    if (EasyCollectionUtil.isNotSingle(relationIds)) {
+                    if (EasyCollectionUtil.isNotEmpty(relationIds)&&EasyCollectionUtil.isNotSingle(relationIds)) {
                         Iterator<Object> iterator = relationIds.iterator();
                         Object firstRelationId = iterator.next();
                         ClientQueryable<TProperty> firstQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, firstRelationId);
@@ -1104,16 +1105,21 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     }
                 }
                 return clientQueryable.cloneQueryable().where(o -> {
-                    o.and(()->{
+                    o.and(() -> {
                         o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationIds);
-                        if(navigateMetadata.getRelationType()!= RelationTypeEnum.ManyToMany){
+                        if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
                             navigateMetadata.predicateFilterApply(o);
                         }
 //                        navigateMetadata.predicateFilterApply(o);
                     });
                 });
             };
-            entityQueryExpressionBuilder.getExpressionContext().getIncludes().put(includeNavigateParams.getNavigateMetadata(),new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
+            boolean replace = navigateInclude.getIncludeNavigateParams().isReplace();
+            if (replace) {
+                entityQueryExpressionBuilder.getExpressionContext().getIncludes().put(includeNavigateParams.getNavigateMetadata(), new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
+            } else {
+                entityQueryExpressionBuilder.getExpressionContext().getIncludes().putIfAbsent(includeNavigateParams.getNavigateMetadata(), new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
+            }
         }
         return this;
     }
@@ -1122,13 +1128,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         ClientQueryable<TProperty> firstQueryable = clientQueryable.cloneQueryable();
         firstQueryable.where(o -> {
-           o.and(()->{
-               o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationId);
-               if(navigateMetadata.getRelationType()!= RelationTypeEnum.ManyToMany){
-                   navigateMetadata.predicateFilterApply(o);
-               }
+            o.and(() -> {
+                o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationId);
+                if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
+                    navigateMetadata.predicateFilterApply(o);
+                }
 //               navigateMetadata.predicateFilterApply(o);
-           });
+            });
         });
         return firstQueryable;
     }
@@ -1242,7 +1248,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public ClientQueryable<T1> asTracking() {
         TrackManager trackManager = runtimeContext.getTrackManager();
 
-        if(!trackManager.currentThreadTracking()){
+        if (!trackManager.currentThreadTracking()) {
             log.warn("current thread context tracking is not available,plz ensure use annotation [@EasyQueryTrack] or [runtimeContext.getTrackManager().begin()]");
         }
         entityQueryExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_TRACKING);

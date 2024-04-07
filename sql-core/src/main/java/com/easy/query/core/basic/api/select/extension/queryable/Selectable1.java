@@ -44,7 +44,10 @@ public interface Selectable1<T1> {
      * @return 返回一个可以获取结果的表达式
      * @param <TR> 返回结果的泛型类型
      */
-    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass);
+    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass){
+        return selectAutoInclude(resultClass,false);
+    }
+    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass,boolean replace);
 
     /**
      * 设置返回对象，返回对象会根据selectExpression映射相同列名

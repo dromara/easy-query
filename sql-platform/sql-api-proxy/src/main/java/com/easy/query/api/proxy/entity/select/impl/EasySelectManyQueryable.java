@@ -546,7 +546,7 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
     }
 
     @Override
-    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass) {
+    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass,boolean replace) {
         throw new UnsupportedOperationException();
     }
 

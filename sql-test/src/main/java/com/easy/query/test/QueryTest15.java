@@ -244,7 +244,7 @@ public class QueryTest15 extends BaseTest {
     }
 
     @Test
-    public void test8(){
+    public void test8() {
         EasyQueryClient queryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(new MysqlDataSource())
                 .optionConfigure(op -> {
@@ -285,8 +285,8 @@ public class QueryTest15 extends BaseTest {
         }).select(f -> {
             ColumnAsSelector<?, ?> asSelector = f.getAsSelector(0);
             asSelector
-            .columnAs("film_id", "film_id")
-                    .columnAs("text","text");
+                    .columnAs("film_id", "film_id")
+                    .columnAs("text", "text");
             SQLFunc fx = asSelector.fx();
 //            SQLFunction concat = fx.concat(x->{
 //                x.column("id");
@@ -302,7 +302,7 @@ public class QueryTest15 extends BaseTest {
 
             CaseWhenBuilderExpression caseWhenBuilderExpression = new CaseWhenBuilderExpression(asSelector.getRuntimeContext(), asSelector.getExpressionContext());
             SQLFunction sqlFunction = caseWhenBuilderExpression.caseWhen(x -> {
-                x.sqlNativeSegment("{0} = {1}",c->{
+                x.sqlNativeSegment("{0} = {1}", c -> {
                     c.expression(asSelector.getTable(), "id");
                     c.format("'1'");
                 });
@@ -312,12 +312,12 @@ public class QueryTest15 extends BaseTest {
 
             asSelector.sqlFunc(sum);
         });//.asAlias("query2");
-        mapquery1.join(MultiTableTypeEnum.LEFT_JOIN,mapquery2,f->{
+        mapquery1.join(MultiTableTypeEnum.LEFT_JOIN, mapquery2, f -> {
             EntitySQLTableOwner<?> rightTable = f.getTableOwner(1);
             WherePredicate<?> where = f.getWherePredicate(0);
-            where.eq(rightTable,"film_id","film_id");
+            where.eq(rightTable, "film_id", "film_id");
         }).asAlias("query2");
-        String sql123=mapquery1.toSQL();
+        String sql123 = mapquery1.toSQL();
         System.out.println(sql123);
 
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
@@ -332,7 +332,21 @@ public class QueryTest15 extends BaseTest {
     }
 
     @Test
-    public void testxxx(){
+    public void testxxx() {
+
+//        List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
+//                .includes(s -> s.schoolStudents(), x -> {
+//                    x.leftJoin(Topic.class, (s, t2) -> s.id().eq(t2.id()))
+//                            .select(SchoolStudentVO.class, (s1, t2) -> Select.of(
+//                                    s1.FETCHER.allFields(),
+//                                    t2.FETCHER.id().as(SchoolStudentVO::getName)
+//                            ));
+//                })
+//                .select(o->new SchoolClassProxy().adapter(r->{
+//                    r.selectAll(o);
+//                    r.schoolStudents().set(o.schoolStudents(),x->new );
+//                }))
+//                .toList();
 
 
         Query<Integer> integerQuery = easyEntityQuery.queryable(Topic.class)

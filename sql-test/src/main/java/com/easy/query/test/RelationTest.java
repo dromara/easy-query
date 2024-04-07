@@ -17,6 +17,7 @@ import com.easy.query.test.entity.school.SchoolStudent;
 import com.easy.query.test.entity.school.SchoolStudentAddress;
 import com.easy.query.test.entity.school.SchoolStudentExtendsVO;
 import com.easy.query.test.entity.school.SchoolTeacher;
+import com.easy.query.test.entity.school.dto.SchoolClass1VO;
 import com.easy.query.test.entity.school.dto.SchoolClassExtendsVO;
 import com.easy.query.test.entity.school.dto.SchoolClassOnlyVO;
 import com.easy.query.test.entity.school.dto.SchoolClassVO;
@@ -160,14 +161,44 @@ public class RelationTest extends BaseTest {
         try {
             relationInit(ids);
             {
-//                 easyEntityQuery.queryable(User.class)
-//                    .select(s ->  s.roles()._discard().resources())
-//                         .toList()
 
-                List<SchoolTeacher> list = easyEntityQuery.queryable(SchoolStudent.class)
-                        .select(s ->  s.schoolClass().schoolTeachers().toList())
-                        .firstNotNull();
-                System.out.println("1");
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+                System.out.println("------------------");
+//                List<SchoolClass1VO> listx= easyEntityQuery.queryable(SchoolClass.class)
+//                        .includes(s -> s.schoolStudents(),schoolStudentQuery->{
+//                            schoolStudentQuery.where(st->{
+//                                st.schoolStudentAddress().address().like("北京");
+//                            }).any();
+//                        })
+//                        .selectAutoInclude(SchoolClass1VO.class,false)
+//                        .toList();
+                List<SchoolClass1VO> listx= easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(s -> s.schoolStudents(),schoolStudentQuery->{
+                            schoolStudentQuery.where(st->st.name().like("123")).limit(2);
+                        })
+                        .selectAutoInclude(SchoolClass1VO.class)
+                        .toList();
+                System.out.println("------------------");
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(),2);
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                    Assert.assertEquals("SELECT t1.`id`,t1.`class_id`,t1.`name` FROM ( (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`name` LIKE ? AND t1.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`name` LIKE ? AND t1.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`name` LIKE ? AND t1.`class_id` = ? LIMIT 2) ) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("%123%(String),class1(String),%123%(String),class2(String),%123%(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+
+                for (SchoolClass1VO schoolClassVO : listx) {
+                    Assert.assertNotNull(schoolClassVO.getSchoolStudents());
+                    for (SchoolStudentVO schoolStudent : schoolClassVO.getSchoolStudents()) {
+                        Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
+                    }
+                }
             }
             {
 

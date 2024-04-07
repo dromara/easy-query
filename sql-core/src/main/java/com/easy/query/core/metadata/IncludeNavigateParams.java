@@ -21,6 +21,7 @@ public class IncludeNavigateParams {
     private TableAvailable table;
     private Integer relationGroupSize;
     private boolean limit;
+    private boolean replace=true;
     public IncludeNavigateParams(){
         relationIds =new ArrayList<>();
     }
@@ -70,6 +71,14 @@ public class IncludeNavigateParams {
 
     public void setLimit(boolean limit) {
         this.limit = limit;
+    }
+
+    public boolean isReplace() {
+        return replace;
+    }
+
+    public void setReplace(boolean replace) {
+        this.replace = replace;
     }
 
     @Override
