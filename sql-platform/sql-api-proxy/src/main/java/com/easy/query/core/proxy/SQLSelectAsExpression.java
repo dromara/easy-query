@@ -3,6 +3,7 @@ package com.easy.query.core.proxy;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.impl.SQLSelectAs2Impl;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.sql.Select;
 
@@ -23,16 +24,8 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
         if (condition) {
 
             SQLSelectAsExpression expression = Select.of(sqlSelectAs);
-            return new SQLSelectAsImpl(x -> {
-                accept(x);
-                expression.accept(x);
-            }, x -> {
-                accept(x);
-                expression.accept(x);
-            }, x -> {
-                accept(x);
-                expression.accept(x);
-            });
+
+            return new SQLSelectAs2Impl(this,expression);
         }
         return SQLSelectAsExpression.empty;
     }

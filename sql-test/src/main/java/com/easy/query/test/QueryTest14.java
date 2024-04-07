@@ -24,6 +24,8 @@ import com.easy.query.test.entity.MultiColumnEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
+import com.easy.query.test.entity.company.ValueCompany;
+import com.easy.query.test.entity.company.ValueCompanyAddress;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.testrelation.TestJoinEntity;
 import com.easy.query.test.entity.testrelation.TestRoleEntity;
@@ -1451,6 +1453,36 @@ public class QueryTest14 extends BaseTest {
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
                 Assert.assertEquals("SELECT rt.* FROM (SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND \"id\" = ? ORDER BY \"star\" ASC) rt WHERE ROWNUM < 11", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
+
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+               try {
+                   ValueCompany valueCompany = new ValueCompany();
+                   valueCompany.setId("1");
+                   valueCompany.setName("2");
+                   ValueCompanyAddress valueCompanyAddress = new ValueCompanyAddress();
+                   valueCompanyAddress.setProvince("123");
+                   valueCompanyAddress.setArea("456");
+                   valueCompany.setAddress(valueCompanyAddress);
+                   long l = defaultEasyEntityQuery.insertable(valueCompany)
+                           .onConflictThen(o->Select.of(
+                                   o.FETCHER.name(),
+                                   o.address().area()
+                           ), o -> Select.of(
+                                   o.FETCHER.id(),
+                                   o.address().province()
+                           )).executeRows();
+               }catch (Exception ignore){
+
+               }
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("MERGE INTO \"my_company\" t1 USING (SELECT ? AS \"id\",? AS \"name\",? AS \"province\",? AS \"area\" FROM DUAL ) t2 ON (t1.\"id\" = t2.\"id\" AND t1.\"province\" = t2.\"province\") WHEN MATCHED THEN UPDATE SET t1.\"name\" = t2.\"name\",t1.\"area\" = t2.\"area\" WHEN NOT MATCHED THEN INSERT (\"id\",\"name\",\"province\",\"area\") VALUES (t2.\"id\",t2.\"name\",t2.\"province\",t2.\"area\")", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("1(String),2(String),123(String),456(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 listenerContextManager.clear();
             }
         }

@@ -32,7 +32,6 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * create time 2024/3/8 11:08
@@ -334,6 +333,7 @@ public class QueryTest15 extends BaseTest {
 
     @Test
     public void testxxx(){
+
 
         Query<Integer> integerQuery = easyEntityQuery.queryable(Topic.class)
                 .select(t -> Select.DRAFT.of(t.stars()))
