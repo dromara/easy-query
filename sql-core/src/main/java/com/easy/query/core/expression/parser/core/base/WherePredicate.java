@@ -10,6 +10,7 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.SQLFxAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 import com.easy.query.core.expression.parser.core.base.core.filter.AssertPredicate;
+import com.easy.query.core.expression.parser.core.base.core.filter.ColumnFuncPredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.FuncColumnPredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.FuncValuePredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.LikePredicate;
@@ -31,6 +32,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
         , SelfPredicate<T1, WherePredicate<T1>>
         , ValuePredicate<T1, WherePredicate<T1>>
         , FuncValuePredicate<T1, WherePredicate<T1>>
+        , ColumnFuncPredicate<T1, WherePredicate<T1>>
         , FuncColumnPredicate<T1, WherePredicate<T1>>
         , ValuesPredicate<T1, WherePredicate<T1>>
         , RangePredicate<T1, WherePredicate<T1>>

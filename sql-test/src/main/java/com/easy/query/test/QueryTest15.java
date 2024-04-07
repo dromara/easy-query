@@ -16,6 +16,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -30,8 +31,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2024/3/8 11:08
@@ -333,6 +336,31 @@ public class QueryTest15 extends BaseTest {
 
     @Test
     public void testxxx() {
+        {
+            String format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
+            List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                    .where(t -> {
+                        SQLConstantExpression constant = t.expression().constant();
+                        t.createTime().lt(
+                                constant.valueOf(format).toDateTime(LocalDateTime.class).plus(1, TimeUnit.DAYS)
+                        );
+                    }).toList();
+        }
+
+//        List<Draft1<String>> list = easyEntityQuery.queryable(Topic.class)
+//                .where(t -> {
+//                    t.createTime().lt(LocalDateTime.now().plusDays(-7));
+//                })
+//                .select(t -> {
+//
+//                    Expression expression = t.expression();
+//                    SQLConstantExpression constant = expression.constant();
+//
+//                    return Select.DRAFT.of(
+////                            constant.valueOf(1).devide(constant.valueOf(2))
+//                            t.createTime().plus(1, TimeUnit.DAYS).format("yyyy-MM")
+//                    );
+//                }).toList();
 
 //        List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
 //                .includes(s -> s.schoolStudents(), x -> {

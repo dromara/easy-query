@@ -1,10 +1,11 @@
 package com.easy.query.sqllite.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
-import com.easy.query.core.func.def.AbstractSQLFunction;
+import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,14 +15,12 @@ import java.util.regex.Pattern;
  *
  * @author xuejiaming
  */
-public class SQLiteDateTimeFormatSQLFunction extends AbstractSQLFunction {
-    private final TableAvailable table;
-    private final String property;
+public class SQLiteDateTimeFormatSQLFunction extends AbstractExpressionSQLFunction {
     private final String javaFormat;
+    private final List<ColumnExpression> columnExpressions;
 
-    public SQLiteDateTimeFormatSQLFunction(TableAvailable table, String property, String javaFormat) {
-        this.table = table;
-        this.property = property;
+    public SQLiteDateTimeFormatSQLFunction(List<ColumnExpression> columnExpressions, String javaFormat) {
+        this.columnExpressions = columnExpressions;
         this.javaFormat = javaFormat;
     }
 
@@ -32,16 +31,12 @@ public class SQLiteDateTimeFormatSQLFunction extends AbstractSQLFunction {
 
     @Override
     public int paramMarks() {
-        return 1;
+        return columnExpressions.size();
     }
 
     @Override
-    protected void consume0(SQLNativeChainExpressionContext context) {
-        if (table == null) {
-            context.expression(property);
-        } else {
-            context.expression(table, property);
-        }
+    protected List<ColumnExpression> getColumnExpressions() {
+        return columnExpressions;
     }
 
     /**

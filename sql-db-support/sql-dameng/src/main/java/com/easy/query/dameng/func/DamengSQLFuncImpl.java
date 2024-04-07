@@ -28,8 +28,8 @@ public class DamengSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat) {
-        return new DamengDateTimeFormatSQLFunction(getTable(tableOwner), property, javaFormat);
+    public SQLFunction dateTimeFormat(SQLExpression1<ColumnFuncSelector> sqlExpression, String javaFormat) {
+        return new DamengDateTimeFormatSQLFunction(getColumnExpressions(sqlExpression), javaFormat);
     }
     @Override
     public SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format) {

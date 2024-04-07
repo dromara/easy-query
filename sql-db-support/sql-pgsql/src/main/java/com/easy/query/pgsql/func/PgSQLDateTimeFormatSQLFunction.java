@@ -1,10 +1,11 @@
 package com.easy.query.pgsql.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
-import com.easy.query.core.func.def.AbstractSQLFunction;
+import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,14 +15,12 @@ import java.util.regex.Pattern;
  *
  * @author xuejiaming
  */
-public class PgSQLDateTimeFormatSQLFunction extends AbstractSQLFunction {
-    private final TableAvailable table;
-    private final String property;
+public class PgSQLDateTimeFormatSQLFunction extends AbstractExpressionSQLFunction {
+    private final List<ColumnExpression> columnExpressions;
     private final String javaFormat;
 
-    public PgSQLDateTimeFormatSQLFunction(TableAvailable table, String property, String javaFormat) {
-        this.table = table;
-        this.property = property;
+    public PgSQLDateTimeFormatSQLFunction(List<ColumnExpression> columnExpressions, String javaFormat) {
+        this.columnExpressions = columnExpressions;
         this.javaFormat = javaFormat;
     }
 
@@ -32,18 +31,8 @@ public class PgSQLDateTimeFormatSQLFunction extends AbstractSQLFunction {
 
     @Override
     public int paramMarks() {
-        return 1;
+        return columnExpressions.size();
     }
-
-    @Override
-    protected void consume0(SQLNativeChainExpressionContext context) {
-        if (table == null) {
-            context.expression(property);
-        } else {
-            context.expression(table, property);
-        }
-    }
-
     /**
      * 代码参考 <a href="https://github.com/dotnetcore/FreeSql">FreeSQL</a>
      *
@@ -179,5 +168,10 @@ public class PgSQLDateTimeFormatSQLFunction extends AbstractSQLFunction {
 
         matcher.appendTail(result);
         return result.toString();
+    }
+
+    @Override
+    protected List<ColumnExpression> getColumnExpressions() {
+        return columnExpressions;
     }
 }

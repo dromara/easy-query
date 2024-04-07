@@ -37,7 +37,10 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
 
     @Override
     public ColumnFuncSelector column(SQLTableOwner tableOwner, String property) {
-        return column(tableOwner.getTable(),property);
+        if(tableOwner!=null){
+            return column(tableOwner.getTable(),property);
+        }
+        return column(property);
     }
 
     @Override

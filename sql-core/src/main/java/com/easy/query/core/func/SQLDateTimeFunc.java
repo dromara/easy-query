@@ -48,7 +48,10 @@ public interface SQLDateTimeFunc {
      * @param javaFormat java格式化
      * @return 时间格式函数
      */
-    SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat);
+    default SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat){
+        return dateTimeFormat(x->x.column(tableOwner,property),javaFormat);
+    }
+    SQLFunction dateTimeFormat(SQLExpression1<ColumnFuncSelector> sqlExpression, String javaFormat);
 
     /**
      * 对时间格式的列进行格式化

@@ -1,9 +1,10 @@
 package com.easy.query.mssql.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
-import com.easy.query.core.func.def.AbstractSQLFunction;
+import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,14 +14,12 @@ import java.util.regex.Pattern;
  *
  * @author xuejiaming
  */
-public class MsSQLDateTimeFormatSQLFunction extends AbstractSQLFunction {
-    private final TableAvailable table;
-    private final String property;
+public class MsSQLDateTimeFormatSQLFunction extends AbstractExpressionSQLFunction {
+    private final List<ColumnExpression> columnExpressions;
     private final String javaFormat;
 
-    public MsSQLDateTimeFormatSQLFunction(TableAvailable table, String property, String javaFormat) {
-        this.table = table;
-        this.property = property;
+    public MsSQLDateTimeFormatSQLFunction(List<ColumnExpression> columnExpressions, String javaFormat) {
+        this.columnExpressions = columnExpressions;
         this.javaFormat = javaFormat;
     }
 
@@ -31,16 +30,7 @@ public class MsSQLDateTimeFormatSQLFunction extends AbstractSQLFunction {
 
     @Override
     public int paramMarks() {
-        return 1;
-    }
-
-    @Override
-    protected void consume0(SQLNativeChainExpressionContext context) {
-        if (table == null) {
-            context.expression(property);
-        } else {
-            context.expression(table, property);
-        }
+        return columnExpressions.size();
     }
 
     /**
@@ -149,4 +139,8 @@ public class MsSQLDateTimeFormatSQLFunction extends AbstractSQLFunction {
         return "(" + result + ")";
     }
 
+    @Override
+    protected List<ColumnExpression> getColumnExpressions() {
+        return columnExpressions;
+    }
 }

@@ -11,6 +11,8 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -45,12 +47,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2024/3/8 11:08
@@ -1486,6 +1490,55 @@ public class QueryTest14 extends BaseTest {
                 listenerContextManager.clear();
             }
         }
+    }
+
+    @Test
+    public void testPlus(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.of(2020,1,1,1,1));
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    SQLConstantExpression constant = t.expression().constant();
+                    t.createTime().lt(
+                            constant.valueOf(format).toDateTime(LocalDateTime.class).plus(1, TimeUnit.DAYS)
+                    );
+                }).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE  `create_time` < date_add(CAST(? AS DATETIME), interval (?) microsecond)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2020-01-01 01:01:00(String),86400000000(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testPropertyFunc(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Topic> list = easyQueryClient.queryable(Topic.class)
+
+                .where(t -> {
+                    String format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.of(2020,1,1,1,1));
+                    SQLFunction createTime = t.fx().cast(x -> x.value(format), LocalDateTime.class);
+                    t.lt("createTime", createTime);
+                }).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE  `create_time` < CAST(? AS DATETIME)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2020-01-01 01:01:00(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        String sql = easyQueryClient.queryable(Map.class)
+                .asTable("my_table")
+                .where(t -> {
+                    String format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.of(2020,1,1,1,1));
+                    SQLFunction createTime = t.fx().cast(x -> x.format("'" + format + "'"), LocalDateTime.class);
+                    t.lt("create_time", createTime);
+                }).toSQL();
+        Assert.assertEquals("SELECT * FROM `my_table` WHERE  `create_time` < CAST('2020-01-01 01:01:00' AS DATETIME)",sql);
     }
 
 
