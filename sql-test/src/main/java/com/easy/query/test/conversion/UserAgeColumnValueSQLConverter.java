@@ -19,41 +19,31 @@ import com.easy.query.core.metadata.ColumnMetadata;
  * @author xuejiaming
  */
 public class UserAgeColumnValueSQLConverter implements ColumnValueSQLConverter {
-    /**
-     * 当这个值被作为select的时候如何处理
-     * @param table
-     * @param columnMetadata
-     * @param sqlPropertyConverter
-     * @param runtimeContext
-     */
     @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction durationDay = fx.duration(x->x.sqlFunc(fx.now()).column(table,"birthday"), DateTimeDurationEnum.Days);
         SQLFunction sqlFunction = fx.numberCalc(x -> x.sqlFunc(durationDay).value(365), NumberCalcEnum.NUMBER_DEVIDE);
         SQLFunction ageSQLFunction = fx.math(x -> x.sqlFunc(sqlFunction), MathMethodEnum.Ceiling);
+        String sqlSegment = ageSQLFunction.sqlSegment(table);
 
-        sqlPropertyConverter.sqlNativeSegment("{0}",context->{
-            context.sqlFunc(ageSQLFunction);
+        sqlPropertyConverter.sqlNativeSegment(sqlSegment,context->{
+            ageSQLFunction.consume(context.getSQLNativeChainExpressionContext());
+            context.setAlias(columnMetadata.getName());
+            //.constValue(dialect.getQuoteName(columnMetadata.getName()));//如果这边也是用变量就会导致join下不是别名而是带具体表的列比如:t.`phone`
         });
     }
 
-    /**
-     * 当这个值被用作非查询的值的时候如何处理不出现在select里面
-     * @param table
-     * @param columnMetadata
-     * @param sqlPropertyConverter
-     * @param runtimeContext
-     */
     @Override
     public void propertyColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction durationDay = fx.duration(x->x.sqlFunc(fx.now()).column(table,"birthday"), DateTimeDurationEnum.Days);
         SQLFunction sqlFunction = fx.numberCalc(x -> x.sqlFunc(durationDay).value(365), NumberCalcEnum.NUMBER_DEVIDE);
         SQLFunction ageSQLFunction = fx.math(x -> x.sqlFunc(sqlFunction), MathMethodEnum.Ceiling);
-
-        sqlPropertyConverter.sqlNativeSegment("{0}",context->{
-            context.sqlFunc(ageSQLFunction);
+        String sqlSegment = ageSQLFunction.sqlSegment(table);
+        sqlPropertyConverter.sqlNativeSegment(sqlSegment,context->{
+            ageSQLFunction.consume(context.getSQLNativeChainExpressionContext());
+            //.constValue(dialect.getQuoteName(columnMetadata.getName()));//如果这边也是用变量就会导致join下不是别名而是带具体表的列比如:t.`phone`
         });
     }
 

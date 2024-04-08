@@ -26,7 +26,8 @@ public class StudentSizeColumnValueSQLConverter implements ColumnValueSQLConvert
                 .select(Long.class,s -> s.columnCount("id"));
 
         sqlPropertyConverter.sqlNativeSegment("{0}",context->{
-            context.subQuery(studentSizeQuery);
+            context.expression(studentSizeQuery);
+            context.setAlias(columnMetadata.getName());
         });
     }
     @Override
@@ -37,7 +38,7 @@ public class StudentSizeColumnValueSQLConverter implements ColumnValueSQLConvert
                 .select(Long.class,s -> s.columnCount("id"));
 
         sqlPropertyConverter.sqlNativeSegment("{0}",context->{
-            context.subQuery(studentSizeQuery);
+            context.expression(studentSizeQuery);
         });
     }
 

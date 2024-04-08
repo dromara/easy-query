@@ -14,7 +14,7 @@ import java.util.Map;
  * @author xuejiaming
  */
 public final class TableContext {
-    private final LinkedHashMap<TableAvailable, TableAliasSchema> aliasMapping = new LinkedHashMap<>();
+    private final Map<TableAvailable, TableAliasSchema> aliasMapping = new LinkedHashMap<>();
 
     public void extract(TableContext otherTableContext) {
         for (Map.Entry<TableAvailable, TableAliasSchema> aliasSchemaEntry : otherTableContext.aliasMapping.entrySet()) {
@@ -43,9 +43,9 @@ public final class TableContext {
             TableAliasSchema tableAliasSchema = EasyCollectionUtil.first(aliasMapping.values());
             if (tableAliasSchema.getTable().isAnonymous() || tableAliasSchema.getTable().hasAlias()) {
                 String tableAlias = tableAliasSchema.getTableAlias(alias);
-                return new SingleToTableContext(tableAliasSchema.getTable(),tableAlias);
+                return new SingleToTableContext(tableAliasSchema.getTable(), tableAlias, alias, aliasMapping);
             }
-            return new SingleToTableContext(tableAliasSchema.getTable(),null);
+            return new SingleToTableContext(tableAliasSchema.getTable(), null, alias, aliasMapping);
         }
         HashMap<TableAvailable, String> result = new HashMap<>(mappingSize);
         int i = 0;
@@ -63,6 +63,6 @@ public final class TableContext {
             result.put(table, tableAlias);
             i++;
         }
-        return new MultiToTableContext(result, mappingSize, firstHasAlias);
+        return new MultiToTableContext(result, firstHasAlias, alias, aliasMapping);
     }
 }

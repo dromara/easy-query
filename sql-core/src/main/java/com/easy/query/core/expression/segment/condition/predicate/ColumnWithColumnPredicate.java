@@ -34,9 +34,9 @@ public class ColumnWithColumnPredicate implements Predicate {
     public String toSQL(ToSQLContext toSQLContext) {
 
         ColumnMetadata leftColumnMetadata = leftTable.getEntityMetadata().getColumnNotNull(leftPropertyName);
-        String sqlColumnSegment1 = EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), leftTable, leftColumnMetadata.getName(), toSQLContext);
+        String sqlColumnSegment1 = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, leftTable, leftColumnMetadata, toSQLContext,true,false);
         ColumnMetadata rightColumnMetadata = rightTable.getEntityMetadata().getColumnNotNull(rightPropertyName);
-        String sqlColumnSegment2 = EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), rightTable, rightColumnMetadata.getName(), toSQLContext);
+        String sqlColumnSegment2 = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, rightTable, rightColumnMetadata, toSQLContext,true,false);
         return sqlColumnSegment1 +" "+ compare.getSQL() + " "+sqlColumnSegment2;
     }
 

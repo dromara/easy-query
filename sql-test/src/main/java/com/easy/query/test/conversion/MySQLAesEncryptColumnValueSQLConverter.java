@@ -22,17 +22,18 @@ public class MySQLAesEncryptColumnValueSQLConverter implements ColumnValueSQLCon
     @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
 //        Dialect dialect = runtimeContext.getQueryConfiguration().getDialect();
-            sqlPropertyConverter.sqlNativeSegment("AES_DECRYPT(from_base64({0}),{1})",context->{
-                context
-                        .column(new SimpleSQLTableOwner(table),columnMetadata.getPropertyName())//采用变量是因为可能出现join附带别名所以需要变量
-                        .value(SECRET);
-                //.constValue(dialect.getQuoteName(columnMetadata.getName()));//如果这边也是用变量就会导致join下不是别名而是带具体表的列比如:t.`phone`
-            });
+        sqlPropertyConverter.sqlNativeSegment("AES_DECRYPT(from_base64({0}),{1})",context->{
+            context
+                    .expression(columnMetadata.getPropertyName())//采用变量是因为可能出现join附带别名所以需要变量
+                    .value(SECRET)
+                    .setAlias(columnMetadata.getName());
+            //.constValue(dialect.getQuoteName(columnMetadata.getName()));//如果这边也是用变量就会导致join下不是别名而是带具体表的列比如:t.`phone`
+        });
     }
 
     @Override
     public void propertyColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
-        sqlPropertyConverter.sqlNativeSegment("{0}",c->c.column(new SimpleSQLTableOwner(table),columnMetadata.getPropertyName()));
+        sqlPropertyConverter.sqlNativeSegment("{0}",c->c.expression(new SimpleSQLTableOwner(table),columnMetadata.getPropertyName()));
     }
 
     @Override

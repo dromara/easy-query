@@ -23,14 +23,15 @@ public class MySQLAESColumnValueSQLConverter implements ColumnValueSQLConverter 
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         sqlPropertyConverter.sqlNativeSegment("AES_DECRYPT(from_base64({0}),{1})",context->{
             context
-                    .column(new SimpleSQLTableOwner(table),columnMetadata.getPropertyName())//采用变量是因为可能出现join附带别名所以需要变量
-                    .value(SECRET);
+                    .expression(columnMetadata.getPropertyName())//采用变量是因为可能出现join附带别名所以需要变量
+                    .value(SECRET)
+                    .setAlias(columnMetadata.getName());
         });
     }
 
     @Override
     public void propertyColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
-        sqlPropertyConverter.sqlNativeSegment("{0}",c->c.column(new SimpleSQLTableOwner(table),columnMetadata.getPropertyName()));
+        sqlPropertyConverter.sqlNativeSegment("{0}",c->c.expression(new SimpleSQLTableOwner(table),columnMetadata.getPropertyName()));
     }
 
     @Override

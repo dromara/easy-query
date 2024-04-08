@@ -20,8 +20,10 @@ public class FullNameColumnValueSQLConverter implements ColumnValueSQLConverter 
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction concat = fx.concat("firstName", "lastName");
-        sqlPropertyConverter.sqlNativeSegment("{0}",context->{
-            context.sqlFunc(concat);
+        String sqlSegment = concat.sqlSegment(table);
+        sqlPropertyConverter.sqlNativeSegment(sqlSegment,context->{
+            concat.consume(context.getSQLNativeChainExpressionContext());
+            context.setAlias(columnMetadata.getName());
         });
     }
 
@@ -29,8 +31,9 @@ public class FullNameColumnValueSQLConverter implements ColumnValueSQLConverter 
     public void propertyColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction concat = fx.concat("firstName", "lastName");
-        sqlPropertyConverter.sqlNativeSegment("{0}",context->{
-            context.sqlFunc(concat);
+        String sqlSegment = concat.sqlSegment(table);
+        sqlPropertyConverter.sqlNativeSegment(sqlSegment,context->{
+            concat.consume(context.getSQLNativeChainExpressionContext());
         });
     }
 

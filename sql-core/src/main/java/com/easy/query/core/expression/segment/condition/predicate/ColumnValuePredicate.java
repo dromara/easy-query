@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
+import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
 import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -36,17 +38,17 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         SQLParameter sqlParameter = getParameter();
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), table, columnMetadata.getName(), toSQLContext);
-
-        EasySQLUtil.addParameter(toSQLContext, sqlParameter);
-        return sqlColumnSegment + " " + compare.getSQL() + " ?";
-//        if(columnValueSQLConverter==null){
-//        }else{
-//            DefaultSQLPropertyConverter sqlValueConverter = new DefaultSQLPropertyConverter(table, expressionContext);
-//            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlValueConverter,expressionContext.getRuntimeContext(),true);
-//            String valSQLParameter = sqlValueConverter.toSQL(toSQLContext);
-//            return sqlColumnSegment + " " + compare.getSQL() + " "+valSQLParameter;
-//        }
+        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
+        if(columnValueSQLConverter==null){
+            EasySQLUtil.addParameter(toSQLContext, sqlParameter);
+            return sqlColumnSegment + " " + compare.getSQL() + " ?";
+        }else{
+            DefaultSQLPropertyConverter sqlValueConverter = new DefaultSQLPropertyConverter(table, expressionContext);
+            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlValueConverter,expressionContext.getRuntimeContext(),true);
+            String valSQLParameter = sqlValueConverter.toSQL(toSQLContext);
+            return sqlColumnSegment + " " + compare.getSQL() + " "+valSQLParameter;
+        }
     }
 
     @Override

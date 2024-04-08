@@ -22,6 +22,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnInSubQue
 import com.easy.query.core.expression.segment.condition.predicate.ColumnNoneSubQueryPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnNullAssertPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnTrueOrFalsePredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
@@ -115,8 +116,9 @@ public class FilterImpl implements Filter {
 
     protected void appendThisPredicate(TableAvailable table, String property, Object val, SQLPredicateCompare condition) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        Predicate columnPredicate = EasySQLExpressionUtil.getSQLOwnerPredicateSegmentColumnMetadata(expressionContext, table, columnMetadata, getReallyPredicateCompare(condition), val);
-        nextPredicateSegment.setPredicate(columnPredicate);
+        nextPredicateSegment.setPredicate(new ColumnValuePredicate(table, columnMetadata, val, getReallyPredicateCompare(condition), expressionContext));
+//        Predicate columnPredicate = EasySQLExpressionUtil.getSQLOwnerPredicateSegmentColumnMetadata(expressionContext, table, columnMetadata, getReallyPredicateCompare(condition), val);
+//        nextPredicateSegment.setPredicate(columnPredicate);
     }
 
     protected void appendThisFuncPredicate(TableAvailable table, String propertyName, ColumnFunction func, SQLPredicateCompare compare, Object val) {

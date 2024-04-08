@@ -29,7 +29,6 @@ import com.easy.query.core.metadata.MapEntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyUtil;
 
@@ -245,8 +244,8 @@ public abstract class AbstractSelector<TChain> {
         if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
             return;
         }
-        SQLSegment columnSegment = EasySQLExpressionUtil.getSQLOwnerSegmentColumnMetadata(expressionContext, table, columnMetadata, alias, true);
-        sqlBuilderSegment.append(columnSegment);
+//        SQLSegment columnSegment = EasySQLExpressionUtil.getSQLOwnerSegmentColumnMetadata(expressionContext, table, columnMetadata, alias, true);
+//        sqlBuilderSegment.append(columnSegment);
 //        if(columnMetadata.getColumnValueSQLConverter()!=null){
 //            ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
 //            DefaultSQLPropertyConverter defaultSQLPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext, alias == null);
@@ -258,6 +257,8 @@ public abstract class AbstractSelector<TChain> {
 //            ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, expressionContext, alias);
 //            sqlBuilderSegment.append(columnSegment);
 //        }
+                    ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, expressionContext, alias);
+            sqlBuilderSegment.append(columnSegment);
     }
 
     private EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {

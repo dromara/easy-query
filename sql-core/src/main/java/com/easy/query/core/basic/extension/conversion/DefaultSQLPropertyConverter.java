@@ -3,10 +3,12 @@ package com.easy.query.core.basic.extension.conversion;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
+import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContextImpl;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.func.column.ColumnFuncSelector;
 
 import java.util.Objects;
 
@@ -44,18 +46,18 @@ public class DefaultSQLPropertyConverter implements SQLPropertyConverter {
     }
 
     @Override
-    public void sqlNativeSegment(String sqlSegment, SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
         Objects.requireNonNull(sqlSegment, "sqlSegment can not be null");
-        Objects.requireNonNull(sqlExpression, "sqlExpression can not be null");
-        this.sqlFunction = expressionContext.getRuntimeContext().fx().anySQLFunction(sqlSegment, sqlExpression);
+        Objects.requireNonNull(contextConsume, "sqlExpression can not be null");
+//        this.sqlFunction = expressionContext.getRuntimeContext().fx().anySQLFunction(sqlSegment, sqlExpression);
 //
-//        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,expressionContext.getRuntimeContext());
-//        SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(table, sqlNativeExpressionContext);
-//        contextConsume.apply(sqlNativePropertyExpressionContext);
-//        if (ignoreAlias) {
-//            sqlNativeExpressionContext.setAlias(null);
-//        }
-//        this.columnSegment = expressionContext.getRuntimeContext().getSQLSegmentFactory().createSQLNativeSegment(expressionContext, sqlSegment, sqlNativeExpressionContext);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,expressionContext.getRuntimeContext());
+        SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(table, sqlNativeExpressionContext);
+        contextConsume.apply(sqlNativePropertyExpressionContext);
+        if (ignoreAlias) {
+            sqlNativeExpressionContext.setAlias(null);
+        }
+        this.columnSegment = expressionContext.getRuntimeContext().getSQLSegmentFactory().createSQLNativeSegment(expressionContext, sqlSegment, sqlNativeExpressionContext);
     }
 
     @Override

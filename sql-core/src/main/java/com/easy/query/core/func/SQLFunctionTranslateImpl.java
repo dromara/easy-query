@@ -24,13 +24,14 @@ public class SQLFunctionTranslateImpl implements SQLFunctionTranslate {
     @Override
     public SQLSegment toSQLSegment(ExpressionContext expressionContext, TableAvailable defTable, QueryRuntimeContext runtimeContext,String alias) {
 
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
-        if(alias!=null){
-            sqlNativeExpressionContext.setAlias(alias);
-        }
-        String sqlSegment = sqlFunction.sqlSegment(defTable);
-        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(defTable,sqlNativeExpressionContext));
         return new LazySQLSegmentImpl(()->{
+
+            SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
+            if(alias!=null){
+                sqlNativeExpressionContext.setAlias(alias);
+            }
+            String sqlSegment = sqlFunction.sqlSegment(defTable);
+            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(defTable,sqlNativeExpressionContext));
             if(sqlFunction instanceof SQLLazyFunction){
                 SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
                 return runtimeContext.getSQLSegmentFactory().createSQLNativeLazySegment(expressionContext,sqlLazyFunction,sqlSegement->sqlSegement, sqlNativeExpressionContext);
