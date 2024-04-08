@@ -1,9 +1,9 @@
 package com.easy.query.core.expression.segment.impl;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
  * create time 2023/6/16 20:43
@@ -14,15 +14,15 @@ import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpress
 public class OrderBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements OrderBySegment {
     protected final boolean asc;
 
-    public OrderBySQLNativeSegmentImpl(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpression sqlNativeExpression, boolean asc){
-        super(runtimeContext,columnConst,sqlNativeExpression);
+    public OrderBySQLNativeSegmentImpl(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression, boolean asc){
+        super(expressionContext,columnConst,sqlNativeExpression);
 
         this.asc = asc;
     }
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new OrderBySQLNativeSegmentImpl(runtimeContext, sqlSegment, sqlNativeExpression,asc);
+        return new OrderBySQLNativeSegmentImpl(expressionContext, sqlSegment, sqlNativeExpression,asc);
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
 
 import java.util.Objects;
@@ -26,6 +27,7 @@ import java.util.Objects;
  */
 public class OrderSelectorImpl implements OrderSelector {
     private final QueryRuntimeContext runtimeContext;
+    private final ExpressionContext expressionContext;
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final SQLSegmentFactory sqlSegmentFactory;
     private final SQLBuilderSegment order;
@@ -33,6 +35,7 @@ public class OrderSelectorImpl implements OrderSelector {
 
     public OrderSelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder,SQLBuilderSegment order) {
         this.runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
+        this.expressionContext = entityQueryExpressionBuilder.getExpressionContext();
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
         this.order = order;
@@ -41,18 +44,18 @@ public class OrderSelectorImpl implements OrderSelector {
 
     @Override
     public OrderSelector column(TableAvailable table, String property) {
-        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table, property, runtimeContext, asc);
+        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table, property, expressionContext, asc);
         order.append(orderByColumnSegment);
         return this;
     }
 
     @Override
     public OrderSelector func(TableAvailable table, SQLFunction sqlFunction,boolean appendASC) {
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(), runtimeContext);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
         String sqlSegment = sqlFunction.sqlSegment(table)+(appendASC?(asc?" ASC":" DESC"):"");
 
-        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderBySQLNativeSegment(runtimeContext,sqlSegment,sqlNativeExpressionContext, asc);
+        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderBySQLNativeSegment(expressionContext,sqlSegment,sqlNativeExpressionContext, asc);
         order.append(orderByColumnSegment);
         return this;
     }
@@ -62,7 +65,7 @@ public class OrderSelectorImpl implements OrderSelector {
         Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlConstExpressionContext=new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(),runtimeContext);
         contextConsume.apply(sqlConstExpressionContext);
-        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderBySQLNativeSegment(runtimeContext,columnConst,sqlConstExpressionContext, asc);
+        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderBySQLNativeSegment(expressionContext,columnConst,sqlConstExpressionContext, asc);
         order.append(orderByColumnSegment);
         return this;
     }
@@ -71,7 +74,7 @@ public class OrderSelectorImpl implements OrderSelector {
     public OrderSelector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction) {
         String propertyName = columnPropertyFunction.getPropertyName();
         ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
-        OrderFuncColumnSegment orderFuncColumnSegment = sqlSegmentFactory.createOrderFuncColumnSegment(table, propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, asc);
+        OrderFuncColumnSegment orderFuncColumnSegment = sqlSegmentFactory.createOrderFuncColumnSegment(table, propertyName, expressionContext, columnFunction, asc);
         order.append(orderFuncColumnSegment);
         return this;
     }

@@ -4,6 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.sharding.router.RouteUnit;
@@ -34,12 +35,13 @@ public class ReversePaginationRewriteRouteUnit  extends DefaultRewriteRouteUnit{
         List<SQLSegment> sqlSegments = querySQLExpression.getOrder().cloneSQLBuilder().getSQLSegments();
         querySQLExpression.getOrder().clear();
         QueryRuntimeContext runtimeContext = entitySQLExpression.getRuntimeContext();
+        ExpressionContext expressionContext = entitySQLExpression.getExpressionMetadata().getExpressionContext();
         SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
 
         for (SQLSegment sqlSegment : sqlSegments) {
             if(sqlSegment instanceof OrderBySegment){
                 OrderBySegment orderByColumnSegment = (OrderBySegment) sqlSegment;
-                OrderBySegment reverseOrderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(orderByColumnSegment.getTable(), orderByColumnSegment.getPropertyName(), runtimeContext, !orderByColumnSegment.isAsc());
+                OrderBySegment reverseOrderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(orderByColumnSegment.getTable(), orderByColumnSegment.getPropertyName(), expressionContext, !orderByColumnSegment.isAsc());
                 querySQLExpression.getOrder().append(reverseOrderByColumnSegment);
             }
         }

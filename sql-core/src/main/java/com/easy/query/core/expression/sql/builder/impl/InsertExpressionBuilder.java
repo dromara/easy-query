@@ -133,11 +133,11 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
                 if(columnMetadata.isValueObject()){
                     continue;
                 }
-                InsertUpdateSetColumnSQLSegment columnInsertSegment = sqlSegmentFactory.createInsertColumnSegment(table.getEntityTable(), columnMetadata, runtimeContext);
+                InsertUpdateSetColumnSQLSegment columnInsertSegment = sqlSegmentFactory.createInsertColumnSegment(table.getEntityTable(), columnMetadata, getExpressionContext());
                 if (hasConfigure) {
                     ColumnConfigurerContext columnConfigurerContext = this.columnConfigurers.get(property);
                     if (columnConfigurerContext != null) {
-                        insertCloneColumns.append(new InsertUpdateColumnConfigureSegmentImpl(columnInsertSegment, columnConfigurerContext.getRuntimeContext(), columnConfigurerContext.getSqlSegment(), columnConfigurerContext.getSqlNativeExpressionContext()));
+                        insertCloneColumns.append(new InsertUpdateColumnConfigureSegmentImpl(columnInsertSegment, getExpressionContext(), columnConfigurerContext.getSqlSegment(), columnConfigurerContext.getSqlNativeExpressionContext()));
                         continue;
                     }
                 }

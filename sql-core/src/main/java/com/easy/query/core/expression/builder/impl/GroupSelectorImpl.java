@@ -60,7 +60,7 @@ public class GroupSelectorImpl implements GroupSelector {
 
     @Override
     public GroupSelector column(TableAvailable table, String property) {
-        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByColumnSegment(table, property, entityQueryExpressionBuilder.getRuntimeContext());
+        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupByColumnSegment(table, property, entityQueryExpressionBuilder.getExpressionContext());
         sqlSegmentBuilder.append(groupByColumnSegment);
         return this;
     }
@@ -87,7 +87,7 @@ public class GroupSelectorImpl implements GroupSelector {
         Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlConstExpressionContext=new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(),entityQueryExpressionBuilder.getRuntimeContext());
         contextConsume.apply(sqlConstExpressionContext);
-        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupBySQLNativeSegment(entityQueryExpressionBuilder.getRuntimeContext(), sqlSegment,sqlConstExpressionContext);
+        GroupByColumnSegment groupByColumnSegment = sqlSegmentFactory.createGroupBySQLNativeSegment(entityQueryExpressionBuilder.getExpressionContext(), sqlSegment,sqlConstExpressionContext);
         sqlSegmentBuilder.append(groupByColumnSegment);
         return this;
     }
@@ -103,7 +103,7 @@ public class GroupSelectorImpl implements GroupSelector {
     public GroupSelector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction) {
         String propertyName = columnPropertyFunction.getPropertyName();
         ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
-        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, null);
+        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, entityQueryExpressionBuilder.getExpressionContext(), columnFunction, null);
         sqlSegmentBuilder.append(funcColumnSegment);
         return this;
     }

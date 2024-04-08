@@ -81,7 +81,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
     @Override
     public AsSelector columnAs(TableAvailable table, String property, String propertyAlias) {
         ResultColumnInfo resultColumnInfo = getResultColumnName(propertyAlias);
-        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, runtimeContext, resultColumnInfo.getColumnAsName());
+        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, property, expressionContext, resultColumnInfo.getColumnAsName());
         sqlBuilderSegment.append(columnSegment);
         return this;
     }
@@ -108,7 +108,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         sqlNativeExpressionContext.setResultEntityMetadata(resultEntityMetadata);
         contextConsume.apply(sqlNativeExpressionContext);
-        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
+        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(expressionContext, sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(columnSegment);
         return castChain();
     }
@@ -151,7 +151,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
                     ColumnMetadata resultColumnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
                     String aliasColumnName = resultColumnMetadata.getName();
                     String alias = Objects.equals(columnName, aliasColumnName) ? null : aliasColumnName;
-                    ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(tableBuilder.getEntityTable(), columnMetadata.getPropertyName(), runtimeContext, alias);
+                    ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(tableBuilder.getEntityTable(), columnMetadata.getPropertyName(), expressionContext, alias);
                     sqlBuilderSegment.append(columnSegment);
                 }
             }
@@ -165,7 +165,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
         String propertyName = columnPropertyFunction.getPropertyName();
         ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
         String columnAsName = propertyAlias == null ? table.getColumnName(propertyName) : getResultColumnName(propertyAlias).getColumnAsName();
-        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, runtimeContext, columnFunction, columnAsName);
+        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, expressionContext, columnFunction, columnAsName);
         sqlBuilderSegment.append(funcColumnSegment);
         return this;
     }

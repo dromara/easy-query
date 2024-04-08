@@ -113,7 +113,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table.getEntityTable());
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(table.getEntityTable(), keyProperty, id, SQLPredicateCompareEnum.EQ, entityDeleteExpressionBuilder.getRuntimeContext()));
+                    .setPredicate(new ColumnValuePredicate(table.getEntityTable(), table.getEntityMetadata().getColumnNotNull(keyProperty), id, SQLPredicateCompareEnum.EQ, entityDeleteExpressionBuilder.getExpressionContext()));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
@@ -127,7 +127,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table.getEntityTable());
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
-                    .setPredicate(new ColumnCollectionPredicate(table.getEntityTable(), keyProperty, ids, SQLPredicateCompareEnum.IN, entityDeleteExpressionBuilder.getRuntimeContext()));
+                    .setPredicate(new ColumnCollectionPredicate(table.getEntityTable(), keyProperty, ids, SQLPredicateCompareEnum.IN, entityDeleteExpressionBuilder.getExpressionContext()));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;

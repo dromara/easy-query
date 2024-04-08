@@ -1,6 +1,5 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.segment.SQLLazySegement;
 import com.easy.query.core.expression.segment.impl.AbstractSQLNativeLazySegmentImpl;
@@ -16,13 +15,13 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class SQLNativeLazyPredicateImpl extends AbstractSQLNativeLazySegmentImpl implements Predicate {
-    public SQLNativeLazyPredicateImpl(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLLazySegement sqlLazySegement, Function<String,String> sqlSegmentFunction, SQLNativeExpression sqlNativeExpression) {
-        super(runtimeContext, expressionContext,sqlLazySegement,sqlSegmentFunction, sqlNativeExpression);
+    public SQLNativeLazyPredicateImpl(ExpressionContext expressionContext, SQLLazySegement sqlLazySegement, Function<String,String> sqlSegmentFunction, SQLNativeExpression sqlNativeExpression) {
+        super(expressionContext,sqlLazySegement,sqlSegmentFunction, sqlNativeExpression);
     }
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-        return new SQLNativeLazyPredicateImpl(runtimeContext,expressionContext,sqlLazySegement,sqlSegmentFunction, sqlNativeExpression);
+        return new SQLNativeLazyPredicateImpl(expressionContext,sqlLazySegement,sqlSegmentFunction, sqlNativeExpression);
     }
 
     @Override

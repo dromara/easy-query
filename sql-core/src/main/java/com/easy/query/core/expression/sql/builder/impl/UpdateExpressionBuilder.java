@@ -278,7 +278,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             if (columnConfigurerContext == null) {
                 continue;
             }
-            updateSet.getSQLSegments().set(i, new InsertUpdateColumnConfigureSegmentImpl(sqlSegment, columnConfigurerContext.getRuntimeContext(), columnConfigurerContext.getSqlSegment(), columnConfigurerContext.getSqlNativeExpressionContext()));
+            updateSet.getSQLSegments().set(i, new InsertUpdateColumnConfigureSegmentImpl(sqlSegment, getExpressionContext(), columnConfigurerContext.getSqlSegment(), columnConfigurerContext.getSqlNativeExpressionContext()));
         }
         return updateSet;
     }
@@ -323,7 +323,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             if (!ignoreVersion) {
                 VersionMetadata versionMetadata = entityMetadata.getVersionMetadata();
                 VersionStrategy easyVersionStrategy = versionMetadata.getEasyVersionStrategy();
-                sqlSetBuilderSegment.append(new ColumnVersionPropertySegmentImpl(entityTable, versionMetadata.getPropertyName(), easyVersionStrategy, runtimeContext));
+                sqlSetBuilderSegment.append(new ColumnVersionPropertySegmentImpl(entityTable, versionMetadata.getPropertyName(), easyVersionStrategy, getExpressionContext()));
             }
         }
         return sqlSetBuilderSegment;
@@ -376,7 +376,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                     continue;
                 }
             }
-            updateSetSQLBuilderSegment.append(new UpdateColumnSegmentImpl(entityTable, property, runtimeContext));
+            updateSetSQLBuilderSegment.append(new UpdateColumnSegmentImpl(entityTable, property, getExpressionContext()));
 //            updateSetSQLBuilderSegment.append(new ColumnPropertyPredicate(entityTable, property, runtimeContext));
 
         }
@@ -428,23 +428,23 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         if (entity != null) {
             EntityPredicateValue predicateValue = getPredicateValue(entity, trackContext, propertyName, tableExpressionBuilder.getEntityMetadata());
             if (nullAssert && predicateValue.getPredicateValue() == null) {
-                ColumnNullAssertPredicate columnPredicate = new ColumnNullAssertPredicate(tableExpressionBuilder.getEntityTable(), propertyName, SQLPredicateCompareEnum.IS_NULL, runtimeContext);
+                ColumnNullAssertPredicate columnPredicate = new ColumnNullAssertPredicate(tableExpressionBuilder.getEntityTable(), propertyName, SQLPredicateCompareEnum.IS_NULL, getExpressionContext());
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPredicate);
                 where.addPredicateSegment(andPredicateSegment);
             } else {
                 if(predicateValue.isTrack()){
                     //如果是追踪应该使用track的original属性
-                    ColumnEqualsTrackPropertyPredicate columnPropertyPredicate = new ColumnEqualsTrackPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, runtimeContext);
+                    ColumnEqualsTrackPropertyPredicate columnPropertyPredicate = new ColumnEqualsTrackPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, getExpressionContext());
                     AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPropertyPredicate);
                     where.addPredicateSegment(andPredicateSegment);
                 }else{
-                    ColumnEqualsPropertyPredicate columnPropertyPredicate = new ColumnEqualsPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, runtimeContext);
+                    ColumnEqualsPropertyPredicate columnPropertyPredicate = new ColumnEqualsPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, getExpressionContext());
                     AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPropertyPredicate);
                     where.addPredicateSegment(andPredicateSegment);
                 }
             }
         } else {
-            ColumnEqualsPropertyPredicate columnPropertyPredicate = new ColumnEqualsPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, runtimeContext);
+            ColumnEqualsPropertyPredicate columnPropertyPredicate = new ColumnEqualsPropertyPredicate(tableExpressionBuilder.getEntityTable(), propertyName, getExpressionContext());
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPropertyPredicate);
             where.addPredicateSegment(andPredicateSegment);
         }

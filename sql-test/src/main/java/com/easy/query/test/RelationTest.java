@@ -12,6 +12,7 @@ import com.easy.query.test.entity.base.Area;
 import com.easy.query.test.entity.base.City;
 import com.easy.query.test.entity.base.Province;
 import com.easy.query.test.entity.school.SchoolClass;
+import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.entity.school.SchoolClassTeacher;
 import com.easy.query.test.entity.school.SchoolStudent;
 import com.easy.query.test.entity.school.SchoolStudentAddress;
@@ -160,6 +161,33 @@ public class RelationTest extends BaseTest {
         List<String> ids = Arrays.asList("1", "2", "3");
         try {
             relationInit(ids);
+            {
+
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+                System.out.println("------------------");
+//                easyQueryClient.queryable(SchoolClass.class)
+//                        .where(s -> s.sqlNativeSegment())
+                List<SchoolClassAggregate> list = easyEntityQuery.queryable(SchoolClassAggregate.class)
+                        .where(s -> s.studentSize().gt(0L))
+                        .toList();
+                System.out.println("------------------");
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t3.`id`) AS `id` FROM `school_student` t3 WHERE t3.`class_id` = t.`id`) AS `student_size` FROM `school_class` t WHERE (SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            }
+            {
+
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+                System.out.println("------------------");
+                List<SchoolClassAggregate> list = easyEntityQuery.queryable(SchoolClassAggregate.class)
+                        .toList();
+                System.out.println("------------------");
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `student_size` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            }
             {
 
                 ListenerContext listenerContext = new ListenerContext(true);

@@ -22,6 +22,9 @@ public class SingleToTableContext implements ToTableContext{
     @Override
     public String getAlias(TableAvailable table) {
         if (!this.table.equals(table)) {
+//            if(table.getAlias()!=null){
+//                return table.getAlias();
+//            }
             throw new EasyQueryTableNotInSQLContextException("not found table:[" + EasyClassUtil.getSimpleName(table.getEntityClass()) + ":"+table+"] in sql context");
         }
         return alias;

@@ -71,7 +71,7 @@ public class OnlySelectorImpl implements OnlySelector {
             }
             return;
         }
-        sqlSegmentBuilder.append(new UpdateColumnSegmentImpl(table, columnMetadata, runtimeContext));
+        sqlSegmentBuilder.append(new UpdateColumnSegmentImpl(table, columnMetadata, expressionContext));
     }
 
     @Override
@@ -106,7 +106,7 @@ public class OnlySelectorImpl implements OnlySelector {
         Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlNativeExpressionContext=new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
         contextConsume.apply(sqlNativeExpressionContext);
-        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
+        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(expressionContext, sqlSegment, sqlNativeExpressionContext);
         sqlSegmentBuilder.append(columnSegment);
         return this;
     }

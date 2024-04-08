@@ -149,7 +149,7 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
                     String targetColumnName = targetColumnMetadata.getName();
                     //如果当前属性和查询对象属性一致那么就返回对应的列名，对应的列名如果不一样就返回对应返回结果对象的属性上的列名
                     String alias = Objects.equals(sourceColumnName, targetColumnName) ? null : targetColumnName;
-                    ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(tableExpressionBuilder.getEntityTable(), sourceColumnMetadata, entityQueryExpressionBuilder.getRuntimeContext(), alias);
+                    ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(tableExpressionBuilder.getEntityTable(), sourceColumnMetadata, entityQueryExpressionBuilder.getExpressionContext(), alias);
                     sqlBuilderSegment.append(columnSegment);
                 }
 

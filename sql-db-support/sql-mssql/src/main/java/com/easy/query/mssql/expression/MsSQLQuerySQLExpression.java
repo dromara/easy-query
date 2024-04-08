@@ -147,7 +147,7 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
             return null;
         }
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        orderBySQLBuilderSegment.append(new ColumnSegmentImpl(table, columnMetadata, getRuntimeContext()));
+        orderBySQLBuilderSegment.append(new ColumnSegmentImpl(table, columnMetadata, getExpressionMetadata().getExpressionContext()));
         return orderBySQLBuilderSegment;
     }
 

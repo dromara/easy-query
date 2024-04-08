@@ -1,13 +1,12 @@
 package com.easy.query.core.basic.extension.conversion;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
-import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContextImpl;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
-import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.column.ColumnFuncSelector;
 
 import java.util.Objects;
 
@@ -19,32 +18,44 @@ import java.util.Objects;
  */
 public class DefaultSQLPropertyConverter implements SQLPropertyConverter {
     private final TableAvailable table;
-    private final QueryRuntimeContext runtimeContext;
+    private final ExpressionContext expressionContext;
     private final boolean ignoreAlias;
     private SQLNativeSegment columnSegment;
+    private SQLFunction sqlFunction;
 
-    public DefaultSQLPropertyConverter(TableAvailable table, QueryRuntimeContext runtimeContext) {
-        this(table, runtimeContext, false);
+    public DefaultSQLPropertyConverter(TableAvailable table,ExpressionContext expressionContext) {
+        this(table,expressionContext, false);
     }
 
-    public DefaultSQLPropertyConverter(TableAvailable table, QueryRuntimeContext runtimeContext, boolean ignoreAlias) {
+    public DefaultSQLPropertyConverter(TableAvailable table, ExpressionContext expressionContext, boolean ignoreAlias) {
 
         this.table = table;
-        this.runtimeContext = runtimeContext;
+        this.expressionContext = expressionContext;
         this.ignoreAlias = ignoreAlias;
     }
 
+    public SQLNativeSegment getColumnSegment() {
+        return columnSegment;
+    }
+
     @Override
-    public void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
+    public SQLFunction getSQLFunction() {
+        return sqlFunction;
+    }
+
+    @Override
+    public void sqlNativeSegment(String sqlSegment, SQLExpression1<ColumnFuncSelector> sqlExpression) {
         Objects.requireNonNull(sqlSegment, "sqlSegment can not be null");
-        Objects.requireNonNull(contextConsume, "contextConsume can not be null");
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(null,runtimeContext);
-        SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(table, sqlNativeExpressionContext);
-        contextConsume.apply(sqlNativePropertyExpressionContext);
-        if (ignoreAlias) {
-            sqlNativeExpressionContext.setAlias(null);
-        }
-        this.columnSegment = runtimeContext.getSQLSegmentFactory().createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
+        Objects.requireNonNull(sqlExpression, "sqlExpression can not be null");
+        this.sqlFunction = expressionContext.getRuntimeContext().fx().anySQLFunction(sqlSegment, sqlExpression);
+//
+//        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,expressionContext.getRuntimeContext());
+//        SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(table, sqlNativeExpressionContext);
+//        contextConsume.apply(sqlNativePropertyExpressionContext);
+//        if (ignoreAlias) {
+//            sqlNativeExpressionContext.setAlias(null);
+//        }
+//        this.columnSegment = expressionContext.getRuntimeContext().getSQLSegmentFactory().createSQLNativeSegment(expressionContext, sqlSegment, sqlNativeExpressionContext);
     }
 
     @Override

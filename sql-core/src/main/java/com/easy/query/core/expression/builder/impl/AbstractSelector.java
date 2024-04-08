@@ -29,6 +29,7 @@ import com.easy.query.core.metadata.MapEntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyUtil;
 
@@ -244,8 +245,19 @@ public abstract class AbstractSelector<TChain> {
         if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
             return;
         }
-        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, runtimeContext, alias);
+        SQLSegment columnSegment = EasySQLExpressionUtil.getSQLOwnerSegmentColumnMetadata(expressionContext, table, columnMetadata, alias, true);
         sqlBuilderSegment.append(columnSegment);
+//        if(columnMetadata.getColumnValueSQLConverter()!=null){
+//            ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+//            DefaultSQLPropertyConverter defaultSQLPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext, alias == null);
+//            columnValueSQLConverter.selectColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,expressionContext.getRuntimeContext());
+//            SQLNativeSegment columnSegment = defaultSQLPropertyConverter.getColumnSegment();
+//
+//            sqlBuilderSegment.append(columnSegment);
+//        }else{
+//            ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, expressionContext, alias);
+//            sqlBuilderSegment.append(columnSegment);
+//        }
     }
 
     private EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
@@ -283,10 +295,10 @@ public abstract class AbstractSelector<TChain> {
 
                     String propertyName = EasyUtil.getAnonymousPropertyName(sqlEntityAliasSegment, table.getEntityTable());
                     if (propertyName != null) {
-                        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), propertyName, runtimeContext, sqlEntityAliasSegment.getAlias());
+                        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), propertyName, expressionContext, sqlEntityAliasSegment.getAlias());
                         sqlBuilderSegment.append(columnSegment);
                     } else {
-                        ColumnSegment columnSegment = sqlSegmentFactory.createAnonymousColumnSegment(table.getEntityTable(), runtimeContext, sqlEntityAliasSegment.getAlias());
+                        ColumnSegment columnSegment = sqlSegmentFactory.createAnonymousColumnSegment(table.getEntityTable(), expressionContext, sqlEntityAliasSegment.getAlias());
                         sqlBuilderSegment.append(columnSegment);
                     }
                 } else {

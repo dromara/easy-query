@@ -2,7 +2,6 @@ package com.easy.query.core.extension.casewhen;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.tuple.Tuple2;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
@@ -24,13 +23,11 @@ import java.util.List;
  */
 public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
 
-    private final QueryRuntimeContext runtimeContext;
     private final ExpressionContext expressionContext;
     private final List<Tuple2<SQLExpression1<Filter>, ParamExpression>> whens;
     private final ParamExpression elseValue;
 
-    public CaseWhenSQLColumnSegment(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, List<Tuple2<SQLExpression1<Filter>,ParamExpression>> whens, ParamExpression elseValue){
-        this.runtimeContext = runtimeContext;
+    public CaseWhenSQLColumnSegment(ExpressionContext expressionContext, List<Tuple2<SQLExpression1<Filter>,ParamExpression>> whens, ParamExpression elseValue){
         this.expressionContext = expressionContext;
 
         this.whens = whens;
@@ -38,7 +35,7 @@ public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
     }
     @Override
     public CloneableSQLSegment cloneSQLColumnSegment() {
-        return new CaseWhenSQLColumnSegment(runtimeContext,expressionContext,new ArrayList<>(whens),elseValue);
+        return new CaseWhenSQLColumnSegment(expressionContext,new ArrayList<>(whens),elseValue);
     }
 
     @Override
@@ -51,17 +48,17 @@ public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
             ParamExpression paramExpression = when.t1();
             AndPredicateSegment resolve = resolve(filterExpression);
             String caseWhenPredicateSql = resolve.toSQL(toSQLContext);
-            Object thenValue = EasySQLExpressionUtil.parseParamExpression(runtimeContext, paramExpression, toSQLContext);
+            Object thenValue = EasySQLExpressionUtil.parseParamExpression(expressionContext, paramExpression, toSQLContext);
             sql.append("WHEN ").append(caseWhenPredicateSql).append(" THEN ").append(thenValue).append(" ");
         }
-        Object elseValue = EasySQLExpressionUtil.parseParamExpression(runtimeContext, this.elseValue, toSQLContext);
+        Object elseValue = EasySQLExpressionUtil.parseParamExpression(expressionContext, this.elseValue, toSQLContext);
         sql.append("ELSE ").append(elseValue).append(" END)");
         return sql.toString();
     }
     public AndPredicateSegment resolve(SQLExpression1<Filter> filterExpression){
 
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
-        FilterImpl filter = new FilterImpl(runtimeContext,expressionContext,andPredicateSegment,false, AnyValueFilter.DEFAULT);
+        FilterImpl filter = new FilterImpl(expressionContext.getRuntimeContext(),expressionContext,andPredicateSegment,false, AnyValueFilter.DEFAULT);
         filterExpression.apply(filter);
 //        topicSQLWherePredicate.eq(Topic::getId,"1");
 //        String sql = andPredicateSegment.toSQL(toSQLContext);

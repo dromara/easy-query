@@ -7,6 +7,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
+import com.easy.query.core.func.def.AnySQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
@@ -300,5 +301,10 @@ public class SQLFuncImpl implements SQLFunc {
             return not(x->x.sqlFunc(likeSQLFunction));
         }
         return likeSQLFunction;
+    }
+
+    @Override
+    public SQLFunction anySQLFunction(String sqlSegment, SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new AnySQLFunction(sqlSegment,getColumnExpressions(sqlExpression));
     }
 }

@@ -24,6 +24,7 @@ import com.easy.query.test.conversion.FullNameColumnValueSQLConverter;
 import com.easy.query.test.conversion.JavaEncryptionStrategy;
 import com.easy.query.test.conversion.JsonConverter;
 import com.easy.query.test.conversion.MySQLAesEncryptColumnValueSQLConverter;
+import com.easy.query.test.conversion.StudentSizeColumnValueSQLConverter;
 import com.easy.query.test.conversion.UserAgeColumnValueSQLConverter;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
@@ -186,6 +187,7 @@ public abstract class BaseTest {
         configuration.applyColumnValueSQLConverter(new MySQLAesEncryptColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new FullNameColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new UserAgeColumnValueSQLConverter());
+        configuration.applyColumnValueSQLConverter(new StudentSizeColumnValueSQLConverter());
         configuration.applyGeneratedKeySQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRoute(new TopicShardingTableRoute());

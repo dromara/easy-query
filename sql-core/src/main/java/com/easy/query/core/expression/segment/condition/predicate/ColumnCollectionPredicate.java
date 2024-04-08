@@ -5,10 +5,10 @@ import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverte
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -28,16 +28,16 @@ import java.util.Iterator;
 public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredicate {
     private final Collection<?> collection;
     private final SQLPredicateCompare compare;
-    private final QueryRuntimeContext runtimeContext;
+    private final ExpressionContext expressionContext;
     private final TableAvailable table;
     private final String propertyName;
 
-    public ColumnCollectionPredicate(TableAvailable table, String propertyName, Collection<?> collection, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
+    public ColumnCollectionPredicate(TableAvailable table, String propertyName, Collection<?> collection, SQLPredicateCompare compare, ExpressionContext expressionContext) {
         this.table = table;
         this.propertyName = propertyName;
         this.collection = collection;
         this.compare = compare;
-        this.runtimeContext = runtimeContext;
+        this.expressionContext = expressionContext;
     }
 
     @Override
@@ -53,8 +53,7 @@ public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredi
         } else {
 
             ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(propertyName);
-
-            String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext,true,false);
+            String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
             String compareSQL = compare.getSQL();
             StringBuilder sql = new StringBuilder();
             sql.append(sqlColumnSegment).append(" ").append(compareSQL).append(" (");
@@ -78,8 +77,8 @@ public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredi
             EasySQLUtil.addParameter(toSQLContext, sqlParameter);
             return "?";
         }else{
-            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
-            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlPropertyConverter,runtimeContext,true);
+            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext);
+            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlPropertyConverter,expressionContext.getRuntimeContext(),true);
             return sqlPropertyConverter.toSQL(toSQLContext);
         }
     }
@@ -97,7 +96,7 @@ public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredi
     @Override
     public Predicate cloneSQLColumnSegment() {
 
-       return new ColumnCollectionPredicate(table,propertyName,collection,compare,runtimeContext);
+       return new ColumnCollectionPredicate(table,propertyName,collection,compare,expressionContext);
     }
 
     @Override

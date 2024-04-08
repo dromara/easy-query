@@ -137,7 +137,7 @@ public abstract class AbstractClientQueryable4<T1, T2, T3, T4> extends AbstractO
         TableAvailable table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
         Class<TMember> tMemberClass = resultClass == null ? (Class<TMember>) table.getEntityMetadata().getColumnNotNull(propertyName).getPropertyType() : resultClass;
-        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, entityQueryExpressionBuilder.getRuntimeContext(), columnFunction, null);
+        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, entityQueryExpressionBuilder.getExpressionContext(), columnFunction, null);
 
         return cloneQueryable().select(funcColumnSegment, true).toList(tMemberClass);
     }

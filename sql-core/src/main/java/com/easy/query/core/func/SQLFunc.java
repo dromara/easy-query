@@ -178,4 +178,5 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
         return new NativeSegmentSQLFunction(sqlSegemnt, consume);
     }
      SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean like, SQLLikeEnum sqlLike);
+     SQLFunction anySQLFunction(String sqlSegment,SQLExpression1<ColumnFuncSelector> sqlExpression);
 }

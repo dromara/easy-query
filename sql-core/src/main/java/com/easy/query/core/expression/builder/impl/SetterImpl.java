@@ -43,7 +43,7 @@ public class SetterImpl implements Setter {
     @Override
     public Setter set(boolean condition, TableAvailable table, String property, Object val) {
         if (condition) {
-            sqlBuilderSegment.append(new UpdateColumnSetSegmentImpl(table, property, val, entityExpressionBuilder.getRuntimeContext()));
+            sqlBuilderSegment.append(new UpdateColumnSetSegmentImpl(table, property, val, entityExpressionBuilder.getExpressionContext()));
         }
         return this;
     }
@@ -51,7 +51,7 @@ public class SetterImpl implements Setter {
     @Override
     public Setter setWithColumn(boolean condition, TableAvailable table, String property1, String property2) {
         if (condition) {
-            sqlBuilderSegment.append(new UpdateColumnSetSelfSegmentImpl(table, property1, table, property2, entityExpressionBuilder.getRuntimeContext()));
+            sqlBuilderSegment.append(new UpdateColumnSetSelfSegmentImpl(table, property1, table, property2, entityExpressionBuilder.getExpressionContext()));
         }
         return this;
     }
@@ -59,7 +59,7 @@ public class SetterImpl implements Setter {
 
     private void setSelf(boolean increment, TableAvailable table, String property, Number val) {
 
-        InsertUpdateSetColumnSQLSegment columnWithSelfSegment = sqlSegmentFactory.createColumnWithSelfSegment(increment, table, property, val, entityExpressionBuilder.getRuntimeContext());
+        InsertUpdateSetColumnSQLSegment columnWithSelfSegment = sqlSegmentFactory.createColumnWithSelfSegment(increment, table, property, val, entityExpressionBuilder.getExpressionContext());
         sqlBuilderSegment.append(columnWithSelfSegment);
     }
 
@@ -86,7 +86,7 @@ public class SetterImpl implements Setter {
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityExpressionBuilder.getExpressionContext(), runtimeContext);
 //        sqlNativeExpressionContext.expression(table,property);
         contextConsume.apply(sqlNativeExpressionContext);
-        InsertUpdateColumnConfigureSegmentImpl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegmentImpl(new UpdateColumnSegmentImpl(table, property, runtimeContext), runtimeContext, sqlSegment, sqlNativeExpressionContext);
+        InsertUpdateColumnConfigureSegmentImpl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegmentImpl(new UpdateColumnSegmentImpl(table, property, entityExpressionBuilder.getExpressionContext()), entityExpressionBuilder.getExpressionContext(), sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(insertUpdateColumnConfigureSegment);
         return this;
     }
@@ -97,7 +97,7 @@ public class SetterImpl implements Setter {
         Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityExpressionBuilder.getExpressionContext(), runtimeContext);
         contextConsume.apply(sqlNativeExpressionContext);
-        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
+        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(entityExpressionBuilder.getExpressionContext(), sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(columnSegment);
         return this;
     }
@@ -109,7 +109,7 @@ public class SetterImpl implements Setter {
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,sqlNativeExpressionContext));
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,sqlNativeExpressionContext));
         String sqlSegment = sqlFunction.sqlSegment(table);
-        InsertUpdateColumnConfigureSegmentImpl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegmentImpl(new UpdateColumnSegmentImpl(table, property, runtimeContext), runtimeContext, sqlSegment, sqlNativeExpressionContext);
+        InsertUpdateColumnConfigureSegmentImpl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegmentImpl(new UpdateColumnSegmentImpl(table, property, entityExpressionBuilder.getExpressionContext()), entityExpressionBuilder.getExpressionContext(), sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(insertUpdateColumnConfigureSegment);
         return this;
     }

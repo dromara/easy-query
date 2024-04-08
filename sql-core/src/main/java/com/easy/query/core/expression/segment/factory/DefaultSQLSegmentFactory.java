@@ -60,13 +60,13 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public ColumnSegment createColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, String alias) {
-        return new ColumnSegmentImpl(table, columnMetadata, runtimeContext, alias);
+    public ColumnSegment createColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, String alias) {
+        return new ColumnSegmentImpl(table, columnMetadata, expressionContext, alias);
     }
 
     @Override
-    public ColumnSegment createAnonymousColumnSegment(TableAvailable table, QueryRuntimeContext runtimeContext, String alias) {
-        return new AnonymousColumnSegmentImpl(table, runtimeContext, alias);
+    public ColumnSegment createAnonymousColumnSegment(TableAvailable table, ExpressionContext expressionContext, String alias) {
+        return new AnonymousColumnSegmentImpl(table, expressionContext, alias);
     }
 
 //    @Override
@@ -75,18 +75,18 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
 //    }
 
     @Override
-    public SQLNativeSegment createSQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpression sqlNativeExpression) {
-        return new SQLNativeSegmentImpl(runtimeContext,columnConst,sqlNativeExpression);
+    public SQLNativeSegment createSQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression) {
+        return new SQLNativeSegmentImpl(expressionContext,columnConst,sqlNativeExpression);
     }
 
     @Override
-    public SQLNativeSegment createSQLNativeLazySegment(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLLazySegement sqlLazySegement, Function<String, String> sqlSegementFunction, SQLNativeExpression sqlNativeExpression) {
-        return new SQLNativeLazySegmentImpl(runtimeContext,expressionContext,sqlLazySegement,sqlSegementFunction,sqlNativeExpression);
+    public SQLNativeSegment createSQLNativeLazySegment(ExpressionContext expressionContext, SQLLazySegement sqlLazySegement, Function<String, String> sqlSegementFunction, SQLNativeExpression sqlNativeExpression) {
+        return new SQLNativeLazySegmentImpl(expressionContext,sqlLazySegement,sqlSegementFunction,sqlNativeExpression);
     }
 
     @Override
-    public InsertUpdateSetColumnSQLSegment createInsertColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext) {
-        return new InsertColumnSegmentImpl(table, columnMetadata, runtimeContext);
+    public InsertUpdateSetColumnSQLSegment createInsertColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
+        return new InsertColumnSegmentImpl(table, columnMetadata, expressionContext);
     }
 
     @Override
@@ -95,38 +95,38 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public InsertUpdateSetColumnSQLSegment createColumnWithSelfSegment(boolean increment, TableAvailable table, String propertyName, Object val, QueryRuntimeContext runtimeContext) {
-        return new ColumnWithSelfSegmentImpl(increment, table, propertyName, val, runtimeContext);
+    public InsertUpdateSetColumnSQLSegment createColumnWithSelfSegment(boolean increment, TableAvailable table, String propertyName, Object val, ExpressionContext expressionContext) {
+        return new ColumnWithSelfSegmentImpl(increment, table, propertyName, val, expressionContext);
     }
 
     @Override
-    public FuncColumnSegment createFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, String alias) {
-        return new FuncColumnSegmentImpl(table, columnMetadata, runtimeContext, columnFunction, alias);
+    public FuncColumnSegment createFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, ColumnFunction columnFunction, String alias) {
+        return new FuncColumnSegmentImpl(table, columnMetadata, expressionContext, columnFunction, alias);
     }
 
     @Override
-    public GroupByColumnSegment createGroupByColumnSegment(TableAvailable table,ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext) {
-        return new GroupColumnSegmentImpl(table, columnMetadata, runtimeContext);
+    public GroupByColumnSegment createGroupByColumnSegment(TableAvailable table,ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
+        return new GroupColumnSegmentImpl(table, columnMetadata, expressionContext);
     }
 
     @Override
-    public OrderBySegment createOrderByColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, boolean asc) {
-        return new OrderColumnSegmentImpl(table, columnMetadata, runtimeContext, asc);
+    public OrderBySegment createOrderByColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, boolean asc) {
+        return new OrderColumnSegmentImpl(table, columnMetadata, expressionContext, asc);
     }
 
     @Override
-    public OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, QueryRuntimeContext runtimeContext, ColumnFunction columnFunction, boolean asc) {
-        return new OrderFuncColumnSegmentImpl(table, columnMetadata, runtimeContext, columnFunction, asc);
+    public OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, ColumnFunction columnFunction, boolean asc) {
+        return new OrderFuncColumnSegmentImpl(table, columnMetadata, expressionContext, columnFunction, asc);
     }
 
     @Override
-    public OrderBySegment createOrderBySQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext, boolean asc) {
-        return new OrderBySQLNativeSegmentImpl(runtimeContext, columnConst,sqlConstExpressionContext, asc);
+    public OrderBySegment createOrderBySQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext, boolean asc) {
+        return new OrderBySQLNativeSegmentImpl(expressionContext, columnConst,sqlConstExpressionContext, asc);
     }
 
     @Override
-    public GroupByColumnSegment createGroupBySQLNativeSegment(QueryRuntimeContext runtimeContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext) {
-        return new GroupBySQLNativeSegmentImpl(runtimeContext, columnConst,sqlConstExpressionContext);
+    public GroupByColumnSegment createGroupBySQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpressionContext sqlConstExpressionContext) {
+        return new GroupBySQLNativeSegmentImpl(expressionContext, columnConst,sqlConstExpressionContext);
     }
 
     @Override

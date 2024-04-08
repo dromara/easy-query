@@ -136,7 +136,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(table, keyProperty, id, SQLPredicateCompareEnum.EQ, entityUpdateExpressionBuilder.getRuntimeContext()));
+                    .setPredicate(new ColumnValuePredicate(table, table.getEntityMetadata().getColumnNotNull(keyProperty), id, SQLPredicateCompareEnum.EQ, entityUpdateExpressionBuilder.getExpressionContext()));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
@@ -150,7 +150,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             PredicateSegment where = entityUpdateExpressionBuilder.getWhere();
             andPredicateSegment
-                    .setPredicate(new ColumnCollectionPredicate(table, keyProperty, ids, SQLPredicateCompareEnum.IN, entityUpdateExpressionBuilder.getRuntimeContext()));
+                    .setPredicate(new ColumnCollectionPredicate(table, keyProperty, ids, SQLPredicateCompareEnum.IN, entityUpdateExpressionBuilder.getExpressionContext()));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;

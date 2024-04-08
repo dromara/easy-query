@@ -14,11 +14,13 @@ import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
+import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
@@ -35,10 +37,19 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
+import com.easy.query.core.expression.segment.condition.predicate.Predicate;
+import com.easy.query.core.expression.segment.condition.predicate.SQLNativeLazyPredicateImpl;
+import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredicateImpl;
+import com.easy.query.core.expression.segment.condition.predicate.SQLNativesPredicateImpl;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.SQLFunctionColumnSegmentImpl;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnMultiParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ColumnParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyAsAliasParamExpression;
@@ -57,6 +68,9 @@ import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpres
 import com.easy.query.core.expression.sql.expression.AnonymousUnionEntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.SQLFunctionTranslateImpl;
+import com.easy.query.core.func.SQLLazyFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 
 import java.util.Collection;
@@ -368,18 +382,81 @@ public class EasySQLExpressionUtil {
 //    public static String getSQLOwnerColumnMetadata(QueryRuntimeContext runtimeContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext) {
 //        return getSQLOwnerColumn(runtimeContext, table, columnMetadata.getName(), toSQLContext);
 //    }
-    public static String getSQLOwnerColumnMetadata(QueryRuntimeContext runtimeContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext,boolean ignoreAlias,boolean inSelect) {
+    public static String getSQLOwnerColumnMetadata(ExpressionContext expressionContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext,boolean ignoreAlias,boolean inSelect) {
         ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
         if(columnValueSQLConverter==null){
-            return getSQLOwnerColumn(runtimeContext, table, columnMetadata.getName(), toSQLContext);
+            return getSQLOwnerColumn(expressionContext.getRuntimeContext(), table, columnMetadata.getName(), toSQLContext);
         }else{
-            DefaultSQLPropertyConverter defaultSQLPropertyConverter = new DefaultSQLPropertyConverter(table, runtimeContext, ignoreAlias);
+            DefaultSQLPropertyConverter defaultSQLPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext, ignoreAlias);
             if(inSelect){
-                columnValueSQLConverter.selectColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,runtimeContext);
+                columnValueSQLConverter.selectColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,expressionContext.getRuntimeContext());
             }else{
-                columnValueSQLConverter.propertyColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,runtimeContext);
+                columnValueSQLConverter.propertyColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,expressionContext.getRuntimeContext());
             }
             return defaultSQLPropertyConverter.toSQL(toSQLContext);
+        }
+    }
+    public static SQLSegment getSQLOwnerSegmentColumnMetadata(ExpressionContext expressionContext, TableAvailable table, ColumnMetadata columnMetadata,String alias,boolean inSelect) {
+        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+        if(columnValueSQLConverter==null){
+            SQLSegmentFactory sqlSegmentFactory = expressionContext.getRuntimeContext().getSQLSegmentFactory();
+            return sqlSegmentFactory.createColumnSegment(table, columnMetadata, expressionContext, alias);
+        }else{
+            DefaultSQLPropertyConverter defaultSQLPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext, !inSelect && alias == null);
+            if(inSelect){
+                columnValueSQLConverter.selectColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,expressionContext.getRuntimeContext());
+                SQLFunction sqlFunction = defaultSQLPropertyConverter.getSQLFunction();
+                String columnAsName = columnMetadata.getName();
+                SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                        .toSQLSegment(expressionContext, table, expressionContext.getRuntimeContext(), columnAsName);
+                return new SQLFunctionColumnSegmentImpl(table, columnMetadata, expressionContext.getRuntimeContext(), sqlSegment, sqlFunction.getAggregationType(), columnAsName);
+
+            }else{
+                columnValueSQLConverter.propertyColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,expressionContext.getRuntimeContext());
+                SQLFunction sqlFunction = defaultSQLPropertyConverter.getSQLFunction();
+                SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                        .toSQLSegment(expressionContext, table, expressionContext.getRuntimeContext(), null);
+                return new SQLFunctionColumnSegmentImpl(table, columnMetadata, expressionContext.getRuntimeContext(), sqlSegment, sqlFunction.getAggregationType(), null);
+            }
+//            return defaultSQLPropertyConverter.getColumnSegment();
+        }
+    }
+//
+//        Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
+//    SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+//        contextConsume.apply(sqlNativeExpressionContext);
+//        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment, sqlNativeExpressionContext));
+    public static Predicate getSQLOwnerPredicateSegmentColumnMetadata(ExpressionContext expressionContext, TableAvailable table, ColumnMetadata columnMetadata, SQLPredicateCompare predicateCompare, Object val) {
+        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+        if(columnValueSQLConverter==null){
+            return new ColumnValuePredicate(table,columnMetadata,val,predicateCompare,expressionContext);
+        }else{
+            DefaultSQLPropertyConverter leftSQLPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext, true);
+            SQLNativeExpressionContextImpl sqlNativeExpressionContextLeft = new SQLNativeExpressionContextImpl(expressionContext, expressionContext.getRuntimeContext());
+            columnValueSQLConverter.propertyColumnConvert(table,columnMetadata,leftSQLPropertyConverter,expressionContext.getRuntimeContext());
+            SQLFunction sqlFunctionLeft = leftSQLPropertyConverter.getSQLFunction();
+            sqlFunctionLeft.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContextLeft));
+            DefaultSQLPropertyConverter rightSQLPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext, true);
+            columnValueSQLConverter.valueConvert(table,columnMetadata,new EasyConstSQLParameter(table,columnMetadata.getPropertyName(),val),rightSQLPropertyConverter,expressionContext.getRuntimeContext(),true);
+            SQLFunction sqlFunctionRight = rightSQLPropertyConverter.getSQLFunction();
+            SQLNativeExpressionContextImpl sqlNativeExpressionContextRight = new SQLNativeExpressionContextImpl(expressionContext, expressionContext.getRuntimeContext());
+            sqlFunctionRight.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContextRight));
+
+
+            Predicate sqlNativePredicateLeft = getSQLFunctionPredicate(expressionContext,table, sqlFunctionLeft, sqlNativeExpressionContextLeft);
+            Predicate sqlNativePredicateRight = getSQLFunctionPredicate(expressionContext,table, sqlFunctionRight, sqlNativeExpressionContextRight);
+            return new SQLNativesPredicateImpl(expressionContext.getRuntimeContext(), sqlNativePredicateLeft, predicateCompare, sqlNativePredicateRight);
+        }
+    }
+
+    public static Predicate getSQLFunctionPredicate(ExpressionContext expressionContext,TableAvailable table, SQLFunction sqlFunction, SQLNativeExpressionContext sqlNativeExpressionContext) {
+
+        if (sqlFunction instanceof SQLLazyFunction) {
+            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
+            return new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment, sqlNativeExpressionContext);
+        } else {
+            String sqlSegment = sqlFunction.sqlSegment(table);
+            return new SQLNativePredicateImpl(expressionContext, sqlSegment, sqlNativeExpressionContext);
         }
     }
 
@@ -457,11 +534,11 @@ public class EasySQLExpressionUtil {
     }
 
 
-    public static Object parseParamExpression(QueryRuntimeContext runtimeContext, ParamExpression paramExpression, ToSQLContext toSQLContext) {
+    public static Object parseParamExpression(ExpressionContext expressionContext, ParamExpression paramExpression, ToSQLContext toSQLContext) {
         if (paramExpression instanceof ColumnPropertyParamExpression) {
             ColumnPropertyParamExpression columnPropertyExpression = (ColumnPropertyParamExpression) paramExpression;
             return SQLFormatArgument.create(()->{
-                return columnPropertyExpression.toSQL(runtimeContext, toSQLContext);
+                return columnPropertyExpression.toSQL(expressionContext, toSQLContext);
             });
 
         } else if (paramExpression instanceof ColumnParamExpression) {
@@ -484,7 +561,7 @@ public class EasySQLExpressionUtil {
             return SQLFormatArgument.create(()-> subQueryParamExpression.toSQL(toSQLContext));
         } else if(paramExpression instanceof ColumnPropertyAsAliasParamExpression){
             ColumnPropertyAsAliasParamExpression columnPropertyAsAliasParamExpression = (ColumnPropertyAsAliasParamExpression) paramExpression;
-            return SQLFormatArgument.create(()-> columnPropertyAsAliasParamExpression.toSQL(runtimeContext));
+            return SQLFormatArgument.create(()-> columnPropertyAsAliasParamExpression.toSQL(expressionContext.getRuntimeContext()));
         }else if(paramExpression instanceof SQLSegmentParamExpression){
             SQLSegmentParamExpression sqlSegmentParamExpression = (SQLSegmentParamExpression) paramExpression;
             return SQLFormatArgument.create(()-> sqlSegmentParamExpression.toSQL(toSQLContext));

@@ -48,7 +48,7 @@ public class SelectorImpl extends AbstractSelector<Selector> implements Selector
         String propertyName = columnPropertyFunction.getPropertyName();
         ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
         String columnAsName = table.getColumnName(propertyName);
-        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, runtimeContext, columnFunction, columnAsName);
+        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, expressionContext, columnFunction, columnAsName);
         sqlBuilderSegment.append(funcColumnSegment);
         return this;
     }
@@ -70,7 +70,7 @@ public class SelectorImpl extends AbstractSelector<Selector> implements Selector
         Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlNativeExpressionContext=new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
         contextConsume.apply(sqlNativeExpressionContext);
-        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(runtimeContext, sqlSegment, sqlNativeExpressionContext);
+        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(expressionContext, sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(columnSegment);
         return castChain();
     }

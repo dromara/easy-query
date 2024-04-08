@@ -1,15 +1,13 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
-import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
-import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
 import com.easy.query.core.basic.jdbc.parameter.ConstLikeSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLUtil;
@@ -22,34 +20,33 @@ import com.easy.query.core.util.EasySQLUtil;
  */
 public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     private final TableAvailable table;
-    private final String propertyName;
+    private final ColumnMetadata columnMetadata;
     private final Object val;
     private final SQLPredicateCompare compare;
-    private final QueryRuntimeContext runtimeContext;
+    private final ExpressionContext expressionContext;
 
-    public ColumnValuePredicate(TableAvailable table, String propertyName, Object val, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
+    public ColumnValuePredicate(TableAvailable table, ColumnMetadata columnMetadata, Object val, SQLPredicateCompare compare, ExpressionContext expressionContext) {
         this.table = table;
-        this.propertyName = propertyName;
+        this.columnMetadata = columnMetadata;
         this.val = val;
         this.compare = compare;
-        this.runtimeContext = runtimeContext;
+        this.expressionContext = expressionContext;
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         SQLParameter sqlParameter = getParameter();
-        ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(propertyName);
-        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(runtimeContext, table, columnMetadata, toSQLContext,true,false);
-        if(columnValueSQLConverter==null){
-            EasySQLUtil.addParameter(toSQLContext, sqlParameter);
-            return sqlColumnSegment + " " + compare.getSQL() + " ?";
-        }else{
-            DefaultSQLPropertyConverter sqlValueConverter = new DefaultSQLPropertyConverter(table, runtimeContext);
-            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlValueConverter,runtimeContext,true);
-            String valSQLParameter = sqlValueConverter.toSQL(toSQLContext);
-            return sqlColumnSegment + " " + compare.getSQL() + " "+valSQLParameter;
-        }
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), table, columnMetadata.getName(), toSQLContext);
+
+        EasySQLUtil.addParameter(toSQLContext, sqlParameter);
+        return sqlColumnSegment + " " + compare.getSQL() + " ?";
+//        if(columnValueSQLConverter==null){
+//        }else{
+//            DefaultSQLPropertyConverter sqlValueConverter = new DefaultSQLPropertyConverter(table, expressionContext);
+//            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlValueConverter,expressionContext.getRuntimeContext(),true);
+//            String valSQLParameter = sqlValueConverter.toSQL(toSQLContext);
+//            return sqlColumnSegment + " " + compare.getSQL() + " "+valSQLParameter;
+//        }
     }
 
     @Override
@@ -59,12 +56,12 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
 
     @Override
     public String getPropertyName() {
-        return propertyName;
+        return columnMetadata.getPropertyName();
     }
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-        return new ColumnValuePredicate(table,propertyName,val,compare,runtimeContext);
+        return new ColumnValuePredicate(table,columnMetadata,val,compare,expressionContext);
     }
 
     @Override
@@ -74,7 +71,7 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
 
     @Override
     public SQLParameter getParameter() {
-        EasyConstSQLParameter constSQLParameter = new EasyConstSQLParameter(table, propertyName, val);
+        EasyConstSQLParameter constSQLParameter = new EasyConstSQLParameter(table, columnMetadata.getPropertyName(), val);
         if (SQLPredicateCompareEnum.LIKE == compare || SQLPredicateCompareEnum.NOT_LIKE == compare) {
             return new ConstLikeSQLParameter(constSQLParameter);
         }

@@ -44,10 +44,10 @@ public class CaseWhenBuilder {
         return caseWhenColumn(predicate,sqlTableOwner.getTable(),property);
     }
     public CloneableSQLSegment elseEnd(Object elseValue){
-        return new CaseWhenSQLColumnSegment(runtimeContext,expressionContext, EasyObjectUtil.typeCastNullable(whens),new ColumnConstSQLParameterExpressionImpl(elseValue));
+        return new CaseWhenSQLColumnSegment(expressionContext, EasyObjectUtil.typeCastNullable(whens),new ColumnConstSQLParameterExpressionImpl(elseValue));
     }
     public CloneableSQLSegment elseEndColumn(TableAvailable table, String property){
-        return new CaseWhenSQLColumnSegment(runtimeContext,expressionContext, EasyObjectUtil.typeCastNullable(whens),new ColumnPropertyExpressionImpl(table,property));
+        return new CaseWhenSQLColumnSegment(expressionContext, EasyObjectUtil.typeCastNullable(whens),new ColumnPropertyExpressionImpl(table,property));
     }
     public CloneableSQLSegment elseEndColumn(SQLTableOwner sqlTableOwner, String property){
         return elseEndColumn(sqlTableOwner.getTable(),property);

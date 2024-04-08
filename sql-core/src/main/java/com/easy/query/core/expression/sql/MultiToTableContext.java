@@ -27,7 +27,11 @@ public final class MultiToTableContext implements ToTableContext {
     @Override
     public String getAlias(TableAvailable table) {
         if (!aliasMapping.containsKey(table)) {
-            throw new EasyQueryTableNotInSQLContextException("not found table:[" + EasyClassUtil.getSimpleName(table.getEntityClass()) + "] in sql context");
+//            if(table.getAlias()!=null){
+//                return table.getAlias();
+//            }
+//            return "a";
+        throw new EasyQueryTableNotInSQLContextException("not found table:[" + EasyClassUtil.getSimpleName(table.getEntityClass()) + "] in sql context");
         }
         if (tableCount == 1) {
             if (firstHasAlias) {

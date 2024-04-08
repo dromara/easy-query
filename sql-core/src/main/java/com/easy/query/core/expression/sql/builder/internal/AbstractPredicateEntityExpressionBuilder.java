@@ -70,7 +70,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                                 throw new EasyQueryInvalidOperationException("entity:"+ EasyClassUtil.getSimpleName(table.getEntityClass())+" has version expression not found version");
                             }
                         } else {
-                            AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), this.getRuntimeContext()));
+                            AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), this.getExpressionContext()));
                             predicateSegment.addPredicateSegment(versionPredicateSegment);
                         }
                     }

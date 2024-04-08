@@ -2,7 +2,9 @@ package com.easy.query.test.common;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.test.entity.BlogEntity;
 
 import javax.sql.DataSource;
@@ -10,6 +12,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -30,6 +34,16 @@ public class EmptyDataSource implements DataSource {
                 .where(be -> be.id().eq("123"))
                 .toSQL();
         System.out.println(sql);
+
+        ToSQLResult sqlResult = easyQueryClient.queryable(Map.class)
+                .asTable("myTable")
+                .where(m -> m.eq("name", "123"))
+                .groupBy(m -> m.column("id"))
+                .select(Map.class, m -> m.column("id").columnCountAs("id", "idCount")
+                        .columnSumAs("age", "ageSum"))
+                .toSQLResult();
+        String sql1 = sqlResult.getSql();
+        List<SQLParameter> parameters = sqlResult.getSqlContext().getParameters();
     }
     @Override
     public Connection getConnection() throws SQLException {
