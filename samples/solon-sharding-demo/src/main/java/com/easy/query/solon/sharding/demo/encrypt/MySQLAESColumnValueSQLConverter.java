@@ -19,6 +19,17 @@ public class MySQLAESColumnValueSQLConverter implements ColumnValueSQLConverter 
      * 数据加密秘钥
      */
     private static final String SECRET="1234567890123456";
+
+    @Override
+    public boolean isRealColumn() {
+        return true;
+    }
+
+    @Override
+    public boolean isMergeSubQuery() {
+        return false;
+    }
+
     @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         sqlPropertyConverter.sqlNativeSegment("AES_DECRYPT(from_base64({0}),{1})",context->{

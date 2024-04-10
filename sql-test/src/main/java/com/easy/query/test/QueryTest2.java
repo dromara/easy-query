@@ -831,7 +831,7 @@ public class QueryTest2 extends BaseTest {
     public void groupTest10() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.notLikeMatchLeft(BlogEntity::getId, "id").notLikeMatchLeft(true, BlogEntity::getContent, "content").notLikeMatchLeft(false, BlogEntity::getTitle, "title"));
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext(),true);
         String sql = queryable.toSQL(toSQLContext);
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` NOT LIKE ? AND `content` NOT LIKE ?", sql);
         List<SQLParameter> parameters = toSQLContext.getParameters();
@@ -901,7 +901,7 @@ public class QueryTest2 extends BaseTest {
     public void groupTest11() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.like(BlogEntity::getId, "id").like(true, BlogEntity::getContent, "content").like(false, BlogEntity::getTitle, "title"));
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext(),true);
         String sql = queryable.toSQL(toSQLContext);
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` LIKE ? AND `content` LIKE ?", sql);
         List<SQLParameter> parameters = toSQLContext.getParameters();
@@ -936,7 +936,7 @@ public class QueryTest2 extends BaseTest {
     public void groupTest12() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.notLikeMatchRight(BlogEntity::getId, "id").notLikeMatchRight(true, BlogEntity::getContent, "content").notLikeMatchRight(false, BlogEntity::getTitle, "title"));
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext(),true);
         String sql = queryable.toSQL(toSQLContext);
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` NOT LIKE ? AND `content` NOT LIKE ?", sql);
         List<SQLParameter> parameters = toSQLContext.getParameters();
@@ -971,7 +971,7 @@ public class QueryTest2 extends BaseTest {
     public void groupTest13() {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.notLike(BlogEntity::getId, "id").notLike(true, BlogEntity::getContent, "content").notLike(false, BlogEntity::getTitle, "title"));
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext(),queryable.getSQLEntityExpressionBuilder().isQuery());
         String sql = queryable.toSQL(toSQLContext);
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` NOT LIKE ? AND `content` NOT LIKE ?", sql);
         List<SQLParameter> parameters = toSQLContext.getParameters();
@@ -1008,7 +1008,7 @@ public class QueryTest2 extends BaseTest {
         Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.lt(BlogEntity::getStar, 9).lt(true, BlogEntity::getPublishTime, now).lt(false, BlogEntity::getOrder, 4));
 
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext(),true);
         String sql = queryable.toSQL(toSQLContext);
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `star` < ? AND `publish_time` < ?", sql);
         List<SQLParameter> parameters = toSQLContext.getParameters();

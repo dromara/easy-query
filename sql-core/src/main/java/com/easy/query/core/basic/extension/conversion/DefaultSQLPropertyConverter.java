@@ -8,7 +8,6 @@ import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExp
 import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.func.SQLFunction;
 
 import java.util.Objects;
 
@@ -23,7 +22,6 @@ public class DefaultSQLPropertyConverter implements SQLPropertyConverter {
     private final ExpressionContext expressionContext;
     private final boolean ignoreAlias;
     private SQLNativeSegment columnSegment;
-    private SQLFunction sqlFunction;
 
     public DefaultSQLPropertyConverter(TableAvailable table,ExpressionContext expressionContext) {
         this(table,expressionContext, false);
@@ -40,10 +38,6 @@ public class DefaultSQLPropertyConverter implements SQLPropertyConverter {
         return columnSegment;
     }
 
-    @Override
-    public SQLFunction getSQLFunction() {
-        return sqlFunction;
-    }
 
     @Override
     public void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
@@ -54,6 +48,7 @@ public class DefaultSQLPropertyConverter implements SQLPropertyConverter {
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,expressionContext.getRuntimeContext());
         SQLNativePropertyExpressionContextImpl sqlNativePropertyExpressionContext = new SQLNativePropertyExpressionContextImpl(table, sqlNativeExpressionContext);
         contextConsume.apply(sqlNativePropertyExpressionContext);
+
         if (ignoreAlias) {
             sqlNativeExpressionContext.setAlias(null);
         }

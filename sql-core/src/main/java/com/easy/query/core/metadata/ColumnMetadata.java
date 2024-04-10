@@ -96,7 +96,6 @@ public class ColumnMetadata {
      * 是否是基本类型 int long double 而不是Integer Long...
      */
     private final boolean primitive;
-    private final boolean realColumn;
 
     /**
      * 数据库和对象值转换器
@@ -154,7 +153,6 @@ public class ColumnMetadata {
         this.supportQueryLike = columnOption.isSupportQueryLike();
         this.large = columnOption.isLarge();
         this.autoSelect = columnOption.isAutoSelect();
-        this.realColumn = columnOption.isRealColumn();
         this.valueConverter = columnOption.getValueConverter();
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
         this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
@@ -239,10 +237,6 @@ public class ColumnMetadata {
 
     public boolean isAutoSelect() {
         return autoSelect;
-    }
-
-    public boolean isRealColumn() {
-        return realColumn;
     }
 
     public ValueConverter<?, ?> getValueConverter() {

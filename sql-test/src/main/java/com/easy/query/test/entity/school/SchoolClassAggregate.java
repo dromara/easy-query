@@ -35,7 +35,7 @@ public class SchoolClassAggregate implements ProxyEntityAvailable<SchoolClassAgg
 //    @Navigate(value = RelationTypeEnum.OneToMany,selfProperty = "id",targetProperty = "classId")
     private List<SchoolStudent> schoolStudents;
 
-    @Column(sqlConversion = StudentSizeColumnValueSQLConverter.class,realColumn = false)
+    @Column(sqlConversion = StudentSizeColumnValueSQLConverter.class)
     @InsertIgnore
     @UpdateIgnore
     private Long studentSize;

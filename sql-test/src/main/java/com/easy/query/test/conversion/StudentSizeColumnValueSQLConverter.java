@@ -19,6 +19,16 @@ import com.easy.query.test.entity.school.SchoolStudent;
  */
 public class StudentSizeColumnValueSQLConverter implements ColumnValueSQLConverter {
     @Override
+    public boolean isRealColumn() {
+        return false;
+    }
+
+    @Override
+    public boolean isMergeSubQuery() {
+        return true;
+    }
+
+    @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         ClientQueryable<SchoolStudent> queryable = sqlClientApiFactory.createQueryable(SchoolStudent.class, runtimeContext);

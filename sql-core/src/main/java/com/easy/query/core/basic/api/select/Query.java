@@ -78,7 +78,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      */
 
     default ToSQLResult toSQLResult() {
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getSQLEntityExpressionBuilder().getExpressionContext().getTableContext(),true);
         String sql = toSQL(queryClass(), toSQLContext);
         return new ToSQLResult(sql,toSQLContext);
     }
@@ -92,7 +92,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      */
     default <TR> String toSQL(Class<TR> resultClass) {
         TableContext tableContext = getSQLEntityExpressionBuilder().getExpressionContext().getTableContext();
-        return toSQL(resultClass, DefaultToSQLContext.defaultToSQLContext(tableContext));
+        return toSQL(resultClass, DefaultToSQLContext.defaultToSQLContext(tableContext,true));
     }
 
     <TR> String toSQL(Class<TR> resultClass, ToSQLContext toSQLContext);

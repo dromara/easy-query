@@ -26,7 +26,7 @@ public interface Deletable<T, TChain> extends SQLExecuteExpectRows,
      * @return
      */
     default String toSQL() {
-        return toSQL(DefaultToSQLContext.defaultToSQLContext(getExpressionContext().getTableContext()));
+        return toSQL(DefaultToSQLContext.defaultToSQLContext(getExpressionContext().getTableContext(),false));
     }
 
     String toSQL(ToSQLContext toSQLContext);

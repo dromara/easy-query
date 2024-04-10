@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment.scec.expression;
 
+import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -25,7 +26,11 @@ public final class ColumnPropertyExpressionImpl implements ColumnPropertyParamEx
     public String toSQL(ExpressionContext expressionContext, ToSQLContext toSQLContext) {
 
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        if(columnMetadata.isRealColumn()){
+        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+        if(columnValueSQLConverter==null){
+            return EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), table, columnMetadata.getName(), toSQLContext);
+        }
+        if(columnValueSQLConverter.isRealColumn()){
             return EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), table, columnMetadata.getName(), toSQLContext);
         }
 //        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();

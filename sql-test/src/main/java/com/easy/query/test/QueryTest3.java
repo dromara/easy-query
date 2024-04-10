@@ -946,7 +946,7 @@ public class QueryTest3 extends BaseTest {
                         .caseWhen(f -> f.eq(Topic::getTitle, "789" ), "first3" )
                         .elseEnd("firstEnd" ), Topic::getTitle));
         ExpressionContext expressionContext = select.getSQLEntityExpressionBuilder().getExpressionContext();
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(expressionContext.getTableContext());
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(expressionContext.getTableContext(),true);
         String sql = select.toSQL(toSQLContext);
         Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? AND t.`stars` >= ? THEN ? WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END) AS `title` FROM `t_topic` t WHERE t.`title` LIKE ? ORDER BY t.`create_time` ASC,t.`id` ASC" , sql);
         Assert.assertEquals(9, toSQLContext.getParameters().size());

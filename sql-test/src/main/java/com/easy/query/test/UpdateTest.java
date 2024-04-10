@@ -358,7 +358,7 @@ public class UpdateTest extends BaseTest {
         ExpressionUpdatable<TopicTypeTest1> queryable = easyQuery.updatable(TopicTypeTest1.class)
                 .set(TopicTypeTest1::getStars, 234)
                 .where(o -> o.eq(TopicTypeTest1::getTopicType, TopicTypeEnum.CLASSER));
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getExpressionContext().getTableContext());
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getExpressionContext().getTableContext(),false);
         String sql = queryable.toSQL(toSQLContext);
         Assert.assertEquals("UPDATE `t_topic_type` SET `stars` = ? WHERE `topic_type` = ?", sql);
         String parameterToString = EasySQLUtil.sqlParameterToString(toSQLContext.getParameters());
@@ -381,7 +381,7 @@ public class UpdateTest extends BaseTest {
         ExpressionUpdatable<TopicTypeTest2> queryable = easyQuery.updatable(TopicTypeTest2.class)
                 .set(TopicTypeTest2::getStars, 234)
                 .where(o -> o.eq(TopicTypeTest2::getTopicType, TopicTypeEnum.CLASSER));
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getExpressionContext().getTableContext());
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(queryable.getExpressionContext().getTableContext(),false);
         String sql = queryable.toSQL(toSQLContext);
         Assert.assertEquals("UPDATE `t_topic_type` SET `stars` = ? WHERE `topic_type` = ?", sql);
         String parameterToString = EasySQLUtil.sqlParameterToString(toSQLContext.getParameters());

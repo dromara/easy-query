@@ -17,6 +17,16 @@ import com.easy.query.core.metadata.ColumnMetadata;
  */
 public class FullNameColumnValueSQLConverter implements ColumnValueSQLConverter {
     @Override
+    public boolean isRealColumn() {
+        return false;
+    }
+
+    @Override
+    public boolean isMergeSubQuery() {
+        return false;
+    }
+
+    @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction concat = fx.concat("firstName", "lastName");

@@ -23,7 +23,6 @@ public class InsertColumnSegmentImpl extends AbstractInsertUpdateSetColumnSQLSeg
     }
     @Override
     public String getColumnNameWithOwner(ToSQLContext toSQLContext) {
-        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
         return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
 //       return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
     }

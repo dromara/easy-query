@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.sql.TableContext;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 
 import java.util.List;
@@ -33,7 +34,8 @@ public class SQLRouteUnit {
 
     public SQLRouteUnit(EntitySQLExpression easyEntitySQLExpression,List<Object> entities, boolean fillAutoIncrement,SQLRewriteUnit sqlRewriteUnit){
         TableContext tableContext = easyEntitySQLExpression.getExpressionMetadata().getTableContext();
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(tableContext,sqlRewriteUnit);
+        boolean query=easyEntitySQLExpression instanceof EntityQuerySQLExpression;
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(tableContext,sqlRewriteUnit,query);
         String sql = easyEntitySQLExpression.toSQL(toSQLContext);
         this.entities = entities;
         this.fillAutoIncrement = fillAutoIncrement;

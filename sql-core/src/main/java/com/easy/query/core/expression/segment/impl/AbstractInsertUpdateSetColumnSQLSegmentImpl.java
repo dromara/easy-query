@@ -22,27 +22,29 @@ public abstract class AbstractInsertUpdateSetColumnSQLSegmentImpl {
     protected final ExpressionContext expressionContext;
     protected final ColumnMetadata columnMetadata;
 
-    public AbstractInsertUpdateSetColumnSQLSegmentImpl(TableAvailable table, String propertyName, ExpressionContext expressionContext){
-        this(table,table.getEntityMetadata().getColumnNotNull(propertyName),expressionContext);
+    public AbstractInsertUpdateSetColumnSQLSegmentImpl(TableAvailable table, String propertyName, ExpressionContext expressionContext) {
+        this(table, table.getEntityMetadata().getColumnNotNull(propertyName), expressionContext);
     }
-    public AbstractInsertUpdateSetColumnSQLSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext){
-        if(columnMetadata.isValueObject()){
-            throw new IllegalArgumentException("entity:["+ EasyClassUtil.getSimpleName(table.getEntityClass())+"."+columnMetadata.getPropertyName()+"] is value object");
+
+    public AbstractInsertUpdateSetColumnSQLSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
+        if (columnMetadata.isValueObject()) {
+            throw new IllegalArgumentException("entity:[" + EasyClassUtil.getSimpleName(table.getEntityClass()) + "." + columnMetadata.getPropertyName() + "] is value object");
         }
         this.table = table;
         this.propertyName = columnMetadata.getPropertyName();
         this.expressionContext = expressionContext;
-        this.columnMetadata=columnMetadata;
+        this.columnMetadata = columnMetadata;
     }
-    public String toSQLWithParameter(ToSQLContext toSQLContext, SQLParameter sqlParameter){
+
+    public String toSQLWithParameter(ToSQLContext toSQLContext, SQLParameter sqlParameter) {
 
         ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
-        if(columnValueSQLConverter==null){
+        if (columnValueSQLConverter == null) {
             EasySQLUtil.addParameter(toSQLContext, sqlParameter);
             return "?";
-        }else{
+        } else {
             DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext);
-            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlPropertyConverter,expressionContext.getRuntimeContext(),false);
+            columnValueSQLConverter.valueConvert(table, columnMetadata, sqlParameter, sqlPropertyConverter, expressionContext.getRuntimeContext(), false);
             return sqlPropertyConverter.toSQL(toSQLContext);
         }
     }

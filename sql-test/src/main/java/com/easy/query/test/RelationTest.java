@@ -161,6 +161,22 @@ public class RelationTest extends BaseTest {
         List<String> ids = Arrays.asList("1", "2", "3");
         try {
             relationInit(ids);
+//            {
+//
+//                ListenerContext listenerContext = new ListenerContext(true);
+//                listenerContextManager.startListen(listenerContext);
+//                System.out.println("------------------");
+////                easyQueryClient.queryable(SchoolClass.class)
+////                        .where(s -> s.sqlNativeSegment())
+//                List<SchoolClassAggregate> list = easyEntityQuery.queryable(SchoolClassAggregate.class)
+//                        .where(s -> s.studentSize().gt(0L))
+//                        .orderBy(s -> s.studentSize().asc())
+//                        .toList();
+//                System.out.println("------------------");
+//                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                Assert.assertEquals("SELECT `id`,`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = `id`) AS `student_size` FROM `school_class` WHERE (SELECT COUNT(t3.`id`) AS `id` FROM `school_student` t3 WHERE t3.`class_id` = `id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            }
             {
 
                 ListenerContext listenerContext = new ListenerContext(true);
@@ -174,7 +190,7 @@ public class RelationTest extends BaseTest {
                 System.out.println("------------------");
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                Assert.assertEquals("SELECT `id`,`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = `id`) AS `student_size` FROM `school_class` WHERE (SELECT COUNT(t3.`id`) AS `id` FROM `school_student` t3 WHERE t3.`class_id` = `id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `student_size` FROM `school_class` t WHERE (SELECT COUNT(t3.`id`) AS `id` FROM `school_student` t3 WHERE t3.`class_id` = t.`id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             }
             {
 
@@ -186,7 +202,7 @@ public class RelationTest extends BaseTest {
                 System.out.println("------------------");
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                Assert.assertEquals("SELECT `id`,`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = `id`) AS `student_size` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `student_size` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
             }
             {
 

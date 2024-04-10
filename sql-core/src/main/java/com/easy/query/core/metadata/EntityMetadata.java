@@ -124,6 +124,7 @@ public class EntityMetadata {
     private final Set<String> shardingTablePropertyNames = new LinkedHashSet<>();
     private ShardingInitConfig shardingInitConfig;
     private boolean hasValueObject;
+    private boolean aliasQuery;
 
     /**
      * 查询过滤器
@@ -332,7 +333,6 @@ public class EntityMetadata {
         Column column = field.getAnnotation(Column.class);
         boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
         boolean autoSelect = column == null ? defaultAutoSelect : column.autoSelect();
-        boolean realColumn = column == null ? true : column.realColumn();
         String columnName = hasColumnName ? column.value() : nameConversion.convert(property);
         ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName);
 //            if (column != null) {
@@ -340,7 +340,6 @@ public class EntityMetadata {
 //            }
         columnOption.setProperty(propertyDescriptor);
         columnOption.setAutoSelect(autoSelect);
-        columnOption.setRealColumn(realColumn);
 
         Encryption encryption = field.getAnnotation(Encryption.class);
         if (encryption != null) {
@@ -434,6 +433,9 @@ public class EntityMetadata {
                         throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " column value sql converter unknown");
                     }
                     columnOption.setColumnValueSQLConverter(columnValueSQLConverter);
+                    if(columnValueSQLConverter.isMergeSubQuery()){
+                        this.aliasQuery=true;
+                    }
                 }
             }
             InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
@@ -930,6 +932,10 @@ public class EntityMetadata {
 
     public boolean isHasValueObject() {
         return hasValueObject;
+    }
+
+    public boolean isAliasQuery() {
+        return aliasQuery;
     }
 
     public @NotNull ErrorMessage getErrorMessage() {

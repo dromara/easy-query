@@ -723,7 +723,7 @@ public class H2QueryTest extends H2BaseTest {
                                 .value(1)
                         )
                 );
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(x.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(x.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext(),false);
         String sql =x.toSQL(toSQLContext);
         Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by ? order by ? desc) as rank2 FROM t_book_test x", sql);
         List<SQLParameter> parameters = toSQLContext.getParameters();
@@ -739,7 +739,7 @@ public class H2QueryTest extends H2BaseTest {
                                 .value(1).value(2)
                         )
                 );
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(x.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(x.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext(),false);
         String sql =x.toSQL(toSQLContext);
         Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by ? ? order by ?? desc) as rank2 FROM t_book_test x", sql);
         List<SQLParameter> parameters = toSQLContext.getParameters();

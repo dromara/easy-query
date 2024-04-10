@@ -72,7 +72,6 @@ public @interface Column {
      */
     @Deprecated
     boolean large() default false;
-    boolean realColumn() default true;
 
     /**
      * 值转换器 在内存中通过java代码进行转换

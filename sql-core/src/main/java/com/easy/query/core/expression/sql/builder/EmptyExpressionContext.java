@@ -34,6 +34,7 @@ public class EmptyExpressionContext implements ExpressionContext{
 
         this.runtimeContext = runtimeContext;
     }
+
     @Override
     public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;

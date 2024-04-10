@@ -14,6 +14,13 @@ import com.easy.query.core.metadata.ColumnMetadata;
  * @author xuejiaming
  */
 public interface ColumnValueSQLConverter {
+    boolean isRealColumn();
+
+    /**
+     * 是否是合并子查询
+     * @return
+     */
+    boolean isMergeSubQuery();
 
 
     /**

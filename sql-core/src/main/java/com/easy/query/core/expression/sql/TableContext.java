@@ -37,7 +37,7 @@ public final class TableContext {
         }
     }
 
-    public ToTableContext getToTableContext(String alias) {
+    public ToTableContext getToTableContext(String alias,boolean query) {
         int mappingSize = aliasMapping.size();
         if (mappingSize == 1) {
             TableAliasSchema tableAliasSchema = EasyCollectionUtil.first(aliasMapping.values());
@@ -45,7 +45,8 @@ public final class TableContext {
                 String tableAlias = tableAliasSchema.getTableAlias(alias);
                 return new SingleToTableContext(tableAliasSchema.getTable(), tableAlias, alias, aliasMapping);
             }
-            return new SingleToTableContext(tableAliasSchema.getTable(), null, alias, aliasMapping);
+            String singleAlias = (query&&tableAliasSchema.getTable().getEntityMetadata().isAliasQuery()) ? tableAliasSchema.getTableAlias(alias) : null;
+            return new SingleToTableContext(tableAliasSchema.getTable(), singleAlias, alias, aliasMapping);
         }
         HashMap<TableAvailable, String> result = new HashMap<>(mappingSize);
         int i = 0;

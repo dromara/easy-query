@@ -208,7 +208,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
 
     @Override
     public String toSQL(Object entity) {
-        return toSQLWithParam(entity, DefaultToSQLContext.defaultToSQLContext(entityUpdateExpressionBuilder.getExpressionContext().getTableContext()));
+        return toSQLWithParam(entity, DefaultToSQLContext.defaultToSQLContext(entityUpdateExpressionBuilder.getExpressionContext().getTableContext(),false));
     }
 
     private String toSQLWithParam(Object entity, ToSQLContext toSQLContext) {
