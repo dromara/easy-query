@@ -46,6 +46,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.reader.EmptyDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReader;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import com.easy.query.core.basic.jdbc.types.handler.UnKnownTypeHandler;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.common.bean.FastBeanProperty;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -373,6 +374,12 @@ public class EntityMetadata {
                 ComplexPropType complexPropType = EasyClassUtil.newInstance(complexPropTypeClass);
                 columnOption.setComplexPropType(complexPropType);
             }
+            Class<? extends JdbcTypeHandler> typeHandlerClass = column.typeHandler();
+            if(!Objects.equals(typeHandlerClass, UnKnownTypeHandler.class)){
+                JdbcTypeHandler handlerByHandlerClass = jdbcTypeHandlerManager.getHandlerByHandlerClass(typeHandlerClass);
+                columnOption.setJdbcTypeHandler(handlerByHandlerClass);
+            }
+
 
         } else {
             //如果是默认的那么就通过自动关联的值转换处进行寻找
@@ -506,8 +513,10 @@ public class EntityMetadata {
         columnOption.setGetterCaller(beanGetter);
         PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
         columnOption.setSetterCaller(beanSetter);
-        JdbcTypeHandler jdbcTypeHandler = jdbcTypeHandlerManager.getHandler(columnOption.getProperty().getPropertyType());
-        columnOption.setJdbcTypeHandler(jdbcTypeHandler);
+        if(columnOption.getJdbcTypeHandler()==null){
+            JdbcTypeHandler jdbcTypeHandler = jdbcTypeHandlerManager.getHandler(columnOption.getProperty().getPropertyType());
+            columnOption.setJdbcTypeHandler(jdbcTypeHandler);
+        }
         return columnOption;
 
     }

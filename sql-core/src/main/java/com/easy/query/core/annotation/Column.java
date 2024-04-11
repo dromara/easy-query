@@ -10,6 +10,8 @@ import com.easy.query.core.basic.extension.generated.DefaultGeneratedKeySQLColum
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
+import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import com.easy.query.core.basic.jdbc.types.handler.UnKnownTypeHandler;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.annotation.Documented;
@@ -114,6 +116,7 @@ public @interface Column {
      * @return
      */
     boolean autoSelect() default true;
+    Class<? extends JdbcTypeHandler> typeHandler() default UnKnownTypeHandler.class;
 //
 //    /**
 //     * 该字段在数据库中是否为null，如果为null那么在update整个对象的时候

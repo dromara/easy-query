@@ -11,4 +11,5 @@ import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 public interface JdbcTypeHandlerManager {
     void appendHandler(Class<?> type, JdbcTypeHandler typeHandler, boolean replace);
     JdbcTypeHandler getHandler(Class<?> type);
+    JdbcTypeHandler getHandlerByHandlerClass(Class<?> handlerType);
 }

@@ -25,6 +25,8 @@ import com.easy.query.core.basic.jdbc.types.handler.TimeTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.TimestampTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.UUIDTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.UtilDateTypeHandler;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -36,6 +38,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -120,5 +123,10 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
             return DEFAULT_HANDLER;
         }
         return handlers.getOrDefault(type,DEFAULT_HANDLER);
+    }
+
+    @Override
+    public JdbcTypeHandler getHandlerByHandlerClass(Class<?> handlerType) {
+        return handlers.values().stream().filter(o-> Objects.equals(o.getClass(),handlerType)).findFirst().orElseThrow(()->new EasyQueryInvalidOperationException("unknown type handler:"+ EasyClassUtil.getSimpleName(handlerType)));
     }
 }
