@@ -64,8 +64,14 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         Class<?> navigatePropertyType = navigateMetadata.getNavigatePropertyType();
         boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         ClientQueryable<TREntity> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
+
         //支持tracking传递
-        return tracking?queryable.asTracking():queryable.asNoTracking();
+        if(tracking){
+            queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_TRACKING);
+        }else{
+            queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_TRACKING);
+        }
+        return queryable;
 //        return queryable.where(o->{
 //            if(includeNavigateParams.isLimit()){
 //                o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),includeNavigateParams.getRelationId());

@@ -60,6 +60,15 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * @return
      * @param <TR>
      */
+    default <TR> TR streamBy(Function<Stream<T>,TR> fetcher){
+       return streamBy(fetcher,Integer.MAX_VALUE);
+    }
+    /**
+     * 直接拉取数据
+     * @param fetcher 如何消费拉取的数据
+     * @return
+     * @param <TR>
+     */
     default <TR> TR streamBy(Function<Stream<T>,TR> fetcher,Integer fetchSize){
        return streamBy(fetcher,statement -> {statement.setFetchSize(fetchSize);});
     }
@@ -89,18 +98,6 @@ public interface StreamAble<T> extends QueryAvailable<T> {
         }catch (SQLException sqlException){
             throw new EasyQuerySQLCommandException(sqlException);
         }
-    }
-
-    /**
-     * 请使用 {@link  #streamBy(Function, Integer)}
-     * @param fetcher
-     * @param configurer
-     * @return
-     * @param <TR>
-     */
-    @Deprecated
-    default <TR> TR fetch(Function<Stream<T>,TR> fetcher, SQLConsumer<Statement> configurer){
-        return streamBy(fetcher,configurer);
     }
 
 }

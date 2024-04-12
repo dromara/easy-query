@@ -113,6 +113,7 @@ public @interface Column {
     /**
      * 当且仅当查询指定该属性才会查询出来
      * columnAll相同对象无法查询出来，除非手动指定column列
+     * 仅返回相同对象时无法获取必须指定如果为false
      * @return
      */
     boolean autoSelect() default true;
