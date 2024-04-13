@@ -2,13 +2,13 @@ package com.easy.query.core.basic.jdbc.executor.impl.def;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.props.ColumnJdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
-import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.util.EasyBeanUtil;
+import com.easy.query.core.metadata.RelationExtraColumn;
+import com.easy.query.core.metadata.RelationExtraMetadata;
 
 /**
  * create time 2023/6/30 22:03
@@ -16,16 +16,18 @@ import com.easy.query.core.util.EasyBeanUtil;
  *
  * @author xuejiaming
  */
-public class EntityResultColumnMetadata implements ResultColumnMetadata {
-    private final EntityMetadata entityMetadata;
-    private final ColumnMetadata columnMetadata;
+public class RelationExtraResultColumnMetadata implements ResultColumnMetadata {
+    private final RelationExtraMetadata relationExtraMetadata;
     private final JdbcProperty jdbcProperty;
+    private final ColumnMetadata columnMetadata;
+    private final RelationExtraColumn relationExtraColumn;
 
-    public EntityResultColumnMetadata(int index, EntityMetadata entityMetadata, ColumnMetadata columnMetadata){
-        this.entityMetadata = entityMetadata;
+    public RelationExtraResultColumnMetadata(int index, RelationExtraMetadata relationExtraMetadata, RelationExtraColumn relationExtraColumn){
+        this.relationExtraMetadata = relationExtraMetadata;
+        this.columnMetadata = relationExtraColumn.getColumnMetadata();
 
-        this.columnMetadata = columnMetadata;
         this.jdbcProperty =new ColumnJdbcProperty(index,columnMetadata);
+        this.relationExtraColumn = relationExtraColumn;
     }
 
     @Override
@@ -70,16 +72,12 @@ public class EntityResultColumnMetadata implements ResultColumnMetadata {
 
     @Override
     public void setValue(Object bean, Object value) {
-        if (entityMetadata.isHasValueObject() && columnMetadata.getPropertyName().contains(".")) {
-            EasyBeanUtil.setPropertyValue(bean, entityMetadata, columnMetadata, value, true);
-        } else {
-            EasyBeanUtil.setCurrentPropertyValue(bean, columnMetadata, value);
-        }
+        relationExtraMetadata.currentRow().put(relationExtraColumn.getPropertyName(),value);
     }
 
 
     @Override
     public Object getValue(Object bean) {
-        return EasyBeanUtil.getPropertyValue(bean,entityMetadata,columnMetadata);
+        throw new UnsupportedOperationException();
     }
 }

@@ -2,6 +2,7 @@ package com.easy.query.core.expression.include;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
+import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 
 import java.util.Collection;
 
@@ -13,7 +14,7 @@ import java.util.Collection;
  */
 public class EasyIncludeProcessorFactory implements IncludeProcessorFactory{
     @Override
-    public <TEntity> IncludeProcessor createIncludeProcess(Collection<TEntity> entities, IncludeParserResult includeParserResult, QueryRuntimeContext runtimeContext) {
-        return new EasyIncludeProcess(entities,includeParserResult,runtimeContext);
+    public IncludeProcessor createIncludeProcess(IncludeParserResult includeParserResult, QueryRuntimeContext runtimeContext) {
+        return new EasyIncludeProcess(includeParserResult,runtimeContext);
     }
 }

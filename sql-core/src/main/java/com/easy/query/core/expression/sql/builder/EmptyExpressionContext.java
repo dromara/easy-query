@@ -13,6 +13,7 @@ import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.metadata.RelationExtraMetadata;
 
 import java.util.List;
 import java.util.Map;
@@ -248,5 +249,15 @@ public class EmptyExpressionContext implements ExpressionContext{
     @Override
     public Function<Class<?>, Boolean> getRelationLogicDelete() {
         return null;
+    }
+
+    @Override
+    public RelationExtraMetadata getRelationExtraMetadata() {
+        return null;
+    }
+
+    @Override
+    public boolean hasRelationExtraMetadata() {
+        return false;
     }
 }

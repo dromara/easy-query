@@ -38,6 +38,7 @@ import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.math.BigDecimal;
@@ -74,7 +75,7 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
         this.runtimeContext = queryable.getSQLEntityExpressionBuilder().getRuntimeContext();
         EntityMetadata entityMetadata = listProxy.getSqlQueryable().getOriginalTable().getEntityMetadata();
         if (Objects.equals(entityMetadata.getEntityClass(), queryable.queryClass())) {
-            selectAutoInclude0(runtimeContext.getEntityMetadataManager(),queryable,entityMetadata,navValue);
+            selectAutoInclude0(runtimeContext.getEntityMetadataManager(), queryable, entityMetadata, navValue);
             this.navigateMetadata = entityMetadata.getNavigateNotNull(navValue);
             this.navigateGetter = this.navigateMetadata.getGetter();
             this.queryable = queryable;
@@ -97,7 +98,14 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
                 NavigateMetadata navigateMetadataResult = currentEntityMetadata.getNavigateNotNull(navValueSplit[navValueSplit.length - 1]);
                 this.navigateMetadata = navigateMetadataResult;
                 this.navigateGetter = navigateMetadataResult.getGetter();
-                this.queryable = queryable.select(currentEntityMetadata.getEntityClass(), o -> o.getAsSelector().column(listProxy.getSqlQueryable().getOriginalTable(), targetPropertyOrPrimary))
+                EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSQLEntityExpressionBuilder();
+                NavigateMetadata finalCurrentNavigateMetadata = currentNavigateMetadata;
+                this.queryable = queryable.select(currentEntityMetadata.getEntityClass(), o -> {
+                            o.getAsSelector().column(listProxy.getSqlQueryable().getOriginalTable(), targetPropertyOrPrimary);
+                            //todo include
+                            EasySQLExpressionUtil.appendTargetExtraTargetProperty(finalCurrentNavigateMetadata,sqlEntityExpressionBuilder,o.getAsSelector(),listProxy.getSqlQueryable().getOriginalTable());
+
+                        })
                         .include(t -> t.with(navValueSplit[navValueSplit.length - 1]));
             } else {
                 //如果存在include那么就只能一张表一张表走
@@ -137,13 +145,15 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
                 this.queryable = queryable;
             }
         }
-    }private void selectAutoInclude0(EntityMetadataManager entityMetadataManager,ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata,String navigateProperties) {
-        if(EasyStringUtil.isBlank(navigateProperties)){
+    }
+
+    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, String navigateProperties) {
+        if (EasyStringUtil.isBlank(navigateProperties)) {
             return;
         }
         int i = navigateProperties.indexOf(".");
-        String navigateProperty=i>=0?navigateProperties.substring(0,i):navigateProperties;
-        String nextNavigateProperty=i>=0?navigateProperties.substring(i+1):null;
+        String navigateProperty = i >= 0 ? navigateProperties.substring(0, i) : navigateProperties;
+        String nextNavigateProperty = i >= 0 ? navigateProperties.substring(i + 1) : null;
 
 
         clientQueryable
@@ -151,7 +161,7 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
                     ClientQueryable<Object> with = t.with(navigateProperty);
                     NavigateMetadata navigateMetadata = entityMetadata.getNavigateNotNull(navigateProperty);
                     EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
-                    selectAutoInclude0(entityMetadataManager,with, entityEntityMetadata,nextNavigateProperty);
+                    selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, nextNavigateProperty);
                     return with;
                 });
     }
@@ -454,12 +464,12 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
     }
 
     @Override
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> include(boolean condition,SQLFuncExpression1<ListProxy<TProxy, TEntity>, TPropertyProxy> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> include(boolean condition, SQLFuncExpression1<ListProxy<TProxy, TEntity>, TPropertyProxy> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> includes(boolean condition,SQLFuncExpression1<ListProxy<TProxy, TEntity>, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> includes(boolean condition, SQLFuncExpression1<ListProxy<TProxy, TEntity>, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
         throw new UnsupportedOperationException();
     }
 
@@ -546,7 +556,7 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
     }
 
     @Override
-    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass,boolean replace) {
+    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, boolean replace) {
         throw new UnsupportedOperationException();
     }
 

@@ -15,11 +15,11 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class PropertyDataReader implements DataReader {
+public class RelationExtraPropertyDataReader implements DataReader {
 
     private final ResultColumnMetadata resultColumnMetadata;
 
-    public PropertyDataReader(ResultColumnMetadata resultColumnMetadata) {
+    public RelationExtraPropertyDataReader(ResultColumnMetadata resultColumnMetadata) {
         Objects.requireNonNull(resultColumnMetadata, "resultColumnMetadata can not be null.");
         this.resultColumnMetadata = resultColumnMetadata;
     }

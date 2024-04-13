@@ -22,6 +22,9 @@ public class NavigateMetadata {
      */
     private final String propertyName;
 
+    /**
+     * 泛型的不是真正的type如果是泛型集合
+     */
     private final Class<?> navigateOriginalPropertyType;
     /**
      * 主表的属性类型

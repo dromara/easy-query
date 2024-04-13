@@ -22,6 +22,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.lambda.SQLExpression10;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
@@ -35,6 +36,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
+import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -64,8 +66,13 @@ import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.SQLLazyFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.IncludeNavigateExpression;
+import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.metadata.RelationExtraColumn;
+import com.easy.query.core.metadata.RelationExtraMetadata;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -120,12 +127,13 @@ public class EasySQLExpressionUtil {
         return sqlEntityExpression.getProjects().isEmpty() && !sqlEntityExpression.hasGroup();
     }
 
-    public static boolean onlyNativeSqlExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder){
-        if(entityQueryExpressionBuilder instanceof SQLAnonymousEntityQueryExpressionBuilder){
+    public static boolean onlyNativeSqlExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        if (entityQueryExpressionBuilder instanceof SQLAnonymousEntityQueryExpressionBuilder) {
             return EasyCollectionUtil.isEmpty(entityQueryExpressionBuilder.getTables());
         }
         return false;
     }
+
     public static boolean moreTableExpressionOrNoAnonymous(EntityQueryExpressionBuilder sqlEntityExpression) {
         if (EasyCollectionUtil.isNotSingle(sqlEntityExpression.getTables())) {
             return true;
@@ -156,9 +164,11 @@ public class EasySQLExpressionUtil {
     public static boolean hasAnyOperateWithoutWhereAndOrder(EntityQueryExpressionBuilder sqlEntityExpression) {
         return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasHaving() || sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
     }
+
     public static boolean hasAnyOperateWithoutWhereAndOrderAndDistinct(EntityQueryExpressionBuilder sqlEntityExpression) {
         return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasHaving() || sqlEntityExpression.hasGroup();
     }
+
     public static boolean hasOnlyOperateWithDistinct(EntityQueryExpressionBuilder sqlEntityExpression) {
         return !sqlEntityExpression.hasLimit() && !sqlEntityExpression.hasHaving() && sqlEntityExpression.isDistinct() && !sqlEntityExpression.hasGroup();
     }
@@ -190,7 +200,7 @@ public class EasySQLExpressionUtil {
         return queryable;
     }
 
-    public static <T1, T2, T3, T4, T5> ClientQueryable5<T1, T2, T3, T4, T5> executeJoinOn(ClientQueryable5<T1, T2, T3, T4,T5> queryable, SQLExpression5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>> on) {
+    public static <T1, T2, T3, T4, T5> ClientQueryable5<T1, T2, T3, T4, T5> executeJoinOn(ClientQueryable5<T1, T2, T3, T4, T5> queryable, SQLExpression5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -200,7 +210,8 @@ public class EasySQLExpressionUtil {
         on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5);
         return queryable;
     }
-    public static <T1, T2, T3, T4, T5, T6> ClientQueryable6<T1, T2, T3, T4, T5, T6> executeJoinOn(ClientQueryable6<T1, T2, T3, T4,T5,T6> queryable, SQLExpression6<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>> on) {
+
+    public static <T1, T2, T3, T4, T5, T6> ClientQueryable6<T1, T2, T3, T4, T5, T6> executeJoinOn(ClientQueryable6<T1, T2, T3, T4, T5, T6> queryable, SQLExpression6<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -208,10 +219,11 @@ public class EasySQLExpressionUtil {
         WherePredicate<T4> sqlOnPredicate4 = queryable.getSQLExpressionProvider4().getOnPredicate(onWhereFilterContext);
         WherePredicate<T5> sqlOnPredicate5 = queryable.getSQLExpressionProvider5().getOnPredicate(onWhereFilterContext);
         WherePredicate<T6> sqlOnPredicate6 = queryable.getSQLExpressionProvider6().getOnPredicate(onWhereFilterContext);
-        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5,sqlOnPredicate6);
+        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5, sqlOnPredicate6);
         return queryable;
     }
-    public static <T1, T2, T3, T4, T5, T6,T7> ClientQueryable7<T1, T2, T3, T4, T5, T6,T7> executeJoinOn(ClientQueryable7<T1, T2, T3, T4,T5,T6,T7> queryable, SQLExpression7<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>> on) {
+
+    public static <T1, T2, T3, T4, T5, T6, T7> ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> executeJoinOn(ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> queryable, SQLExpression7<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -220,10 +232,11 @@ public class EasySQLExpressionUtil {
         WherePredicate<T5> sqlOnPredicate5 = queryable.getSQLExpressionProvider5().getOnPredicate(onWhereFilterContext);
         WherePredicate<T6> sqlOnPredicate6 = queryable.getSQLExpressionProvider6().getOnPredicate(onWhereFilterContext);
         WherePredicate<T7> sqlOnPredicate7 = queryable.getSQLExpressionProvider7().getOnPredicate(onWhereFilterContext);
-        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5,sqlOnPredicate6,sqlOnPredicate7);
+        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5, sqlOnPredicate6, sqlOnPredicate7);
         return queryable;
     }
-    public static <T1, T2, T3, T4, T5, T6,T7,T8> ClientQueryable8<T1, T2, T3, T4, T5, T6,T7,T8> executeJoinOn(ClientQueryable8<T1, T2, T3, T4,T5,T6,T7,T8> queryable, SQLExpression8<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>> on) {
+
+    public static <T1, T2, T3, T4, T5, T6, T7, T8> ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> executeJoinOn(ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> queryable, SQLExpression8<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -233,10 +246,11 @@ public class EasySQLExpressionUtil {
         WherePredicate<T6> sqlOnPredicate6 = queryable.getSQLExpressionProvider6().getOnPredicate(onWhereFilterContext);
         WherePredicate<T7> sqlOnPredicate7 = queryable.getSQLExpressionProvider7().getOnPredicate(onWhereFilterContext);
         WherePredicate<T8> sqlOnPredicate8 = queryable.getSQLExpressionProvider8().getOnPredicate(onWhereFilterContext);
-        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5,sqlOnPredicate6,sqlOnPredicate7,sqlOnPredicate8);
+        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5, sqlOnPredicate6, sqlOnPredicate7, sqlOnPredicate8);
         return queryable;
     }
-    public static <T1, T2, T3, T4, T5, T6,T7,T8,T9> ClientQueryable9<T1, T2, T3, T4, T5, T6,T7,T8,T9> executeJoinOn(ClientQueryable9<T1, T2, T3, T4,T5,T6,T7,T8,T9> queryable, SQLExpression9<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>> on) {
+
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> executeJoinOn(ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> queryable, SQLExpression9<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -247,10 +261,11 @@ public class EasySQLExpressionUtil {
         WherePredicate<T7> sqlOnPredicate7 = queryable.getSQLExpressionProvider7().getOnPredicate(onWhereFilterContext);
         WherePredicate<T8> sqlOnPredicate8 = queryable.getSQLExpressionProvider8().getOnPredicate(onWhereFilterContext);
         WherePredicate<T9> sqlOnPredicate9 = queryable.getSQLExpressionProvider9().getOnPredicate(onWhereFilterContext);
-        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5,sqlOnPredicate6,sqlOnPredicate7,sqlOnPredicate8,sqlOnPredicate9);
+        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5, sqlOnPredicate6, sqlOnPredicate7, sqlOnPredicate8, sqlOnPredicate9);
         return queryable;
     }
-    public static <T1, T2, T3, T4, T5, T6,T7,T8,T9,T10> ClientQueryable10<T1, T2, T3, T4, T5, T6,T7,T8,T9,T10> executeJoinOn(ClientQueryable10<T1, T2, T3, T4,T5,T6,T7,T8,T9,T10> queryable, SQLExpression10<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>, WherePredicate<T10>> on) {
+
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> executeJoinOn(ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> queryable, SQLExpression10<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>, WherePredicate<T10>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -262,44 +277,44 @@ public class EasySQLExpressionUtil {
         WherePredicate<T8> sqlOnPredicate8 = queryable.getSQLExpressionProvider8().getOnPredicate(onWhereFilterContext);
         WherePredicate<T9> sqlOnPredicate9 = queryable.getSQLExpressionProvider9().getOnPredicate(onWhereFilterContext);
         WherePredicate<T10> sqlOnPredicate10 = queryable.getSQLExpressionProvider10().getOnPredicate(onWhereFilterContext);
-        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5,sqlOnPredicate6,sqlOnPredicate7,sqlOnPredicate8,sqlOnPredicate9,sqlOnPredicate10);
+        on.apply(sqlOnPredicate1, sqlOnPredicate2, sqlOnPredicate3, sqlOnPredicate4, sqlOnPredicate5, sqlOnPredicate6, sqlOnPredicate7, sqlOnPredicate8, sqlOnPredicate9, sqlOnPredicate10);
         return queryable;
     }
 
 
-    public static EntityQueryExpressionBuilder getCountEntityQueryExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder,boolean isDistinct) {
+    public static EntityQueryExpressionBuilder getCountEntityQueryExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, boolean isDistinct) {
         processRemoveOrderAndLimit(entityQueryExpressionBuilder);
         if (EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpressionBuilder)) {
             return null;
         }
-        if(EasySQLExpressionUtil.onlyNativeSqlExpression(entityQueryExpressionBuilder)){
+        if (EasySQLExpressionUtil.onlyNativeSqlExpression(entityQueryExpressionBuilder)) {
             return null;
         }
 
-        if(!entityQueryExpressionBuilder.hasWhere()){
+        if (!entityQueryExpressionBuilder.hasWhere()) {
             //如果他只是匿名表那么就使用匿名表的内部表
             if (!EasySQLExpressionUtil.moreTableExpressionOrNoAnonymous(entityQueryExpressionBuilder)) {
                 AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) entityQueryExpressionBuilder.getTable(0);
                 EntityQueryExpressionBuilder entityQueryExpression = table.getEntityQueryExpressionBuilder().cloneEntityExpressionBuilder();
                 //存在操作那么就返回父类
                 if (!EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpression)) {
-                    EntityQueryExpressionBuilder countEntityQueryExpression = getCountEntityQueryExpression(entityQueryExpression,isDistinct||entityQueryExpression.isDistinct());
+                    EntityQueryExpressionBuilder countEntityQueryExpression = getCountEntityQueryExpression(entityQueryExpression, isDistinct || entityQueryExpression.isDistinct());
                     if (countEntityQueryExpression != null) {
                         return countEntityQueryExpression;
                     }
-                }else{
+                } else {
                     if (EasySQLExpressionUtil.hasOnlyOperateWithDistinct(entityQueryExpression)) {
 
                         processRemoveOrderAndLimit(entityQueryExpression);
-                        return processSelectCountProject(entityQueryExpression,isDistinct||entityQueryExpression.isDistinct());
+                        return processSelectCountProject(entityQueryExpression, isDistinct || entityQueryExpression.isDistinct());
                     }
                 }
             }
         }
-        return processSelectCountProject(entityQueryExpressionBuilder,isDistinct);
+        return processSelectCountProject(entityQueryExpressionBuilder, isDistinct);
     }
 
-    private static void processRemoveOrderAndLimit(EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+    private static void processRemoveOrderAndLimit(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         if (entityQueryExpressionBuilder.hasOrder()) {
             entityQueryExpressionBuilder.getOrder().clear();
         }
@@ -308,22 +323,24 @@ public class EasySQLExpressionUtil {
             entityQueryExpressionBuilder.setRows(0);
         }
     }
+
     /**
      * 如果是distinct 的count需要做特殊处理
+     *
      * @param entityQueryExpressionBuilder
      * @param isDistinct
      * @return
      */
-    private static EntityQueryExpressionBuilder processSelectCountProject(EntityQueryExpressionBuilder entityQueryExpressionBuilder,boolean isDistinct){
+    private static EntityQueryExpressionBuilder processSelectCountProject(EntityQueryExpressionBuilder entityQueryExpressionBuilder, boolean isDistinct) {
         SQLSegmentFactory sqlSegmentFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
-        if(isDistinct){
+        if (isDistinct) {
             SQLBuilderSegment sqlBuilderSegment = entityQueryExpressionBuilder.getProjects().cloneSQLBuilder();
             entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
             SQLSegment sqlSegment = sqlSegmentFactory.createSelectCountDistinctSegment(sqlBuilderSegment.getSQLSegments());
             entityQueryExpressionBuilder.getProjects().append(sqlSegment);
             entityQueryExpressionBuilder.setDistinct(false);
 
-        }else{
+        } else {
             entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
             SQLSegment sqlSegment = sqlSegmentFactory.createSelectConstSegment("COUNT(*)");
             entityQueryExpressionBuilder.getProjects().append(sqlSegment);
@@ -371,19 +388,19 @@ public class EasySQLExpressionUtil {
         return getSQLOwnerColumn(runtimeContext, table, columnName, toSQLContext);
     }
 
-//    public static String getSQLOwnerColumnMetadata(QueryRuntimeContext runtimeContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext) {
+    //    public static String getSQLOwnerColumnMetadata(QueryRuntimeContext runtimeContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext) {
 //        return getSQLOwnerColumn(runtimeContext, table, columnMetadata.getName(), toSQLContext);
 //    }
-    public static String getSQLOwnerColumnMetadata(ExpressionContext expressionContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext,boolean ignoreAlias,boolean inSelect) {
+    public static String getSQLOwnerColumnMetadata(ExpressionContext expressionContext, TableAvailable table, ColumnMetadata columnMetadata, ToSQLContext toSQLContext, boolean ignoreAlias, boolean inSelect) {
         ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
-        if(columnValueSQLConverter==null){
+        if (columnValueSQLConverter == null) {
             return getSQLOwnerColumn(expressionContext.getRuntimeContext(), table, columnMetadata.getName(), toSQLContext);
-        }else{
+        } else {
             DefaultSQLPropertyConverter defaultSQLPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext, ignoreAlias);
-            if(inSelect){
-                columnValueSQLConverter.selectColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,expressionContext.getRuntimeContext());
-            }else{
-                columnValueSQLConverter.propertyColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,expressionContext.getRuntimeContext());
+            if (inSelect) {
+                columnValueSQLConverter.selectColumnConvert(table, columnMetadata, defaultSQLPropertyConverter, expressionContext.getRuntimeContext());
+            } else {
+                columnValueSQLConverter.propertyColumnConvert(table, columnMetadata, defaultSQLPropertyConverter, expressionContext.getRuntimeContext());
             }
             return defaultSQLPropertyConverter.toSQL(toSQLContext);
         }
@@ -441,7 +458,7 @@ public class EasySQLExpressionUtil {
 //        }
 //    }
 
-    public static Predicate getSQLFunctionPredicate(ExpressionContext expressionContext,TableAvailable table, SQLFunction sqlFunction, SQLNativeExpressionContext sqlNativeExpressionContext) {
+    public static Predicate getSQLFunctionPredicate(ExpressionContext expressionContext, TableAvailable table, SQLFunction sqlFunction, SQLNativeExpressionContext sqlNativeExpressionContext) {
 
         if (sqlFunction instanceof SQLLazyFunction) {
             SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
@@ -469,7 +486,7 @@ public class EasySQLExpressionUtil {
         return runtimeContext.getQueryConfiguration().getDialect().getQuoteName(value);
     }
 
-    public static String getCTEColumns(QueryRuntimeContext runtimeContext, EntityQuerySQLExpression querySQLExpression){
+    public static String getCTEColumns(QueryRuntimeContext runtimeContext, EntityQuerySQLExpression querySQLExpression) {
 
         boolean unionExpression = querySQLExpression instanceof AnonymousUnionEntityQuerySQLExpression;
         if (!unionExpression) {
@@ -494,7 +511,7 @@ public class EasySQLExpressionUtil {
                 columns.append(EasySQLExpressionUtil.getQuoteName(runtimeContext, sqlEntityAliasSegment.getAlias()));
             } else if (sqlEntityAliasSegment.getTable() != null && sqlEntityAliasSegment.getPropertyName() != null) {
                 columns.append(EasySQLExpressionUtil.getQuoteName(runtimeContext, sqlEntityAliasSegment.getTable().getColumnName(sqlEntityAliasSegment.getPropertyName())));
-            }else{
+            } else {
                 throw new EasyQueryInvalidOperationException("sqlSegment is SQLEntityAliasSegment,can not get column name");
             }
         }
@@ -529,35 +546,106 @@ public class EasySQLExpressionUtil {
     public static Object parseParamExpression(ExpressionContext expressionContext, ParamExpression paramExpression, ToSQLContext toSQLContext) {
         if (paramExpression instanceof ColumnPropertyParamExpression) {
             ColumnPropertyParamExpression columnPropertyExpression = (ColumnPropertyParamExpression) paramExpression;
-            return SQLFormatArgument.create(()->{
+            return SQLFormatArgument.create(() -> {
                 return columnPropertyExpression.toSQL(expressionContext, toSQLContext);
             });
 
         } else if (paramExpression instanceof ColumnParamExpression) {
             ColumnParamExpression columnParamExpression = (ColumnParamExpression) paramExpression;
-            return SQLFormatArgument.create(()->{
+            return SQLFormatArgument.create(() -> {
                 columnParamExpression.addParams(toSQLContext);
                 return "?";
             });
-        }  else if (paramExpression instanceof ColumnMultiParamExpression) {
+        } else if (paramExpression instanceof ColumnMultiParamExpression) {
             ColumnMultiParamExpression columnMultiParamExpression = (ColumnMultiParamExpression) paramExpression;
-            return SQLFormatArgument.create(()->{
+            return SQLFormatArgument.create(() -> {
                 columnMultiParamExpression.addParams(toSQLContext);
-                return EasyCollectionUtil.join(columnMultiParamExpression.getParamSize(),",","?");
+                return EasyCollectionUtil.join(columnMultiParamExpression.getParamSize(), ",", "?");
             });
-        } else if(paramExpression instanceof FormatValueParamExpression){
+        } else if (paramExpression instanceof FormatValueParamExpression) {
             FormatValueParamExpression constValueParamExpression = (FormatValueParamExpression) paramExpression;
             return SQLFormatArgument.create(constValueParamExpression::toSQLSegment);
-        } else if(paramExpression instanceof SubQueryParamExpression){
+        } else if (paramExpression instanceof SubQueryParamExpression) {
             SubQueryParamExpression subQueryParamExpression = (SubQueryParamExpression) paramExpression;
-            return SQLFormatArgument.create(()-> subQueryParamExpression.toSQL(toSQLContext));
-        } else if(paramExpression instanceof ColumnPropertyAsAliasParamExpression){
+            return SQLFormatArgument.create(() -> subQueryParamExpression.toSQL(toSQLContext));
+        } else if (paramExpression instanceof ColumnPropertyAsAliasParamExpression) {
             ColumnPropertyAsAliasParamExpression columnPropertyAsAliasParamExpression = (ColumnPropertyAsAliasParamExpression) paramExpression;
-            return SQLFormatArgument.create(()-> columnPropertyAsAliasParamExpression.toSQL(expressionContext.getRuntimeContext()));
-        }else if(paramExpression instanceof SQLSegmentParamExpression){
+            return SQLFormatArgument.create(() -> columnPropertyAsAliasParamExpression.toSQL(expressionContext.getRuntimeContext()));
+        } else if (paramExpression instanceof SQLSegmentParamExpression) {
             SQLSegmentParamExpression sqlSegmentParamExpression = (SQLSegmentParamExpression) paramExpression;
-            return SQLFormatArgument.create(()-> sqlSegmentParamExpression.toSQL(toSQLContext));
+            return SQLFormatArgument.create(() -> sqlSegmentParamExpression.toSQL(toSQLContext));
         }
         throw new EasyQueryInvalidOperationException("can not process ParamExpression:" + EasyClassUtil.getInstanceSimpleName(paramExpression));
+    }
+
+
+    public static void appendSelfExtraTargetProperty(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLNative<?> sqlNative, TableAvailable table) {
+        ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
+        if (expressionContext.hasIncludes()) {
+            RelationExtraMetadata relationExtraMetadata = expressionContext.getRelationExtraMetadata();
+            Map<NavigateMetadata, IncludeNavigateExpression> includes = expressionContext.getIncludes();
+            SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
+            for (Map.Entry<NavigateMetadata, IncludeNavigateExpression> navigateKV : includes.entrySet()) {
+                NavigateMetadata navigateMetadata = navigateKV.getKey();
+                String selfPropertyOrPrimary = navigateMetadata.getSelfPropertyOrPrimary();
+
+                boolean hasSelfPropertyOrPrimary = false;
+                if (EasySQLSegmentUtil.isNotEmpty(projects)) {
+                    for (SQLSegment sqlSegment : projects.getSQLSegments()) {
+                        if (sqlSegment instanceof ColumnSegment) {
+                            ColumnSegment columnSegment = (ColumnSegment) sqlSegment;
+                            if (columnSegment.getTable() == table && Objects.equals(columnSegment.getPropertyName(), selfPropertyOrPrimary)) {
+                                hasSelfPropertyOrPrimary = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                String alias = "__relation__" + selfPropertyOrPrimary;
+                ColumnMetadata columnMetadata = navigateMetadata.getEntityMetadata().getColumnNotNull(selfPropertyOrPrimary);
+                RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(selfPropertyOrPrimary, alias, columnMetadata,!hasSelfPropertyOrPrimary));
+                if (relationExtraColumn == null) {
+                    if (!hasSelfPropertyOrPrimary) {
+                        sqlNative.sqlNativeSegment("{0}", c -> {
+                            c.expression(table, selfPropertyOrPrimary);
+                            c.setAlias(alias);
+                        });
+                    }
+                }
+
+
+            }
+        }
+    }
+
+    public static void appendTargetExtraTargetProperty(NavigateMetadata selfNavigateMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLNative<?> sqlNative, TableAvailable table) {
+        ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
+        QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
+        RelationExtraMetadata relationExtraMetadata = expressionContext.getRelationExtraMetadata();
+        String targetPropertyOrPrimary = selfNavigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
+        SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
+        boolean hasTargetPropertyOrPrimary = false;
+        if (EasySQLSegmentUtil.isNotEmpty(projects)) {
+            for (SQLSegment sqlSegment : projects.getSQLSegments()) {
+                if (sqlSegment instanceof ColumnSegment) {
+                    ColumnSegment columnSegment = (ColumnSegment) sqlSegment;
+                    if (columnSegment.getTable() == table && Objects.equals(columnSegment.getPropertyName(), targetPropertyOrPrimary)) {
+                        hasTargetPropertyOrPrimary = true;
+                        break;
+                    }
+                }
+            }
+        }
+        String alias = "__relation__" + targetPropertyOrPrimary;
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(targetPropertyOrPrimary);
+        RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(targetPropertyOrPrimary, alias, columnMetadata,!hasTargetPropertyOrPrimary));
+        if (relationExtraColumn == null) {
+            if (!hasTargetPropertyOrPrimary) {
+                sqlNative.sqlNativeSegment("{0}", c -> {
+                    c.expression(table, targetPropertyOrPrimary);
+                    c.setAlias(alias);
+                });
+            }
+        }
     }
 }

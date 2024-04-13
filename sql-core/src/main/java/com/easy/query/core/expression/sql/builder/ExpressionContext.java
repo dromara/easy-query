@@ -13,6 +13,7 @@ import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.metadata.RelationExtraMetadata;
 
 import java.util.List;
 import java.util.Map;
@@ -96,4 +97,6 @@ public interface ExpressionContext {
     void setRelationLogicDelete(Function<Class<?>,Boolean> relationLogicDelete);
     boolean hasRelationLogicDelete();
     Function<Class<?>,Boolean> getRelationLogicDelete();
+    RelationExtraMetadata getRelationExtraMetadata();
+    boolean hasRelationExtraMetadata();
 }

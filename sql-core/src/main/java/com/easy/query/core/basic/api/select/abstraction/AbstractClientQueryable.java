@@ -42,7 +42,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
-import com.easy.query.core.expression.builder.core.SelectorColumn;
+import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.include.IncludeProcessor;
@@ -478,6 +478,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             selectOnly(resultClass);
             return Objects.equals(queryClass(), resultClass) && !entityQueryExpressionBuilder.getTable(0).getEntityTable().isAnonymous();
         }
+        else {
+            ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
+            if (expressionContext.hasIncludes()) {
+                ColumnAsSelector<T1, ?> sqlColumnSelector = getSQLExpressionProvider1().getAutoColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
+                EasySQLExpressionUtil.appendSelfExtraTargetProperty(entityQueryExpressionBuilder, sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
+            }
+        }
         return false;
     }
 
@@ -555,7 +562,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
                 IncludeParserResult includeParserResult = includeParserEngine.process(this.entityQueryExpressionBuilder, entityMetadata, result, include);
 
-                IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(result, includeParserResult, runtimeContext);
+                IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(includeParserResult, runtimeContext);
                 includeProcess.process();
             }
         }
@@ -629,7 +636,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public ClientQueryable<T1> select(SQLExpression1<ColumnSelector<T1>> selectExpression) {
         ColumnSelector<T1> sqlColumnSelector = getSQLExpressionProvider1().getColumnSelector(entityQueryExpressionBuilder.getProjects());
         selectExpression.apply(sqlColumnSelector);
-        processorIncludeRelationProperty(sqlColumnSelector.getSelector());
+        processorIncludeRelationProperty(sqlColumnSelector.getSQLNative(),sqlColumnSelector.getTable());
         if (EasyCollectionUtil.isSingle(entityQueryExpressionBuilder.getTables())) {
             return this;
         }
@@ -644,7 +651,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             SQLExpression1<ColumnAsSelector<T1, TR>> selectAllExpression = ColumnAsSelector::columnAll;
             selectAllExpression.apply(sqlColumnSelector);
         } else {
-            processorIncludeRelationProperty(sqlColumnSelector.getAsSelector());
+            processorIncludeRelationProperty(sqlColumnSelector.getSQLNative(),sqlColumnSelector.getTable());
         }
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
@@ -654,19 +661,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
      *
      * @param selectorColumn
      */
-    private void processorIncludeRelationProperty(SelectorColumn<?> selectorColumn) {
-        ExpressionContext expressionContext = getSQLEntityExpressionBuilder().getExpressionContext();
-        boolean hasIncludes = expressionContext.hasIncludes();
-        if (hasIncludes) {
-            TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
-            for (IncludeNavigateExpression includeNavigateExpression : expressionContext.getIncludes().values()) {
-                IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
-                if (includeNavigateParams.getTable() == entityTable) {
-                    String selfPropertyOrPrimary = includeNavigateParams.getNavigateMetadata().getSelfPropertyOrPrimary();
-                    selectorColumn.columnIfAbsent(entityTable, selfPropertyOrPrimary);
-                }
-            }
-        }
+    private void processorIncludeRelationProperty(SQLNative<?> sqlNative, TableAvailable table) {
+        EasySQLExpressionUtil.appendSelfExtraTargetProperty(getSQLEntityExpressionBuilder(), sqlNative, table);
     }
 
     @Override
@@ -701,7 +697,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EntityTableExpressionBuilder table = getSQLEntityExpressionBuilder().getTable(0);
         TableAvailable entityTable = table.getEntityTable();
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
-        selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null,replace);
+        selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace);
 
         return select(resultClass);
     }
@@ -739,6 +735,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression = ColumnAsSelector::columnAll;
         ColumnAsSelector<T1, TR> sqlColumnSelector = getSQLExpressionProvider1().getAutoColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
         selectExpression.apply(sqlColumnSelector);
+        //如果存在include那么需要对当前结果进行查询
+        //todo include
+        EasySQLExpressionUtil.appendSelfExtraTargetProperty(entityQueryExpressionBuilder, sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
     }
 
     @Override
@@ -1088,10 +1087,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
             includeNavigateParams.setLimit(hasLimit);
             NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
+            if (!Objects.equals(navigateMetadata.getNavigatePropertyType(), clientQueryable.queryClass())) {
+                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(queryClass()) + " include query navigate error return type should:[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] actual:[" + EasyClassUtil.getSimpleName(clientQueryable.queryClass()) + "]");
+            }
+
             SQLFuncExpression<ClientQueryable<?>> queryableExpression = () -> {
                 List<Object> relationIds = includeNavigateParams.getRelationIds();
                 if (hasLimit) {
-                    if (EasyCollectionUtil.isNotEmpty(relationIds)&&EasyCollectionUtil.isNotSingle(relationIds)) {
+                    if (EasyCollectionUtil.isNotEmpty(relationIds) && EasyCollectionUtil.isNotSingle(relationIds)) {
                         Iterator<Object> iterator = relationIds.iterator();
                         Object firstRelationId = iterator.next();
                         ClientQueryable<TProperty> firstQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, firstRelationId);
@@ -1113,6 +1116,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                        navigateMetadata.predicateFilterApply(o);
                     });
                 });
+//                return appendNavigateTargetProperty(navigateQueryable,navigateMetadata);
             };
             boolean replace = navigateInclude.getIncludeNavigateParams().isReplace();
             if (replace) {
@@ -1138,6 +1142,27 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         });
         return firstQueryable;
     }
+
+    private <T> ClientQueryable<T> appendNavigateTargetProperty(ClientQueryable<T> queryable, NavigateMetadata navigateMetadata) {
+        return queryable;
+//        ExpressionContext expressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
+//        return queryable.select(t -> {
+//            t.columnAll();
+//            Map<String, RelationExtraColumn> relationExtraColumnMap=new HashMap<>();
+//            String targetPropertyOrPrimary = navigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
+//            String alias = "__relation__" + targetPropertyOrPrimary;
+//            ColumnMetadata columnMetadata = t.getTable().getEntityMetadata().getColumnNotNull(targetPropertyOrPrimary);
+//            RelationExtraColumn relationExtraColumn = relationExtraColumnMap.putIfAbsent(alias, new RelationExtraColumn(targetPropertyOrPrimary,alias, columnMetadata));
+//            if(relationExtraColumn==null){
+//                t.sqlNativeSegment("{0}", c -> {
+//                    c.expression(navigateMetadata.getTargetProperty());
+//                    c.setAlias(alias);
+//                });
+//            }
+//            expressionContext.setRelationExtraMetadata(new RelationExtraMetadata(relationExtraColumnMap));
+//        });
+    }
+
 
     @Override
     public <TREntity> ClientQueryable<T1> fillMany(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {

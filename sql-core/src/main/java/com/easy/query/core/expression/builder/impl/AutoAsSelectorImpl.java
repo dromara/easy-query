@@ -13,8 +13,10 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -37,11 +39,13 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
 
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final Class<?> resultClass;
+    protected final EntityMetadata resultEntityMetadata;
 
     public AutoAsSelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlBuilderSegment, Class<?> resultClass) {
         super(entityQueryExpressionBuilder, sqlBuilderSegment);
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.resultClass = resultClass;
+        this.resultEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(resultClass);
     }
 
     @Override
@@ -161,6 +165,20 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
 
     @Override
     public AsSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
-        throw new UnsupportedOperationException();
+        Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+        sqlNativeExpressionContext.setResultEntityMetadata(resultEntityMetadata);
+        contextConsume.apply(sqlNativeExpressionContext);
+        SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(expressionContext, sqlSegment, sqlNativeExpressionContext);
+        sqlBuilderSegment.append(columnSegment);
+        return this;
     }
+
+//    @Override
+//    public AsSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+//
+//        getSQLNative().sqlNativeSegment(sqlSegment, context->{
+//            contextConsume.apply(new SQLAliasNativePropertyExpressionContextImpl(getTable(),context));
+//        });
+//    }
 }

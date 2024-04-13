@@ -5,20 +5,25 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
+import com.easy.query.core.basic.jdbc.executor.impl.def.RelationExtraResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.EmptyDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.RelationExtraPropertyDataReader;
 import com.easy.query.core.common.KeywordTool;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.metadata.RelationExtraColumn;
+import com.easy.query.core.metadata.RelationExtraMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyTrackUtil;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * create time 2023/7/31 16:08
@@ -31,14 +36,19 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
     protected boolean trackBean;
     protected TrackManager trackManager;
     protected DataReader dataReader;
+    protected RelationExtraMetadata relationExtraMetadata;
 
     public DefaultBeanStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
         super(context, streamResult, resultMetadata);
+
     }
 
     @Override
     protected void init0() throws SQLException {
         ResultSetMetaData rsmd = streamResultSet.getMetaData();
+        if(context.getExpressionContext().hasRelationExtraMetadata()){
+            relationExtraMetadata =context.getExpressionContext().getRelationExtraMetadata();
+        }
         this.dataReader = getColumnDataReader(rsmd);
         this.trackBean = EasyTrackUtil.trackBean(context, resultMetadata.getResultClass());
         this.trackManager = trackBean ? context.getRuntimeContext().getTrackManager() : null;
@@ -69,6 +79,9 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
     @Override
     protected T mapTo() throws SQLException {
         T bean = resultMetadata.newBean();
+        if(relationExtraMetadata!=null){
+            this.relationExtraMetadata.createRow();
+        }
         dataReader.readTo(bean, streamResultSet);
         //todo forEach
         return bean;
@@ -88,7 +101,17 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
             }
             ResultColumnMetadata resultColumnMetadata = getMapColumnMetadata(i, colName, mapToBeanStrict);
             if (resultColumnMetadata == null) {
-                if(easyQueryOption.isWarningColumnMiss()){
+                if(relationExtraMetadata!=null){
+                    Map<String, RelationExtraColumn> relationExtraColumnMap = relationExtraMetadata.getRelationExtraColumnMap();
+                    RelationExtraColumn relationExtraColumn = relationExtraColumnMap.get(colName);
+                    if(relationExtraColumn!=null){
+                        RelationExtraResultColumnMetadata relationExtraResultColumnMetadata = new RelationExtraResultColumnMetadata(i, relationExtraMetadata, relationExtraColumn);
+                        dataReader = new BeanDataReader(dataReader, new RelationExtraPropertyDataReader(relationExtraResultColumnMetadata));
+                        continue;
+                    } else if(easyQueryOption.isWarningColumnMiss()){
+                        log.warn("sql result column name:["+colName+"] mapping miss in class:["+ EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) +"]");
+                    }
+                } else if(easyQueryOption.isWarningColumnMiss()){
                     log.warn("sql result column name:["+colName+"] mapping miss in class:["+ EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) +"]");
                 }
                 continue;

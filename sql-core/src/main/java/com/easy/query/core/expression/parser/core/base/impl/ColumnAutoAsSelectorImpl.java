@@ -77,7 +77,7 @@ public class ColumnAutoAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR
 
     @Override
     public ColumnAsSelector<T1, TR> castChain() {
-        return EasyObjectUtil.typeCastNullable(asSelector);
+        return this;
     }
 
     @Override

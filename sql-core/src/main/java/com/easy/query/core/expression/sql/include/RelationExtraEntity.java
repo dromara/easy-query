@@ -1,0 +1,45 @@
+package com.easy.query.core.expression.sql.include;
+
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.metadata.RelationExtraColumn;
+import com.easy.query.core.util.EasyClassUtil;
+
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * create time 2024/4/13 13:56
+ * 文件说明
+ *
+ * @author xuejiaming
+ */
+public class RelationExtraEntity {
+    private final Object entity;
+    private final Map<String, Object> extraColumns;
+    private final Map<String, RelationExtraColumn> relationExtraColumnMap;
+
+    public RelationExtraEntity(Object entity, Map<String,Object> extraColumns, Map<String, RelationExtraColumn> relationExtraColumnMap){
+        this.relationExtraColumnMap = relationExtraColumnMap;
+        Objects.requireNonNull(entity,"entity is null");
+        Objects.requireNonNull(extraColumns,"extraColumns is null");
+
+        this.entity = entity;
+        this.extraColumns = extraColumns;
+    }
+
+    public Object getEntity() {
+        return entity;
+    }
+
+    public Object getRelationExtraColumn(String propertyName){
+        RelationExtraColumn relationExtraColumn = relationExtraColumnMap.get(propertyName);
+        if(relationExtraColumn==null){
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getInstanceSimpleName(entity) +" cant get relation column:"+propertyName);
+        }
+        if(relationExtraColumn.isAppendRelationExtra()){
+            return extraColumns.get(propertyName);
+        }else{
+            return relationExtraColumn.getColumnMetadata().getGetterCaller().apply(entity);
+        }
+    }
+}

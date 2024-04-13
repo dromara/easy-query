@@ -15,7 +15,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 public interface ResultColumnMetadata {
     ColumnMetadata getColumnMetadata();
     Class<?> getEntityClass();
-    JdbcProperty getDataReader();
+    JdbcProperty getJdbcProperty();
     String getPropertyName();
     JdbcTypeHandler getJdbcTypeHandler();
     boolean isEncryption();

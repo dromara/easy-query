@@ -18,6 +18,7 @@ import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.metadata.RelationExtraMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private Map<TableAvailable, Map<String, ColumnIncludeExpression>> columnIncludeMaps;
     private Class<?>[] propTypes;
     private Function<Class<?>, Boolean> relationLogicDelete;
+    private RelationExtraMetadata relationExtraMetadata;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -328,6 +330,7 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.connectionMode = this.connectionMode;
         easyExpressionContext.sharding = this.sharding;
         easyExpressionContext.hasSubQuery = this.hasSubQuery;
+        easyExpressionContext.relationExtraMetadata = this.relationExtraMetadata;
         if (hasIncludes()) {
             easyExpressionContext.getIncludes().putAll(this.includes);
         }
@@ -380,5 +383,18 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public Function<Class<?>, Boolean> getRelationLogicDelete() {
         return this.relationLogicDelete;
+    }
+
+    @Override
+    public RelationExtraMetadata getRelationExtraMetadata() {
+        if(relationExtraMetadata==null){
+            this.relationExtraMetadata=new RelationExtraMetadata();
+        }
+        return relationExtraMetadata;
+    }
+
+    @Override
+    public boolean hasRelationExtraMetadata() {
+        return this.relationExtraMetadata!=null&&!this.relationExtraMetadata.getRelationExtraColumnMap().isEmpty();
     }
 }

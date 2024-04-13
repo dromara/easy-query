@@ -15,13 +15,14 @@ import java.util.Map;
  */
 public class DefaultIncludeParserResult implements IncludeParserResult{
     private final EntityMetadata entityMetadata;
+    private final List<RelationExtraEntity> relationExtraEntities;
     private final RelationTypeEnum relationType;
     private final String navigatePropertyName;
     private final Class<?> navigateOriginalPropertyType;
     private final Class<?> navigatePropertyType;
     private final String selfProperty;
     private final String targetProperty;
-    private final List<Object> includeResult;
+    private final List<RelationExtraEntity> includeResult;
 
     private Class<?> mappingClass;
     private String selfMappingProperty;
@@ -30,6 +31,7 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     private final PropertySetterCaller<Object> setter;
 
     public DefaultIncludeParserResult(EntityMetadata entityMetadata,
+                                      List<RelationExtraEntity> relationExtraEntities,
                                       RelationTypeEnum relationType,
                                       String navigatePropertyName,
                                       Class<?> navigateOriginalPropertyType,
@@ -39,11 +41,12 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
                                       Class<?> mappingClass,
                                       String selfMappingProperty,
                                       String targetMappingProperty,
-                                      List<Object> includeResult,
+                                      List<RelationExtraEntity> includeResult,
                                       List<Map<String, Object>> mappingRows,
                                       PropertySetterCaller<Object> setter){
 
         this.entityMetadata = entityMetadata;
+        this.relationExtraEntities = relationExtraEntities;
         this.relationType = relationType;
         this.navigatePropertyName = navigatePropertyName;
         this.navigateOriginalPropertyType = navigateOriginalPropertyType;
@@ -108,7 +111,7 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     }
 
     @Override
-    public List<Object> getIncludeResult() {
+    public List<RelationExtraEntity> getIncludeResult() {
         return includeResult;
     }
 
@@ -120,5 +123,13 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     @Override
     public PropertySetterCaller<Object> getSetter() {
         return setter;
+    }
+
+    /**
+     * 封装的额外对象
+     * @return
+     */
+    public List<RelationExtraEntity> getRelationExtraEntities() {
+        return relationExtraEntities;
     }
 }

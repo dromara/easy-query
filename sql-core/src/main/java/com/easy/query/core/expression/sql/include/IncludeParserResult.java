@@ -44,9 +44,10 @@ public interface IncludeParserResult {
 
     String getTargetMappingProperty();
 
-    List<Object> getIncludeResult();
+    List<RelationExtraEntity> getIncludeResult();
     List<Map<String, Object>> getMappingRows();
 
     PropertySetterCaller<Object> getSetter();
+    List<RelationExtraEntity> getRelationExtraEntities();
 
 }
