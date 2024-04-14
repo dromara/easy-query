@@ -17,6 +17,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLConstantExpression;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -27,6 +28,7 @@ import com.easy.query.test.dto.UserExtraDTO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.UserExtra;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.listener.ListenerContext;
 import com.mysql.cj.jdbc.MysqlDataSource;
@@ -423,5 +425,48 @@ public class QueryTest15 extends BaseTest {
 
         System.out.println(1);
     }
+
+    @Test
+    public void testCaseWhenLazy(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft1<Object>> list = easyEntityQuery.queryable(Topic.class)
+                .select(t -> Select.DRAFT.of(
+                        t.expression().caseWhen(() -> t.title().eq("123")).then("1").elseEnd("2")
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN ? ELSE ? END) AS `value1` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testCaseWhenLazy2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .select(t -> {
+
+                    TopicProxy topicProxy = new TopicProxy();
+                    topicProxy.title().set(
+                            t.expression().caseWhen(() -> t.title().eq("123")).then("1").elseEnd("2")
+                    );
+                    return topicProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN ? ELSE ? END) AS `title` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        listenerContextManager.clear();
+    }
+
 
 }

@@ -7,8 +7,10 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegment2Impl;
 import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
 import com.easy.query.core.expression.segment.impl.UpdateColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.UpdateColumnSetSegmentImpl;
@@ -17,6 +19,7 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.SQLFunctionTranslateImpl;
 
 import java.util.Objects;
 
@@ -108,9 +111,22 @@ public class SetterImpl implements Setter {
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityExpressionBuilder.getExpressionContext(),runtimeContext);
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,sqlNativeExpressionContext));
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,sqlNativeExpressionContext));
-        String sqlSegment = sqlFunction.sqlSegment(table);
-        InsertUpdateColumnConfigureSegmentImpl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegmentImpl(new UpdateColumnSegmentImpl(table, property, entityExpressionBuilder.getExpressionContext()), entityExpressionBuilder.getExpressionContext(), sqlSegment, sqlNativeExpressionContext);
+
+        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                .toSQLSegment(entityExpressionBuilder.getExpressionContext(), table, runtimeContext, null);
+//        if (sqlFunction instanceof SQLLazyFunction) {
+//            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
+//            nextPredicateSegment.setPredicate(new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment + " " + sqlPredicateAssert.getSQL(), sqlNativeExpressionContext));
+//        } else {
+//            String sqlSegment = sqlFunction.sqlSegment(table);
+//            InsertUpdateColumnConfigureSegmentImpl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegmentImpl(new UpdateColumnSegmentImpl(table, property, entityExpressionBuilder.getExpressionContext()), entityExpressionBuilder.getExpressionContext(), sqlSegment, sqlNativeExpressionContext);
+//            sqlBuilderSegment.append(insertUpdateColumnConfigureSegment);
+//        }
+//        String sqlSegment = sqlFunction.sqlSegment(table);
+        InsertUpdateColumnConfigureSegment2Impl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegment2Impl(new UpdateColumnSegmentImpl(table, property, entityExpressionBuilder.getExpressionContext())
+                , entityExpressionBuilder.getExpressionContext(), sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(insertUpdateColumnConfigureSegment);
+
         return this;
     }
 

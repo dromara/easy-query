@@ -29,10 +29,10 @@ public class DamengDateTimeDurationSQLFunction extends AbstractExpressionSQLFunc
             throw new IllegalArgumentException("date time duration sql arguments != 2");
         }
         switch (durationEnum){
-            case Days:return "ROUND(TO_NUMBER({0} - {1}))";
-            case Hours:return "ROUND(TO_NUMBER({0} - {1}) * 24)";
-            case Minutes:return "ROUND(TO_NUMBER({0} - {1}) * 24 * 60)";
-            case Seconds:return "ROUND(TO_NUMBER({0} - {1}) * 24 * 60 * 60)";
+            case Days:return "EXTRACT(DAY FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))";
+            case Hours:return "EXTRACT(HOUR FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))";
+            case Minutes:return "EXTRACT(MINUTE FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))";
+            case Seconds:return "FLOOR(EXTRACT(SECOND FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY')))";
         }
         throw new UnsupportedOperationException("不支持当前函数DamengDateTimeDurationSQLFunction:"+ durationEnum);
     }

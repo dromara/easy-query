@@ -272,4 +272,43 @@ public class UpdateTest1 extends BaseTest{
         Assert.assertEquals("false(Boolean),2xxxa(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+    @Test
+    public void testUpdate5(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Supplier<Exception> f = () -> {
+            try {
+                easyEntityQuery.updatable(BlogEntity.class)
+                        .asSchema(x->x+"_abc")
+                        .asTable(o->o+"_abc")
+                        .setColumns(o->{
+                            o.title().set(
+                                    o.expression().caseWhen(()->o.title().eq("123"))
+                                            .then("1")
+                                            .elseEnd("2")
+                            );
+                        })
+                        .whereById("2xxxa")
+                        .executeRows();
+            }catch (Exception ex){
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("UPDATE `_abc`.`t_blog_abc` SET `title` = (CASE WHEN `title` = ? THEN ? ELSE ? END) WHERE `deleted` = ? AND `id` = ?", easyQuerySQLStatementException.getSQL());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `_abc`.`t_blog_abc` SET `title` = (CASE WHEN `title` = ? THEN ? ELSE ? END) WHERE `deleted` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(String),2(String),false(Boolean),2xxxa(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 }

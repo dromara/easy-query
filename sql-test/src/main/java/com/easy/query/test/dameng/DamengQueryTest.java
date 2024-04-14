@@ -2,16 +2,22 @@ package com.easy.query.test.dameng;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
+import com.easy.query.test.entity.Topic;
+import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -187,4 +193,15 @@ public class DamengQueryTest extends DamengBaseTest{
 //        String s = "插入:" + damengMyTopics.size() + "条,用时:" + (end - begin) + "(ms)";
 //        System.out.println(s);
 //    }
+
+    @Test
+    public void test1(){
+        List<DamengMyTopic> list = easyQuery.queryable(DamengMyTopic.class)
+                .where(d -> d.ge(DamengMyTopic::getCreateTime, LocalDateTime.now()))
+                .toList();
+        List<DamengMyTopic> list1 = entityQuery.queryable(DamengMyTopic.class)
+                .where(x -> {
+                    x.createTime().duration(LocalDateTime.now(), DateTimeDurationEnum.Seconds).gt(100L);
+                }).toList();
+    }
 }
