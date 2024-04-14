@@ -29,10 +29,10 @@ public class DamengDateTimeDurationSQLFunction extends AbstractExpressionSQLFunc
             throw new IllegalArgumentException("date time duration sql arguments != 2");
         }
         switch (durationEnum){
-            case Days:return "EXTRACT(DAY FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))";
-            case Hours:return "EXTRACT(HOUR FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))";
-            case Minutes:return "EXTRACT(MINUTE FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))";
-            case Seconds:return "FLOOR(EXTRACT(SECOND FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY')))";
+            case Days:return "EXTRACT(DAY FROM (CAST({0} AS TIMESTAMP WITH TIME ZONE)-{1}))";
+            case Hours:return "(EXTRACT(DAY FROM (CAST({0} AS TIMESTAMP WITH TIME ZONE)-{1}))*24+EXTRACT(HOUR FROM (CAST({0} AS TIMESTAMP WITH TIME ZONE)-{1})))";
+            case Minutes:return "(EXTRACT(DAY FROM (CAST({0} AS TIMESTAMP WITH TIME ZONE)-{1}))*1440+EXTRACT(HOUR FROM (CAST({0} AS TIMESTAMP WITH TIME ZONE)-{1}))*60+EXTRACT(MINUTE FROM (CAST({0} AS TIMESTAMP WITH TIME ZONE)-{1})))";
+            case Seconds:return "(EXTRACT(DAY FROM (CAST({0} AS TIMESTAMP WITH TIME ZONE)-{1}))*86400+EXTRACT(HOUR FROM (CAST({0} AS TIMESTAMP WITH TIME ZONE)-{1}))*3600+EXTRACT(MINUTE FROM (CAST({0} AS TIMESTAMP WITH TIME ZONE)-{1}))*60+EXTRACT(SECOND FROM (CAST({0} AS TIMESTAMP WITH TIME ZONE)-{1})))";
         }
         throw new UnsupportedOperationException("不支持当前函数DamengDateTimeDurationSQLFunction:"+ durationEnum);
     }

@@ -238,8 +238,9 @@ public void query10() {
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Seconds),
                         o.createTime().duration(o.createTime().plus(1,TimeUnit.DAYS), DateTimeDurationEnum.Days),
                         o.createTime().duration(o.createTime().plus(2,TimeUnit.SECONDS),DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(3,TimeUnit.MINUTES),DateTimeDurationEnum.Minutes)
+                        o.createTime().duration(o.createTime().plus(1,TimeUnit.DAYS).plus(3,TimeUnit.MINUTES),DateTimeDurationEnum.Minutes)
                 )).firstOrNull();
+        Assert.assertEquals(-1443,(long)draft4.getValue7());
 
         entityQuery.deletable(BlogEntity.class)
                 .whereById(id)

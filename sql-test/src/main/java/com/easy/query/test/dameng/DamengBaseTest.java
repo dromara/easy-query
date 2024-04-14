@@ -67,7 +67,7 @@ public abstract class DamengBaseTest {
 
     public static void initData() {
 
-
+        easyQuery.deletable(DamengMyTopic.class).where(d -> d.isNotNull(DamengMyTopic::getId)).allowDeleteStatement(true).disableLogicDelete().executeRows();
         boolean topicAny = easyQuery.queryable(DamengMyTopic.class).any();
         if (!topicAny) {
             List<DamengMyTopic> topics = new ArrayList<>();

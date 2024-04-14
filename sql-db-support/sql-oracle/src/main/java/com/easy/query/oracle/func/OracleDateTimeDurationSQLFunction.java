@@ -30,9 +30,9 @@ public class OracleDateTimeDurationSQLFunction extends AbstractExpressionSQLFunc
         }
         switch (durationEnum){
             case Days:return "EXTRACT(DAY FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))";
-            case Hours:return "EXTRACT(HOUR FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))";
-            case Minutes:return "EXTRACT(MINUTE FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))";
-            case Seconds:return "FLOOR(EXTRACT(SECOND FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY')))";
+            case Hours:return "(EXTRACT(DAY FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))*24+EXTRACT(HOUR FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY')))";
+            case Minutes:return "(EXTRACT(DAY FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))*1440+EXTRACT(HOUR FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))*60+EXTRACT(MINUTE FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY')))";
+            case Seconds:return "(EXTRACT(DAY FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))*86400+EXTRACT(HOUR FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))*3600+EXTRACT(MINUTE FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY'))*60+EXTRACT(SECOND FROM NUMTODSINTERVAL(({0}+0)-({1}+0),'DAY')))";
         }
         throw new UnsupportedOperationException("不支持当前函数OracleDateTimeDurationSQLFunction:"+ durationEnum);
     }
