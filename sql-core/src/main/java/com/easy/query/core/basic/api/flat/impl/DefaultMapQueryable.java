@@ -10,6 +10,7 @@ import com.easy.query.core.basic.api.flat.provider.MapSelector;
 import com.easy.query.core.basic.api.flat.provider.impl.MapFilterImpl;
 import com.easy.query.core.basic.api.flat.provider.impl.MapGroupSelectorImpl;
 import com.easy.query.core.basic.api.flat.provider.impl.MapHavingImpl;
+import com.easy.query.core.basic.api.flat.provider.impl.MapOnFilterImpl;
 import com.easy.query.core.basic.api.flat.provider.impl.MapOrderByImpl;
 import com.easy.query.core.basic.api.flat.provider.impl.MapSelectorImpl;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -56,7 +57,7 @@ public class DefaultMapQueryable implements MapQueryable {
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Map.class);
         EntityTableExpressionBuilder sqlTable = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.LEFT_JOIN, runtimeContext);
         queryable.getSQLEntityExpressionBuilder().addSQLEntityTableExpression(sqlTable);
-        on.apply(new MapFilterImpl(this.queryable));
+        on.apply(new MapOnFilterImpl(this.queryable));
         return this;
     }
 
@@ -75,7 +76,7 @@ public class DefaultMapQueryable implements MapQueryable {
         EntityTableExpressionBuilder sqlTable = runtimeContext.getExpressionBuilderFactory().createAnonymousEntityTableExpressionBuilder(entityMetadata, joinTable, joinQueryableSQLEntityExpressionBuilder);
         queryable.getSQLEntityExpressionBuilder().addSQLEntityTableExpression(sqlTable);
 
-        on.apply(new MapFilterImpl(this.queryable));
+        on.apply(new MapOnFilterImpl(this.queryable));
         return this;
     }
 

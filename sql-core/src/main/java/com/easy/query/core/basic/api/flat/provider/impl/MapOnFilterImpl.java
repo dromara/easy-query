@@ -12,14 +12,14 @@ import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
  *
  * @author xuejiaming
  */
-public class MapFilterImpl extends AbstractMapTable implements MapFilter {
+public class MapOnFilterImpl extends AbstractMapTable implements MapFilter {
 
-    public MapFilterImpl(ClientQueryable<?> queryable){
+    public MapOnFilterImpl(ClientQueryable<?> queryable){
         super(queryable);
     }
 
     @Override
     public WherePredicate<?> getWherePredicate(int tableIndex) {
-        return new WherePredicateImpl<>(getTable(tableIndex), sqlExpressionProvider.getWhereFilterContext());
+        return new WherePredicateImpl<>(getTable(tableIndex), sqlExpressionProvider.getOnWhereFilterContext());
     }
 }

@@ -568,5 +568,15 @@ public class QueryTest15 extends BaseTest {
         }
     }
 
+    @Test
+     public void test1223(){
+        String name = easyQueryClient.mapQueryable().asTable("123")
+                .where(x -> {
+                    WherePredicate<?> wherePredicate = x.getWherePredicate(0);
+                    wherePredicate.eq("name", "123");
+                }).toSQL();
+        Assert.assertEquals("SELECT * FROM `123` WHERE `name` = ?",name);
+    }
+
 
 }
