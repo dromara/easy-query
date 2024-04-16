@@ -60,6 +60,9 @@ import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.logging.nologging.NoLoggingImpl;
 import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -102,6 +105,7 @@ import java.util.stream.Collectors;
  * @author xuejiaming
  */
 public class EntityMetadata {
+    private static final Log log = LogFactory.getLog(EntityMetadata.class);
     private final Class<?> entityClass;
     private String tableName;
     private String schema;
@@ -203,6 +207,15 @@ public class EntityMetadata {
             //未找到bean属性就直接忽略
             PropertyDescriptor propertyDescriptor = propertyDescriptorFinder.find(property);
             if (propertyDescriptor == null) {
+                propertyDescriptor = propertyDescriptorFinder.findIgnoreCase(property);
+                if (propertyDescriptor != null) {
+                    String warningMessage = EasyClassUtil.getSimpleName(entityClass) + " filed:" + field.getName() + ",compare name:" + property + ",property name:" + propertyDescriptor.getName();
+                    if (log instanceof NoLoggingImpl) {
+                        System.out.println(warningMessage);
+                    } else {
+                        log.warn(warningMessage);
+                    }
+                }
                 continue;
             }
             Type genericType = field.getGenericType();
@@ -375,7 +388,7 @@ public class EntityMetadata {
                 columnOption.setComplexPropType(complexPropType);
             }
             Class<? extends JdbcTypeHandler> typeHandlerClass = column.typeHandler();
-            if(!Objects.equals(typeHandlerClass, UnKnownTypeHandler.class)){
+            if (!Objects.equals(typeHandlerClass, UnKnownTypeHandler.class)) {
                 JdbcTypeHandler handlerByHandlerClass = jdbcTypeHandlerManager.getHandlerByHandlerClass(typeHandlerClass);
                 columnOption.setJdbcTypeHandler(handlerByHandlerClass);
             }
@@ -440,8 +453,8 @@ public class EntityMetadata {
                         throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " column value sql converter unknown");
                     }
                     columnOption.setColumnValueSQLConverter(columnValueSQLConverter);
-                    if(columnValueSQLConverter.isMergeSubQuery()){
-                        this.aliasQuery=true;
+                    if (columnValueSQLConverter.isMergeSubQuery()) {
+                        this.aliasQuery = true;
                     }
                 }
             }
@@ -513,7 +526,7 @@ public class EntityMetadata {
         columnOption.setGetterCaller(beanGetter);
         PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
         columnOption.setSetterCaller(beanSetter);
-        if(columnOption.getJdbcTypeHandler()==null){
+        if (columnOption.getJdbcTypeHandler() == null) {
             JdbcTypeHandler jdbcTypeHandler = jdbcTypeHandlerManager.getHandler(columnOption.getProperty().getPropertyType());
             columnOption.setJdbcTypeHandler(jdbcTypeHandler);
         }

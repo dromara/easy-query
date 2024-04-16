@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -44,6 +45,7 @@ import com.easy.query.test.entity.proxy.TopicShardingProxy;
 import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
+import com.easy.query.test.testvo.MyUserDTO;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1278,5 +1280,9 @@ public class GenericTest extends BaseTest {
         TopicShardingProxy table = TopicShardingProxy.createTable();
         SQLColumn<TopicShardingProxy, String> topicShardingProxyStringSQLColumn = table._title();
         TopicShardingProxy.TopicShardingProxyFetcher topicShardingProxyFetcher = table.FETCHER._title();
+    }
+    @Test
+    public void test1(){
+        Queryable<MyUserDTO> queryable = easyQuery.queryable(MyUserDTO.class);
     }
 }

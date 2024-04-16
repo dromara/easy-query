@@ -1,5 +1,7 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+
 import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +35,14 @@ public class PropertyDescriptorFinder {
         if(mapFind){
             return this.propertyDescriptorMap.get(propertyName);
         }else{
-            return firstOrNull(this.propertyDescriptors, o -> Objects.equals(o.getName(), propertyName));
+            return firstOrNull(this.propertyDescriptors, o -> Objects.equals(o.getName(),propertyName));
         }
+    }
+    public PropertyDescriptor findIgnoreCase(String propertyName){
+        if(propertyName==null){
+            throw new EasyQueryInvalidOperationException("propertyName is null");
+        }
+        return firstOrNull(this.propertyDescriptors, o -> propertyName.equalsIgnoreCase(o.getName()));
     }
 
     private PropertyDescriptor firstOrNull(PropertyDescriptor[] ps, Predicate<PropertyDescriptor> predicate) {
