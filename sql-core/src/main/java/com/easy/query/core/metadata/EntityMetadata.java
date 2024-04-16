@@ -211,7 +211,7 @@ public class EntityMetadata {
                 if (propertyDescriptor != null) {
                     String warningMessage = EasyClassUtil.getSimpleName(entityClass) + " filed:" + field.getName() + ",compare name:" + property + ",property name:" + propertyDescriptor.getName();
                     if (log instanceof NoLoggingImpl) {
-                        System.out.println(warningMessage);
+                        System.out.println("NoLogging:"+warningMessage);
                     } else {
                         log.warn(warningMessage);
                     }
