@@ -36,6 +36,7 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.extension.navigate.DefaultNavigateExtraFilterStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
+import com.easy.query.core.basic.extension.track.update.ConcurrentValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
@@ -119,7 +120,6 @@ public class EntityMetadata {
         return shardingDataSourcePropertyName != null;
     }
 
-    private boolean columnValueUpdateAtomicTrack = false;
 
     private LogicDeleteMetadata logicDeleteMetadata;
     private VersionMetadata versionMetadata;
@@ -442,8 +442,15 @@ public class EntityMetadata {
                     if (trackValueUpdate == null) {
                         throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown");
                     }
+                    if(column.concurrent()){
+                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + "conflict with trackValueUpdate and concurrent");
+                    }
                     columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(trackValueUpdate));
-                    columnValueUpdateAtomicTrack = true;
+                }else{
+                    if(column.concurrent()){
+                        ValueUpdateAtomicTrack<?> valueUpdateAtomicTrack = configuration.getValueUpdateAtomicTrack(ConcurrentValueUpdateAtomicTrack.class);
+                        columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(valueUpdateAtomicTrack));
+                    }
                 }
                 Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = column.sqlConversion();
                 if (!Objects.equals(DefaultColumnValueSQLConverter.class, columnValueSQLConverterClass)) {
@@ -926,10 +933,6 @@ public class EntityMetadata {
 
     public ShardingInitConfig getShardingInitConfig() {
         return shardingInitConfig;
-    }
-
-    public boolean isColumnValueUpdateAtomicTrack() {
-        return columnValueUpdateAtomicTrack;
     }
 
     public Supplier<Object> getBeanConstructorCreator() {

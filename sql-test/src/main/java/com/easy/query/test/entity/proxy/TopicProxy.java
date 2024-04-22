@@ -16,7 +16,7 @@ import com.easy.query.core.proxy.columns.SQLDateTimeColumn;
  * 当前文件是easy-query自动生成的请不要随意修改
  * 如果出现属性冲突请使用@ProxyProperty进行重命名
  *
- * @author xuejiaming
+ * @author easy-query
  */
 public class TopicProxy extends AbstractProxyEntity<TopicProxy, Topic> {
 

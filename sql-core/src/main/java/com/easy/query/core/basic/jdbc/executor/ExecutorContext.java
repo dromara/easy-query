@@ -33,6 +33,7 @@ public class ExecutorContext {
         this.isQuery = isQuery;
         this.executeMethod = executeMethod;
         this.tracking = tracking;
+        this.mapToBeanStrict = easyQueryOption.isMapToBeanStrict();
     }
 
     public static ExecutorContext create(ExpressionContext expressionContext, boolean isQuery, ExecuteMethodEnum executeMethod) {

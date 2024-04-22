@@ -24,11 +24,13 @@ public class ColumnEqualsTrackPropertyPredicate implements Predicate,ValuePredic
     protected final TableAvailable table;
     protected final String propertyName;
     protected final ExpressionContext expressionContext;
+    protected final SQLPredicateCompare sqlPredicateCompare;
 
-    public ColumnEqualsTrackPropertyPredicate(TableAvailable table, String propertyName, ExpressionContext expressionContext){
+    public ColumnEqualsTrackPropertyPredicate(TableAvailable table, String propertyName, ExpressionContext expressionContext,SQLPredicateCompare sqlPredicateCompare){
         this.table = table;
         this.propertyName = propertyName;
         this.expressionContext = expressionContext;
+        this.sqlPredicateCompare = sqlPredicateCompare;
     }
 
     @Override
@@ -39,12 +41,12 @@ public class ColumnEqualsTrackPropertyPredicate implements Predicate,ValuePredic
         String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
         if(columnValueSQLConverter==null){
             EasySQLUtil.addParameter(toSQLContext, sqlParameter);
-            return sqlColumnSegment + " = ?";
+            return sqlColumnSegment + " "+sqlPredicateCompare.getSQL()+" ?";
         }else{
             DefaultSQLPropertyConverter sqlValueConverter = new DefaultSQLPropertyConverter(table, expressionContext);
             columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlValueConverter,expressionContext.getRuntimeContext(),true);
             String valSQLParameter = sqlValueConverter.toSQL(toSQLContext);
-            return sqlColumnSegment + " = "+valSQLParameter;
+            return sqlColumnSegment + " "+sqlPredicateCompare.getSQL()+" "+valSQLParameter;
         }
     }
 

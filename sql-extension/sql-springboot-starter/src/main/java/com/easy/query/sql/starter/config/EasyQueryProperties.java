@@ -122,6 +122,10 @@ public class EasyQueryProperties {
      */
     private int shardingFetchSize = 1000;
     /**
+     * jdbc结果集映射到bean是否使用属性严格模式
+     */
+    private boolean mapToBeanStrict = true;
+    /**
      * 启用反向排序的偏移量阈值
      * 小于等于0表示不启用
      */
@@ -377,6 +381,14 @@ public class EasyQueryProperties {
 
     public void setSqlParameterPrint(SQLParameterPrintEnum sqlParameterPrint) {
         this.sqlParameterPrint = sqlParameterPrint;
+    }
+
+    public boolean isMapToBeanStrict() {
+        return mapToBeanStrict;
+    }
+
+    public void setMapToBeanStrict(boolean mapToBeanStrict) {
+        this.mapToBeanStrict = mapToBeanStrict;
     }
 
     public EasyQueryProperties() {

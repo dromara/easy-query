@@ -110,6 +110,7 @@ public class SolonEasyQueryProperties {
     private final static boolean keepNativeStyle = false;
     private final static boolean warningColumnMiss = true;
     private final static int shardingFetchSize = 1000;
+    private final static boolean mapToBeanStrict = true;
     private final static long reverseOffsetThreshold = 0;
 
     private final Props props;
@@ -310,6 +311,9 @@ public class SolonEasyQueryProperties {
     }
     public int getShardingFetchSize() {
         return this.props.getInt("sharding-fetch-size",shardingFetchSize);
+    }
+    public boolean getMapToBeanStrict() {
+        return this.props.getBool("map-to-bean-strict",mapToBeanStrict);
     }
     public long getReverseOffsetThreshold() {
         return this.props.getLong("reverse-offset-threshold",reverseOffsetThreshold);

@@ -74,6 +74,7 @@ public class EasyQueryOptionBuilder {
      * 分片下默认拉取size大小
      */
     private int shardingFetchSize;
+    private boolean mapToBeanStrict;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -102,6 +103,7 @@ public class EasyQueryOptionBuilder {
         this.reverseOffsetThreshold = 0;
         this.warningColumnMiss = true;
         this.shardingFetchSize = 1000;
+        this.mapToBeanStrict = true;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -228,6 +230,10 @@ public class EasyQueryOptionBuilder {
         this.shardingFetchSize = shardingFetchSize;
     }
 
+    public void setMapToBeanStrict(boolean mapToBeanStrict) {
+        this.mapToBeanStrict = mapToBeanStrict;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -256,6 +262,7 @@ public class EasyQueryOptionBuilder {
                 this.keepNativeStyle,
                 this.reverseOffsetThreshold,
                 this.warningColumnMiss,
-                this.shardingFetchSize);
+                this.shardingFetchSize,
+                this.mapToBeanStrict);
     }
 }

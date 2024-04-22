@@ -1,10 +1,15 @@
 package com.easy.query.test;
 
+import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.flat.MapQueryable;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintFormat;
+import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.configuration.dialect.DefaultDialect;
+import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
@@ -35,6 +40,7 @@ import com.easy.query.test.entity.school.SchoolClassAggregatePropVO;
 import com.easy.query.test.entity.school.proxy.SchoolClassAggregatePropProxy;
 import com.easy.query.test.listener.ListenerContext;
 import com.mysql.cj.jdbc.MysqlDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -576,6 +582,44 @@ public class QueryTest15 extends BaseTest {
                     wherePredicate.eq("name", "123");
                 }).toSQL();
         Assert.assertEquals("SELECT * FROM `123` WHERE `name` = ?",name);
+    }
+
+    @Test
+     public void test12234(){
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
+        dataSource.setUsername("root");
+        dataSource.setPassword("root");
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setMaximumPoolSize(20);
+
+      EasyQueryClient  easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(0);
+                    op.setMaxShardingQueryLimit(10);
+                    op.setShardingOption(easyQueryShardingOption);
+                    op.setDefaultDataSourceName("ds2020");
+                    op.setThrowIfRouteNotMatch(false);
+                    op.setMaxShardingRouteCount(512);
+                    op.setDefaultDataSourceMergePoolSize(20);
+                    op.setStartTimeJob(true);
+                    op.setReverseOffsetThreshold(10);
+                })
+                .useDatabaseConfigure(new MySQLDatabaseConfiguration())
+                .replaceService(Dialect.class, DefaultDialect.class)
+                .replaceService(SQLParameterPrintFormat.class, MyBatisSQLParameterPrintFormat.class)
+//                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
+                .build();
+        DefaultEasyQuery easyQuery = new DefaultEasyQuery(easyQueryClient);
+        List<Topic> list = easyQuery.queryable(Topic.class)
+
+                .where(t -> t.eq(Topic::getId,1))
+                .where(t -> t.eq(Topic::getId,1))
+                .toList();
+        System.out.println(list);
     }
 
 

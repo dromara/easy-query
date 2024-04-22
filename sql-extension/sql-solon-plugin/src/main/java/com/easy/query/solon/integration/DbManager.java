@@ -136,6 +136,7 @@ public class DbManager {
                     builder.setShardingFetchSize(solonEasyQueryProperties.getShardingFetchSize());
                     builder.setConnectionMode(solonEasyQueryProperties.getConnectionMode());
                     builder.setReverseOffsetThreshold(solonEasyQueryProperties.getReverseOffsetThreshold());
+                    builder.setMapToBeanStrict(solonEasyQueryProperties.getMapToBeanStrict());
                 });
         DatabaseConfiguration databaseConfigure = getDatabaseConfigure(solonEasyQueryProperties);
         if(databaseConfigure!=null){
