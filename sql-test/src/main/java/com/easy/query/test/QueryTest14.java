@@ -1399,6 +1399,24 @@ public class QueryTest14 extends BaseTest {
         DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         {
 
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                try {
+
+                    List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                            .where(b -> b.createTime().format("yyyy年MM月dd日 HH时mm分ss秒").eq("2022年01月01日 01时01分01秒"))
+                            .toList();
+                } catch (Exception ignore) {
+                }
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND (TO_CHAR(\"create_time\",'YYYY年MM月DD日 HH24时MI分SS秒')) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("false(Boolean),2022年01月01日 01时01分01秒(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
 
             {
 

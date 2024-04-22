@@ -9,6 +9,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  *
  * @author xuejiaming
  */
+@Deprecated
 public interface ValueUpdateAtomicTrack<TProperty> {
     void configureSet(String propertyName, TProperty originalValue, TProperty currentValue, ColumnSetter<Object> sqlColumnSetter);
 
