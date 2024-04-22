@@ -207,4 +207,64 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         return currentTrackContext.getTrackEntityStateNotNull(entity);
     }
 
+//    @Override
+//    public <T, TP> void loadInclude(Collection<T> entities, String navigateProperty, SQLFuncExpression1<NavigateInclude<T>, ClientQueryable<TP>> navigateIncludeSQLExpression) {
+//        if(EasyCollectionUtil.isEmpty(entities)){
+//            return;
+//        }
+//        T first = EasyCollectionUtil.first(entities);
+//        Class<?> firstClass = first.getClass();
+//        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+//        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(firstClass);
+//        NavigateMetadata navigateMetadata = entityMetadata.getNavigateNotNull(navigateProperty);
+//
+//        IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
+//        new NavigateIncludeImpl<>(null, runtimeContext, includeNavigateParams, entityQueryExpressionBuilder.getExpressionContext());
+//        NavigateInclude<T> navigateInclude = getSQLExpressionProvider1().getNavigateInclude(includeNavigateParams);
+//        ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
+//        boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
+//        includeNavigateParams.setLimit(hasLimit);
+//        NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
+//        if (!Objects.equals(navigateMetadata.getNavigatePropertyType(), clientQueryable.queryClass())) {
+//            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(queryClass()) + " include query navigate error return type should:[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] actual:[" + EasyClassUtil.getSimpleName(clientQueryable.queryClass()) + "]");
+//        }
+//
+//        SQLFuncExpression<ClientQueryable<?>> queryableExpression = () -> {
+//            List<Object> relationIds = includeNavigateParams.getRelationIds();
+//            if (hasLimit) {
+//                if (EasyCollectionUtil.isNotEmpty(relationIds) && EasyCollectionUtil.isNotSingle(relationIds)) {
+//                    Iterator<Object> iterator = relationIds.iterator();
+//                    Object firstRelationId = iterator.next();
+//                    ClientQueryable<TProperty> firstQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, firstRelationId);
+//                    ArrayList<ClientQueryable<TProperty>> otherQueryable = new ArrayList<>();
+//                    while (iterator.hasNext()) {
+//                        Object nextRelationId = iterator.next();
+//                        ClientQueryable<TProperty> nextQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, nextRelationId);
+//                        otherQueryable.add(nextQueryable);
+//                    }
+//                    return firstQueryable.unionAll(otherQueryable);
+//                }
+//            }
+//            return clientQueryable.cloneQueryable().where(o -> {
+//                o.and(() -> {
+//                    o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationIds);
+//                    if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
+//                        navigateMetadata.predicateFilterApply(o);
+//                    }
+////                        navigateMetadata.predicateFilterApply(o);
+//                });
+//            });
+////                return appendNavigateTargetProperty(navigateQueryable,navigateMetadata);
+//        };
+//        boolean replace = navigateInclude.getIncludeNavigateParams().isReplace();
+//        if (replace) {
+//            entityQueryExpressionBuilder.getExpressionContext().getIncludes().put(includeNavigateParams.getNavigateMetadata(), new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
+//        } else {
+//            entityQueryExpressionBuilder.getExpressionContext().getIncludes().putIfAbsent(includeNavigateParams.getNavigateMetadata(), new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
+//        }
+//
+//
+//
+//
+//    }
 }

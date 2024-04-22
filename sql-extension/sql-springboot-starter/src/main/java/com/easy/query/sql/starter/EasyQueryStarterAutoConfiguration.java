@@ -1,15 +1,18 @@
 package com.easy.query.sql.starter;
 
-import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.api.proxy.client.EasyProxyQuery;
+import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
+import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
+import com.easy.query.core.basic.extension.formater.DefaultSQLParameterPrintFormat;
+import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintFormat;
+import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
@@ -49,6 +52,7 @@ import com.easy.query.sql.starter.config.EasyQueryProperties;
 import com.easy.query.sql.starter.conn.SpringConnectionManager;
 import com.easy.query.sql.starter.conn.SpringDataSourceUnitFactory;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
+import com.easy.query.sql.starter.option.SQLParameterPrintEnum;
 import com.easy.query.sqllite.config.SQLLiteDatabaseConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -211,6 +215,12 @@ public class EasyQueryStarterAutoConfiguration {
         return new DefaultStarterConfigurer();
     }
 
+    private Class<? extends SQLParameterPrintFormat> getSQLParameterPrintFormatClass() {
+        if (easyQueryProperties.getSqlParameterPrint() == SQLParameterPrintEnum.MYBATIS) {
+            return MyBatisSQLParameterPrintFormat.class;
+        }
+        return DefaultSQLParameterPrintFormat.class;
+    }
     @Bean
     @ConditionalOnMissingBean
     public EasyQueryClient easyQueryClient(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
@@ -219,6 +229,7 @@ public class EasyQueryStarterAutoConfiguration {
                 .replaceService(DataSourceUnitFactory.class, SpringDataSourceUnitFactory.class)
                 .replaceService(NameConversion.class, nameConversion)
                 .replaceService(ConnectionManager.class, SpringConnectionManager.class)
+                .replaceService(SQLParameterPrintFormat.class, getSQLParameterPrintFormatClass())
                 .optionConfigure(builder -> {
                     builder.setDeleteThrowError(easyQueryProperties.getDeleteThrow());
                     builder.setInsertStrategy(easyQueryProperties.getInsertStrategy());

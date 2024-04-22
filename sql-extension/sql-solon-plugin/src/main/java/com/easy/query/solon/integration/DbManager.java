@@ -7,6 +7,8 @@ import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4kt.client.DefaultEasyKtQuery;
 import com.easy.query.api4kt.client.EasyKtQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintFormat;
+import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.track.InvokeTryFinally;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
@@ -37,6 +39,7 @@ import com.easy.query.solon.integration.conn.SolonConnectionManager;
 import com.easy.query.solon.integration.conn.SolonDataSourceUnitFactory;
 import com.easy.query.solon.integration.option.DatabaseEnum;
 import com.easy.query.solon.integration.option.NameConversionEnum;
+import com.easy.query.solon.integration.option.SQLParameterPrintEnum;
 import com.easy.query.sqllite.config.SQLLiteDatabaseConfiguration;
 import org.noear.solon.Utils;
 import org.noear.solon.core.BeanWrap;
@@ -139,6 +142,11 @@ public class DbManager {
             easyQueryBuilderConfiguration.useDatabaseConfigure(databaseConfigure);
         }
         useNameConversion(solonEasyQueryProperties,easyQueryBuilderConfiguration);
+        SQLParameterPrintEnum sqlParameterPrint = solonEasyQueryProperties.getSQLParameterPrint();
+        switch (sqlParameterPrint){
+            case MYBATIS:easyQueryBuilderConfiguration
+                    .replaceService(SQLParameterPrintFormat.class, MyBatisSQLParameterPrintFormat.class);break;
+        }
         easyQueryBuilderConfiguration
                 .replaceService(DataSourceUnitFactory.class, SolonDataSourceUnitFactory.class)
                 .replaceService(ConnectionManager.class, SolonConnectionManager.class);

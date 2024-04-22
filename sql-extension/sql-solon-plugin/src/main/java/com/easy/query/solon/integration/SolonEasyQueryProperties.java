@@ -4,6 +4,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.solon.integration.option.DatabaseEnum;
 import com.easy.query.solon.integration.option.NameConversionEnum;
+import com.easy.query.solon.integration.option.SQLParameterPrintEnum;
 import org.noear.solon.Utils;
 import org.noear.solon.core.Props;
 
@@ -149,6 +150,15 @@ public class SolonEasyQueryProperties {
                 case "sqlite":return DatabaseEnum.SQLITE;
             }
             return null;
+        });
+    }
+    public SQLParameterPrintEnum getSQLParameterPrint() {
+       return getOrDef("sql-parameter-print",SQLParameterPrintEnum.DEFAULT,v->{
+           String vl = v.toLowerCase();
+           switch (vl){
+                case "mybatis":return SQLParameterPrintEnum.MYBATIS;
+            }
+           return SQLParameterPrintEnum.DEFAULT;
         });
     }
     private <T> T getOrDef(String key, T def, Function<String, T> convert) {

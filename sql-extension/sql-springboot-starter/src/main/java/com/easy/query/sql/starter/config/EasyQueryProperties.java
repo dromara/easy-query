@@ -5,6 +5,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.sql.starter.option.DatabaseEnum;
 import com.easy.query.sql.starter.option.NameConversionEnum;
+import com.easy.query.sql.starter.option.SQLParameterPrintEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.concurrent.Executors;
@@ -21,6 +22,7 @@ public class EasyQueryProperties {
     private Boolean enable = false;
     private Boolean deleteThrow = true;
     private DatabaseEnum database = DatabaseEnum.MYSQL;
+    private SQLParameterPrintEnum sqlParameterPrint = SQLParameterPrintEnum.DEFAULT;
     private NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
     private SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
     private SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
@@ -367,6 +369,14 @@ public class EasyQueryProperties {
 
     public void setShardingFetchSize(int shardingFetchSize) {
         this.shardingFetchSize = shardingFetchSize;
+    }
+
+    public SQLParameterPrintEnum getSqlParameterPrint() {
+        return sqlParameterPrint;
+    }
+
+    public void setSqlParameterPrint(SQLParameterPrintEnum sqlParameterPrint) {
+        this.sqlParameterPrint = sqlParameterPrint;
     }
 
     public EasyQueryProperties() {

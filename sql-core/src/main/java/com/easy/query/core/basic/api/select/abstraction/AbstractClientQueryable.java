@@ -560,7 +560,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             IncludeParserEngine includeParserEngine = runtimeContext.getIncludeParserEngine();
             for (IncludeNavigateExpression include : expressionContext.getIncludes().values()) {
 
-                IncludeParserResult includeParserResult = includeParserEngine.process(this.entityQueryExpressionBuilder, entityMetadata, result, include);
+                IncludeParserResult includeParserResult = includeParserEngine.process(this.entityQueryExpressionBuilder.getExpressionContext(), entityMetadata, result, include);
 
                 IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(includeParserResult, runtimeContext);
                 includeProcess.process();

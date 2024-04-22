@@ -71,14 +71,13 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         return relationExtraEntities;
     }
     @Override
-    public <TR> IncludeParserResult process(EntityQueryExpressionBuilder mainEntityQueryExpressionBuilder, EntityMetadata entityMetadata, List<TR> result, IncludeNavigateExpression includeExpression) {
+    public <TR> IncludeParserResult process(ExpressionContext expressionContext, EntityMetadata entityMetadata, List<TR> result, IncludeNavigateExpression includeExpression) {
         IncludeNavigateParams includeNavigateParams = includeExpression.getIncludeNavigateParams();
         SQLFuncExpression<ClientQueryable<?>> queryableExpression = includeExpression.getSqlFuncExpression();
         NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
         if (navigateMetadata == null) {
             throw new EasyQueryInvalidOperationException("navigateMetadata is null");
         }
-        ExpressionContext expressionContext = mainEntityQueryExpressionBuilder.getExpressionContext();
 
         QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         List<RelationExtraEntity> relationExtraEntities = getRelationExtraEntities(expressionContext, result);

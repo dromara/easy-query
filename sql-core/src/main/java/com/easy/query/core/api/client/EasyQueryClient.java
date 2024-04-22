@@ -117,4 +117,16 @@ public interface EasyQueryClient {
     MapClientUpdatable<Map<String,Object>> mapUpdatable(Map<String,Object> map);
 
     MapClientUpdatable<Map<String,Object>> mapUpdatable(Collection<Map<String,Object>> maps);
+
+
+//    default <T> void loadInclude(T entity,String navigateProperty){
+//         loadInclude(Collections.singletonList(entity),navigateProperty);
+//    }
+//    default <T,TP> void loadInclude(T entity,String navigateProperty, SQLFuncExpression1<NavigateInclude<T>, ClientQueryable<TP>> navigateIncludeSQLExpression){
+//         loadInclude(Collections.singletonList(entity),navigateProperty,navigateIncludeSQLExpression);
+//    }
+//    default <T,TP> void loadInclude(Collection<T> entities,String navigateProperty){
+//         loadInclude(entities,navigateProperty,(SQLFuncExpression1<NavigateInclude<T>, ClientQueryable<TP>>)null);
+//    }
+//    <T,TP> void loadInclude(Collection<T> entities,String navigateProperty, SQLFuncExpression1<NavigateInclude<T>, ClientQueryable<TP>> navigateIncludeSQLExpression);
 }

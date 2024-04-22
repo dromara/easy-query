@@ -65,6 +65,33 @@ public class EasySQLUtil {
         }
         return builder.toString();
     }
+    public static String sqlParameterToMyBatisString(List<SQLParameter> sqlParameters) {
+        if (sqlParameters == null) {
+            return EasyStringUtil.EMPTY;
+        }
+        StringBuilder builder = new StringBuilder();
+        int i = 0;
+        for (SQLParameter sqlParameter : sqlParameters) {
+            if (sqlParameter instanceof ConstSQLParameter) {
+                Object param = sqlParameter.getValue();
+                if (i++ != 0) {
+                    builder.append(", ");
+                }
+                builder.append(param);
+                builder.append("(");
+                builder.append(param == null ? "null" : EasyClassUtil.getInstanceSimpleName(param));
+                builder.append(")");
+            } else if (sqlParameter instanceof PropertySQLParameter) {
+                String propertyName = sqlParameter.getPropertyNameOrNull();
+                String param ="[unknown](propertyName:" + propertyName+")";
+                if (i++ != 0) {
+                    builder.append(", ");
+                }
+                builder.append(param);
+            }
+        }
+        return builder.toString();
+    }
 
 
     public static void addParameter(ToSQLContext toSQLContext, SQLParameter sqlParameter) {
