@@ -248,5 +248,21 @@ public void query10() {
                 .allowDeleteStatement(true)
                 .executeRows();
     }
+    @Test
+    public void test123(){
+
+        List<BlogEntity> yyyy年MM月dd日 = entityQuery.queryable(BlogEntity.class)
+                .where(m -> {
+                    m.or(()->{
+                        m.createTime().format("yyyy年MM月dd日").eq("2022年01月01日");
+                        m.id().isNotNull();
+                    });
+                }).toList();
+        String sql = entityQuery.queryable(BlogEntity.class)
+                .where(m -> {
+                    m.createTime().format("yyyy年MM月dd日").eq("2022年01月01日");
+                }).toSQL();
+        Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND TO_CHAR(((\"create_time\")::TIMESTAMP)::timestamp,'YYYY年MM月DD日') = ?",sql);
+    }
 
 }

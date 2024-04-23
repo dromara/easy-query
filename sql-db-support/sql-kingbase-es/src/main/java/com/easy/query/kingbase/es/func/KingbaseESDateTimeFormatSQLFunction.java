@@ -44,29 +44,29 @@ public class KingbaseESDateTimeFormatSQLFunction extends AbstractExpressionSQLFu
             String format = this.javaFormat;
             switch (format) {
                 case "yyyy-MM-dd HH:mm:ss":
-                    return "to_char({0},'YYYY-MM-DD HH24:MI:SS')";
+                    return "to_char(({0})::TIMESTAMP,'YYYY-MM-DD HH24:MI:SS')";
                 case "yyyy-MM-dd HH:mm":
-                    return "to_char({0},'YYYY-MM-DD HH24:MI')";
+                    return "to_char(({0})::TIMESTAMP,'YYYY-MM-DD HH24:MI')";
                 case "yyyy-MM-dd HH":
-                    return "to_char({0},'YYYY-MM-DD HH24')";
+                    return "to_char(({0})::TIMESTAMP,'YYYY-MM-DD HH24')";
                 case "yyyy-MM-dd":
-                    return "to_char({0},'YYYY-MM-DD')";
+                    return "to_char(({0})::TIMESTAMP,'YYYY-MM-DD')";
                 case "yyyy-MM":
-                    return "to_char({0},'YYYY-MM')";
+                    return "to_char(({0})::TIMESTAMP,'YYYY-MM')";
                 case "yyyyMMddHHmmss":
-                    return "to_char({0},'YYYYMMDDHH24MISS')";
+                    return "to_char(({0})::TIMESTAMP,'YYYYMMDDHH24MISS')";
                 case "yyyyMMddHHmm":
-                    return "to_char({0},'YYYYMMDDHH24MI')";
+                    return "to_char(({0})::TIMESTAMP,'YYYYMMDDHH24MI')";
                 case "yyyyMMddHH":
-                    return "to_char({0},'YYYYMMDDHH24')";
+                    return "to_char(({0})::TIMESTAMP,'YYYYMMDDHH24')";
                 case "yyyyMMdd":
-                    return "to_char({0},'YYYYMMDD')";
+                    return "to_char(({0})::TIMESTAMP,'YYYYMMDD')";
                 case "yyyyMM":
-                    return "to_char({0},'YYYYMM')";
+                    return "to_char(({0})::TIMESTAMP,'YYYYMM')";
                 case "yyyy":
-                    return "to_char({0},'YYYY')";
+                    return "to_char(({0})::TIMESTAMP,'YYYY')";
                 case "HH:mm:ss":
-                    return "to_char({0},'HH24:MI:SS')";
+                    return "to_char(({0})::TIMESTAMP,'HH24:MI:SS')";
             }
             format=replaceFormat(format);
 
@@ -75,25 +75,25 @@ public class KingbaseESDateTimeFormatSQLFunction extends AbstractExpressionSQLFu
             for (int a = 0; a < argsSpts.length; a++) {
                 switch (argsSpts[a]) {
                     case "M":
-                        argsSpts[a] = "ltrim(to_char({0},'MM'),'0')";
+                        argsSpts[a] = "ltrim(to_char(({0})::TIMESTAMP,'MM'),'0')";
                         break;
                     case "d":
-                        argsSpts[a] = "case when substr(to_char({0},'DD'),1,1) = '0' then substr(to_char({0},'DD'),2,1) else to_char({0},'DD') end";
+                        argsSpts[a] = "case when substr(to_char(({0})::TIMESTAMP,'DD'),1,1) = '0' then substr(to_char(({0})::TIMESTAMP,'DD'),2,1) else to_char(({0})::TIMESTAMP,'DD') end";
                         break;
                     case "H":
-                        argsSpts[a] = "case when substr(to_char({0},'HH24'),1,1) = '0' then substr(to_char({0},'HH24'),2,1) else to_char({0},'HH24') end";
+                        argsSpts[a] = "case when substr(to_char(({0})::TIMESTAMP,'HH24'),1,1) = '0' then substr(to_char(({0})::TIMESTAMP,'HH24'),2,1) else to_char(({0})::TIMESTAMP,'HH24') end";
                         break;
                     case "h":
-                        argsSpts[a] = "case when substr(to_char({0},'HH12'),1,1) = '0' then substr(to_char({0},'HH12'),2,1) else to_char({0},'HH12') end";
+                        argsSpts[a] = "case when substr(to_char(({0})::TIMESTAMP,'HH12'),1,1) = '0' then substr(to_char(({0})::TIMESTAMP,'HH12'),2,1) else to_char(({0})::TIMESTAMP,'HH12') end";
                         break;
                     case "m":
-                        argsSpts[a] = "case when substr(to_char({0},'MI'),1,1) = '0' then substr(to_char({0},'MI'),2,1) else to_char({0},'MI') end";
+                        argsSpts[a] = "case when substr(to_char(({0})::TIMESTAMP,'MI'),1,1) = '0' then substr(to_char(({0})::TIMESTAMP,'MI'),2,1) else to_char(({0})::TIMESTAMP,'MI') end";
                         break;
                     case "s":
-                        argsSpts[a] = "case when substr(to_char({0},'SS'),1,1) = '0' then substr(to_char({0},'SS'),2,1) else to_char({0},'SS') end";
+                        argsSpts[a] = "case when substr(to_char(({0})::TIMESTAMP,'SS'),1,1) = '0' then substr(to_char(({0})::TIMESTAMP,'SS'),2,1) else to_char(({0})::TIMESTAMP,'SS') end";
                         break;
                     case "t":
-                        argsSpts[a] = "rtrim(to_char({0},'AM'),'M')";
+                        argsSpts[a] = "rtrim(to_char(({0})::TIMESTAMP,'AM'),'M')";
                         break;
                     default:
                         String argsSptsA = argsSpts[a];
@@ -104,7 +104,7 @@ public class KingbaseESDateTimeFormatSQLFunction extends AbstractExpressionSQLFu
                             argsSptsA = argsSptsA.substring(0, argsSptsA.length() - 1);
                         }
                         if (Arrays.stream(argsFinds).anyMatch(argsSptsA::contains)) {
-                            argsSpts[a] = "to_char({0},'"+argsSptsA+"')";
+                            argsSpts[a] = "to_char(({0})::TIMESTAMP,'"+argsSptsA+"')";
                         } else {
                             argsSpts[a] = "'" + argsSptsA + "'";
                         }
@@ -125,7 +125,7 @@ public class KingbaseESDateTimeFormatSQLFunction extends AbstractExpressionSQLFu
                     .replace("%_a5", "MI")
                     .replace("%_a6", "AM");
         }
-        return "to_char({0},'YYYY-MM-DD HH24:MI:SS.US')";
+        return "to_char(({0})::TIMESTAMP,'YYYY-MM-DD HH24:MI:SS.US')";
     }
 
     protected String replaceFormat(String format) {
