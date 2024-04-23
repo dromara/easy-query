@@ -5,7 +5,6 @@ import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
-import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
@@ -75,6 +74,10 @@ public class ColumnMetadata {
      * 如果更新时忽略当前列存在track的diff中是否也要更新
      */
     private final boolean updateSetInTrackDiff;
+    /**
+     * 并发更新在追踪下
+     */
+    private final boolean concurrentUpdateInTrack;
 
     /**
      * 加密策略
@@ -105,10 +108,6 @@ public class ColumnMetadata {
      * 对象数据库列转换器
      */
     private final ColumnValueSQLConverter columnValueSQLConverter;
-    /**
-     * 原子更新
-     */
-    private final ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
     /**
      * 数据库生成键生成器
      */
@@ -155,7 +154,7 @@ public class ColumnMetadata {
         this.autoSelect = columnOption.isAutoSelect();
         this.valueConverter = columnOption.getValueConverter();
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
-        this.valueUpdateAtomicTrack = columnOption.getValueUpdateAtomicTrack();
+        this.concurrentUpdateInTrack = columnOption.isConcurrentUpdateInTrack();
         this.generatedSQLColumnGenerator = columnOption.getGeneratedKeySQLColumnGenerator();
 
         if (columnOption.getGetterCaller() == null) {
@@ -243,10 +242,6 @@ public class ColumnMetadata {
         return valueConverter;
     }
 
-    public ValueUpdateAtomicTrack<Object> getValueUpdateAtomicTrack() {
-        return valueUpdateAtomicTrack;
-    }
-
     public Class<?> getPropertyType() {
         return propertyType;
     }
@@ -300,5 +295,9 @@ public class ColumnMetadata {
 
     public Supplier<Object> getBeanConstructorCreatorOrNull() {
         return beanConstructorCreator;
+    }
+
+    public boolean isConcurrentUpdateInTrack() {
+        return concurrentUpdateInTrack;
     }
 }

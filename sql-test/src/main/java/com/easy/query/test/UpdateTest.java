@@ -8,7 +8,6 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.core.exception.EasyQueryColumnValueUpdateAtomicTrackException;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
@@ -22,8 +21,6 @@ import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicLarge;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.TopicTypeTest2;
-import com.easy.query.test.entity.TopicValueUpdateAtomicTrack;
-import com.easy.query.test.entity.TopicValueUpdateAtomicTrackIgnore;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
@@ -488,94 +485,6 @@ public class UpdateTest extends BaseTest {
                 .set(Topic::getTitle, "2123")
                 .where(o -> o.exists(easyQuery.queryable("select * from `t_topic`", Topic.class).where(x -> x.eq(o, Topic::getId, Topic::getId))).isNull(Topic::getId)).toSQL();
         Assert.assertEquals("UPDATE `t_topic` t SET t.`title` = ? WHERE EXISTS (SELECT 1 FROM (select * from `t_topic`) t1 WHERE t1.`id` = t.`id`) AND t.`id` IS NULL", sql);
-    }
-
-    @Test
-    public void updateTest15() {
-        TopicValueUpdateAtomicTrack topicValueUpdateAtomicTrack = new TopicValueUpdateAtomicTrack();
-        topicValueUpdateAtomicTrack.setId("123");
-        topicValueUpdateAtomicTrack.setStars(99);
-        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
-        try {
-            trackManager.begin();
-            easyQuery.addTracking(topicValueUpdateAtomicTrack);
-            topicValueUpdateAtomicTrack.setStars(98);
-            long l = easyQuery.updatable(topicValueUpdateAtomicTrack).executeRows();
-            System.out.println(l);
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
-            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
-            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
-            Assert.assertEquals("UPDATE `t_topic_value_atomic` SET `stars` = `stars`- ? WHERE `id` = ? AND `stars` >= ?", sql);
-        } finally {
-            trackManager.release();
-        }
-    }
-
-    @Test
-    public void updateTest15_1() {
-        TopicValueUpdateAtomicTrackIgnore topicValueUpdateAtomicTrack = new TopicValueUpdateAtomicTrackIgnore();
-        topicValueUpdateAtomicTrack.setId("123");
-        topicValueUpdateAtomicTrack.setStars(99);
-        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
-        try {
-            trackManager.begin();
-            easyQuery.addTracking(topicValueUpdateAtomicTrack);
-            topicValueUpdateAtomicTrack.setStars(98);
-            long l = easyQuery.updatable(topicValueUpdateAtomicTrack).executeRows();
-            System.out.println(l);
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
-            Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
-            String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
-            Assert.assertEquals("UPDATE `t_topic_value_atomic` SET `stars` = `stars`- ? WHERE `id` = ? AND `stars` >= ?", sql);
-        } finally {
-            trackManager.release();
-        }
-    }
-
-    @Test
-    public void updateTest15_2() {
-        TopicValueUpdateAtomicTrackIgnore topicValueUpdateAtomicTrack = new TopicValueUpdateAtomicTrackIgnore();
-        topicValueUpdateAtomicTrack.setId("123");
-        topicValueUpdateAtomicTrack.setStars(99);
-        Supplier<Exception> queryF = () -> {
-            try {
-                easyQuery.addTracking(topicValueUpdateAtomicTrack);
-                topicValueUpdateAtomicTrack.setStars(98);
-                long l = easyQuery.updatable(topicValueUpdateAtomicTrack).executeRows();
-                System.out.println(l);
-            } catch (Exception ex) {
-                return ex;
-            }
-            return null;
-        };
-
-        Exception ex = queryF.get();
-        Assert.assertNotNull(ex);
-        Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-        EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
-        Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
-        String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
-        Assert.assertEquals("UPDATE `t_topic_value_atomic` SET `title` = ?,`topic_type` = ?,`create_time` = ? WHERE `id` = ?", sql);
-    }
-
-    @Test
-    public void updateTest15_3() {
-        TopicValueUpdateAtomicTrack topicValueUpdateAtomicTrack = new TopicValueUpdateAtomicTrack();
-        topicValueUpdateAtomicTrack.setId("123");
-        topicValueUpdateAtomicTrack.setStars(99);
-        try {
-            easyQuery.addTracking(topicValueUpdateAtomicTrack);
-            topicValueUpdateAtomicTrack.setStars(98);
-            long l = easyQuery.updatable(topicValueUpdateAtomicTrack).executeRows();
-            System.out.println(l);
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryColumnValueUpdateAtomicTrackException);
-            Assert.assertEquals("entity:TopicValueUpdateAtomicTrack property:[stars] has configure value update atomic track，but current update not use track update.", ex.getMessage());
-        }
     }
 
     @Test

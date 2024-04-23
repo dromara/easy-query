@@ -8,8 +8,6 @@ import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.generated.DefaultGeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
-import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
-import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.UnKnownTypeHandler;
 import com.easy.query.core.util.EasyStringUtil;
@@ -36,13 +34,6 @@ public @interface Column {
      * 主键列用于对象更新、删除操作
      */
     boolean primaryKey() default false;
-    /**
-     * 请使用 {@param generatedKey}
-     * 是否是自增键
-     * 自增列不会出现在insert语句中,并且调用{@link com.easy.query.core.basic.api.insert.Insertable#executeRows(boolean)}传入true参数会自动回填返回值
-     */
-    @Deprecated
-    boolean increment() default false;
 
     /**
      * 自增或者由数据库函数生成
@@ -85,18 +76,18 @@ public @interface Column {
      */
     Class<? extends ColumnValueSQLConverter> sqlConversion() default DefaultColumnValueSQLConverter.class;
 
-    /**
-     * 对象原子追踪更新 生成 UPDATE TABLE SET COLUMN=COLUMN-[1] WHERE ID=XX AND COLUMN >= [1]
-     * 对象更新通过差值进行动态生成原则增减值比如原始对象user.money=100，更新user.name=90那么动态生成差值10并且是递减所以生成
-     * eg. UPDATE user SET money=money-10 WHERE ID=XX AND money >= 10
-     */
-    Class<? extends ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrack() default DefaultValueUpdateAtomicTrack.class;
-
-    /**
-     * 请使用 {@param generatedSQLColumnGenerator}
-     */
-    @Deprecated
-    Class<? extends GeneratedKeySQLColumnGenerator> incrementSQLColumnGenerator() default DefaultGeneratedKeySQLColumnGenerator.class;
+//    /**
+//     * 对象原子追踪更新 生成 UPDATE TABLE SET COLUMN=COLUMN-[1] WHERE ID=XX AND COLUMN >= [1]
+//     * 对象更新通过差值进行动态生成原则增减值比如原始对象user.money=100，更新user.name=90那么动态生成差值10并且是递减所以生成
+//     * eg. UPDATE user SET money=money-10 WHERE ID=XX AND money >= 10
+//     */
+//    Class<? extends ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrack() default DefaultValueUpdateAtomicTrack.class;
+//
+//    /**
+//     * 请使用 {@param generatedSQLColumnGenerator}
+//     */
+//    @Deprecated
+//    Class<? extends GeneratedKeySQLColumnGenerator> incrementSQLColumnGenerator() default DefaultGeneratedKeySQLColumnGenerator.class;
 
     /**
      * 数据库生成键插入时生效比如 NEWID()  RAND()

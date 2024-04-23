@@ -6,7 +6,6 @@ import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
-import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
@@ -49,7 +48,6 @@ public final class ColumnOption {
     private ValueConverter<?, ?> valueConverter;
     private ComplexPropType complexPropType;
     private ColumnValueSQLConverter columnValueSQLConverter;
-    private ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack;
     private GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator;
     private PropertySetterCaller<Object> setterCaller;
     private Property<Object, ?> getterCaller;
@@ -59,6 +57,7 @@ public final class ColumnOption {
     private Supplier<Object> beanConstructorCreator;
     private final List<ColumnOption> valueObjectColumnOptions;
     private String fullPropertyName;
+    private boolean concurrentUpdateInTrack = false;
 
 
     public ColumnOption(boolean tableEntity,EntityMetadata entityMetadata, String name) {
@@ -66,7 +65,6 @@ public final class ColumnOption {
         this.entityMetadata = entityMetadata;
         this.name = name;
         this.valueConverter = DefaultValueConverter.INSTANCE;
-        this.valueUpdateAtomicTrack = null;
         this.valueObject = false;
         this.valueObjectColumnOptions = new ArrayList<>();
     }
@@ -187,14 +185,6 @@ public final class ColumnOption {
         this.columnValueSQLConverter = columnValueSQLConverter;
     }
 
-    public ValueUpdateAtomicTrack<Object> getValueUpdateAtomicTrack() {
-        return valueUpdateAtomicTrack;
-    }
-
-    public void setValueUpdateAtomicTrack(ValueUpdateAtomicTrack<Object> valueUpdateAtomicTrack) {
-        this.valueUpdateAtomicTrack = valueUpdateAtomicTrack;
-    }
-
     public PropertySetterCaller<Object> getSetterCaller() {
         return setterCaller;
     }
@@ -265,5 +255,13 @@ public final class ColumnOption {
 
     public void setBeanConstructorCreator(Supplier<Object> beanConstructorCreator) {
         this.beanConstructorCreator = beanConstructorCreator;
+    }
+
+    public boolean isConcurrentUpdateInTrack() {
+        return concurrentUpdateInTrack;
+    }
+
+    public void setConcurrentUpdateInTrack(boolean concurrentUpdateInTrack) {
+        this.concurrentUpdateInTrack = concurrentUpdateInTrack;
     }
 }

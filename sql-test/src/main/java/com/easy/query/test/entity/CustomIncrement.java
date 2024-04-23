@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 @Table("custom_increment")
 public class CustomIncrement {
-    @Column(primaryKey = true,increment = true, generatedSQLColumnGenerator = MyDatabaseIncrementSQLColumnGenerator.class)
+    @Column(primaryKey = true,generatedKey = true, generatedSQLColumnGenerator = MyDatabaseIncrementSQLColumnGenerator.class)
     private String id;
     private String name;
     private String address;

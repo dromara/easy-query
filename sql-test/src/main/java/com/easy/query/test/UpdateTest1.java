@@ -379,12 +379,12 @@ public class UpdateTest1 extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `stars` = ? WHERE `id` = ? AND `stars` = ? AND `stars` = ?", easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `stars` = ? WHERE `id` = ? AND `stars` = ?", easyQuerySQLStatementException.getSQL());
 
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `stars` = ? WHERE `id` = ? AND `stars` = ? AND `stars` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("102(Integer),1(String),101(Integer),101(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `stars` = ? WHERE `id` = ? AND `stars` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("102(Integer),1(String),101(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
 
         } finally {
@@ -442,12 +442,12 @@ public class UpdateTest1 extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `stars` = ? WHERE `id` = ? AND `stars` = ? AND `stars` = ?", easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `stars` = ? WHERE `id` = ? AND `stars` = ?", easyQuerySQLStatementException.getSQL());
 
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `stars` = ? WHERE `id` = ? AND `stars` = ? AND `stars` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("102(Integer),1(String),101(Integer),101(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("UPDATE `_abc`.`t_topic_abc` SET `stars` = ? WHERE `id` = ? AND `stars` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("102(Integer),1(String),101(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
 
         } finally {

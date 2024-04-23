@@ -36,9 +36,6 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.extension.navigate.DefaultNavigateExtraFilterStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
-import com.easy.query.core.basic.extension.track.update.ConcurrentValueUpdateAtomicTrack;
-import com.easy.query.core.basic.extension.track.update.DefaultValueUpdateAtomicTrack;
-import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
@@ -406,7 +403,7 @@ public class EntityMetadata {
                     keyPropertiesMap.put(property, columnName);
                 }
                 columnOption.setPrimary(column.primaryKey());
-                boolean generatedKey = column.increment() || column.generatedKey();
+                boolean generatedKey = column.generatedKey();
                 if (generatedKey) {
                     generatedKeyColumns.add(columnName);
                     Class<? extends GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorClass = column.generatedSQLColumnGenerator();
@@ -417,17 +414,6 @@ public class EntityMetadata {
                         }
                         columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
                     }
-                    //兼容代码后续版本删除
-                    else {
-                        Class<? extends GeneratedKeySQLColumnGenerator> incrementSQLColumnGeneratorClass = column.incrementSQLColumnGenerator();
-                        if (!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class, incrementSQLColumnGeneratorClass)) {
-                            GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator = configuration.getGeneratedKeySQLColumnGenerator(incrementSQLColumnGeneratorClass);
-                            if (generatedKeySQLColumnGenerator == null) {
-                                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown");
-                            }
-                            columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
-                        }
-                    }
                 }
                 columnOption.setGeneratedKey(generatedKey);
 
@@ -436,21 +422,24 @@ public class EntityMetadata {
 //                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
 
 
-                Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = column.valueUpdateAtomicTrack();
-                if (!Objects.equals(DefaultValueUpdateAtomicTrack.class, trackValueUpdateClass)) {
-                    ValueUpdateAtomicTrack<?> trackValueUpdate = configuration.getValueUpdateAtomicTrack(trackValueUpdateClass);
-                    if (trackValueUpdate == null) {
-                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown");
-                    }
-                    if(column.concurrent()){
-                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + "conflict with trackValueUpdate and concurrent");
-                    }
-                    columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(trackValueUpdate));
-                }else{
-                    if(column.concurrent()){
-                        ValueUpdateAtomicTrack<?> valueUpdateAtomicTrack = configuration.getValueUpdateAtomicTrack(ConcurrentValueUpdateAtomicTrack.class);
-                        columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(valueUpdateAtomicTrack));
-                    }
+//                Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = column.valueUpdateAtomicTrack();
+//                if (!Objects.equals(DefaultValueUpdateAtomicTrack.class, trackValueUpdateClass)) {
+//                    ValueUpdateAtomicTrack<?> trackValueUpdate = configuration.getValueUpdateAtomicTrack(trackValueUpdateClass);
+//                    if (trackValueUpdate == null) {
+//                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown");
+//                    }
+//                    if(column.concurrent()){
+//                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + "conflict with trackValueUpdate and concurrent");
+//                    }
+//                    columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(trackValueUpdate));
+//                }else{
+//                    if(column.concurrent()){
+//                        ValueUpdateAtomicTrack<?> valueUpdateAtomicTrack = configuration.getValueUpdateAtomicTrack(ConcurrentValueUpdateAtomicTrack.class);
+//                        columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(valueUpdateAtomicTrack));
+//                    }
+//                }
+                if(column.concurrent()){
+                    columnOption.setConcurrentUpdateInTrack(true);
                 }
                 Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = column.sqlConversion();
                 if (!Objects.equals(DefaultColumnValueSQLConverter.class, columnValueSQLConverterClass)) {
