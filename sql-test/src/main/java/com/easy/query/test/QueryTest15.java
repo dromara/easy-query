@@ -23,7 +23,9 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLConstantExpression;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -679,6 +681,63 @@ public class QueryTest15 extends BaseTest {
         Assert.assertEquals("2022年01月01日(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+    @Test
+    public void testOrderCase(){
 
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .where(t -> t.id().eq("123"))
+                .orderBy(t -> {
+                    Expression expression = t.expression();
+                    expression.caseWhen(() -> t.stars().ge(1)).then(2)
+                            .caseWhen(() -> t.stars().le(2)).then(3)
+                            .elseEnd(4)
+                            .asc();
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? ORDER BY (CASE WHEN `stars` >= ? THEN ? WHEN `stars` <= ? THEN ? ELSE ? END) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),2(Integer),2(Integer),3(Integer),4(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+//    @Test
+//    public void test1234(){
+//
+//
+//        List<Topic> list1 = easyQueryClient.queryable(Topic.class)
+//                .where(t -> t.like("title", "123"))
+//                .orderByAsc(t -> {
+//                    t.sqlNativeSegment("CASE WHEN {0} THEN 1 WHEN {1} THEN 2 ELSE 4 END ", c -> {
+//                        c.expression("title")
+//                                .expression("stars");
+//                    });
+//                }).toList();
+//
+//        List<Map<String, Object>> list12 = easyQueryClient.queryable("t_table")
+//                .where(m -> {
+//                    m.eq("id", "123");
+//                    m.like("name", "456");
+//                }).toList();
+//
+//    }
+
+
+    @Test
+    public void testa(){
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    Expression expression = t.expression();
+                    t.id().eq("6261");
+                    t.createTime().format("yyyy-MM").ge(expression.now().plusMonths(-3).format("yyyy-MM"));
+                    t.createTime().format("yyyy-MM").le(expression.now().plusMonths(-1).format("yyyy-MM"));
+
+                }).groupBy(t -> GroupKeys.TABLE1.of(t.createTime().format("yyyy-MM")))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.count()
+                )).toList();
+    }
 
 }

@@ -88,7 +88,7 @@ public class ColumnFunctionComparableStringChainExpressionImpl<TProperty> implem
                 SQLFunction sqlFunction = func.apply(fx);
                 if (nullsModeEnum != null) {
                     SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(sqlFunction, true, nullsModeEnum);
-                    s.func(this.getTable(), orderByNullsModeFunction,false);
+                    s.func(this.getTable(), orderByNullsModeFunction,true);
                 } else {
                     s.func(this.getTable(), sqlFunction,true);
                 }

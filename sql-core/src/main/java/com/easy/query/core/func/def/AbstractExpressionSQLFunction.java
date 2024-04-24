@@ -39,6 +39,9 @@ public abstract class AbstractExpressionSQLFunction extends AbstractSQLFunction 
         if (columnExpression instanceof ColumnPropertyExpression) {
             ColumnPropertyExpression concatColumnExpression = (ColumnPropertyExpression) columnExpression;
             TableAvailable tableOrNull = concatColumnExpression.getTableOrNull();
+//            if(concatColumnExpression.getProperty()!=null){
+//
+//            }
             if (tableOrNull == null) {
                 context.expression(concatColumnExpression.getProperty());
             } else {

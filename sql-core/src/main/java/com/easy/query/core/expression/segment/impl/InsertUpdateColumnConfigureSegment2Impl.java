@@ -17,7 +17,7 @@ public class InsertUpdateColumnConfigureSegment2Impl extends AbstractSQLNativeSe
     private final InsertUpdateSetColumnSQLSegment insertUpdateSetColumnSQLSegment;
 
     public InsertUpdateColumnConfigureSegment2Impl(InsertUpdateSetColumnSQLSegment insertUpdateSetColumnSQLSegment, ExpressionContext expressionContext, SQLSegment sqlSegment, SQLNativeExpression sqlNativeExpression) {
-        super(expressionContext, sqlSegment, sqlNativeExpression);
+        super(expressionContext, sqlSegment,s->s, sqlNativeExpression);
         this.insertUpdateSetColumnSQLSegment = insertUpdateSetColumnSQLSegment;
     }
 

@@ -34,7 +34,12 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
 
     default ColumnFunctionComparableStringChainExpression<String> format(String javaFormat) {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
-            return fx.dateTimeFormat(this.getValue(), javaFormat);
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.dateTimeFormat(x->x.sqlFunc(sqlFunction),javaFormat);
+            } else {
+                return fx.dateTimeFormat(this.getValue(),javaFormat);
+            }
         }, String.class);
     }
 

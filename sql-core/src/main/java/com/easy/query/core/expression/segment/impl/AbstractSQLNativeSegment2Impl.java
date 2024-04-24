@@ -10,6 +10,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.text.MessageFormat;
+import java.util.function.Function;
 
 /**
  * create time 2023/6/16 20:55
@@ -20,11 +21,13 @@ import java.text.MessageFormat;
 public abstract class AbstractSQLNativeSegment2Impl {
     protected final ExpressionContext expressionContext;
     protected final SQLSegment sqlSegment;
+    protected final Function<String, String> sqlSegmentFunction;
     protected final SQLNativeExpression sqlNativeExpression;
 
-    public AbstractSQLNativeSegment2Impl(ExpressionContext expressionContext, SQLSegment sqlSegment, SQLNativeExpression sqlNativeExpression) {
+    public AbstractSQLNativeSegment2Impl(ExpressionContext expressionContext, SQLSegment sqlSegment, Function<String, String> sqlSegmentFunction, SQLNativeExpression sqlNativeExpression) {
         this.expressionContext = expressionContext;
         this.sqlSegment = sqlSegment;
+        this.sqlSegmentFunction = sqlSegmentFunction;
         this.sqlNativeExpression = sqlNativeExpression;
     }
 
@@ -53,7 +56,7 @@ public abstract class AbstractSQLNativeSegment2Impl {
     }
 
     private String getResultSQL(ToSQLContext toSQLContext) {
-        String sqlSegmentSQL = sqlSegment.toSQL(toSQLContext);
+        String sqlSegmentSQL = sqlSegmentFunction.apply(sqlSegment.toSQL(toSQLContext));
 
         if (EasyCollectionUtil.isNotEmpty(sqlNativeExpression.getExpressions())) {
             Object[] args = new Object[sqlNativeExpression.getExpressions().size()];
