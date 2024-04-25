@@ -231,7 +231,8 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
     private <T> IncludeParserResult getIncludeParserResult(List<T> entities, NavigateMetadata navigateMetadata, LoadIncludeConfiguration loadIncludeConfiguration) {
         RelationTypeEnum relationType = navigateMetadata.getRelationType();
-        Property<Object, ?> getter = navigateMetadata.getGetter();
+        ColumnMetadata columnMetadata = navigateMetadata.getEntityMetadata().getColumnNotNull(navigateMetadata.getSelfPropertyOrPrimary());
+        Property<Object, ?> getter = columnMetadata.getGetterCaller();
         List<Object> relationIds = entities.stream().map(o -> getter.apply(o))
                 .filter(o -> o != null).distinct().collect(Collectors.toList());
         IncludeRelationIdContext includeRelationIdContext = new IncludeRelationIdContext();
@@ -272,8 +273,8 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
                 navigateMetadata.getPropertyName(),
                 navigateMetadata.getNavigateOriginalPropertyType(),
                 navigateMetadata.getNavigatePropertyType(),
-                navigateMetadata.getSelfProperty(),
-                navigateMetadata.getTargetProperty(),
+                navigateMetadata.getSelfPropertyOrPrimary(),
+                navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),
                 navigateMetadata.getMappingClass(),
                 navigateMetadata.getSelfMappingProperty(),
                 navigateMetadata.getTargetMappingProperty(),
