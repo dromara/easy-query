@@ -6,13 +6,17 @@ import com.easy.query.api4j.insert.EntityInsertable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.api4j.update.ExpressionUpdatable;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -177,4 +181,17 @@ public interface EasyQuery {
     default MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
         return getEasyQueryClient().mapUpdatable(maps);
     }
+
+    default <T> void loadInclude(T entity,Property<T,?> navigateProperty){
+        loadInclude(Collections.singletonList(entity),navigateProperty);
+    }
+    default <T> void loadInclude(T entity,Property<T,?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+        loadInclude(Collections.singletonList(entity),navigateProperty,configure);
+    }
+    default <T> void loadInclude(List<T> entities,Property<T,?> navigateProperty){
+        loadInclude(entities,navigateProperty,null);
+    }
+   default <T> void loadInclude(List<T> entities, Property<T,?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+       getEasyQueryClient().loadInclude(entities, EasyLambdaUtil.getPropertyName(navigateProperty),configure);
+   }
 }

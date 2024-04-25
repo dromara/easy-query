@@ -15,9 +15,14 @@ import com.easy.query.api4kt.update.impl.EasyKtExpressionUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import kotlin.reflect.KProperty1;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author xuejiaming
@@ -115,5 +120,22 @@ public class DefaultEasyKtQuery implements EasyKtQuery {
     @Override
     public EntityState getTrackEntityStateNotNull(Object entity) {
         return easyQueryClient.getTrackEntityStateNotNull(entity);
+    }
+
+
+    <T> void loadInclude(T entity, KProperty1<T, ?> navigateProperty) {
+        loadInclude(Collections.singletonList(entity), navigateProperty);
+    }
+
+    <T> void loadInclude(T entity, KProperty1<T, ?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
+        loadInclude(Collections.singletonList(entity), navigateProperty, configure);
+    }
+
+    <T> void loadInclude(List<T> entities, KProperty1<T, ?> navigateProperty) {
+        loadInclude(entities, navigateProperty, null);
+    }
+
+    <T> void loadInclude(List<T> entities, KProperty1<T, ?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
+        getEasyQueryClient().loadInclude(entities, navigateProperty.getName(), configure);
     }
 }

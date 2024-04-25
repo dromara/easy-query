@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.client;
 
+import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.delete.EntityDeletable;
 import com.easy.query.api.proxy.entity.delete.ExpressionDeletable;
 import com.easy.query.api.proxy.entity.insert.EntityInsertable;
@@ -12,11 +13,18 @@ import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -118,5 +126,24 @@ public interface EasyEntityQuery {
 
     default MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps) {
         return getEasyQueryClient().mapUpdatable(maps);
+    }
+
+    default  <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>>  void loadInclude(T entity, SQLFuncExpression1<TProxy, PropColumn> navigateProperty){
+        loadInclude(Collections.singletonList(entity),navigateProperty);
+    }
+    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(T entity,SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+        loadInclude(Collections.singletonList(entity),navigateProperty,configure);
+    }
+    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(List<T> entities,SQLFuncExpression1<TProxy, PropColumn> navigateProperty){
+        loadInclude(entities,navigateProperty,null);
+    }
+    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(List<T> entities, SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+        if(EasyCollectionUtil.isEmpty(entities)){
+            return;
+        }
+        Class<T> entityClass = EasyObjectUtil.typeCast(entities.get(0).getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
+        PropColumn propColumn = navigateProperty.apply(tProxy);
+        getEasyQueryClient().loadInclude(entities,propColumn.getValue(),configure);
     }
 }

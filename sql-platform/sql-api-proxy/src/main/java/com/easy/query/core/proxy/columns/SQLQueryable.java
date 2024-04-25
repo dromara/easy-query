@@ -7,6 +7,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
@@ -28,7 +29,7 @@ import java.math.BigDecimal;
  *
  * @author xuejiaming
  */
-public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable, LogicDeletable<SQLQueryable<T1Proxy, T1>> {//,ProxyEntity<T1Proxy,T1>
+public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable, PropColumn, LogicDeletable<SQLQueryable<T1Proxy, T1>> {//,ProxyEntity<T1Proxy,T1>
 
     EntityQueryable<T1Proxy, T1> getQueryable();
 
@@ -37,6 +38,10 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     String getNavValue();
     T1Proxy getProxy();
 
+    @Override
+   default String getValue(){
+        return getNavValue();
+    }
 
     default SQLPredicateQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
         getQueryable().where(whereExpression);
