@@ -13,7 +13,9 @@ import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -118,15 +120,15 @@ public interface EasyQueryClient {
 
     MapClientUpdatable<Map<String,Object>> mapUpdatable(Collection<Map<String,Object>> maps);
 
-
-//    default <T> void loadInclude(T entity,String navigateProperty){
-//         loadInclude(Collections.singletonList(entity),navigateProperty);
-//    }
-//    default <T,TP> void loadInclude(T entity,String navigateProperty, SQLFuncExpression1<NavigateInclude<T>, ClientQueryable<TP>> navigateIncludeSQLExpression){
-//         loadInclude(Collections.singletonList(entity),navigateProperty,navigateIncludeSQLExpression);
-//    }
-//    default <T,TP> void loadInclude(Collection<T> entities,String navigateProperty){
-//         loadInclude(entities,navigateProperty,(SQLFuncExpression1<NavigateInclude<T>, ClientQueryable<TP>>)null);
-//    }
-//    <T,TP> void loadInclude(Collection<T> entities,String navigateProperty, SQLFuncExpression1<NavigateInclude<T>, ClientQueryable<TP>> navigateIncludeSQLExpression);
+//
+    default <T> void loadInclude(T entity,String navigateProperty){
+         loadInclude(Collections.singletonList(entity),navigateProperty);
+    }
+    default <T> void loadInclude(T entity,String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+         loadInclude(Collections.singletonList(entity),navigateProperty,configure);
+    }
+    default <T> void loadInclude(List<T> entities,String navigateProperty){
+         loadInclude(entities,navigateProperty,null);
+    }
+    <T> void loadInclude(List<T> entities,String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure);
 }

@@ -8,6 +8,7 @@ import com.easy.query.core.basic.api.flat.impl.DefaultMapQueryable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
@@ -17,13 +18,34 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.common.IncludeRelationIdContext;
+import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.include.IncludeProcessor;
+import com.easy.query.core.expression.include.IncludeProcessorFactory;
+import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.sql.include.DefaultIncludeParserResult;
+import com.easy.query.core.expression.sql.include.IncludeParserResult;
+import com.easy.query.core.expression.sql.include.RelationEntityImpl;
+import com.easy.query.core.expression.sql.include.RelationExtraEntity;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyIncludeUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
@@ -207,64 +229,102 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         return currentTrackContext.getTrackEntityStateNotNull(entity);
     }
 
-//    @Override
-//    public <T, TP> void loadInclude(Collection<T> entities, String navigateProperty, SQLFuncExpression1<NavigateInclude<T>, ClientQueryable<TP>> navigateIncludeSQLExpression) {
-//        if(EasyCollectionUtil.isEmpty(entities)){
-//            return;
-//        }
-//        T first = EasyCollectionUtil.first(entities);
-//        Class<?> firstClass = first.getClass();
-//        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
-//        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(firstClass);
-//        NavigateMetadata navigateMetadata = entityMetadata.getNavigateNotNull(navigateProperty);
-//
-//        IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
-//        new NavigateIncludeImpl<>(null, runtimeContext, includeNavigateParams, entityQueryExpressionBuilder.getExpressionContext());
-//        NavigateInclude<T> navigateInclude = getSQLExpressionProvider1().getNavigateInclude(includeNavigateParams);
-//        ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
-//        boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
-//        includeNavigateParams.setLimit(hasLimit);
-//        NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
-//        if (!Objects.equals(navigateMetadata.getNavigatePropertyType(), clientQueryable.queryClass())) {
-//            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(queryClass()) + " include query navigate error return type should:[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] actual:[" + EasyClassUtil.getSimpleName(clientQueryable.queryClass()) + "]");
-//        }
-//
-//        SQLFuncExpression<ClientQueryable<?>> queryableExpression = () -> {
-//            List<Object> relationIds = includeNavigateParams.getRelationIds();
-//            if (hasLimit) {
-//                if (EasyCollectionUtil.isNotEmpty(relationIds) && EasyCollectionUtil.isNotSingle(relationIds)) {
-//                    Iterator<Object> iterator = relationIds.iterator();
-//                    Object firstRelationId = iterator.next();
-//                    ClientQueryable<TProperty> firstQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, firstRelationId);
-//                    ArrayList<ClientQueryable<TProperty>> otherQueryable = new ArrayList<>();
-//                    while (iterator.hasNext()) {
-//                        Object nextRelationId = iterator.next();
-//                        ClientQueryable<TProperty> nextQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, nextRelationId);
-//                        otherQueryable.add(nextQueryable);
-//                    }
-//                    return firstQueryable.unionAll(otherQueryable);
-//                }
-//            }
-//            return clientQueryable.cloneQueryable().where(o -> {
-//                o.and(() -> {
-//                    o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationIds);
-//                    if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
-//                        navigateMetadata.predicateFilterApply(o);
-//                    }
-////                        navigateMetadata.predicateFilterApply(o);
-//                });
-//            });
-////                return appendNavigateTargetProperty(navigateQueryable,navigateMetadata);
-//        };
-//        boolean replace = navigateInclude.getIncludeNavigateParams().isReplace();
-//        if (replace) {
-//            entityQueryExpressionBuilder.getExpressionContext().getIncludes().put(includeNavigateParams.getNavigateMetadata(), new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
-//        } else {
-//            entityQueryExpressionBuilder.getExpressionContext().getIncludes().putIfAbsent(includeNavigateParams.getNavigateMetadata(), new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
-//        }
-//
-//
-//
-//
-//    }
+    private <T> IncludeParserResult getIncludeParserResult(List<T> entities, NavigateMetadata navigateMetadata, LoadIncludeConfiguration loadIncludeConfiguration) {
+        RelationTypeEnum relationType = navigateMetadata.getRelationType();
+        Property<Object, ?> getter = navigateMetadata.getGetter();
+        List<Object> relationIds = entities.stream().map(o -> getter.apply(o))
+                .filter(o -> o != null).distinct().collect(Collectors.toList());
+        IncludeRelationIdContext includeRelationIdContext = new IncludeRelationIdContext();
+        EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
+        Integer groupSize = loadIncludeConfiguration.getGroupSize();
+        int queryRelationGroupSize = groupSize == null ? easyQueryOption.getRelationGroupSize() : groupSize;
+        List<Map<String, Object>> mappingRows = null;
+        if (RelationTypeEnum.ManyToMany == relationType) {
+
+            ClientQueryable<?> mappingQueryable = queryable(navigateMetadata.getMappingClass())
+                    .where(o -> {
+                        o.in(navigateMetadata.getSelfMappingProperty(), includeRelationIdContext.getRelationIds());
+                        navigateMetadata.predicateFilterApply(o);
+                    })
+                    .select(o -> o.column(navigateMetadata.getSelfMappingProperty()).column(navigateMetadata.getTargetMappingProperty()));
+
+            mappingRows = EasyIncludeUtil.queryableGroupExecute(queryRelationGroupSize, mappingQueryable, includeRelationIdContext, relationIds, Query::toMaps);
+            EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
+            ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperty());
+            String targetColumnName = mappingTargetColumnMetadata.getName();
+            List<Object> targetIds = mappingRows.stream()
+                    .map(o -> o.get(targetColumnName)).filter(Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.toList());
+            relationIds.clear();
+            relationIds.addAll(targetIds);
+        }
+
+        SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression = createIncludeQueryableExpression(includeRelationIdContext, navigateMetadata,loadIncludeConfiguration);
+
+
+        List<?> entityResult = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeQueryableExpression, includeRelationIdContext, relationIds, q -> q.toList());
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+        List<RelationExtraEntity> includeResult = entityResult.stream().map(o -> new RelationEntityImpl(o, entityMetadata)).collect(Collectors.toList());
+        List<RelationExtraEntity> relationExtraEntities = entities.stream().map(o -> new RelationEntityImpl(o, navigateMetadata.getEntityMetadata())).collect(Collectors.toList());
+
+        return new DefaultIncludeParserResult(entityMetadata, relationExtraEntities, navigateMetadata.getRelationType(),
+                navigateMetadata.getPropertyName(),
+                navigateMetadata.getNavigateOriginalPropertyType(),
+                navigateMetadata.getNavigatePropertyType(),
+                navigateMetadata.getSelfProperty(),
+                navigateMetadata.getTargetProperty(),
+                navigateMetadata.getMappingClass(),
+                navigateMetadata.getSelfMappingProperty(),
+                navigateMetadata.getTargetMappingProperty(),
+                includeResult,
+                mappingRows,
+                navigateMetadata.getSetter());
+    }
+
+    private SQLFuncExpression<ClientQueryable<?>> createIncludeQueryableExpression(IncludeRelationIdContext includeRelationIdContext, NavigateMetadata navigateMetadata,LoadIncludeConfiguration loadIncludeConfiguration) {
+
+        Class<?> navigatePropertyType = navigateMetadata.getNavigatePropertyType();
+        ClientQueryable<?> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
+        Boolean tracking = loadIncludeConfiguration.getTracking();
+        if(tracking!=null){
+            if(tracking){
+                queryable.asTracking();
+            }else{
+                queryable.asNoTracking();
+            }
+        }
+        SQLFuncExpression<ClientQueryable<?>> queryableExpression = () -> {
+            List<Object> relationIds = includeRelationIdContext.getRelationIds();
+            return queryable.cloneQueryable().where(o -> {
+                o.and(() -> {
+                    o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationIds);
+                    if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
+                        navigateMetadata.predicateFilterApply(o);
+                    }
+                });
+            });
+        };
+        return queryableExpression;
+    }
+
+    @Override
+    public <T> void loadInclude(List<T> entities, String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
+        if (EasyCollectionUtil.isEmpty(entities)) {
+            return;
+        }
+        T first = EasyCollectionUtil.first(entities);
+        Class<?> firstClass = first.getClass();
+        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(firstClass);
+        NavigateMetadata navigateMetadata = entityMetadata.getNavigateNotNull(navigateProperty);
+        LoadIncludeConfiguration loadIncludeConfiguration = new LoadIncludeConfiguration();
+        if(configure!=null){
+            configure.apply(loadIncludeConfiguration);
+        }
+        IncludeParserResult includeParserResult = getIncludeParserResult(entities, navigateMetadata,loadIncludeConfiguration);
+        IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
+        IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(includeParserResult, runtimeContext);
+        includeProcess.process();
+    }
 }

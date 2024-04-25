@@ -2,6 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.common.IncludeRelationIdAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class IncludeNavigateParams {
+public class IncludeNavigateParams implements IncludeRelationIdAvailable {
     private final List<Object> relationIds;
     private NavigateMetadata navigateMetadata;
     private ClientQueryable<?> mappingQueryable;
