@@ -33,7 +33,9 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.dto.SchoolClassAggregateDTO;
+import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.UserExtraDTO;
+import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.UserExtra;
@@ -579,17 +581,17 @@ public class QueryTest15 extends BaseTest {
     }
 
     @Test
-     public void test1223(){
+    public void test1223() {
         String name = easyQueryClient.mapQueryable().asTable("123")
                 .where(x -> {
                     WherePredicate<?> wherePredicate = x.getWherePredicate(0);
                     wherePredicate.eq("name", "123");
                 }).toSQL();
-        Assert.assertEquals("SELECT * FROM `123` WHERE `name` = ?",name);
+        Assert.assertEquals("SELECT * FROM `123` WHERE `name` = ?", name);
     }
 
     @Test
-     public void test12234(){
+    public void test12234() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
         dataSource.setUsername("root");
@@ -597,7 +599,7 @@ public class QueryTest15 extends BaseTest {
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setMaximumPoolSize(20);
 
-      EasyQueryClient  easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
@@ -620,14 +622,14 @@ public class QueryTest15 extends BaseTest {
         DefaultEasyQuery easyQuery = new DefaultEasyQuery(easyQueryClient);
         List<Topic> list = easyQuery.queryable(Topic.class)
 
-                .where(t -> t.eq(Topic::getId,1))
-                .where(t -> t.eq(Topic::getId,1))
+                .where(t -> t.eq(Topic::getId, 1))
+                .where(t -> t.eq(Topic::getId, 1))
                 .toList();
         System.out.println(list);
     }
 
     @Test
-     public void test122345(){
+    public void test122345() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
         dataSource.setUsername("root");
@@ -635,7 +637,7 @@ public class QueryTest15 extends BaseTest {
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setMaximumPoolSize(20);
 
-      EasyQueryClient  easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
@@ -660,12 +662,12 @@ public class QueryTest15 extends BaseTest {
                 .where(m -> {
                     m.createTime().format("yyyy年MM月dd日").eq("2022年01月01日");
                 }).toSQL();
-        Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE to_char((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ?",sql);
+        Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE to_char((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ?", sql);
     }
 
 
     @Test
-    public void test123(){
+    public void test123() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -681,8 +683,9 @@ public class QueryTest15 extends BaseTest {
         Assert.assertEquals("2022年01月01日(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testOrderCase(){
+    public void testOrderCase() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -725,7 +728,7 @@ public class QueryTest15 extends BaseTest {
 
 
     @Test
-    public void testa(){
+    public void testa() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<Draft2<String, Long>> list = easyEntityQuery.queryable(Topic.class)
@@ -745,6 +748,33 @@ public class QueryTest15 extends BaseTest {
         Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y-%m') AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t WHERE t.`id` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m') >= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m') AND DATE_FORMAT(t.`create_time`,'%Y-%m') <= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m') GROUP BY DATE_FORMAT(t.`create_time`,'%Y-%m')", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("6261(String),-3(Integer),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+
+
+        List<TopicTypeVO> list1 = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(t1.id()))
+                .select(group -> {
+                    TopicTypeVOProxy r = new TopicTypeVOProxy();
+                    r.id().set(group.key1());
+                    r.createTime().set(group.groupTable().t1.createTime().max());
+                    r.stars().set(group.groupTable().t1.stars().max());
+                    return r;
+                })
+                .where(t -> {
+                    t.createTime().gt(LocalDateTime.now());
+                }).toList();
+//
+//        List<TopicTypeVO> list2 = easyEntityQuery.queryable(Topic.class)
+//                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+//                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(t1.id()))
+//                .select(group ->new TopicTypeVOProxy(){{
+//                    id().set(group.key1());
+//                    createTime().set(group.groupTable().t1.createTime().max());
+//                    stars().set(group.groupTable().t1.stars().max());
+//                }})
+//                .where(t -> {
+//                    t.createTime().gt(LocalDateTime.now());
+//                }).toList();
     }
 
 }

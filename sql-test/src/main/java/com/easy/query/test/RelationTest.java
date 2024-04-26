@@ -164,6 +164,23 @@ public class RelationTest extends BaseTest {
         try {
             relationInit(ids);
             {
+
+                List<String> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .select(s -> s.name2()).toList();
+
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+
+                List<SchoolTeacher> list = easyEntityQuery.queryable(SchoolStudent.class)
+                        .select(s ->  s.schoolClass().schoolTeachers().toList())
+                        .firstNotNull();
+
+//                List<SchoolTeacher> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+//                        .select(s -> s.schoolClass().schoolTeachers().toList2()).toList();
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+                Assert.assertEquals(3,listenerContext.getJdbcExecuteAfterArgs().size());
+            }
+            {
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .include(o-> o.with("schoolStudents"))
 

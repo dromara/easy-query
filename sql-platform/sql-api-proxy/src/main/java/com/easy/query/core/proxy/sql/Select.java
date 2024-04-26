@@ -517,6 +517,14 @@ public class Select {
                 Select.setDraftPropTypes(select, resultProxy);
                 return new EasyEntityQueryable<>(resultProxy, select);
             } else {
+                if(resultProxy instanceof SQLSelectExpression){
+                    SQLSelectExpression resultProxySelectExpression = (SQLSelectExpression) resultProxy;
+                    ClientQueryable<TR> select = queryable.select(resultProxy.getEntityClass(), columnAsSelector -> {
+                        resultProxySelectExpression.accept(columnAsSelector.getAsSelector());
+                    });
+                    Select.setDraftPropTypes(select, resultProxy);
+                    return new EasyEntityQueryable<>(resultProxy, select);
+                }
                 ClientQueryable<TR> select = queryable.select(resultProxy.getEntityClass(), columnAsSelector -> {
                     columnAsSelector.getAsSelector().columnAll(tableOrNull);
                 });

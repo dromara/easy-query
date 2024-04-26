@@ -142,6 +142,9 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     default ListProxy<T1Proxy, T1> toList() {
         return new ListProxy<>(this);
     }
+//    default List2Proxy<T1Proxy, T1> toList2() {
+//        return new List2Proxy<>(this);
+//    }
 
 //    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLQueryable<TPropertyProxy, TProperty> select(SQLFuncExpression1<T1Proxy, TPropertyProxy> selectColumnExpression) {
 //        EntityQueryable<TPropertyProxy, TProperty> select = this.getQueryable().select(selectColumnExpression);

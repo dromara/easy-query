@@ -34,6 +34,42 @@ import com.easy.query.core.proxy.columns.impl.SQLDateTimeColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLNavigateColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLNumberColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLStringColumnImpl;
+import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLBigDecimalTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLBooleanTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLByteTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLDateTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLDoubleTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLFloatTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLLocalDateTimeTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLLocalDateTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLLocalTimeTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLLongTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLShortTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLTimeTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLTimestampTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLUUIDTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLUtilDateTypeColumn;
+import com.easy.query.core.proxy.columns.types.impl.SQLAnyTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLBigDecimalTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLBooleanTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLByteTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLDateTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLDoubleTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLFloatTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLIntegerTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLLocalDateTimeTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLLocalDateTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLLocalTimeTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLLongTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLShortTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLStringTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLTimeTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLTimestampTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLUUIDTypeColumnImpl;
+import com.easy.query.core.proxy.columns.types.impl.SQLUtilDateTypeColumnImpl;
 import com.easy.query.core.proxy.core.ColumnSelectSQLContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
@@ -116,8 +152,68 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     protected <TProperty> SQLAnyColumn<TProxy, TProperty> getAnyColumn(String property, @Nullable Class<TProperty> propType) {
         return new SQLAnyColumnImpl<>(entitySQLContext, table, property, propType);
     }
-    @Deprecated
 
+
+    protected <TProperty> SQLAnyTypeColumn<TProxy,TProperty> getAnyTypeColumn(String property, @Nullable Class<TProperty> propType) {
+        return new SQLAnyTypeColumnImpl<>(entitySQLContext, table, property,propType);
+    }
+
+    protected SQLBigDecimalTypeColumn<TProxy> getBigDecimalTypeColumn(String property) {
+        return new SQLBigDecimalTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLBooleanTypeColumn<TProxy> getBooleanTypeColumn(String property) {
+        return new SQLBooleanTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLByteTypeColumn<TProxy> getByteTypeColumn(String property) {
+        return new SQLByteTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLDateTypeColumn<TProxy> getSQLDateTypeColumn(String property) {
+        return new SQLDateTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLDoubleTypeColumn<TProxy> getDoubleTypeColumn(String property) {
+        return new SQLDoubleTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLFloatTypeColumn<TProxy> getFloatTypeColumn(String property) {
+        return new SQLFloatTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLIntegerTypeColumn<TProxy> getIntegerTypeColumn(String property) {
+        return new SQLIntegerTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLLocalDateTimeTypeColumn<TProxy> getLocalDateTimeTypeColumn(String property) {
+        return new SQLLocalDateTimeTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLLocalDateTypeColumn<TProxy> getLocalDateTypeColumn(String property) {
+        return new SQLLocalDateTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLLocalTimeTypeColumn<TProxy> getLocalTimeTypeColumn(String property) {
+        return new SQLLocalTimeTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLLongTypeColumn<TProxy> getLongTypeColumn(String property) {
+        return new SQLLongTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLShortTypeColumn<TProxy> getShortTypeColumn(String property) {
+        return new SQLShortTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+
+    protected SQLStringTypeColumn<TProxy> getStringTypeColumn(String property) {
+        return new SQLStringTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLTimestampTypeColumn<TProxy> getTimestampTypeColumn(String property) {
+        return new SQLTimestampTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLTimeTypeColumn<TProxy> getTimeTypeColumn(String property) {
+        return new SQLTimeTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLUtilDateTypeColumn<TProxy> getUtilDateTypeColumn(String property) {
+        return new SQLUtilDateTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+    protected SQLUUIDTypeColumn<TProxy> getUUIDTypeColumn(String property) {
+        return new SQLUUIDTypeColumnImpl<>(entitySQLContext, table, property);
+    }
+
+
+
+    @Deprecated
     protected <TProperty> SQLNavigateColumn<TProxy, TProperty> getNavigate(String property, Class<TProperty> propType) {
         return new SQLNavigateColumnImpl<>(entitySQLContext, table, property, propType);
     }

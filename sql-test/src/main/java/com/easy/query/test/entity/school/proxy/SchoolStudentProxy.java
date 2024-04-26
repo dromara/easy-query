@@ -3,6 +3,7 @@ package com.easy.query.test.entity.school.proxy;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLStringColumn;
+import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.test.entity.school.SchoolStudent;
 
@@ -43,6 +44,13 @@ public class SchoolStudentProxy extends AbstractProxyEntity<SchoolStudentProxy, 
      */
     public SQLStringColumn<SchoolStudentProxy, java.lang.String> name() {
         return getStringColumn("name", java.lang.String.class);
+    }
+
+    /**
+     * {@link SchoolStudent#getName}
+     */
+    public SQLStringTypeColumn<SchoolStudentProxy> name2() {
+        return getStringTypeColumn("name");
     }
 
     /**

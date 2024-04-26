@@ -33,8 +33,8 @@ public class ALLTYPEVO2 {
     private java.sql.Date sqlDate;
     private Time onlyTime;
     private Boolean enable;
-    //    private Blob jBlob;
-//    private Clob jClob;
+//        private Blob mlob1;
+//    private Clob mlob2;
     private String value;
     private UUID uid;
     private float numberFloatBasic;
@@ -245,4 +245,5 @@ public class ALLTYPEVO2 {
     public void setEnableBasic1(boolean enableBasic1) {
         this.enableBasic1 = enableBasic1;
     }
+
 }
