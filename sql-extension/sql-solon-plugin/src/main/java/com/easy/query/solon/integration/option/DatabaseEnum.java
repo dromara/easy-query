@@ -25,5 +25,6 @@ public enum DatabaseEnum {
     KINGBASE_ES,
     MSSQL_ROW_NUMBER,
     ORACLE,
-    SQLITE
+    SQLITE,
+    CLICKHOUSE
 }

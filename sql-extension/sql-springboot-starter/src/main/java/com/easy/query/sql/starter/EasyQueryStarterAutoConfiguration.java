@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
+import com.easy.query.clickhouse.config.ClickHouseDatabaseConfiguration;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
@@ -125,6 +126,13 @@ public class EasyQueryStarterAutoConfiguration {
     @ConditionalOnMissingBean
     public DatabaseConfiguration mssqlDatabaseConfiguration() {
         return new MsSQLDatabaseConfiguration();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "clickhouse")
+    @ConditionalOnMissingBean
+    public DatabaseConfiguration clickhouseDatabaseConfiguration() {
+        return new ClickHouseDatabaseConfiguration();
     }
 
     @Bean

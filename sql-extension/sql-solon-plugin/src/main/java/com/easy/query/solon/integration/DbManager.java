@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4kt.client.DefaultEasyKtQuery;
 import com.easy.query.api4kt.client.EasyKtQuery;
+import com.easy.query.clickhouse.config.ClickHouseDatabaseConfiguration;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
@@ -189,6 +190,7 @@ public class DbManager {
             case MSSQL_ROW_NUMBER:return new MsSQLRowNumberDatabaseConfiguration();
             case ORACLE:return new OracleDatabaseConfiguration();
             case SQLITE:return new SQLLiteDatabaseConfiguration();
+            case CLICKHOUSE:return new ClickHouseDatabaseConfiguration();
         }
         return null;
     }
