@@ -123,7 +123,7 @@ public class DamengQueryTest extends DamengBaseTest{
                 .groupBy(o -> GroupKeys.TABLE1.of(o.title()))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
-                        o.join(o.group().id(),",")
+                        o.groupTable().id().join(",")
                 )).toList();
     }
 

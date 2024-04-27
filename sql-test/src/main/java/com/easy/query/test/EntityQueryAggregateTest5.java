@@ -59,8 +59,8 @@ public class EntityQueryAggregateTest5 extends BaseEntityQueryAggregateTest1 {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Grouping2<String, String>> list = join1().groupBy((t1,t2,t3,t4,t5,t6,t7,t8,t9,t10) -> GroupKeys.TABLE10.of(t1.id(), t2.id()))
-                    .having(o->o.count(o.group().t1.id()).gt(0L))
-                    .having(false,o->o.count(o.group().t1.id()).gt(0L))
+                    .having(o->o.count(o.groupTable().t1.id()).gt(0L))
+                    .having(false,o->o.count(o.groupTable().t1.id()).gt(0L))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -112,8 +112,8 @@ public class EntityQueryAggregateTest5 extends BaseEntityQueryAggregateTest1 {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Grouping2<String, String>> list = join2().groupBy((t1,t2,t3,t4,t5,t6,t7,t8,t9) -> GroupKeys.TABLE9.of(t1.id(), t2.id()))
-                    .having(o->o.count(o.group().t1.id()).gt(0L))
-                    .having(false,o->o.count(o.group().t1.id()).gt(0L))
+                    .having(o->o.count(o.groupTable().t1.id()).gt(0L))
+                    .having(false,o->o.count(o.groupTable().t1.id()).gt(0L))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -164,8 +164,8 @@ public class EntityQueryAggregateTest5 extends BaseEntityQueryAggregateTest1 {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Grouping2<String, String>> list = join3().groupBy((t1,t2,t3,t4,t5,t6,t7,t8) -> GroupKeys.TABLE8.of(t1.id(), t2.id()))
-                    .having(o->o.count(o.group().t1.id()).gt(0L))
-                    .having(false,o->o.count(o.group().t1.id()).gt(0L))
+                    .having(o->o.count(o.groupTable().t1.id()).gt(0L))
+                    .having(false,o->o.count(o.groupTable().t1.id()).gt(0L))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -217,8 +217,8 @@ public class EntityQueryAggregateTest5 extends BaseEntityQueryAggregateTest1 {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Grouping2<String, String>> list = join4().groupBy((t1,t2,t3,t4,t5,t6,t7) -> GroupKeys.TABLE7.of(t1.id(), t2.id()))
-                    .having(o->o.count(o.group().t1.id()).gt(0L))
-                    .having(false,o->o.count(o.group().t1.id()).gt(0L))
+                    .having(o->o.count(o.groupTable().t1.id()).gt(0L))
+                    .having(false,o->o.count(o.groupTable().t1.id()).gt(0L))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -269,8 +269,8 @@ public class EntityQueryAggregateTest5 extends BaseEntityQueryAggregateTest1 {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Grouping2<String, String>> list = join5().groupBy((t1,t2,t3,t4,t5,t6) -> GroupKeys.TABLE6.of(t1.id(), t2.id()))
-                    .having(o->o.count(o.group().t1.id()).gt(0L))
-                    .having(false,o->o.count(o.group().t1.id()).gt(0L))
+                    .having(o->o.count(o.groupTable().t1.id()).gt(0L))
+                    .having(false,o->o.count(o.groupTable().t1.id()).gt(0L))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -322,8 +322,8 @@ public class EntityQueryAggregateTest5 extends BaseEntityQueryAggregateTest1 {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Grouping2<String, String>> list = join6().groupBy((t1,t2,t3,t4,t5) -> GroupKeys.TABLE5.of(t1.id(), t2.id()))
-                    .having(o->o.count(o.group().t1.id()).gt(0L))
-                    .having(false,o->o.count(o.group().t1.id()).gt(0L))
+                    .having(o->o.count(o.groupTable().t1.id()).gt(0L))
+                    .having(false,o->o.count(o.groupTable().t1.id()).gt(0L))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -375,8 +375,8 @@ public class EntityQueryAggregateTest5 extends BaseEntityQueryAggregateTest1 {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Grouping2<String, String>> list = join7().groupBy((t1,t2,t3,t4) -> GroupKeys.TABLE4.of(t1.id(), t2.id()))
-                    .having(o->o.count(o.group().t1.id()).gt(0L))
-                    .having(false,o->o.count(o.group().t1.id()).gt(0L))
+                    .having(o->o.count(o.groupTable().t1.id()).gt(0L))
+                    .having(false,o->o.count(o.groupTable().t1.id()).gt(0L))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -428,8 +428,8 @@ public class EntityQueryAggregateTest5 extends BaseEntityQueryAggregateTest1 {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Grouping2<String, String>> list = join8().groupBy((t1,t2,t3) -> GroupKeys.TABLE3.of(t1.id(), t2.id()))
-                    .having(o->o.count(o.group().t1.id()).gt(0L))
-                    .having(false,o->o.count(o.group().t1.id()).gt(0L))
+                    .having(o->o.count(o.groupTable().t1.id()).gt(0L))
+                    .having(false,o->o.count(o.groupTable().t1.id()).gt(0L))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -480,8 +480,8 @@ public class EntityQueryAggregateTest5 extends BaseEntityQueryAggregateTest1 {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             List<Grouping2<String, String>> list = join9().groupBy((t1,t2) -> GroupKeys.TABLE2.of(t1.id(), t2.id()))
-                    .having(o->o.count(o.group().t1.id()).gt(0L))
-                    .having(false,o->o.count(o.group().t1.id()).gt(0L))
+                    .having(o->o.count(o.groupTable().t1.id()).gt(0L))
+                    .having(false,o->o.count(o.groupTable().t1.id()).gt(0L))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

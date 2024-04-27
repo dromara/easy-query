@@ -512,7 +512,7 @@ public class QueryTest9 extends BaseTest {
                 .select(o -> new TopicProxy().adapter(r -> {
 
                     r.title().set(o.key1());
-                    r.stars().set(o.intCount(o.group().id()));
+                    r.stars().set(o.intCount(o.groupTable().id()));
                 }))
                 .toList();
 
@@ -607,7 +607,7 @@ public class QueryTest9 extends BaseTest {
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
                     .groupBy(o -> GroupKeys.TABLE1.of(o.createTime().format("yyyy/MM/dd" )))
                     .select(o -> new TopicProxy().adapter(r -> {
-                        r.stars().set(o.intCount(o.group().id()));
+                        r.stars().set(o.intCount(o.groupTable().id()));
                         r.title().set(o.key1());
                     }))
                     .toList();
@@ -627,8 +627,8 @@ public class QueryTest9 extends BaseTest {
                     .groupBy(o -> GroupKeys.TABLE1.of(o.createTime().format("yyyy/MM/dd" )))
                     .select(o -> new TopicProxy().adapter(r -> {
 
-                        r.stars().set(o.intCount(o.group().id()));
-                        r.title().set(o.group().createTime().format("yyyy/MM/dd" ));
+                        r.stars().set(o.intCount(o.groupTable().id()));
+                        r.title().set(o.groupTable().createTime().format("yyyy/MM/dd" ));
 //                        id().set(o.createTime().format("yyyy/MM/dd"));
                         r.id().set(o.key1());
                     }))
@@ -916,7 +916,7 @@ public class QueryTest9 extends BaseTest {
                     .select(o -> new TopicProxy().adapter(r -> {
 
                         r.selectExpression(o.key1());
-                        r.stars().set(o.intCount(o.group().id()));
+                        r.stars().set(o.intCount(o.groupTable().id()));
                     }))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1118,13 +1118,13 @@ public class QueryTest9 extends BaseTest {
                     .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                     .having(o -> {
                         o.count().ne(1L);
-                        o.sum(o.group().star()).ge(10);
+                        o.groupTable().star().sum().ge(10);
                     })
                     .select(o -> new BlogEntityProxy().adapter(r -> {
 
                         r.id().set(o.key1());
-                        r.star().set(o.group().id().count().setPropertyType(Integer.class));
-                        r.title().set(o.group().id().max());
+                        r.star().set(o.groupTable().id().count().setPropertyType(Integer.class));
+                        r.title().set(o.groupTable().id().max());
                     })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -1161,12 +1161,12 @@ public class QueryTest9 extends BaseTest {
                 })
                 .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                 .having(o -> {
-                    o.count(o.group().id()).ne(1L);
-                    o.sum(o.group().star()).ge(10);
+                    o.count(o.groupTable().id()).ne(1L);
+                    o.groupTable().star().sum().ge(10);
                 }).select(o -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(o.key1());
                     r.star().set(o.intCount());
-                    r.title().set(o.group().id().max());
+                    r.title().set(o.groupTable().id().max());
                 })).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -1193,14 +1193,14 @@ public class QueryTest9 extends BaseTest {
                 })
                 .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
                 .having(o -> {
-                    o.count(o.group().id()).ne(1L);
-                    o.sum(o.group().star()).ge(10);
+                    o.count(o.groupTable().id()).ne(1L);
+                    o.groupTable().star().sum().ge(10);
                 })
                 .select(o -> new BlogEntityProxy().adapter(r -> {
 
                     r.selectExpression(o.key1()
-                            , o.group().id().count().as(r.star())
-                            , o.group().id().max().as(r.title())
+                            , o.groupTable().id().count().as(r.star())
+                            , o.groupTable().id().max().as(r.title())
                     );
                 })).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

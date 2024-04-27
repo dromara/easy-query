@@ -57,7 +57,7 @@ public class MyTest1 extends BaseTest {
                 .groupBy(o -> GroupKeys.TABLE1.of(o.content()))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
-                        o.group().content().length()
+                        o.groupTable().content().length()
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -105,7 +105,7 @@ public class MyTest1 extends BaseTest {
                 .groupBy(o -> GroupKeys.TABLE1.of(o.content()))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
-                        o.group().content().length()
+                        o.groupTable().content().length()
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -908,7 +908,7 @@ public class MyTest1 extends BaseTest {
                 .select(g -> new BlogEntityProxy().adapter(r -> {
 
                     r.id().set(g.key1());
-                    r.star().set(g.intCount(g.group().title().subString(1, 2)));
+                    r.star().set(g.intCount(g.groupTable().title().subString(1, 2)));
                 })).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -938,7 +938,7 @@ public class MyTest1 extends BaseTest {
                 })
                 .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(g.key1());
-                    r.star().set(g.intCount(g.group().value2()));
+                    r.star().set(g.intCount(g.groupTable().value2()));
                 })).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -969,7 +969,7 @@ public class MyTest1 extends BaseTest {
                 .orderBy(o -> o.key1().asc())
                 .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(g.key1());
-                    r.star().set(g.intCount(g.group().value2()));
+                    r.star().set(g.intCount(g.groupTable().value2()));
                 })).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1000,7 +1000,7 @@ public class MyTest1 extends BaseTest {
                 .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.selectExpression();
                     r.id().set(g.key1());
-                    r.star().set(g.intCount(g.group().value2()));
+                    r.star().set(g.intCount(g.groupTable().value2()));
                 }))
                 .orderBy(o -> o.star().asc()).toList();
 
@@ -1029,13 +1029,13 @@ public class MyTest1 extends BaseTest {
 
                     r.id().set(g.key1());
                     r.title().set(
-                            g.max(g.group().title())
+                            g.groupTable().title().max()
                     );
                     r.score().set(
-                            g.min(g.group().stars().toNumber(BigDecimal.class))
+                            g.groupTable().stars().toNumber(BigDecimal.class).min()
                     );
                     r.content().set(
-                            g.join(g.group().id(), ",")
+                            g.groupTable().id().join(",")
                     );
                 })).toList();
 
@@ -1198,7 +1198,7 @@ public class MyTest1 extends BaseTest {
                 ))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
-                        o.count(o.group().t1.title())
+                        o.count(o.groupTable().t1.title())
                 )).toList();
 
 
@@ -1234,7 +1234,7 @@ public class MyTest1 extends BaseTest {
                 ))
                 .selectDraft(o -> Select.draft(
                         o.key1(),
-                        o.count(o.group().t1.title())
+                        o.count(o.groupTable().t1.title())
                 )).toList();
 
 

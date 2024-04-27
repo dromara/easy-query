@@ -82,7 +82,7 @@ public class QueryTest11 extends BaseTest {
                 .groupBy((t1, t2) -> GroupKeys.TABLE2.of(t2.id()))
                 .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(g.key1());
-                    r.score().set(g.sum(g.group().t2.score()));
+                    r.score().set(g.sum(g.groupTable().t2.score()));
                 }))
                 .toPageResult(1, 20);
 
@@ -670,7 +670,7 @@ public class QueryTest11 extends BaseTest {
                 }).selectDraft(o -> Select.draft(
                         o.key1(),
                         o.key2(),
-                        o.sum(o.group().star())
+                        o.sum(o.groupTable().star())
                 )).toList();
 
 

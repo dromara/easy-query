@@ -453,7 +453,7 @@ public class QueryTest10 extends BaseTest{
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(t1.id()))
                 .select((g) -> new BlogEntityProxy().adapter(r->{
                     r.selectExpression(g.key1());
-                    r.score().set(g.sum(g.group().t2.score()));
+                    r.score().set(g.sum(g.groupTable().t2.score()));
                 }))
                 .toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -535,7 +535,7 @@ public class QueryTest10 extends BaseTest{
             List<Draft3<String, Long, Integer>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t -> GroupKeys.TABLE1.of(t.id()))
-                    .selectDraft(g -> Select.draft(g.key1(), g.count(), g.sum(g.group().stars())))
+                    .selectDraft(g -> Select.draft(g.key1(), g.count(), g.sum(g.groupTable().stars())))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -989,7 +989,7 @@ public class QueryTest10 extends BaseTest{
                 .groupBy(o-> GroupKeys.TABLE1.of(o.content().subString(0,8)))
                 .select(o -> Select.DRAFT.of(
                         o.key1(),
-                        o.join(o.group().id(),",")
+                        o.join(o.groupTable().id(),",")
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -1079,7 +1079,7 @@ public class QueryTest10 extends BaseTest{
                 .toList();
         query(q->q.whereObject(new Object()));
 //        easyEntityQuery.queryable(BlogEntity.class)
-//                .groupBy1(k->k.of(k.group().createTime()))
+//                .groupBy1(k->k.of(k.groupTable().createTime()))
     }
     @Test
     public void test223(){

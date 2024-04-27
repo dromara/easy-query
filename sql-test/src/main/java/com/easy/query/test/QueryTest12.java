@@ -241,7 +241,7 @@ public class QueryTest12 extends BaseTest {
                 .groupBy(o -> GroupKeys.TABLE1.of(o.content().subString(0, 8)))
                 .select(o -> Select.DRAFT.of(
                         o.key1(),
-                        o.join(o.group().id(), ",")
+                        o.groupTable().id().join(",")
                 ));
 
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
@@ -647,7 +647,7 @@ public class QueryTest12 extends BaseTest {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                     PropTypeColumn<Integer> integerPropTypeColumn = b.expression().sqlType("case {0} when {1} then 1 else 0 end",
                             c -> {
-                                c.expression(b.group().score()).value(1);
+                                c.expression(b.groupTable().score()).value(1);
                             }).setPropertyType(Integer.class);
                     blogEntityProxy.star().set(b.sum(integerPropTypeColumn));
                     return blogEntityProxy;
@@ -670,7 +670,7 @@ public class QueryTest12 extends BaseTest {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                     blogEntityProxy.score().set(b.min(b.expression().sqlType("case {0} when {1} then 1 else 0 end",
                             c -> {
-                                c.expression(b.group().score()).value(1);
+                                c.expression(b.groupTable().score()).value(1);
                             }).setPropertyType(BigDecimal.class)));
                     return blogEntityProxy;
                 }).toList();
