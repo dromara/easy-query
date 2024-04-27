@@ -23,7 +23,6 @@ public @interface EntityFileProxy {
      * 不建议设置别名
      * @return
      */
-    @Deprecated
     String value() default "";
 
     /**

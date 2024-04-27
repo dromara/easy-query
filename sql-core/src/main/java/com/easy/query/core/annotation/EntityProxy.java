@@ -21,7 +21,6 @@ public @interface EntityProxy {
      * 不建议设置别名
      * @return
      */
-    @Deprecated
     String value() default "";
 
     /**
