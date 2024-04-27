@@ -81,6 +81,8 @@ public interface EntityFetcher<TProxy extends ProxyEntity<TProxy, TEntity>, TEnt
     @Override
     TChain as(String propertyAlias);
 
+    TProxy fetchProxy();
+
 //    @Override
 //    TChain asc(boolean condition);
 //

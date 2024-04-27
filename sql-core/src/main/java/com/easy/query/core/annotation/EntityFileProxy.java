@@ -37,4 +37,11 @@ public @interface EntityFileProxy {
      * @return
      */
     FileGenerateEnum strategy() default FileGenerateEnum.GENERATE_COMPILE_ALWAYS_OVERRIDE;
+
+    /**
+     * 兼容旧版本的eq,因为插件升级到最新版本如果eq没有升级到最新那么插件生成的代码将是有问题的,
+     * 为了兼容1.x版本的eq的apt所以这边增加了版本号这个值,请不要随意修改这个值
+     * @return
+     */
+    int version() default 2;
 }

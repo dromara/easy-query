@@ -47,13 +47,6 @@ public class SchoolStudentProxy extends AbstractProxyEntity<SchoolStudentProxy, 
     }
 
     /**
-     * {@link SchoolStudent#getName}
-     */
-    public SQLStringTypeColumn<SchoolStudentProxy> name2() {
-        return getStringTypeColumn("name");
-    }
-
-    /**
      * private Integer age;
      * {@link SchoolStudent#getSchoolClass}
      */

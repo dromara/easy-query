@@ -70,23 +70,23 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         TYPE_MAPPING.put("long", "java.lang.Long");
         TYPE_MAPPING.put("byte", "java.lang.Byte");
         TYPE_MAPPING.put("boolean", "java.lang.Boolean");
-        TYPE_COLUMN_MAPPING.put("java.lang.Float", new PropertyColumn("SQLNumberColumn", "java.lang.Float"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Double", new PropertyColumn("SQLNumberColumn", "java.lang.Double"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Short", new PropertyColumn("SQLNumberColumn", "java.lang.Short"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Integer", new PropertyColumn("SQLNumberColumn", "java.lang.Integer"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Long", new PropertyColumn("SQLNumberColumn", "java.lang.Long"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Byte", new PropertyColumn("SQLNumberColumn", "java.lang.Byte"));
-        TYPE_COLUMN_MAPPING.put("java.math.BigDecimal", new PropertyColumn("SQLNumberColumn", "java.math.BigDecimal"));
-        TYPE_COLUMN_MAPPING.put("java.lang.Boolean", new PropertyColumn("SQLBooleanColumn", "java.lang.Boolean"));
-        TYPE_COLUMN_MAPPING.put("java.lang.String", new PropertyColumn("SQLStringColumn", "java.lang.String"));
-        TYPE_COLUMN_MAPPING.put("java.util.UUID", new PropertyColumn("SQLStringColumn", "java.util.UUID"));
-        TYPE_COLUMN_MAPPING.put("java.sql.Timestamp", new PropertyColumn("SQLDateTimeColumn", "java.sql.Timestamp"));
-        TYPE_COLUMN_MAPPING.put("java.sql.Time", new PropertyColumn("SQLDateTimeColumn", "java.sql.Time"));
-        TYPE_COLUMN_MAPPING.put("java.sql.Date", new PropertyColumn("SQLDateTimeColumn", "java.sql.Date"));
-        TYPE_COLUMN_MAPPING.put("java.util.Date", new PropertyColumn("SQLDateTimeColumn", "java.util.Date"));
-        TYPE_COLUMN_MAPPING.put("java.time.LocalDate", new PropertyColumn("SQLDateTimeColumn", "java.time.LocalDate"));
-        TYPE_COLUMN_MAPPING.put("java.time.LocalDateTime", new PropertyColumn("SQLDateTimeColumn", "java.time.LocalDateTime"));
-        TYPE_COLUMN_MAPPING.put("java.time.LocalTime", new PropertyColumn("SQLDateTimeColumn", "java.time.LocalTime"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Float", new PropertyColumn("SQLFloatTypeColumn", "java.lang.Float"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Double", new PropertyColumn("SQLDoubleTypeColumn", "java.lang.Double"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Short", new PropertyColumn("SQLShortTypeColumn", "java.lang.Short"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Integer", new PropertyColumn("SQLIntegerTypeColumn", "java.lang.Integer"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Long", new PropertyColumn("SQLLongTypeColumn", "java.lang.Long"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Byte", new PropertyColumn("SQLByteTypeColumn", "java.lang.Byte"));
+        TYPE_COLUMN_MAPPING.put("java.math.BigDecimal", new PropertyColumn("SQLBigDecimalTypeColumn", "java.math.BigDecimal"));
+        TYPE_COLUMN_MAPPING.put("java.lang.Boolean", new PropertyColumn("SQLBooleanTypeColumn", "java.lang.Boolean"));
+        TYPE_COLUMN_MAPPING.put("java.lang.String", new PropertyColumn("SQLStringTypeColumn", "java.lang.String"));
+        TYPE_COLUMN_MAPPING.put("java.util.UUID", new PropertyColumn("SQLUUIDTypeColumn", "java.util.UUID"));
+        TYPE_COLUMN_MAPPING.put("java.sql.Timestamp", new PropertyColumn("SQLTimestampTypeColumn", "java.sql.Timestamp"));
+        TYPE_COLUMN_MAPPING.put("java.sql.Time", new PropertyColumn("SQLTimeTypeColumn", "java.sql.Time"));
+        TYPE_COLUMN_MAPPING.put("java.sql.Date", new PropertyColumn("SQLDateTypeColumn", "java.sql.Date"));
+        TYPE_COLUMN_MAPPING.put("java.util.Date", new PropertyColumn("SQLUtilDateTypeColumn", "java.util.Date"));
+        TYPE_COLUMN_MAPPING.put("java.time.LocalDate", new PropertyColumn("SQLLocalDateTypeColumn", "java.time.LocalDate"));
+        TYPE_COLUMN_MAPPING.put("java.time.LocalDateTime", new PropertyColumn("SQLLocalDateTimeTypeColumn", "java.time.LocalDateTime"));
+        TYPE_COLUMN_MAPPING.put("java.time.LocalTime", new PropertyColumn("SQLLocalTimeTypeColumn", "java.time.LocalTime"));
     }
 
     private static final String FIELD_DOC_COMMENT_TEMPLATE = "\n" +
@@ -584,7 +584,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
     }
 
     public static PropertyColumn getPropertyColumn(String fieldGenericType) {
-        return TYPE_COLUMN_MAPPING.getOrDefault(fieldGenericType, new PropertyColumn("SQLAnyColumn", fieldGenericType));
+        return TYPE_COLUMN_MAPPING.getOrDefault(fieldGenericType, new PropertyColumn("SQLAnyTypeColumn", fieldGenericType));
     }
 
 }

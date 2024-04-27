@@ -56,14 +56,14 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
 
     @Override
     public TChain allFields() {
-        SQLSelectAsExpression sqlSelectAsExpression = new SQLSelectAllImpl(tProxy.getEntitySQLContext(),tProxy.getTable(), new TablePropColumn[0]);
+        SQLSelectAsExpression sqlSelectAsExpression = new SQLSelectAllImpl(tProxy.getEntitySQLContext(), tProxy.getTable(), new TablePropColumn[0]);
         return createFetcher(tProxy, this, sqlSelectAsExpression);
     }
 
 
     @Override
     public TChain allFieldsExclude(Collection<SQLColumn<TProxy, ?>> ignoreColumns) {
-        SQLSelectAsExpression sqlSelectAsExpression =new SQLSelectAllImpl(tProxy.getEntitySQLContext(),tProxy.getTable(), ignoreColumns.stream().toArray(SQLColumn[]::new));
+        SQLSelectAsExpression sqlSelectAsExpression = new SQLSelectAllImpl(tProxy.getEntitySQLContext(), tProxy.getTable(), ignoreColumns.stream().toArray(SQLColumn[]::new));
         return createFetcher(tProxy, this, sqlSelectAsExpression);
     }
 
@@ -80,7 +80,7 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     protected abstract TChain createFetcher(TProxy tProxy, AbstractFetcher<TProxy, TEntity, TChain> prev, SQLSelectAsExpression sqlSelectExpression);
 
     protected TChain add(SQLColumn<TProxy, ?> sqlColumn) {
-        SQLSelectAsExpression selectAsExpression = SQLSelectAsExpression.createDefault(getProxy().getEntitySQLContext(),getProxy().getTable(), sqlColumn.getValue());
+        SQLSelectAsExpression selectAsExpression = SQLSelectAsExpression.createDefault(getProxy().getEntitySQLContext(), getProxy().getTable(), sqlColumn.getValue());
         return createFetcher(tProxy, this, selectAsExpression);
     }
 
@@ -129,6 +129,7 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     public void accept(OnlySelector s) {
         acceptOnlySelector(s);
     }
+
     protected void acceptOnlySelector(OnlySelector s) {
         if (prev != null) {
             prev.acceptOnlySelector(s);
@@ -138,7 +139,14 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
 
     @Override
     public TChain as(String propertyAlias) {
-        sqlSelectAsExpression=sqlSelectAsExpression.as(propertyAlias);
-        return (TChain)this;
+        sqlSelectAsExpression = sqlSelectAsExpression.as(propertyAlias);
+        return (TChain) this;
+    }
+
+    @Override
+    public TProxy fetchProxy() {
+        TProxy proxy = tProxy.create(null, tProxy.getEntitySQLContext());
+        proxy.selectExpression(this);
+        return proxy;
     }
 }

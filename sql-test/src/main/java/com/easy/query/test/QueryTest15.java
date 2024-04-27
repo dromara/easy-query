@@ -33,9 +33,7 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.dto.SchoolClassAggregateDTO;
-import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.UserExtraDTO;
-import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.UserExtra;
@@ -750,19 +748,19 @@ public class QueryTest15 extends BaseTest {
         listenerContextManager.clear();
 
 
-        List<TopicTypeVO> list1 = easyEntityQuery.queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
-                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(t1.id()))
-                .select(group -> {
-                    TopicTypeVOProxy r = new TopicTypeVOProxy();
-                    r.id().set(group.key1());
-                    r.createTime().set(group.groupTable().t1.createTime().max());
-                    r.stars().set(group.groupTable().t1.stars().max());
-                    return r;
-                })
-                .where(t -> {
-                    t.createTime().gt(LocalDateTime.now());
-                }).toList();
+//        List<TopicTypeVO> list1 = easyEntityQuery.queryable(Topic.class)
+//                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+//                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(t1.id()))
+//                .select(group -> {
+//                    TopicTypeVOProxy r = new TopicTypeVOProxy();
+//                    r.id().set(group.key1());
+//                    r.createTime().set(group.groupTable().t1.createTime().max());
+//                    r.stars().set(group.groupTable().t1.stars().max());
+//                    return r;
+//                })
+//                .where(t -> {
+//                    t.createTime().gt(LocalDateTime.now());
+//                }).toList();
 //
 //        List<TopicTypeVO> list2 = easyEntityQuery.queryable(Topic.class)
 //                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
@@ -775,6 +773,59 @@ public class QueryTest15 extends BaseTest {
 //                .where(t -> {
 //                    t.createTime().gt(LocalDateTime.now());
 //                }).toList();
+    }
+    @Test
+    public void testColumn(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<LocalDateTime> list = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    Expression expression = t.expression();
+                    t.id().eq("6261");
+                    t.createTime().format("yyyy-MM").ge(expression.now().plusMonths(-3).format("yyyy-MM"));
+                    t.createTime().format("yyyy-MM").le(expression.now().plusMonths(-1).format("yyyy-MM"));
+
+                }).select(t -> t.createTime()).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`create_time` FROM `t_topic` t WHERE t.`id` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m') >= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m') AND DATE_FORMAT(t.`create_time`,'%Y-%m') <= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("6261(String),-3(Integer),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testColumn1(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<LocalDateTime> list = easyEntityQuery.queryable(Topic.class).select(t -> t.createTime()).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`create_time` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("6261(String),-3(Integer),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (LocalDateTime localDateTime : list) {
+            System.out.println(localDateTime);
+        }
+    }
+    @Test
+    public void testFETCHER(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    Expression expression = t.expression();
+                    t.id().eq("6261");
+                    t.createTime().format("yyyy-MM").ge(expression.now().plusMonths(-3).format("yyyy-MM"));
+                    t.createTime().format("yyyy-MM").le(expression.now().plusMonths(-1).format("yyyy-MM"));
+
+                }).select(t -> t.FETCHER.id().createTime().title().fetchProxy()).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`title` FROM `t_topic` t WHERE t.`id` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m') >= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m') AND DATE_FORMAT(t.`create_time`,'%Y-%m') <= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("6261(String),-3(Integer),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
 }
