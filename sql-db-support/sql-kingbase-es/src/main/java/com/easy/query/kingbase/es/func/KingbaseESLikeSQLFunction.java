@@ -40,7 +40,7 @@ public class KingbaseESLikeSQLFunction extends AbstractExpressionSQLFunction {
                         return "STRPOS({1},{0}) = 1";
                     }
                     if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_LEFT){
-                        return "STRPOS({1},{0}) = CHAR_LENGTH({0})";
+                        return "STRPOS({1},{0}) = CHAR_LENGTH({1})";
                     }
                     return "STRPOS({1},{0}) > 0";
                 }

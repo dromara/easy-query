@@ -36,6 +36,7 @@
         <module>sql-db-support/sql-sqlite</module>
         <module>sql-db-support/sql-dameng</module>
         <module>sql-db-support/sql-kingbase-es</module>
+        <module>sql-db-support/sql-clickhouse</module>
         <module>sql-db-support/sql-gauss-db</module>
         <module>sql-processor</module>
         <!--        以下是不需要deploy到远程仓库的-->
