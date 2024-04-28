@@ -163,6 +163,12 @@ public class RelationTest extends BaseTest {
         List<String> ids = Arrays.asList("1", "2", "3");
         try {
             relationInit(ids);
+            List<SchoolStudent> list4 = easyEntityQuery.queryable(SchoolStudent.class).toList();
+            easyEntityQuery.loadInclude(list4,x->x.schoolClass());
+            for (SchoolStudent schoolStudent : list4) {
+
+                Assert.assertNotNull(schoolStudent.getSchoolClass());
+            }
 //            {
 //
 //                List<String> list1 = easyEntityQuery.queryable(SchoolStudent.class)

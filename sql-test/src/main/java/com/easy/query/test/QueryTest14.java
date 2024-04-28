@@ -1559,5 +1559,4 @@ public class QueryTest14 extends BaseTest {
         Assert.assertEquals("SELECT * FROM `my_table` WHERE  `create_time` < CAST('2020-01-01 01:01:00' AS DATETIME)",sql);
     }
 
-
 }

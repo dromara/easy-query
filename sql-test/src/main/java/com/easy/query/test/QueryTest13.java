@@ -43,7 +43,12 @@ public class QueryTest13 extends BaseTest {
                     b.star().gt(1);
                 })
                 .groupBy(b -> GroupKeys.TABLE1.of(b.id()))
-                .select(group -> new MapTypeProxy().put(blogId, group.key1()).put(blogCount, group.intCount()))
+                .select(group -> {
+                    MapTypeProxy r = new MapTypeProxy();
+                    r.put(blogId, group.key1());
+                    r.put(blogCount, group.intCount());
+                    return r;
+                })
                 .leftJoin(Topic.class, (g, topic) -> {
                     g.get(blogId).eq(topic.id());
                 })
