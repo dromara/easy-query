@@ -110,11 +110,11 @@ public @interface Column {
     boolean autoSelect() default true;
     Class<? extends JdbcTypeHandler> typeHandler() default UnKnownTypeHandler.class;
 
-    /**
-     * 是否是并发字段,如果是并发字段支持并发控制更新
-     * @return
-     */
-    boolean concurrent() default false;
+//    /**
+//     * 是否是并发字段,如果是并发字段支持并发控制更新
+//     * @return
+//     */
+//    boolean concurrent() default false;
 //
 //    /**
 //     * 该字段在数据库中是否为null，如果为null那么在update整个对象的时候

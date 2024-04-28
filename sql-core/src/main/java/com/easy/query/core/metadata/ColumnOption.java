@@ -57,7 +57,7 @@ public final class ColumnOption {
     private Supplier<Object> beanConstructorCreator;
     private final List<ColumnOption> valueObjectColumnOptions;
     private String fullPropertyName;
-    private boolean concurrentUpdateInTrack = false;
+//    private boolean concurrentUpdateInTrack = false;
 
 
     public ColumnOption(boolean tableEntity,EntityMetadata entityMetadata, String name) {
@@ -257,11 +257,11 @@ public final class ColumnOption {
         this.beanConstructorCreator = beanConstructorCreator;
     }
 
-    public boolean isConcurrentUpdateInTrack() {
-        return concurrentUpdateInTrack;
-    }
-
-    public void setConcurrentUpdateInTrack(boolean concurrentUpdateInTrack) {
-        this.concurrentUpdateInTrack = concurrentUpdateInTrack;
-    }
+//    public boolean isConcurrentUpdateInTrack() {
+//        return concurrentUpdateInTrack;
+//    }
+//
+//    public void setConcurrentUpdateInTrack(boolean concurrentUpdateInTrack) {
+//        this.concurrentUpdateInTrack = concurrentUpdateInTrack;
+//    }
 }

@@ -438,9 +438,9 @@ public class EntityMetadata {
 //                        columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(valueUpdateAtomicTrack));
 //                    }
 //                }
-                if(column.concurrent()){
-                    columnOption.setConcurrentUpdateInTrack(true);
-                }
+//                if(column.concurrent()){
+//                    columnOption.setConcurrentUpdateInTrack(true);
+//                }
                 Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = column.sqlConversion();
                 if (!Objects.equals(DefaultColumnValueSQLConverter.class, columnValueSQLConverterClass)) {
                     //配置列值数据库转换器

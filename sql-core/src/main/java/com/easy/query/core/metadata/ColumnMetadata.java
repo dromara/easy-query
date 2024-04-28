@@ -74,10 +74,10 @@ public class ColumnMetadata {
      * 如果更新时忽略当前列存在track的diff中是否也要更新
      */
     private final boolean updateSetInTrackDiff;
-    /**
-     * 并发更新在追踪下
-     */
-    private final boolean concurrentUpdateInTrack;
+//    /**
+//     * 并发更新在追踪下
+//     */
+//    private final boolean concurrentUpdateInTrack;
 
     /**
      * 加密策略
@@ -154,7 +154,7 @@ public class ColumnMetadata {
         this.autoSelect = columnOption.isAutoSelect();
         this.valueConverter = columnOption.getValueConverter();
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
-        this.concurrentUpdateInTrack = columnOption.isConcurrentUpdateInTrack();
+//        this.concurrentUpdateInTrack = columnOption.isConcurrentUpdateInTrack();
         this.generatedSQLColumnGenerator = columnOption.getGeneratedKeySQLColumnGenerator();
 
         if (columnOption.getGetterCaller() == null) {
@@ -297,7 +297,7 @@ public class ColumnMetadata {
         return beanConstructorCreator;
     }
 
-    public boolean isConcurrentUpdateInTrack() {
-        return concurrentUpdateInTrack;
-    }
+//    public boolean isConcurrentUpdateInTrack() {
+//        return concurrentUpdateInTrack;
+//    }
 }
