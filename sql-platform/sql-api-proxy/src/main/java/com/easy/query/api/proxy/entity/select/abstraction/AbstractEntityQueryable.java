@@ -1,10 +1,12 @@
 package com.easy.query.api.proxy.entity.select.abstraction;
 
+import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable2;
+import com.easy.query.api.proxy.entity.select.impl.EasySelectFlatQueryable;
 import com.easy.query.api.proxy.sql.ProxyFilter;
 import com.easy.query.api.proxy.sql.ProxySelector;
 import com.easy.query.api.proxy.sql.impl.ProxyFilterImpl;
@@ -168,10 +170,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return getClientQueryable().toMaps();
     }
 
-    @Override
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy) {
-        return toList(trProxy.getEntityClass());
-    }
+//    @Override
+//    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy) {
+//        return toList(trProxy.getEntityClass());
+//    }
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass) {
@@ -835,4 +837,16 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
+    @Override
+    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(SQLFuncExpression1<T1Proxy, TRProxy> fetchResultExpression) {
+        TRProxy resultProxy = fetchResultExpression.apply(get1Proxy());
+        if (resultProxy instanceof ListProxy) {
+            ListProxy<TRProxy, TR> listProxy = (ListProxy<TRProxy, TR>) resultProxy;
+            SQLQueryable<TRProxy, TR> sqlQueryable = listProxy.getSqlQueryable();
+            Objects.requireNonNull(sqlQueryable, "select columns null result class");
+
+            return new EasySelectFlatQueryable<>(clientQueryable, sqlQueryable.getNavValue()).toList();
+        }
+        return new EasySelectFlatQueryable<>(clientQueryable, resultProxy.getNavValue()).toList();
+    }
 }

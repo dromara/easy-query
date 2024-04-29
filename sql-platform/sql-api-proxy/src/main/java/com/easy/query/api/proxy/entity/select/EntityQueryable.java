@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.entity.select;
 
 import com.easy.query.api.proxy.entity.select.extension.EntityAvailable;
+import com.easy.query.api.proxy.entity.select.extension.FlatListResultAble;
 import com.easy.query.api.proxy.entity.select.extension.queryable.ClientEntityQueryableAvailable;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityAggregatable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityCountable1;
@@ -30,8 +31,6 @@ import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 
-import java.util.List;
-
 /**
  * create time 2023/12/4 09:59
  * 文件说明
@@ -39,6 +38,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends Query<T1>,
+        FlatListResultAble<T1Proxy,T1>,
         Interceptable<EntityQueryable<T1Proxy, T1>>,
         LogicDeletable<EntityQueryable<T1Proxy, T1>>,
         TableReNameable<EntityQueryable<T1Proxy, T1>>,
@@ -63,9 +63,9 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
 
 
     ClientQueryable<T1> getClientQueryable();
-
-    @Deprecated
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy);
+//
+//    @Deprecated
+//    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy);
 
     @Override
     EntityQueryable<T1Proxy, T1> cloneQueryable();

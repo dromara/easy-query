@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.columns;
 
+import com.easy.query.api.proxy.base.FlatListProxy;
 import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
@@ -139,12 +140,18 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(columnProxy.getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy.getQueryable().get1Proxy(), navigateSelectExpression));
     }
 
-    default ListProxy<T1Proxy, T1> toList() {
+    @Deprecated
+    default ListProxy<T1Proxy, T1> toStructList() {
         return new ListProxy<>(this);
     }
-//    default List2Proxy<T1Proxy, T1> toList2() {
-//        return new List2Proxy<>(this);
-//    }
+    default FlatListProxy<T1Proxy, T1> toList() {
+        return new FlatListProxy<>(this);
+    }
+    default T1Proxy flatElement() {
+        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), getProxy().getEntitySQLContext());
+        tPropertyProxy.setNavValue(getNavValue());
+        return tPropertyProxy;
+    }
 
 //    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLQueryable<TPropertyProxy, TProperty> select(SQLFuncExpression1<T1Proxy, TPropertyProxy> selectColumnExpression) {
 //        EntityQueryable<TPropertyProxy, TProperty> select = this.getQueryable().select(selectColumnExpression);

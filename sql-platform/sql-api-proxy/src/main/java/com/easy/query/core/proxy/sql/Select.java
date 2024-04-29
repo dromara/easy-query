@@ -93,6 +93,14 @@ public class Select {
             EntityQueryable<ListProxy<TRProxy, TR>, List<TR>> listProxyListEntityQueryable = new EasySelectManyQueryable<>(queryable, listProxy, sqlQueryable.getNavValue());
             return EasyObjectUtil.typeCastNullable(listProxyListEntityQueryable);
         }
+//        if (resultProxy instanceof FlatListProxy) {
+//            FlatListProxy<TRProxy, TR> listProxy = (FlatListProxy<TRProxy, TR>) resultProxy;
+//            SQLQueryable<TRProxy, TR> sqlQueryable = listProxy.getSqlQueryable();
+//            Objects.requireNonNull(sqlQueryable, "select columns null result class");
+//
+//            EntityQueryable<FlatListProxy<TRProxy, TR>, TR> listProxyListEntityQueryable = new EasySelectMany2Queryable<>(queryable, listProxy, sqlQueryable.getNavValue());
+//            return EasyObjectUtil.typeCastNullable(listProxyListEntityQueryable);
+//        }
 
         SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
         if (selectAsExpression == null) {//全属性映射

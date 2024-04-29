@@ -9,7 +9,7 @@ import com.easy.query.core.proxy.columns.SQLQueryable;
  *
  * @author xuejiaming
  */
-public class List2Proxy<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractBasicProxyEntity<List2Proxy<TProxy,TEntity>, TEntity> {
+public class FlatListProxy<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractBasicProxyEntity<FlatListProxy<TProxy,TEntity>, TEntity> {
 
     private final SQLQueryable<TProxy, TEntity> sqlQueryable;
 
@@ -17,7 +17,7 @@ public class List2Proxy<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> ex
 //        return new ListProxy<>();
 //    }
 
-    public List2Proxy(SQLQueryable<TProxy,TEntity> sqlQueryable) {
+    public FlatListProxy(SQLQueryable<TProxy,TEntity> sqlQueryable) {
         this.sqlQueryable = sqlQueryable;
     }
 

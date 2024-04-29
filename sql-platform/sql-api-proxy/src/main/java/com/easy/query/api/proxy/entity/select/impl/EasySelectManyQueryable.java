@@ -328,10 +328,10 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy) {
-        throw new UnsupportedOperationException();
-    }
+//    @Override
+//    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy) {
+//        throw new UnsupportedOperationException();
+//    }
 
     @Override
     public EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> cloneQueryable() {
@@ -675,6 +675,12 @@ public class EasySelectManyQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     @Override
     public EntityQueryable<ListProxy<TProxy, TEntity>, List<TEntity>> tableLogicDelete(Supplier<Boolean> tableLogicDel) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(SQLFuncExpression1<ListProxy<TProxy, TEntity>, TRProxy> fetchResultExpression) {
+
         throw new UnsupportedOperationException();
     }
 //

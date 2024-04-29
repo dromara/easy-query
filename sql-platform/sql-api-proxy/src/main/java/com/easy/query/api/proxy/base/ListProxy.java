@@ -12,6 +12,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
+@Deprecated
 public class ListProxy<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractBasicProxyEntity<ListProxy<TProxy,TEntity>, List<TEntity>> {
 
     private final SQLQueryable<TProxy, TEntity> sqlQueryable;
