@@ -477,8 +477,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (EasySQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(entityQueryExpressionBuilder)) {
             selectOnly(resultClass);
             return Objects.equals(queryClass(), resultClass) && !entityQueryExpressionBuilder.getTable(0).getEntityTable().isAnonymous();
-        }
-        else {
+        } else {
             ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
             if (expressionContext.hasIncludes()) {
                 ColumnAsSelector<T1, ?> sqlColumnSelector = getSQLExpressionProvider1().getAutoColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
@@ -636,7 +635,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public ClientQueryable<T1> select(SQLExpression1<ColumnSelector<T1>> selectExpression) {
         ColumnSelector<T1> sqlColumnSelector = getSQLExpressionProvider1().getColumnSelector(entityQueryExpressionBuilder.getProjects());
         selectExpression.apply(sqlColumnSelector);
-        processorIncludeRelationProperty(sqlColumnSelector.getSQLNative(),sqlColumnSelector.getTable());
+        processorIncludeRelationProperty(sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
         if (EasyCollectionUtil.isSingle(entityQueryExpressionBuilder.getTables())) {
             return this;
         }
@@ -651,7 +650,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             SQLExpression1<ColumnAsSelector<T1, TR>> selectAllExpression = ColumnAsSelector::columnAll;
             selectAllExpression.apply(sqlColumnSelector);
         } else {
-            processorIncludeRelationProperty(sqlColumnSelector.getSQLNative(),sqlColumnSelector.getTable());
+            processorIncludeRelationProperty(sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
         }
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
@@ -718,10 +717,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             if (circulateChecker.includePathRepeat(new IncludePath(entityNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getPropertyName()))) {
                 continue;
             }
+//            String navigatePropName = resultNavigateMetadata.isBasicType() ? resultNavigateMetadata.getMappingProp().split("//.")[0] : resultNavigateMetadata.getPropertyName();
 
             clientQueryable
                     .include(t -> {
                         t.getIncludeNavigateParams().setReplace(replace);
+//                        ClientQueryable<Object> with = t.with(navigatePropName);
                         ClientQueryable<Object> with = t.with(resultNavigateMetadata.getPropertyName());
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());

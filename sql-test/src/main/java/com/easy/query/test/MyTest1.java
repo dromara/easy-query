@@ -55,7 +55,7 @@ public class MyTest1 extends BaseTest {
 //                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
                 })
                 .groupBy(o -> GroupKeys.TABLE1.of(o.content()))
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.groupTable().content().length()
                 )).toList();
@@ -79,7 +79,7 @@ public class MyTest1 extends BaseTest {
 //                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
                 })
                 .groupBy(o -> GroupKeys.TABLE1.of(o.content()))
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.groupTable().content().length()
                 )).toList();
@@ -103,7 +103,7 @@ public class MyTest1 extends BaseTest {
 //                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
                 })
                 .groupBy(o -> GroupKeys.TABLE1.of(o.content()))
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.groupTable().content().length()
                 )).toList();
@@ -118,7 +118,7 @@ public class MyTest1 extends BaseTest {
     public void testDraft3() {
         {
             Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
-                    .selectDraft(o -> Select.draft(
+                    .select(o -> Select.DRAFT.of(
                             o.createTime()
                     )).firstOrNull();
             Assert.assertNotNull(localDateTimeDraft1);
@@ -131,7 +131,7 @@ public class MyTest1 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.createTime().plus(2, TimeUnit.DAYS)
                 )).firstOrNull();
         Assert.assertNotNull(localDateTimeDraft1);
@@ -152,7 +152,7 @@ public class MyTest1 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.createTime().plusMonths(2)
                 )).firstOrNull();
         Assert.assertNotNull(localDateTimeDraft1);
@@ -173,7 +173,7 @@ public class MyTest1 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.createTime().plusMonths(12).plus(1, TimeUnit.DAYS)
                 )).firstOrNull();
         Assert.assertNotNull(localDateTimeDraft1);
@@ -222,7 +222,7 @@ public class MyTest1 extends BaseTest {
                 .where(o -> {
                     o.createTime().plusYears(1).le(LocalDateTime.of(2023, 1, 1, 0, 0));
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.createTime().plusMonths(12).plus(1, TimeUnit.DAYS),
                         o.createTime().plusYears(1),
                         o.createTime().plus(3, TimeUnit.SECONDS)
@@ -289,7 +289,7 @@ public class MyTest1 extends BaseTest {
                 .where(o -> {
                     o.createTime().plusYears(1).le(LocalDateTime.of(2023, 2, 1, 0, 0));
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.createTime().year(),
                         o.createTime().month(),
                         o.createTime().day(),
@@ -364,7 +364,7 @@ public class MyTest1 extends BaseTest {
                 .where(o -> {
                     o.createTime().plusYears(1).le(LocalDateTime.of(2023, 2, 1, 0, 0));
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.createTime().year(),
                         o.createTime().month(),
                         o.createTime().day(),
@@ -436,7 +436,7 @@ public class MyTest1 extends BaseTest {
 
         Draft7<Long, Long, Long, Long, Long, Long, Long> draft3 = easyEntityQuery.queryable(BlogEntity.class)
                 .whereById(id)
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days),
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),
@@ -490,7 +490,7 @@ public class MyTest1 extends BaseTest {
                     //创建时间和现在的相差天数现在小于0
                     o.createTime().duration(LocalDateTime.of(2021, 1, 1, 1, 1), DateTimeDurationEnum.Days).le(0L);
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title(),
                         o.createTime(),
@@ -801,9 +801,9 @@ public class MyTest1 extends BaseTest {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
-                .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
+                .select(o -> Select.DRAFT.of(o.title(), o.title().subString(1, 2)))
                 .groupBy(o -> GroupKeys.TABLE1.of(o.value1()))
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.count()
                 ))
@@ -851,14 +851,14 @@ public class MyTest1 extends BaseTest {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
-                .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
+                .select(o -> Select.DRAFT.of(o.title(), o.title().subString(1, 2)))
                 .groupBy(o -> {
                     return GroupKeys.TABLE1.of(o.value1());
                 })
                 .orderBy(o -> {
                     o.key1().desc();
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.count()
                 )).toList();
@@ -932,7 +932,7 @@ public class MyTest1 extends BaseTest {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
-                .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
+                .select(o -> Select.DRAFT.of(o.title(), o.title().subString(1, 2)))
                 .groupBy(o -> {
                     return GroupKeys.TABLE1.of(o.value1());
                 })
@@ -962,7 +962,7 @@ public class MyTest1 extends BaseTest {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
-                .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
+                .select(o -> Select.DRAFT.of(o.title(), o.title().subString(1, 2)))
                 .groupBy(o -> {
                     return GroupKeys.TABLE1.of(o.value1());
                 })
@@ -993,7 +993,7 @@ public class MyTest1 extends BaseTest {
                     o.title().isNotNull();
                     o.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
                 })
-                .selectDraft(o -> Select.draft(o.title(), o.title().subString(1, 2)))
+                .select(o -> Select.DRAFT.of(o.title(), o.title().subString(1, 2)))
                 .groupBy(o -> {
                     return GroupKeys.TABLE1.of(o.value1());
                 })
@@ -1103,7 +1103,7 @@ public class MyTest1 extends BaseTest {
                 .groupBy(o -> GroupKeys.TABLE1.of(o.title().subString(1, 2)))
                 .having(o -> {
                     o.count().ge(1L);
-                }).selectDraft(o -> Select.draft(
+                }).select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.count()
                 )).toList();
@@ -1141,7 +1141,7 @@ public class MyTest1 extends BaseTest {
                 ))
                 .having(t -> {
                     t.count().ge(1L);
-                }).selectDraft(o -> Select.draft(
+                }).select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.key2(),
                         o.count()
@@ -1196,7 +1196,7 @@ public class MyTest1 extends BaseTest {
                         t.expression().sqlType("SUBSTR({0},2,2)", c -> c.expression(t.title())).setPropertyType(String.class),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.count(o.groupTable().t1.title())
                 )).toList();
@@ -1232,7 +1232,7 @@ public class MyTest1 extends BaseTest {
                         t.expression().sqlType("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022, 1, 1, 1, 2))).setPropertyType(LocalDateTime.class),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.count(o.groupTable().t1.title())
                 )).toList();

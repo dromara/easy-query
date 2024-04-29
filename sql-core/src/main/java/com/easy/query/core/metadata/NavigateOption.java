@@ -3,6 +3,7 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.util.EasyClassUtil;
 
 /**
  * create time 2024/3/1 16:13
@@ -18,6 +19,8 @@ public class NavigateOption {
     private final RelationTypeEnum relationType;
     private final String selfProperty;
     private final String targetProperty;
+    private final String mappingProp;
+    private final boolean basicType;
     private Class<?> mappingClass;
     private String selfMappingProperty;
     private String targetMappingProperty;
@@ -29,7 +32,8 @@ public class NavigateOption {
                           Class<?> navigatePropertyType,
                           RelationTypeEnum relationType,
                           String selfProperty,
-                          String targetProperty){
+                          String targetProperty,
+                          String mappingProp){
 
         this.entityMetadata = entityMetadata;
         this.propertyName = propertyName;
@@ -38,6 +42,8 @@ public class NavigateOption {
         this.relationType = relationType;
         this.selfProperty = selfProperty;
         this.targetProperty = targetProperty;
+        this.mappingProp = mappingProp;
+        this.basicType = EasyClassUtil.isBasicType(navigatePropertyType);
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -98,5 +104,13 @@ public class NavigateOption {
 
     public void setPredicateFilterExpression(SQLExpression1<WherePredicate<?>> predicateFilterExpression) {
         this.predicateFilterExpression = predicateFilterExpression;
+    }
+
+    public String getMappingProp() {
+        return mappingProp;
+    }
+
+    public boolean isBasicType() {
+        return basicType;
     }
 }

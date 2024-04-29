@@ -196,7 +196,7 @@ public void query10() {
                 .executeRows();
         Draft3<LocalDateTime, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(BlogEntity.class)
                 .whereById(id)
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.createTime().plus(1, TimeUnit.DAYS),
                         o.createTime().plus(2, TimeUnit.SECONDS),
                         o.createTime().plus(3, TimeUnit.MINUTES)
@@ -204,7 +204,7 @@ public void query10() {
 
         Draft7<Long, Long, Long, Long, Long, Long, Long> draft3 = entityQuery.queryable(BlogEntity.class)
                 .whereById(id)
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days),
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),
@@ -231,7 +231,7 @@ public void query10() {
         Assert.assertEquals(-3, (long) value7);
         Draft7<Long, Long, Long, Long, Long, Long, Long> draft4 = entityQuery.queryable(BlogEntity.class)
                 .whereById(id)
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         SQLMathExpression.abs(o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days)),
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
                         o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),

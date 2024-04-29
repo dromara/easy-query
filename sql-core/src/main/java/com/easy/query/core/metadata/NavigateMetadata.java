@@ -34,6 +34,8 @@ public class NavigateMetadata {
      * 关联关系
      */
     private final RelationTypeEnum relationType;
+    private final String mappingProp;
+    private final boolean basicType;
     private final String selfProperty;
     /**
      * 导航属性关联字段
@@ -60,6 +62,8 @@ public class NavigateMetadata {
         this.selfMappingProperty = navigateOption.getSelfMappingProperty();
         this.targetMappingProperty = navigateOption.getTargetMappingProperty();
         this.predicateFilterExpression = navigateOption.getPredicateFilterExpression();
+        this.mappingProp=navigateOption.getMappingProp();
+        this.basicType=navigateOption.isBasicType();
         this.getter = getter;
         this.setter = setter;
     }
@@ -148,5 +152,12 @@ public class NavigateMetadata {
         if(predicateFilterExpression!=null){
             predicateFilterExpression.apply(wherePredicate);
         }
+    }
+    public String getMappingProp() {
+        return mappingProp;
+    }
+
+    public boolean isBasicType() {
+        return basicType;
     }
 }

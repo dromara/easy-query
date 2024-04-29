@@ -182,7 +182,7 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
                 .executeRows();
         Draft3<LocalDateTime, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
                 .whereById(id)
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.createTime().plus(1, TimeUnit.DAYS),
                         o.createTime().plus(2, TimeUnit.SECONDS),
                         o.createTime().plus(3, TimeUnit.MINUTES)
@@ -190,7 +190,7 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
 
         Draft4<Long, Long, Long, Long> draft3 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
                 .whereById(id)
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.createTime().duration(o.createTime().plus(1,TimeUnit.DAYS), DateTimeDurationEnum.Days),
                         o.createTime().duration(o.createTime().plus(2,TimeUnit.SECONDS),DateTimeDurationEnum.Seconds),
                         o.createTime().duration(o.createTime().plus(3,TimeUnit.MINUTES),DateTimeDurationEnum.Minutes),

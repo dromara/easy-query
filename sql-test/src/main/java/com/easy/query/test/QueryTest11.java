@@ -141,11 +141,11 @@ public class QueryTest11 extends BaseTest {
         }
         {
             List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class).limit(100)
-                    .selectDraft(o -> Select.draft(o.id(), o.stars()))
+                    .select(o -> Select.DRAFT.of(o.id(), o.stars()))
                     .leftJoin(BlogEntity.class, (t, t1) -> t.value1().eq(t1.id()))
-                    .selectDraft((a, b) -> Select.draft(a.value1(), b.url()))
+                    .select((a, b) -> Select.DRAFT.of(a.value1(), b.url()))
                     .innerJoin(BlogEntity.class, (t, t1) -> t.value2().eq(t1.id()))
-                    .selectDraft((a, b) -> Select.draft(a.value1(), b.url())).toList();
+                    .select((a, b) -> Select.DRAFT.of(a.value1(), b.url())).toList();
         }
     }
 
@@ -615,20 +615,20 @@ public class QueryTest11 extends BaseTest {
         //SELECT 'type1' AS `type`,COUNT(t.`id`) AS `count` FROM `t_topic` t WHERE t.`title` = ?
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select1 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("123"))
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.SQLParameter().valueOf("type1"),
                         o.expression().count()
                 ));
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select2 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("123"))
-                .selectDraft(o -> Select.draft(
-                        o.SQLParameter().valueOf("type2"),
+                .select(o -> Select.DRAFT.of(
+                        o.expression().constant().valueOf("type2"),
                         o.expression().count()
                 ));
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select3 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("123"))
-                .selectDraft(o -> Select.draft(
-                        o.SQLParameter().valueOf("type3"),
+                .select(o -> Select.DRAFT.of(
+                        o.expression().constant().valueOf("type3"),
                         o.expression().count()
                 ));
         List<Draft2<String, Long>> list1 = select1.unionAll(select2, select3).toList();
@@ -667,7 +667,7 @@ public class QueryTest11 extends BaseTest {
                     o.key2().asc();
 //                    o.key2().nullOrDefault(1).asc();
 //                    o.key2().asc(OrderByModeEnum.NULLS_FIRST);
-                }).selectDraft(o -> Select.draft(
+                }).select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.key2(),
                         o.sum(o.groupTable().star())
@@ -717,7 +717,7 @@ public class QueryTest11 extends BaseTest {
                             .where(x -> x.id().eq(o.id())).selectCount(Integer.class);
 
                     o.star().eq(intQuery);
-                }).selectDraft(o -> Select.draft(
+                }).select(o -> Select.DRAFT.of(
                         o.id(),
                         o.url()
                 )).toList();
@@ -739,10 +739,10 @@ public class QueryTest11 extends BaseTest {
         List<Draft3<String, String, Long>> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> {
                     o.id().eq("123");
-                }).selectDraft(o -> Select.draft(
+                }).select(o -> Select.DRAFT.of(
                         o.id(),
                         o.url(),
-                        o.subQuery(() -> easyEntityQuery.queryable(Topic.class).where(x -> x.id().eq(o.id())).selectCount())
+                        o.expression().subQuery(() -> easyEntityQuery.queryable(Topic.class).where(x -> x.id().eq(o.id())).selectCount())
                 )).toList();
 
 

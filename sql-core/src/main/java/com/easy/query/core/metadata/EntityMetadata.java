@@ -208,7 +208,7 @@ public class EntityMetadata {
                 if (propertyDescriptor != null) {
                     String warningMessage = EasyClassUtil.getSimpleName(entityClass) + " filed:" + field.getName() + ",compare name:" + property + ",property name:" + propertyDescriptor.getName();
                     if (log instanceof NoLoggingImpl) {
-                        System.out.println("NoLogging:"+warningMessage);
+                        System.out.println("NoLogging:" + warningMessage);
                     } else {
                         log.warn(warningMessage);
                     }
@@ -255,6 +255,7 @@ public class EntityMetadata {
 
         String selfProperty = tableEntity ? navigate.selfProperty() : null;
         String targetProperty = tableEntity ? navigate.targetProperty() : null;
+        String mappingProp = tableEntity ? null : navigate.mappingProp();
         RelationTypeEnum relationType = navigate.value();
         Class<?> navigateType = getNavigateType(relationType, field, fastBeanProperty);
         if (navigateType == null) {
@@ -263,7 +264,7 @@ public class EntityMetadata {
 
         Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
         PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
-        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty);
+        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty,mappingProp);
 
         if (tableEntity) {
             Class<? extends NavigateExtraFilterStrategy> extraFilterStrategyClass = navigate.extraFilter();

@@ -4,6 +4,8 @@ import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.sql.impl.FillPredicate;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dto.CityVO;
@@ -163,10 +165,46 @@ public class RelationTest extends BaseTest {
         List<String> ids = Arrays.asList("1", "2", "3");
         try {
             relationInit(ids);
-            List<SchoolStudent> list4 = easyEntityQuery.queryable(SchoolStudent.class).toList();
-            easyEntityQuery.loadInclude(list4,x->x.schoolClass());
-            for (SchoolStudent schoolStudent : list4) {
+//            {
+//
+//
+//                ListenerContext listenerContext = new ListenerContext(true);
+//                listenerContextManager.startListen(listenerContext);
+//                System.out.println("------------------");
+////                easyQueryClient.queryable(SchoolClass.class)
+////                        .where(s -> s.sqlNativeSegment())
+//
+//                List<SchoolClassAOProp> list = easyQueryClient.queryable(SchoolClass.class)
+//                        .selectAutoInclude(SchoolClassAOProp.class)
+//                        .toList();
+//                System.out.println("------------------");
+//                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+//                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+//
+//            }
 
+            {
+
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+
+                List<Draft1<Long>> list5 = easyEntityQuery.queryable(SchoolClass.class)
+                        .where(s -> s.name().like("123"))
+                        .select(s -> Select.DRAFT.of(
+                                s.schoolStudents().where(st -> st.name().like("456")).count()
+                        )).toList();
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+                Assert.assertEquals(1, listenerContext.getJdbcExecuteAfterArgs().size());
+
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT (SELECT COUNT(*) FROM `school_student` t2 WHERE t2.`class_id` = t.`id` AND t2.`name` LIKE ?) AS `value1` FROM `school_class` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("%456%(String),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+            }
+
+            List<SchoolStudent> list4 = easyEntityQuery.queryable(SchoolStudent.class).toList();
+            easyEntityQuery.loadInclude(list4, x -> x.schoolClass());
+            for (SchoolStudent schoolStudent : list4) {
                 Assert.assertNotNull(schoolStudent.getSchoolClass());
             }
 //            {
@@ -197,10 +235,10 @@ public class RelationTest extends BaseTest {
 //                        .where(s -> s.sqlNativeSegment())
                 List<SchoolClass> schoolStudents = easyEntityQuery.queryable(SchoolClass.class).toList();
 
-                easyEntityQuery.loadInclude(schoolStudents,x-> x.schoolStudents());
+                easyEntityQuery.loadInclude(schoolStudents, x -> x.schoolStudents());
                 System.out.println("------------------");
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(2,listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
                 {
 
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
@@ -216,18 +254,16 @@ public class RelationTest extends BaseTest {
 
                 }
                 for (SchoolClass schoolStudent : schoolStudents) {
-                    if(Objects.equals(schoolStudent.getId(),"class1")){
-                        Assert.assertEquals(2,schoolStudent.getSchoolStudents().size());
+                    if (Objects.equals(schoolStudent.getId(), "class1")) {
+                        Assert.assertEquals(2, schoolStudent.getSchoolStudents().size());
                     }
-                    if(Objects.equals(schoolStudent.getId(),"class2")){
-                        Assert.assertEquals(1,schoolStudent.getSchoolStudents().size());
+                    if (Objects.equals(schoolStudent.getId(), "class2")) {
+                        Assert.assertEquals(1, schoolStudent.getSchoolStudents().size());
                     }
-                    if(Objects.equals(schoolStudent.getId(),"class3")){
-                        Assert.assertEquals(0,schoolStudent.getSchoolStudents().size());
+                    if (Objects.equals(schoolStudent.getId(), "class3")) {
+                        Assert.assertEquals(0, schoolStudent.getSchoolStudents().size());
                     }
                 }
-
-
 
 
 //                Assert.assertEquals("1","2");
@@ -235,7 +271,7 @@ public class RelationTest extends BaseTest {
                         .includes(o -> o.schoolStudents())
                         .toList();
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(),y->y.where(x -> x.name().like("123")))
+                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -254,10 +290,10 @@ public class RelationTest extends BaseTest {
 
                 List<SchoolClass> schoolStudents = easyQueryClient.queryable(SchoolClass.class)
                         .toList();
-                easyQueryClient.loadInclude(schoolStudents,"schoolStudents");
+                easyQueryClient.loadInclude(schoolStudents, "schoolStudents");
                 System.out.println("------------------");
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(2,listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
                 {
 
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
@@ -274,14 +310,12 @@ public class RelationTest extends BaseTest {
                 }
 
 
-
-
 //                Assert.assertEquals("1","2");
                 List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
                         .includes(o -> o.schoolStudents())
                         .toList();
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(),y->y.where(x -> x.name().like("123")))
+                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -305,7 +339,7 @@ public class RelationTest extends BaseTest {
                         .toList();
                 System.out.println("------------------");
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(2,listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
                 {
 
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
@@ -322,14 +356,12 @@ public class RelationTest extends BaseTest {
                 }
 
 
-
-
 //                Assert.assertEquals("1","2");
                 List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
                         .includes(o -> o.schoolStudents())
                         .toList();
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(),y->y.where(x -> x.name().like("123")))
+                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -353,7 +385,7 @@ public class RelationTest extends BaseTest {
                         .toList();
                 System.out.println("------------------");
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(2,listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
                 {
 
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
@@ -370,14 +402,12 @@ public class RelationTest extends BaseTest {
                 }
 
 
-
-
 //                Assert.assertEquals("1","2");
                 List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
                         .includes(o -> o.schoolStudents())
                         .toList();
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(),y->y.where(x -> x.name().like("123")))
+                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -440,15 +470,15 @@ public class RelationTest extends BaseTest {
 //                        })
 //                        .selectAutoInclude(SchoolClass1VO.class,false)
 //                        .toList();
-                List<SchoolClass1VO> listx= easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents(),schoolStudentQuery->{
-                            schoolStudentQuery.where(st->st.name().like("123")).limit(2);
+                List<SchoolClass1VO> listx = easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(s -> s.schoolStudents(), schoolStudentQuery -> {
+                            schoolStudentQuery.where(st -> st.name().like("123")).limit(2);
                         })
                         .selectAutoInclude(SchoolClass1VO.class)
                         .toList();
                 System.out.println("------------------");
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(),2);
+                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 2);
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                     Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -484,10 +514,10 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
 
                 List<SchoolTeacher> list = easyEntityQuery.queryable(SchoolStudent.class)
-                        .select(s ->  s.schoolClass().schoolTeachers().toList())
+                        .select(s -> s.schoolClass().schoolTeachers().toList())
                         .firstNotNull();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(3,listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                     Assert.assertEquals("SELECT t1.`id` FROM `school_student` t LEFT JOIN `school_class` t1 ON t1.`id` = t.`class_id` LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -511,10 +541,10 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
 
                 List<List<SchoolTeacher>> list = easyEntityQuery.queryable(SchoolStudent.class)
-                        .select(s ->  s.schoolClass().schoolTeachers().toList())
+                        .select(s -> s.schoolClass().schoolTeachers().toList())
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(3,listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                     Assert.assertEquals("SELECT t1.`id` FROM `school_student` t LEFT JOIN `school_class` t1 ON t1.`id` = t.`class_id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -541,10 +571,10 @@ public class RelationTest extends BaseTest {
 
                 List<List<SchoolStudent>> list = easyEntityQuery.queryable(SchoolClass.class)
 //                        .includes(s -> s.schoolStudents())
-                        .select(s ->  s.schoolStudents().toList())
+                        .select(s -> s.schoolStudents().toList())
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(),2);
+                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 2);
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                     Assert.assertEquals("SELECT `id`,`name` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -566,12 +596,12 @@ public class RelationTest extends BaseTest {
                 ListenerContext listenerContext = new ListenerContext(true);
                 listenerContextManager.startListen(listenerContext);
                 System.out.println("------------------");
-                List<SchoolClassVO> listx= easyEntityQuery.queryable(SchoolClass.class)
+                List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
                         .selectAutoInclude(SchoolClassVO.class)
                         .toList();
                 System.out.println("------------------");
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(),9);
+                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 9);
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                     Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -635,10 +665,10 @@ public class RelationTest extends BaseTest {
 //                        .include(s -> s.schoolClass(),y->{
 //                            y.includes(x->x.schoolTeachers());
 //                        })
-                        .select(s ->  s.schoolClass().schoolTeachers().toList())
+                        .select(s -> s.schoolClass().schoolTeachers().toList())
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(3,listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                     Assert.assertEquals("SELECT t1.`id` FROM `school_student` t LEFT JOIN `school_class` t1 ON t1.`id` = t.`class_id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -667,10 +697,10 @@ public class RelationTest extends BaseTest {
 //                        .include(s -> s.schoolClass(),y->{
 //                            y.includes(x->x.schoolTeachers());
 //                        })
-                        .select(s ->  s.schoolClass().schoolTeachers().toList())
+                        .select(s -> s.schoolClass().schoolTeachers().toList())
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(3,listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                     Assert.assertEquals("SELECT t1.`id` FROM `school_student` t LEFT JOIN `school_class` t1 ON t1.`id` = t.`class_id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -698,10 +728,10 @@ public class RelationTest extends BaseTest {
 
                 List<List<SchoolStudent>> list = easyEntityQuery.queryable(SchoolClass.class)
                         .includes(s -> s.schoolStudents())
-                        .select(s ->  s.schoolStudents().toList())
+                        .select(s -> s.schoolStudents().toList())
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(),2);
+                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 2);
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                     Assert.assertEquals("SELECT `id`,`name` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -780,9 +810,9 @@ public class RelationTest extends BaseTest {
                 System.out.println("------------------");
                 List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
                         //返回班级下的所有学生 班级和学生是一对多
-                        .includes(s -> s.schoolStudents(),x->{
+                        .includes(s -> s.schoolStudents(), x -> {
                             //返回学生下的所有学生地址 学生和学生地址是一对一
-                            x.include(y->y.schoolStudentAddress());
+                            x.include(y -> y.schoolStudentAddress());
                         })
                         //返回班级下面的所有老师 老师和班级多对多
                         .includes(s -> s.schoolTeachers())
@@ -792,7 +822,7 @@ public class RelationTest extends BaseTest {
 
 
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(),5);
+                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 5);
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                     Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -860,14 +890,14 @@ public class RelationTest extends BaseTest {
                 ListenerContext listenerContext = new ListenerContext(true);
                 listenerContextManager.startListen(listenerContext);
                 System.out.println("------------------");
-                List<SchoolClassOnlyVO> listx= easyEntityQuery.queryable(SchoolClass.class)
+                List<SchoolClassOnlyVO> listx = easyEntityQuery.queryable(SchoolClass.class)
                         .selectAutoInclude(SchoolClassOnlyVO.class)
                         .toList();
                 System.out.println("------------------");
 
 
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(),6);
+                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 6);
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                     Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -918,9 +948,9 @@ public class RelationTest extends BaseTest {
                 System.out.println("------------------");
                 List<SchoolClassOnlyVO> listx = easyEntityQuery.queryable(SchoolClass.class)
                         //返回班级下的所有学生 班级和学生是一对多
-                        .includes(s -> s.schoolStudents(),x->{
+                        .includes(s -> s.schoolStudents(), x -> {
                             //返回学生下的所有学生地址 学生和学生地址是一对一
-                            x.include(y->y.schoolStudentAddress());
+                            x.include(y -> y.schoolStudentAddress());
                         })
                         //返回班级下面的所有老师 老师和班级多对多
                         .includes(s -> s.schoolTeachers())
@@ -930,7 +960,7 @@ public class RelationTest extends BaseTest {
 
 
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(),5);
+                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 5);
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                     Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -1264,7 +1294,7 @@ public class RelationTest extends BaseTest {
                         .includes(o -> o.schoolStudents())
                         .toList();
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(),y->y.where(x -> x.name().like("123")))
+                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());

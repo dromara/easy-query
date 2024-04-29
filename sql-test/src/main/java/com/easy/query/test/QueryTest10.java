@@ -473,7 +473,7 @@ public class QueryTest10 extends BaseTest{
             List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t ->GroupKeys.TABLE1.of( t.id()))
-                    .selectDraft(t -> Select.draft(t.key1()))
+                    .select(t -> Select.DRAFT.of(t.key1()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -488,7 +488,7 @@ public class QueryTest10 extends BaseTest{
             List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t ->GroupKeys.TABLE1.of( t.id(),t.title()))
-                    .selectDraft(t -> Select.draft(t.key1()))
+                    .select(t -> Select.DRAFT.of(t.key1()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -503,7 +503,7 @@ public class QueryTest10 extends BaseTest{
             List<Draft1<String>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t -> GroupKeys.TABLE1.of(t.id()))
-                    .selectDraft(t -> Select.draft(t.key1()))
+                    .select(t -> Select.DRAFT.of(t.key1()))
                     .where(o -> o.value1().eq("123"))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -518,7 +518,7 @@ public class QueryTest10 extends BaseTest{
             List<Draft2<String, Long>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t -> GroupKeys.TABLE1.of(t.id()))
-                    .selectDraft(t -> Select.draft(
+                    .select(t -> Select.DRAFT.of(
                             t.key1(),
                             t.count()
                     ))
@@ -535,7 +535,7 @@ public class QueryTest10 extends BaseTest{
             List<Draft3<String, Long, Integer>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t -> GroupKeys.TABLE1.of(t.id()))
-                    .selectDraft(g -> Select.draft(g.key1(), g.count(), g.sum(g.groupTable().stars())))
+                    .select(g -> Select.DRAFT.of(g.key1(), g.count(), g.sum(g.groupTable().stars())))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -549,7 +549,7 @@ public class QueryTest10 extends BaseTest{
             listenerContextManager.startListen(listenerContext);
             List<Draft2<String, String>> list = easyEntityQuery
                     .queryable(ValueCompany.class)
-                    .selectDraft(t -> Select.draft(t.id(), t.address().province()))
+                    .select(t -> Select.DRAFT.of(t.id(), t.address().province()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -562,7 +562,7 @@ public class QueryTest10 extends BaseTest{
             listenerContextManager.startListen(listenerContext);
             List<Draft2<String, LocalDateTime>> list = easyEntityQuery
                     .queryable(BlogEntity.class)
-                    .selectDraft(t -> Select.draft(t.id(), t.createTime()))
+                    .select(t -> Select.DRAFT.of(t.id(), t.createTime()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -577,7 +577,7 @@ public class QueryTest10 extends BaseTest{
             listenerContextManager.startListen(listenerContext);
             List<Draft3<String, LocalDateTime, String>> list = easyEntityQuery
                     .queryable(BlogEntity.class)
-                    .selectDraft(t -> Select.draft(t.id(),
+                    .select(t -> Select.DRAFT.of(t.id(),
                             t.createTime(),
                             t.expression().sqlType("1").setPropertyType(String.class)
                     ))
@@ -596,7 +596,7 @@ public class QueryTest10 extends BaseTest{
             listenerContextManager.startListen(listenerContext);
             List<Draft3<String, LocalDateTime, String>> list = easyEntityQuery
                     .queryable(BlogEntity.class)
-                    .selectDraft(t -> Select.draft(t.id(),
+                    .select(t -> Select.DRAFT.of(t.id(),
                             t.createTime(),
                             t.expression().sqlType("IFNULL({0},'1')", c -> c.keepStyle().expression(t.title())).setPropertyType(String.class)
                     ))
@@ -656,7 +656,7 @@ public class QueryTest10 extends BaseTest{
                     t.id().asc();
                     t1.createTime().desc();
                 })
-                .selectDraft((t, t1) -> Select.draft(
+                .select((t, t1) -> Select.DRAFT.of(
                         t.stars(),
                         t.createTime(),
                         t1.title()
@@ -697,7 +697,7 @@ public class QueryTest10 extends BaseTest{
                     o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
                 })
                 .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.count()
                 ))
@@ -726,7 +726,7 @@ public class QueryTest10 extends BaseTest{
                     o.title().toUpper().ne(o.id().toLower());
 //                    o.title().toUpper().ne(new LocalDateTimeProxy(LocalDateTime.of(2021,1,1,1,1)).format("yyyy-MM-dd"));
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title().toLower(),
                         o.title().toUpper()
@@ -756,7 +756,7 @@ public class QueryTest10 extends BaseTest{
                             .subString(1, 10)//分割从第一位
                             .like("023-01");
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title().toLower().replace("123","456"),
                         o.title().toUpper(),
@@ -789,7 +789,7 @@ public class QueryTest10 extends BaseTest{
                             .trim()
                             .like("023-01");
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title().toLower().trim(),
                         o.title().trim().toUpper(),
@@ -822,7 +822,7 @@ public class QueryTest10 extends BaseTest{
                             .trimStart()
                             .like("023-01");
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title().toLower().trimStart(),
                         o.title().trimStart().toUpper(),
@@ -855,7 +855,7 @@ public class QueryTest10 extends BaseTest{
                             .trimEnd()
                             .like("023-01");
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title().toLower().trimEnd(),
                         o.title().trimEnd().toUpper(),
@@ -881,7 +881,7 @@ public class QueryTest10 extends BaseTest{
                     o.title().trimEnd().trimStart().eq(o.id().trimStart());
                     o.createTime().format("yyyy-MM-dd").subString(0, 4).eq("2021");
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title().toLower()
                 ))
@@ -904,7 +904,7 @@ public class QueryTest10 extends BaseTest{
                 .where(o -> {
                     o.title().trimEnd().trimStart().replace("title", "abc").like("abc");
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title().toLower().replace("title", "abc")
                 ))
@@ -929,7 +929,7 @@ public class QueryTest10 extends BaseTest{
                     o.title().trim().compareTo(o.id().toLower().subString(1, 10)).ge(2);//>=2
                     o.id().compareTo(o.title()).le(1);//<=1
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title().compareTo(o.id())
                 ))
@@ -952,7 +952,7 @@ public class QueryTest10 extends BaseTest{
                 .where(o -> {
                     o.title().leftPad(5, '1').ne("title0");//==0
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title().leftPad(9, '0')
                 ))
@@ -968,7 +968,7 @@ public class QueryTest10 extends BaseTest{
                     o.title().leftPad(5, '1').ne("title0");//==0
                     o.id().ne("7");
                 })
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title().leftPad(9, '0')
                 ))
@@ -1011,7 +1011,7 @@ public class QueryTest10 extends BaseTest{
 ////                .groupByDraft(o -> GroupBy.keys(
 ////                        o.title()
 ////                ))
-////                .selectDraft(o -> Select.draft(
+////                .select(o -> Select.DRAFT.of(
 ////                        o.groupKeys().key1(),
 ////                        o.count(x->x.title())
 ////                )).toList();
@@ -1075,7 +1075,7 @@ public class QueryTest10 extends BaseTest{
         }).toList();
         List<Draft1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
                 .groupBy(o -> GroupKeys.TABLE1.of(o.content().subString(0, 8)))
-                .selectDraft(o -> Select.draft(o.key1()))
+                .select(o -> Select.DRAFT.of(o.key1()))
                 .toList();
         query(q->q.whereObject(new Object()));
 //        easyEntityQuery.queryable(BlogEntity.class)

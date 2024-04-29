@@ -156,7 +156,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
 
         List<Draft2<String, String>> list = entityQuery.queryable(MsSQLMyTopic.class)
                 .groupBy(o -> GroupKeys.TABLE1.of(o.title()))
-                .selectDraft(o -> Select.draft(
+                .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.groupTable().id().join(",")
                 )).toList();
