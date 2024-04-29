@@ -7,7 +7,7 @@
     <groupId>com.easy-query</groupId>
     <artifactId>easy-query-all</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.2</version>
+    <version>2.0.3</version>
     <name>easy-query</name>
     <description>java object query distributed connector</description>
     <url>https://github.com/xuejmnet/easy-query</url>
@@ -37,11 +37,11 @@
         <module>sql-db-support/sql-dameng</module>
         <module>sql-db-support/sql-kingbase-es</module>
         <module>sql-db-support/sql-clickhouse</module>
-        <module>sql-db-support/sql-gauss-db</module>
+<!--        <module>sql-db-support/sql-gauss-db</module>-->
         <module>sql-processor</module>
         <!--        以下是不需要deploy到远程仓库的-->
-        <module>sql-test</module>
-        <module>samples</module>
+<!--        <module>sql-test</module>-->
+<!--        <module>samples</module>-->
     </modules>
 
     <properties>

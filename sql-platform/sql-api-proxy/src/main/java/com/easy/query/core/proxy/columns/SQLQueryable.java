@@ -1,7 +1,5 @@
 package com.easy.query.core.proxy.columns;
 
-import com.easy.query.api.proxy.base.FlatListProxy;
-import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.select.Query;
