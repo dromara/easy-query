@@ -37,7 +37,8 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
         EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
         String[] navValueSplit = navValue.split("\\.");
         String firstNavValue = navValueSplit[0];
-        NavigateMetadata currentNavigateMetadata = queryEntityMetadata.getNavigateNotNull(firstNavValue);
+        NavigateMetadata firstNavigateMetadata = queryEntityMetadata.getNavigateNotNull(firstNavValue);
+        NavigateMetadata currentNavigateMetadata = firstNavigateMetadata;
         EntityMetadata currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
         List<Property<Object, ?>> replyExpressions = new ArrayList<>();
         replyExpressions.add(currentNavigateMetadata.getGetter());
@@ -62,8 +63,14 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
             }
             return collectionValues;
         };
-        selectAutoInclude0(runtimeContext.getEntityMetadataManager(), queryable, entityMetadata, navValue);
-        this.queryable = queryable;
+        ClientQueryable<?> select = queryable.select(o -> {
+            o.column(firstNavigateMetadata.getSelfPropertyOrPrimary());
+//            //todo include
+//            EasySQLExpressionUtil.appendTargetExtraTargetProperty(firstNavigateMetadata, sqlEntityExpressionBuilder, o.getAsSelector(), o.getTable());
+
+        });
+        selectAutoInclude0(runtimeContext.getEntityMetadataManager(), select, entityMetadata, navValue);
+        this.queryable = select;
 //            }
 //        }
     }
@@ -95,7 +102,17 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
                     NavigateMetadata navigateMetadata = entityMetadata.getNavigateNotNull(navigateProperty);
                     EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
                     selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, nextNavigateProperty);
-                    return with;
+                    //没有下级要拉去
+                    if(nextNavigateProperty==null){
+                        return with;
+                    }else{
+                        return with.select(c->{
+                            Collection<String> keyProperties = entityMetadata.getKeyProperties();
+                            for (String keyProperty : keyProperties) {
+                                c.column(keyProperty);
+                            }
+                        });
+                    }
                 });
     }
 

@@ -139,14 +139,6 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(SQLQueryable<TPropertyProxy, TProperty> columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<T1Proxy, T1>> navigateSelectExpression) {
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(columnProxy.getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy.getQueryable().get1Proxy(), navigateSelectExpression));
     }
-
-    @Deprecated
-    default ListProxy<T1Proxy, T1> toStructList() {
-        return new ListProxy<>(this);
-    }
-    default FlatListProxy<T1Proxy, T1> toList() {
-        return new FlatListProxy<>(this);
-    }
     default T1Proxy flatElement() {
         T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), getProxy().getEntitySQLContext());
         tPropertyProxy.setNavValue(getNavValue());

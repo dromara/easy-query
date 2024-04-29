@@ -9,6 +9,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
@@ -306,10 +307,16 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 ClientQueryable<?> includeQueryable = includeQueryableExpression.apply();
                 EntityQueryExpressionBuilder sqlEntityExpressionBuilder = includeQueryable.getSQLEntityExpressionBuilder();
                 NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
-                return includeQueryable.select(t -> {
-                    t.columnAll();
-                    EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata,sqlEntityExpressionBuilder,t.getSQLNative(),t.getTable());
-                });
+                if(sqlEntityExpressionBuilder.getProjects().isEmpty()){
+                    return includeQueryable.select(t -> {
+                        t.columnAll();
+                        EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata,sqlEntityExpressionBuilder,t.getSQLNative(),t.getTable());
+                    });
+                }else{
+                    ColumnSelector<?> columnSelector = includeQueryable.getSQLExpressionProvider1().getColumnSelector(sqlEntityExpressionBuilder.getProjects());
+                    EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata,sqlEntityExpressionBuilder,columnSelector.getSQLNative(),columnSelector.getTable());
+                    return includeQueryable;
+                }
             });
         }
         if (!aliasEntity) {

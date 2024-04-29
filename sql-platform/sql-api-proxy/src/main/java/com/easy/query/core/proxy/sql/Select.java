@@ -1,22 +1,17 @@
 package com.easy.query.core.proxy.sql;
 
-import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
-import com.easy.query.api.proxy.entity.select.impl.EasySelectManyQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
-import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.draft.proxy.DraftProxy;
 import com.easy.query.core.util.EasyArrayUtil;
-import com.easy.query.core.util.EasyObjectUtil;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -74,33 +69,9 @@ public class Select {
         }
     }
 
-    public static <TQueryable, TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectList(ListProxy<TRProxy, TR> listProxy, TQueryable queryable) {
-
-        SQLQueryable<TRProxy, TR> sqlQueryable = listProxy.getSqlQueryable();
-        Objects.requireNonNull(sqlQueryable, "select columns null result class");
-        EntityQueryable<ListProxy<TRProxy, TR>, List<TR>> listProxyListEntityQueryable = new EasySelectManyQueryable<>(EasyObjectUtil.typeCastNullable(queryable), listProxy, sqlQueryable.getNavValue());
-        return EasyObjectUtil.typeCastNullable(listProxyListEntityQueryable);
-    }
-
     public static <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxy(TRProxy resultProxy, ClientQueryable<?> queryable) {
 
         Objects.requireNonNull(resultProxy, "select null result class");
-        if (resultProxy instanceof ListProxy) {
-            ListProxy<TRProxy, TR> listProxy = (ListProxy<TRProxy, TR>) resultProxy;
-            SQLQueryable<TRProxy, TR> sqlQueryable = listProxy.getSqlQueryable();
-            Objects.requireNonNull(sqlQueryable, "select columns null result class");
-
-            EntityQueryable<ListProxy<TRProxy, TR>, List<TR>> listProxyListEntityQueryable = new EasySelectManyQueryable<>(queryable, listProxy, sqlQueryable.getNavValue());
-            return EasyObjectUtil.typeCastNullable(listProxyListEntityQueryable);
-        }
-//        if (resultProxy instanceof FlatListProxy) {
-//            FlatListProxy<TRProxy, TR> listProxy = (FlatListProxy<TRProxy, TR>) resultProxy;
-//            SQLQueryable<TRProxy, TR> sqlQueryable = listProxy.getSqlQueryable();
-//            Objects.requireNonNull(sqlQueryable, "select columns null result class");
-//
-//            EntityQueryable<FlatListProxy<TRProxy, TR>, TR> listProxyListEntityQueryable = new EasySelectMany2Queryable<>(queryable, listProxy, sqlQueryable.getNavValue());
-//            return EasyObjectUtil.typeCastNullable(listProxyListEntityQueryable);
-//        }
 
         SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
         if (selectAsExpression == null) {//全属性映射

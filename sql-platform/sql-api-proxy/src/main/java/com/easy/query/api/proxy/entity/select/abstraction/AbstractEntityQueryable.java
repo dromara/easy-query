@@ -1,6 +1,5 @@
 package com.easy.query.api.proxy.entity.select.abstraction;
 
-import com.easy.query.api.proxy.base.ListProxy;
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
@@ -840,13 +839,6 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(SQLFuncExpression1<T1Proxy, TRProxy> fetchResultExpression) {
         TRProxy resultProxy = fetchResultExpression.apply(get1Proxy());
-        if (resultProxy instanceof ListProxy) {
-            ListProxy<TRProxy, TR> listProxy = (ListProxy<TRProxy, TR>) resultProxy;
-            SQLQueryable<TRProxy, TR> sqlQueryable = listProxy.getSqlQueryable();
-            Objects.requireNonNull(sqlQueryable, "select columns null result class");
-
-            return new EasySelectFlatQueryable<>(clientQueryable, sqlQueryable.getNavValue()).toList();
-        }
         return new EasySelectFlatQueryable<>(clientQueryable, resultProxy.getNavValue()).toList();
     }
 }
