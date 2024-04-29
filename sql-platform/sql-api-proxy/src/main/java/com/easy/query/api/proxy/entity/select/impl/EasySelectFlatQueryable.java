@@ -33,41 +33,6 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
         this.runtimeContext = queryable.getSQLEntityExpressionBuilder().getRuntimeContext();
         EntityMetadata entityMetadata = queryable.getSQLEntityExpressionBuilder().getTable(0).getEntityMetadata();
-//        if (Objects.equals(entityMetadata.getEntityClass(), queryable.queryClass())) {
-//            selectAutoInclude0(runtimeContext.getEntityMetadataManager(), queryable, entityMetadata, navValue);
-//            this.navigateMetadata = entityMetadata.getNavigateNotNull(navValue);
-//            this.navigateGetter = this.navigateMetadata.getGetter();
-//            this.queryable = queryable;
-//        } else {
-//            ExpressionContext expressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
-        //如果没有include默认include
-//            if (!expressionContext.hasIncludes()) {
-//                EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
-//                EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
-//                String[] navValueSplit = navValue.split("\\.");
-//                String firstNavValue = navValueSplit[0];
-//                NavigateMetadata currentNavigateMetadata = queryEntityMetadata.getNavigateNotNull(firstNavValue);
-//                EntityMetadata currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
-//                for (int i = 1; i < navValueSplit.length - 1; i++) {
-//                    String currentNavValue = navValueSplit[i];
-//                    currentNavigateMetadata = currentEntityMetadata.getNavigateNotNull(currentNavValue);
-//                    currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
-//                }
-//                String targetPropertyOrPrimary = currentNavigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
-//                NavigateMetadata navigateMetadataResult = currentEntityMetadata.getNavigateNotNull(navValueSplit[navValueSplit.length - 1]);
-//                this.navigateMetadata = navigateMetadataResult;
-//                this.navigateGetter = navigateMetadataResult.getGetter();
-//                EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSQLEntityExpressionBuilder();
-//                NavigateMetadata finalCurrentNavigateMetadata = currentNavigateMetadata;
-//                this.queryable = queryable.select(currentEntityMetadata.getEntityClass(), o -> {
-//                            o.getAsSelector().column(listProxy.getSqlQueryable().getOriginalTable(), targetPropertyOrPrimary);
-//                            //todo include
-//                            EasySQLExpressionUtil.appendTargetExtraTargetProperty(finalCurrentNavigateMetadata,sqlEntityExpressionBuilder,o.getAsSelector(),listProxy.getSqlQueryable().getOriginalTable());
-//
-//                        })
-//                        .include(t -> t.with(navValueSplit[navValueSplit.length - 1]));
-//            } else {
-        //如果存在include那么就只能一张表一张表走
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
         String[] navValueSplit = navValue.split("\\.");
@@ -82,8 +47,6 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
             currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
             replyExpressions.add(currentNavigateMetadata.getGetter());
         }
-//        NavigateMetadata navigateMetadataResult = currentEntityMetadata.getNavigateNotNull(navValueSplit[navValueSplit.length - 1]);
-//        replyExpressions.add(navigateMetadataResult.getGetter());
         this.navigateGetter = obj -> {
             if (obj == null) {
                 return null;
@@ -108,7 +71,7 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
     private Collection<Object> getCollectionValue(Object obj,Property<Object, ?> getter){
         Object value = getter.apply(obj);
         if(value==null){
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         if(value instanceof Collection){
             return (Collection<Object>) value;
