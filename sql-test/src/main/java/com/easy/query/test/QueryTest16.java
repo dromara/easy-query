@@ -1,6 +1,7 @@
 //package com.easy.query.test;
 //
 //import com.easy.query.core.proxy.core.draft.Draft2;
+//import com.easy.query.core.proxy.core.draft.Draft3;
 //import com.easy.query.core.proxy.sql.Select;
 //import com.easy.query.test.dto.UserRoleMenuDTO;
 //import com.easy.query.test.entity.blogtest.SysMenu;
@@ -113,6 +114,17 @@
 //                }).select(s -> Select.DRAFT.of(
 //                        s.name(),
 //                        s.address().addr()//隐式join因为用户返回了地址标的地址信息
+//                )).toList();
+//    }
+//    @Test
+//    public void test10() {
+//        List<Draft3<String, String, Long>> userNameAndAddrAndRoleCount = easyEntityQuery.queryable(SysUser.class)
+//                .where(s -> {
+//                    s.name().eq("小明");
+//                }).select(s -> Select.DRAFT.of(
+//                        s.name(),
+//                        s.address().addr(),
+//                        s.roles().count()//隐式子查询返回用户拥有的角色数量
 //                )).toList();
 //    }
 //}
