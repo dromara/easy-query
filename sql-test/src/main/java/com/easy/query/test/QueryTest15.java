@@ -22,6 +22,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
@@ -826,6 +827,67 @@ public class QueryTest15 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`title` FROM `t_topic` t WHERE t.`id` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m') >= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m') AND DATE_FORMAT(t.`create_time`,'%Y-%m') <= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m')", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("6261(String),-3(Integer),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+    @Test
+     public void testxxx1(){
+        List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    Expression expression = o.expression();
+                    o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" );
+                    o.or(() -> {
+                        o.stars().ne(1);
+                        o.createTime().le(LocalDateTime.of(2024, 1, 1, 1, 1));
+                        o.title().notLike("abc" );
+                    });
+                    o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" );
+                    o.id().nullOrDefault("yyyy/MM/dd" ).eq("xxx" );
+                    expression.sql("{0} != {1}" , c -> {
+                        c.expression(o.stars()).expression(o.createTime());
+                    });
+                    o.or(() -> {
+                        o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" );
+                        o.id().nullOrDefault("yyyy/MM/dd" ).eq("xxx" );
+                        expression.sql("{0} != {1}" , c -> {
+                            c.expression(o.stars()).expression(o.createTime());
+                        });
+                    });
+
+                    o.createTime().format("yyyy/MM/dd" ).eq("2023/01/02" );
+                    o.id().nullOrDefault("yyyy/MM/dd2" ).eq("xxx1" );
+                })
+                .select(o -> o.FETCHER
+                        .allFieldsExclude(o.id(), o.title())
+                        .id().as(o.title())
+                        .id().fetchProxy())
+                .toList();
+
+        List<Topic> list3 = easyEntityQuery.queryable(Topic.class)
+                .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
+                .select(o -> new TopicProxy().adapter(r->{
+
+                    r.title().set(o.stars().nullOrDefault(0).toStr());
+                    r.alias().setSQL("IFNULL({0},'')" , c -> {
+                        c.keepStyle();
+                        c.expression(o.id());
+                    });
+                }))
+                .toList();
+        List<Topic> list4 = easyEntityQuery.queryable(Topic.class)
+                .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
+                .select(o -> new TopicProxy().adapter(r->{
+
+                    r.title().set(o.stars().nullOrDefault(0).toStr());
+
+                    PropTypeColumn<String> nullProperty = o.expression().sqlType("IFNULL({0},'')", c -> {
+                        c.keepStyle();
+                        c.expression(o.id());
+                    }).setPropertyType(String.class);
+
+                    r.alias().set(nullProperty);
+                }))
+                .toList();
+
     }
 
 }

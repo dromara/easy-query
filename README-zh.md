@@ -415,17 +415,6 @@ Topic topic = easyEntityQuery
 
 ## 多表查询
 ```java
-
-```
-```sql
-==> Preparing: SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ? LIMIT 1
-==> Parameters: 3(String)
-<== Time Elapsed: 15(ms)
-<== Total: 1     
-```
-
-## Multi-Table Query
-```java
 Topic topic = entityQuery
                .queryable(Topic.class)
                .leftJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))

@@ -2,7 +2,6 @@ package com.easy.query.test.entity.school.proxy;
 
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.columns.SQLStringColumn;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.test.entity.school.SchoolStudent;
@@ -12,7 +11,7 @@ import com.easy.query.test.entity.school.SchoolStudent;
  * 当前文件是easy-query自动生成的请不要随意修改
  * 如果出现属性冲突请使用@ProxyProperty进行重命名
  *
- * @author xuejiaming
+ * @author easy-query
  */
 public class SchoolStudentProxy extends AbstractProxyEntity<SchoolStudentProxy, SchoolStudent> {
 
@@ -28,22 +27,22 @@ public class SchoolStudentProxy extends AbstractProxyEntity<SchoolStudentProxy, 
     /**
      * {@link SchoolStudent#getId}
      */
-    public SQLStringColumn<SchoolStudentProxy, java.lang.String> id() {
-        return getStringColumn("id", java.lang.String.class);
+    public SQLStringTypeColumn<SchoolStudentProxy> id() {
+        return getStringTypeColumn("id");
     }
 
     /**
      * {@link SchoolStudent#getClassId}
      */
-    public SQLStringColumn<SchoolStudentProxy, java.lang.String> classId() {
-        return getStringColumn("classId", java.lang.String.class);
+    public SQLStringTypeColumn<SchoolStudentProxy> classId() {
+        return getStringTypeColumn("classId");
     }
 
     /**
      * {@link SchoolStudent#getName}
      */
-    public SQLStringColumn<SchoolStudentProxy, java.lang.String> name() {
-        return getStringColumn("name", java.lang.String.class);
+    public SQLStringTypeColumn<SchoolStudentProxy> name() {
+        return getStringTypeColumn("name");
     }
 
     /**
