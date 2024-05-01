@@ -18,6 +18,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.test.conversion.CertStatusColumnValueSQLConverter;
 import com.easy.query.test.conversion.EnumConverter;
 import com.easy.query.test.conversion.EnumValueConverter;
 import com.easy.query.test.conversion.FullNameColumnValueSQLConverter;
@@ -184,6 +185,7 @@ public abstract class BaseTest {
         configuration.applyValueConverter(new JsonConverter());
         configuration.applyValueConverter(new EnumValueConverter());
 //        configuration.applyValueUpdateAtomicTrack(new IntegerNotNullValueUpdateAtomicTrack());
+        configuration.applyColumnValueSQLConverter(new CertStatusColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new MySQLAesEncryptColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new FullNameColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new UserAgeColumnValueSQLConverter());

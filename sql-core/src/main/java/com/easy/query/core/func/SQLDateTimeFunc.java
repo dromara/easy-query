@@ -217,6 +217,7 @@ public interface SQLDateTimeFunc {
 
     /**
      * 相差时间函数
+     * 参数顺序大时间然后小时间则计算出来结果为正数
      *
      * @param property
      * @param otherDateTime
@@ -232,6 +233,7 @@ public interface SQLDateTimeFunc {
 
     /**
      * 相差时间函数
+     * 参数顺序大时间然后小时间则计算出来结果为正数
      *
      * @param property
      * @param otherTable
@@ -248,6 +250,7 @@ public interface SQLDateTimeFunc {
 
     /**
      * 相差时间函数
+     * 参数顺序大时间然后小时间则计算出来结果为正数
      *
      * @param property
      * @param sqlFunction
@@ -262,6 +265,7 @@ public interface SQLDateTimeFunc {
 
     /**
      * 相差时间函数
+     * 参数顺序大时间然后小时间则计算出来结果为正数
      *
      * @param sqlFunction
      * @param otherDateTime
@@ -277,6 +281,7 @@ public interface SQLDateTimeFunc {
 
     /**
      * 相差时间函数
+     * 参数顺序大时间然后小时间则计算出来结果为正数
      *
      * @param sqlFunction
      * @param otherTable
@@ -293,6 +298,7 @@ public interface SQLDateTimeFunc {
 
     /**
      * 相差时间函数
+     * 参数顺序大时间然后小时间则计算出来结果为正数
      *
      * @param sqlFunction1
      * @param sqlFunction2
@@ -307,6 +313,7 @@ public interface SQLDateTimeFunc {
 
     /**
      * 相差时间函数
+     * 参数顺序大时间然后小时间则计算出来结果为正数
      *
      * @param sqlExpression
      * @param durationEnum

@@ -1202,15 +1202,15 @@ public class GenericTest extends BaseTest {
     @Test
     public void EnumValueTest2(){
         EnumValueConverter enumValueConverter = new EnumValueConverter();
-        Integer e1 = enumValueConverter.serialize(null, null);
+        Number e1 = enumValueConverter.serialize(null, null);
         Assert.assertNull(e1);
-        Integer e2 = enumValueConverter.serialize(MyEnum.ZJ, null);
+        Number e2 = enumValueConverter.serialize(MyEnum.ZJ, null);
         Assert.assertEquals(MyEnum.ZJ.getCode(),e2);
-        Integer e3 = enumValueConverter.serialize(MyEnum.JS, null);
+        Number e3 = enumValueConverter.serialize(MyEnum.JS, null);
         Assert.assertEquals(MyEnum.JS.getCode(),e3);
-        Integer e4 = enumValueConverter.serialize(MyEnum.SH, null);
+        Number e4 = enumValueConverter.serialize(MyEnum.SH, null);
         Assert.assertEquals(MyEnum.SH.getCode(),e4);
-        Integer e5 = enumValueConverter.serialize(MyEnum.BJ, null);
+        Number e5 = enumValueConverter.serialize(MyEnum.BJ, null);
         Assert.assertEquals(MyEnum.BJ.getCode(),e5);
 
     }

@@ -10,14 +10,14 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public class EnumConverter implements ValueConverter<IEnum<?>,Integer> {
+public class EnumConverter implements ValueConverter<IEnum<?>,Number> {
     @Override
-    public Integer serialize(IEnum<?> iEnum, ColumnMetadata columnMetadata) {
+    public Number serialize(IEnum<?> iEnum, ColumnMetadata columnMetadata) {
         return iEnum.getCode();
     }
 
     @Override
-    public IEnum<?> deserialize(Integer integer, ColumnMetadata columnMetadata) {
-        return EnumDeserializer.deserialize(EasyObjectUtil.typeCast(columnMetadata.getPropertyType()),integer);
+    public IEnum<?> deserialize(Number integer, ColumnMetadata columnMetadata) {
+        return EnumDeserializer.deserialize(EasyObjectUtil.typeCast(columnMetadata.getPropertyType()),integer.intValue());
     }
 }

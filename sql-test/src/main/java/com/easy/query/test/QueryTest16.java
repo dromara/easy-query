@@ -2,8 +2,11 @@
 //
 //import com.easy.query.core.proxy.core.draft.Draft2;
 //import com.easy.query.core.proxy.core.draft.Draft3;
+//import com.easy.query.core.proxy.sql.GroupKeys;
 //import com.easy.query.core.proxy.sql.Select;
 //import com.easy.query.test.dto.UserRoleMenuDTO;
+//import com.easy.query.test.entity.blogtest.CertStatusEnum;
+//import com.easy.query.test.entity.blogtest.Certificate;
 //import com.easy.query.test.entity.blogtest.SysMenu;
 //import com.easy.query.test.entity.blogtest.SysUser;
 //import org.junit.Test;
@@ -125,6 +128,36 @@
 //                        s.name(),
 //                        s.address().addr(),
 //                        s.roles().count()//隐式子查询返回用户拥有的角色数量
+//                )).toList();
+//    }
+//
+//
+//    @Test
+//    public void testCert1(){
+//        List<Certificate> list = easyEntityQuery.queryable(Certificate.class)
+//                .toList();
+//    }
+//    @Test
+//    public void testCert2(){
+//        List<Certificate> list = easyEntityQuery.queryable(Certificate.class)
+//                .where(c -> c.status().eq(CertStatusEnum.NORMAL))
+//                .toList();
+//    }
+//    @Test
+//    public void testCert3(){
+//        List<Certificate> list = easyEntityQuery.queryable(Certificate.class)
+//                .where(c -> c.status().eq(CertStatusEnum.NORMAL))
+//                .orderBy(c -> c.status().asc())
+//                .toList();
+//    }
+//    @Test
+//    public void testCert4(){
+//        List<Draft2<CertStatusEnum, Long>> list = easyEntityQuery.queryable(Certificate.class)
+//                .where(c -> c.status().eq(CertStatusEnum.NORMAL))
+//                .groupBy(c -> GroupKeys.TABLE1.of(c.status()))
+//                .select(group -> Select.DRAFT.of(
+//                        group.key1(),
+//                        group.count()
 //                )).toList();
 //    }
 //}
