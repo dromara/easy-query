@@ -890,4 +890,23 @@ public class QueryTest15 extends BaseTest {
 
     }
 
+    @Test
+     public void test1c(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> title = easyQuery.queryable(Topic.class)
+                .groupBy(t -> t.column(Topic::getId))
+                .select(BlogEntity.class, t -> {
+                    SQLFunction titleFunc = t.fx().join(Topic::getTitle, ",");
+                    t.column(Topic::getId).sqlFuncAs(titleFunc, BlogEntity::getTitle);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,GROUP_CONCAT(t.`title` SEPARATOR ?) AS `title` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
 }

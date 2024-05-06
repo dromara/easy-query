@@ -1,18 +1,12 @@
 package com.easy.query.api4j.func;
 
-import com.easy.query.api4j.func.column.SQLColumnFuncSelectorImpl;
 import com.easy.query.api4j.func.column.SQLColumnFuncSelector;
+import com.easy.query.api4j.func.column.SQLColumnFuncSelectorImpl;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.func.column.ColumnExpression;
-import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
-import com.easy.query.core.util.EasyObjectUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * create time 2023/10/12 16:41
@@ -20,7 +14,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface LambdaSQLFunc<T1> extends LambdaAggregateSQLFunc<T1> {
+public interface LambdaSQLFunc<T1> extends LambdaAggregateSQLFunc<T1>,LambdaSQLStringFunc<T1>,LambdaSQLDateTimeFunc<T1>,LambdaSQLNumberFunc<T1>,LambdaSQLMathFunc<T1> {
 
 
 
@@ -76,38 +70,45 @@ public interface LambdaSQLFunc<T1> extends LambdaAggregateSQLFunc<T1> {
     }
 
     /**
+     * 请使用 math
      * 获取绝对值
      *
      * @param property 属性列
      * @return 绝对值函数
      */
+    @Deprecated
     default SQLFunction abs(Property<T1, ?> property) {
         return abs(null, property);
     }
 
     /**
+     * 请使用 math
      * 获取绝对值
      *
      * @param tableOwner 属性所属表
      * @param property 属性列
      * @return 绝对值函数
      */
+    @Deprecated
     default SQLFunction abs(EntitySQLTableOwner<T1> tableOwner, Property<T1, ?> property) {
         return getSQLFunc().abs(tableOwner, EasyLambdaUtil.getPropertyName(property));
     }
 
     /**
+     * 请使用 math
      * 按照指定的小数位数进行四舍五入运算
      *
      * @param property 属性列
      * @param scale 保留小数位数
      * @return 四舍五入函数
      */
+    @Deprecated
     default SQLFunction round(Property<T1, ?> property, int scale) {
         return round(null, property, scale);
     }
 
     /**
+     * 请使用 math
      * 按照指定的小数位数进行四舍五入运算
      *
      * @param tableOwner 列所属表
@@ -115,6 +116,7 @@ public interface LambdaSQLFunc<T1> extends LambdaAggregateSQLFunc<T1> {
      * @param scale 保留小数位数
      * @return round函数
      */
+    @Deprecated
     default SQLFunction round(EntitySQLTableOwner<T1> tableOwner, Property<T1, ?> property, int scale) {
         return getSQLFunc().round(tableOwner, EasyLambdaUtil.getPropertyName(property), scale);
     }
@@ -176,58 +178,6 @@ public interface LambdaSQLFunc<T1> extends LambdaAggregateSQLFunc<T1> {
     default SQLFunction dateTimeSQLFormat(EntitySQLTableOwner<T1> tableOwner, Property<T1, ?> property, String format) {
         return getSQLFunc().dateTimeSQLFormat(tableOwner, EasyLambdaUtil.getPropertyName(property), format);
     }
-
-    /**
-     * 连接函数将多个列合并在一起
-     * @param property1 属性列1
-     * @param property2 属性列2
-     * @return 链接函数
-     */
-    default SQLFunction concat(Property<T1, ?> property1, Property<T1, ?> property2) {
-        return concat(s -> {
-            SQLColumnFuncSelector<T1> s1 = EasyObjectUtil.typeCastNullable(s);
-            s1.column(property1)
-                    .column(property2);
-        });
-    }
-
-    /**
-     * 连接函数将多个列合并在一起
-     *
-     * @param property1 属性列1
-     * @param property2 属性列2
-     * @param property3 属性列3
-     * @return 链接函数
-     */
-    default SQLFunction concat(Property<T1, ?> property1, Property<T1, ?> property2, Property<T1, ?> property3) {
-        return this.<T1>concat(s -> {
-            s.column(property1)
-                    .column(property2)
-                    .column(property3);
-        });
-    }
-
-    /**
-     * 链接函数表达式 将多个列合并在一起
-     *
-     * @param sqlExpression 指定多个属性列
-     * @return 链接函数
-     */
-    default SQLFunction concat(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression) {
-        List<ColumnExpression> columnExpressions = new ArrayList<>();
-        sqlExpression.apply(new SQLColumnFuncSelectorImpl<>(new ColumnFuncSelectorImpl(columnExpressions)));
-        return concat(columnExpressions);
-    }
-
-    /**
-     * 链接函数 将多个列合并在一起
-     *
-     * @param concatExpressions 链接列或者常量等表达式
-     * @return 链接函数
-     */
-    default SQLFunction concat(List<ColumnExpression> concatExpressions) {
-        return getSQLFunc().concat(concatExpressions);
-    }
 //
 //    default SQLFunction join(String separator, Property<T1, ?> property1, Property<T1, ?> property2) {
 //        return this.<T1>join(separator, s -> {
@@ -271,4 +221,5 @@ public interface LambdaSQLFunc<T1> extends LambdaAggregateSQLFunc<T1> {
     default SQLFunction utcNow() {
         return getSQLFunc().utcNow();
     }
+
 }

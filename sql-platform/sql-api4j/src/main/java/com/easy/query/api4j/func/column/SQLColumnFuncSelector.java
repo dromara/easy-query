@@ -2,7 +2,8 @@ package com.easy.query.api4j.func.column;
 
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 
 /**
@@ -17,7 +18,7 @@ public interface SQLColumnFuncSelector<T> {
        getColumnFuncSelector().column(EasyLambdaUtil.getPropertyName(property));
        return this;
    }
-    default SQLColumnFuncSelector<T> column(EntitySQLTableOwner<T> tableOwner, Property<T,?> property){
+    default <T2> SQLColumnFuncSelector<T> column(SQLTableOwner tableOwner, Property<T2,?> property){
         getColumnFuncSelector().column(tableOwner,EasyLambdaUtil.getPropertyName(property));
         return this;
     }
@@ -27,6 +28,10 @@ public interface SQLColumnFuncSelector<T> {
     }
     default SQLColumnFuncSelector<T> format(Object valFormat){
         getColumnFuncSelector().format(valFormat);
+        return this;
+    }
+    default SQLColumnFuncSelector<T> sqlFunc(SQLFunction sqlFunction){
+        getColumnFuncSelector().sqlFunc(sqlFunction);
         return this;
     }
 }
