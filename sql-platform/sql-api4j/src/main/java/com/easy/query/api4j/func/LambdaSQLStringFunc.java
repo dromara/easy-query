@@ -615,4 +615,36 @@ public interface LambdaSQLStringFunc<T1> extends SQLFuncAvailable {
            sqlExpression.apply(new SQLColumnFuncSelectorImpl<>(x));
        });
    }
+
+    /**
+     * 长度
+     * @param property 属性列
+     * @return 长度函数
+     */
+    default SQLFunction length(Property<T1, ?> property){
+        return length(s->{
+            s.column(property);
+        });
+    }
+    /**
+     * 长度
+     * @param sqlFunction sql函数
+     * @return 长度函数
+     */
+    default SQLFunction length(SQLFunction sqlFunction){
+        return length(s->{
+            s.sqlFunc(sqlFunction);
+        });
+    }
+
+    /**
+     * 长度
+     * @param sqlExpression 属性选择函数
+     * @return 列组合函数
+     */
+    default SQLFunction length(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression){
+        return getSQLFunc().length(x->{
+            sqlExpression.apply(new SQLColumnFuncSelectorImpl<>(x));
+        });
+    }
 }
