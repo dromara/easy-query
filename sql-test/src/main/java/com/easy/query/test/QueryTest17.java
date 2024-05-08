@@ -1,21 +1,16 @@
 package com.easy.query.test;
 
 import com.easy.query.api4j.func.LambdaSQLFunc;
-import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
-import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * create time 2024/5/6 17:16
@@ -165,41 +160,41 @@ public class QueryTest17 extends BaseTest{
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND IFNULL(`id`,?) = ? AND SUBSTR(`id`,2,20) = ? AND CONCAT(`content`,?,`id`) = ? AND UPPER(`content`) = ? AND LOWER(`content`) = ? AND TRIM(`content`) = ? AND LTRIM(`content`) = ? AND RTRIM(`content`) = ? AND REPLACE(`content`,?,?) = ? AND LPAD(`content`, 2, ?) = ? AND RPAD(`content`, 2, ?) = ? AND CHAR_LENGTH(`content`) = ? AND STRCMP(`content`,?) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),123(String),123(String),456(String),123(String),789(String),abc(String),def(String),a(String),b(String),c(String),123(String),456(String),aaa(String),a(String),aa(String),a(String),aa(String),1(Integer),aaaa(String),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
-
-    @Test
-    public  void testxxxx(){
-//        String sql = easyQueryClient.queryable(Topic.class).from(BlogEntity.class)
-//                .where(t -> {
-//                    t.eq("id", 123);
-//                    t.ne("title", (Object) null);
-//                }).toSQL();
-//        System.out.println(sql);
-
-//        String sql1 = easyQueryClient.queryable(Topic.class)
-//                .select(Topic.class, t -> t.column("id").column("title"))
-//                .where(t -> t.eq("title", "123"))
+//
+//    @Test
+//    public  void testxxxx(){
+////        String sql = easyQueryClient.queryable(Topic.class).from(BlogEntity.class)
+////                .where(t -> {
+////                    t.eq("id", 123);
+////                    t.ne("title", (Object) null);
+////                }).toSQL();
+////        System.out.println(sql);
+//
+////        String sql1 = easyQueryClient.queryable(Topic.class)
+////                .select(Topic.class, t -> t.column("id").column("title"))
+////                .where(t -> t.eq("title", "123"))
+////                .toSQL();
+////
+////        System.out.println(sql1);
+//
+//        ClientQueryable<Topic> select = easyQueryClient.queryable(Topic.class)
+//                .select(Topic.class, t -> t.column("id").column("title"));
+//
+//        String sql = select.from(BlogEntity.class)
 //                .toSQL();
 //
-//        System.out.println(sql1);
-
-        ClientQueryable<Topic> select = easyQueryClient.queryable(Topic.class)
-                .select(Topic.class, t -> t.column("id").column("title"));
-
-        String sql = select.from(BlogEntity.class)
-                .toSQL();
-
-        System.out.println(sql);
-        List<Map<String, Object>> list = easyQueryClient.mapQueryable("select * from t_topic")
-                .toList();
-        List<Map<String, Object>> list1 = easyQueryClient.mapQueryable()
-                .asTable("table1")
-                .join(MultiTableTypeEnum.LEFT_JOIN, easyQueryClient.mapQueryable("select * from t_topic"), on -> {
-                    WherePredicate<?> wherePredicate0 = on.getWherePredicate(0);
-                    WherePredicate<?> wherePredicate1 = on.getWherePredicate(1);
-
-                    wherePredicate0.eq(wherePredicate1, "id", "id");
-                })
-                .toList();
-    }
+//        System.out.println(sql);
+//        List<Map<String, Object>> list = easyQueryClient.mapQueryable("select * from t_topic")
+//                .toList();
+//        List<Map<String, Object>> list1 = easyQueryClient.mapQueryable()
+//                .asTable("table1")
+//                .join(MultiTableTypeEnum.LEFT_JOIN, easyQueryClient.mapQueryable("select * from t_topic"), on -> {
+//                    WherePredicate<?> wherePredicate0 = on.getWherePredicate(0);
+//                    WherePredicate<?> wherePredicate1 = on.getWherePredicate(1);
+//
+//                    wherePredicate0.eq(wherePredicate1, "id", "id");
+//                })
+//                .toList();
+//    }
 
 }

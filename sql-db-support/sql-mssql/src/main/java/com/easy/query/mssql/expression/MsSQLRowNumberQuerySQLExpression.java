@@ -2,6 +2,7 @@ package com.easy.query.mssql.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.KeywordTool;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
@@ -80,6 +81,8 @@ public class MsSQLRowNumberQuerySQLExpression extends MsSQLQuerySQLExpression {
                             SQLBuilderSegment columnOrder = getPrimaryKeyOrFirstColumnOrder(firstTable.getEntityTable());
                             if(columnOrder!=null){
                                 sql.append(" ORDER BY ").append(columnOrder.toSQL(toSQLContext));
+                            }else {
+                                throw new EasyQueryInvalidOperationException("the pagination must include the 'order by' clause.");
                             }
                         }
                     }

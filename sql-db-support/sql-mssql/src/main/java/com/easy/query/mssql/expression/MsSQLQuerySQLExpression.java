@@ -1,6 +1,7 @@
 package com.easy.query.mssql.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -113,13 +114,15 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
                     SQLBuilderSegment columnOrder = getPrimaryKeyOrFirstColumnOrder(firstTable.getEntityTable());
                     if(columnOrder!=null){
                         sql.append(" ORDER BY ").append(columnOrder.toSQL(toSQLContext));
+                    }else {
+                        throw new EasyQueryInvalidOperationException("the pagination must include the 'order by' clause.");
                     }
                 }
             }
 
-            sql.append(" OFFSET ").append(offset).append(" ROW");
+            sql.append(" OFFSET ").append(offset).append(" ROWS");
             if (this.rows > 0) {
-                sql.append(" FETCH NEXT ").append(rows).append(" ROW ONLY");
+                sql.append(" FETCH NEXT ").append(rows).append(" ROWS ONLY");
             }
         }
 
