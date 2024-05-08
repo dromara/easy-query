@@ -65,6 +65,7 @@ public interface EasyQueryClient {
 
 
     MapQueryable mapQueryable();
+    MapQueryable mapQueryable(String sql);
 
    default  <T> ClientQueryable<T> queryable(String sql, Class<T> clazz){
        return queryable(sql,clazz,Collections.emptyList());

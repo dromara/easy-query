@@ -98,6 +98,12 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
     }
 
     @Override
+    public MapQueryable mapQueryable(String sql) {
+        ClientQueryable<Map> queryable = easySQLApiFactory.createQueryable(sql,Map.class, runtimeContext);
+        return new DefaultMapQueryable(EasyObjectUtil.typeCastNullable(queryable));
+    }
+
+    @Override
     public Transaction beginTransaction(Integer isolationLevel) {
         ConnectionManager connectionManager = runtimeContext.getConnectionManager();
         return connectionManager.beginTransaction(isolationLevel);
