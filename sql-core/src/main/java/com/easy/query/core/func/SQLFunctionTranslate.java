@@ -1,8 +1,10 @@
 package com.easy.query.core.func;
 
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 /**
@@ -13,4 +15,5 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  */
 public interface SQLFunctionTranslate {
     SQLSegment toSQLSegment(ExpressionContext expressionContext, TableAvailable defTable, QueryRuntimeContext runtimeContext,String alias);
+    SQLSegment toSQLSegment(SQLNativeExpressionContext sqlNativeExpressionContext, TableAvailable defTable, String alias, SQLActionExpression afterConsume);
 }

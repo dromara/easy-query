@@ -86,9 +86,11 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
     }
 
     @Override
-    public <TEntity> void expression(Query<TEntity> subQuery) {
+    public <TEntity> void expression(Query<TEntity> subQuery,boolean extract) {
         Objects.requireNonNull(subQuery, "subQuery cannot be null");
-        extract(subQuery);
+        if(extract){
+            extract(subQuery);
+        }
         SubQueryParamExpressionImpl subQueryParamExpression = new SubQueryParamExpressionImpl(subQuery);
         this.expressions.add(subQueryParamExpression);
         this.defaultTable=null;
