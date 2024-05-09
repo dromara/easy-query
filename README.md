@@ -37,7 +37,7 @@
 ## 📚 documentation
 <div align="center">
 
-[GITHUB Documentation](https://xuejmnet.github.io/easy-query-doc/) | [GITEE Documentation](https://xuejm.gitee.io/easy-query-doc/)
+[GITHUB Documentation](https://xuejmnet.github.io/easy-query-doc/) | [OFFICAL Documentation](http://www.easy-query.com/easy-query-doc/)
 
 </div>
 

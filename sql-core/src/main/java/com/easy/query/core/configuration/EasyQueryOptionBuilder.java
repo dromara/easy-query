@@ -74,6 +74,9 @@ public class EasyQueryOptionBuilder {
      * 分片下默认拉取size大小
      */
     private int shardingFetchSize;
+    /**
+     * 映射结果集是否是严格的如果不严格则会尝试忽略大小写映射默认严格
+     */
     private boolean mapToBeanStrict;
 
     public EasyQueryOptionBuilder() {

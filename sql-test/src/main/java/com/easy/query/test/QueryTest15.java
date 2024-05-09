@@ -8,6 +8,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.dialect.DefaultDialect;
 import com.easy.query.core.configuration.dialect.Dialect;
@@ -24,6 +25,7 @@ import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLConstantExpression;
+import com.easy.query.core.proxy.columns.SQLNumberColumn;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
@@ -33,6 +35,7 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.dto.SchoolClassAggregateDTO;
 import com.easy.query.test.dto.UserExtraDTO;
 import com.easy.query.test.entity.BlogEntity;
@@ -907,6 +910,12 @@ public class QueryTest15 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,GROUP_CONCAT(t.`title` SEPARATOR ?) AS `title` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals(",(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+
+        SQLNumberColumn<?,?> x=null;
+        DatabaseConfiguration service = x.getEntitySQLContext().getRuntimeContext().getService(DatabaseConfiguration.class);
+        if(service instanceof OracleDatabaseConfiguration){
+
+        }
     }
 
 }
