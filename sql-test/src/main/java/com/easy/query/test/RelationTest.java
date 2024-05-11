@@ -313,6 +313,9 @@ public class RelationTest extends BaseTest {
                     Assert.assertEquals("SELECT `id`,`name` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
                     Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 }
+//                System.out.println("123");
+//                List<String> list1 = easyEntityQuery.queryable(SchoolClass.class).toList(x -> x.schoolTeachers().flatElement().id());
+//                System.out.println("123");
             }
 
             {

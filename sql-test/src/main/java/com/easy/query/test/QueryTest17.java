@@ -4,9 +4,14 @@ import com.easy.query.api4j.func.LambdaSQLFunc;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.sql.GroupKeys;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.nop.MyObject;
+import com.easy.query.test.nop.OtherTable;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -196,5 +201,281 @@ public class QueryTest17 extends BaseTest{
 //                })
 //                .toList();
 //    }
+
+//
+    @Test
+     public void testNopQuery(){
+////         select v.f1,sum(v.f2), count(u.f3)
+////         from (select o.f1, o.f2 from MyObject o left join o.parent
+////                 where o.parent.children.myChild.name > 3 ) v,
+////                 OtherTable u
+////         where v.f1 = u.type group by u.type
+//
+//        //myObject oneToOne parent
+//        //parent oneToMany children
+//        //children onToMany myChild
+//
+//        //查询object的父级下的children中存在myChild里面name是大于3的
+//
+//
+//
+//        List<MyObject> list = easyEntityQuery.queryable(MyObject.class)
+//                .where(m -> {
+//                    m.parent().children().flatElement().name().gt("3");
+//                }).toList();
+//
+//        List<MyObject> list1 = easyEntityQuery.queryable(MyObject.class)
+//                .where(m -> {
+//                    m.parent().children().where(o->{
+//                        o.name().gt("3");
+//                    }).any();
+//                }).toList();
+//
+//
+//
+//
+//        List<Draft3<String, Number, Long>> list2 = easyEntityQuery.queryable(MyObject.class)
+//                .where(m -> {
+//                    m.parent().children()
+//                            .where(children -> {
+//                                children.myChildren().where(myChild -> {
+//                                    myChild.name().gt("3");
+//                                }).any();
+//                            }).any();
+//                }).select(m -> Select.DRAFT.of(m.f1(), m.f1()))
+//                .innerJoin(OtherTable.class, (a, b) -> a.value1().eq(b.type()))
+//                .groupBy((a, b) -> GroupKeys.TABLE2.of(a.value1()))
+//                .select(group -> Select.DRAFT.of(
+//                        group.key1(),
+//                        group.groupTable().t1.value2().sum(),
+//                        group.groupTable().t2.type().count()
+//                )).toList();
+    }
+
+
+    @Test
+    public void testFlatElement1(){
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                List<MyObject> list1 = easyEntityQuery.queryable(MyObject.class)
+                        .where(m -> {
+                            m.parent().children().where(o->{
+                                o.name().gt("3");
+                            }).any();
+                        }).toList();
+            }catch (Exception ignored){
+
+            }
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`f1`,t.`f2`,t.`parent_id` FROM `MyObject` t LEFT JOIN `MyObjectParent` t1 ON t1.`id` = t.`parent_id` WHERE EXISTS (SELECT 1 FROM `MyObjectParentChildren` t2 WHERE t2.`parent_id` = t1.`id` AND t2.`name` > ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+        {
+
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            try {
+
+                List<MyObject> list = easyEntityQuery.queryable(MyObject.class)
+                        .where(m -> {
+                            m.parent().children().flatElement().name().gt("3");
+                        }).toList();
+            }catch (Exception ignored){
+
+            }
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`f1`,t.`f2`,t.`parent_id` FROM `MyObject` t LEFT JOIN `MyObjectParent` t1 ON t1.`id` = t.`parent_id` WHERE EXISTS (SELECT 1 FROM `MyObjectParentChildren` t2 WHERE t2.`parent_id` = t1.`id` AND t2.`name` > ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+    }
+
+    @Test
+    public void testFlatElement2(){
+//
+//
+//
+//        List<MyObject> list2 = easyEntityQuery.queryable(MyObject.class)
+//                .where(m -> {
+//                    m.parent().children()
+//                            .where(children -> {
+//                                children.myChildren().where(myChild -> {
+//                                    myChild.name().gt("3");
+//                                }).any();
+//                            }).any();
+//                }).toList();
+//
+//
+//        List<MyObject> list1 = easyEntityQuery.queryable(MyObject.class)
+//                .where(m -> {
+//                    m.parent().children().flatElement().myChildren().flatElement().name().gt("3");
+//                }).toList();
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                List<MyObject> list1 = easyEntityQuery.queryable(MyObject.class)
+                        .where(m -> {
+                            m.parent().children()
+                                    .where(children -> {
+                                        children.myChildren().where(myChild -> {
+                                            myChild.name().gt("3");
+                                        }).any();
+                                    }).any();
+                        }).toList();
+            }catch (Exception ignored){
+
+            }
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`f1`,t.`f2`,t.`parent_id` FROM `MyObject` t LEFT JOIN `MyObjectParent` t1 ON t1.`id` = t.`parent_id` WHERE EXISTS (SELECT 1 FROM `MyObjectParentChildren` t2 WHERE t2.`parent_id` = t1.`id` AND EXISTS (SELECT 1 FROM `MyChild` t3 WHERE t3.`children_parent_id` = t2.`id` AND t3.`name` > ? LIMIT 1) LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+        {
+
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            try {
+
+                List<MyObject> list = easyEntityQuery.queryable(MyObject.class)
+                        .where(m -> {
+                            m.parent().children().flatElement().myChildren().flatElement().name().gt("3");
+                        }).toList();
+            }catch (Exception ignored){
+
+            }
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`f1`,t.`f2`,t.`parent_id` FROM `MyObject` t LEFT JOIN `MyObjectParent` t1 ON t1.`id` = t.`parent_id` WHERE EXISTS (SELECT 1 FROM `MyObjectParentChildren` t2 WHERE t2.`parent_id` = t1.`id` AND EXISTS (SELECT 1 FROM `MyChild` t3 WHERE t3.`children_parent_id` = t2.`id` AND t3.`name` > ? LIMIT 1) LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+        {
+
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            try {
+
+                List<MyObject> list = easyEntityQuery.queryable(MyObject.class)
+                        .where(m -> {
+                            m.parent().children().where(children->{
+                                children.myChildren().flatElement().name().gt("3");
+                            }).any();
+                        }).toList();
+            }catch (Exception ignored){
+
+            }
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`f1`,t.`f2`,t.`parent_id` FROM `MyObject` t LEFT JOIN `MyObjectParent` t1 ON t1.`id` = t.`parent_id` WHERE EXISTS (SELECT 1 FROM `MyObjectParentChildren` t2 WHERE t2.`parent_id` = t1.`id` AND EXISTS (SELECT 1 FROM `MyChild` t3 WHERE t3.`children_parent_id` = t2.`id` AND t3.`name` > ? LIMIT 1) LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+    }
+
+    @Test
+     public void testNop2(){
+        {
+
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            try {
+                List<Draft3<String, Number, Long>> list2 = easyEntityQuery.queryable(MyObject.class)
+                        .where(m -> {
+                            m.parent().children()
+                                    .where(children -> {
+                                        children.myChildren().where(myChild -> {
+                                            myChild.name().gt("3");
+                                        }).any();
+                                    }).any();
+                        }).select(m -> Select.DRAFT.of(m.f1(), m.f1()))
+                        .innerJoin(OtherTable.class, (a, b) -> a.value1().eq(b.type()))
+                        .groupBy((a, b) -> GroupKeys.TABLE2.of(a.value1()))
+                        .select(group -> Select.DRAFT.of(
+                                group.key1(),
+                                group.groupTable().t1.value2().sum(),
+                                group.groupTable().t2.type().count()
+                        )).toList();
+            }catch (Exception ignored){
+
+            }
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t4.`value1` AS `value1`,SUM(t4.`value2`) AS `value2`,COUNT(t5.`type`) AS `value3` FROM (SELECT t.`f1` AS `value1`,t.`f1` AS `value2` FROM `MyObject` t LEFT JOIN `MyObjectParent` t1 ON t1.`id` = t.`parent_id` WHERE EXISTS (SELECT 1 FROM `MyObjectParentChildren` t2 WHERE t2.`parent_id` = t1.`id` AND EXISTS (SELECT 1 FROM `MyChild` t3 WHERE t3.`children_parent_id` = t2.`id` AND t3.`name` > ? LIMIT 1) LIMIT 1)) t4 INNER JOIN `OtherTable` t5 ON t4.`value1` = t5.`type` GROUP BY t4.`value1`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+        {
+
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            try {
+                List<Draft3<String, Number, Long>> list2 = easyEntityQuery.queryable(MyObject.class)
+                        .where(m -> {
+
+                            m.parent().children().flatElement().myChildren().flatElement().name().gt("3");
+
+                        }).select(m -> Select.DRAFT.of(m.f1(), m.f1()))
+                        .innerJoin(OtherTable.class, (a, b) -> a.value1().eq(b.type()))
+                        .groupBy((a, b) -> GroupKeys.TABLE2.of(a.value1()))
+                        .select(group -> Select.DRAFT.of(
+                                group.key1(),
+                                group.groupTable().t1.value2().sum(),
+                                group.groupTable().t2.type().count()
+                        )).toList();
+            }catch (Exception ignored){
+
+            }
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t4.`value1` AS `value1`,SUM(t4.`value2`) AS `value2`,COUNT(t5.`type`) AS `value3` FROM (SELECT t.`f1` AS `value1`,t.`f1` AS `value2` FROM `MyObject` t LEFT JOIN `MyObjectParent` t1 ON t1.`id` = t.`parent_id` WHERE EXISTS (SELECT 1 FROM `MyObjectParentChildren` t2 WHERE t2.`parent_id` = t1.`id` AND EXISTS (SELECT 1 FROM `MyChild` t3 WHERE t3.`children_parent_id` = t2.`id` AND t3.`name` > ? LIMIT 1) LIMIT 1)) t4 INNER JOIN `OtherTable` t5 ON t4.`value1` = t5.`type` GROUP BY t4.`value1`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+     }
 
 }

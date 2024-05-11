@@ -3,6 +3,7 @@ package com.easy.query.core.proxy.columns;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -12,6 +13,7 @@ import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.columns.impl.EasySQLPredicateQueryable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.ProxyFlatElementEntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableAnyChainExpressionImpl;
@@ -143,10 +145,22 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
      * @return
      */
     default T1Proxy flatElement() {
-        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), getProxy().getEntitySQLContext());
+        QueryRuntimeContext runtimeContext = this.getProxy().getEntitySQLContext().getRuntimeContext();
+        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this,runtimeContext));
         tPropertyProxy.setNavValue(getNavValue());
         return tPropertyProxy;
     }
+//    default T1Proxy flatElement(SQLExpression1<EntityQueryable<T1Proxy, T1>> flatAdapterExpression) {
+//        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), getProxy().getEntitySQLContext());
+//        tPropertyProxy.setNavValue(getNavValue());
+//        return tPropertyProxy;
+//    }
+//    default T1Proxy flatElement1() {
+//        QueryRuntimeContext runtimeContext = this.getProxy().getEntitySQLContext().getRuntimeContext();
+//        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this,runtimeContext));
+//        tPropertyProxy.setNavValue(getNavValue());
+//        return tPropertyProxy;
+//    }
 
 //    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLQueryable<TPropertyProxy, TProperty> select(SQLFuncExpression1<T1Proxy, TPropertyProxy> selectColumnExpression) {
 //        EntityQueryable<TPropertyProxy, TProperty> select = this.getQueryable().select(selectColumnExpression);

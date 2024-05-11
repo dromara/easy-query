@@ -1,6 +1,5 @@
 package com.easy.query.test.entity.proxy;
 
-import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.types.SQLBigDecimalTypeColumn;
@@ -18,7 +17,7 @@ import com.easy.query.test.entity.BlogEntity;
  *
  * @author easy-query
  */
-public class BlogEntityProxy extends AbstractProxyEntity<BlogEntityProxy, BlogEntity> {
+public class BlogEntityProxy extends MyAbstractProxyEntity<BlogEntityProxy, BlogEntity> {
 
     private static final Class<BlogEntity> entityClass = BlogEntity.class;
 
@@ -33,7 +32,7 @@ public class BlogEntityProxy extends AbstractProxyEntity<BlogEntityProxy, BlogEn
      * 标题
      * {@link BlogEntity#getTitle}
      */
-    public SQLStringTypeColumn<BlogEntityProxy> title() {
+    public MySQLStringTypeColumn<BlogEntityProxy> title() {
         return getStringTypeColumn("title");
     }
 
