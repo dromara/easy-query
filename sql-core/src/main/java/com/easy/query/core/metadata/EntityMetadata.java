@@ -255,7 +255,6 @@ public class EntityMetadata {
 
         String selfProperty = tableEntity ? navigate.selfProperty() : null;
         String targetProperty = tableEntity ? navigate.targetProperty() : null;
-        String mappingProp = tableEntity ? null : navigate.mappingProp();
         RelationTypeEnum relationType = navigate.value();
         Class<?> navigateType = getNavigateType(relationType, field, fastBeanProperty);
         if (navigateType == null) {
@@ -264,7 +263,7 @@ public class EntityMetadata {
 
         Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
         PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
-        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty,mappingProp);
+        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty);
 
         if (tableEntity) {
             Class<? extends NavigateExtraFilterStrategy> extraFilterStrategyClass = navigate.extraFilter();

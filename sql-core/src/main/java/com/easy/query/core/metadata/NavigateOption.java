@@ -19,7 +19,6 @@ public class NavigateOption {
     private final RelationTypeEnum relationType;
     private final String selfProperty;
     private final String targetProperty;
-    private final String mappingProp;
     private final boolean basicType;
     private Class<?> mappingClass;
     private String selfMappingProperty;
@@ -32,8 +31,7 @@ public class NavigateOption {
                           Class<?> navigatePropertyType,
                           RelationTypeEnum relationType,
                           String selfProperty,
-                          String targetProperty,
-                          String mappingProp){
+                          String targetProperty){
 
         this.entityMetadata = entityMetadata;
         this.propertyName = propertyName;
@@ -42,7 +40,6 @@ public class NavigateOption {
         this.relationType = relationType;
         this.selfProperty = selfProperty;
         this.targetProperty = targetProperty;
-        this.mappingProp = mappingProp;
         this.basicType = EasyClassUtil.isBasicType(navigatePropertyType);
     }
 
@@ -104,10 +101,6 @@ public class NavigateOption {
 
     public void setPredicateFilterExpression(SQLExpression1<WherePredicate<?>> predicateFilterExpression) {
         this.predicateFilterExpression = predicateFilterExpression;
-    }
-
-    public String getMappingProp() {
-        return mappingProp;
     }
 
     public boolean isBasicType() {
