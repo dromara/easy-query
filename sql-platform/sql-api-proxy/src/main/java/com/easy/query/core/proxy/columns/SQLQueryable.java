@@ -150,20 +150,22 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
         tPropertyProxy.setNavValue(getNavValue());
         return tPropertyProxy;
     }
-//    default T1Proxy flatElement(SQLExpression1<EntityQueryable<T1Proxy, T1>> flatAdapterExpression) {
-//        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), getProxy().getEntitySQLContext());
-//        tPropertyProxy.setNavValue(getNavValue());
-//        return tPropertyProxy;
-//    }
-//    default T1Proxy flatElement1() {
+//    default T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression) {
 //        QueryRuntimeContext runtimeContext = this.getProxy().getEntitySQLContext().getRuntimeContext();
 //        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this,runtimeContext));
 //        tPropertyProxy.setNavValue(getNavValue());
+//        SQLSelectAsExpression selectExpression = flatAdapterExpression.apply(this.getProxy());
+//        tPropertyProxy.getEntitySQLContext().accept(selectExpression);
 //        return tPropertyProxy;
 //    }
-
-//    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLQueryable<TPropertyProxy, TProperty> select(SQLFuncExpression1<T1Proxy, TPropertyProxy> selectColumnExpression) {
-//        EntityQueryable<TPropertyProxy, TProperty> select = this.getQueryable().select(selectColumnExpression);
-//        return new EasySQLQueryable<>(this.getEntitySQLContext(), select, this.getOriginalTable());
+//    default void flatElement(SQLExpression1<T1Proxy> flatFilterExpression) {
+//        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), getProxy().getEntitySQLContext());
+//        tPropertyProxy.setNavValue(getNavValue());
+//
+//        FilterContext whereFilterContext = getQueryable().getClientQueryable().getSQLExpressionProvider1().getWhereFilterContext();
+//        tPropertyProxy.getEntitySQLContext()._where(whereFilterContext.getFilter(), () -> {
+//            flatFilterExpression.apply(tPropertyProxy);
+//        });
+//        this.any();
 //    }
 }

@@ -478,4 +478,86 @@ public class QueryTest17 extends BaseTest{
         }
      }
 
+    @Test
+    public void testFlatElement5(){
+//
+//
+//        List<MyObject> list1 = easyEntityQuery.queryable(MyObject.class)
+//                .where(m -> {
+//                    m.parent().children().where(o->{
+//                        o.name().gt("3");
+//                        o.id().eq("123");
+//                    }).any();
+//                }).toList();
+//
+//
+//
+//        List<MyObject> list = easyEntityQuery.queryable(MyObject.class)
+//                .where(m -> {
+//                    m.parent().children().flatElement(c->{
+//                        c.name().gt("3");
+//                        c.id().eq("123");
+//                    });
+//                }).toList();
+//
+//
+//        List<MyObject> list2 = easyEntityQuery.queryable(MyObject.class)
+//                .where(m -> {
+//                    m.parent().children().flatElement().myChildren().flatElement().name().gt("3");
+//                }).toList();
+//        {
+//
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//
+//            try {
+//
+//                List<MyObject> list = easyEntityQuery.queryable(MyObject.class)
+//                        .where(m -> {
+//                            m.parent().children().flatElement(c->{
+//                                c.name().gt("3");
+//                                c.id().eq("123");
+//                            });
+//                        }).toList();
+//            }catch (Exception ignored){
+//
+//            }
+//            listenerContextManager.clear();
+//
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`f1`,t.`f2`,t.`parent_id` FROM `MyObject` t LEFT JOIN `MyObjectParent` t1 ON t1.`id` = t.`parent_id` WHERE EXISTS (SELECT 1 FROM `MyObjectParentChildren` t2 WHERE t2.`parent_id` = t1.`id` AND t2.`name` > ? AND t2.`id` = ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("3(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//
+//        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                List<MyObject> list1 = easyEntityQuery.queryable(MyObject.class)
+                        .where(m -> {
+                            m.parent().children().where(o->{
+                                o.name().gt("3");
+                                o.id().eq("123");
+                            }).any();
+                        }).toList();
+            }catch (Exception ignored){
+
+            }
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`f1`,t.`f2`,t.`parent_id` FROM `MyObject` t LEFT JOIN `MyObjectParent` t1 ON t1.`id` = t.`parent_id` WHERE EXISTS (SELECT 1 FROM `MyObjectParentChildren` t2 WHERE t2.`parent_id` = t1.`id` AND t2.`name` > ? AND t2.`id` = ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("3(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+    }
+
 }

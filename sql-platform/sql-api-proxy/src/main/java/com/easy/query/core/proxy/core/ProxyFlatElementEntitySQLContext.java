@@ -14,6 +14,7 @@ import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
+import com.easy.query.core.proxy.sql.Select;
 
 /**
  * create time 2023/12/8 15:35
@@ -25,6 +26,7 @@ public class ProxyFlatElementEntitySQLContext implements EntitySQLContext {
     private final SQLQueryable<?,?> sqlQueryable;
     private final FilterContext whereFilterContext;
     private final QueryRuntimeContext runtimeContext;
+    private SQLSelectAsExpression sqlSelectAsExpression = null;
 
     public ProxyFlatElementEntitySQLContext(SQLQueryable<?,?> sqlQueryable, QueryRuntimeContext runtimeContext) {
         this.sqlQueryable = sqlQueryable;
@@ -62,7 +64,10 @@ public class ProxyFlatElementEntitySQLContext implements EntitySQLContext {
 
     @Override
     public void accept(SQLSelectAsExpression... selectAsExpressions) {
-        throw new UnsupportedOperationException();
+        if (sqlSelectAsExpression == null) {
+            sqlSelectAsExpression = SQLSelectAsExpression.empty;
+        }
+        sqlSelectAsExpression = sqlSelectAsExpression._concat(Select.of(selectAsExpressions));
     }
 
     @Override
@@ -98,7 +103,7 @@ public class ProxyFlatElementEntitySQLContext implements EntitySQLContext {
 
     @Override
     public SQLSelectAsExpression getSelectAsExpression() {
-        throw new UnsupportedOperationException();
+        return sqlSelectAsExpression;
     }
     //    @Override
 //    public void _nativeSqlSegment(SQLActionExpression sqlActionExpression) {

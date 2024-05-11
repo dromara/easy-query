@@ -29,7 +29,7 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
     private final QueryRuntimeContext runtimeContext;
     private final Property<Object, Collection<?>> navigateGetter;
 
-    public EasySelectFlatQueryable(ClientQueryable<?> queryable,  String navValue) {
+    public EasySelectFlatQueryable(ClientQueryable<?> queryable, String navValue) {
 
         this.runtimeContext = queryable.getSQLEntityExpressionBuilder().getRuntimeContext();
         EntityMetadata entityMetadata = queryable.getSQLEntityExpressionBuilder().getTable(0).getEntityMetadata();
@@ -57,8 +57,8 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
             Collection<Object> collectionValues = getCollectionValue(obj, first);
             while (iterator.hasNext()) {
                 Property<Object, ?> getter = iterator.next();
-                collectionValues= collectionValues.stream().map(o -> {
-                    return  getCollectionValue(o, getter);
+                collectionValues = collectionValues.stream().map(o -> {
+                    return getCollectionValue(o, getter);
                 }).flatMap(o -> o.stream()).filter(o -> o != null).distinct().collect(Collectors.toList());
             }
             return collectionValues;
@@ -75,14 +75,14 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 //        }
     }
 
-    private Collection<Object> getCollectionValue(Object obj,Property<Object, ?> getter){
+    private Collection<Object> getCollectionValue(Object obj, Property<Object, ?> getter) {
         Object value = getter.apply(obj);
-        if(value==null){
+        if (value == null) {
             return Collections.emptyList();
         }
-        if(value instanceof Collection){
+        if (value instanceof Collection) {
             return (Collection<Object>) value;
-        }else{
+        } else {
             return Collections.singletonList(value);
         }
     }
@@ -103,10 +103,10 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
                     EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
                     selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, nextNavigateProperty);
                     //没有下级要拉去
-                    if(nextNavigateProperty==null){
+                    if (nextNavigateProperty == null) {
                         return with;
-                    }else{
-                        return with.select(c->{
+                    } else {
+                        return with.select(c -> {
                             Collection<String> keyProperties = entityMetadata.getKeyProperties();
                             for (String keyProperty : keyProperties) {
                                 c.column(keyProperty);
@@ -123,7 +123,7 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
         }).flatMap(o -> o.stream()).filter(o -> o != null).distinct().collect(Collectors.toList());
     }
 
-    protected  <TResult> TResult getNavigates(Object entity) {
+    protected <TResult> TResult getNavigates(Object entity) {
         if (entity != null) {
             Collection<?> values = navigateGetter.apply(entity);
             if (values == null) {

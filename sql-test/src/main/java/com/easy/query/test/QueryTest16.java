@@ -159,5 +159,50 @@
 //                        group.key1(),
 //                        group.count()
 //                )).toList();
+//
+//
+//        List<SysUser> list1 = easyEntityQuery.queryable(SysUser.class)
+//                .where(s -> {
+//                    s.roles().any(role -> {
+//                        role.menus().any(menu -> {
+//                            menu.name().like("/admin");
+//                            menu.icon().eq("123");
+//                        });
+//                    });
+//                }).toList();
+//
+//
+////        List<SysUser> list7 = easyEntityQuery.queryable(SysUser.class)
+////                .where(s -> {
+////                    s.roles().flatElement().menus().flatElement(c->{
+////                        c.or(()->{
+////                            c.name().like("/admin");
+////                            c.icon().eq("123");
+////                        });
+////                    });
+////                }).toList();
+//
+//
+//
+//        List<SysUser> list2 = easyEntityQuery.queryable(SysUser.class)
+//                .where(s -> {
+//                    s.roles().flatElement().menus().flatElement().name().like("/admin");
+//                }).toList();
+//
+////        List<SysUser> list4 = easyEntityQuery.queryable(SysUser.class)
+////                .where(s -> {
+////                    s.roles().flatElement().menus().flatElement(c->{
+////                        c.or(()->{
+////                            c.name().like("/admin");
+////                            c.name().like("/user");
+////                        });
+////                    });
+////                }).toList();
+//
+//        List<SysUser> list3 = easyEntityQuery.queryable(SysMenu.class)
+//                .where(s -> {
+//                    s.name().like("/admin");
+//                })
+//                .toList(menu -> menu.roles().flatElement().users().flatElement());
 //    }
 //}

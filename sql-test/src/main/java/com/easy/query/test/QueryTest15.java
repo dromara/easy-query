@@ -33,6 +33,7 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.sqllite.config.SQLLiteDatabaseConfiguration;
 import com.easy.query.test.common.BusinessException;
 import com.easy.query.test.dto.SchoolClassAggregateDTO;
 import com.easy.query.test.dto.UserExtraDTO;
@@ -920,6 +921,45 @@ public class QueryTest15 extends BaseTest {
 //                    b.title().asx();
 //                    b.title().subString()
 //                });
+    }
+
+
+
+    @Test
+    public void test1223456() {
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
+        dataSource.setUsername("root");
+        dataSource.setPassword("root");
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setMaximumPoolSize(20);
+
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(0);
+                    op.setMaxShardingQueryLimit(10);
+                    op.setShardingOption(easyQueryShardingOption);
+                    op.setDefaultDataSourceName("ds2020");
+                    op.setThrowIfRouteNotMatch(false);
+                    op.setMaxShardingRouteCount(512);
+                    op.setDefaultDataSourceMergePoolSize(20);
+                    op.setStartTimeJob(true);
+                    op.setReverseOffsetThreshold(10);
+                })
+                .useDatabaseConfigure(new SQLLiteDatabaseConfiguration())
+//                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
+                .build();
+        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+
+
+        String sql = defaultEasyEntityQuery.queryable(Topic.class)
+                .where(m -> {
+                    m.createTime().format("yyyy年MM月dd日").eq("2022年01月01日");
+                }).toSQL();
+        Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE strftime('%Y年%m月%d日', \"create_time\") = ?", sql);
     }
 
 }
