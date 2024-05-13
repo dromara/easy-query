@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.extension.functions.entry;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.proxy.PropTypeColumn;
 
 /**
@@ -15,6 +16,20 @@ public interface ConcatExpressionSelector {
      * @return 返回当前选择器
      */
     ConcatExpressionSelector value(String val);
+
+    /**
+     * 格式化处理
+     * @param valFormat
+     * @return
+     */
+    ConcatExpressionSelector format(Object valFormat);
+
+    /**
+     * 接受子查询
+     * @param subQuery
+     * @return
+     */
+    ConcatExpressionSelector subQuery(Query<?> subQuery);
 
 
     /**

@@ -1,17 +1,24 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api4j.func.LambdaSQLFunc;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.nop.MyObject;
 import com.easy.query.test.nop.OtherTable;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -558,6 +565,44 @@ public class QueryTest17 extends BaseTest{
             Assert.assertEquals("3(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
         }
+    }
+    @Test
+    public void test12234567() {
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
+        dataSource.setUsername("root");
+        dataSource.setPassword("root");
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setMaximumPoolSize(20);
+
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(0);
+                    op.setMaxShardingQueryLimit(10);
+                    op.setShardingOption(easyQueryShardingOption);
+                    op.setDefaultDataSourceName("ds2020");
+                    op.setThrowIfRouteNotMatch(false);
+                    op.setMaxShardingRouteCount(512);
+                    op.setDefaultDataSourceMergePoolSize(20);
+                    op.setStartTimeJob(true);
+                    op.setReverseOffsetThreshold(10);
+                })
+                .useDatabaseConfigure(new KingbaseESDatabaseConfiguration())
+//                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
+                .build();
+        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+
+
+        String sql = defaultEasyEntityQuery.queryable(Topic.class)
+                .where(m -> {
+                    m.createTime().format("yyyy年MM月dd日").eq("2022年01月01日");
+                    Expression expression = m.expression();
+                    expression.concat(x->x.expression(m.id()).format("':'")).eq("123");
+                }).toSQL();
+        Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE to_char((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ? AND CONCAT(\"id\"::TEXT,':') = ?", sql);
     }
 
 }

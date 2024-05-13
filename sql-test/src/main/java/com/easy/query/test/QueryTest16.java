@@ -152,6 +152,18 @@
 //    }
 //    @Test
 //    public void testCert4(){
+//
+////        List<Draft3<String, String, String>> 杭州 = easyEntityQuery.queryable(SysUser.class)
+////                .leftJoin(Topic.class, (s, t2) -> s.id().eq(t2.id()))
+////                .where(s -> {
+////                    s.address().city().eq("杭州");
+////                }).select((s1, t2) -> Select.DRAFT.of(
+////                        s1.id(),
+////                        s1.address().city(),
+////                        t2.title()
+////                )).toList();
+//
+//
 //        List<Draft2<CertStatusEnum, Long>> list = easyEntityQuery.queryable(Certificate.class)
 //                .where(c -> c.status().eq(CertStatusEnum.NORMAL))
 //                .groupBy(c -> GroupKeys.TABLE1.of(c.status()))
@@ -204,5 +216,6 @@
 //                    s.name().like("/admin");
 //                })
 //                .toList(menu -> menu.roles().flatElement().users().flatElement());
+//
 //    }
 //}

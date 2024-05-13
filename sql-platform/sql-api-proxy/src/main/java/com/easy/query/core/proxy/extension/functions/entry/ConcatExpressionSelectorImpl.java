@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.extension.functions.entry;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
@@ -24,6 +25,18 @@ public class ConcatExpressionSelectorImpl implements ConcatExpressionSelector{
     @Override
     public ConcatExpressionSelector value(String val) {
         columnFuncSelector.value(val);
+        return this;
+    }
+
+    @Override
+    public ConcatExpressionSelector format(Object valFormat) {
+        columnFuncSelector.format(valFormat);
+        return this;
+    }
+
+    @Override
+    public ConcatExpressionSelector subQuery(Query<?> subQuery) {
+        columnFuncSelector.subQuery(subQuery);
         return this;
     }
 
