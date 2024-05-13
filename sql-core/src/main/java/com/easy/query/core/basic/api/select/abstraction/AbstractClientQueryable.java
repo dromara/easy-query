@@ -689,16 +689,34 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
     }
 
+//    @Override
+//    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, boolean replace) {
+//        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+//        EntityMetadata resultEntityMetadata = entityMetadataManager.getEntityMetadata(resultClass);
+//        EntityTableExpressionBuilder table = getSQLEntityExpressionBuilder().getTable(0);
+//        TableAvailable entityTable = table.getEntityTable();
+//        EntityMetadata entityMetadata = entityTable.getEntityMetadata();
+//        selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace);
+//
+//        return select(resultClass);
+//    }
+
     @Override
-    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, boolean replace) {
+    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression, boolean replace) {
+        selectAutoInclude0(resultClass,replace);
+         if(selectExpression!=null){
+            ColumnAsSelector<T1, TR> sqlColumnSelector = getSQLExpressionProvider1().getColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
+            selectExpression.apply(sqlColumnSelector);
+        }
+        return select(resultClass);
+    }
+    protected  <TR> void selectAutoInclude0(Class<TR> resultClass,boolean replace){
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         EntityMetadata resultEntityMetadata = entityMetadataManager.getEntityMetadata(resultClass);
         EntityTableExpressionBuilder table = getSQLEntityExpressionBuilder().getTable(0);
         TableAvailable entityTable = table.getEntityTable();
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
         selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace);
-
-        return select(resultClass);
     }
 
     private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, boolean replace) {

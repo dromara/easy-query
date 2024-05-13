@@ -296,13 +296,24 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             sqlSelectAsExpression.accept(columnAsSelector.getAsSelector());
         });
     }
+//
+//    @Override
+//    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, boolean replace) {
+//        return clientQueryable.selectAutoInclude(resultClass, replace);
+//    }
 
     @Override
-    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, boolean replace) {
-        return clientQueryable.selectAutoInclude(resultClass, replace);
+    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression, boolean replace) {
+        return clientQueryable.selectAutoInclude(resultClass,columnAsSelector->{
+            if(selectExpression!=null){
+                SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy());
+                if(sqlSelectAsExpression!=null){
+                    sqlSelectAsExpression.accept(columnAsSelector.getAsSelector());
+                }
+            }
+        }, replace);
     }
-
-//    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata) {
+    //    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata) {
 //        Collection<NavigateMetadata> resultNavigateMetadatas = resultEntityMetadata.getNavigateMetadatas();
 //        if(EasyCollectionUtil.isEmpty(resultNavigateMetadatas)){
 //            return;

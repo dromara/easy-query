@@ -59,13 +59,15 @@ public interface EntitySelectable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraftMerge(SQLFuncExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>, DraftFetcher<TR, TRProxy>> selectExpression) {
         return selectDraft((t1, t2, t3) -> selectExpression.apply(new MergeTuple3<>(get1Proxy(), get2Proxy(), get3Proxy())));
     }
+
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, TRProxy> selectExpression) {
 
         TRProxy resultProxy = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
-        return Select.selectProxy(resultProxy,getClientQueryable3());
+        return Select.selectProxy(resultProxy, getClientQueryable3());
     }
-    default <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression3<T1Proxy, T2Proxy,T3Proxy, SQLSelectAsExpression> selectExpression) {
-        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(),get3Proxy());
+
+    default <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLSelectAsExpression> selectExpression) {
+        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
         return getClientQueryable3().select(resultClass, columnAsSelector -> {
             sqlSelectAsExpression.accept(columnAsSelector.getAsSelector());
         });
@@ -74,6 +76,7 @@ public interface EntitySelectable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(SQLFuncExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>, TRProxy> selectExpression) {
         return select((a, b, c) -> selectExpression.apply(new MergeTuple3<>(a, b, c)));
     }
+
     /**
      * 快速读取单列用于返回基本类型或者subQuery等查询
      * <blockquote><pre>
@@ -95,12 +98,26 @@ public interface EntitySelectable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <TR>
      * @return
      */
-    default  <TR> Query<TR> selectColumn(SQLFuncExpression3<T1Proxy,T2Proxy,T3Proxy, PropTypeColumn<TR>> selectExpression){
-        PropTypeColumn<TR> column = selectExpression.apply(get1Proxy(),get2Proxy(),get3Proxy());
+    default <TR> Query<TR> selectColumn(SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, PropTypeColumn<TR>> selectExpression) {
+        PropTypeColumn<TR> column = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
         Objects.requireNonNull(column, "select column null result class");
-        ClientQueryable<?> select = getClientQueryable3().select(column.getPropertyType(), (t1,t2,t3) -> {
-            PropTypeColumn.selectColumn(t1.getAsSelector(),column);
+        ClientQueryable<?> select = getClientQueryable3().select(column.getPropertyType(), (t1, t2, t3) -> {
+            PropTypeColumn.selectColumn(t1.getAsSelector(), column);
         });
         return EasyObjectUtil.typeCastNullable(select);
+    }
+
+
+    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLSelectAsExpression> selectExpression) {
+        return selectAutoInclude(resultClass, selectExpression, false);
+    }
+
+    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLSelectAsExpression> selectExpression, boolean replace) {
+        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
+        return getClientQueryable3().selectAutoInclude(resultClass, (columnAsSelector1, columnAsSelector2, columnAsSelector3) -> {
+            if (sqlSelectAsExpression != null) {
+                sqlSelectAsExpression.accept(columnAsSelector1.getAsSelector());
+            }
+        }, replace);
     }
 }

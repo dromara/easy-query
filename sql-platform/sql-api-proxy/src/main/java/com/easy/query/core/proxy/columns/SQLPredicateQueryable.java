@@ -52,5 +52,4 @@ public interface SQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     <TMember> ColumnFunctionComparableAnyChainExpression<TMember> max(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector);
 
     <TMember> ColumnFunctionComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector);
-
 }

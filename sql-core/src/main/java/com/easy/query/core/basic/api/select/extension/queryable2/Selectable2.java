@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select.extension.queryable2;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.common.tuple.Tuple2;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
@@ -21,4 +22,7 @@ public interface Selectable2<T1,T2> {
             selectExpression.apply(new Tuple2<>(t1, t2));
         });
     }
+
+    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLExpression2<ColumnAsSelector<T1, TR>, ColumnAsSelector<T2, TR>> selectExpression, boolean replace);
+
 }

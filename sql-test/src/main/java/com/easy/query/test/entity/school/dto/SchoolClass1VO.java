@@ -18,6 +18,7 @@ import java.util.List;
 public class SchoolClass1VO {
     private String id;
     private String name;
+    private String name1;
     @Navigate(RelationTypeEnum.OneToMany)
     private List<SchoolStudentVO> schoolStudents;
 }

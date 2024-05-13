@@ -129,9 +129,9 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
     <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression);
 
    default  <TR> Query<TR> selectAutoInclude(Class<TR> resultClass){
-       return selectAutoInclude(resultClass,false);
+       return selectAutoInclude(resultClass,x->null,false);
    }
-    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass,boolean replace);
+    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression,boolean replace);
 //    <TR> Query<TR> select(Class<TR> resultClass,SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression);
 
 

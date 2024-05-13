@@ -45,9 +45,9 @@ public interface Selectable1<T1> {
      * @param <TR> 返回结果的泛型类型
      */
     default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass){
-        return selectAutoInclude(resultClass,false);
+        return selectAutoInclude(resultClass,null,false);
     }
-    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass,boolean replace);
+    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass,SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression,boolean replace);
 
     /**
      * 设置返回对象，返回对象会根据selectExpression映射相同列名

@@ -64,10 +64,11 @@ public interface EntitySelectable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, TRProxy> selectExpression) {
 
         TRProxy resultProxy = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
-        return Select.selectProxy(resultProxy,getClientQueryable4());
+        return Select.selectProxy(resultProxy, getClientQueryable4());
     }
-    default <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression4<T1Proxy, T2Proxy,T3Proxy,T4Proxy, SQLSelectAsExpression> selectExpression) {
-        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(),get3Proxy(),get4Proxy());
+
+    default <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLSelectAsExpression> selectExpression) {
+        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
         return getClientQueryable4().select(resultClass, columnAsSelector -> {
             sqlSelectAsExpression.accept(columnAsSelector.getAsSelector());
         });
@@ -103,8 +104,21 @@ public interface EntitySelectable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         PropTypeColumn<TR> column = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
         Objects.requireNonNull(column, "select column null result class");
         ClientQueryable<?> select = getClientQueryable4().select(column.getPropertyType(), (t1, t2, t3, t4) -> {
-            PropTypeColumn.selectColumn(t1.getAsSelector(),column);
+            PropTypeColumn.selectColumn(t1.getAsSelector(), column);
         });
         return EasyObjectUtil.typeCastNullable(select);
+    }
+
+    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLSelectAsExpression> selectExpression) {
+        return selectAutoInclude(resultClass, selectExpression, false);
+    }
+
+    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLSelectAsExpression> selectExpression, boolean replace) {
+        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
+        return getClientQueryable4().selectAutoInclude(resultClass, (columnAsSelector1, columnAsSelector2, columnAsSelector3, columnAsSelector4) -> {
+            if (sqlSelectAsExpression != null) {
+                sqlSelectAsExpression.accept(columnAsSelector1.getAsSelector());
+            }
+        }, replace);
     }
 }

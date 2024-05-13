@@ -107,4 +107,17 @@ public interface EntitySelectable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         });
         return EasyObjectUtil.typeCastNullable(select);
     }
+
+    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression5<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy, SQLSelectAsExpression> selectExpression) {
+        return selectAutoInclude(resultClass, selectExpression, false);
+    }
+
+    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression5<T1Proxy, T2Proxy, T3Proxy, T4Proxy,T5Proxy, SQLSelectAsExpression> selectExpression, boolean replace) {
+        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(),get5Proxy());
+        return getClientQueryable5().selectAutoInclude(resultClass, (columnAsSelector1, columnAsSelector2, columnAsSelector3, columnAsSelector4, columnAsSelector5) -> {
+            if (sqlSelectAsExpression != null) {
+                sqlSelectAsExpression.accept(columnAsSelector1.getAsSelector());
+            }
+        }, replace);
+    }
 }
