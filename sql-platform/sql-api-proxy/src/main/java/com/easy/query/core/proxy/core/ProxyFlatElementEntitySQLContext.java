@@ -5,6 +5,7 @@ import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
@@ -14,7 +15,6 @@ import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
-import com.easy.query.core.proxy.sql.Select;
 
 /**
  * create time 2023/12/8 15:35
@@ -22,17 +22,20 @@ import com.easy.query.core.proxy.sql.Select;
  *
  * @author xuejiaming
  */
-public class ProxyFlatElementEntitySQLContext implements EntitySQLContext {
+public class ProxyFlatElementEntitySQLContext implements FlatEntitySQLContext {
     private final SQLQueryable<?,?> sqlQueryable;
     private final FilterContext whereFilterContext;
     private final QueryRuntimeContext runtimeContext;
-    private SQLSelectAsExpression sqlSelectAsExpression = null;
+    private final String navValue;
+    private final SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction;
 
-    public ProxyFlatElementEntitySQLContext(SQLQueryable<?,?> sqlQueryable, QueryRuntimeContext runtimeContext) {
+    public ProxyFlatElementEntitySQLContext(SQLQueryable<?,?> sqlQueryable, QueryRuntimeContext runtimeContext, String navValue, SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction) {
         this.sqlQueryable = sqlQueryable;
         this.whereFilterContext = sqlQueryable.getQueryable().getClientQueryable().getSQLExpressionProvider1().getWhereFilterContext();
 
         this.runtimeContext = runtimeContext;
+        this.navValue = navValue;
+        this.sqlSelectAsExpressionFunction = sqlSelectAsExpressionFunction;
     }
 
     @Override
@@ -64,10 +67,7 @@ public class ProxyFlatElementEntitySQLContext implements EntitySQLContext {
 
     @Override
     public void accept(SQLSelectAsExpression... selectAsExpressions) {
-        if (sqlSelectAsExpression == null) {
-            sqlSelectAsExpression = SQLSelectAsExpression.empty;
-        }
-        sqlSelectAsExpression = sqlSelectAsExpression._concat(Select.of(selectAsExpressions));
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -103,7 +103,17 @@ public class ProxyFlatElementEntitySQLContext implements EntitySQLContext {
 
     @Override
     public SQLSelectAsExpression getSelectAsExpression() {
-        return sqlSelectAsExpression;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getNavValue() {
+        return navValue;
+    }
+
+    @Override
+    public SQLFuncExpression1<?, SQLSelectAsExpression> getSelectAsExpressionFunction() {
+        return sqlSelectAsExpressionFunction;
     }
     //    @Override
 //    public void _nativeSqlSegment(SQLActionExpression sqlActionExpression) {

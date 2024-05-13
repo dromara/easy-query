@@ -11,6 +11,18 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  * @author xuejiaming
  */
 public interface NavigateExtraFilterStrategy {
+//   /**
+//    *
+//    * @param builder
+//    * @return
+//    */
+//   default SQLExpression2<WherePredicate<?>, EntitySQLTableOwner<?>> getPredicateExtraFilterExpression(NavigateBuilder builder){
+//      return (where,table)->{
+//         SQLExpression1<WherePredicate<?>> predicateFilterExpression = getPredicateFilterExpression(builder);
+//         predicateFilterExpression.apply(where);
+//      };
+//   }
+   //EntitySQLTableOwner<?> selfTableOrNull
    @Nullable
    SQLExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder);
 }

@@ -3,7 +3,7 @@ package com.easy.query.test.entity.school.proxy;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
-import com.easy.query.core.proxy.columns.SQLStringColumn;
+import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.test.entity.school.SchoolClass;
 
@@ -12,93 +12,80 @@ import com.easy.query.test.entity.school.SchoolClass;
  * 当前文件是easy-query自动生成的请不要随意修改
  * 如果出现属性冲突请使用@ProxyProperty进行重命名
  *
- * @author xuejiaming
+ * @author easy-query
  */
-public class SchoolClassProxy extends AbstractProxyEntity < SchoolClassProxy, SchoolClass > {
+public class SchoolClassProxy extends AbstractProxyEntity<SchoolClassProxy, SchoolClass> {
 
-    private static final Class < SchoolClass > entityClass = SchoolClass .class;
+    private static final Class<SchoolClass> entityClass = SchoolClass.class;
 
-    public static SchoolClassProxy createTable (){
-        return new SchoolClassProxy ();
+    public static SchoolClassProxy createTable() {
+        return new SchoolClassProxy();
     }
 
-    public SchoolClassProxy (){
+    public SchoolClassProxy() {
     }
 
     /**
-     *{@link SchoolClass#getId}
+     * {@link SchoolClass#getId}
      */
-    public SQLStringColumn < SchoolClassProxy, java.lang.String> id(){
-    return getStringColumn("id", java.lang.String.class);
-}
+    public SQLStringTypeColumn<SchoolClassProxy> id() {
+        return getStringTypeColumn("id");
+    }
 
     /**
-     *{@link SchoolClass#getName}
+     * {@link SchoolClass#getName}
      */
-    public SQLStringColumn < SchoolClassProxy, java.lang.String> name(){
-    return getStringColumn("name", java.lang.String.class);
-}
-
-
-//    /**
-//     *{@link SchoolClass#getName}
-//     */
-//    public SQLStringColumnProxy< SchoolClassProxy> name(){
-//        return new SQLStringColumnProxy<>("name", getEntitySQLContext(),getTable());
-//    }
+    public SQLStringTypeColumn<SchoolClassProxy> name() {
+        return getStringTypeColumn("name");
+    }
 
     /**
      * 一对多 一个班级多个学生
-     *{@link SchoolClass#getSchoolStudents}
+     * {@link SchoolClass#getSchoolStudents}
      */
-    public SQLQueryable < com . easy . query . test . entity . school . proxy . SchoolStudentProxy, com.easy.query.test.entity.school.SchoolStudent> schoolStudents(){
-    return getNavigates(
-        "schoolStudents",
-        new com . easy . query . test . entity . school . proxy . SchoolStudentProxy ()
-    );
-}
+    public SQLQueryable<com.easy.query.test.entity.school.proxy.SchoolStudentProxy, com.easy.query.test.entity.school.SchoolStudent> schoolStudents() {
+        return getNavigates("schoolStudents", new com.easy.query.test.entity.school.proxy.SchoolStudentProxy());
+    }
 
     /**
      * 中间表多对多配置,其中mappingClass表示中间表,selfMappingProperty表示中间表的哪个字段和当前表对应,
-     *{@link SchoolClass#getSchoolTeachers}
+     * {@link SchoolClass#getSchoolTeachers}
      */
-    public SQLQueryable < com . easy . query . test . entity . school . proxy . SchoolTeacherProxy, com.easy.query.test.entity.school.SchoolTeacher> schoolTeachers(){
-    return getNavigates(
-        "schoolTeachers",
-        new com . easy . query . test . entity . school . proxy . SchoolTeacherProxy ()
-    );
-}
+    public SQLQueryable<com.easy.query.test.entity.school.proxy.SchoolTeacherProxy, com.easy.query.test.entity.school.SchoolTeacher> schoolTeachers() {
+        return getNavigates("schoolTeachers", new com.easy.query.test.entity.school.proxy.SchoolTeacherProxy());
+    }
 
 
     @Override
-    public Class < SchoolClass > getEntityClass (){
+    public Class<SchoolClass> getEntityClass() {
         return entityClass;
     }
 
 
     /**
      * 数据库列的简单获取
+     *
      * @return
      */
-    public SchoolClassProxyFetcher FETCHER = new SchoolClassProxyFetcher (this, null, SQLSelectAsExpression.empty);
+    public SchoolClassProxyFetcher FETCHER = new SchoolClassProxyFetcher(this, null, SQLSelectAsExpression.empty);
 
 
     public static class SchoolClassProxyFetcher extends AbstractFetcher<SchoolClassProxy, SchoolClass, SchoolClassProxyFetcher> {
 
-        public SchoolClassProxyFetcher (SchoolClassProxy proxy, SchoolClassProxyFetcher prev, SQLSelectAsExpression sqlSelectAsExpression){
-        super(proxy, prev, sqlSelectAsExpression);
-    }
+        public SchoolClassProxyFetcher(SchoolClassProxy proxy, SchoolClassProxyFetcher prev, SQLSelectAsExpression sqlSelectAsExpression) {
+            super(proxy, prev, sqlSelectAsExpression);
+        }
 
 
         /**
-         *{@link SchoolClass#getId}
+         * {@link SchoolClass#getId}
          */
         public SchoolClassProxyFetcher id() {
             return add(getProxy().id());
         }
 
         /**
-         *{@link SchoolClass#getName}
+         * {@link SchoolClass#getName}
          */
         public SchoolClassProxyFetcher name() {
             return add(getProxy().name());
@@ -106,12 +93,8 @@ public class SchoolClassProxy extends AbstractProxyEntity < SchoolClassProxy, Sc
 
 
         @Override
-        protected SchoolClassProxyFetcher createFetcher(
-            SchoolClassProxy cp,
-            AbstractFetcher<SchoolClassProxy, SchoolClass, SchoolClassProxyFetcher> prev,
-            SQLSelectAsExpression sqlSelectExpression
-        ) {
-            return new SchoolClassProxyFetcher (cp, this, sqlSelectExpression);
+        protected SchoolClassProxyFetcher createFetcher(SchoolClassProxy cp, AbstractFetcher<SchoolClassProxy, SchoolClass, SchoolClassProxyFetcher> prev, SQLSelectAsExpression sqlSelectExpression) {
+            return new SchoolClassProxyFetcher(cp, this, sqlSelectExpression);
         }
     }
 

@@ -8,6 +8,7 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.core.Expression;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -22,7 +23,9 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2024/5/6 17:16
@@ -604,5 +607,30 @@ public class QueryTest17 extends BaseTest{
                 }).toSQL();
         Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE to_char((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ? AND CONCAT(\"id\"::TEXT,':') = ?", sql);
     }
+
+    @Test
+     public void aaaa(){
+        List<Draft1<LocalDateTime>> list = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    t.createTime().plus(1, TimeUnit.DAYS).lt(LocalDateTime.now());
+                }).select(t -> Select.DRAFT.of(
+                        t.createTime().plus(1, TimeUnit.DAYS)
+                )).toList();
+
+        List<Draft1<LocalDateTime>> list1 = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    Expression expression = t.expression();
+                    expression.sql("({0} + interval 1 day) < {1}", c -> {
+                        c.expression(t.createTime()).value(LocalDateTime.now());
+                    });
+
+                }).select(t -> Select.DRAFT.of(
+                        t.expression().sqlType("({0} + interval 1 day)", c -> {
+                            c.expression(t.createTime());
+                        }).setPropertyType(LocalDateTime.class)
+                )).toList();
+
+    }
+
 
 }

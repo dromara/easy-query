@@ -151,6 +151,11 @@ public class NavigateMetadata {
             predicateFilterExpression.apply(wherePredicate);
         }
     }
+//    public void predicateFilterApply2(WherePredicate<?> wherePredicate, EntitySQLTableOwner<?> selfTableOrNull){
+//        if(predicateFilterExpression!=null){
+//            predicateFilterExpression.apply(wherePredicate);
+//        }
+//    }
 
     public boolean isBasicType() {
         return basicType;

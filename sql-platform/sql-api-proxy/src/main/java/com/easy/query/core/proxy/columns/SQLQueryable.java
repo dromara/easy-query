@@ -10,6 +10,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.columns.impl.EasySQLPredicateQueryable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
@@ -145,19 +146,14 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
      * @return
      */
     default T1Proxy flatElement() {
+        return flatElement(null);
+    }
+    default T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression) {
         QueryRuntimeContext runtimeContext = this.getProxy().getEntitySQLContext().getRuntimeContext();
-        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this,runtimeContext));
+        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this,runtimeContext,getNavValue(),flatAdapterExpression));
         tPropertyProxy.setNavValue(getNavValue());
         return tPropertyProxy;
     }
-//    default T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression) {
-//        QueryRuntimeContext runtimeContext = this.getProxy().getEntitySQLContext().getRuntimeContext();
-//        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this,runtimeContext));
-//        tPropertyProxy.setNavValue(getNavValue());
-//        SQLSelectAsExpression selectExpression = flatAdapterExpression.apply(this.getProxy());
-//        tPropertyProxy.getEntitySQLContext().accept(selectExpression);
-//        return tPropertyProxy;
-//    }
 //    default void flatElement(SQLExpression1<T1Proxy> flatFilterExpression) {
 //        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), getProxy().getEntitySQLContext());
 //        tPropertyProxy.setNavValue(getNavValue());

@@ -4,11 +4,13 @@ import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
+import com.easy.query.core.proxy.core.FlatEntitySQLContext;
 import com.easy.query.core.proxy.core.draft.proxy.DraftProxy;
 import com.easy.query.core.util.EasyArrayUtil;
 
@@ -72,6 +74,10 @@ public class Select {
     public static <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectProxy(TRProxy resultProxy, ClientQueryable<?> queryable) {
 
         Objects.requireNonNull(resultProxy, "select null result class");
+        if(resultProxy.getEntitySQLContext() instanceof FlatEntitySQLContext){
+            //[flatElement]方法不允许在select函数里面使用,如果你希望是从[flatElement]函数获取的请在[toList]函数内部使用
+            throw new EasyQueryInvalidOperationException("The [flatElement] method is not allowed to be used inside the select function. If you wish to retrieve from the [flatElement] function, please use it within the [toList] function. ");
+        }
 
         SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();
         if (selectAsExpression == null) {//全属性映射

@@ -39,6 +39,8 @@ import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
+import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.FlatEntitySQLContext;
 import com.easy.query.core.proxy.core.draft.DraftFetcher;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -230,7 +232,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression) {
         TRProxy resultProxy = selectExpression.apply(get1Proxy());
-        return Select.selectProxy(resultProxy,getClientQueryable());
+        return Select.selectProxy(resultProxy, getClientQueryable());
 //
 //
 //        Objects.requireNonNull(resultProxy, "select null result class");
@@ -296,8 +298,8 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass,boolean replace) {
-        return clientQueryable.selectAutoInclude(resultClass,replace);
+    public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, boolean replace) {
+        return clientQueryable.selectAutoInclude(resultClass, replace);
     }
 
 //    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata) {
@@ -839,6 +841,20 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(SQLFuncExpression1<T1Proxy, TRProxy> fetchResultExpression) {
         TRProxy resultProxy = fetchResultExpression.apply(get1Proxy());
-        return new EasySelectFlatQueryable<>(clientQueryable, resultProxy.getNavValue()).toList();
+        String navValue = getNavValue(resultProxy);
+        return new EasySelectFlatQueryable<>(clientQueryable, navValue, resultProxy).toList();
+    }
+
+    private <TRProxy extends ProxyEntity<TRProxy, TR>, TR> String getNavValue(TRProxy resultProxy) {
+        String navValue = resultProxy.getNavValue();
+        if(navValue==null){
+            EntitySQLContext entitySQLContext = resultProxy.getEntitySQLContext();
+            if(entitySQLContext instanceof FlatEntitySQLContext){
+                FlatEntitySQLContext flatEntitySQLContext = (FlatEntitySQLContext) entitySQLContext;
+                navValue = flatEntitySQLContext.getNavValue();
+            }
+        }
+        return navValue;
+
     }
 }
