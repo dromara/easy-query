@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.sql.impl.FillPredicate;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -167,6 +168,21 @@ public class RelationTest extends BaseTest {
         List<String> ids = Arrays.asList("1", "2", "3");
         try {
             relationInit(ids);
+            {
+                try {
+
+                    List<String> list = easyEntityQuery.queryable(SchoolStudent.class)
+                            .toList(x -> x.schoolStudentAddress().address());
+                }catch (Exception exception){
+                    Assert.assertTrue(exception instanceof EasyQueryInvalidOperationException);
+                    Assert.assertEquals(exception.getMessage(),"flatElement result only allowed use in toList");
+                }
+                System.out.println(1);
+            }
+            {
+                List<String> list = easyEntityQuery.queryable(SchoolClass.class)
+                        .toList(x -> x.schoolTeachers().flatElement().name());
+            }
             {
                 System.out.println("1");
                 ListenerContext listenerContext = new ListenerContext(true);

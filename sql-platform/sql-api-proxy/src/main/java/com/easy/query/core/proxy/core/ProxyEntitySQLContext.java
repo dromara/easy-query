@@ -39,7 +39,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
     private EntityExpressionAccept accept = EntityExpressionAccept.empty;
     private SQLSelectAsExpression sqlSelectAsExpression = null;
 
-    public ProxyEntitySQLContext(EntityExpressionBuilder entityExpressionBuilder,QueryRuntimeContext runtimeContext) {
+    public ProxyEntitySQLContext(EntityExpressionBuilder entityExpressionBuilder, QueryRuntimeContext runtimeContext) {
         this.entityExpressionBuilder = entityExpressionBuilder;
 
         this.runtimeContext = runtimeContext;
@@ -134,7 +134,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
             PredicateEntityExpressionAccept predicateEntityExpressionAccept = (PredicateEntityExpressionAccept) accept;
             boolean nextIsOr = predicateEntityExpressionAccept.nextIsOr();
             Filter filter = predicateEntityExpressionAccept.getFilter();
-            if(nextIsOr){
+            if (nextIsOr) {
                 filter.or(f -> {
                     PredicateEntityExpressionAcceptImpl innerAccept = new PredicateEntityExpressionAcceptImpl(f);
                     innerAccept.nextOr(true);
@@ -143,7 +143,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
                     innerAccept.nextOr(true);
                 });
                 filter.or();
-            }else{
+            } else {
                 filter.and(f -> {
                     PredicateEntityExpressionAcceptImpl innerAccept = new PredicateEntityExpressionAcceptImpl(f);
                     innerAccept.nextOr(true);
@@ -158,7 +158,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
             AggregatePredicateEntityExpressionAccept aggregatePredicateEntityExpressionAccept = (AggregatePredicateEntityExpressionAccept) accept;
             boolean nextIsOr = aggregatePredicateEntityExpressionAccept.nextIsOr();
             AggregateFilter aggregateFilter = aggregatePredicateEntityExpressionAccept.getAggregateFilter();
-            if(nextIsOr){
+            if (nextIsOr) {
                 aggregateFilter.or(f -> {
                     AggregatePredicateEntityExpressionAcceptImpl innerAccept = new AggregatePredicateEntityExpressionAcceptImpl(f);
                     innerAccept.nextOr(true);
@@ -167,7 +167,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
                     innerAccept.nextOr(true);
                 });
                 aggregateFilter.or();
-            }else{
+            } else {
                 aggregateFilter.and(f -> {
                     AggregatePredicateEntityExpressionAcceptImpl innerAccept = new AggregatePredicateEntityExpressionAcceptImpl(f);
                     innerAccept.nextOr(true);
@@ -198,7 +198,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
                     innerAccept.nextOr(true);
                 });
                 filter.or();
-            }else{
+            } else {
                 filter.and(f -> {
                     PredicateEntityExpressionAcceptImpl innerAccept = new PredicateEntityExpressionAcceptImpl(f);
                     innerAccept.nextOr(false);
@@ -213,7 +213,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
             AggregatePredicateEntityExpressionAccept aggregatePredicateEntityExpressionAccept = (AggregatePredicateEntityExpressionAccept) accept;
             boolean nextIsOr = aggregatePredicateEntityExpressionAccept.nextIsOr();
             AggregateFilter aggregateFilter = aggregatePredicateEntityExpressionAccept.getAggregateFilter();
-            if(nextIsOr){
+            if (nextIsOr) {
                 aggregateFilter.or(f -> {
                     AggregatePredicateEntityExpressionAcceptImpl innerAccept = new AggregatePredicateEntityExpressionAcceptImpl(f);
                     this.accept = innerAccept;
@@ -222,7 +222,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
                     innerAccept.nextOr(true);
                 });
                 aggregateFilter.or();
-            }else{
+            } else {
                 aggregateFilter.and(f -> {
                     AggregatePredicateEntityExpressionAcceptImpl innerAccept = new AggregatePredicateEntityExpressionAcceptImpl(f);
                     this.accept = innerAccept;

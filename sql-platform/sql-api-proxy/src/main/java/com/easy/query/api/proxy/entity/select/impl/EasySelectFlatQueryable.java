@@ -3,6 +3,7 @@ package com.easy.query.api.proxy.entity.select.impl;
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -36,17 +37,16 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
     private final ColumnMetadata columnMetadata;
 
     public EasySelectFlatQueryable(ClientQueryable<?> queryable, String navValue, TProxy tProxy) {
+        if(!(tProxy.getEntitySQLContext() instanceof FlatEntitySQLContext)){
+            throw new EasyQueryInvalidOperationException("flatElement result only allowed use in toList");
+        }
 
         this.runtimeContext = queryable.getSQLEntityExpressionBuilder().getRuntimeContext();
         this.resultBasicType = tProxy.getNavValue() == null && tProxy.getValue() != null;
         EntityMetadata entityMetadata = queryable.getSQLEntityExpressionBuilder().getTable(0).getEntityMetadata();
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
-        if(this.resultBasicType){
-            columnMetadata = queryEntityMetadata.getColumnNotNull(tProxy.getValue());
-        }else{
-            columnMetadata=null;
-        }
+
 
         String[] navValueSplit = navValue.split("\\.");
         String firstNavValue = navValueSplit[0];
@@ -61,6 +61,11 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
             currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
             replyExpressions.add(currentNavigateMetadata.getGetter());
         }
+        if (this.resultBasicType) {
+            columnMetadata = currentEntityMetadata.getColumnNotNull(tProxy.getValue());
+        } else {
+            columnMetadata = null;
+        }
         this.navigateGetter = obj -> {
             if (obj == null) {
                 return null;
@@ -73,8 +78,8 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
                 boolean hasNext = iterator.hasNext();
                 collectionValues = collectionValues.stream().map(o -> {
                     return getCollectionValue(o, getter);
-                }).flatMap(o -> o.stream()).filter(o -> o != null).map(o->{
-                    return getEndValue(o,hasNext);
+                }).flatMap(o -> o.stream()).filter(o -> o != null).map(o -> {
+                    return getEndValue(o, hasNext);
                 }).distinct().collect(Collectors.toList());
             }
             return collectionValues;
@@ -93,12 +98,13 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
 
     /**
      * 返回最终结果可能是基本类型也可能是对象
+     *
      * @param entity
      * @param hasNext
      * @return
      */
-    private Object getEndValue(Object entity,boolean hasNext){
-        if(!hasNext&&this.resultBasicType){
+    private Object getEndValue(Object entity, boolean hasNext) {
+        if (!hasNext && this.resultBasicType) {
             return columnMetadata.getGetterCaller().apply(entity);
         }
         return entity;
@@ -138,17 +144,19 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
                                 x.column(tProxy.getValue());
                             });
                         }
-                        FlatEntitySQLContext flatEntitySQLContext = (FlatEntitySQLContext) tProxy.getEntitySQLContext();
-                         if(flatEntitySQLContext.getSelectAsExpressionFunction()!=null){
-                             Class<Object> queryClass = with.queryClass();
-                             return with.select(x -> {
-                                 SQLSelectAsExpression sqlSelectAsExpression = flatEntitySQLContext.getSelectAsExpressionFunction().apply(
-                                         EasyObjectUtil.typeCastNullable(
-                                                 EntityQueryProxyManager.create(EasyObjectUtil.typeCastNullable(queryClass)).create(x.getTable(),with.getSQLEntityExpressionBuilder(),x.getRuntimeContext())
-                                         )
-                                 );
-                                 sqlSelectAsExpression.accept(x.getSelector());
-                            });
+                        if(tProxy.getEntitySQLContext() instanceof FlatEntitySQLContext){
+                            FlatEntitySQLContext flatEntitySQLContext = (FlatEntitySQLContext)tProxy.getEntitySQLContext() ;
+                            if (flatEntitySQLContext.getSelectAsExpressionFunction() != null) {
+                                Class<Object> queryClass = with.queryClass();
+                                return with.select(x -> {
+                                    SQLSelectAsExpression sqlSelectAsExpression = flatEntitySQLContext.getSelectAsExpressionFunction().apply(
+                                            EasyObjectUtil.typeCastNullable(
+                                                    EntityQueryProxyManager.create(EasyObjectUtil.typeCastNullable(queryClass)).create(x.getTable(), with.getSQLEntityExpressionBuilder(), x.getRuntimeContext())
+                                            )
+                                    );
+                                    sqlSelectAsExpression.accept(x.getSelector());
+                                });
+                            }
                         }
                         return with;
                     } else {
