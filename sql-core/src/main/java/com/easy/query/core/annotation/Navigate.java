@@ -61,13 +61,11 @@ public @interface Navigate {
      */
     boolean propIsProxy() default true;
 
-//    /**
-//     * 一对多比如SchoolClass映射多个schoolTeachers
-//     * 那么当{@code basicMappingPropPath} 为 [schoolTeachers]且是基本类型那么会将schoolTeachers的主键进行赋值如果需要其他属性
-//     * 则使用[schoolTeachers.name]schoolTeacherNames
-//     * @return
-//     */
-    String mappingProp() default "";
+
+    /**
+     * 仅entity生效
+     * @return
+     */
 
     Class<? extends NavigateExtraFilterStrategy> extraFilter() default DefaultNavigateExtraFilterStrategy.class;
 }

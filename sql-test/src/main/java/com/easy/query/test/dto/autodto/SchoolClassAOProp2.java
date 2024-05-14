@@ -14,7 +14,7 @@ import java.util.List;
  * @author xuejiaming
  */
 @Data
-public class SchoolClassAOProp {
+public class SchoolClassAOProp2 {
 
     //    @Column(primaryKey = true)//主键
 //    private String id;
@@ -25,6 +25,8 @@ public class SchoolClassAOProp {
 //    @Navigate(value = RelationTypeEnum.OneToMany,selfProperty = "id",targetProperty = "classId")
     @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolStudents","id"})
     private List<String> schoolStudentsIds;
+    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","id"})
+    private List<String> schoolTeachersClassIds;
 
 //    @Data
 //    public static class  SchoolStudentAO{

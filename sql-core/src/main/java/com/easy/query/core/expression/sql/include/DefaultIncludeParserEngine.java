@@ -42,8 +42,8 @@ import java.util.stream.Collectors;
  */
 public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
-    private <TEntity> List<RelationExtraEntity> getRelationExtraEntities(ExpressionContext expressionContext,List<TEntity> entities){
-        if(EasyCollectionUtil.isEmpty(entities)){
+    private <TEntity> List<RelationExtraEntity> getRelationExtraEntities(ExpressionContext expressionContext, List<TEntity> entities) {
+        if (EasyCollectionUtil.isEmpty(entities)) {
             return new ArrayList<>();
         }
 
@@ -53,24 +53,25 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         RelationExtraMetadata relationExtraMetadata = expressionContext.getRelationExtraMetadata();
         Map<String, RelationExtraColumn> relationExtraColumnMap = relationExtraMetadata.getRelationExtraColumnMap();
         Map<String, RelationExtraColumn> extraColumnMetadata = relationExtraColumnMap.values().stream()
-                .map(o->{
-                    if(o.isAppendRelationExtra()){
+                .map(o -> {
+                    if (o.isAppendRelationExtra()) {
                         return o;
                     }
                     ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(o.getPropertyName());
-                    return new RelationExtraColumn(o.getPropertyName(),o.getColumnName(),columnMetadata,o.isAppendRelationExtra());
+                    return new RelationExtraColumn(o.getPropertyName(), o.getColumnName(), columnMetadata, o.isAppendRelationExtra());
                 }).collect(Collectors.toMap(o -> o.getPropertyName(), o -> o, (k1, k2) -> {
-            return k1;
-        }));
-        int i=0;
+                    return k1;
+                }));
+        int i = 0;
         for (TEntity entity : entities) {
             Map<String, Object> extraColumns = relationExtraMetadata.getRelationExtraColumnList().get(i);
-            RelationExtraEntity relationExtraEntity = new RelationExtraEntityImpl(entity, extraColumns,extraColumnMetadata);
+            RelationExtraEntity relationExtraEntity = new RelationExtraEntityImpl(entity, extraColumns, extraColumnMetadata);
             relationExtraEntities.add(relationExtraEntity);
             i++;
         }
         return relationExtraEntities;
     }
+
     @Override
     public <TR> IncludeParserResult process(ExpressionContext expressionContext, EntityMetadata entityMetadata, List<TR> result, IncludeNavigateExpression includeExpression) {
         IncludeNavigateParams includeNavigateParams = includeExpression.getIncludeNavigateParams();
@@ -131,7 +132,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
             relationIds.addAll(targetIds);
         }
         //导航属性追踪与否
-        List<RelationExtraEntity> includeResult = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeParseContext.getIncludeQueryableExpression(), includeNavigateParams, relationIds, q->{
+        List<RelationExtraEntity> includeResult = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeParseContext.getIncludeQueryableExpression(), includeNavigateParams, relationIds, q -> {
             ExpressionContext innerExpressionContext = q.getSQLEntityExpressionBuilder().getExpressionContext();
             List<?> list = q.toList();
             return getRelationExtraEntities(innerExpressionContext, list);
@@ -160,7 +161,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 //            includeParseContext.setTargetProperty(navigateMetadata.getTargetProperty());
 //        }
 
-        return new DefaultIncludeParserResult(entityMetadata,relationExtraEntities, navigateMetadata.getRelationType(),
+        return new DefaultIncludeParserResult(entityMetadata, relationExtraEntities, navigateMetadata.getRelationType(),
                 includeParseContext.getNavigatePropertyName(),
                 includeParseContext.getNavigateOriginalPropertyType(),
                 includeParseContext.getNavigatePropertyType(),
@@ -171,7 +172,10 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getTargetMappingProperty(),
                 includeResult,
                 includeParseContext.getMappingRows(),
-                includeParseContext.getNavigatePropertySetter());
+                includeParseContext.getNavigatePropertySetter(),
+                includeParseContext.getIncludeNavigateParams().getNavigateFlatMetadata(),
+                includeParseContext.getIncludeNavigateParams().getFlatQueryEntityMetadata()
+        );
     }
 
 //    private TableAvailable getTableByEntityClass(EntityQueryExpressionBuilder sqlEntityExpressionBuilder, Class<?> entityClass) {
@@ -198,7 +202,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
         IncludeNavigateParams includeNavigateParams = includeParseContext.getIncludeNavigateParams();
 
-        List<Map<String, Object>> mappingRows = EasyIncludeUtil.queryableGroupExecute(queryRelationGroupSize,includeNavigateParams.getMappingQueryable(),includeNavigateParams, relationIds, Query::toMaps);
+        List<Map<String, Object>> mappingRows = EasyIncludeUtil.queryableGroupExecute(queryRelationGroupSize, includeNavigateParams.getMappingQueryable(), includeNavigateParams, relationIds, Query::toMaps);
         includeParseContext.setMappingRows(mappingRows);
     }
 
@@ -276,9 +280,9 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                         includeParseContext.setIncludeQueryableExpression(() -> {
                             ClientQueryable<?> includeQueryable = includeQueryableExpression.apply();
                             EntityQueryExpressionBuilder sqlEntityExpressionBuilder = includeQueryable.getSQLEntityExpressionBuilder();
-                            includeQueryable.select(aliasNavigateMetadata.getNavigatePropertyType(),t->{
+                            includeQueryable.select(aliasNavigateMetadata.getNavigatePropertyType(), t -> {
                                 t.columnAll();
-                                EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata,sqlEntityExpressionBuilder,t.getSQLNative(),t.getTable());
+                                EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                             });
                             return includeQueryable;
                         });
@@ -292,34 +296,33 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                             EntityQueryExpressionBuilder sqlEntityExpressionBuilder = includeQueryable.getSQLEntityExpressionBuilder();
                             return includeQueryable.select(aliasNavigateMetadata.getNavigatePropertyType(), t -> {
                                 columnIncludeExpression.getIncludeSelectorExpression().apply(t.getAsSelector());
-                                EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder,t.getSQLNative(),t.getTable());
-                                EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata,sqlEntityExpressionBuilder,t.getSQLNative(),t.getTable());
+                                EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
+                                EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                             });
                         });
                     }
                     return;
                 }
             }
-        }
-        else{
+        } else {
             SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression = includeParseContext.getIncludeQueryableExpression();
             includeParseContext.setIncludeQueryableExpression(() -> {
                 ClientQueryable<?> includeQueryable = includeQueryableExpression.apply();
                 EntityQueryExpressionBuilder sqlEntityExpressionBuilder = includeQueryable.getSQLEntityExpressionBuilder();
                 NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
-                if(sqlEntityExpressionBuilder.getProjects().isEmpty()){
+                if (sqlEntityExpressionBuilder.getProjects().isEmpty()) {
                     return includeQueryable.select(t -> {
                         t.columnAll();
-                        EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata,sqlEntityExpressionBuilder,t.getSQLNative(),t.getTable());
+                        EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                     });
-                }else{
+                } else {
                     ColumnSelector<?> columnSelector = includeQueryable.getSQLExpressionProvider1().getColumnSelector(sqlEntityExpressionBuilder.getProjects());
-                    EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata,sqlEntityExpressionBuilder,columnSelector.getSQLNative(),columnSelector.getTable());
+                    EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, columnSelector.getSQLNative(), columnSelector.getTable());
                     return includeQueryable;
                 }
             });
         }
-        if (!aliasEntity) {
+        if (!aliasEntity || includeNavigateParams.isMappingFlat()) {
             NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
             includeParseContext.setNavigatePropertyName(navigateMetadata.getPropertyName());
             includeParseContext.setNavigateOriginalPropertyType(navigateMetadata.getNavigateOriginalPropertyType());

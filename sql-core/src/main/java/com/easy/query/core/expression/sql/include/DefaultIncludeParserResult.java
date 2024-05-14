@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.include;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.NavigateFlatMetadata;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     private String targetMappingProperty;
     private List<Map<String, Object>> mappingRows;
     private final PropertySetterCaller<Object> setter;
+    private final NavigateFlatMetadata navigateFlatMetadata;
+    private final EntityMetadata flatQueryEntityMetadata;
 
     public DefaultIncludeParserResult(EntityMetadata entityMetadata,
                                       List<RelationExtraEntity> relationExtraEntities,
@@ -43,7 +46,9 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
                                       String targetMappingProperty,
                                       List<RelationExtraEntity> includeResult,
                                       List<Map<String, Object>> mappingRows,
-                                      PropertySetterCaller<Object> setter){
+                                      PropertySetterCaller<Object> setter,
+                                      NavigateFlatMetadata navigateFlatMetadata,
+                                      EntityMetadata flatQueryEntityMetadata){
 
         this.entityMetadata = entityMetadata;
         this.relationExtraEntities = relationExtraEntities;
@@ -59,6 +64,8 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
         this.includeResult = includeResult;
         this.mappingRows = mappingRows;
         this.setter = setter;
+        this.navigateFlatMetadata = navigateFlatMetadata;
+        this.flatQueryEntityMetadata = flatQueryEntityMetadata;
     }
     @Override
     public EntityMetadata getEntityMetadata() {
@@ -131,5 +138,15 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
      */
     public List<RelationExtraEntity> getRelationExtraEntities() {
         return relationExtraEntities;
+    }
+
+    @Override
+    public NavigateFlatMetadata getNavigateFlatMetadata() {
+        return navigateFlatMetadata;
+    }
+
+    @Override
+    public EntityMetadata getFlatQueryEntityMetadata() {
+        return flatQueryEntityMetadata;
     }
 }

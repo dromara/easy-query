@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.include;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.NavigateFlatMetadata;
 
 import java.util.List;
 import java.util.Map;
@@ -49,5 +50,6 @@ public interface IncludeParserResult {
 
     PropertySetterCaller<Object> getSetter();
     List<RelationExtraEntity> getRelationExtraEntities();
-
+    NavigateFlatMetadata getNavigateFlatMetadata();
+    EntityMetadata getFlatQueryEntityMetadata();
 }

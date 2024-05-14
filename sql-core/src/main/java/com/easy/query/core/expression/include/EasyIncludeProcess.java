@@ -31,7 +31,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             Object subRelationKey = includeEntity.getRelationExtraColumn(targetColumnMetadataPropertyName);
             Object entity = entityMap.get(subRelationKey);
             if (entity != null) {
-                includeParserResult.getSetter().call(entity, includeEntity.getEntity());
+                setEntityValue(entity, includeEntity.getEntity());
             }
         }
     }
@@ -44,7 +44,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             Object relationId = entity.getRelationExtraColumn(selfRelationColumn);
             Object entityInclude = includeMap.get(relationId);
             if (entityInclude != null) {
-                includeParserResult.getSetter().call(entity.getEntity(), entityInclude);
+                setEntityValue(entity.getEntity(), entityInclude);
             }
         }
     }
@@ -57,7 +57,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         //因为是一对多所以获取关联数据key为主键的map
 //        Map<?, ?> entityMap = EasyCollectionUtil.collectionToMap(entities, keyGetter::apply, o -> o);
 
-        Map<Object, Collection<Object>> targetToManyMap = getTargetToManyMap(includes);
+        Map<Object, Collection<RelationExtraEntity>> targetToManyMap = getTargetToManyMap(includes);
 //        Set<Map.Entry<Object, Collection<TEntityInclude>>> entries = targetToManyMap.entrySet();
 //        for (Map.Entry<Object, Collection<TEntityInclude>> entry : entries) {
 //            Object subRelationKey = entry.getKey();
@@ -69,8 +69,8 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
 //        }
         for (RelationExtraEntity entity : entities) {
             Object selfRelationId = entity.getRelationExtraColumn(selfRelationColumn);
-            Collection<?> targetEntities = targetToManyMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
-            includeParserResult.getSetter().call(entity.getEntity(),targetEntities);
+            Collection<RelationExtraEntity> targetEntities = targetToManyMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
+            setEntityValue(entity.getEntity(),targetEntities);
         }
     }
 
@@ -84,7 +84,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         for (RelationExtraEntity entity : entities) {
             Object selfRelationId =entity.getRelationExtraColumn(selfRelationColumn);
             Collection<RelationExtraEntity> targetEntities = targetToManyMap.computeIfAbsent(selfRelationId,k->createManyCollection());
-            includeParserResult.getSetter().call(entity.getEntity(), targetEntities);
+            setEntityValue(entity.getEntity(), targetEntities);
         }
     }
 

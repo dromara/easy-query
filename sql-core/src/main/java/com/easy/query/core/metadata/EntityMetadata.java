@@ -7,6 +7,7 @@ import com.easy.query.core.annotation.Encryption;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Navigate;
+import com.easy.query.core.annotation.NavigateFlat;
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.annotation.ShardingDataSourceKey;
 import com.easy.query.core.annotation.ShardingExtraDataSourceKey;
@@ -50,6 +51,7 @@ import com.easy.query.core.common.bean.FastBeanProperty;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
+import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -136,6 +138,7 @@ public class EntityMetadata {
     private final List<UpdateSetInterceptor> updateSetInterceptors = new ArrayList<>();
     private final Map<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
     private final Map<String, NavigateMetadata> property2NavigateMap = new LinkedHashMap<>();
+    private final Map<String, NavigateFlatMetadata> property2NavigateFlatMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
     private final List<String/*column name*/> generatedKeyColumns = new ArrayList<>(4);
     private final Map<String/*column name*/, ColumnMetadata> column2PropertyMap = new HashMap<>();
@@ -238,6 +241,13 @@ public class EntityMetadata {
                     continue;
                 }
             }
+            if (!tableEntity) {
+                NavigateFlat navigateFlat = field.getAnnotation(NavigateFlat.class);
+                if (navigateFlat != null) {
+                    createNavigateMappingMetadata(navigateFlat, field, fastBean, fastBeanProperty, property);
+                    continue;
+                }
+            }
 
             ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true);
             acceptColumnOption(null, columnOption, columnAllIndex);
@@ -256,7 +266,8 @@ public class EntityMetadata {
         String selfProperty = tableEntity ? navigate.selfProperty() : null;
         String targetProperty = tableEntity ? navigate.targetProperty() : null;
         RelationTypeEnum relationType = navigate.value();
-        Class<?> navigateType = getNavigateType(relationType, field, fastBeanProperty);
+        boolean toMany = relationType.equals(RelationTypeEnum.OneToMany) || relationType.equals(RelationTypeEnum.ManyToMany);
+        Class<?> navigateType = getNavigateType(toMany, field, fastBeanProperty);
         if (navigateType == null) {
             throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");
         }
@@ -296,6 +307,24 @@ public class EntityMetadata {
         NavigateMetadata navigateMetadata = new NavigateMetadata(navigateOption, beanGetter, beanSetter);
 
         property2NavigateMap.put(property, navigateMetadata);
+    }
+
+    private void createNavigateMappingMetadata(NavigateFlat navigateFlat, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property) {
+        if (navigateFlat.mappingPath().length <= 1) {
+            throw new EasyQueryInvalidOperationException("navigate flat, mappingPath at least two path");
+        }
+        RelationMappingTypeEnum relationMappingType = navigateFlat.value();
+        boolean toMany = relationMappingType.equals(RelationMappingTypeEnum.ToMany);
+        Class<?> navigateType = getNavigateType(toMany, field, fastBeanProperty);
+        if (navigateType == null) {
+            throw new EasyQueryInvalidOperationException("not found navigate flat type, property:[" + property + "]");
+        }
+
+        Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
+        PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
+        NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, relationMappingType, navigateFlat.mappingPath(), navigateType, EasyClassUtil.isBasicType(navigateType), beanSetter);
+
+        property2NavigateFlatMap.put(property, navigateFlatMetadata);
     }
 
     private ColumnMetadata acceptColumnOption(String parentPropertyName, ColumnOption columnOption, ColumnAllIndex columnAllIndex) {
@@ -593,9 +622,9 @@ public class EntityMetadata {
         return false;
     }
 
-    private Class<?> getNavigateType(RelationTypeEnum relationType, Field field, FastBeanProperty fastBeanProperty) {
+    private Class<?> getNavigateType(boolean toMany, Field field, FastBeanProperty fastBeanProperty) {
 
-        if (relationType.equals(RelationTypeEnum.OneToMany) || relationType.equals(RelationTypeEnum.ManyToMany)) {
+        if (toMany) {
             Type genericType = field.getGenericType();
 
             if (genericType instanceof ParameterizedType) {
@@ -773,12 +802,28 @@ public class EntityMetadata {
         return navigateMetadata;
     }
 
+    public NavigateFlatMetadata getNavigateFlatNotNull(String propertyName) {
+        NavigateFlatMetadata navigateFlatMetadata = getNavigateFlatOrNull(propertyName);
+        if (navigateFlatMetadata == null) {
+            throw new EasyQueryException(String.format(EasyClassUtil.getSimpleName(entityClass) + " not found property:[%s] mapping navigate flat", propertyName));
+        }
+        return navigateFlatMetadata;
+    }
+
     public NavigateMetadata getNavigateOrNull(String propertyName) {
         return property2NavigateMap.get(propertyName);
     }
 
+    public NavigateFlatMetadata getNavigateFlatOrNull(String propertyName) {
+        return property2NavigateFlatMap.get(propertyName);
+    }
+
     public Collection<NavigateMetadata> getNavigateMetadatas() {
         return property2NavigateMap.values();
+    }
+
+    public Collection<NavigateFlatMetadata> getNavigateFlatMetadatas() {
+        return property2NavigateFlatMap.values();
     }
 
     public ColumnMetadata getColumnNotNull(String propertyName) {
