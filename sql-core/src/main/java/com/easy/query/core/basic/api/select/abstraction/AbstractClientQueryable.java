@@ -720,6 +720,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         TableAvailable entityTable = table.getEntityTable();
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
         selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace);
+        selectAutoIncludeFlat0(entityMetadataManager,entityMetadata,resultEntityMetadata);
+    }
+    private void selectAutoIncludeFlat0(EntityMetadataManager entityMetadataManager,EntityMetadata entityMetadata,EntityMetadata resultEntityMetadata){
         Collection<NavigateFlatMetadata> navigateFlatMetadatas = resultEntityMetadata.getNavigateFlatMetadatas();
         if (EasyCollectionUtil.isNotEmpty(navigateFlatMetadatas)) {
             for (NavigateFlatMetadata navigateFlatMetadata : navigateFlatMetadatas) {
@@ -755,6 +758,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
                         selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, replace);
+                        selectAutoIncludeFlat0(entityMetadataManager,entityEntityMetadata,navigateEntityMetadata);
                         return with;
                     });
         }
