@@ -22,6 +22,7 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
+import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByStreamValue;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterable;
@@ -94,6 +95,7 @@ import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.MappingPathIterator;
 import com.easy.query.core.metadata.NavigateFlatMetadata;
+import com.easy.query.core.metadata.NavigateFlatProperty;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.util.EasyClassUtil;
@@ -101,6 +103,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasyUtil;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -720,16 +723,50 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         TableAvailable entityTable = table.getEntityTable();
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
         selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace);
-        selectAutoIncludeFlat0(entityMetadataManager,entityMetadata,resultEntityMetadata);
+        selectAutoIncludeFlat0(entityMetadataManager, entityMetadata, resultEntityMetadata);
     }
-    private void selectAutoIncludeFlat0(EntityMetadataManager entityMetadataManager,EntityMetadata entityMetadata,EntityMetadata resultEntityMetadata){
+
+    private void selectAutoIncludeFlat0(EntityMetadataManager entityMetadataManager, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata) {
         Collection<NavigateFlatMetadata> navigateFlatMetadatas = resultEntityMetadata.getNavigateFlatMetadatas();
         if (EasyCollectionUtil.isNotEmpty(navigateFlatMetadatas)) {
-            for (NavigateFlatMetadata navigateFlatMetadata : navigateFlatMetadatas) {
-                MappingPathIterator mappingPathIterator = navigateFlatMetadata.getMappingPathIterator();
-                selectAutoIncludeFlat0(entityMetadataManager, this, entityMetadata, navigateFlatMetadata, mappingPathIterator,true);
+            List<MappingPathIterator> mappingPathIterators = getMappingPathIterators(navigateFlatMetadatas);
+            for (MappingPathIterator mappingPathIterator : mappingPathIterators) {
+                selectAutoIncludeFlat0(entityMetadataManager, this, entityMetadata, mappingPathIterator, true);
             }
+//            for (NavigateFlatMetadata navigateFlatMetadata : navigateFlatMetadatas) {
+//                MappingPathIterator mappingPathIterator = navigateFlatMetadata.getMappingPathIterator();
+//                selectAutoIncludeFlat0(entityMetadataManager, this, entityMetadata, navigateFlatMetadata, mappingPathIterator, true);
+//            }
         }
+    }
+
+    private List<MappingPathIterator> getMappingPathIterators(Collection<NavigateFlatMetadata> navigateFlatMetadataCollection) {
+        return EasyUtil.groupBy(navigateFlatMetadataCollection.stream(), o -> o.getMappingPath()[0])
+                .map(o -> {
+//                    List<List<MappingPathNode>> mappingPathNodes = new ArrayList<>();
+//                    ArrayList<MappingPathNode> head = new ArrayList<>();
+//                    head.add(new MappingPathNode(o.key(), false));
+//                    mappingPathNodes.add(head);
+//                    List<NavigateFlatMetadata> navigateFlatMetadataList = o.values().collect(Collectors.toList());
+//                    int maxLength = navigateFlatMetadataList.stream().map(x -> x.getMappingPath().length).max(Integer::compareTo).orElse(0);
+//                    for (int i = 1; i < maxLength; i++) {
+//                        if (i <= mappingPathNodes.size()) {
+//                            mappingPathNodes.add(new ArrayList<>());
+//                        }
+//                        //获取当前层的集合
+//                        List<MappingPathNode> currentLayerList = mappingPathNodes.get(i);
+//                        for (NavigateFlatMetadata navigateFlatMetadata : navigateFlatMetadataList) {
+//                            String[] mappingPath = navigateFlatMetadata.getMappingPath();
+//
+//                            if(i<mappingPath.length){
+//                                String s = mappingPath[i];
+//                            }
+//
+//                        }
+//                    }
+                    return new MappingPathIterator(o.values().collect(Collectors.toList()));
+                }).collect(Collectors.toList());
+
     }
 
     private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, boolean replace) {
@@ -758,48 +795,50 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
                         selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, replace);
-                        selectAutoIncludeFlat0(entityMetadataManager,entityEntityMetadata,navigateEntityMetadata);
+                        selectAutoIncludeFlat0(entityMetadataManager, entityEntityMetadata, navigateEntityMetadata);
                         return with;
                     });
         }
     }
 
-    private void selectAutoIncludeFlat0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, NavigateFlatMetadata navigateMetadata, MappingPathIterator mappingPathIterator,boolean first) {
+    private void selectAutoIncludeFlat0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, MappingPathIterator mappingPathIterator, boolean first) {
         if (!mappingPathIterator.hasNext()) {
             return;
         }
-        String propertyName = mappingPathIterator.next();
-        if (!mappingPathIterator.hasNext() && navigateMetadata.isBasicType()) {
-            return;
-        }
-        NavigateMetadata entityNavigateMetadata = entityMetadata.getNavigateOrNull(propertyName);
-        if (entityNavigateMetadata == null) {
-            return;
-        }
+        List<NavigateFlatProperty> navigateFlatProperties = mappingPathIterator.next();
+        List<GroupByStreamValue<String, NavigateFlatProperty>> navigateFlatGroupProperties = EasyUtil.groupBy(navigateFlatProperties.stream(), x -> x.getProperty()).collect(Collectors.toList());
+        for (GroupByStreamValue<String, NavigateFlatProperty> navigateFlatGroupProperty : navigateFlatGroupProperties) {
+            String propertyName = navigateFlatGroupProperty.key();
+            NavigateMetadata entityNavigateMetadata = entityMetadata.getNavigateOrNull(propertyName);
+            if (entityNavigateMetadata == null) {
+                return;
+            }
+//            List<NavigateFlatProperty> flatProperties = navigateFlatGroupProperty.values().collect(Collectors.toList());
+            List<NavigateFlatProperty> navigateFlatProps = mappingPathIterator.nextRest().stream().filter(i -> i.getNavigateFlatMetadata().isBasicType() && i.getNextCount() == 0).collect(Collectors.toList());
+
 //            String navigatePropName = resultNavigateMetadata.isBasicType() ? resultNavigateMetadata.getMappingProp().split("//.")[0] : resultNavigateMetadata.getPropertyName();
 
-        clientQueryable
-                .include(t -> {
-                    if(first){
-                        t.getIncludeNavigateParams().setMappingFlat(true);
-                        t.getIncludeNavigateParams().setNavigateFlatMetadata(navigateMetadata);
-                        t.getIncludeNavigateParams().setFlatQueryEntityMetadata(entityMetadata);
-                    }
-//                        ClientQueryable<Object> with = t.with(navigatePropName);
-                    ClientQueryable<?> with = t.with(propertyName);
-                    EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
-                    selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, navigateMetadata, mappingPathIterator,false);
-                    if (mappingPathIterator.hasOneNext()) {
-                        if (navigateMetadata.isBasicType()) {
-                            with = with.select(navigateMetadata.getNavigatePropertyType(), z -> {
-                                z.column(mappingPathIterator.next());
-                            });
-                        } else {
-                            with = with.select(navigateMetadata.getNavigatePropertyType());
+            clientQueryable
+                    .include(t -> {
+                        if (first) {
+                            t.getIncludeNavigateParams().setMappingFlat(true);
+                            t.getIncludeNavigateParams().setNavigateFlatMetadataList(mappingPathIterator.getNavigateFlatMetadataList());
+                            t.getIncludeNavigateParams().setFlatQueryEntityMetadata(entityMetadata);
                         }
-                    }
-                    return with;
-                });
+//                        ClientQueryable<Object> with = t.with(navigatePropName);
+                        ClientQueryable<?> with = t.with(propertyName);
+                        EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
+                        selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, mappingPathIterator, false);
+                        if (EasyCollectionUtil.isNotEmpty(navigateFlatProps)) {
+                            with = with.select(z -> {
+                                for (NavigateFlatProperty navigateFlatProp : navigateFlatProps) {
+                                    z.column(navigateFlatProp.getProperty());
+                                }
+                            });
+                        }
+                        return with;
+                    });
+        }
     }
 
     private <TR> void selectOnly(Class<TR> resultClass) {

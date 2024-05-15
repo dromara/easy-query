@@ -50,9 +50,6 @@ public class NavigateFlatMetadata {
     public String[] getMappingPath() {
         return mappingPath;
     }
-    public MappingPathIterator getMappingPathIterator(){
-        return new MappingPathIterator(mappingPath);
-    }
 
     public PropertySetterCaller<Object> getBeanSetter() {
         return beanSetter;

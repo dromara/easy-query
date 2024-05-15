@@ -152,7 +152,9 @@ public abstract class AbstractSelector<TChain> {
                     if(targetEntityMetadata.getNavigateOrNull(navigateAutoMappingPropertyName)!=null){
                         columnInclude(table,navigateAutoMappingPropertyName,navigateAutoMappingPropertyName,s->{
                             TableAvailable entityTable = s.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
-                            s.columnAll(entityTable);
+                            if(s.getEntityQueryExpressionBuilder().getProjects().isEmpty()){
+                                s.columnAll(entityTable);
+                            }
                         });
                     }
                 }

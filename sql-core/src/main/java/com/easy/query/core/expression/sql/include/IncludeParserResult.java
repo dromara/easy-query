@@ -50,6 +50,6 @@ public interface IncludeParserResult {
 
     PropertySetterCaller<Object> getSetter();
     List<RelationExtraEntity> getRelationExtraEntities();
-    NavigateFlatMetadata getNavigateFlatMetadata();
+    List<NavigateFlatMetadata> getNavigateFlatMetadataList();
     EntityMetadata getFlatQueryEntityMetadata();
 }

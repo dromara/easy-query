@@ -173,7 +173,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 includeResult,
                 includeParseContext.getMappingRows(),
                 includeParseContext.getNavigatePropertySetter(),
-                includeParseContext.getIncludeNavigateParams().getNavigateFlatMetadata(),
+                includeParseContext.getIncludeNavigateParams().getNavigateFlatMetadataList(),
                 includeParseContext.getIncludeNavigateParams().getFlatQueryEntityMetadata()
         );
     }

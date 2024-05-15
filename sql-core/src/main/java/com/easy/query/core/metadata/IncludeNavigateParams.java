@@ -24,7 +24,7 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
     private boolean limit;
     private boolean replace=true;
     private boolean mappingFlat=false;
-    private NavigateFlatMetadata navigateFlatMetadata;
+    private List<NavigateFlatMetadata> navigateFlatMetadataList;
     private EntityMetadata flatQueryEntityMetadata;
     public IncludeNavigateParams(){
         relationIds =new ArrayList<>();
@@ -93,12 +93,12 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
         this.mappingFlat = mappingFlat;
     }
 
-    public NavigateFlatMetadata getNavigateFlatMetadata() {
-        return navigateFlatMetadata;
+    public List<NavigateFlatMetadata> getNavigateFlatMetadataList() {
+        return navigateFlatMetadataList;
     }
 
-    public void setNavigateFlatMetadata(NavigateFlatMetadata navigateFlatMetadata) {
-        this.navigateFlatMetadata = navigateFlatMetadata;
+    public void setNavigateFlatMetadataList(List<NavigateFlatMetadata> navigateFlatMetadataList) {
+        this.navigateFlatMetadataList = navigateFlatMetadataList;
     }
 
     public EntityMetadata getFlatQueryEntityMetadata() {

@@ -30,7 +30,7 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     private String targetMappingProperty;
     private List<Map<String, Object>> mappingRows;
     private final PropertySetterCaller<Object> setter;
-    private final NavigateFlatMetadata navigateFlatMetadata;
+    private final List<NavigateFlatMetadata> navigateFlatMetadataList;
     private final EntityMetadata flatQueryEntityMetadata;
 
     public DefaultIncludeParserResult(EntityMetadata entityMetadata,
@@ -47,7 +47,7 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
                                       List<RelationExtraEntity> includeResult,
                                       List<Map<String, Object>> mappingRows,
                                       PropertySetterCaller<Object> setter,
-                                      NavigateFlatMetadata navigateFlatMetadata,
+                                      List<NavigateFlatMetadata> navigateFlatMetadataList,
                                       EntityMetadata flatQueryEntityMetadata){
 
         this.entityMetadata = entityMetadata;
@@ -64,7 +64,7 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
         this.includeResult = includeResult;
         this.mappingRows = mappingRows;
         this.setter = setter;
-        this.navigateFlatMetadata = navigateFlatMetadata;
+        this.navigateFlatMetadataList = navigateFlatMetadataList;
         this.flatQueryEntityMetadata = flatQueryEntityMetadata;
     }
     @Override
@@ -141,8 +141,8 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     }
 
     @Override
-    public NavigateFlatMetadata getNavigateFlatMetadata() {
-        return navigateFlatMetadata;
+    public List<NavigateFlatMetadata> getNavigateFlatMetadataList() {
+        return navigateFlatMetadataList;
     }
 
     @Override
