@@ -14,7 +14,7 @@ import java.util.List;
  * @author xuejiaming
  */
 @Data
-public class SchoolClassAOProp4 {
+public class SchoolClassAOProp5 {
 
     //    @Column(primaryKey = true)//主键
 //    private String id;
@@ -30,11 +30,11 @@ public class SchoolClassAOProp4 {
     @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","name"})
     private List<String> schoolTeachersClassId1s;
     @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses"})
-    private List<SchoolClass> schoolTeachersClassList;
+    private List<SchoolStudentAO> schoolTeachersClassList;
 
-//    @Data
-//    public static class  SchoolStudentAO{
-//        private String id;
-//        private String name;
-//    }
+    @Data
+    public static class  SchoolStudentAO{
+        private String id;
+        private String name;
+    }
 }

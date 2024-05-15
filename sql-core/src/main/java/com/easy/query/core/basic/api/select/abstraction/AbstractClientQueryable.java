@@ -814,8 +814,20 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 return;
             }
 //            List<NavigateFlatProperty> flatProperties = navigateFlatGroupProperty.values().collect(Collectors.toList());
+            //获取下一次的基本属性
             List<NavigateFlatProperty> navigateFlatProps = mappingPathIterator.nextRest().stream().filter(i -> i.getNavigateFlatMetadata().isBasicType() && i.getNextCount() == 0).collect(Collectors.toList());
-
+            //获取当前属性没有下面属性来的
+            List<NavigateFlatProperty> currentClassDTO = navigateFlatProperties.stream().filter(i -> !i.getNavigateFlatMetadata().isBasicType() && i.getNextCount() == 0).collect(Collectors.toList());
+            if(EasyCollectionUtil.isNotEmpty(currentClassDTO)){
+                //检查是否存在自定义dto
+                for (NavigateFlatProperty navigateFlatProperty : currentClassDTO) {
+                    Class<?> navigatePropertyType = navigateFlatProperty.getNavigateFlatMetadata().getNavigatePropertyType();
+                    EntityMetadata propEntityMetadata = entityMetadataManager.getEntityMetadata(navigatePropertyType);
+                    if(propEntityMetadata.getTableName()==null){
+                        throw new EasyQueryInvalidOperationException("NavigateFlat only supports basic types and database types");
+                    }
+                }
+            }
 //            String navigatePropName = resultNavigateMetadata.isBasicType() ? resultNavigateMetadata.getMappingProp().split("//.")[0] : resultNavigateMetadata.getPropertyName();
 
             clientQueryable
@@ -828,8 +840,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                        ClientQueryable<Object> with = t.with(navigatePropName);
                         ClientQueryable<?> with = t.with(propertyName);
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
+
+//                        if(!entityEntityMetadata.getEntityClass().equals(entityNavigateMetadata.getNavigatePropertyType())){
+//                            throw new EasyQueryInvalidOperationException("NavigateFlat 仅支持基本类型和数据库类型");
+//                        }
                         selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, mappingPathIterator, false);
                         if (EasyCollectionUtil.isNotEmpty(navigateFlatProps)) {
+
+
                             with = with.select(z -> {
                                 for (NavigateFlatProperty navigateFlatProp : navigateFlatProps) {
                                     z.column(navigateFlatProp.getProperty());

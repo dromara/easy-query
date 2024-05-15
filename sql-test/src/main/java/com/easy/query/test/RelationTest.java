@@ -15,6 +15,7 @@ import com.easy.query.test.dto.autodto.SchoolClassAOProp;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp2;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp3;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp4;
+import com.easy.query.test.dto.autodto.SchoolClassAOProp5;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.Area;
 import com.easy.query.test.entity.base.City;
@@ -171,19 +172,39 @@ public class RelationTest extends BaseTest {
         try {
             relationInit(ids);
             {
+                boolean exception=true;
                 try {
 
                     List<String> list = easyEntityQuery.queryable(SchoolStudent.class)
                             .toList(x -> x.schoolStudentAddress().address());
-                }catch (Exception exception){
-                    Assert.assertTrue(exception instanceof EasyQueryInvalidOperationException);
-                    Assert.assertEquals(exception.getMessage(),"flatElement result only allowed use in toList");
+                    exception=false;
+                }catch (Exception ex){
+                    Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
+                    Assert.assertEquals(ex.getMessage(),"flatElement result only allowed use in toList");
                 }
+                Assert.assertTrue(exception);
                 System.out.println(1);
             }
             {
                 List<String> list = easyEntityQuery.queryable(SchoolClass.class)
                         .toList(x -> x.schoolTeachers().flatElement().name());
+            }
+            {
+                System.out.println("4");
+                boolean exception=true;
+                try {
+                    List<SchoolClassAOProp5> list = easyEntityQuery.queryable(SchoolClass.class)
+                            .selectAutoInclude(SchoolClassAOProp5.class)
+                            .toList();
+                    exception=false;
+
+                }catch (Exception ex){
+                    Assert.assertTrue(ex instanceof  EasyQueryInvalidOperationException);
+                    Assert.assertEquals(ex.getMessage(),"NavigateFlat only supports basic types and database types");
+                }
+                Assert.assertTrue(exception);
+                System.out.println("1");
+
             }
             {
                 System.out.println("3");
