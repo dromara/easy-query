@@ -814,21 +814,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 return;
             }
 //            List<NavigateFlatProperty> flatProperties = navigateFlatGroupProperty.values().collect(Collectors.toList());
+            //获取当前属性没有后续的属性了的 path最后一个是navigate那么就不可以是自定义dto只能是table
+            List<NavigateFlatProperty> customPathTypes = navigateFlatProperties.stream().filter(i -> !i.getNavigateFlatMetadata().isBasicType() && i.getNextCount() == 0).collect(Collectors.toList());
+
+//            String navigatePropName = resultNavigateMetadata.isBasicType() ? resultNavigateMetadata.getMappingProp().split("//.")[0] : resultNavigateMetadata.getPropertyName();
+
             //获取下一次的基本属性
             List<NavigateFlatProperty> navigateFlatProps = mappingPathIterator.nextRest().stream().filter(i -> i.getNavigateFlatMetadata().isBasicType() && i.getNextCount() == 0).collect(Collectors.toList());
-            //获取当前属性没有下面属性来的
-            List<NavigateFlatProperty> currentClassDTO = navigateFlatProperties.stream().filter(i -> !i.getNavigateFlatMetadata().isBasicType() && i.getNextCount() == 0).collect(Collectors.toList());
-            if(EasyCollectionUtil.isNotEmpty(currentClassDTO)){
-                //检查是否存在自定义dto
-                for (NavigateFlatProperty navigateFlatProperty : currentClassDTO) {
-                    Class<?> navigatePropertyType = navigateFlatProperty.getNavigateFlatMetadata().getNavigatePropertyType();
-                    EntityMetadata propEntityMetadata = entityMetadataManager.getEntityMetadata(navigatePropertyType);
-                    if(propEntityMetadata.getTableName()==null){
-                        throw new EasyQueryInvalidOperationException("NavigateFlat only supports basic types and database types");
-                    }
-                }
-            }
-//            String navigatePropName = resultNavigateMetadata.isBasicType() ? resultNavigateMetadata.getMappingProp().split("//.")[0] : resultNavigateMetadata.getPropertyName();
 
             clientQueryable
                     .include(t -> {
@@ -845,14 +837,24 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                            throw new EasyQueryInvalidOperationException("NavigateFlat 仅支持基本类型和数据库类型");
 //                        }
                         selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, mappingPathIterator, false);
-                        if (EasyCollectionUtil.isNotEmpty(navigateFlatProps)) {
 
-
-                            with = with.select(z -> {
-                                for (NavigateFlatProperty navigateFlatProp : navigateFlatProps) {
-                                    z.column(navigateFlatProp.getProperty());
+                        if (EasyCollectionUtil.isNotEmpty(customPathTypes)) {
+                            //检查是否存在自定义dto
+                            for (NavigateFlatProperty customPathType : customPathTypes) {
+                                Class<?> navigatePropertyType = customPathType.getNavigateFlatMetadata().getNavigatePropertyType();
+                                if (!Objects.equals(with.queryClass(),navigatePropertyType)) {
+                                    throw new EasyQueryInvalidOperationException("NavigateFlat only supports basic types and database types");
                                 }
-                            });
+                            }
+                        }
+                        if(EasyCollectionUtil.isEmpty(customPathTypes)){
+                            if (EasyCollectionUtil.isNotEmpty(navigateFlatProps)) {
+                                with = with.select(z -> {
+                                    for (NavigateFlatProperty navigateFlatProp : navigateFlatProps) {
+                                        z.column(navigateFlatProp.getProperty());
+                                    }
+                                });
+                            }
                         }
                         return with;
                     });
