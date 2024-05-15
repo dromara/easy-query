@@ -633,4 +633,11 @@ public class QueryTest17 extends BaseTest{
     }
 
 
+//    @Test
+//    public void test11(){
+//        List<UserInfoDTO> list = easyEntityQuery.queryable(User.class)
+//                .selectAutoInclude(UserInfoDTO.class)
+//                .toList();
+//        System.out.println("1");
+//    }
 }

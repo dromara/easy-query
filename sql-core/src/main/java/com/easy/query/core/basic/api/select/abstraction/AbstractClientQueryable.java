@@ -811,7 +811,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             String propertyName = navigateFlatGroupProperty.key();
             NavigateMetadata entityNavigateMetadata = entityMetadata.getNavigateOrNull(propertyName);
             if (entityNavigateMetadata == null) {
-                return;
+                continue;
             }
 //            List<NavigateFlatProperty> flatProperties = navigateFlatGroupProperty.values().collect(Collectors.toList());
             //获取当前属性没有后续的属性了的 path最后一个是navigate那么就不可以是自定义dto只能是table
@@ -842,7 +842,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             //检查是否存在自定义dto
                             for (NavigateFlatProperty customPathType : customPathTypes) {
                                 Class<?> navigatePropertyType = customPathType.getNavigateFlatMetadata().getNavigatePropertyType();
-                                if (!Objects.equals(with.queryClass(),navigatePropertyType)) {
+                                if (Objects.equals(propertyName,customPathType.getProperty())&&!Objects.equals(with.queryClass(),navigatePropertyType)) {
                                     throw new EasyQueryInvalidOperationException("NavigateFlat only supports basic types and database types");
                                 }
                             }

@@ -201,7 +201,7 @@ public class RelationTest extends BaseTest {
 
                 }catch (Exception ex){
                     Assert.assertTrue(ex instanceof  EasyQueryInvalidOperationException);
-                    Assert.assertEquals(ex.getMessage(),"NavigateFlat only supports basic types and database types");
+                    Assert.assertEquals("NavigateFlat only supports basic types and database types",ex.getMessage());
                 }
                 Assert.assertTrue(exception);
                 System.out.println("1");

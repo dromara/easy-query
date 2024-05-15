@@ -27,6 +27,7 @@ import com.easy.query.test.conversion.JsonConverter;
 import com.easy.query.test.conversion.MySQLAesEncryptColumnValueSQLConverter;
 import com.easy.query.test.conversion.StudentSizeColumnValueSQLConverter;
 import com.easy.query.test.conversion.UserAgeColumnValueSQLConverter;
+import com.easy.query.test.dto.autotest.RoleJoin;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
@@ -176,6 +177,7 @@ public abstract class BaseTest {
         configuration.applyInterceptor(new MyTenantInterceptor());
         configuration.applyNavigateExtraFilterStrategy(new BookNavigateExtraFilterStrategy());
         configuration.applyNavigateExtraFilterStrategy(new JoinType());
+        configuration.applyNavigateExtraFilterStrategy(new RoleJoin.RoleJoinType());
 //        configuration.applyShardingInitializer(new FixShardingInitializer());
         configuration.applyShardingInitializer(new DataSourceAndTableShardingInitializer());
         configuration.applyShardingInitializer(new TopicShardingShardingInitializer());
