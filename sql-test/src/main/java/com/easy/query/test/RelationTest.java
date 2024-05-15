@@ -212,7 +212,10 @@ public class RelationTest extends BaseTest {
                 ListenerContext listenerContext = new ListenerContext(true);
                 listenerContextManager.startListen(listenerContext);
                 List<SchoolClassAOProp6> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassAOProp6.class)
+                        .leftJoin(Topic.class,(s, t2) -> s.id().eq(t2.id()))
+                        .selectAutoInclude(SchoolClassAOProp6.class,(s,t2)->Select.of(
+                                t2.stars().as(SchoolClassAOProp6::getName1)
+                        ))
                         .toList();
                 for (SchoolClassAOProp6 schoolClassAOProp2 : list) {
                     List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
@@ -249,7 +252,7 @@ public class RelationTest extends BaseTest {
                 {
 
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("SELECT t1.`stars` AS `name1`,t.`name`,t.`id` AS `__relation__id` FROM `school_class` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 }
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);

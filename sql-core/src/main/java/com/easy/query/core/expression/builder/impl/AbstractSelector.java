@@ -146,16 +146,18 @@ public abstract class AbstractSelector<TChain> {
             }
             for (IncludeNavigateExpression includeNavigateExpression : expressionContext.getIncludes().values()) {
                 IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
-                if (includeNavigateParams.getTable() == table) {
-                    NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
-                    String navigateAutoMappingPropertyName = navigateMetadata.getPropertyName();
-                    if(targetEntityMetadata.getNavigateOrNull(navigateAutoMappingPropertyName)!=null){
-                        columnInclude(table,navigateAutoMappingPropertyName,navigateAutoMappingPropertyName,s->{
-                            TableAvailable entityTable = s.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
-                            if(s.getEntityQueryExpressionBuilder().getProjects().isEmpty()){
-                                s.columnAll(entityTable);
-                            }
-                        });
+                if(!includeNavigateParams.isMappingFlat()){
+                    if (includeNavigateParams.getTable() == table) {
+                        NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
+                        String navigateAutoMappingPropertyName = navigateMetadata.getPropertyName();
+                        if(targetEntityMetadata.getNavigateOrNull(navigateAutoMappingPropertyName)!=null){
+                            columnInclude(table,navigateAutoMappingPropertyName,navigateAutoMappingPropertyName,s->{
+                                TableAvailable entityTable = s.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
+                                if(s.getEntityQueryExpressionBuilder().getProjects().isEmpty()){
+                                    s.columnAll(entityTable);
+                                }
+                            });
+                        }
                     }
                 }
             }

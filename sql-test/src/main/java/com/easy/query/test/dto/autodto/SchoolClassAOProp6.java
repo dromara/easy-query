@@ -19,6 +19,7 @@ public class SchoolClassAOProp6 {
     //    @Column(primaryKey = true)//主键
 //    private String id;
     private String name;
+    private String name1;
     //一对多 一个班级多个学生
 //    @Navigate(value = RelationTypeEnum.OneToMany)
     //完整配置,property忽略表示对应的主键

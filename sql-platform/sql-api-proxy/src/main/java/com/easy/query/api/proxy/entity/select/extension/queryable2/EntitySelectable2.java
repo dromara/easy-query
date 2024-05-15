@@ -77,8 +77,15 @@ public interface EntitySelectable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     }
 
 
-    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLSelectAsExpression> selectExpression) {
-        return selectAutoInclude(resultClass, selectExpression, false);
+    /**
+     *
+     * @param resultClass
+     * @param extraSelectExpression 额外属性映射
+     * @return
+     * @param <TR>
+     */
+    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLSelectAsExpression> extraSelectExpression) {
+        return selectAutoInclude(resultClass, extraSelectExpression, false);
     }
 
     default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLSelectAsExpression> selectExpression, boolean replace) {
