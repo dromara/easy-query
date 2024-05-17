@@ -10,6 +10,8 @@
 //import com.easy.query.test.entity.blogtest.SysMenu;
 //import com.easy.query.test.entity.blogtest.SysRole;
 //import com.easy.query.test.entity.blogtest.SysUser;
+//import com.easy.query.test.entity.blogtest.SysUserAddress;
+//import com.easy.query.test.entity.blogtest.UserRole;
 //import org.junit.Test;
 //
 //import java.time.LocalDateTime;
@@ -212,7 +214,7 @@
 //
 //        List<SysUser> list7 = easyEntityQuery.queryable(SysUser.class)
 //                .where(s -> {
-//                    s.roles().flatElement().menus().any(c->{
+//                    s.roles().flatElement().menus().any(c -> {
 //
 //                        c.name().like("/admin");
 //                        c.icon().eq("123");
@@ -245,7 +247,51 @@
 //    }
 //
 //    @Test
-//    public void xxx1(){
+//    public void xxx1() {
+//        List<SysUser> list1 = easyEntityQuery.queryable(SysUser.class)
+//                .where(user -> {
+//                    user.expression().sql("{0} > {1}", c -> {
+//                        c.value(LocalDateTime.now()).expression(user.createTime());
+//                    });
+//                }).toList();
+//
+//        List<Draft2<String, String>> list2 = easyEntityQuery.queryable(SysUser.class)
+//                .where(user -> {
+//                    user.createTime().gt(LocalDateTime.now());
+//                }).select(user -> Select.DRAFT.of(
+//                        user.id(),
+//                        user.expression().sqlType("IFNULL({0},'')", c -> c.expression(user.name())).setPropertyType(String.class)
+//                )).toList();
+//
+//        List<Draft2<String, Long>> userIdAndRoleCount1 = easyEntityQuery.queryable(SysUser.class)
+//                .where(user -> user.name().like("小明"))
+//                .select(user -> Select.DRAFT.of(
+//                        user.id(),
+//                        user.expression().subQuery(() -> {
+//                            return easyEntityQuery.queryable(SysRole.class)
+//                                    .where(r -> {
+//                                        r.expression().exists(() -> {
+//                                            return easyEntityQuery.queryable(UserRole.class)
+//                                                    .where(u -> {
+//                                                        u.roleId().eq(r.id());
+//                                                        u.userId().eq(user.id());
+//                                                    });
+//                                        });
+//                                    })
+//                                    .selectCount();
+//                        })
+//                )).toList();
+//
+//        List<Draft2<String, Long>> userIdAndRoleCount = easyEntityQuery.queryable(SysUser.class)
+//                .where(user -> user.name().like("小明"))
+//                .select(user -> Select.DRAFT.of(
+//                        user.id(),
+//                        user.roles().count()
+//                )).toList();
+////        ==> Preparing: SELECT t.`id` AS `value1`,(SELECT COUNT(*) FROM `t_role` t1 WHERE EXISTS (SELECT 1 FROM `t_user` t2 WHERE EXISTS (SELECT 1 FROM `t_user_role` t3 WHERE t3.`user_id` = t2.`id` AND t3.`role_id` = t1.`id` LIMIT 1) AND t2.`id` = t.`id` LIMIT 1)) AS `value2` FROM `t_user` t WHERE t.`name` LIKE ?
+////==> Parameters: %小明%(String)
+//
+//
 //        System.out.println("------");
 //        List<String> collect1 = easyEntityQuery.queryable(SysUser.class)
 //                .where(s -> s.id().eq("1"))
@@ -263,5 +309,65 @@
 //                })
 //                .select(s -> s.name())
 //                .toList();
+////
+////        List<SysUserDTO> users = easyEntityQuery.queryable(SysUser.class)
+////                .where(s -> s.name().like("小明"))
+////                .select(SysUserDTO.class, s -> Select.of(
+////                        s.FETCHER.allFields(),
+////                        s.address().addr().as(SysUserDTO.Fields.myAddress)
+////                )).toList();
+////        List<StructSysUserDTO> users = easyEntityQuery.queryable(SysUser.class)
+////                .leftJoin(Topic.class,(s, t2) -> s.id().eq(t2.id()))
+////                .where(s -> s.name().like("小明"))
+////                .selectAutoInclude(StructSysUserDTO.class,(s, t2)->Select.of(
+////                        //////s.FETCHER.allFields(),请注意不需要添加这一行因为selectAutoInclude会自动执行allFields
+////                        t2.stars().nullOrDefault(1).as(StructSysUserDTO.Fields.topicStars)
+////                )).toList();
+////        List<SysUserFlatDTO> users = easyEntityQuery.queryable(SysUser.class)
+////                .where(s -> s.name().like("小明"))
+////                .selectAutoInclude(SysUserFlatDTO.class).toList();
+////
+////
+////        List<String> menuIds = easyEntityQuery.queryable(SysUser.class)
+////                .where(s -> s.name().like("小明"))
+////                .toList(s -> s.roles().flatElement().menus().flatElement().id());
+////
+////        List<SysMenu> menuIdNames = easyEntityQuery.queryable(SysUser.class)
+////                .where(s -> s.name().like("小明"))
+////                .toList(s -> s.roles().flatElement().menus().flatElement(x->x.FETCHER.id().name()));
+//
+//        List<Draft3<String, LocalDateTime, String>> userInfo = easyEntityQuery.queryable(SysUser.class)
+//                .leftJoin(SysUserAddress.class, (user, addr) -> user.id().eq(addr.userId()))
+//                .where((user, addr) -> {
+//                    user.name().like("小明");
+//                    addr.city().eq("杭州");
+//                })
+//                .select((s1, s2) -> Select.DRAFT.of(
+//                        s1.id(),
+//                        s1.createTime(),
+//                        s2.area()
+//                )).toList();
+//
+//        List<SysUser> userIn = easyEntityQuery.queryable(SysUser.class)
+//                .where(user -> {
+//                    user.id().in(
+//                            easyEntityQuery.queryable(SysRole.class)
+//                                    .select(s -> s.id())
+//                    );
+//                }).toList();
+//
+//        List<SysUser> userExists = easyEntityQuery.queryable(SysUser.class)
+//                .where(user -> {
+//
+//                    user.expression().exists(() -> {
+//                        return easyEntityQuery.queryable(SysRole.class)
+//                                .where(role -> {
+//                                    role.name().eq("管理员");
+//                                    role.id().eq(user.id());
+//                                });
+//                    });
+//                }).toList();
+//
+//
 //    }
 //}

@@ -8,6 +8,7 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.entity.blogtest.proxy.SysRoleProxy;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 @Table("t_role")
 @Data
 @EntityProxy
+@FieldNameConstants
 public class SysRole implements ProxyEntityAvailable<SysRole, SysRoleProxy> {
     @Column(primaryKey = true)
     private String id;

@@ -8,6 +8,7 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.entity.blogtest.proxy.SysMenuProxy;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ import java.util.List;
 @Table("t_menu")
 @Data
 @EntityProxy
+@FieldNameConstants
 public class SysMenu implements ProxyEntityAvailable<SysMenu , SysMenuProxy> {
     @Column(primaryKey = true)
     private String id;

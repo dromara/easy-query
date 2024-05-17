@@ -214,13 +214,14 @@ public class RelationTest extends BaseTest {
                 List<SchoolClassAOProp6> list = easyEntityQuery.queryable(SchoolClass.class)
                         .leftJoin(Topic.class,(s, t2) -> s.id().eq(t2.id()))
                         .selectAutoInclude(SchoolClassAOProp6.class,(s,t2)->Select.of(
-                                t2.stars().as(SchoolClassAOProp6::getName1)
+                                t2.stars().nullOrDefault(1).as(SchoolClassAOProp6::getName1)
                         ))
                         .toList();
                 for (SchoolClassAOProp6 schoolClassAOProp2 : list) {
                     List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
                     List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
                     List<SchoolClass> schoolTeachersClassList = schoolClassAOProp2.getSchoolTeachersClassList();
+                    Assert.assertEquals("1",schoolClassAOProp2.getName1());
                     if (schoolClassAOProp2.getName().equals("班级1")) {
                         Assert.assertTrue(schoolStudentsIds.contains("1"));
                         Assert.assertTrue(schoolStudentsIds.contains("3"));
@@ -252,7 +253,8 @@ public class RelationTest extends BaseTest {
                 {
 
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t1.`stars` AS `name1`,t.`name`,t.`id` AS `__relation__id` FROM `school_class` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("SELECT IFNULL(t1.`stars`,?) AS `name1`,t.`name`,t.`id` AS `__relation__id` FROM `school_class` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 }
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);

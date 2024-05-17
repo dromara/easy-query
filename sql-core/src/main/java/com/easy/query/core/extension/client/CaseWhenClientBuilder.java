@@ -1,6 +1,8 @@
 package com.easy.query.core.extension.client;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
@@ -30,5 +32,11 @@ public class CaseWhenClientBuilder<T1,TR> {
     }
     public CloneableSQLSegment elseEnd(Object elseValue){
         return caseWhenBuilder.elseEnd(elseValue);
+    }
+    public CloneableSQLSegment elseEndColumn(TableAvailable table, String property){
+        return caseWhenBuilder.elseEndColumn(table,property);
+    }
+    public CloneableSQLSegment elseEndColumn(SQLTableOwner sqlTableOwner, String property){
+        return caseWhenBuilder.elseEndColumn(sqlTableOwner,property);
     }
 }
