@@ -1,4 +1,4 @@
-package com.easy.query.api.proxy.sql;
+package com.easy.query.api.proxy.entity.insert.extension;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.builder.Configurer;
@@ -9,11 +9,10 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 
 /**
- * create time 2023/12/7 13:21
- * 文件说明
- *
- * @author xuejiaming
- */
+  * create time 2024/5/19 09:34
+  * 文件说明
+  * @author xuejiaming
+  */
 public interface ProxyColumnConfigurer<TProxy extends ProxyEntity<TProxy, T>,T> {
     Configurer getConfigurer();
 

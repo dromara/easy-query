@@ -3,7 +3,6 @@ package com.easy.query.api4j.select;
 import com.easy.query.api4j.select.extension.queryable.ClientQueryableAvailable;
 import com.easy.query.api4j.select.extension.queryable.SQLAggregatable1;
 import com.easy.query.api4j.select.extension.queryable.SQLCountable1;
-import com.easy.query.api4j.select.extension.queryable.SQLFillable1;
 import com.easy.query.api4j.select.extension.queryable.SQLFilterable1;
 import com.easy.query.api4j.select.extension.queryable.SQLForEachConfigurable1;
 import com.easy.query.api4j.select.extension.queryable.SQLGroupable1;
@@ -15,7 +14,6 @@ import com.easy.query.api4j.select.extension.queryable.SQLSelectable1;
 import com.easy.query.api4j.select.extension.queryable.SQLTreeable1;
 import com.easy.query.api4j.select.extension.queryable.SQLUnionable1;
 import com.easy.query.api4j.sql.SQLColumnSelector;
-import com.easy.query.api4j.sql.SQLWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.internal.FilterConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
@@ -47,10 +45,9 @@ public interface Queryable<T1> extends Query<T1>,
         SQLUnionable1<T1>,
         SQLFilterable1<T1>,
         SQLIncludeable1<T1>,
-        SQLFillable1<T1>,
         SQLCountable1<T1>,
         ClientQueryableAvailable<T1>,
-        SQLForEachConfigurable1<T1> ,
+        SQLForEachConfigurable1<T1>,
         SQLTreeable1<T1> {
 
     /**
@@ -63,20 +60,6 @@ public interface Queryable<T1> extends Query<T1>,
     Queryable<T1> cloneQueryable();
 
     long countDistinct(SQLExpression1<SQLColumnSelector<T1>> selectExpression);
-
-
-    /**
-     * SELECT NOT EXISTS (
-     * SELECT 1
-     * FROM `table` AS `t`
-     * WHERE (`t`.`columns` = ?))
-     *
-     * @param whereExpression 表达式最后一个是取反
-     * @return
-     */
-    @Deprecated
-    boolean all(SQLExpression1<SQLWherePredicate<T1>> whereExpression);
-
 
     /**
      * 设置column所有join表都会生效

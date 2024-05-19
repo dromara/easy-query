@@ -166,8 +166,6 @@ public class GenericTest extends BaseTest {
         code = EasyBitwiseUtil.addBit(code, ExecuteMethodEnum.ANY.getCode());
         Assert.assertNotEquals(code, ExecuteMethodEnum.UNKNOWN.getCode());
         Assert.assertTrue(EasyBitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
-        Assert.assertFalse(EasyBitwiseUtil.hasBit(code, ExecuteMethodEnum.ALL.getCode()));
-        code = EasyBitwiseUtil.removeBit(code, ExecuteMethodEnum.ALL.getCode());
         Assert.assertNotEquals(code, ExecuteMethodEnum.UNKNOWN.getCode());
         Assert.assertTrue(EasyBitwiseUtil.hasBit(code, ExecuteMethodEnum.ANY.getCode()));
         code = EasyBitwiseUtil.removeBit(code, ExecuteMethodEnum.ANY.getCode());

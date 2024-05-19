@@ -65,7 +65,7 @@ public class EasyQueryExecutor extends AbstractExecutor<QueryExecuteResult> {
                 return AnyElementCircuitBreaker.INSTANCE;
             case LIST:return ListCircuitBreaker.INSTANCE;
             case ANY:return AnyCircuitBreaker.INSTANCE;
-            case ALL:return AllCircuitBreaker.INSTANCE;
+//            case ALL:return AllCircuitBreaker.INSTANCE;
             default:return NoCircuitBreaker.INSTANCE;
         }
     }

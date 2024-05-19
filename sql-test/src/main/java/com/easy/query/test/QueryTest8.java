@@ -1,7 +1,6 @@
 package com.easy.query.test;
 
-import com.easy.query.api.proxy.select.ProxyQueryable;
-import com.easy.query.api.proxy.select.ProxyQueryable2;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.api4j.sql.SQLWherePredicate;
@@ -17,7 +16,6 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.TopicMisDTO;
 import com.easy.query.test.dto.TopicRequest;
-import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
 import com.easy.query.test.dto.proxy.TopicMisDTOProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
@@ -537,22 +535,6 @@ public class QueryTest8 extends BaseTest {
     }
 
     @Test
-    public void test2() {
-        ProxyQueryable<TopicProxy, Topic> query = easyProxyQuery.queryable(TopicProxy.createTable())
-                .limit(100);
-        ProxyQueryable2<TopicProxy, Topic, BlogEntityProxy, BlogEntity> join = query
-                .select(TopicProxy.createTable(), o -> o.columns(o.t().id(), o.t().stars()))
-                .innerJoin(BlogEntityProxy.createTable(), o -> o.eq(o.t().id(), o.t1().id()));
-        BlogEntityTestProxy blogTestVO = BlogEntityTestProxy.createTable();
-        ProxyQueryable2<BlogEntityTestProxy, BlogEntityTest, BlogEntityProxy, BlogEntity> join2 = join.select(blogTestVO, o -> o.columnAs(o.t().id(), o.tr().url())
-                        .column(o.t1().title()))
-                .innerJoin(BlogEntityProxy.createTable(), o -> o.eq(o.t().url(), o.t1().id()));
-        List<BlogEntity> list = join2.select(BlogEntityProxy.createTable(), o -> {
-            o.columnAs(o.t().url(), o.tr().url()).columnAs(o.t1().title(), o.tr().content());
-        }).toList();
-    }
-
-    @Test
     public void test3() {
         ValueCompanyDTO companyDTO = easyQuery.queryable(ValueCompany.class)
                 .select(ValueCompanyDTO.class, o -> o.columnAll())
@@ -606,7 +588,7 @@ public class QueryTest8 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         Topic topic = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.eq(o.t().id(), "123"))
+                .where(o -> o.id().eq("123"))
                 .firstOrNull();
         Assert.assertNull(topic);
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -621,8 +603,8 @@ public class QueryTest8 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         Set<Topic> traceId1 = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.eq(o.t().id(), "1"))
-                .fetch(o -> {
+                .where(o -> o.id().eq("1"))
+                .streamBy(o -> {
                     return o.peek(x -> x.setTitle(traceId)).collect(Collectors.toSet());
                 },100);
         Assert.assertEquals(1, traceId1.size());
@@ -641,8 +623,8 @@ public class QueryTest8 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         Optional<Topic> traceId1 = easyProxyQuery.queryable(TopicProxy.createTable())
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                .where(o -> o.eq(o.t().id(), "1"))
-                .fetch(o -> {
+                .where(o -> o.id().eq( "1"))
+                .streamBy(o -> {
                     return o.findFirst();
                 },1);
         Assert.assertTrue(traceId1.isPresent());
@@ -670,9 +652,9 @@ public class QueryTest8 extends BaseTest {
     public void test5x() {
         BlogEntityProxy table = BlogEntityProxy.createTable();
         String sql = easyProxyQuery.queryable(table)
-                .where(o -> o.like(table.content(), (String) "1"))
+                .where(o -> o.content().like((String) "1"))
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                .where(o -> o.like(table.url(), (String) null))
+                .where(o -> o.url().like((String) null))
                 .toSQL();
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ?", sql);
     }
@@ -709,9 +691,9 @@ public class QueryTest8 extends BaseTest {
                     long count = easyProxyQuery.queryable(table)
                             .asTable("AAA")
                             //.where(o -> o.eq(table.id(), "1"))
-                            .select(TopicProxy.createTable(), o -> o.column(table.id()))
-                            .where(o -> o.isNotNull(o.t().id()))
-                            .orderByAsc(o -> o.column(o.t().id()))
+                            .select(x-> x.FETCHER.id().fetchProxy())
+                            .where(o -> o.id().isNotNull())
+                            .orderBy(o -> o.id().asc())
                             .limit(1)
                             .count();
                 }catch (Exception ex){
@@ -737,9 +719,9 @@ public class QueryTest8 extends BaseTest {
                     List<Topic> list = easyProxyQuery.queryable(table)
                             .asTable("AAA")
                             //.where(o -> o.eq(table.id(), "1"))
-                            .select(TopicProxy.createTable(), o -> o.column(table.id()))
-                            .where(o -> o.isNotNull(o.t().id()))
-                            .orderByAsc(o -> o.column(o.t().id()))
+                            .select(o -> o.FETCHER.id().fetchProxy())
+                            .where(o -> o.id().isNotNull())
+                            .orderBy(o -> o.id().asc())
                             .limit(1)
                             .limit(1, 2).toList();
                 }catch (Exception ex){
@@ -765,7 +747,7 @@ public class QueryTest8 extends BaseTest {
                     long count = easyProxyQuery.queryable(table)
                             .asTable("AAA")
                             .limit(1)
-                            .select(TopicProxy.createTable(), o -> o.column(table.id()))
+                            .select(o -> o.FETCHER.id().fetchProxy())
                             .count();
                 }catch (Exception ex){
                     return ex;
@@ -790,33 +772,7 @@ public class QueryTest8 extends BaseTest {
                     List<Topic> list = easyProxyQuery.queryable(table)
                             .asTable("AAA")
                             .limit(1)
-                            .select(TopicProxy.createTable(), o -> o.expression(table.id())
-                                    .expressions(table.stars().as(o.tr().stars()), table.title().subString(1, 2)))
-                            .toList();
-                }catch (Exception ex){
-                    return ex;
-                }
-                return null;
-            };
-            Exception exception = f.get();
-            Assert.assertNotNull(exception);
-            Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
-            EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
-            Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT t.`id`,t.`stars` AS `stars`,SUBSTR(t.`title`,2,2) FROM `AAA` t LIMIT 1",easyQuerySQLStatementException.getSQL());
-
-        }
-        {
-
-
-            Supplier<Exception> f = () -> {
-                try {
-                    TopicProxy table = TopicProxy.createTable();
-                    List<Topic> list = easyProxyQuery.queryable(table)
-                            .asTable("AAA")
-                            .limit(1)
-                            .select(TopicProxy.createTable(), o -> o.column(table.id()))
+                            .select(o -> o.FETCHER.id().fetchProxy())
                             .limit(1, 2).toList();
                 }catch (Exception ex){
                     return ex;
@@ -845,7 +801,7 @@ public class QueryTest8 extends BaseTest {
                     long count = easyProxyQuery.queryable(table)
                             .asTable("AAA")
                             .limit(1)
-                            .select(TopicProxy.createTable(), o -> o.column(table.id())).distinct()
+                            .select(o->o.FETCHER.id().fetchProxy()).distinct()
                             .count();
                 }catch (Exception ex){
                     return ex;
@@ -872,8 +828,8 @@ public class QueryTest8 extends BaseTest {
                 try {
                     TopicProxy table = TopicProxy.createTable();
                     long count = easyProxyQuery.queryable(table)
-                            .asTable("AAA").where(o -> o.eq(table.id(), "1"))
-                            .select(TopicProxy.createTable(), o -> o.columns(table.id(),table.stars())).distinct()
+                            .asTable("AAA").where(o -> o.id().eq("1"))
+                            .select( o -> o.FETCHER.id().stars().fetchProxy()).distinct()
                             .count();
                 }catch (Exception ex){
                     return ex;
@@ -928,11 +884,11 @@ public class QueryTest8 extends BaseTest {
         TopicProxy topicTable = TopicProxy.createTable();
         BlogEntityProxy blogTable = BlogEntityProxy.createTable();
 
-        ProxyQueryable<BlogEntityProxy, BlogEntity> distinct = easyProxyQuery.queryable(topicTable)
-                .innerJoin(blogTable, o -> o.eq(topicTable.id(), blogTable.id()))
-                .where(o -> o.isNotNull(blogTable.title()))
-                .orderByDesc(o -> o.column(blogTable.publishTime()))
-                .select(BlogEntityProxy.createTable(), o -> o.columns(o.t1().publishTime(), o.t1().id(), o.t1().score()))
+        EntityQueryable<BlogEntityProxy, BlogEntity> distinct = easyProxyQuery.queryable(topicTable)
+                .innerJoin(blogTable, (o, o1) -> o.id().eq(o1.id()))
+                .where((o, o1) -> o1.title().isNotNull())
+                .orderBy((o, o1) -> o1.publishTime().desc())
+                .select((o, o1) -> new BlogEntityProxy().selectExpression(o1.publishTime(), o1.id(), o1.score()))
                 .distinct();
         EntityQueryExpressionBuilder countEntityQueryExpression = EasySQLExpressionUtil.getCountEntityQueryExpression(distinct.getSQLEntityExpressionBuilder().cloneEntityExpressionBuilder(),true);
         Assert.assertNotNull(countEntityQueryExpression);
@@ -959,13 +915,13 @@ public class QueryTest8 extends BaseTest {
     @Test
      public void testJoin5_1(){
         String sql = easyProxyQuery.queryable(TopicProxy.createTable())
-                .leftJoin(TopicProxy.createTable(), o -> o.eq(o.t().id(), o.t1().id()))
-                .leftJoin(TopicProxy.createTable(), o -> o.eq(o.t().id(), o.t1().id()))
-                .leftJoin(TopicProxy.createTable(), o -> o.eq(o.t().id(), o.t1().id()))
-                .leftJoin(BlogEntityProxy.createTable(), o -> o.eq(o.t().id(), o.t1().id()))
-                .where(o -> {
-                    o.eq(o.t().stars(), 1);
-                    o.eq(o.t4().order(), BigDecimal.ZERO);
+                .leftJoin(TopicProxy.createTable(), (o,o1) -> o.id().eq(o1.id()))
+                .leftJoin(TopicProxy.createTable(), (o,o1,o2) -> o.id().eq(o1.id()))
+                .leftJoin(TopicProxy.createTable(), (o,o1,o2,o3) -> o.id().eq(o1.id()))
+                .leftJoin(BlogEntityProxy.createTable(), (o,o1,o2,o3,o4) -> o.id().eq(o1.id()))
+                .where((o,o1,o2,o3,o4) -> {
+                    o.stars().eq(1);
+                    o4.order().eq(BigDecimal.ZERO);
                 }).toSQL();
          Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t1.`id` LEFT JOIN `t_blog` t4 ON t4.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`stars` = ? AND t4.`order` = ?",sql);
      }
@@ -1097,13 +1053,7 @@ public class QueryTest8 extends BaseTest {
     @Test
      public void testColumnMiss(){
         List<TopicMisDTO> list = easyProxyQuery.queryable(TopicProxy.createTable())
-                .select(TopicMisDTOProxy.createTable(), o -> o.column(o.t().id()).column(o.t().stars()).column(o.t().title()).column(o.t().createTime()))
-                .toList();
-    }
-    @Test
-     public void testColumnMiss1(){
-        List<TopicMisDTO> list = easyProxyQuery.queryable(TopicProxy.createTable())
-                .select(TopicMisDTOProxy.createTable(), o -> o.column(o.t().id()).column(o.t().stars()).columnAs(o.t().title(),o.tr().title1()).column(o.t().createTime()))
+                .select(o ->TopicMisDTOProxy.createTable().selectExpression(o.id(),o.stars(),o.title(),o.createTime()))
                 .toList();
     }
     @Test

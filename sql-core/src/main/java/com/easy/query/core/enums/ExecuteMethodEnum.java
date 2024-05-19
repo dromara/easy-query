@@ -13,7 +13,7 @@ public enum ExecuteMethodEnum {
     COUNT(1<<3),
     COUNT_DISTINCT(1<<4),
     ANY(1<<5),
-    ALL(1<<6),
+//    ALL(1<<6),//作废不支持
     MAX(1<<7),
     MIN(1<<8),
     SUM(1<<9),

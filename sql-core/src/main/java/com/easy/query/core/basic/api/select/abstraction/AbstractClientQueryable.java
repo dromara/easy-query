@@ -59,12 +59,10 @@ import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.FillSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
-import com.easy.query.core.expression.parser.core.base.impl.FillSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurerImpl;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
@@ -254,20 +252,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         setExecuteMethod(ExecuteMethodEnum.ANY);
         List<Long> result = cloneQueryable().limit(1).select(" 1 ").toList(Long.class);
         return !result.isEmpty();
-    }
-
-    @Override
-    public boolean all(SQLExpression1<WherePredicate<T1>> whereExpression) {
-        setExecuteMethod(ExecuteMethodEnum.ALL);
-        ClientQueryable<T1> cloneQueryable = cloneQueryable();
-        EntityQueryExpressionBuilder cloneSQLEntityQueryExpressionBuilder1 = cloneQueryable.getSQLEntityExpressionBuilder();
-        SQLExpressionProvider<T1> sqlExpressionProvider = runtimeContext.getSQLExpressionInvokeFactory().createSQLExpressionProvider(0, cloneSQLEntityQueryExpressionBuilder1);
-        FilterContext allWhereFilterContext = sqlExpressionProvider.getAllWhereFilterContext();
-        WherePredicate<T1> sqlAllPredicate = sqlExpressionProvider.getAllWherePredicate(allWhereFilterContext);
-        whereExpression.apply(sqlAllPredicate);
-        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = cloneQueryable.select(" 1 ").getSQLEntityExpressionBuilder();
-        List<Long> result = toInternalListByExpression(sqlEntityExpressionBuilder, Long.class, false, null);
-        return EasyCollectionUtil.all(result, o -> o == 1L);
     }
 
     @Override
@@ -662,8 +646,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     /**
      * 如果存在include那么就需要对select的结果进行补齐关联id
-     *
-     * @param selectorColumn
+     * @param sqlNative
+     * @param table
      */
     private void processorIncludeRelationProperty(SQLNative<?> sqlNative, TableAvailable table) {
         EasySQLExpressionUtil.appendSelfExtraTargetProperty(getSQLEntityExpressionBuilder(), sqlNative, table);
@@ -1293,19 +1277,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //        });
     }
 
-
-    @Override
-    public <TREntity> ClientQueryable<T1> fillMany(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
-        SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
-            FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
-            return fillSetterExpression.apply(fillSelector);
-        };
-        FillExpression fillExpression = new FillExpression(queryClass(), true, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), fillQueryableExpression);
-        fillExpression.setProduceMany(EasyObjectUtil.typeCastNullable(produce));
-        entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
-        return this;
-    }
-
     @Override
     public ClientQueryable<T1> asTreeCTE(String codeProperty, String parentCodeProperty, SQLExpression1<TreeCTEConfigurer> treeExpression) {
         //将当前表达式的expression builder放入新表达式的声明里面新表达式还是当前的T类型
@@ -1350,18 +1321,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public MethodQuery<T1> forEach(Consumer<T1> mapConfigure) {
         entityQueryExpressionBuilder.getExpressionContext().setForEachConfigurer(EasyObjectUtil.typeCastNullable(mapConfigure));
-        return this;
-    }
-
-    @Override
-    public <TREntity> ClientQueryable<T1> fillOne(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce) {
-        SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
-            FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
-            return fillSetterExpression.apply(fillSelector);
-        };
-        FillExpression fillExpression = new FillExpression(queryClass(), false, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), fillQueryableExpression);
-        fillExpression.setProduceOne(EasyObjectUtil.typeCastNullable(produce));
-        entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
         return this;
     }
 

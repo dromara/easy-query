@@ -1,15 +1,12 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.StringProxy;
-import com.easy.query.api.proxy.sql.impl.FillPredicate;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.Select;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.dto.CityVO;
 import com.easy.query.test.dto.autodto.SchoolClassAO;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp2;
@@ -37,7 +34,6 @@ import com.easy.query.test.entity.school.dto.SchoolStudentVO;
 import com.easy.query.test.entity.school.dto.SchoolTeacherVO;
 import com.easy.query.test.entity.school.dto.proxy.SchoolClassVOProxy;
 import com.easy.query.test.entity.school.dto.proxy.SchoolStudentVOProxy;
-import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
@@ -1611,18 +1607,6 @@ public class RelationTest extends BaseTest {
 
 //                        })
             }
-
-            {
-                SchoolStudentProxy table1 = SchoolStudentProxy.createTable();
-                SchoolClassProxy table2 = SchoolClassProxy.createTable();
-                List<SchoolStudent> list1 = easyProxyQuery.queryable(table1)
-                        .include(i -> i.one(table1.schoolClass()))
-                        .toList();
-                for (SchoolStudent schoolStudent : list1) {
-                    Assert.assertNotNull(schoolStudent.getSchoolClass());
-                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
-                }
-            }
             {
                 //todo alias
                 List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
@@ -2001,191 +1985,6 @@ public class RelationTest extends BaseTest {
             }
         }
         System.out.println(list);
-    }
-
-    @Test
-    public void provinceTest2() {
-
-        List<Province> list = easyQuery.queryable(Province.class)
-                .fillMany(x -> x.with(City.class).where(y -> y.eq(City::getCode, "3306"))
-                        , City::getProvinceCode
-                        , Province::getCode
-                        , (x, y) -> {
-                            x.setCities(new ArrayList<>(y));
-                        })
-                .toList();
-        List<City> list1 = easyQuery.queryable(City.class)
-                .fillOne(x -> x.with(Province.class), Province::getCode, City::getProvinceCode, (x, y) -> {
-                    x.setProvince(y);
-                })
-                .toList();
-
-        Assert.assertEquals(2, list.size());
-        for (Province province : list) {
-            if ("浙江省".equals(province.getName())) {
-
-                Assert.assertNotNull(province.getCities());
-                for (City city : province.getCities()) {
-                    Assert.assertEquals("绍兴市", city.getName());
-                    Assert.assertEquals(province.getCode(), city.getProvinceCode());
-                    Assert.assertNull(city.getAreas());
-                }
-            }
-        }
-    }
-
-    @Test
-    public void provinceTest3() {
-
-        EasyPageResult<City> pageResult = easyQuery.queryable(City.class)
-                .fillOne(x -> x.consumeNull(false).with(Province.class), Province::getCode, City::getProvinceCode, (x, y) -> {
-                    x.setProvince(y);
-                })
-                .toPageResult(1, 2);
-
-        Assert.assertEquals(24L, pageResult.getTotal());
-        Assert.assertEquals(2, pageResult.getData().size());
-        for (City city : pageResult.getData()) {
-            Assert.assertNotNull(city.getProvince());
-        }
-        {
-
-            EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
-                    .fillMany(x -> x.with(City.class).where(y -> y.eq(City::getCode, "3306"))
-                            , City::getProvinceCode
-                            , Province::getCode
-                            , (x, y) -> {
-                                x.setCities(new ArrayList<>(y));
-                            })
-                    .toPageResult(1, 1);
-            Assert.assertEquals(2L, pageResult1.getTotal());
-            Assert.assertEquals(1, pageResult1.getData().size());
-            for (Province province : pageResult1.getData()) {
-                if (!"33".equals(province.getCode())) {
-                    Assert.assertNull(province.getCities());
-                } else {
-                    Assert.assertNotNull(province.getCities());
-                    Assert.assertTrue(province.getCities().size() > 0);
-                }
-            }
-        }
-        {
-            {
-//easyEntityQuery.queryable(Province.class)
-//        .fillMany(()->{
-//            return easyEntityQuery.queryable(City.class);
-//        },(a,b)->new FillPredicate<>(a.code(),b.provinceCode()),(x,y)->{
-//
-//        })
-
-
-                EasyPageResult<Province> pageResult1 = easyEntityQuery.queryable(Province.class)
-                        .fillMany(() -> {
-                                    return easyEntityQuery.queryable(City.class).where(y -> y.code().eq("3306"));
-                                },
-                                (p, c) -> new FillPredicate<>(p.code(), c.provinceCode()),
-                                (x, y) -> {
-                                    x.setCities(new ArrayList<>(y));
-                                })
-                        .toPageResult(1, 1);
-                Assert.assertEquals(2L, pageResult1.getTotal());
-                Assert.assertEquals(1, pageResult1.getData().size());
-                for (Province province : pageResult1.getData()) {
-                    if (!"33".equals(province.getCode())) {
-                        Assert.assertNull(province.getCities());
-                    } else {
-                        Assert.assertNotNull(province.getCities());
-                        Assert.assertTrue(province.getCities().size() > 0);
-                    }
-                }
-
-            }
-
-            {
-
-
-                EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
-                        .fillMany(x -> x.with(City.class).where(y -> y.eq(City::getCode, "3306"))
-                                , City::getProvinceCode
-                                , Province::getCode
-                                , (x, y) -> {
-                                    x.setCities(new ArrayList<>(y));
-                                })
-                        .toPageResult(1, 1);
-                Assert.assertEquals(2L, pageResult1.getTotal());
-                Assert.assertEquals(1, pageResult1.getData().size());
-                for (Province province : pageResult1.getData()) {
-                    if (!"33".equals(province.getCode())) {
-                        Assert.assertNull(province.getCities());
-                    } else {
-                        Assert.assertNotNull(province.getCities());
-                        Assert.assertTrue(province.getCities().size() > 0);
-                    }
-                }
-            }
-        }
-        {
-            EasyPageResult<Province> pageResult1 = easyEntityQuery.queryable(Province.class)
-                    .fillMany(() -> easyEntityQuery.queryable(City.class).where(x -> x.code().eq("3306")), (a, b) -> new FillPredicate<>(a.code(), b.provinceCode()), (x, y) -> {
-                        x.setCities(new ArrayList<>(y));
-                    })
-                    .toPageResult(1, 1);
-
-            Assert.assertEquals(2L, pageResult1.getTotal());
-            Assert.assertEquals(1, pageResult1.getData().size());
-            for (Province province : pageResult1.getData()) {
-                if (!"33".equals(province.getCode())) {
-                    Assert.assertNull(province.getCities());
-                } else {
-                    Assert.assertNotNull(province.getCities());
-                    Assert.assertTrue(province.getCities().size() > 0);
-                }
-            }
-        }
-        {
-
-            EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
-                    .fillMany(x -> x.consumeNull(true).with(City.class).where(y -> y.eq(City::getCode, "3306"))
-                            , City::getProvinceCode
-                            , Province::getCode
-                            , (x, y) -> {
-                                x.setCities(y == null ? new ArrayList<>() : new ArrayList<>(y));
-                            })
-                    .toPageResult(1, 1);
-            Assert.assertEquals(2L, pageResult1.getTotal());
-            Assert.assertEquals(1, pageResult1.getData().size());
-            for (Province province : pageResult1.getData()) {
-                Assert.assertNotNull(province.getCities());
-                if (!"33".equals(province.getCode())) {
-                    Assert.assertEquals(0, province.getCities().size());
-                } else {
-                    Assert.assertTrue(province.getCities().size() > 0);
-                }
-            }
-        }
-        {
-
-            EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
-                    .fillMany(x -> x.consumeNull(true).with(City.class).where(y -> y.eq(City::getCode, "3306")).select(CityVO.class)
-                            , CityVO::getProvinceCode
-                            , Province::getCode
-                            , (x, y) -> {
-                                if (EasyCollectionUtil.isNotEmpty(y)) {
-                                    CityVO first = EasyCollectionUtil.first(y);
-                                    x.setFirstCityName(first.getName());
-                                }
-                            })
-                    .toPageResult(1, 10);
-            Assert.assertEquals(2L, pageResult1.getTotal());
-            Assert.assertEquals(2, pageResult1.getData().size());
-            for (Province province : pageResult1.getData()) {
-                if (!"33".equals(province.getCode())) {
-                    Assert.assertNull(province.getFirstCityName());
-                } else {
-                    Assert.assertNotNull(province.getFirstCityName());
-                }
-            }
-        }
     }
 
     @Test

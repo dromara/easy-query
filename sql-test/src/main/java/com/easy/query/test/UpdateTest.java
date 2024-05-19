@@ -131,8 +131,10 @@ public class UpdateTest extends BaseTest {
     public void updateTest1_1() {
         TopicProxy table = TopicProxy.createTable();
         String sql = easyProxyQuery.updatable(table)
-                .set(table.stars(), 123)
-                .where(o -> o.eq(table.id(), "2"))
+                .setColumns(t -> {
+                    t.stars().set(123);
+                })
+                .where(o -> o.id().eq("2"))
                 .toSQL();
         Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `id` = ?", sql);
     }
@@ -141,14 +143,18 @@ public class UpdateTest extends BaseTest {
     public void updateTest1_2() {
         TopicProxy table = TopicProxy.createTable();
         String sql = easyProxyQuery.updatable(table)
-                .set(table.stars(), 123)
-                .where(o -> o.eq(table.id(), "2"))
+                .setColumns(t -> {
+                    t.stars().set(123);
+                })
+                .where(t -> t.id().eq("2"))
                 .toSQL();
         Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `id` = ?", sql);
         try {
             String sql1 = easyProxyQuery.updatable(table)
-                    .set(table.stars(), 123)
-                    .where(o -> o.eq(table.id(), "2"))
+                    .setColumns(t -> {
+                        t.stars().set(123);
+                    })
+                    .where(t -> t.id().eq("2"))
                     .toSQL();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryTableNotInSQLContextException);
@@ -406,7 +412,7 @@ public class UpdateTest extends BaseTest {
         Assert.assertNotNull(topic);
         String sql = easyProxyQuery.updatable(topic)
                 .useProxy(TopicProxy.createTable())
-                .whereColumns(o -> o.columnKeys().column(o.t().stars())).toSQL(topic);
+                .whereColumns(o -> o.FETCHER.columnKeys().stars()).toSQL(topic);
         Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?", sql);
     }
 

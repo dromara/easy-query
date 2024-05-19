@@ -1,15 +1,10 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable7;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.api.proxy.entity.select.EntityQueryable7;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
-import com.easy.query.api.proxy.sql.ProxyGroupSelector;
-import com.easy.query.api.proxy.sql.impl.ProxyGroupSelectorImpl;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.common.tuple.MergeTuple7;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.lambda.SQLExpression8;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression7;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;

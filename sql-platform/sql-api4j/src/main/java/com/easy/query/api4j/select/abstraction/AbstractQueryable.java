@@ -84,13 +84,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public boolean any() {
         return entityQueryable.any();
     }
-
-    @Override
-    public boolean all(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
-        return entityQueryable.all(wherePredicate -> {
-            whereExpression.apply(new SQLWherePredicateImpl<>(wherePredicate));
-        });
-    }
     @Override
     public Queryable<Long> selectCount() {
         return this.selectCount(Long.class);

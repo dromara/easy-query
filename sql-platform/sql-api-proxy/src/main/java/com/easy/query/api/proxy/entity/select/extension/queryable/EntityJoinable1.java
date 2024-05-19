@@ -55,6 +55,7 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      */
 
     <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2,T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> onExpression);
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy t2Proxy, SQLExpression2<T1Proxy, T2Proxy> onExpression);
 
     /**
      * 创建join可查询对象
@@ -115,6 +116,7 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * @param <T2> join对象
      */
     <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2,T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> onExpression);
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(T2Proxy t2Proxy, SQLExpression2<T1Proxy, T2Proxy> onExpression);
 
     /**
      * 创建join可查询对象
@@ -175,6 +177,7 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * @param <T2> join对象
      */
     <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2,T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> onExpression);
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(T2Proxy t2Proxy, SQLExpression2<T1Proxy, T2Proxy> onExpression);
 
     /**
      * 创建join可查询对象

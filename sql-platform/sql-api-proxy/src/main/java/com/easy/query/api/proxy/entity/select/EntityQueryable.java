@@ -5,7 +5,6 @@ import com.easy.query.api.proxy.entity.select.extension.FlatListResultAble;
 import com.easy.query.api.proxy.entity.select.extension.queryable.ClientEntityQueryableAvailable;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityAggregatable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityCountable1;
-import com.easy.query.api.proxy.entity.select.extension.queryable.EntityFillable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityFilterable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityGroupable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityHavingable1;
@@ -16,8 +15,6 @@ import com.easy.query.api.proxy.entity.select.extension.queryable.EntityOrderabl
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntitySelectable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityTreeable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityUnionable1;
-import com.easy.query.api.proxy.sql.ProxyFilter;
-import com.easy.query.api.proxy.sql.ProxySelector;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
@@ -29,7 +26,9 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLColumn;
 
 /**
  * create time 2023/12/4 09:59
@@ -47,7 +46,6 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
         ClientEntityQueryableAvailable<T1>,
         EntityFilterable1<T1Proxy,T1>,
         EntityCountable1<T1Proxy,T1>,
-        EntityFillable1<T1Proxy,T1>,
         EntityHavingable1<T1Proxy,T1>,
         EntityIncludeable1<T1Proxy,T1>,
         EntityIncludesable1<T1Proxy,T1>,
@@ -70,19 +68,7 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
     @Override
     EntityQueryable<T1Proxy, T1> cloneQueryable();
 
-    long countDistinct(SQLExpression2<ProxySelector, T1Proxy> selectExpression);
-
-    /**
-     * SELECT NOT EXISTS (
-     * SELECT 1
-     * FROM `table` AS `t`
-     * WHERE (`t`.`columns` = ?))
-     *
-     * @param whereExpression 表达式最后一个是取反
-     * @return
-     */
-    @Deprecated
-    boolean all(SQLExpression2<ProxyFilter, T1Proxy> whereExpression);
+    long countDistinct(SQLFuncExpression1<T1Proxy, SQLColumn<?,?>> selectExpression);
 
     /**
      * 设置column所有join表都会生效

@@ -1,6 +1,6 @@
 package com.easy.query.test;
 
-import com.easy.query.api.proxy.select.ProxyQueryable;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.pagination.EasyPageResult;
@@ -14,6 +14,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnFunction;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.dto.BlogEntityTest;
@@ -472,19 +473,24 @@ public class QueryTest extends BaseTest {
     }
     @Test
     public void query11_3() {
-        ProxyQueryable<TopicProxy, Topic> sql = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.eq(o.t().id(), "3"));
+        EntityQueryable<TopicProxy, Topic> sql = easyProxyQuery.queryable(TopicProxy.createTable())
+                .where(t -> t.id().eq("3"));
 
         Assert.assertNotNull(sql);
         BlogEntityProxy blog = BlogEntityProxy.createTable();
         String sql1 = easyProxyQuery.queryable(blog)
-                .leftJoin(sql, o -> o.eq( blog.id(),o.t1().id()))
-                .where(o -> o.isNotNull(blog.id()).eq(blog.id(), "3"))
-                .select(BlogEntityProxy.createTable(), o -> {
-                    o.column(blog.id());
-                    o.sqlNativeSegment("rank() over(order by {0} desc) as rank1", c -> {
-                        c.expression(o.t1().stars());
-                    });
+                .leftJoin(sql, (o,o1) -> o.id().eq(o1.id()))
+                .where((o,o1) -> {
+                    o.id().isNotNull();
+                    o.id().eq("3");
+                })
+                .select(BlogEntity.class, (o,o1) -> {
+                    return Select.of(
+                            o.id(),
+                            o1.expression().sqlType("rank() over(order by {0} desc) as rank1", c -> {
+                                c.expression(o1.stars());
+                            })
+                    );
                 }).toSQL();
 
         Assert.assertEquals("SELECT t.`id`,rank() over(order by t2.`stars` desc) as rank1 FROM `t_blog` t LEFT JOIN (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?) t2 ON t.`id` = t2.`id` WHERE t.`deleted` = ? AND t.`id` IS NOT NULL AND t.`id` = ?",sql1);

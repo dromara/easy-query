@@ -659,7 +659,7 @@ public class H2QueryTest extends H2BaseTest {
         long l = easyProxyQuery.insertable(alltype).executeRows();
         Assert.assertEquals(1, l);
         ALLTYPEVO1 alltype1 = easyProxyQuery.queryable(ALLTYPE1Proxy.createTable())
-                .whereById("1235678").select(ALLTYPEVO1Proxy.createTable()).firstOrNull();
+                .whereById("1235678").select(o->ALLTYPEVO1Proxy.createTable()).firstOrNull();
         Assert.assertNotNull(alltype1);
         Assert.assertEquals(alltype1.getId(), alltype.getId());
         Assert.assertEquals(alltype1.getNumberDecimal(), alltype.getNumberDecimal());

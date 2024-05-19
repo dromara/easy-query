@@ -3,7 +3,6 @@ package com.easy.query.api4kt.select;
 import com.easy.query.api4kt.select.extension.queryable.ClientKtQueryableAvailable;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtAggregatable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtCountable1;
-import com.easy.query.api4kt.select.extension.queryable.SQLKtFillable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtFilterable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtForEachConfigurable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtGroupable1;
@@ -15,7 +14,6 @@ import com.easy.query.api4kt.select.extension.queryable.SQLKtSelectable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtTreeable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtUnionable1;
 import com.easy.query.api4kt.sql.SQLKtColumnSelector;
-import com.easy.query.api4kt.sql.SQLKtWherePredicate;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.internal.FilterConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
@@ -47,7 +45,6 @@ public interface KtQueryable<T1> extends Query<T1>,
         SQLKtUnionable1<T1>,
         SQLKtFilterable1<T1>,
         SQLKtIncludeable1<T1>,
-        SQLKtFillable1<T1>,
         SQLKtCountable1<T1>,
         ClientKtQueryableAvailable<T1>,
         SQLKtForEachConfigurable1<T1>,
@@ -64,19 +61,6 @@ public interface KtQueryable<T1> extends Query<T1>,
 
 
     long countDistinct(SQLExpression1<SQLKtColumnSelector<T1>> selectExpression);
-
-
-    /**
-     * SELECT NOT EXISTS (
-     * SELECT 1
-     * FROM `table` AS `t`
-     * WHERE (`t`.`columns` = ?))
-     *
-     * @param whereExpression 表达式最后一个是取反
-     * @return
-     */
-    @Deprecated
-    boolean all(SQLExpression1<SQLKtWherePredicate<T1>> whereExpression);
 
     /**
      * 设置column所有join表都会生效

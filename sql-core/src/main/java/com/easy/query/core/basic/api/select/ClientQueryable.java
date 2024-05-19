@@ -9,7 +9,6 @@ import com.easy.query.core.basic.api.internal.TableLogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.extension.queryable.Aggregatable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Countable1;
-import com.easy.query.core.basic.api.select.extension.queryable.Fillable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Filterable1;
 import com.easy.query.core.basic.api.select.extension.queryable.ForEachConfigurable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Groupable1;
@@ -25,7 +24,6 @@ import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 /**
  * create time 2023/6/1 17:26
@@ -50,7 +48,6 @@ public interface ClientQueryable<T1> extends Query<T1>,
         Orderable1<T1>,
         Unionable1<T1>,
         Includeable1<T1>,
-        Fillable1<T1>,
         Countable1<T1>,
         ForEachConfigurable1<T1>,
         Treeable1<T1> {
@@ -70,19 +67,6 @@ public interface ClientQueryable<T1> extends Query<T1>,
      * @return 具体长度
      */
     long countDistinct(SQLExpression1<ColumnSelector<T1>> selectExpression);
-
-
-    /**
-     * SELECT NOT EXISTS (
-     * SELECT 1
-     * FROM `table` AS `t`
-     * WHERE (`t`.`columns` = ?))
-     *
-     * @param whereExpression 表达式最后一个是取反
-     * @return
-     */
-    @Deprecated
-    boolean all(SQLExpression1<WherePredicate<T1>> whereExpression);
 
     /**
      * 设置column所有join表都会生效

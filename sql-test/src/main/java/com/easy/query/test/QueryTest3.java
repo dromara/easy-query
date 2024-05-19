@@ -4,8 +4,6 @@ import com.easy.query.api.proxy.base.IntegerProxy;
 import com.easy.query.api.proxy.base.LongProxy;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.StringProxy;
-import com.easy.query.api.proxy.extension.SQLProxyFunc;
-import com.easy.query.api.proxy.select.ProxyQueryable;
 import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
@@ -597,18 +595,21 @@ public class QueryTest3 extends BaseTest {
         TopicProxy table = TopicProxy.createTable();
         List<Topic> list1 = easyProxyQuery
                 .queryable(table)
-                .where(o -> o.eq(o.t().id(), "123" ).like(o.t().title(), "xxx" ))
-                .where(o -> o.eq(o.t().id(), "123" ).like(o.t().title(), "xxx" ))
-                .select(o -> {
-                    TopicProxy topicProxy = o.t();
-                    o.columns(topicProxy.id(), topicProxy.title());
+                .where(o -> {
+                    o.id().eq("123" );
+                    o.title().like("xxx" );
                 })
+                .where(t -> {
+                    t.id().eq("123");
+                    t.title().like("xxx");
+                })
+                .select(o -> o.FETCHER.id().title().fetchProxy())
                 .toList();
         {
             try {
 
                 List<Topic> list = easyProxyQuery.queryable(TopicProxy.createTable())
-                        .where(o -> o.eq(table.id(), "123" ))
+                        .where(o -> o.id().eq("123" ))
                         .toList();
             } catch (Exception ex) {
                 Assert.assertTrue(ex instanceof EasyQueryTableNotInSQLContextException);
@@ -618,118 +619,16 @@ public class QueryTest3 extends BaseTest {
         }
 
         String sql = easyProxyQuery.queryable(BlogEntityProxy.createTable())
-                .leftJoin(TopicAutoProxy.createTable(), o -> o.eq(o.t().id(), o.t1().title()))
-                .where(o -> o.eq(o.t1().title(), o.t().id())).toSQL();
+                .leftJoin(TopicAutoProxy.createTable(), (a,b) -> a.id().eq(b.title()))
+                .where((a,b) -> b.title().eq(a.id())).toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`deleted` = ? AND t1.`title` = t.`id`" , sql);
 
         EasyPageResult<Topic> topicPageResult = easyProxyQuery
                 .queryable(TopicProxy.createTable())
-                .where(o -> o.isNotNull(o.t().id()))
+                .where(o -> o.id().isNotNull())
                 .toPageResult(3, 10);
         List<Topic> data = topicPageResult.getData();
         Assert.assertEquals(10, data.size());
-    }
-
-    @Test
-    public void testProxy2() {
-//        String sqlz= easyProxyQuery
-//                .queryable(TOPIC_TEST_PROXY)
-//                .where1(t->t.id().eq("123").and(t.title().ge("432")).and(t.id().ge("432")))
-//                .orderByAsc((c,t)->c.column(t.id()))
-//                .select((selector, t) -> selector.columns(t.id(), t.title()))
-//                .toSQL();
-//        String sqlz1= easyProxyQuery
-//                .queryable(TOPIC_TEST_PROXY)
-//                .where1(t->t.id().eq("123").and(t.title().ge("432").or(t.id().ge("432")).or(t.id().eq(t.title()).and(t.id().eq("666")))))
-//                .orderByAsc((c,t)->c.column(t.id()))
-//                .select((selector, t) -> selector.columns(t.id(), t.title()))
-//                .toSQL();
-//        String sqlz2= easyProxyQuery
-//                .queryable(TOPIC_TEST_PROXY)
-//                .where1(t->t.id().eq(false,"123")
-//                        .and(
-//                                t.title().ge("432")
-//                                .or(t.id().eq(false,"432"))
-//
-//                                .or(
-//                                        t.id().eq(t.title())
-//                                                .and(t.id().eq(false,"666"))
-//                                )
-//                        )
-//                )
-//                .orderByAsc((c,t)->c.column(t.id()))
-//                .select((selector, t) -> selector.columns(t.id(), t.title()))
-//                .toSQL();
-        TopicTestProxy table = TopicTestProxy.createTable();
-        String sqlx = easyProxyQuery
-                .queryable(table)
-                .where(o -> {
-                    TopicTestProxy topic = o.t();
-//                    topic.id().eq("123").and()
-//                    topic.id().eq("123")
-//                                    .and(topic.title().ge("111").or(topic.title().eq("111")).or())
-
-                    o.eq(topic.id(), "123" ).like(topic.title(), "xxx" ).and(
-                            x -> x.eq(topic.id(), "123" ).or().like(topic.title(), "11" )
-                    );
-                })
-                .where(o -> o.eq(o.t().id(), "123" ).like(o.t().title(), "xxx" ))
-                .orderByAsc(o -> o.column(o.t().id()))
-                .select(o -> o.columns(o.t().id(), o.t().title()))
-                .toSQL();
-        String sqly = easyProxyQuery
-                .queryable(TopicTestProxy.createTable())
-                .where(o -> o.eq(o.t().id(), "123" ).like(o.t().title(), "xxx" ))
-                .where(o -> o.eq(o.t().id(), "123" ).like(o.t().title(), "xxx" ))
-                .orderByAsc(o -> o.column(o.t().id()))
-                .select(o -> o.columns(o.t().id(), o.t().title()))
-                .toSQL();
-        Assert.assertEquals("SELECT `id`,`title` FROM `t_topic` WHERE `id` = ? AND `title` LIKE ? AND (`id` = ? OR `title` LIKE ?) AND `id` = ? AND `title` LIKE ? ORDER BY `id` ASC" , sqlx);
-        Assert.assertEquals("SELECT `id`,`title` FROM `t_topic` WHERE `id` = ? AND `title` LIKE ? AND `id` = ? AND `title` LIKE ? ORDER BY `id` ASC" , sqly);
-        TopicAuto topicAuto = easyProxyQuery.queryable(TopicAutoProxy.createTable())
-                .where(o -> o.eq(o.t().title(), "123" ))
-                .firstOrNull();
-        BlogEntityTestProxy r1 = BlogEntityTestProxy.createTable();
-        List<BlogEntityTest> list = easyProxyQuery.queryable(BlogEntityProxy.createTable())
-                .leftJoin(TopicAutoProxy.createTable(), o -> o.eq(o.t().id(), o.t1().title()))
-                .where(o -> o.eq(o.t().title(), "123" ).like(o.t().id(), "22" ))
-                .where(sql -> sql.eq(sql.t().id(), "123" ))
-                .select(r1, o ->
-                        o.columns(o.t().id(), o.t1().title())
-                                .columnAs(o.t().content(), r1.content())
-                                .columnAs(o.t().isTop(), r1.isTop())
-                ).toList();
-
-        String sql = easyProxyQuery.queryable(BlogEntityProxy.createTable())
-                .leftJoin(TopicAutoProxy.createTable(), o -> o.eq(o.t().id(), o.t1().title()))
-                .where(filter -> filter.eq(filter.t1().title(), "123" ).like(filter.t().id(), "22" ))
-                .select(BlogEntityTestProxy.createTable(), o -> o.columns(o.t().id(), o.t1().title()).columnAs(o.t().content(), o.tr().content())
-                        .columnAs(o.t().isTop(), o.tr().isTop())).toSQL();
-        Assert.assertEquals("SELECT t.`id`,t1.`title`,t.`content` AS `content`,t.`is_top` AS `is_top` FROM `t_blog` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`deleted` = ? AND t1.`title` = ? AND t.`id` LIKE ?" , sql);
-
-        String sql1 = easyProxyQuery.queryable(BlogEntityProxy.createTable())
-                .leftJoin(TopicAutoProxy.createTable(), o -> o.eq(o.t().id(), o.t1().title()))
-                .where(o -> o.eq(o.t1().title(), "123" ).like(o.t().id(), "22" ))
-                .select(BlogEntityTestProxy.createTable(), o -> o.columnAll(o.t()).columns(o.t().id(), o.t1().title()).columnAs(o.t().content(), o.tr().content())
-                        .columnAs(o.t().isTop(), o.tr().isTop())).toSQL();
-        Assert.assertEquals("SELECT t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`id`,t1.`title`,t.`content` AS `content`,t.`is_top` AS `is_top` FROM `t_blog` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`deleted` = ? AND t1.`title` = ? AND t.`id` LIKE ?" , sql1);
-//        List<TopicAuto> topicAutos = easyQuery.queryable(TopicAuto.class).where(o->o.lt(TopicAuto::getStars,999)).toList();
-//
-//        easyProxyQuery.queryable(BlogEntityProxy.createTable())
-//                .leftJoin(TopicAutoProxy.createTable(), o -> {
-//                    BlogEntityProxy t = o.t();
-//                    TopicAutoProxy t1 = o.t1();
-//                    o.eq(t.id(), t1.title()).eq(t1.id(),123);
-//                })
-
-    }
-
-    @Test
-    public void testProxy3() {
-        Topic topic = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.eq(o.t().id(), "3" ).or().like(o.t().title(), "你好" ))
-                .firstOrNull();
-        Assert.assertNotNull(topic);
     }
 
     @Test
@@ -859,42 +758,6 @@ public class QueryTest3 extends BaseTest {
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` >= `order`" , sql1);
         }
-        {
-            String sql2 = easyProxyQuery.queryable(BlogEntityProxy.createTable())
-                    .where(o -> o.eq(o.t().score(), new BigDecimal("3" )).eq(o.t().score(), o.t().order()))
-                    .toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` = `order`" , sql2);
-        }
-        {
-            String sql2 = easyProxyQuery.queryable(BlogEntityProxy.createTable())
-                    .where(o -> o.eq(o.t().score(), new BigDecimal("3" )).ne(o.t().score(), o.t().order()))
-                    .toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` <> `order`" , sql2);
-        }
-        {
-            String sql2 = easyProxyQuery.queryable(BlogEntityProxy.createTable())
-                    .where(o -> o.eq(o.t().score(), new BigDecimal("3" )).ge(o.t().score(), o.t().order()))
-                    .toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` >= `order`" , sql2);
-        }
-        {
-            String sql2 = easyProxyQuery.queryable(BlogEntityProxy.createTable())
-                    .where(o -> o.eq(o.t().score(), new BigDecimal("3" )).gt(o.t().score(), o.t().order()))
-                    .toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` > `order`" , sql2);
-        }
-        {
-            String sql2 = easyProxyQuery.queryable(BlogEntityProxy.createTable())
-                    .where(o -> o.eq(o.t().score(), new BigDecimal("3" )).lt(o.t().score(), o.t().order()))
-                    .toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` < `order`" , sql2);
-        }
-        {
-            String sql2 = easyProxyQuery.queryable(BlogEntityProxy.createTable())
-                    .where(o -> o.eq(o.t().score(), new BigDecimal("3" )).le(o.t().score(), o.t().order()))
-                    .toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` <= `order`" , sql2);
-        }
     }
 
     @Test
@@ -902,8 +765,10 @@ public class QueryTest3 extends BaseTest {
 
         List<Map<String, Object>> list = easyProxyQuery
                 .queryable(TopicProxy.createTable())
-                .select(MapProxy.createTable(), o -> {
-                    o.columns(o.t().id(), o.t().title());
+                .select(o -> {
+                    MapProxy table = MapProxy.createTable();
+                    table.selectExpression(o.id(),o.title());
+                    return table;
                 })
                 .toList();
         for (Map<?, ?> map : list) {
@@ -927,11 +792,6 @@ public class QueryTest3 extends BaseTest {
                 .orderByAsc(o -> o.column(Topic::getCreateTime).column(Topic::getId))
                 .toList();
         Assert.assertEquals(0, list1.size());
-        List<Topic> list2 = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.like(o.t().title(), "someTitle" ))
-                .orderByAsc(o -> o.columns(o.t().createTime(), o.t().id()))
-                .toList();
-        Assert.assertEquals(0, list2.size());
     }
 
     @Test
@@ -959,110 +819,6 @@ public class QueryTest3 extends BaseTest {
         Assert.assertEquals("first3" , toSQLContext.getParameters().get(6).getValue());
         Assert.assertEquals("firstEnd" , toSQLContext.getParameters().get(7).getValue());
         Assert.assertEquals("%someTitle%" , toSQLContext.getParameters().get(8).getValue());
-    }
-
-    @Test
-    public void proxyCaseWhen() {
-        TopicProxy table = TopicProxy.createTable();
-        String sql = easyProxyQuery.queryable(table)
-                .where(o -> o.like(o.t().title(), "someTitle" ))
-                .select(TopicProxy.createTable(), o -> {
-
-                            SQLColumn<TopicProxy, String> title = o.tr().title();
-                            o.sqlSegmentAs(
-                                            SQLProxyFunc.caseWhenBuilder(o)
-                                                    .caseWhen(f -> {
-                                                        System.out.println(table.title());
-                                                        f.eq(table.title(), "123" );
-                                                        System.out.println(table.title() + "11" );
-                                                    }, "111" )
-                                                    .caseWhen(f -> f.eq(table.title(), "456" ), "222" )
-                                                    .elseEnd("222" )
-                                            , title)
-                                    .column(o.t().id());
-                        }
-                )
-                .toSQL();
-        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN ? WHEN t.`title` = ? THEN ? ELSE ? END) AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
-
-        List<Topic> list = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.like(o.t().title(), "someTitle" ))
-                .select(TopicProxy.createTable(), o -> o
-                        .sqlSegmentAs(
-                                SQLProxyFunc.caseWhenBuilder(o)
-                                        .caseWhen(f -> f.eq(o.t().title(), "123" ), "111" )
-                                        .caseWhen(f -> f.eq(o.t().title(), "456" ), "222" )
-                                        .elseEnd("222" )
-                                , o.tr().title())
-                        .column(o.t().id())
-                ).toList();
-        Assert.assertEquals(0, list.size());
-    }
-
-    @Test
-    public void proxyCaseWhen1() {
-        TopicProxy table = TopicProxy.createTable();
-        String sql = easyProxyQuery.queryable(table)
-                .where(o -> o.like(o.t().title(), "someTitle" ))
-                .select(TopicProxy.createTable(), o -> {
-
-                            o.sqlSegmentAs(
-                                            SQLProxyFunc.caseWhenBuilder(o)
-                                                    .caseWhen(f -> {
-                                                        f.eq(table.title(), "123" );
-                                                    }, o.t().title())
-                                                    .caseWhen(f -> f.eq(table.title(), "456" ), "222" )
-                                                    .elseEnd("222" )
-                                            , o.tr().title())
-                                    .column(o.t().id());
-                        }
-                )
-                .toSQL();
-        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE ? END) AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
-
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-        List<Topic> list = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.like(o.t().title(), "someTitle" ))
-                .select(TopicProxy.createTable(), o -> o
-                        .sqlSegmentAs(
-                                SQLProxyFunc.caseWhenBuilder(o)
-                                        .caseWhen(f -> f.eq(o.t().title(), "123" ), o.t().title())
-                                        .caseWhen(f -> f.eq(o.t().title(), "456" ), "222" )
-                                        .elseEnd("222" )
-                                , o.tr().title())
-                        .column(o.t().id())
-                ).toList();
-        Assert.assertEquals(0, list.size());
-
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE ? END) AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals(1, jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().size());
-        Assert.assertEquals("123(String),456(String),222(String),222(String),%someTitle%(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-    }
-
-    @Test
-    public void proxyCaseWhen2() {
-        TopicProxy table = TopicProxy.createTable();
-        String sql = easyProxyQuery.queryable(table)
-                .where(o -> o.like(o.t().title(), "someTitle" ))
-                .select(TopicProxy.createTable(), o -> {
-
-                            o.sqlSegmentAs(
-                                            SQLProxyFunc.caseWhenBuilder(o)
-                                                    .caseWhen(f -> {
-                                                        f.eq(table.title(), "123" );
-                                                    }, o.t().title())
-                                                    .caseWhen(f -> f.eq(table.title(), "456" ), "222" )
-                                                    .elseEnd(o.t().id())
-                                            , o.tr().title())
-                                    .column(o.t().id());
-                        }
-                )
-                .toSQL();
-        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN t.`title` WHEN t.`title` = ? THEN ? ELSE t.`id` END) AS `title`,t.`id` FROM `t_topic` t WHERE t.`title` LIKE ?" , sql);
-
     }
 
     @Test
@@ -1369,17 +1125,6 @@ public class QueryTest3 extends BaseTest {
                 .select(String.class, o -> o.column("id" )).toSQL();
         Assert.assertEquals("SELECT t.`id` FROM `t_topic` t WHERE t.`id` = ?" , sql1);
 
-        List<String> list2 = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.eq(o.t().id(), "1" ))
-                .select(StringProxy.createTable(), o -> o.column(o.t().id()))
-                .toList();
-        Assert.assertEquals(1, list2.size());
-        Assert.assertEquals("1" , list2.get(0));
-        TopicProxy table = TopicProxy.createTable();
-        String sql2 = easyProxyQuery.queryable(table)
-                .where(o -> o.eq(table.id(), "1" ))
-                .select(StringProxy.createTable(), o -> o.column(table.id())).toSQL();
-        Assert.assertEquals("SELECT t.`id` FROM `t_topic` t WHERE t.`id` = ?" , sql2);
 
     }
 
@@ -1409,18 +1154,6 @@ public class QueryTest3 extends BaseTest {
                 .where(o -> o.eq("id" , "1" ))
                 .select(Integer.class, o -> o.column("stars" )).toSQL();
         Assert.assertEquals("SELECT t.`stars` FROM `t_topic` t WHERE t.`id` = ?" , sql1);
-
-        List<Integer> list2 = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.eq(o.t().id(), "1" ))
-                .select(IntegerProxy.createTable(), o -> o.column(o.t().stars()))
-                .toList();
-        Assert.assertEquals(1, list2.size());
-        Assert.assertEquals(101, (int) list2.get(0));
-
-        String sql2 = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.eq(o.t().id(), "1" ))
-                .select(IntegerProxy.createTable(), o -> o.column(o.t().stars())).toSQL();
-        Assert.assertEquals("SELECT t.`stars` FROM `t_topic` t WHERE t.`id` = ?" , sql2);
 
     }
 
@@ -1480,62 +1213,6 @@ public class QueryTest3 extends BaseTest {
                     .select(mapClass).toSQL();
             Assert.assertEquals("SELECT * FROM `t_topic` t WHERE t.`id` = ?" , sql1);
         }
-
-        {
-            TopicProxy table = TopicProxy.createTable();
-            List<Map<String, Object>> list2 = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(table.id(), "1" ))
-                    .select(MapProxy.createTable(), o -> o.columnAll(o.t()))
-                    .toList();
-            Assert.assertEquals(1, list2.size());
-
-            TopicProxy table1 = TopicProxy.createTable();
-            String sql2 = easyProxyQuery.queryable(table1)
-                    .where(o -> o.eq(table1.id(), "1" ))
-                    .select(MapProxy.createTable(), o -> o.columnAll(o.t())).toSQL();
-            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?" , sql2);
-        }
-        {
-            TopicProxy topic = TopicProxy.createTable();
-            BlogEntityProxy blog = BlogEntityProxy.createTable();
-            List<Topic> list = easyProxyQuery.queryable(topic)
-                    .leftJoin(blog, o -> o.eq(topic.id(), blog.id()))
-                    .select(o -> o.columns(topic.id(), topic.title()))
-                    .toList();
-
-        }
-        {
-            TopicProxy topic = TopicProxy.createTable();
-            BlogEntityProxy blog = BlogEntityProxy.createTable();
-            List<Topic> list = easyProxyQuery.queryable(topic)
-                    .leftJoin(blog, o -> o.eq(o.t().id(), o.t1().id()))
-                    .select(o -> o.columns(topic.id(), topic.title()))
-                    .toList();
-
-        }
-
-        {
-//
-//            TopicProxy table1 = TopicProxy.createTable();
-//            TopicProxy table2 = TopicProxy.createTable();
-//            easyProxyQuery.queryable(table1)
-////                    .leftJoin(table2,o->o.eq(table1.id(),table2.id()))
-//                    .where(o->{
-//                        o.eq(table1.id(), "123").eq(table2.stars(), 1);
-//                    })
-
-            List<Map<String, Object>> list2 = easyProxyQuery.queryable(TopicProxy.createTable())
-                    .where(o -> o.eq(o.t().id(), "1" ))
-                    .select(MapProxy.createTable())
-                    .toList();
-            Assert.assertEquals(1, list2.size());
-
-            String sql2 = easyProxyQuery.queryable(TopicProxy.createTable())
-                    .where(o -> o.eq(o.t().id(), "1" ))
-                    .select(MapProxy.createTable()).toSQL();
-            Assert.assertEquals("SELECT * FROM `t_topic` t WHERE t.`id` = ?" , sql2);
-        }
-
     }
 
 
@@ -1696,8 +1373,8 @@ public class QueryTest3 extends BaseTest {
 
     @Test
     public void query9_1() {
-        try (JdbcStreamResult<BlogEntity> streamResult = easyProxyQuery.queryable(BlogEntityProxy.createTable()).where(o -> o.le(o.t().star(), 100))
-                .orderByAsc(o -> o.column(o.t().createTime())).toStreamResult(100)) {
+        try (JdbcStreamResult<BlogEntity> streamResult = easyProxyQuery.queryable(BlogEntityProxy.createTable()).where(o -> o.star().le(100))
+                .orderBy(o -> o.createTime().asc()).toStreamResult(100)) {
 //            StreamIterable<BlogEntity> streamIterable = streamResult.getStreamIterable();
 //            Iterator<BlogEntity> iterator = streamIterable.iterator();
 //            int fetchSize=10;
@@ -1988,45 +1665,6 @@ public class QueryTest3 extends BaseTest {
 //                Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE (t.`id` = ? OR t1.`title` = t1.`title`) ORDER BY t.`id` ASC",sqlz1);
 //    }
 
-    @Test
-    public void newPredicateTest3() {
-        String sqlz1 = easyProxyQuery
-                .queryable(TopicTestProxy.createTable())
-                .leftJoin(TopicAutoProxy.createTable(), o -> o.eq(o.t().id(), o.t1().title()))
-                .where(t -> {
-                    TopicTestProxy testProxy = t.t();
-                    TopicAutoProxy topicAutoProxy = t.t1();
-// t.`id` = ? AND t1.`stars` = ? AND (t1.`title` = t1.`title` AND (t1.`title` = t1.`title` OR t1.`stars` = ? AND t1.`title` = t1.`title`))
-
-
-                    t.eq(testProxy.id(), "123" )
-                            .and(x -> {
-                                x.and(y -> {
-                                            y.eq(testProxy.title(), "111" )
-                                                    .eq(topicAutoProxy.title(), "111" )
-                                                    .eq(testProxy.id(), "111" );
-                                        })
-                                        .or(z -> {
-                                            z.eq(testProxy.title(), "111" )
-                                                    .eq(topicAutoProxy.title(), "111" );
-                                        });
-                            });
-//                    return testProxy.id().eq("123").and(
-//                            topicAutoProxy.stars().eq(1).and(topicAutoProxy.title().eq(topicAutoProxy.title())).and(topicAutoProxy.title().eq(topicAutoProxy.title()))
-//                                    .or(
-//                                            topicAutoProxy.stars().eq(1)).and(topicAutoProxy.title().eq(topicAutoProxy.title())
-//                                    )
-//
-//                    );
-
-
-                })
-                .orderByAsc(o -> o.column(o.t().id()))
-                .select(s -> s.columns(s.t().id(), s.t().title()))
-                .toSQL();
-        //SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND t1.`stars` = ? AND (t1.`title` = t1.`title` AND (t1.`title` = t1.`title` OR t1.`stars` = ? AND t1.`title` = t1.`title`)) ORDER BY t.`id` ASC
-        Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND ((t.`title` = ? AND t1.`title` = ? AND t.`id` = ?) OR (t.`title` = ? AND t1.`title` = ?)) ORDER BY t.`id` ASC" , sqlz1);
-    }
 
 
     @Test
@@ -2099,41 +1737,6 @@ public class QueryTest3 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND ((t.`title` = ? AND t1.`id` = ?) OR (t.`title` = ? AND t1.`id` = ?)) AND t.`id` = ? AND (t.`title` = ? OR t1.`stars` = ?)" , sqlz1);
     }
 
-    @Test
-    public void newPredicateTest6() {
-        TopicProxy table1 = TopicProxy.createTable();
-        TopicAutoProxy table2 = TopicAutoProxy.createTable();
-        String sql = easyProxyQuery.queryable(table1)
-                .leftJoin(table2, o -> o.eq(table1.id(), table2.title()))
-                .where(o -> {
-                    o.eq(table1.id(), "1" );
-
-                    o.and(x -> {
-                        x.eq(table1.title(), "123" )
-                                .or().eq(table2.stars(), 1);
-                    });
-
-                })
-                .toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND (t.`title` = ? OR t1.`stars` = ?)" , sql);
-    }
-
-    @Test
-    public void newPredicateTest7() {
-        String sql = easyProxyQuery.queryable(TopicProxy.createTable())
-                .leftJoin(TopicAutoProxy.createTable(), o -> o.eq(o.t().id(), o.t1().title()))
-                .where(o -> {
-                    o.eq(o.t().id(), "1" );
-
-                    o.and(x -> {
-                        x.eq(o.t().title(), "123" )
-                                .or().eq(o.t1().stars(), 1);
-                    });
-
-                })
-                .toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`id` = ? AND (t.`title` = ? OR t1.`stars` = ?)" , sql);
-    }
 
     @Test
     public void testOrder() {
@@ -2230,104 +1833,6 @@ public class QueryTest3 extends BaseTest {
             Assert.assertEquals("id1" , exception.getPropertyName());
             Assert.assertEquals("BlogEntity not found [id1] in entity class" , exception.getMessage());
         }
-    }
-
-
-    @Test
-    public void queryProxySubQueryAs() {
-        TopicProxy inner = TopicProxy.createTable();
-        ProxyQueryable<TopicProxy, Topic> subQuery = easyProxyQuery.queryable(inner);
-
-        TopicProxy topic = TopicProxy.createTable();
-        TopicSubQueryBlogProxy subResult = TopicSubQueryBlogProxy.createTable();
-        String sql = easyProxyQuery.queryable(topic)
-                .select(subResult, o -> o.column(topic.id()).columnSubQueryAs(() -> {
-                    return subQuery.where(x -> x.eq(inner.id(), topic.id()))
-                            .select(LongProxy.createTable(), x -> x.columnCount(inner.id()));
-                }, o.tr().blogCount())).toSQL();
-        Assert.assertEquals("SELECT t.`id`,(SELECT COUNT(t1.`id`) AS `id` FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t" , sql);
-    }
-
-    @Test
-    public void queryProxySubQueryAs1() {
-        TopicProxy topic = TopicProxy.createTable();
-        SQLFuncExpression<ProxyQueryable<LongProxy, Long>> subQueryFunc = () -> {
-            TopicProxy inner = TopicProxy.createTable();
-            ProxyQueryable<LongProxy, Long> select = easyProxyQuery.queryable(inner).where(x -> x.eq(inner.id(), topic.id()))
-                    .select(LongProxy.createTable(), x -> x.columnCount(inner.id()));
-            return select;
-        };
-
-
-        TopicSubQueryBlogProxy subResult = TopicSubQueryBlogProxy.createTable();
-        String sql = easyProxyQuery.queryable(topic)
-                .select(subResult, o -> o.column(topic.id()).columnSubQueryAs(subQueryFunc, o.tr().blogCount())).toSQL();
-        Assert.assertEquals("SELECT t.`id`,(SELECT COUNT(t1.`id`) AS `id` FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t" , sql);
-    }
-
-    @Test
-    public void queryProxySubQueryAs1_1() {
-        TopicProxy topic = TopicProxy.createTable();
-        SQLFuncExpression<ProxyQueryable<LongProxy, Long>> subQueryFunc = () -> {
-            TopicProxy inner = TopicProxy.createTable();
-            ProxyQueryable<LongProxy, Long> select = easyProxyQuery.queryable(inner).where(x -> x.eq(inner.id(), topic.id()))
-                    .selectCount();
-            return select;
-        };
-
-
-        TopicSubQueryBlogProxy subResult = TopicSubQueryBlogProxy.createTable();
-        String sql = easyProxyQuery.queryable(topic)
-                .select(subResult, o -> o.column(topic.id()).columnSubQueryAs(subQueryFunc, o.tr().blogCount())).toSQL();
-        Assert.assertEquals("SELECT t.`id`,(SELECT COUNT(*) FROM `t_topic` t1 WHERE t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t" , sql);
-    }
-
-    @Test
-    public void test1() {
-        TopicTestProxy table = TopicTestProxy.createTable();
-        TopicAutoProxy table1 = TopicAutoProxy.createTable();
-        String sql = easyProxyQuery
-                .queryable(table)
-                .leftJoin(table1, o -> o.eq(table.id(), table1.title()))
-                .where(o -> o.eq(table.id(), "123" )
-                        .or().eq(table1.title(), "111" ))
-                .orderByAsc(o -> o.column(table1.id()))
-                .select(s -> s.columns(table1.id(), table1.createTime()).column(table.title()))
-                .toSQL();
-        Assert.assertEquals("SELECT t1.`id`,t1.`create_time`,t.`title` FROM `t_topic` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE (t.`id` = ? OR t1.`title` = ?) ORDER BY t1.`id` ASC" , sql);
-    }
-
-    public void test2() {
-
-        {
-            TopicProxy topicTable = TopicProxy.createTable();
-            BlogEntityProxy blogTable = BlogEntityProxy.createTable();
-            SysUserProxy userTable = SysUserProxy.createTable();
-            easyProxyQuery
-                    .queryable(topicTable)
-                    //第一个join采用双参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity
-                    .leftJoin(blogTable, o -> o.eq(topicTable.id(), blogTable.id()))
-                    //第二个join采用三参数,参数1表示第一张表Topic 参数2表示第二张表 BlogEntity 第三个参数表示第三张表 SysUser
-                    .leftJoin(userTable, o -> o.eq(topicTable.id(), userTable.id()))
-                    .where(o -> o.eq(topicTable.id(), "123" ).like(blogTable.title(), "456" )
-                            .eq(userTable.createTime(), LocalDateTime.now()))
-                    //如果不想用链式大括号方式执行顺序就是代码顺序,默认采用and链接
-                    //动态表达式
-                    .where(o -> {
-                        o.eq(topicTable.id(), "1234" );
-                        if (true) {
-                            o.eq(userTable.id(), "1234" );
-                        }
-                    })
-                    .select(o -> o.columns(userTable.id(), blogTable.id()))
-                    .select(TopicTypeVOProxy.createTable(), o -> {
-                        o.columns(userTable.id(), blogTable.id());
-                        if (true) {
-                            o.columnAs(userTable.id(), o.tr().id());
-                        }
-                    });
-        }
-
     }
 
     @Test

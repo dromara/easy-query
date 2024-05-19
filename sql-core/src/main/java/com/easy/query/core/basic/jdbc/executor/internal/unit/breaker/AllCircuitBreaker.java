@@ -14,6 +14,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
+@Deprecated
 public final class AllCircuitBreaker extends AbstractCircuitBreaker{
 
     public static final CircuitBreaker INSTANCE=new AllCircuitBreaker();

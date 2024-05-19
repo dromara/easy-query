@@ -1,11 +1,10 @@
-package com.easy.query.api.proxy.sql.impl;
+package com.easy.query.api.proxy.entity.insert.extension;
 
-import com.easy.query.api.proxy.sql.ProxyColumnConfigurer;
 import com.easy.query.core.expression.builder.Configurer;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
- * create time 2023/12/7 13:34
+ * create time 2024/5/19 09:35
  * 文件说明
  *
  * @author xuejiaming

@@ -1,8 +1,5 @@
 package com.easy.query.console.demo;
 
-import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
-import com.easy.query.api.proxy.client.EasyProxyQuery;
-import com.easy.query.console.demo.proxy.TopicProxy;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
@@ -10,8 +7,6 @@ import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConve
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.zaxxer.hikari.HikariDataSource;
-
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -35,12 +30,12 @@ public class Main {
                 .replaceService(NameConversion.class, UnderlinedNameConversion.class)//替换框架内部的属性和列转换模式改为大写转下划线
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())//设置方言语法等为mysql的
                 .build();
-        //创建代理模式api查询
-        EasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
-        List<Topic> topics = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.eq(o.t().id(), "123").like(o.t().name(), "您好"))
-                .orderByAsc(o -> o.columns(o.t().createTime(), o.t().id()))
-                .select(s -> s.columns(s.t().no(), s.t().id(), s.t().name()))
-                .toList();
+//        //创建代理模式api查询
+//        EasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
+//        List<Topic> topics = easyProxyQuery.queryable(TopicProxy.createTable())
+//                .where(o -> o.eq(o.t().id(), "123").like(o.t().name(), "您好"))
+//                .orderByAsc(o -> o.columns(o.t().createTime(), o.t().id()))
+//                .select(s -> s.columns(s.t().no(), s.t().id(), s.t().name()))
+//                .toList();
     }
 }

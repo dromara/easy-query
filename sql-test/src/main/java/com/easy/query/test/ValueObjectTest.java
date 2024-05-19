@@ -6,6 +6,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.dto.ValueCompanyDTO;
 import com.easy.query.test.entity.Company;
 import com.easy.query.test.entity.CompanyAddress;
@@ -710,7 +711,7 @@ public class ValueObjectTest extends BaseTest {
         {
 
             ValueCompany province12 = easyProxyQuery.queryable(ValueCompany1Proxy.createTable())
-                    .where(o -> o.eq(o.t().address().province(), "province1"))
+                    .where(o -> o.address().province().eq( "province1"))
                     .firstOrNull();
             Assert.assertNotNull(province12);
         }
@@ -718,23 +719,23 @@ public class ValueObjectTest extends BaseTest {
 
             ValueCompany1Proxy table = ValueCompany1Proxy.createTable();
             ValueCompany province12 = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(table.address().province(), "province1"))
+                    .where(o -> o.address().province().eq("province1"))
                     .firstOrNull();
             Assert.assertNotNull(province12);
         }
         {
 
             ValueCompany province12 = easyProxyQuery.queryable(ValueCompany1Proxy.createTable())
-                    .where(o -> o.eq(o.t().address().province(), "province1"))
-                    .select(o->o.column(o.t().address()).column(o.t().license().extra().licenseImage()))
+                    .where(o -> o.address().province().eq("province1"))
+                    .select(ValueCompany.class,v -> v.FETCHER.address()._concat(v.license().extra().licenseImage()))
                     .firstOrNull();
             Assert.assertNotNull(province12);
         }
         {
 
             ValueCompany province12 = easyProxyQuery.queryable(ValueCompany1Proxy.createTable())
-                    .where(o -> o.eq(o.t().address().province(), "province1"))
-                    .select(o->o.column(o.t().address()).column(o.t().license().extra()))
+                    .where(o -> o.address().province().eq("province1"))
+                    .select(ValueCompany.class,o-> Select.of(o.address(),o.license().extra()))
                     .firstOrNull();
             Assert.assertNotNull(province12);
         }
@@ -745,7 +746,7 @@ public class ValueObjectTest extends BaseTest {
         {
 
             ValueCompany province12 = easyProxyQuery.queryable(VCTable.createTable())
-                    .where(o -> o.eq(o.t().address().province(), "province1"))
+                    .where(o -> o.address().province().eq("province1"))
                     .firstOrNull();
             Assert.assertNotNull(province12);
         }
@@ -753,23 +754,23 @@ public class ValueObjectTest extends BaseTest {
 
             VCTable table = VCTable.createTable();
             ValueCompany province12 = easyProxyQuery.queryable(table)
-                    .where(o -> o.eq(table.address().province(), "province1"))
+                    .where(o -> o.address().province().eq("province1"))
                     .firstOrNull();
             Assert.assertNotNull(province12);
         }
         {
 
             ValueCompany province12 = easyProxyQuery.queryable(VCTable.createTable())
-                    .where(o -> o.eq(o.t().address().province(), "province1"))
-                    .select(o->o.column(o.t().address()).column(o.t().license().extra().licenseImage()))
+                    .where(o -> o.address().province().eq("province1"))
+                    .select(ValueCompany.class,o->Select.of(o.address(),o.license().extra().licenseImage()))
                     .firstOrNull();
             Assert.assertNotNull(province12);
         }
         {
 
             ValueCompany province12 = easyProxyQuery.queryable(VCTable.createTable())
-                    .where(o -> o.eq(o.t().address().province(), "province1"))
-                    .select(o->o.column(o.t().address()).column(o.t().license().extra()))
+                    .where(o -> o.address().province().eq("province1"))
+                    .select(ValueCompany.class,o->Select.of(o.address(),o.license().extra()))
                     .firstOrNull();
             Assert.assertNotNull(province12);
         }

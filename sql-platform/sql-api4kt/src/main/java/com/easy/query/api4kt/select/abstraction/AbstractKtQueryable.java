@@ -87,13 +87,6 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     }
 
     @Override
-    public boolean all(SQLExpression1<SQLKtWherePredicate<T1>> whereExpression) {
-        return entityQueryable.all(wherePredicate -> {
-            whereExpression.apply(new SQLKtWherePredicateImpl<>(wherePredicate));
-        });
-    }
-
-    @Override
     public KtQueryable<Long> selectCount() {
         return this.selectCount(Long.class);
     }

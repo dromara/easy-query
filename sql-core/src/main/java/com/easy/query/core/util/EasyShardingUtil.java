@@ -317,9 +317,9 @@ public class EasyShardingUtil {
             QueryPrepareParseResult queryPrepareParseResult = (QueryPrepareParseResult) prepareParseResult;
             EntityQuerySQLExpression easyQuerySQLExpression = (EntityQuerySQLExpression) easyEntitySQLExpression;
             switch (executorContext.getExecuteMethod()) {
-                case ALL:
-                    mergeBehavior = EasyBitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ALL.getCode());
-                    break;
+//                case ALL:
+//                    mergeBehavior = EasyBitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ALL.getCode());
+//                    break;
                 case ANY:
                     mergeBehavior = EasyBitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.ANY.getCode());
                     break;

@@ -40,7 +40,6 @@ import com.easy.query.test.dto.UserExtraDTO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.UserExtra;
-import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.entity.school.SchoolClassAggregateProp;
@@ -963,12 +962,12 @@ public class QueryTest15 extends BaseTest {
         Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE strftime('%Y年%m月%d日', \"create_time\") = ?", sql);
     }
 
-    @Test
-    public void aaa(){
-
-        BlogEntity blogEntity = easyEntityQuery.queryable(BlogEntityProxy.createTable())
-                .where(b -> b.title().eq("123"))
-                .firstOrNull();
-    }
+//    @Test
+//    public void aaa(){
+//
+////        BlogEntity blogEntity = easyEntityQuery.queryable(BlogEntityProxy.createTable())
+////                .where(b -> b.title().eq("123"))
+////                .firstOrNull();
+//    }
 
 }

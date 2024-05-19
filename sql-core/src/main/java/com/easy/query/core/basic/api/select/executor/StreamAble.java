@@ -74,17 +74,6 @@ public interface StreamAble<T> extends QueryAvailable<T> {
     }
 
     /**
-     * 请使用 {@link  #streamBy(Function, Integer)}
-     * @param fetcher
-     * @param fetchSize
-     * @return
-     * @param <TR>
-     */
-    @Deprecated
-    default <TR> TR fetch(Function<Stream<T>,TR> fetcher,Integer fetchSize){
-       return streamBy(fetcher,statement -> {statement.setFetchSize(fetchSize);});
-    }
-    /**
      * 直接拉取数据
      * @param fetcher 如何消费拉取的数据
      * @return

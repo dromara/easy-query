@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.entity.insert;
 
-import com.easy.query.api.proxy.sql.ProxyColumnConfigurer;
-import com.easy.query.api.proxy.sql.impl.ProxyColumnConfigurerImpl;
+import com.easy.query.api.proxy.entity.insert.extension.ProxyColumnConfigurer;
+import com.easy.query.api.proxy.entity.insert.extension.ProxyColumnConfigurerImpl;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;

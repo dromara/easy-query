@@ -1,8 +1,8 @@
 package com.easy.query.api.proxy.entity.insert;
 
+import com.easy.query.api.proxy.entity.insert.extension.ProxyColumnConfigurer;
 import com.easy.query.api.proxy.internal.ProxyEntityConflictThenable;
 import com.easy.query.api.proxy.internal.ProxyEntityOnDuplicateKeyUpdate;
-import com.easy.query.api.proxy.sql.ProxyColumnConfigurer;
 import com.easy.query.core.basic.api.insert.Insertable;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.proxy.ProxyEntity;

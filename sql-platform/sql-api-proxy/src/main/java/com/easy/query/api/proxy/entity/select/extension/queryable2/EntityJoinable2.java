@@ -61,7 +61,10 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      */
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(Class<T3> joinClass, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
-        ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().leftJoin(joinClass, (t, t1, t2) -> {
+        return leftJoin(t3Proxy,onExpression);
+    }
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(T3Proxy t3Proxy, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+        ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().leftJoin(t3Proxy.getEntityClass(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
                 onExpression.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),get1Proxy().getEntitySQLContext()));
             });
@@ -138,7 +141,11 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      */
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoin(Class<T3> joinClass, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
-        ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().rightJoin(joinClass, (t, t1, t2) -> {
+        return rightJoin(t3Proxy,onExpression);
+
+    }
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  rightJoin(T3Proxy t3Proxy, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+        ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().rightJoin(t3Proxy.getEntityClass(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
                 onExpression.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),get1Proxy().getEntitySQLContext()));
             });
@@ -217,7 +224,11 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      */
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoin(Class<T3> joinClass, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
-        ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().innerJoin(joinClass, (t, t1, t2) -> {
+        return innerJoin(t3Proxy,onExpression);
+
+    }
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3>  innerJoin(T3Proxy t3Proxy, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+        ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().innerJoin(t3Proxy.getEntityClass(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
                 onExpression.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),get1Proxy().getEntitySQLContext()));
             });
