@@ -77,16 +77,6 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     }
 
     @Override
-    public WherePredicate<TEntity> getAllWherePredicate(FilterContext filterContext) {
-        return new WherePredicateImpl<>(table, filterContext);
-    }
-
-    @Override
-    public FilterContext getAllWhereFilterContext() {
-        return new FilterContext(new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getAllPredicate(), true, AnyValueFilter.DEFAULT));
-    }
-
-    @Override
     public WhereAggregatePredicate<TEntity> getAggregatePredicate() {
         return new WhereAggregatePredicateImpl<>(table, new AggregateFilterImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getHaving()));
     }

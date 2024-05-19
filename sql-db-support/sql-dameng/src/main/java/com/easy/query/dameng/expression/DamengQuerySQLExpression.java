@@ -78,16 +78,11 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
                 sql.append(" ON ").append(on.toSQL(toSQLContext));
             }
         }
-        boolean notExistsSQL = EasySQLSegmentUtil.isNotEmpty(this.allPredicate);
         boolean hasWhere = EasySQLSegmentUtil.isNotEmpty(this.where);
         if (hasWhere) {
             String whereSQL = this.where.toSQL(toSQLContext);
             sql.append(" WHERE ");
-            if (root && notExistsSQL) {
-                sql.append("( ").append(whereSQL).append(" )");
-            } else {
-                sql.append(whereSQL);
-            }
+            sql.append(whereSQL);
         }
         if (!hasOrderBy && !hasGroup && (offset > 0 || rows > 0)) {
             if(!hasWhere){
@@ -97,17 +92,13 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
             }
             sql.append(offset+rows+1);
         }
-        boolean onlyWhere = true;
         if (hasGroup) {
-            onlyWhere = false;
             sql.append(" GROUP BY ").append(this.group.toSQL(toSQLContext));
         }
         if (this.having != null && this.having.isNotEmpty()) {
-            onlyWhere = false;
             sql.append(" HAVING ").append(this.having.toSQL(toSQLContext));
         }
         if (hasOrderBy) {
-            onlyWhere = false;
             sql.append(" ORDER BY ").append(this.order.toSQL(toSQLContext));
         }
 
@@ -126,20 +117,6 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
             }
         }
 
-        String resultSQL = sql.toString();
-        if (root && notExistsSQL) {
-            StringBuilder notExistsResultSQL = new StringBuilder("SELECT NOT EXISTS ( ");
-            if (onlyWhere) {
-
-                notExistsResultSQL.append(resultSQL).append(hasWhere ? " AND " : " WHERE ").append("( ").append(allPredicate.toSQL(toSQLContext))
-                        .append(" )").append(" )");
-            } else {
-                notExistsResultSQL.append("SELECT 1 FROM ( ").append(resultSQL).append(" ) t ").append(" WHERE ").append(allPredicate.toSQL(toSQLContext))
-                        .append(" )");
-            }
-            return notExistsResultSQL.toString();
-        } else {
-            return resultSQL;
-        }
+        return sql.toString();
     }
 }

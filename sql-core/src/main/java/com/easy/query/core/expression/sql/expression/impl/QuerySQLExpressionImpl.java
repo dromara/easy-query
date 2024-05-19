@@ -28,7 +28,6 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
     protected final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
     protected SQLBuilderSegment projects;
     protected PredicateSegment where;
-    protected PredicateSegment allPredicate;
     protected SQLBuilderSegment group;
     protected PredicateSegment having;
     protected SQLBuilderSegment order;
@@ -128,16 +127,6 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         return this.rows > 0;
     }
 
-    @Override
-    public void setAllPredicate(PredicateSegment allPredicate) {
-        this.allPredicate = allPredicate;
-    }
-
-    @Override
-    public PredicateSegment getAllPredicate() {
-        return allPredicate;
-    }
-
 //    @Override
 //    public List<EntityQuerySQLExpression> getIncludes() {
 //        return includes;
@@ -206,52 +195,29 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         List<EntityTableSQLExpression> tables = getTables();
         buildSQLTableOrJoin(sql, tables, toSQLContext);
 
-        boolean notExistsSQL = EasySQLSegmentUtil.isNotEmpty(this.allPredicate);
         boolean hasWhere = EasySQLSegmentUtil.isNotEmpty(this.where);
         if (hasWhere) {
             String whereSQL = this.where.toSQL(toSQLContext);
-            if (root && notExistsSQL) {
-                sql.append(" WHERE ").append("( ").append(whereSQL).append(" )");
-            } else {
-                sql.append(" WHERE ").append(whereSQL);
-            }
+            sql.append(" WHERE ").append(whereSQL);
         }
-        boolean onlyWhere = true;
         if (this.group != null && this.group.isNotEmpty()) {
-            onlyWhere = false;
             sql.append(" GROUP BY ").append(this.group.toSQL(toSQLContext));
         }
         if (this.having != null && this.having.isNotEmpty()) {
-            onlyWhere = false;
             sql.append(" HAVING ").append(this.having.toSQL(toSQLContext));
         }
         if (this.order != null && this.order.isNotEmpty()) {
-            onlyWhere = false;
             sql.append(" ORDER BY ").append(this.order.toSQL(toSQLContext));
         }
         if (this.rows > 0) {
-            onlyWhere = false;
             sql.append(" LIMIT ");
             sql.append(this.rows);
             if (this.offset > 0) {
                 sql.append(" OFFSET ").append(this.offset);
             }
         }
-        String resultSQL = sql.toString();
-        if (root && notExistsSQL) {
-            StringBuilder notExistsResultSQL = new StringBuilder("SELECT NOT EXISTS ( ");
-            if (onlyWhere) {
 
-                notExistsResultSQL.append(resultSQL).append(hasWhere ? " AND " : " WHERE ").append("( ").append(allPredicate.toSQL(toSQLContext))
-                        .append(" )").append(" )");
-            } else {
-                notExistsResultSQL.append("SELECT 1 FROM ( ").append(resultSQL).append(" ) t ").append(" WHERE ").append(allPredicate.toSQL(toSQLContext))
-                        .append(" )");
-            }
-            return notExistsResultSQL.toString();
-        } else {
-            return resultSQL;
-        }
+        return sql.toString();
     }
 
     protected void buildSQLTableOrJoin(StringBuilder sql, List<EntityTableSQLExpression> tables, ToSQLContext toSQLContext) {
@@ -295,9 +261,6 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         }
         if (EasySQLSegmentUtil.isNotEmpty(this.projects)) {
             easyQuerySQLExpression.setProjects(projects.cloneSQLBuilder());
-        }
-        if (EasySQLSegmentUtil.isNotEmpty(this.allPredicate)) {
-            easyQuerySQLExpression.setAllPredicate(allPredicate.clonePredicateSegment());
         }
 //        if(EasyCollectionUtil.isNotEmpty(this.includes)){
 //            ArrayList<EntityQuerySQLExpression> entityQuerySQLExpressions = new ArrayList<>(this.includes.size());

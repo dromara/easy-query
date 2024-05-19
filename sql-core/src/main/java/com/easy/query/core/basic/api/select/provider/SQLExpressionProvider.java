@@ -28,8 +28,6 @@ public interface SQLExpressionProvider<TEntity> {
 
    <TR> NavigateInclude<TEntity> getNavigateInclude(IncludeNavigateParams includeNavigateParams);
 
-    WherePredicate<TEntity> getAllWherePredicate(FilterContext filterContext);
-    FilterContext getAllWhereFilterContext();
 
     WhereAggregatePredicate<TEntity> getAggregatePredicate();
 

@@ -79,34 +79,24 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
                 sql.append(" ON ").append(on.toSQL(toSQLContext));
             }
         }
-        boolean notExistsSQL = EasySQLSegmentUtil.isNotEmpty(this.allPredicate);
         boolean hasWhere = EasySQLSegmentUtil.isNotEmpty(this.where);
         if (hasWhere) {
             String whereSQL = this.where.toSQL(toSQLContext);
-            if (root && notExistsSQL) {
-                sql.append(" WHERE ").append("( ").append(whereSQL).append(" )");
-            } else {
-                sql.append(" WHERE ").append(whereSQL);
-            }
+            sql.append(" WHERE ").append(whereSQL);
         }
-        boolean onlyWhere = true;
         boolean hasGroupBy = this.group != null && this.group.isNotEmpty();
         if (hasGroupBy) {
-            onlyWhere = false;
             sql.append(" GROUP BY ").append(this.group.toSQL(toSQLContext));
         }
         if (this.having != null && this.having.isNotEmpty()) {
-            onlyWhere = false;
             sql.append(" HAVING ").append(this.having.toSQL(toSQLContext));
         }
         boolean hasOrderBy = this.order != null && this.order.isNotEmpty();
         if (hasOrderBy) {
-            onlyWhere = false;
             sql.append(" ORDER BY ").append(this.order.toSQL(toSQLContext));
         }
         //分页必须要有order by
         if (this.offset > 0) {
-            onlyWhere = false;
             if (!hasOrderBy) {
                 if (hasGroupBy) {
                     sql.append(" ORDER BY ").append(this.group.toSQL(toSQLContext));
@@ -126,21 +116,7 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
             }
         }
 
-        String resultSQL = sql.toString();
-        if (root && notExistsSQL) {
-            StringBuilder notExistsResultSQL = new StringBuilder("SELECT NOT EXISTS ( ");
-            if (onlyWhere) {
-
-                notExistsResultSQL.append(resultSQL).append(hasWhere ? " AND " : " WHERE ").append("( ").append(allPredicate.toSQL(toSQLContext))
-                        .append(" )").append(" )");
-            } else {
-                notExistsResultSQL.append("SELECT 1 FROM ( ").append(resultSQL).append(" ) rrt ").append(" WHERE ").append(allPredicate.toSQL(toSQLContext))
-                        .append(" )");
-            }
-            return notExistsResultSQL.toString();
-        } else {
-            return resultSQL;
-        }
+        return sql.toString();
     }
 
     protected SQLBuilderSegment getPrimaryKeyOrFirstColumnOrder(TableAvailable table) {

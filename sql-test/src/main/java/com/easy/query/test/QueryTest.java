@@ -484,7 +484,7 @@ public class QueryTest extends BaseTest {
                     o.id().isNotNull();
                     o.id().eq("3");
                 })
-                .select(BlogEntity.class, (o,o1) -> {
+                .select(Map.class, (o,o1) -> {
                     return Select.of(
                             o.id(),
                             o1.expression().sqlType("rank() over(order by {0} desc) as rank1", c -> {

@@ -36,7 +36,6 @@ import java.util.Map;
 public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBuilder implements EntityQueryExpressionBuilder {
 
     protected PredicateSegment where;
-    protected PredicateSegment allPredicate;
     protected SQLBuilderSegment group;
     protected PredicateSegment having;
     protected OrderBySQLBuilderSegment order;
@@ -68,19 +67,6 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
             where = new AndPredicateSegment(true);
         }
         return where;
-    }
-
-    @Override
-    public boolean hasAllPredicate() {
-        return EasySQLSegmentUtil.isNotEmpty(allPredicate);
-    }
-
-    @Override
-    public PredicateSegment getAllPredicate() {
-        if (allPredicate == null) {
-            allPredicate = new AndPredicateSegment(true);
-        }
-        return allPredicate;
     }
 
     @Override
@@ -242,7 +228,6 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         easyQuerySQLExpression.setOrder(getOrder().cloneSQLBuilder());
         easyQuerySQLExpression.setOffset(getOffset());
         easyQuerySQLExpression.setRows(getRows());
-        easyQuerySQLExpression.setAllPredicate(getAllPredicate().clonePredicateSegment());
 //        if(hasIncludes()){
 //            List<EntityQueryExpressionBuilder> includeList = getIncludes();
 //            ArrayList<EntityQuerySQLExpression> includeExpressions = new ArrayList<>(includeList.size());
@@ -291,9 +276,6 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         }
         if (hasOrder()) {
             getOrder().copyTo(queryExpressionBuilder.getOrder());
-        }
-        if (hasAllPredicate()) {
-            getAllPredicate().copyTo(queryExpressionBuilder.getAllPredicate());
         }
         getProjects().copyTo(queryExpressionBuilder.getProjects());
         queryExpressionBuilder.setOffset(this.offset);

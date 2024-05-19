@@ -138,16 +138,6 @@ public class AnonymousEntityQuerySQLExpressionImpl implements AnonymousEntityQue
         return false;
     }
 
-    @Override
-    public void setAllPredicate(PredicateSegment allPredicate) {
-
-    }
-
-    @Override
-    public PredicateSegment getAllPredicate() {
-        return null;
-    }
-
 //    @Override
 //    public List<EntityQuerySQLExpression> getIncludes() {
 //        return null;

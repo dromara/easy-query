@@ -38,8 +38,6 @@ public interface EntityQuerySQLExpression extends EntityPredicateSQLExpression {
     boolean isDistinct();
 
     boolean hasLimit();
-    void setAllPredicate(PredicateSegment allPredicate);
-    PredicateSegment getAllPredicate();
 //    List<EntityQuerySQLExpression> getIncludes();
 //    void setIncludes(List<EntityQuerySQLExpression> includes);
 
