@@ -45,10 +45,6 @@ public class SQLFunctionTranslateImpl implements SQLFunctionTranslate {
             if(afterConsume!=null){
                 afterConsume.apply();
             }
-            if(sqlFunction instanceof SQLLazyFunction){
-                SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
-                return runtimeContext.getSQLSegmentFactory().createSQLNativeLazySegment(expressionContext,sqlLazyFunction,sqlSegement->sqlSegement, sqlNativeExpressionContext);
-            }
             return runtimeContext.getSQLSegmentFactory().createSQLNativeSegment(expressionContext, sqlSegment, sqlNativeExpressionContext);
         });
     }

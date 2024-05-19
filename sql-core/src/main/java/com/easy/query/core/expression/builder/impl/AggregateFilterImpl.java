@@ -15,7 +15,6 @@ import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnTrueOrFalsePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
-import com.easy.query.core.expression.segment.condition.predicate.SQLNativeLazyPredicateImpl;
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredicateImpl;
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativesPredicateImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
@@ -23,7 +22,6 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.func.SQLLazyFunction;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
@@ -218,13 +216,10 @@ public class AggregateFilterImpl implements AggregateFilter {
 
     private AggregateFilter getLikePredicateFilter(TableAvailable leftTable, SQLNativeExpressionContextImpl sqlNativeExpressionContext, SQLFunction likeSQLFunction) {
         likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(leftTable, sqlNativeExpressionContext));
-        if (likeSQLFunction instanceof SQLLazyFunction) {
-            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) likeSQLFunction;
-            nextPredicateSegment.setPredicate(new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment, sqlNativeExpressionContext));
-        } else {
-            String sqlSegment = likeSQLFunction.sqlSegment(leftTable);
-            nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment, sqlNativeExpressionContext));
-        }
+
+        String sqlSegment = likeSQLFunction.sqlSegment(leftTable);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment, sqlNativeExpressionContext));
+
         nextAnd();
         return this;
     }

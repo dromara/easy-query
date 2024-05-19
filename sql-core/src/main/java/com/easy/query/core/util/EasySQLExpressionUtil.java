@@ -41,7 +41,6 @@ import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
-import com.easy.query.core.expression.segment.condition.predicate.SQLNativeLazyPredicateImpl;
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredicateImpl;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
@@ -64,7 +63,6 @@ import com.easy.query.core.expression.sql.expression.AnonymousUnionEntityQuerySQ
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.func.SQLLazyFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -459,14 +457,8 @@ public class EasySQLExpressionUtil {
 //    }
 
     public static Predicate getSQLFunctionPredicate(ExpressionContext expressionContext, TableAvailable table, SQLFunction sqlFunction, SQLNativeExpressionContext sqlNativeExpressionContext) {
-
-        if (sqlFunction instanceof SQLLazyFunction) {
-            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
-            return new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment, sqlNativeExpressionContext);
-        } else {
-            String sqlSegment = sqlFunction.sqlSegment(table);
-            return new SQLNativePredicateImpl(expressionContext, sqlSegment, sqlNativeExpressionContext);
-        }
+        String sqlSegment = sqlFunction.sqlSegment(table);
+        return new SQLNativePredicateImpl(expressionContext, sqlSegment, sqlNativeExpressionContext);
     }
 
     public static String getSQLOwnerColumn(QueryRuntimeContext runtimeContext, TableAvailable table, String columnName, ToSQLContext toSQLContext) {

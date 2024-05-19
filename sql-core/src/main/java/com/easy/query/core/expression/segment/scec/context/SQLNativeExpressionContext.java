@@ -23,10 +23,7 @@ public interface SQLNativeExpressionContext extends SQLNativeExpression {
     QueryRuntimeContext getRuntimeContext();
     void expression(TableAvailable table, String property);
     void columnName(TableAvailable table, String columnName);
-    default <TEntity> void expression(Query<TEntity> subQuery){
-        expression(subQuery,true);
-    }
-    <TEntity> void expression(Query<TEntity> subQuery,boolean extract);
+    <TEntity> void expression(Query<TEntity> subQuery);
     void value(Object val);
     void sql(SQLSegment sqlSegment);
     <T> void collection(Collection<T> values);

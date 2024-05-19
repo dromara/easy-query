@@ -11,7 +11,6 @@ import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
-import com.easy.query.core.expression.segment.SQLLazySegement;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
@@ -30,7 +29,6 @@ import com.easy.query.core.expression.segment.impl.OrderBySQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderFuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
-import com.easy.query.core.expression.segment.impl.SQLNativeLazySegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectCountDistinctSegmentImpl;
@@ -78,11 +76,6 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     @Override
     public SQLNativeSegment createSQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression) {
         return new SQLNativeSegmentImpl(expressionContext,columnConst,sqlNativeExpression);
-    }
-
-    @Override
-    public SQLNativeSegment createSQLNativeLazySegment(ExpressionContext expressionContext, SQLLazySegement sqlLazySegement, Function<String, String> sqlSegementFunction, SQLNativeExpression sqlNativeExpression) {
-        return new SQLNativeLazySegmentImpl(expressionContext,sqlLazySegement,sqlSegementFunction,sqlNativeExpression);
     }
 
     @Override

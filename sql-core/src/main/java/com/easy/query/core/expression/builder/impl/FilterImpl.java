@@ -26,7 +26,6 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePre
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
-import com.easy.query.core.expression.segment.condition.predicate.SQLNativeLazyPredicateImpl;
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredicateImpl;
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativesPredicateImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
@@ -34,7 +33,6 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.func.SQLLazyFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -262,15 +260,10 @@ public class FilterImpl implements Filter {
 //        nextPredicateSegment.setPredicate(sqlNativePredicate2);
 //
 
-        if (sqlFunction instanceof SQLLazyFunction) {
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
-            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
-            nextPredicateSegment.setPredicate(new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment + " " + sqlPredicateAssert.getSQL(), sqlNativeExpressionContext));
-        } else {
-            String sqlSegment = sqlFunction.sqlSegment(table);
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
-            nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " " + sqlPredicateAssert.getSQL(), sqlNativeExpressionContext));
-        }
+        String sqlSegment = sqlFunction.sqlSegment(table);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " " + sqlPredicateAssert.getSQL(), sqlNativeExpressionContext));
+
         next();
         return this;
     }
@@ -316,18 +309,10 @@ public class FilterImpl implements Filter {
 //        SQLNativePredicate2Impl sqlNativePredicate2 = new SQLNativePredicate2Impl(expressionContext, sqlSegment, s -> s + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext);
 //        nextPredicateSegment.setPredicate(sqlNativePredicate2);
 //
-//
-        if (sqlFunction instanceof SQLLazyFunction) {
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
-            sqlNativeExpressionContext.value(val);
-            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
-            nextPredicateSegment.setPredicate(new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
-        } else {
-            String sqlSegment = sqlFunction.sqlSegment(table);
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
-            sqlNativeExpressionContext.value(val);
-            nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
-        }
+        String sqlSegment = sqlFunction.sqlSegment(table);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
+        sqlNativeExpressionContext.value(val);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
         next();
     }
 
@@ -340,17 +325,12 @@ public class FilterImpl implements Filter {
 //
 //        SQLNativePredicate2Impl sqlNativePredicate2 = new SQLNativePredicate2Impl(expressionContext, sqlSegment, s -> s + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext);
 //        nextPredicateSegment.setPredicate(sqlNativePredicate2);
-        if (sqlFunction instanceof SQLLazyFunction) {
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table1, sqlNativeExpressionContext));
-            sqlNativeExpressionContext.expression(table2, property);
-            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
-            nextPredicateSegment.setPredicate(new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
-        } else {
-            String sqlSegment = sqlFunction.sqlSegment(table1);
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table1, sqlNativeExpressionContext));
-            sqlNativeExpressionContext.expression(table2, property);
-            nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
-        }
+
+        String sqlSegment = sqlFunction.sqlSegment(table1);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table1, sqlNativeExpressionContext));
+        sqlNativeExpressionContext.expression(table2, property);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
+
         next();
     }
 
@@ -365,17 +345,12 @@ public class FilterImpl implements Filter {
 //        SQLNativePredicate2Impl sqlNativePredicate2 = new SQLNativePredicate2Impl(expressionContext, sqlSegment, s -> s + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext);
 //        nextPredicateSegment.setPredicate(sqlNativePredicate2);
 
-        if (sqlFunction instanceof SQLLazyFunction) {
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table1, sqlNativeExpressionContext));
-            sqlNativeExpressionContext.expression(subQuery.cloneQueryable());
-            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
-            nextPredicateSegment.setPredicate(new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
-        } else {
-            String sqlSegment = sqlFunction.sqlSegment(table1);
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table1, sqlNativeExpressionContext));
-            sqlNativeExpressionContext.expression(subQuery.cloneQueryable());
-            nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
-        }
+
+        String sqlSegment = sqlFunction.sqlSegment(table1);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table1, sqlNativeExpressionContext));
+        sqlNativeExpressionContext.expression(subQuery.cloneQueryable());
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
+
         next();
     }
 
@@ -404,17 +379,12 @@ public class FilterImpl implements Filter {
 //        SQLNativePredicate2Impl sqlNativePredicate2 = new SQLNativePredicate2Impl(expressionContext, sqlSegment, s -> s + " " + predicateCompare.getSQL() + " ({" + sqlFunction.paramMarks() + "})", sqlNativeExpressionContext);
 //        nextPredicateSegment.setPredicate(sqlNativePredicate2);
 
-        if (sqlFunction instanceof SQLLazyFunction) {
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
-            sqlNativeExpressionContext.collection(collections);
-            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
-            nextPredicateSegment.setPredicate(new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment + " " + predicateCompare.getSQL() + " ({" + sqlFunction.paramMarks() + "})", sqlNativeExpressionContext));
-        } else {
-            String sqlSegment = sqlFunction.sqlSegment(table);
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
-            sqlNativeExpressionContext.collection(collections);
-            nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " " + predicateCompare.getSQL() + " ({" + sqlFunction.paramMarks() + "})", sqlNativeExpressionContext));
-        }
+
+        String sqlSegment = sqlFunction.sqlSegment(table);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
+        sqlNativeExpressionContext.collection(collections);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " " + predicateCompare.getSQL() + " ({" + sqlFunction.paramMarks() + "})", sqlNativeExpressionContext));
+
         next();
     }
 
@@ -433,32 +403,14 @@ public class FilterImpl implements Filter {
 //        SQLNativePredicate2Impl sqlNativePredicate2 = new SQLNativePredicate2Impl(expressionContext, sqlSegment, s ->  " {" + sqlFunction.paramMarks() + "} " + predicateCompare.getSQL()+ " " + s, sqlNativeExpressionContext);
 //        nextPredicateSegment.setPredicate(sqlNativePredicate2);
 
-        if (sqlFunction instanceof SQLLazyFunction) {
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
-            sqlNativeExpressionContext.expression(table, property);
-            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
-            nextPredicateSegment.setPredicate(new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> " {" + sqlFunction.paramMarks() + "} " + predicateCompare.getSQL() + " " + sqlSegment, sqlNativeExpressionContext));
-        } else {
+        String sqlSegment = sqlFunction.sqlSegment(tableRight);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
+        sqlNativeExpressionContext.expression(table, property);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, " {" + sqlFunction.paramMarks() + "} " + predicateCompare.getSQL() + " " + sqlSegment, sqlNativeExpressionContext));
 
-            String sqlSegment = sqlFunction.sqlSegment(tableRight);
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
-            sqlNativeExpressionContext.expression(table, property);
-            nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, " {" + sqlFunction.paramMarks() + "} " + predicateCompare.getSQL() + " " + sqlSegment, sqlNativeExpressionContext));
-        }
         next();
     }
 
-
-//    private Predicate getSQLFunctionPredicate(TableAvailable table, SQLFunction sqlFunction, SQLNativeExpressionContext sqlNativeExpressionContext) {
-//
-//        if (sqlFunction instanceof SQLLazyFunction) {
-//            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) sqlFunction;
-//            return new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment, sqlNativeExpressionContext);
-//        } else {
-//            String sqlSegment = sqlFunction.sqlSegment(table);
-//            return new SQLNativePredicateImpl(expressionContext, sqlSegment, sqlNativeExpressionContext);
-//        }
-//    }
 
     private void funcColumnFuncFilter0(TableAvailable tableLeft, SQLFunction sqlFunctionLeft, TableAvailable tableRight, SQLFunction sqlFunctionRight, SQLPredicateCompare sqlPredicateCompare) {
         SQLNativeExpressionContextImpl sqlNativeExpressionContextLeft = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
@@ -638,15 +590,11 @@ public class FilterImpl implements Filter {
 //        nextPredicateSegment.setPredicate(sqlNativePredicate2);
 
 
-        if (likeSQLFunction instanceof SQLLazyFunction) {
-            likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(leftTable, sqlNativeExpressionContext));
-            SQLLazyFunction sqlLazyFunction = (SQLLazyFunction) likeSQLFunction;
-            nextPredicateSegment.setPredicate(new SQLNativeLazyPredicateImpl(expressionContext, sqlLazyFunction, sqlSegment -> sqlSegment, sqlNativeExpressionContext));
-        } else {
-            String sqlSegment = likeSQLFunction.sqlSegment(leftTable);
-            likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(leftTable, sqlNativeExpressionContext));
-            nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment, sqlNativeExpressionContext));
-        }
+
+        String sqlSegment = likeSQLFunction.sqlSegment(leftTable);
+        likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(leftTable, sqlNativeExpressionContext));
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment, sqlNativeExpressionContext));
+
         next();
         return this;
     }

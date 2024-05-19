@@ -1,21 +1,22 @@
 package com.easy.query.core.func.def.impl;
 
-import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.tuple.Tuple2;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
-import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import com.easy.query.core.expression.segment.impl.DefaultSQLSegment;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.func.SQLLazyFunction;
+import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.column.impl.ColumSQLExpressionImpl;
+import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,36 +25,53 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class CaseWhenSQLFunction implements SQLLazyFunction {
+public class CaseWhenSQLFunction extends AbstractExpressionSQLFunction {
+    private final QueryRuntimeContext runtimeContext;
+    private final ExpressionContext expressionContext;
     private final List<Tuple2<SQLExpression1<Filter>, ParamExpression>> whens;
     private final ParamExpression elseValue;
+    private final List<ColumnExpression> columnExpressions = new ArrayList<>();
+    private final StringBuilder sql = new StringBuilder();
 
-    public CaseWhenSQLFunction(List<Tuple2<SQLExpression1<Filter>, ParamExpression>> whens, ParamExpression elseValue){
+    public CaseWhenSQLFunction(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, List<Tuple2<SQLExpression1<Filter>, ParamExpression>> whens, ParamExpression elseValue) {
+        this.runtimeContext = runtimeContext;
+        this.expressionContext = expressionContext;
 
         this.whens = whens;
         this.elseValue = elseValue;
+        initCaseWhen();
     }
-    @Override
-    public String toSQL(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, ToSQLContext toSQLContext) {
 
-        StringBuilder sql = new StringBuilder();
+    private void initCaseWhen() {
+
+        int i = 0;
         sql.append("(CASE ");
         for (Tuple2<SQLExpression1<Filter>, ParamExpression> when : whens) {
             SQLExpression1<Filter> filterExpression = when.t();
             ParamExpression paramExpression = when.t1();
-            AndPredicateSegment resolve = resolve(runtimeContext,expressionContext,filterExpression);
-            String caseWhenPredicateSql = resolve.toSQL(toSQLContext);
-            Object thenValue = EasySQLExpressionUtil.parseParamExpression(expressionContext, paramExpression, toSQLContext);
-            sql.append("WHEN ").append(caseWhenPredicateSql).append(" THEN ").append(thenValue).append(" ");
+            AndPredicateSegment resolve = resolve(runtimeContext, expressionContext, filterExpression);
+            ColumSQLExpressionImpl columSQLExpressionPredicate = new ColumSQLExpressionImpl(new DefaultSQLSegment(toSQLContext -> resolve.toSQL(toSQLContext)));
+            columnExpressions.add(columSQLExpressionPredicate);
+            sql.append("WHEN ");
+            sql.append("{").append(i++).append("}");
+//            String caseWhenPredicateSql = resolve.toSQL(toSQLContext);
+
+            ColumSQLExpressionImpl columSQLExpressionValue = new ColumSQLExpressionImpl(new DefaultSQLSegment(toSQLContext -> EasySQLExpressionUtil.parseParamExpression(expressionContext, paramExpression, toSQLContext).toString()));
+            columnExpressions.add(columSQLExpressionValue);
+            sql.append(" THEN ");
+            sql.append("{").append(i++).append("}").append(" ");
+//            sql.append("WHEN ").append(caseWhenPredicateSql).append(" THEN ").append(thenValue).append(" ");
         }
-        Object elseValue = EasySQLExpressionUtil.parseParamExpression(expressionContext, this.elseValue, toSQLContext);
-        sql.append("ELSE ").append(elseValue).append(" END)");
-        return sql.toString();
+
+        ColumSQLExpressionImpl columSQLExpressionElseValue = new ColumSQLExpressionImpl(new DefaultSQLSegment(toSQLContext -> EasySQLExpressionUtil.parseParamExpression(expressionContext, this.elseValue, toSQLContext).toString()));
+        columnExpressions.add(columSQLExpressionElseValue);
+        sql.append("ELSE ").append("{").append(i++).append("}").append(" END)");
     }
-    public AndPredicateSegment resolve(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext,SQLExpression1<Filter> filterExpression){
+
+    public AndPredicateSegment resolve(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLExpression1<Filter> filterExpression) {
 
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
-        FilterImpl filter = new FilterImpl(runtimeContext,expressionContext,andPredicateSegment,false, AnyValueFilter.DEFAULT);
+        FilterImpl filter = new FilterImpl(runtimeContext, expressionContext, andPredicateSegment, false, AnyValueFilter.DEFAULT);
         filterExpression.apply(filter);
 //        topicSQLWherePredicate.eq(Topic::getId,"1");
 //        String sql = andPredicateSegment.toSQL(toSQLContext);
@@ -63,21 +81,16 @@ public class CaseWhenSQLFunction implements SQLLazyFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        return null;
+        return sql.toString();
     }
 
     @Override
     public int paramMarks() {
-        return 0;
+        return columnExpressions.size();
     }
 
     @Override
-    public void consume(SQLNativeChainExpressionContext context) {
-
-    }
-
-    @Override
-    public AggregationType getAggregationType() {
-        return AggregationType.UNKNOWN;
+    protected List<ColumnExpression> getColumnExpressions() {
+        return columnExpressions;
     }
 }
