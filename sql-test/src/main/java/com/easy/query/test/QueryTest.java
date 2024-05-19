@@ -389,11 +389,10 @@ public class QueryTest extends BaseTest {
 
     @Test
     public void query10_1() {
-
         String toSql = easyQuery
                 .queryable(Topic.class)
                 .asAlias("y")
-                .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId))
+                .leftJoin(BlogEntity.class, (t, t1) ->t.eq(t1, Topic::getId, BlogEntity::getId))
                 .asAlias("z")
                 .where(o -> o.eq(Topic::getId, "3"))
                 .toSQL();

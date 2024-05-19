@@ -51,6 +51,7 @@ public class QueryProxySubQueryTest extends BaseTest {
     @Test
     public void test3(){
         BlogEntityProxy blogTable = BlogEntityProxy.createTable();
+
         ProxyQueryable<LocalDateTimeProxy, LocalDateTime> select = easyProxyQuery.queryable(blogTable)
                 .select(LocalDateTimeProxy.createTable(), x -> x.column(blogTable.createTime()));
         TopicProxy topicTable = TopicProxy.createTable();

@@ -16,9 +16,6 @@ import com.easy.query.api.proxy.entity.update.impl.EasyEmptyEntityUpdatable;
 import com.easy.query.api.proxy.entity.update.impl.EasyEntityUpdatable;
 import com.easy.query.api.proxy.entity.update.impl.EasyExpressionUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.extension.track.EntityState;
-import com.easy.query.core.basic.jdbc.tx.Transaction;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -46,11 +43,6 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
         return easyQueryClient;
     }
 
-    @Override
-    public QueryRuntimeContext getRuntimeContext() {
-        return easyQueryClient.getRuntimeContext();
-    }
-
 
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> queryable(Class<T> entityClass) {
@@ -62,11 +54,6 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> queryable(String sql, Class<T> entityClass) {
         TProxy tProxy = EntityQueryProxyManager.create(entityClass);
         return new EasyEntityQueryable<>(tProxy, easyQueryClient.queryable(sql, entityClass));
-    }
-
-    @Override
-    public Transaction beginTransaction(Integer isolationLevel) {
-        return easyQueryClient.beginTransaction(isolationLevel);
     }
 
     @Override
@@ -132,18 +119,4 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
         return new EasyExpressionDeletable<>(tProxy, easyQueryClient.deletable(entityClass));
     }
 
-    @Override
-    public boolean addTracking(Object entity) {
-        return easyQueryClient.addTracking(entity);
-    }
-
-    @Override
-    public boolean removeTracking(Object entity) {
-        return easyQueryClient.removeTracking(entity);
-    }
-
-    @Override
-    public EntityState getTrackEntityStateNotNull(Object entity) {
-        return easyQueryClient.getTrackEntityStateNotNull(entity);
-    }
 }
