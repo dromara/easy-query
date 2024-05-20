@@ -32,7 +32,9 @@
 	</a>
 </p>
 
-- [GITEE](https://gitee.com/xuejm/easy-query)  国内镜像地址
+
+- [GITHUB](https://github.com/dromara/easy-query)  GITHUB镜像地址
+- [GITEE](https://gitee.com/dromara/easy-query)  GITEE镜像地址
 
 ## 📚 documentation
 <div align="center">
