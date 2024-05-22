@@ -21,9 +21,4 @@ public class UserRole implements ProxyEntityAvailable<UserRole , UserRoleProxy> 
     private String id;
     private String userId;
     private String roleId;
-
-    @Override
-    public Class<UserRoleProxy> proxyTableClass() {
-        return UserRoleProxy.class;
-    }
 }

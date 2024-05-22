@@ -34,9 +34,4 @@ public class TestRouteEntity implements ProxyEntityAvailable<TestRouteEntity , T
      */
     private String requestPath;
 
-
-    @Override
-    public Class<TestRouteEntityProxy> proxyTableClass() {
-        return TestRouteEntityProxy.class;
-    }
 }

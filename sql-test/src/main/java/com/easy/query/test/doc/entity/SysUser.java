@@ -27,8 +27,4 @@ public class SysUser implements ProxyEntityAvailable<SysUser , SysUserProxy> {
     private String phone;
     private LocalDateTime createTime;
 
-    @Override
-    public Class<SysUserProxy> proxyTableClass() {
-        return SysUserProxy.class;
-    }
 }

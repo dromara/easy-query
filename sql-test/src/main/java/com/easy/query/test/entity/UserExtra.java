@@ -37,9 +37,4 @@ public class UserExtra implements ProxyEntityAvailable<UserExtra , UserExtraProx
     @UpdateIgnore
     @Column(sqlConversion = UserAgeColumnValueSQLConverter.class)
     private Integer age;
-
-    @Override
-    public Class<UserExtraProxy> proxyTableClass() {
-        return UserExtraProxy.class;
-    }
 }

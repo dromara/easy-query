@@ -45,8 +45,4 @@ public class TestUserEntity implements ProxyEntityAvailable<TestUserEntity, Test
     extraFilter = JoinType.class)
     private List<TestRoleEntity> roles;
 
-    @Override
-    public Class<TestUserEntityProxy> proxyTableClass() {
-        return TestUserEntityProxy.class;
-    }
 }

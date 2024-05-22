@@ -32,8 +32,4 @@ public class RelationTeacher implements ProxyEntityAvailable<RelationTeacher , R
     @Navigate(value = RelationTypeEnum.OneToMany,targetProperty ="userId", extraFilter = BookNavigateExtraFilterStrategy.class)
     private List<RelationBook> books;
 
-    @Override
-    public Class<RelationTeacherProxy> proxyTableClass() {
-        return RelationTeacherProxy.class;
-    }
 }

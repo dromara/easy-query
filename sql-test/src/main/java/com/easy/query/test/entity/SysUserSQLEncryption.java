@@ -30,9 +30,4 @@ public class SysUserSQLEncryption implements ProxyEntityAvailable<SysUserSQLEncr
     private String idCard;
     private String address;
     private LocalDateTime createTime;
-
-    @Override
-    public Class<SysUserSQLEncryptionProxy> proxyTableClass() {
-        return SysUserSQLEncryptionProxy.class;
-    }
 }

@@ -34,8 +34,4 @@ public class City implements ProxyEntityAvailable<City , CityProxy> {
     @ColumnIgnore
     private Province province;
 
-    @Override
-    public Class<CityProxy> proxyTableClass() {
-        return CityProxy.class;
-    }
 }

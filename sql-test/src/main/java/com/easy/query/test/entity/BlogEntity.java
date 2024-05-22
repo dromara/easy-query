@@ -74,8 +74,4 @@ public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogE
     @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = "title")
     private List<SysUser> users;
 
-    @Override
-    public Class<BlogEntityProxy> proxyTableClass() {
-        return BlogEntityProxy.class;
-    }
 }

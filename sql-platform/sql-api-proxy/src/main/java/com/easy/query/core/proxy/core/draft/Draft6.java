@@ -93,8 +93,4 @@ public class Draft6<T1, T2, T3, T4, T5, T6> extends AbstractDraft implements Pro
     public int capacity() {
         return 6;
     }
-    @Override
-    public Class<Draft6Proxy<T1, T2, T3, T4, T5, T6>> proxyTableClass() {
-        return EasyObjectUtil.typeCastNullable(Draft6Proxy.class);
-    }
 }

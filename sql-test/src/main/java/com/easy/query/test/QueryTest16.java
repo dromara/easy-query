@@ -1,8 +1,11 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.TopicType;
 import com.easy.query.test.entity.blogtest.SysUser;
+import com.easy.query.test.entity.proxy.TopicTypeProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -678,7 +681,6 @@ public class QueryTest16 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-
             try {
                 List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                         .where(user -> {

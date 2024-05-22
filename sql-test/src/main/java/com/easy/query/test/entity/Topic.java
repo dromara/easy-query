@@ -34,9 +34,4 @@ public class Topic implements ProxyEntityAvailable<Topic , TopicProxy> {
     @InsertIgnore
     @UpdateIgnore
     private String alias;
-
-    @Override
-    public Class<TopicProxy> proxyTableClass() {
-        return TopicProxy.class;
-    }
 }

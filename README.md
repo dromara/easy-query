@@ -233,11 +233,6 @@ public class Topic implements ProxyEntityAvailable<Topic , TopicProxy> {
   private String title;
   private LocalDateTime createTime;
 
-
-  @Override
-  public Class<TopicProxy> proxyTableClass() {
-    return TopicProxy.class;
-  }
 }
 
 //The ProxyEntityAvailable interface can be quickly generated using the IDEA plugin EasyQueryAssistant.
@@ -288,13 +283,6 @@ public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogE
    * 是否置顶
    */
   private Boolean top;
-
-
-
-  @Override
-  public Class<BlogEntityProxy> proxyTableClass() {
-    return BlogEntityProxy.class;
-  }
 }
 
 ```

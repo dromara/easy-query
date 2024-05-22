@@ -40,9 +40,4 @@ public class BlogEntity2  extends BaseEntity implements ProxyEntityAvailable<Blo
      * 点赞数
      */
     private BigDecimal star;
-
-    @Override
-    public Class<BlogEntity2Proxy> proxyTableClass() {
-        return BlogEntity2Proxy.class;
-    }
 }

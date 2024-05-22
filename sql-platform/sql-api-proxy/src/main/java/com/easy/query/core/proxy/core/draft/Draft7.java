@@ -103,8 +103,4 @@ public class Draft7<T1, T2, T3, T4, T5, T6, T7> extends AbstractDraft implements
     public int capacity() {
         return 7;
     }
-    @Override
-    public Class<Draft7Proxy<T1, T2, T3, T4, T5, T6, T7>> proxyTableClass() {
-        return EasyObjectUtil.typeCastNullable(Draft7Proxy.class);
-    }
 }

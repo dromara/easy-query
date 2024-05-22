@@ -21,9 +21,4 @@ public class MyChild implements ProxyEntityAvailable<MyChild , MyChildProxy> {
     private String id;
     private String childrenParentId;
     private String name;
-
-    @Override
-    public Class<MyChildProxy> proxyTableClass() {
-        return MyChildProxy.class;
-    }
 }

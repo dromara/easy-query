@@ -26,8 +26,4 @@ public class DamengMyTopic implements ProxyEntityAvailable<DamengMyTopic , Damen
     private String title;
     private LocalDateTime createTime;
 
-    @Override
-    public Class<DamengMyTopicProxy> proxyTableClass() {
-        return DamengMyTopicProxy.class;
-    }
 }

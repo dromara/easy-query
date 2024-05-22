@@ -36,9 +36,4 @@
 //    @InsertIgnore
 //    @UpdateIgnore
 //    private String alias;
-//
-//    @Override
-//    public Class<TopicConcurrentProxy> proxyTableClass() {
-//        return TopicConcurrentProxy.class;
-//    }
 //}

@@ -1,7 +1,10 @@
 package com.easy.query.test.entity.base;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.base.proxy.AreaProxy;
 import lombok.Data;
 import lombok.ToString;
 
@@ -14,7 +17,8 @@ import lombok.ToString;
 @Table("t_area")
 @Data
 @ToString
-public class Area {
+@EntityProxy
+public class Area implements ProxyEntityAvailable<Area , AreaProxy> {
     @Column(primaryKey = true)
     private String code;
     private String provinceCode;

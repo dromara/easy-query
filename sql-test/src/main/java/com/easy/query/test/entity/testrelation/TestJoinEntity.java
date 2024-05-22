@@ -36,9 +36,4 @@ public class TestJoinEntity implements ProxyEntityAvailable<TestJoinEntity , Tes
     @Column(primaryKey = true)
     private Integer type;
 
-
-    @Override
-    public Class<TestJoinEntityProxy> proxyTableClass() {
-        return TestJoinEntityProxy.class;
-    }
 }

@@ -88,10 +88,5 @@ public class Route implements ProxyEntityAvailable<Route, RouteProxy> {
             , targetMappingProperty = "roleId"
             , extraFilter = RoleJoin.RoleJoinType.class)
     private List<Role> roles;
-
-    @Override
-    public Class<RouteProxy> proxyTableClass() {
-        return RouteProxy.class;
-    }
 }
 

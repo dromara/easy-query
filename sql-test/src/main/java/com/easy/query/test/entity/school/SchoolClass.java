@@ -47,9 +47,4 @@ public class SchoolClass implements ProxyEntityAvailable<SchoolClass , SchoolCla
 //            , targetMappingProperty = "teacherId")
 
     private List<SchoolTeacher> schoolTeachers;
-
-    @Override
-    public Class<SchoolClassProxy> proxyTableClass() {
-        return SchoolClassProxy.class;
-    }
 }

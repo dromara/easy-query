@@ -22,8 +22,4 @@ public class RoleMenu implements ProxyEntityAvailable<RoleMenu , RoleMenuProxy> 
     private String roleId;
     private String menuId;
 
-    @Override
-    public Class<RoleMenuProxy> proxyTableClass() {
-        return RoleMenuProxy.class;
-    }
 }

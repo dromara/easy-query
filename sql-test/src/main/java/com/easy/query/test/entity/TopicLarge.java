@@ -31,9 +31,4 @@ public class TopicLarge implements ProxyEntityAvailable<TopicLarge , TopicLargeP
     @UpdateIgnore
     private String title1;
     private LocalDateTime createTime;
-
-    @Override
-    public Class<TopicLargeProxy> proxyTableClass() {
-        return TopicLargeProxy.class;
-    }
 }

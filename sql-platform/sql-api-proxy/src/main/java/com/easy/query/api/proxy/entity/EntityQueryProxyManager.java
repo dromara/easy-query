@@ -3,11 +3,15 @@ package com.easy.query.api.proxy.entity;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.common.cache.Cache;
 import com.easy.query.core.common.cache.DefaultMemoryCache;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 /**
@@ -83,8 +87,36 @@ public class EntityQueryProxyManager {
             Object proxy = creator.get();
             return EasyObjectUtil.typeCast(proxy);
         }
-        TEntity tEntity = EasyClassUtil.newInstance(entityClass);
-        Class<TEntityProxy> proxyTableClass = tEntity.proxyTableClass();
+
+        Class<?> proxyTableClass = Arrays.stream(entityClass.getGenericInterfaces()).map(t -> {
+
+            if (t instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) t;
+                Type rawType = parameterizedType.getRawType();
+
+                if (rawType instanceof Class && ProxyEntityAvailable.class.isAssignableFrom((Class<?>) rawType)) {
+
+                    // 如果你需要进一步检查类型参数
+                    Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                    if (actualTypeArguments.length == 2) {
+                        Type actualTypeArgument = actualTypeArguments[1];
+                        if (actualTypeArgument instanceof Class<?>) {
+                            return (Class<?>) actualTypeArgument;
+                        }
+                    }
+//                    for (Type actualType : actualTypeArguments) {
+//                        if()
+//                        System.out.println("Type argument: " + actualType);
+//                    }
+                }
+            }
+            return null;
+        }).filter(t -> t != null).findFirst().orElse(null);
+
+        if(proxyTableClass==null){
+            throw new EasyQueryInvalidOperationException(String.format("%s is not implements ProxyEntityAvailable",EasyClassUtil.getSimpleName(entityClass)));
+        }
+
         FastBean fastBean = new FastBean(proxyTableClass);
         Supplier<Object> beanConstructorCreator = fastBean.getBeanConstructorCreator();
         Supplier<Object> objectSupplier = proxyConstructorCache.computeIfAbsent(entityClass, key -> {

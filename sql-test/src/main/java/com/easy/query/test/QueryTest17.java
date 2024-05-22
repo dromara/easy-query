@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
+import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api4j.func.LambdaSQLFunc;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -690,5 +691,13 @@ public class QueryTest17 extends BaseTest {
             Assert.assertEquals("%456%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
         }
+    }
+
+    @Test
+     public void testxxx9(){
+        Class<Topic> topicClass = Topic.class;
+        TopicProxy topicProxy = EntityQueryProxyManager.create(topicClass);
+        Assert.assertNotNull(topicProxy);
+        System.out.println(topicProxy);
     }
 }

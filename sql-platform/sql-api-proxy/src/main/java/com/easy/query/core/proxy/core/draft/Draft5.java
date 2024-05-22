@@ -82,9 +82,4 @@ public class Draft5<T1, T2, T3, T4, T5> extends AbstractDraft implements ProxyEn
     public int capacity() {
         return 5;
     }
-
-    @Override
-    public Class<Draft5Proxy<T1, T2, T3, T4, T5>> proxyTableClass() {
-        return EasyObjectUtil.typeCastNullable(Draft5Proxy.class);
-    }
 }

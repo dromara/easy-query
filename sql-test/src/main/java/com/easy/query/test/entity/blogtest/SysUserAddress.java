@@ -24,9 +24,4 @@ public class SysUserAddress implements ProxyEntityAvailable<SysUserAddress , Sys
     private String city;
     private String area;
     private String addr;
-
-    @Override
-    public Class<SysUserAddressProxy> proxyTableClass() {
-        return SysUserAddressProxy.class;
-    }
 }

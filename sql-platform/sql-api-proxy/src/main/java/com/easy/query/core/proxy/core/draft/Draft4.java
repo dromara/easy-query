@@ -70,8 +70,4 @@ public class Draft4<T1, T2, T3, T4> extends AbstractDraft implements ProxyEntity
     public int capacity() {
         return 4;
     }
-    @Override
-    public Class<Draft4Proxy<T1, T2, T3, T4>> proxyTableClass() {
-        return EasyObjectUtil.typeCastNullable(Draft4Proxy.class);
-    }
 }

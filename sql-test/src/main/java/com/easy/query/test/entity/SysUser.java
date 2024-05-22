@@ -37,11 +37,6 @@ public class SysUser extends BaseEntity implements ProxyEntityAvailable<SysUser 
 
     @Navigate(value = RelationTypeEnum.OneToOne)
     private BlogEntity myBlog;
-
-    @Override
-    public Class<SysUserProxy> proxyTableClass() {
-        return SysUserProxy.class;
-    }
 }
 
 //    id varchar(32) not null comment '主键ID'primary key,

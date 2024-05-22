@@ -20,9 +20,4 @@ public class OtherTable implements ProxyEntityAvailable<OtherTable , OtherTableP
     @Column(primaryKey = true)
     private String id;
     private String type;
-
-    @Override
-    public Class<OtherTableProxy> proxyTableClass() {
-        return OtherTableProxy.class;
-    }
 }

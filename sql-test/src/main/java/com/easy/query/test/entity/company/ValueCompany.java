@@ -36,9 +36,4 @@ public class ValueCompany implements ProxyEntityAvailable<ValueCompany , VCTable
      */
     @ValueObject
     private ValueCompanyLicense license;
-
-    @Override
-    public Class<VCTable> proxyTableClass() {
-        return VCTable.class;
-    }
 }

@@ -42,11 +42,6 @@ public class HelpAreaEntity extends BaseEntity implements CacheMultiEntity,Proxy
 
     private String cityName;
 
-
-    @Override
-    public Class<HelpAreaEntityProxy> proxyTableClass() {
-        return HelpAreaEntityProxy.class;
-    }
     @Override
     public String cacheIndexId() {
         return getCityId();

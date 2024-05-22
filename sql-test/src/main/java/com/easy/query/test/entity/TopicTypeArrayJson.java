@@ -35,9 +35,4 @@ public class TopicTypeArrayJson implements ProxyEntityAvailable<TopicTypeArrayJs
 //    private Integer[] title3;
     private Integer topicType;
     private LocalDateTime createTime;
-
-    @Override
-    public Class<TopicTypeArrayJsonProxy> proxyTableClass() {
-        return TopicTypeArrayJsonProxy.class;
-    }
 }

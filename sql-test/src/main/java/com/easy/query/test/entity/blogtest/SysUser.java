@@ -44,9 +44,4 @@ public class SysUser implements ProxyEntityAvailable<SysUser , SysUserProxy> {
 
     @Navigate(value = RelationTypeEnum.ManyToOne,selfProperty = Fields.companyId)
     private Company company;
-
-    @Override
-    public Class<SysUserProxy> proxyTableClass() {
-        return SysUserProxy.class;
-    }
 }

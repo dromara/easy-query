@@ -23,9 +23,4 @@ public class SchoolClassTeacher implements ProxyEntityAvailable<SchoolClassTeach
     private String classId;
     @Column(primaryKey = true)
     private String teacherId;
-
-    @Override
-    public Class<SchoolClassTeacherProxy> proxyTableClass() {
-        return SchoolClassTeacherProxy.class;
-    }
 }

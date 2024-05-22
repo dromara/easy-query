@@ -131,9 +131,4 @@ public class EqUser extends User implements ProxyEntityAvailable<EqUser, EqUserP
      */
     private String remark;
 
-
-    @Override
-    public Class<EqUserProxy> proxyTableClass() {
-        return EqUserProxy.class;
-    }
 }

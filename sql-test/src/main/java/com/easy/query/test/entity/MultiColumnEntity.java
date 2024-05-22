@@ -32,8 +32,4 @@ public class MultiColumnEntity implements ProxyEntityAvailable<MultiColumnEntity
     private String col9;
     private String col10;
 
-    @Override
-    public Class<MultiColumnEntityProxy> proxyTableClass() {
-        return MultiColumnEntityProxy.class;
-    }
 }

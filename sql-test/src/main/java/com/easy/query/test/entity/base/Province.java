@@ -32,9 +32,4 @@ public class Province implements ProxyEntityAvailable<Province , ProvinceProxy> 
 
     @ColumnIgnore
     private String firstCityName;
-
-    @Override
-    public Class<ProvinceProxy> proxyTableClass() {
-        return ProvinceProxy.class;
-    }
 }

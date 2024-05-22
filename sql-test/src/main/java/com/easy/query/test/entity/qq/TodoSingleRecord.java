@@ -66,12 +66,6 @@ public class TodoSingleRecord extends BaseEntity implements Serializable, ProxyE
             , targetProperty = "todoId",propIsProxy = false)
     private List<TodoExecutors> todoExecutorsJoinList;
 
-
-    @Override
-    public Class<TodoSingleRecordProxy> proxyTableClass() {
-        return TodoSingleRecordProxy.class;
-    }
-
 //    private List<Long> userIdsx;
 
 

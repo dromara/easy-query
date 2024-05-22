@@ -18,9 +18,4 @@ import lombok.ToString;
 public class SchoolTeacherVO implements ProxyEntityAvailable<SchoolTeacherVO , SchoolTeacherVOProxy> {
     private String id;
     private String name;
-
-    @Override
-    public Class<SchoolTeacherVOProxy> proxyTableClass() {
-        return SchoolTeacherVOProxy.class;
-    }
 }

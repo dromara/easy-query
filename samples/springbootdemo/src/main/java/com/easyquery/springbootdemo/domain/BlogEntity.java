@@ -68,11 +68,6 @@ public class BlogEntity extends BaseEntity implements CacheKvEntity,ProxyEntityA
     private Boolean top;
 
     @Override
-    public Class<BlogEntityProxy> proxyTableClass() {
-        return BlogEntityProxy.class;
-    }
-
-    @Override
     public String cacheIdValue() {
         return getId();
     }

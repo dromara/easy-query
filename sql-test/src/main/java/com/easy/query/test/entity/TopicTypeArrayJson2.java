@@ -24,9 +24,4 @@ public class TopicTypeArrayJson2 implements ProxyEntityAvailable<TopicTypeArrayJ
     @Column(primaryKey = true)
     private String id;
     private Integer[] title3;
-
-    @Override
-    public Class<TopicTypeArrayJson2Proxy> proxyTableClass() {
-        return TopicTypeArrayJson2Proxy.class;
-    }
 }

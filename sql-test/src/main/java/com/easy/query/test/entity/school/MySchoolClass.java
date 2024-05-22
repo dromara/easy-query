@@ -31,9 +31,4 @@ public class MySchoolClass implements ProxyEntityAvailable<MySchoolClass , MySch
     //完整配置,property忽略表示对应的主键
 //    @Navigate(value = RelationTypeEnum.OneToMany,selfProperty = "id",targetProperty = "classId")
     private List<MySchoolStudent> schoolStudents;
-
-    @Override
-    public Class<MySchoolClassProxy> proxyTableClass() {
-        return MySchoolClassProxy.class;
-    }
 }

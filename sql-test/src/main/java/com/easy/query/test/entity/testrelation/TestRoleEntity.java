@@ -20,7 +20,7 @@ import java.util.List;
 @Data
 @Table(value = "t_test_role")
 @EntityProxy
-public class TestRoleEntity implements ProxyEntityAvailable<TestRoleEntity , TestRoleEntityProxy> {
+public class TestRoleEntity implements ProxyEntityAvailable<TestRoleEntity, TestRoleEntityProxy> {
 
     /**
      * 主键ID
@@ -45,9 +45,5 @@ public class TestRoleEntity implements ProxyEntityAvailable<TestRoleEntity , Tes
             targetMappingProperty = "secondId",
             extraFilter = JoinType.class)
     private List<TestRouteEntity> routes;
-
-    @Override
-    public Class<TestRoleEntityProxy> proxyTableClass() {
-        return TestRoleEntityProxy.class;
-    }
 }
+

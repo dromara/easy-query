@@ -43,8 +43,4 @@ public class RelationUser implements ProxyEntityAvailable<RelationUser , com.eas
     extraFilter = BookNavigateExtraFilterStrategy.class)
     private List<RelationTeacher> teachers;
 
-    @Override
-    public Class<com.easy.query.test.entity.relation.proxy.RelationUserProxy> proxyTableClass() {
-        return com.easy.query.test.entity.relation.proxy.RelationUserProxy.class;
-    }
 }

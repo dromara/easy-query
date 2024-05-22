@@ -58,10 +58,6 @@ public class Draft3<T1, T2, T3> extends AbstractDraft implements ProxyEntityAvai
 //    public int capacity() {
 //        return 3;
 //    }
-    @Override
-    public Class<Draft3Proxy<T1, T2, T3>> proxyTableClass() {
-        return EasyObjectUtil.typeCastNullable(Draft3Proxy.class);
-    }
 
     @Override
     public int capacity() {

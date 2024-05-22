@@ -27,9 +27,4 @@ public class RelationBook implements ProxyEntityAvailable<RelationBook , Relatio
     //学生书籍和老师数据
     private Integer bookType;
     private LocalDateTime createTime;
-
-    @Override
-    public Class<RelationBookProxy> proxyTableClass() {
-        return RelationBookProxy.class;
-    }
 }

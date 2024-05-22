@@ -25,9 +25,4 @@ public class MsSQLMyTopic implements ProxyEntityAvailable<MsSQLMyTopic , MsSQLMy
     private Integer stars;
     private String title;
     private LocalDateTime createTime;
-
-    @Override
-    public Class<MsSQLMyTopicProxy> proxyTableClass() {
-        return MsSQLMyTopicProxy.class;
-    }
 }

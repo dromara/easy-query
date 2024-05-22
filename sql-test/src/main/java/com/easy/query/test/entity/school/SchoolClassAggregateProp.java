@@ -38,8 +38,4 @@ public class SchoolClassAggregateProp implements ProxyEntityAvailable<SchoolClas
     @UpdateIgnore
     private Long studentSize;
 
-    @Override
-    public Class<SchoolClassAggregatePropProxy> proxyTableClass() {
-        return SchoolClassAggregatePropProxy.class;
-    }
 }

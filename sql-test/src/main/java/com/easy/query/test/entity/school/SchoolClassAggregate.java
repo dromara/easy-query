@@ -39,9 +39,4 @@ public class SchoolClassAggregate implements ProxyEntityAvailable<SchoolClassAgg
     @InsertIgnore
     @UpdateIgnore
     private Long studentSize;
-
-    @Override
-    public Class<SchoolClassAggregateProxy> proxyTableClass() {
-        return SchoolClassAggregateProxy.class;
-    }
 }

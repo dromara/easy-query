@@ -37,11 +37,6 @@ public class Draft1<T1> extends AbstractDraft implements ProxyEntityAvailable<Dr
     }
 
     @Override
-    public Class<Draft1Proxy<T1>> proxyTableClass() {
-        return EasyObjectUtil.typeCastNullable(Draft1Proxy.class);
-    }
-
-    @Override
     public int capacity() {
         return 1;
     }

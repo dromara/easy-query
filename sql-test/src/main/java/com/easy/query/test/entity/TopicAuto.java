@@ -25,9 +25,4 @@ public class TopicAuto implements ProxyEntityAvailable<TopicAuto , TopicAutoProx
     private Integer stars;
     private String title;
     private LocalDateTime createTime;
-
-    @Override
-    public Class<TopicAutoProxy> proxyTableClass() {
-        return TopicAutoProxy.class;
-    }
 }

@@ -27,9 +27,4 @@ public class MyObjectParentChildren implements ProxyEntityAvailable<MyObjectPare
     private String name;
     @Navigate(value = RelationTypeEnum.OneToMany,targetProperty = "childrenParentId")
     private List<MyChild> myChildren;
-
-    @Override
-    public Class<MyObjectParentChildrenProxy> proxyTableClass() {
-        return MyObjectParentChildrenProxy.class;
-    }
 }

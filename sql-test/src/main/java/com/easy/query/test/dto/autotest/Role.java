@@ -66,8 +66,4 @@ public class Role implements ProxyEntityAvailable<Role, RoleProxy> {
             , extraFilter = RoleJoin.RoleJoinType.class)
     private List<User> users;
 
-    @Override
-    public Class<RoleProxy> proxyTableClass() {
-        return RoleProxy.class;
-    }
 }

@@ -54,8 +54,4 @@ public class Resource implements ProxyEntityAvailable<Resource, ResourceProxy> {
             , extraFilter = RoleJoin.RoleJoinType.class)
     private List<Role> roles;
 
-    @Override
-    public Class<ResourceProxy> proxyTableClass() {
-        return ResourceProxy.class;
-    }
 }

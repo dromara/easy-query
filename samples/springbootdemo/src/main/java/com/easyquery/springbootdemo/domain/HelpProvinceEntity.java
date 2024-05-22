@@ -34,11 +34,6 @@ public class HelpProvinceEntity extends BaseEntity implements CacheAllEntity, Pr
 
 
     @Override
-    public Class<HelpProvinceEntityProxy> proxyTableClass() {
-        return HelpProvinceEntityProxy.class;
-    }
-
-    @Override
     public String cacheIdValue() {
         return getId();
     }

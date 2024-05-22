@@ -25,8 +25,4 @@ public class SchoolStudentAddressVO implements ProxyEntityAvailable<SchoolStuden
     @Navigate(value = RelationTypeEnum.ManyToOne)
     private SchoolStudentVO schoolStudent;
 
-    @Override
-    public Class<SchoolStudentAddressVOProxy> proxyTableClass() {
-        return SchoolStudentAddressVOProxy.class;
-    }
 }

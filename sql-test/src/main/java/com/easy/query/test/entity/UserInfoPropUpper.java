@@ -24,9 +24,4 @@ public class UserInfoPropUpper implements ProxyEntityAvailable<UserInfoPropUpper
     @Column(primaryKey = true)
     private String ID;
     private Date LevelDate;
-
-    @Override
-    public Class<UserInfoPropUpperProxy> proxyTableClass() {
-        return UserInfoPropUpperProxy.class;
-    }
 }

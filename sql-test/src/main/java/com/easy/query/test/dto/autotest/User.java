@@ -78,8 +78,4 @@ public class User implements ProxyEntityAvailable<User, UserProxy> {
             , extraFilter = RoleJoin.RoleJoinType.class)
     private List<Role> roles;
 
-    @Override
-    public Class<UserProxy> proxyTableClass() {
-        return UserProxy.class;
-    }
 }

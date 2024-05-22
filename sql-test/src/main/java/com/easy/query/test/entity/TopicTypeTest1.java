@@ -31,9 +31,4 @@ public class TopicTypeTest1 implements ProxyEntityAvailable<TopicTypeTest1 , Top
     @Column(value = "topic_type",conversion = EnumConverter.class)
     private TopicTypeEnum topicType;
     private LocalDateTime createTime;
-
-    @Override
-    public Class<TopicTypeTest1Proxy> proxyTableClass() {
-        return TopicTypeTest1Proxy.class;
-    }
 }

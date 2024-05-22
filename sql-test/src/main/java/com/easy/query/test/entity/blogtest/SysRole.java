@@ -40,9 +40,4 @@ public class SysRole implements ProxyEntityAvailable<SysRole, SysRoleProxy> {
             selfMappingProperty = "roleId",
             targetMappingProperty = "menuId")
     private List<SysMenu> menus;
-
-    @Override
-    public Class<SysRoleProxy> proxyTableClass() {
-        return SysRoleProxy.class;
-    }
 }

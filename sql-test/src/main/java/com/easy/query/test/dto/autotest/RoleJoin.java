@@ -35,11 +35,6 @@ public class RoleJoin implements ProxyEntityAvailable<RoleJoin, RoleJoinProxy> {
     @Column("type")
     private String type;
 
-    @Override
-    public Class<RoleJoinProxy> proxyTableClass() {
-        return RoleJoinProxy.class;
-    }
-
     @Component
     public static class RoleJoinType implements NavigateExtraFilterStrategy {
 

@@ -114,8 +114,4 @@ public class Draft8<T1, T2, T3, T4, T5, T6, T7, T8> extends AbstractDraft implem
     public int capacity() {
         return 8;
     }
-    @Override
-    public Class<Draft8Proxy<T1, T2, T3, T4, T5, T6, T7, T8>> proxyTableClass() {
-        return EasyObjectUtil.typeCastNullable(Draft8Proxy.class);
-    }
 }

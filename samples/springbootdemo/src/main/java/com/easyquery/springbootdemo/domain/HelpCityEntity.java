@@ -40,12 +40,6 @@ public class HelpCityEntity extends BaseEntity implements CacheMultiEntity, Prox
 
 
     @Override
-    public Class<HelpCityEntityProxy> proxyTableClass() {
-        return HelpCityEntityProxy.class;
-    }
-
-
-    @Override
     public String cacheIndexId() {
         return getProvinceId();
     }

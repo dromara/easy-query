@@ -33,9 +33,4 @@ public class Company implements ProxyEntityAvailable<Company , CompanyProxy> {
 
     @Navigate(value = RelationTypeEnum.OneToMany,targetProperty = SysUser.Fields.companyId)
     private List<SysUser> users;
-
-    @Override
-    public Class<CompanyProxy> proxyTableClass() {
-        return CompanyProxy.class;
-    }
 }
