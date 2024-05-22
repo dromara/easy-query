@@ -1,16 +1,15 @@
 package com.easy.query.test;
 
-import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.entity.TopicType;
 import com.easy.query.test.entity.blogtest.SysUser;
-import com.easy.query.test.entity.proxy.TopicTypeProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2024/4/29 23:02
@@ -695,6 +694,67 @@ public class QueryTest16 extends BaseTest {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t WHERE (t.`name` LIKE ? OR EXISTS (SELECT 1 FROM `t_role` t1 WHERE EXISTS (SELECT 1 FROM `t_user_role` t2 WHERE t2.`role_id` = t1.`id` AND t2.`user_id` = t.`id` LIMIT 1) AND t1.`name` LIKE ? LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("%小明%(String),%管理员%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+
+    @Test
+    public void test16() {
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                List<Map<String, Object>> list1 = easyQueryClient.mapQueryable().asTable("t_user")
+                        .select(m -> {
+                            ColumnAsSelector<?, ?> asSelector = m.getAsSelector(0);
+                            asSelector.column("a");
+                            asSelector.column("b");
+                        })
+                        .union(
+                                easyQueryClient.mapQueryable().asTable("t_user1")
+                                        .select(m -> {
+                                            ColumnAsSelector<?, ?> asSelector = m.getAsSelector(0);
+                                            asSelector.column("a");
+                                            asSelector.column("b");
+                                        })
+                        ).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t4.`a` AS `a`,t4.`b` AS `b` FROM ( (SELECT t.`a` AS `a`,t.`b` AS `b` FROM `t_user` t)  UNION  (SELECT t2.`a` AS `a`,t2.`b` AS `b` FROM `t_user1` t2) ) t4", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%管理员%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                List<Map<String, Object>> list1 = easyQueryClient.mapQueryable().asTable("t_user")
+                        .select(m -> {
+                            ColumnAsSelector<?, ?> asSelector = m.getAsSelector(0);
+                            asSelector.column("a");
+                            asSelector.column("b");
+                        })
+                        .unionAll(
+                                easyQueryClient.mapQueryable().asTable("t_user1")
+                                        .select(m -> {
+                                            ColumnAsSelector<?, ?> asSelector = m.getAsSelector(0);
+                                            asSelector.column("a");
+                                            asSelector.column("b");
+                                        })
+                        ).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t4.`a` AS `a`,t4.`b` AS `b` FROM ( (SELECT t.`a` AS `a`,t.`b` AS `b` FROM `t_user` t)  UNION ALL  (SELECT t2.`a` AS `a`,t2.`b` AS `b` FROM `t_user1` t2) ) t4", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%管理员%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
     }

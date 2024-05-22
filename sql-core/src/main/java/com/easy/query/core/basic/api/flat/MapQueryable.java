@@ -6,6 +6,7 @@ import com.easy.query.core.basic.api.flat.extension.Havingable;
 import com.easy.query.core.basic.api.flat.extension.Joinable;
 import com.easy.query.core.basic.api.flat.extension.Orderable;
 import com.easy.query.core.basic.api.flat.extension.Selectable;
+import com.easy.query.core.basic.api.flat.extension.Unionable;
 import com.easy.query.core.basic.api.internal.FilterConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
@@ -31,6 +32,7 @@ public interface MapQueryable extends Query<Map<String, Object>>,
         Groupable,
         Havingable,
         Orderable,
+        Unionable,
         Interceptable<MapQueryable>,
         LogicDeletable<MapQueryable>,
         TableReNameable<MapQueryable>,

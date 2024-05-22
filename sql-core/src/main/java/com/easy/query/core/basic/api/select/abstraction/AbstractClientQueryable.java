@@ -48,7 +48,6 @@ import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.include.IncludeProcessor;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
@@ -804,7 +803,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //            String navigatePropName = resultNavigateMetadata.isBasicType() ? resultNavigateMetadata.getMappingProp().split("//.")[0] : resultNavigateMetadata.getPropertyName();
 
             //获取下一次的基本属性
-            List<NavigateFlatProperty> navigateFlatProps = mappingPathIterator.nextRest().stream().filter(i -> i.getNavigateFlatMetadata().isBasicType() && i.getNextCount() == 0).collect(Collectors.toList());
+            List<NavigateFlatProperty> navigateFlatBasicProps = mappingPathIterator.nextRest().stream().filter(i -> i.getNavigateFlatMetadata().isBasicType() && i.getNextCount() == 0).collect(Collectors.toList());
 
             clientQueryable
                     .include(t -> {
@@ -827,14 +826,16 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             for (NavigateFlatProperty customPathType : customPathTypes) {
                                 Class<?> navigatePropertyType = customPathType.getNavigateFlatMetadata().getNavigatePropertyType();
                                 if (Objects.equals(propertyName,customPathType.getProperty())&&!Objects.equals(with.queryClass(),navigatePropertyType)) {
-                                    throw new EasyQueryInvalidOperationException("NavigateFlat only supports basic types and database types");
+                                    if (EasyCollectionUtil.isNotEmpty(navigateFlatBasicProps)){
+                                        throw new EasyQueryInvalidOperationException("NavigateFlat only supports basic types and database types");
+                                    }
                                 }
                             }
                         }
                         if(EasyCollectionUtil.isEmpty(customPathTypes)){
-                            if (EasyCollectionUtil.isNotEmpty(navigateFlatProps)) {
+                            if (EasyCollectionUtil.isNotEmpty(navigateFlatBasicProps)) {
                                 with = with.select(z -> {
-                                    for (NavigateFlatProperty navigateFlatProp : navigateFlatProps) {
+                                    for (NavigateFlatProperty navigateFlatProp : navigateFlatBasicProps) {
                                         z.column(navigateFlatProp.getProperty());
                                     }
                                 });

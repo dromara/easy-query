@@ -29,10 +29,12 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * create time 2024/3/26 16:01
@@ -337,5 +339,16 @@ public class DefaultMapQueryable implements MapQueryable {
     public MapQueryable tableLogicDelete(Supplier<Boolean> tableLogicDel) {
         this.queryable.tableLogicDelete(tableLogicDel);
         return this;
+    }
+
+    @Override
+    public MapQueryable union(Collection<MapQueryable> mapQueryables) {
+        ClientQueryable<Map<String, Object>> unionQueryable = this.queryable.union(mapQueryables.stream().map(o -> o.getClientQueryable()).collect(Collectors.toList()));
+        return new DefaultMapQueryable(unionQueryable);
+    }
+    @Override
+    public MapQueryable unionAll(Collection<MapQueryable> mapQueryables) {
+        ClientQueryable<Map<String, Object>> unionQueryable = this.queryable.unionAll(mapQueryables.stream().map(o -> o.getClientQueryable()).collect(Collectors.toList()));
+        return new DefaultMapQueryable(unionQueryable);
     }
 }
