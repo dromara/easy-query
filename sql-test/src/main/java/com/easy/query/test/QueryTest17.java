@@ -18,7 +18,9 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.TopicProxy;
+import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.nop.MyObject;
 import com.easy.query.test.nop.OtherTable;
@@ -699,5 +701,12 @@ public class QueryTest17 extends BaseTest {
         TopicProxy topicProxy = EntityQueryProxyManager.create(topicClass);
         Assert.assertNotNull(topicProxy);
         System.out.println(topicProxy);
+
+        List<Draft1<TopicTypeEnum>> list = easyEntityQuery.queryable(TopicTypeTest1.class)
+                .select(t -> Select.DRAFT.of(t.topicType())).toList();
+        for (Draft1<TopicTypeEnum> topicTypeEnumDraft1 : list) {
+            TopicTypeEnum value1 = topicTypeEnumDraft1.getValue1();
+            System.out.println(value1);
+        }
     }
 }

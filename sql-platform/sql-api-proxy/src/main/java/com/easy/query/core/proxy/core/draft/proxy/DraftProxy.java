@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.core.draft.proxy;
 
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.TablePropColumn;
 
@@ -11,5 +12,5 @@ import com.easy.query.core.proxy.TablePropColumn;
  */
 public interface DraftProxy {
     <TProperty> void fetch(int index, PropTypeColumn<TProperty> column, TablePropColumn tablePropColumn);
-    Class<?>[] getDraftPropTypes();
+    ResultColumnMetadata[] getDraftPropTypes();
 }

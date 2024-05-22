@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -227,12 +228,12 @@ public class EmptyExpressionContext implements ExpressionContext{
     }
 
     @Override
-    public void setResultPropTypes(Class<?>[] propTypes) {
+    public void setResultPropTypes(ResultColumnMetadata[] propTypes) {
 
     }
 
     @Override
-    public Class<?>[] getResultPropTypes() {
+    public ResultColumnMetadata[] getResultPropTypes() {
         return null;
     }
 

@@ -132,40 +132,6 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
        return selectAutoInclude(resultClass,x->null,false);
    }
     <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression,boolean replace);
-//    <TR> Query<TR> select(Class<TR> resultClass,SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression);
-
-
-//    <TR> Query<TR> select(Class<TR> resultClass,SQLFuncExpression1<T1Proxy, PropTypeColumn<TR>> selectExpression);
-
-
-    /**
-     * 请使用 select + Select.DRAFT.of
-     * 草稿对象返回草稿对象{@link com.easy.query.core.proxy.core.draft.Draft1}到{@link com.easy.query.core.proxy.core.draft.Draft10}
-     * 使用 {@link Select#draft(PropTypeColumn)}来构建返回需要列,
-     * 支持普通属性列,函数列
-     * <blockquote><pre>
-     *     {@code
-     * List<Draft2<String, Long>> list = entityQuery.queryable(Topic.class)
-     *                 .where(o -> {
-     *                     o.title().like("123");
-     *                     o.createTime().ge(LocalDateTime.of(2022, 2, 1, 3, 4));
-     *                 })
-     *                 .groupBy(o -> o.id())//多个用GroupBy.of(.....)
-     *                 .selectDraft(t -> Select.draft(
-     *                         t.key1(),
-     *                         t.count()
-     *                 ))
-     *                 .toList();
-     *                 }
-     * </pre></blockquote>
-     *
-     * @param selectExpression
-     * @param <TRProxy>
-     * @param <TR>
-     * @return
-     */
-    @Deprecated
-    <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression1<T1Proxy, DraftFetcher<TR, TRProxy>> selectExpression);
 
     default EntityQueryable<T1Proxy, T1> select(ColumnSegment columnSegment, boolean clearAll) {
         return select(Collections.singletonList(columnSegment), clearAll);

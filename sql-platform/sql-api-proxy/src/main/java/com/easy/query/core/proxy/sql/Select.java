@@ -4,6 +4,8 @@ import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
+import com.easy.query.core.basic.jdbc.executor.impl.def.TypeResultColumnMetadata;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -63,7 +65,7 @@ public class Select {
             expressionContext.setResultPropTypes(draftProxy.getDraftPropTypes());
         } else if(trProxy instanceof MapTypeProxy){
             MapTypeProxy mapTypeProxy = (MapTypeProxy) trProxy;
-            expressionContext.setResultPropTypes(mapTypeProxy._getResultPropTypes().toArray(new Class[0]));
+            expressionContext.setResultPropTypes(mapTypeProxy._getResultPropTypes().stream().map(x->new TypeResultColumnMetadata(x)).toArray(ResultColumnMetadata[]::new));
         } else{
             if(expressionContext.getResultPropTypes()!=null){
                 expressionContext.setResultPropTypes(null);

@@ -13,6 +13,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
  * @author xuejiaming
  */
 public interface ResultColumnMetadata {
+    Class<?> getPropertyType();
     ColumnMetadata getColumnMetadata();
     Class<?> getEntityClass();
     JdbcProperty getJdbcProperty();

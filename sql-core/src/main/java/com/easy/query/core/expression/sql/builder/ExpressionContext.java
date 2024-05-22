@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -91,8 +92,8 @@ public interface ExpressionContext {
     boolean hasDeclareExpressions();
 
 
-    void setResultPropTypes(Class<?>[] propTypes);
-    Class<?>[] getResultPropTypes();
+    void setResultPropTypes(ResultColumnMetadata[] propTypes);
+    ResultColumnMetadata[] getResultPropTypes();
 
     void setRelationLogicDelete(Function<Class<?>,Boolean> relationLogicDelete);
     boolean hasRelationLogicDelete();

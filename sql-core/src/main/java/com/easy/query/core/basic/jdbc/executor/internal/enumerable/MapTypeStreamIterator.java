@@ -2,6 +2,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultBasicMetadata;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.props.BasicJdbcProperty;
@@ -36,9 +37,9 @@ public class MapTypeStreamIterator extends AbstractMapToStreamIterator<Map<Strin
     }
 
     private Class<?> getPropTypeOrObjectType(int index) {
-        Class<?>[] mapPropTypes = context.getExpressionContext().getResultPropTypes();
+        ResultColumnMetadata[] mapPropTypes = context.getExpressionContext().getResultPropTypes();
         if (mapPropTypes != null) {
-            return mapPropTypes[index];
+            return mapPropTypes[index].getPropertyType();
         }
         return Object.class;
     }

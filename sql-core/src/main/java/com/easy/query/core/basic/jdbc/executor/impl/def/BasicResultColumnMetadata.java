@@ -3,12 +3,9 @@ package com.easy.query.core.basic.jdbc.executor.impl.def;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
-import com.easy.query.core.basic.jdbc.executor.internal.props.ColumnJdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.metadata.RelationExtraColumn;
-import com.easy.query.core.metadata.RelationExtraMetadata;
 
 /**
  * create time 2023/6/30 22:03
@@ -16,33 +13,31 @@ import com.easy.query.core.metadata.RelationExtraMetadata;
  *
  * @author xuejiaming
  */
-public class RelationExtraResultColumnMetadata implements ResultColumnMetadata {
-    private final RelationExtraMetadata relationExtraMetadata;
+public class BasicResultColumnMetadata implements ResultColumnMetadata {
+    private final Class<?> propType;
+    private final JdbcTypeHandler jdbcTypeHandler;
     private final JdbcProperty jdbcProperty;
-    private final ColumnMetadata columnMetadata;
-    private final RelationExtraColumn relationExtraColumn;
 
-    public RelationExtraResultColumnMetadata(int index, RelationExtraMetadata relationExtraMetadata, RelationExtraColumn relationExtraColumn){
-        this.relationExtraMetadata = relationExtraMetadata;
-        this.columnMetadata = relationExtraColumn.getColumnMetadata();
+    public BasicResultColumnMetadata(Class<?> propType,JdbcTypeHandler jdbcTypeHandler, JdbcProperty jdbcProperty){
+        this.propType = propType;
+        this.jdbcTypeHandler = jdbcTypeHandler;
 
-        this.jdbcProperty =new ColumnJdbcProperty(index,columnMetadata);
-        this.relationExtraColumn = relationExtraColumn;
+        this.jdbcProperty =jdbcProperty;
     }
 
     @Override
     public Class<?> getPropertyType() {
-        return getColumnMetadata().getPropertyType();
+        return propType;
     }
 
     @Override
     public ColumnMetadata getColumnMetadata() {
-        return this.columnMetadata;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Class<?> getEntityClass() {
-        return columnMetadata.getEntityMetadata().getEntityClass();
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -52,32 +47,32 @@ public class RelationExtraResultColumnMetadata implements ResultColumnMetadata {
 
     @Override
     public String getPropertyName() {
-        return columnMetadata.getPropertyName();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public JdbcTypeHandler getJdbcTypeHandler() {
-        return columnMetadata.getJdbcTypeHandler();
+        return jdbcTypeHandler;
     }
 
     @Override
     public boolean isEncryption() {
-        return columnMetadata.isEncryption();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public EncryptionStrategy getEncryptionStrategy() {
-        return columnMetadata.getEncryptionStrategy();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ValueConverter<?, ?> getValueConverter() {
-        return columnMetadata.getValueConverter();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setValue(Object bean, Object value) {
-        relationExtraMetadata.currentRow().put(relationExtraColumn.getPropertyName(),value);
+        throw new UnsupportedOperationException();
     }
 
 

@@ -1,9 +1,16 @@
 package com.easy.query.core.proxy.core.draft.proxy;
 
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
+import com.easy.query.core.basic.jdbc.executor.impl.def.BasicResultColumnMetadata;
+import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
+import com.easy.query.core.basic.jdbc.executor.internal.props.BasicJdbcProperty;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.ValueObjectProxyEntity;
@@ -15,9 +22,9 @@ import com.easy.query.core.proxy.ValueObjectProxyEntity;
  * @author xuejiaming
  */
 public abstract class AbstractDraftProxy<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractProxyEntity<TProxy,TEntity> implements DraftProxy {
-    private final Class<?>[] propTypes;
+    private final ResultColumnMetadata[] propTypes;
     public AbstractDraftProxy(int capacity){
-        this.propTypes=new Class[capacity];
+        this.propTypes=new ResultColumnMetadata[capacity];
     }
     @Override
     public <TProperty> void fetch(int index, PropTypeColumn<TProperty> column, TablePropColumn tablePropColumn) {
@@ -25,12 +32,23 @@ public abstract class AbstractDraftProxy<TProxy extends ProxyEntity<TProxy, TEnt
         if (sqlSelectAsExpression instanceof ValueObjectProxyEntity) {
             throw new EasyQueryInvalidOperationException("draft result not support value object columns");
         }
-        propTypes[index]=column.getPropertyType();
+
+        if(column instanceof SQLColumn &&column.getTable()!=null){
+            EntityMetadata entityMetadata = column.getTable().getEntityMetadata();
+            ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(column.getValue());
+            if(columnMetadata!=null){
+                propTypes[index]=new EntityResultColumnMetadata(index,entityMetadata,columnMetadata);
+            }else{
+                propTypes[index]=new BasicResultColumnMetadata(column.getPropertyType(),null,new BasicJdbcProperty(index,column.getPropertyType()));
+            }
+        }else{
+            propTypes[index]=new BasicResultColumnMetadata(column.getPropertyType(),null,new BasicJdbcProperty(index,column.getPropertyType()));
+        }
         selectExpression(sqlSelectAsExpression);
     }
 
     @Override
-    public Class<?>[] getDraftPropTypes() {
+    public ResultColumnMetadata[] getDraftPropTypes() {
         return propTypes;
     }
 }

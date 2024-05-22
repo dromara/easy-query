@@ -421,17 +421,6 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression1<T1Proxy, DraftFetcher<TR, TRProxy>> selectExpression) {
-        DraftFetcher<TR, TRProxy> draftFetcher = selectExpression.apply(get1Proxy());
-        ClientQueryable<TR> select = clientQueryable.select(EasyObjectUtil.typeCastNullable(draftFetcher.getDraft().getClass()), columnAsSelector -> {
-            draftFetcher.accept(columnAsSelector.getAsSelector());
-        });
-        TRProxy draftProxy = draftFetcher.getDraftProxy();
-        select.getSQLEntityExpressionBuilder().getExpressionContext().setResultPropTypes(draftFetcher.getDraftPropTypes());
-        return new EasyEntityQueryable<>(draftProxy, select);
-    }
-
-    @Override
     public EntityQueryable<T1Proxy, T1> select(String columns) {
         clientQueryable.select(columns);
         return this;

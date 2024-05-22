@@ -1,18 +1,14 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable6;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DraftResult;
 import com.easy.query.core.common.tuple.MergeTuple6;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression6;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.core.draft.DraftFetcher;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -31,37 +27,6 @@ public interface EntitySelectable6<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T5Proxy extends ProxyEntity<T5Proxy, T5>, T5,
         T6Proxy extends ProxyEntity<T6Proxy, T6>, T6> extends ClientEntityQueryable6Available<T1, T2, T3, T4, T5, T6>, EntityQueryable6Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> {
 
-    /**
-     * 请使用 select + Select.DRAFT.of
-     *
-     * @param selectExpression
-     * @param <TRProxy>
-     * @param <TR>
-     * @return
-     */
-    @Deprecated
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraft(SQLFuncExpression6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, DraftFetcher<TR, TRProxy>> selectExpression) {
-        DraftFetcher<TR, TRProxy> draftFetcher = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy());
-        ClientQueryable<TR> select = getClientQueryable6().select(EasyObjectUtil.typeCastNullable(draftFetcher.getDraft().getClass()), columnAsSelector -> {
-            draftFetcher.accept(columnAsSelector.getAsSelector());
-        });
-        TRProxy draftProxy = draftFetcher.getDraftProxy();
-        select.getSQLEntityExpressionBuilder().getExpressionContext().setResultPropTypes(draftFetcher.getDraftPropTypes());
-        return new EasyEntityQueryable<>(draftProxy, select);
-    }
-
-    /**
-     * 请使用 select + Select.DRAFT.of
-     *
-     * @param selectExpression
-     * @param <TRProxy>
-     * @param <TR>
-     * @return
-     */
-    @Deprecated
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy> & DraftResult> EntityQueryable<TRProxy, TR> selectDraftMerge(SQLFuncExpression1<MergeTuple6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy>, DraftFetcher<TR, TRProxy>> selectExpression) {
-        return selectDraft((t1, t2, t3, t4, t5, t6) -> selectExpression.apply(new MergeTuple6<>(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy(), get5Proxy(), get6Proxy())));
-    }
 
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression6<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, TRProxy> selectExpression) {
 

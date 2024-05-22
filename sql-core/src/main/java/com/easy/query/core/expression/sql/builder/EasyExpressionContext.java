@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -59,7 +60,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private Consumer<Object> forEachConfigurer;
 
     private Map<TableAvailable, Map<String, ColumnIncludeExpression>> columnIncludeMaps;
-    private Class<?>[] propTypes;
+    private ResultColumnMetadata[] propTypes;
     private Function<Class<?>, Boolean> relationLogicDelete;
     private RelationExtraMetadata relationExtraMetadata;
 
@@ -341,7 +342,7 @@ public class EasyExpressionContext implements ExpressionContext {
             easyExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
         }
         if (this.propTypes != null) {
-            easyExpressionContext.propTypes = new Class<?>[this.propTypes.length];
+            easyExpressionContext.propTypes = new ResultColumnMetadata[this.propTypes.length];
             System.arraycopy(this.propTypes, 0, easyExpressionContext.propTypes, 0, this.propTypes.length);
         }
         return easyExpressionContext;
@@ -361,12 +362,12 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public void setResultPropTypes(Class<?>[] propTypes) {
+    public void setResultPropTypes(ResultColumnMetadata[] propTypes) {
         this.propTypes = propTypes;
     }
 
     @Override
-    public Class<?>[] getResultPropTypes() {
+    public ResultColumnMetadata[] getResultPropTypes() {
         return this.propTypes;
     }
 
