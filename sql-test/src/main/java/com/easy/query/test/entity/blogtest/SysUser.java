@@ -1,6 +1,7 @@
 package com.easy.query.test.entity.blogtest;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EasyAlias;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
@@ -23,10 +24,13 @@ import java.util.List;
 @Data
 @EntityProxy
 @FieldNameConstants
+@EasyAlias("user")
 public class SysUser implements ProxyEntityAvailable<SysUser , SysUserProxy> {
     @Column(primaryKey = true)
     private String id;
+    private String companyId;
     private String name;
+    private Integer age;
     private LocalDateTime createTime;
 
     @Navigate(value = RelationTypeEnum.OneToOne,targetProperty = "userId")
@@ -37,6 +41,9 @@ public class SysUser implements ProxyEntityAvailable<SysUser , SysUserProxy> {
             selfMappingProperty = "userId",
             targetMappingProperty = "roleId")
     private List<SysRole> roles;
+
+    @Navigate(value = RelationTypeEnum.ManyToOne,selfProperty = Fields.companyId)
+    private Company company;
 
     @Override
     public Class<SysUserProxy> proxyTableClass() {

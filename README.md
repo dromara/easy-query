@@ -50,23 +50,6 @@
 
 </div>
 
-## entity query
-```java
-
-List<Topic> list1 = entityQuery.queryable(Topic.class)
-        .where(o -> o.title().like("someTitle"))
-        .orderBy(o ->{
-          o.createTime().asc();
-          o.id().asc();
-        })
-        .toList();
-
-==> Preparing: SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ? ORDER BY `create_time` ASC,`id` ASC
-==> Parameters: %someTitle%(String)
-<== Time Elapsed: 3(ms)
-<== Total: 0
-```
-
 ## Dependency
 entity use `@EntityProxy` or `@EntityFileProxy` annotation then build project apt will auto generate java code for proxy
 ```xml

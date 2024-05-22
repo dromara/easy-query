@@ -283,6 +283,27 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return castProxy();
     }
 
+
+//    /**
+//     * 快速选择表达式
+//     * <blockquote><pre>
+//     * {@code
+//     *
+//     *  .select(t -> {
+//     *         TopicProxy topicProxy = new TopicProxy();
+//     *         topicProxy.clientSelect(selector -> {
+//     *             selector.column(t.getTable(), "id");
+//     *             selector.column(t.getTable(), "title");
+//     *         });
+//     *         return topicProxy;
+//     *     })
+//     *  }
+//     * </pre></blockquote>
+//     **/
+//    public void clientSelect(Consumer<AsSelector> selectorConsumer) {
+//        entitySQLContext.accept(new SQLSelectAsOnlyImpl(this.getTable(),this.getEntitySQLContext(),selectorConsumer));
+//    }
+
     private TProxy castProxy(){
         return (TProxy)this;
     }

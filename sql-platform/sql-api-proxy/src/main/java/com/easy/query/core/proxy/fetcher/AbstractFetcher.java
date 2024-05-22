@@ -8,7 +8,6 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 
@@ -56,7 +55,7 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
 
     @Override
     public TChain allFields() {
-        SQLSelectAsExpression sqlSelectAsExpression = new SQLSelectAllImpl(tProxy.getEntitySQLContext(), tProxy.getTable(), new TablePropColumn[0]);
+        SQLSelectAsExpression sqlSelectAsExpression = new SQLSelectAllImpl(tProxy.getEntitySQLContext(), tProxy.getTable(), null);
         return createFetcher(tProxy, this, sqlSelectAsExpression);
     }
 

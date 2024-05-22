@@ -5,6 +5,7 @@ import com.easy.query.api4j.func.LambdaSQLFunc;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.core.Expression;
@@ -16,6 +17,7 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.nop.MyObject;
 import com.easy.query.test.nop.OtherTable;
@@ -33,9 +35,9 @@ import java.util.concurrent.TimeUnit;
  *
  * @author xuejiaming
  */
-public class QueryTest17 extends BaseTest{
+public class QueryTest17 extends BaseTest {
     @Test
-    public void test1(){
+    public void test1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -46,7 +48,7 @@ public class QueryTest17 extends BaseTest{
                 .where(b -> {
                     b.id().nullOrDefault("123").eq("123");
                     b.id().subString(1, 20).eq("456");
-                    b.expression().concat(x->x.expression(b.content()).value("123").expression(b.id())).eq("789");
+                    b.expression().concat(x -> x.expression(b.content()).value("123").expression(b.id())).eq("789");
                     b.content().toUpper().eq("abc");
                     b.content().toLower().eq("def");
                     b.content().trim().eq("a");
@@ -66,8 +68,9 @@ public class QueryTest17 extends BaseTest{
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND IFNULL(`id`,?) = ? AND SUBSTR(`id`,2,20) = ? AND CONCAT(`content`,?,`id`) = ? AND UPPER(`content`) = ? AND LOWER(`content`) = ? AND TRIM(`content`) = ? AND LTRIM(`content`) = ? AND RTRIM(`content`) = ? AND REPLACE(`content`,?,?) = ? AND LPAD(`content`, 2, ?) = ? AND RPAD(`content`, 2, ?) = ? AND CHAR_LENGTH(`content`) = ? AND STRCMP(`content`,?) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),123(String),123(String),456(String),123(String),789(String),abc(String),def(String),a(String),b(String),c(String),123(String),456(String),aaa(String),a(String),aa(String),a(String),aa(String),1(Integer),aaaa(String),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
-    public void test2(){
+    public void test2() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -78,41 +81,41 @@ public class QueryTest17 extends BaseTest{
                 .where(b -> {
                     LambdaSQLFunc<BlogEntity> fx = b.fx();
                     SQLFunction nullOrDefault = fx.nullOrDefault(BlogEntity::getId, "123");
-                    b.eq(nullOrDefault,"123");
+                    b.eq(nullOrDefault, "123");
 
                     SQLFunction subString = fx.subString(BlogEntity::getId, 1, 20);
-                    b.eq(subString,"456");
+                    b.eq(subString, "456");
 
                     SQLFunction concat = fx.concat(x -> x.column(BlogEntity::getContent).value("123").column(BlogEntity::getId));
-                    b.eq(concat,"789");
+                    b.eq(concat, "789");
 
                     SQLFunction upper = fx.toUpper(BlogEntity::getContent);
-                    b.eq(upper,"abc");
+                    b.eq(upper, "abc");
                     SQLFunction lower = fx.toLower(BlogEntity::getContent);
-                    b.eq(lower,"def");
+                    b.eq(lower, "def");
 
                     SQLFunction trim = fx.trim(BlogEntity::getContent);
-                    b.eq(trim,"a");
+                    b.eq(trim, "a");
 
                     SQLFunction trimStart = fx.trimStart(BlogEntity::getContent);
-                    b.eq(trimStart,"b");
+                    b.eq(trimStart, "b");
                     SQLFunction trimEnd = fx.trimEnd(BlogEntity::getContent);
-                    b.eq(trimEnd,"c");
+                    b.eq(trimEnd, "c");
 
                     SQLFunction replace = fx.replace(BlogEntity::getContent, "123", "456");
-                    b.eq(replace,"aaa");
+                    b.eq(replace, "aaa");
 
                     SQLFunction leftPad = fx.leftPad(BlogEntity::getContent, 2, 'a');
-                    b.eq(leftPad,"aa");
+                    b.eq(leftPad, "aa");
 
                     SQLFunction rightPad = fx.rightPad(BlogEntity::getContent, 2, 'a');
-                    b.eq(rightPad,"aa");
+                    b.eq(rightPad, "aa");
 
                     SQLFunction length = fx.length(BlogEntity::getContent);
-                    b.eq(length,1);
+                    b.eq(length, 1);
 
                     SQLFunction stringCompareTo = fx.stringCompareTo(BlogEntity::getContent, "aaaa");
-                    b.ge(stringCompareTo,0);
+                    b.ge(stringCompareTo, 0);
                 }).toList();
 
         listenerContextManager.clear();
@@ -122,8 +125,9 @@ public class QueryTest17 extends BaseTest{
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND IFNULL(`id`,?) = ? AND SUBSTR(`id`,2,20) = ? AND CONCAT(`content`,?,`id`) = ? AND UPPER(`content`) = ? AND LOWER(`content`) = ? AND TRIM(`content`) = ? AND LTRIM(`content`) = ? AND RTRIM(`content`) = ? AND REPLACE(`content`,?,?) = ? AND LPAD(`content`, 2, ?) = ? AND RPAD(`content`, 2, ?) = ? AND CHAR_LENGTH(`content`) = ? AND STRCMP(`content`,?) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),123(String),123(String),456(String),123(String),789(String),abc(String),def(String),a(String),b(String),c(String),123(String),456(String),aaa(String),a(String),aa(String),a(String),aa(String),1(Integer),aaaa(String),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
-    public void test3(){
+    public void test3() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -212,9 +216,9 @@ public class QueryTest17 extends BaseTest{
 //                .toList();
 //    }
 
-//
+    //
     @Test
-     public void testNopQuery(){
+    public void testNopQuery() {
 ////         select v.f1,sum(v.f2), count(u.f3)
 ////         from (select o.f1, o.f2 from MyObject o left join o.parent
 ////                 where o.parent.children.myChild.name > 3 ) v,
@@ -264,7 +268,7 @@ public class QueryTest17 extends BaseTest{
 
 
     @Test
-    public void testFlatElement1(){
+    public void testFlatElement1() {
         {
 
             ListenerContext listenerContext = new ListenerContext();
@@ -274,11 +278,11 @@ public class QueryTest17 extends BaseTest{
 
                 List<MyObject> list1 = easyEntityQuery.queryable(MyObject.class)
                         .where(m -> {
-                            m.parent().children().where(o->{
+                            m.parent().children().where(o -> {
                                 o.name().gt("3");
                             }).any();
                         }).toList();
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
 
@@ -303,7 +307,7 @@ public class QueryTest17 extends BaseTest{
                         .where(m -> {
                             m.parent().children().flatElement().name().gt("3");
                         }).toList();
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
             listenerContextManager.clear();
@@ -317,7 +321,7 @@ public class QueryTest17 extends BaseTest{
     }
 
     @Test
-    public void testFlatElement2(){
+    public void testFlatElement2() {
 //
 //
 //
@@ -354,7 +358,7 @@ public class QueryTest17 extends BaseTest{
                                         }).any();
                                     }).any();
                         }).toList();
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
             listenerContextManager.clear();
@@ -378,7 +382,7 @@ public class QueryTest17 extends BaseTest{
                         .where(m -> {
                             m.parent().children().flatElement().myChildren().flatElement().name().gt("3");
                         }).toList();
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
             listenerContextManager.clear();
@@ -400,11 +404,11 @@ public class QueryTest17 extends BaseTest{
 
                 List<MyObject> list = easyEntityQuery.queryable(MyObject.class)
                         .where(m -> {
-                            m.parent().children().where(children->{
+                            m.parent().children().where(children -> {
                                 children.myChildren().flatElement().name().gt("3");
                             }).any();
                         }).toList();
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
             listenerContextManager.clear();
@@ -418,7 +422,7 @@ public class QueryTest17 extends BaseTest{
     }
 
     @Test
-     public void testNop2(){
+    public void testNop2() {
         {
 
 
@@ -443,7 +447,7 @@ public class QueryTest17 extends BaseTest{
                                 group.groupTable().t1.value2().sum(),
                                 group.groupTable().t2.type().count()
                         )).toList();
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
             listenerContextManager.clear();
@@ -475,7 +479,7 @@ public class QueryTest17 extends BaseTest{
                                 group.groupTable().t1.value2().sum(),
                                 group.groupTable().t2.type().count()
                         )).toList();
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
             listenerContextManager.clear();
@@ -486,10 +490,10 @@ public class QueryTest17 extends BaseTest{
             Assert.assertEquals("3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
         }
-     }
+    }
 
     @Test
-    public void testFlatElement5(){
+    public void testFlatElement5() {
 //
 //
 //        List<MyObject> list1 = easyEntityQuery.queryable(MyObject.class)
@@ -551,12 +555,12 @@ public class QueryTest17 extends BaseTest{
 
                 List<MyObject> list1 = easyEntityQuery.queryable(MyObject.class)
                         .where(m -> {
-                            m.parent().children().where(o->{
+                            m.parent().children().where(o -> {
                                 o.name().gt("3");
                                 o.id().eq("123");
                             }).any();
                         }).toList();
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
 
@@ -569,6 +573,7 @@ public class QueryTest17 extends BaseTest{
 
         }
     }
+
     @Test
     public void test12234567() {
         HikariDataSource dataSource = new HikariDataSource();
@@ -603,13 +608,13 @@ public class QueryTest17 extends BaseTest{
                 .where(m -> {
                     m.createTime().format("yyyy年MM月dd日").eq("2022年01月01日");
                     Expression expression = m.expression();
-                    expression.concat(x->x.expression(m.id()).format("':'")).eq("123");
+                    expression.concat(x -> x.expression(m.id()).format("':'")).eq("123");
                 }).toSQL();
         Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE to_char((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ? AND CONCAT(\"id\"::TEXT,':') = ?", sql);
     }
 
     @Test
-     public void aaaa(){
+    public void aaaa() {
         List<Draft1<LocalDateTime>> list = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
                     t.createTime().plus(1, TimeUnit.DAYS).lt(LocalDateTime.now());
@@ -633,8 +638,57 @@ public class QueryTest17 extends BaseTest{
     }
 
 
-//    @Test
-//    public void test11(){
-//       easyQueryClient.mapQueryable()
-//    }
+    @Test
+    public void test11() {
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                    .where(t -> {
+                        Filter filter = t.getEntitySQLContext().getFilter();
+                        filter.eq(t.getTable(), "title", "123");
+                    })
+                    .select(t -> {
+                        TopicProxy topicProxy = new TopicProxy();
+                        topicProxy.selectColumn(t,"id");
+                        topicProxy.selectColumn(t,"title");
+                        return topicProxy;
+                    }).toList();
+
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`title` FROM `t_topic` t WHERE t.`title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+                    .where(t -> {
+                        t.title().like("456");
+                    })
+                    .select(Topic.class, x -> x.FETCHER.allFields()._concat(x.stars())).toList();
+
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,t.`stars` FROM `t_topic` t WHERE t.`title` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%456%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+    }
 }

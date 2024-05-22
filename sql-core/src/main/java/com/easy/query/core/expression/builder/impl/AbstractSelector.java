@@ -76,11 +76,11 @@ public abstract class AbstractSelector<TChain> {
 
     public TChain groupKeysAs(int index, String alias) {
         if (EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getGroup())) {
-            throw new EasyQueryInvalidOperationException("not found group in current expression builder" );
+            throw new EasyQueryInvalidOperationException("not found group in current expression builder");
         }
         List<SQLSegment> sqlSegments = entityQueryExpressionBuilder.getGroup().getSQLSegments();
         if (sqlSegments.size() <= index) {
-            throw new EasyQueryInvalidOperationException("current expression builder group keys size:[" + sqlSegments.size() + "],not found keys index:[" + index + "]" );
+            throw new EasyQueryInvalidOperationException("current expression builder group keys size:[" + sqlSegments.size() + "],not found keys index:[" + index + "]");
         }
         SQLSegment sqlSegment = sqlSegments.get(index);
         if (sqlSegment instanceof CloneableSQLSegment) {
@@ -93,7 +93,7 @@ public abstract class AbstractSelector<TChain> {
                 sqlBuilderSegment.append(cloneableSQLSegment);
             }
         } else {
-            throw new EasyQueryInvalidOperationException("group key not instanceof CloneableSQLSegment not support key quick select" );
+            throw new EasyQueryInvalidOperationException("group key not instanceof CloneableSQLSegment not support key quick select");
         }
         return castChain();
     }
@@ -103,14 +103,15 @@ public abstract class AbstractSelector<TChain> {
 
     public TChain columnKeys(TableAvailable table) {
         Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-        if(EasyCollectionUtil.isEmpty(keyProperties)){
-            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(table.getEntityClass()) +" not found keys");
+        if (EasyCollectionUtil.isEmpty(keyProperties)) {
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(table.getEntityClass()) + " not found keys");
         }
         for (String keyProperty : keyProperties) {
-            column(table,keyProperty);
+            column(table, keyProperty);
         }
         return castChain();
     }
+
     public TChain column(TableAvailable table, String property) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         String alias = table.getEntityMetadata() instanceof MapEntityMetadata ? property : null;
@@ -137,23 +138,23 @@ public abstract class AbstractSelector<TChain> {
         return castChain();
     }
 
-    protected void autoColumnInclude(TableAvailable table,EntityMetadata targetEntityMetadata){
-        if(expressionContext.hasIncludes()){
+    protected void autoColumnInclude(TableAvailable table, EntityMetadata targetEntityMetadata) {
+        if (expressionContext.hasIncludes()) {
             //如果手动设置过includeMap则不自动设置
             boolean hasColumnIncludeMaps = expressionContext.hasColumnIncludeMaps();
-            if(hasColumnIncludeMaps){
+            if (hasColumnIncludeMaps) {
                 return;
             }
             for (IncludeNavigateExpression includeNavigateExpression : expressionContext.getIncludes().values()) {
                 IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
-                if(!includeNavigateParams.isMappingFlat()){
+                if (!includeNavigateParams.isMappingFlat()) {
                     if (includeNavigateParams.getTable() == table) {
                         NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
                         String navigateAutoMappingPropertyName = navigateMetadata.getPropertyName();
-                        if(targetEntityMetadata.getNavigateOrNull(navigateAutoMappingPropertyName)!=null){
-                            columnInclude(table,navigateAutoMappingPropertyName,navigateAutoMappingPropertyName,s->{
+                        if (targetEntityMetadata.getNavigateOrNull(navigateAutoMappingPropertyName) != null) {
+                            columnInclude(table, navigateAutoMappingPropertyName, navigateAutoMappingPropertyName, s -> {
                                 TableAvailable entityTable = s.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
-                                if(s.getEntityQueryExpressionBuilder().getProjects().isEmpty()){
+                                if (s.getEntityQueryExpressionBuilder().getProjects().isEmpty()) {
                                     s.columnAll(entityTable);
                                 }
                             });
@@ -172,13 +173,14 @@ public abstract class AbstractSelector<TChain> {
                         (
                                 Objects.equals(sqlEntitySegment.getPropertyName(), property)
                                         ||
-                                        (sqlEntitySegment.getPropertyName().contains("." ) && sqlEntitySegment.getPropertyName().startsWith(property + "." ))
+                                        (sqlEntitySegment.getPropertyName().contains(".") && sqlEntitySegment.getPropertyName().startsWith(property + "."))
                         );
             }
             return false;
         });
         return castChain();
     }
+
     public TChain columnIfAbsent(TableAvailable table, String property) {
         for (SQLSegment sqlSegment : sqlBuilderSegment.getSQLSegments()) {
             if (sqlSegment instanceof SQLEntitySegment) {
@@ -189,14 +191,15 @@ public abstract class AbstractSelector<TChain> {
                                         ||
                                         (sqlEntitySegment.getPropertyName().contains(".") && sqlEntitySegment.getPropertyName().startsWith(property + "."))
                         );
-                if(sameTableAndProperty){
+                if (sameTableAndProperty) {
                     return castChain();
                 }
             }
         }
-        column(table,property);
+        column(table, property);
         return castChain();
     }
+
     public TChain sqlSegmentAs(CloneableSQLSegment sqlColumnSegment) {
         CloneableSQLSegment sqlColumnAsSegment = sqlSegmentFactory.createSQLColumnAsSegment(sqlColumnSegment, null, runtimeContext);
         sqlBuilderSegment.append(sqlColumnAsSegment);
@@ -220,7 +223,7 @@ public abstract class AbstractSelector<TChain> {
             for (ColumnMetadata columnMetadata : columns) {
                 appendColumnMetadata(table, columnMetadata, queryLargeColumn, true, true, null);
             }
-            autoColumnInclude(table,entityMetadata);
+            autoColumnInclude(table, entityMetadata);
         }
         return castChain();
     }
@@ -261,8 +264,8 @@ public abstract class AbstractSelector<TChain> {
 //            ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, expressionContext, alias);
 //            sqlBuilderSegment.append(columnSegment);
 //        }
-                    ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, expressionContext, alias);
-            sqlBuilderSegment.append(columnSegment);
+        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, expressionContext, alias);
+        sqlBuilderSegment.append(columnSegment);
     }
 
     private EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {

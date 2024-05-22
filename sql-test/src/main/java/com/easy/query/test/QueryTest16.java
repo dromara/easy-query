@@ -1,30 +1,21 @@
-//package com.easy.query.test;
-//
-//import com.easy.query.core.proxy.core.draft.Draft2;
-//import com.easy.query.core.proxy.core.draft.Draft3;
-//import com.easy.query.core.proxy.sql.GroupKeys;
-//import com.easy.query.core.proxy.sql.Select;
-//import com.easy.query.test.dto.UserRoleMenuDTO;
-//import com.easy.query.test.entity.blogtest.CertStatusEnum;
-//import com.easy.query.test.entity.blogtest.Certificate;
-//import com.easy.query.test.entity.blogtest.SysMenu;
-//import com.easy.query.test.entity.blogtest.SysRole;
-//import com.easy.query.test.entity.blogtest.SysUser;
-//import com.easy.query.test.entity.blogtest.SysUserAddress;
-//import com.easy.query.test.entity.blogtest.UserRole;
-//import org.junit.Test;
-//
-//import java.time.LocalDateTime;
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-///**
-// * create time 2024/4/29 23:02
-// * 文件说明
-// *
-// * @author xuejiaming
-// */
-//public class QueryTest16 extends BaseTest {
+package com.easy.query.test;
+
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.blogtest.SysUser;
+import com.easy.query.test.listener.ListenerContext;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.List;
+
+/**
+ * create time 2024/4/29 23:02
+ * 文件说明
+ *
+ * @author xuejiaming
+ */
+public class QueryTest16 extends BaseTest {
 //
 //    @Test
 //    public void test1() {
@@ -370,4 +361,339 @@
 //
 //
 //    }
-//}
+//
+//    @Test
+//    public void test11() {
+//
+//
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//
+//                List<SysUser> list1 = easyEntityQuery.queryable(SysUser.class)
+//                        .where(user -> {
+//                            user.name().like("小明");
+//                            user.company().name().like("JAVA企业");
+//                        }).toList();
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//
+//
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//
+//                List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
+//                        .where(user -> {
+//                            user.createTime()
+//                                    .nullOrDefault(LocalDateTime.now())
+//                                    .plus(1, TimeUnit.DAYS)
+//                                    .format("yyyy-MM-dd HH:mm:ss")
+//                                    .eq("2024-01-01 00:00:00");
+//                        }).toList();
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//
+//
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//
+//                List<SysUser> userWithMenuContainsAdminPath = easyEntityQuery.queryable(SysUser.class)
+//                        .where(user -> {
+//                            user.roles().flatElement().menus().any(menu -> menu.route().like("/admin"));
+//                        }).toList();
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//
+//                List<Company> companies = easyEntityQuery.queryable(SysUser.class)
+//                        .leftJoin(Company.class, (user, com) -> user.companyId().eq(com.id()))
+//                        .where((user, com) -> com.name().like("JAVA企业"))
+//                        .select((user, com) -> com).toList();
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//
+//                EasyPageResult<SysUser> userAndRolePage = easyEntityQuery.queryable(SysUser.class)
+//                        .includes(user -> user.roles())
+//                        .where(user -> user.age().lt(18))
+//                        .toPageResult(1, 20);
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//
+//                List<SysUser> userAndRoles = easyEntityQuery.queryable(SysUser.class)
+//                        .includes(user -> user.roles())
+//                        .where(user -> user.age().lt(18))
+//                        .toList();
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//                List<SysMenu> menus = easyEntityQuery.queryable(SysUser.class)
+//                        .where(user -> user.name().eq("小明"))
+//                        .toList(user -> user.roles().flatElement().menus().flatElement());
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//
+//
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//
+//                List<String> menuIds = easyEntityQuery.queryable(SysUser.class)
+//                        .where(user -> user.name().eq("小明"))
+//                        .toList(user -> user.roles().flatElement().menus().flatElement().id());
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//
+//                List<Draft2<String, Integer>> list2 = easyEntityQuery.queryable(SysUser.class)
+//                        .where(user -> {
+//                            user.name().like("小明");
+//                            user.company().name().like("JAVA企业");
+//                        })
+//                        .groupBy(user -> GroupKeys.TABLE1.of(user.name()))
+//                        .select(group -> Select.DRAFT.of(
+//                                group.key1(),//user.name
+//                                group.sum(group.groupTable().age())//sum(user.age)
+//                        )).toList();
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//
+//                List<Draft3<String, String, String>> userInfo = easyEntityQuery.queryable(SysUser.class)
+//                        .where(user -> {
+//                            user.or(() -> {
+//                                user.name().like("小明");
+//                                user.company().name().like("JAVA企业");
+//                            });
+//                        }).select(user -> Select.DRAFT.of(
+//                                user.id(),
+//                                user.name(),
+//                                user.company().name()
+//                        )).toList();
+//                for (Draft3<String, String, String> userAdnCom : userInfo) {
+//                    String userId = userAdnCom.getValue1();
+//                    String userName = userAdnCom.getValue2();
+//                    String companyName = userAdnCom.getValue3();
+//                }
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//
+//
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//
+//                List<Company> companies = easyEntityQuery.queryable(Company.class)
+//                        .where(com -> {
+//                            com.users().any(u -> {
+//                                u.name().like("小明");
+//                            });
+//                        }).toList();
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            try {
+//
+//                List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+//                        .where(user -> {
+//                            user.or(() -> {
+//                                user.name().like("小明");
+//                                user.company().name().like("JAVA企业");
+//                            });
+//                        }).toList();
+//            } catch (Exception ignore) {
+//            }
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//
+//
+//    }
+
+//    @Test
+//    public void test13(){
+//
+//        EntityMetadata entityMetadata = easyEntityQuery.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(UserInfoPropUpper.class);
+//        System.out.println(entityMetadata.getProperties());
+//    }
+
+    @Test
+    public void test14() {
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+                List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                        .where(user -> {
+                            user.or(() -> {
+                                user.name().like("小明");
+                                user.company().name().like("JAVA企业");
+                            });
+                        }).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE (t.`name` LIKE ? OR t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%小明%(String),%JAVA企业%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+
+    @Test
+    public void test15() {
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+                List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                        .where(user -> {
+                            user.or(() -> {
+                                user.name().like("小明");
+                                user.roles().flatElement().name().like("管理员");
+                            });
+                        }).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t WHERE (t.`name` LIKE ? OR EXISTS (SELECT 1 FROM `t_role` t1 WHERE EXISTS (SELECT 1 FROM `t_user_role` t2 WHERE t2.`role_id` = t1.`id` AND t2.`user_id` = t.`id` LIMIT 1) AND t1.`name` LIKE ? LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%小明%(String),%管理员%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+}

@@ -142,7 +142,8 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     }
 
     /**
-     * 仅支持toList查询返回展开
+     * 暂开集合元素
+     * 用户返回集合元素
      * @return
      */
     default T1Proxy flatElement() {
