@@ -9,6 +9,7 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft3;
@@ -707,6 +708,32 @@ public class QueryTest17 extends BaseTest {
         for (Draft1<TopicTypeEnum> topicTypeEnumDraft1 : list) {
             TopicTypeEnum value1 = topicTypeEnumDraft1.getValue1();
             System.out.println(value1);
+        }
+    }
+
+
+    @Test
+    public void textLikeFunc(){
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                    .where(b -> {
+                        SQLConstantExpression constant = b.expression().constant();
+                        b.title().like(constant.valueOf("ABc").toLower());
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE CONCAT('%',LOWER(?),'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),ABc(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
         }
     }
 }
