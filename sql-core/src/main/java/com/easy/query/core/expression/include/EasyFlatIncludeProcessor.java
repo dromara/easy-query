@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.include;
 
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -92,12 +93,17 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess{
     @Override
     protected <T> void setEntityValue(T entity, Object value) {
         if(navigateFlatMetadata!=null){
+            Collection<?> values =null;
             if(value instanceof Collection){
-                Collection<?> values = ((Collection<?>) value).stream().map(o->navigateFlatGetter.apply(o)).flatMap(o->o.stream()).distinct().collect(Collectors.toList());
-                navigateFlatMetadata.getBeanSetter().call(entity,values);
+                values = ((Collection<?>) value).stream().map(o->navigateFlatGetter.apply(o)).flatMap(o->o.stream()).distinct().collect(Collectors.toList());
             }else{
-                Collection<?> values = navigateFlatGetter.apply(value);
+                values = navigateFlatGetter.apply(value);
+
+            }
+            if(navigateFlatMetadata.getRelationMappingType()== RelationMappingTypeEnum.ToOne){
                 navigateFlatMetadata.getBeanSetter().call(entity, EasyCollectionUtil.firstOrNull(values));
+            }else{
+                navigateFlatMetadata.getBeanSetter().call(entity,values);
             }
         }else{
             super.setEntityValue(entity, value);

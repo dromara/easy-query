@@ -37,6 +37,8 @@ public class Certificate implements ProxyEntityAvailable<Certificate , Certifica
      */
     private String invalidTime;
 
+//    private Map<String, List<String>> nameMap;
+
     @Column(sqlConversion = CertStatusColumnValueSQLConverter.class)
     //因为不是真实列所以不需要插入
     @InsertIgnore

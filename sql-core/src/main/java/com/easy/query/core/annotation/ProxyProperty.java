@@ -23,4 +23,10 @@ public @interface ProxyProperty {
      * @return
      */
     String value() default EasyStringUtil.EMPTY;
+
+    /**
+     * 是否生成any类型处理
+     * @return
+     */
+    boolean generateAnyType() default false;
 }

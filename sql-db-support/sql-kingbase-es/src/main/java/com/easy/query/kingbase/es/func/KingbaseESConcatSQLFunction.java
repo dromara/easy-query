@@ -27,7 +27,7 @@ public class KingbaseESConcatSQLFunction extends AbstractExpressionSQLFunction {
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) ->i==0?"{" + i + "}::TEXT": "{" + i + "}");
-        return String.format("%s", String.join(" || ", params));
+        return String.format("(%s)", String.join(" || ", params));
 ////        return String.format("%s", String.join(" || ", params));
 //        return String.format("CONCAT(%s)", String.join(",", params));
     }

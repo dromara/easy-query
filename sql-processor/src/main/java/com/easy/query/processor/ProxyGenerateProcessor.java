@@ -366,6 +366,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
                 ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
                 String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
+                Boolean anyType=proxyProperty==null?null:proxyProperty.generateAnyType();
 
                 TypeMirror type = fieldElement.asType();
                 boolean isGeneric = type.getKind() == TypeKind.TYPEVAR;
@@ -376,7 +377,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean isValueObject = valueObject != null;
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : entityName;
                 String fieldComment = getFiledComment(docComment, fieldName, propertyName);
-                PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType);
+                PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType,anyType);
                 aptFileCompiler.addImports(propertyColumn.getImport());
                 if (includeProperty) {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
@@ -434,6 +435,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean includeManyProperty = false;
                 ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
                 String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
+                Boolean anyType=proxyProperty==null?null:proxyProperty.generateAnyType();
 //                if(Objects.equals("aaa",propertyName)){
 //                    System.out.println("111");
 //                }
@@ -446,7 +448,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean isValueObject = valueObject != null;
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : aptFileCompiler.getEntityClassName();
                 String fieldComment = getFiledComment(docComment, fieldName, propertyName);
-                PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType);
+                PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType,anyType);
                 aptFileCompiler.addImports(propertyColumn.getImport());
 
                 if (!includeProperty) {
@@ -583,8 +585,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         }
     }
 
-    public static PropertyColumn getPropertyColumn(String fieldGenericType) {
-        return TYPE_COLUMN_MAPPING.getOrDefault(fieldGenericType, new PropertyColumn("SQLAnyTypeColumn", fieldGenericType));
+    public static PropertyColumn getPropertyColumn(String fieldGenericType,Boolean anyType) {
+        return TYPE_COLUMN_MAPPING.getOrDefault(fieldGenericType, new PropertyColumn("SQLAnyTypeColumn", fieldGenericType,anyType));
     }
 
 }
