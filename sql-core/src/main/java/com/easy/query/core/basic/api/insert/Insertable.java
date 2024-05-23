@@ -6,7 +6,9 @@ import com.easy.query.core.basic.api.internal.SQLExecuteRows;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.basic.api.internal.SQLOnDuplicateKeyIgnore;
 import com.easy.query.core.basic.api.internal.TableReNameable;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 
 import java.util.Collection;
@@ -21,19 +23,33 @@ public interface Insertable<T, TChain> extends SQLExecuteRows, Interceptable<TCh
     TChain insert(T entity);
 
     TChain insert(Collection<T> entities);
+
     EntityInsertExpressionBuilder getEntityInsertExpressionBuilder();
 
     /**
-     *
      * @param fillAutoIncrement
      * @return
      */
     long executeRows(boolean fillAutoIncrement);
 
     @Override
-    default long executeRows(){
+    default long executeRows() {
         return executeRows(false);
     }
-   String toSQL(T entity);
+
+    String toSQL(T entity);
+
     String toSQL(T entity, ToSQLContext toSQLContext);
+
+    /**
+     * 传入生成sql的上下文用来获取生成sql后的表达式内部的参数
+     *
+     * @return 包含sql和sql结果比如参数
+     */
+
+    default ToSQLResult toSQLResult(T entity) {
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getEntityInsertExpressionBuilder().getExpressionContext().getTableContext(), true);
+        String sql = toSQL(entity, toSQLContext);
+        return new ToSQLResult(sql, toSQLContext);
+    }
 }

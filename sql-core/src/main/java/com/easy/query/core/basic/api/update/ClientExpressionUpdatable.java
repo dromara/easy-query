@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
@@ -144,5 +145,12 @@ public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpress
     }
 
     String toSQL(ToSQLContext toSQLContext);
+
+    default ToSQLResult toSQLResult() {
+        TableContext tableContext = getExpressionContext().getTableContext();
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(tableContext,true);
+        String sql = toSQL(toSQLContext);
+        return new ToSQLResult(sql,toSQLContext);
+    }
 }
 

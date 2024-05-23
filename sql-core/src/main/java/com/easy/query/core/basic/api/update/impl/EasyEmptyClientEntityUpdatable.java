@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.update.impl;
 
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -104,6 +105,11 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     @Override
     public String toSQL(Object entity) {
         return null;
+    }
+
+    @Override
+    public String toSQL(Object entity, ToSQLContext toSQLContext) {
+        return "";
     }
 
     @Override

@@ -2,6 +2,9 @@ package com.easy.query.core.basic.api.update;
 
 import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
@@ -71,4 +74,15 @@ public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdat
 
     ClientEntityUpdatable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression);
     String toSQL(Object entity);
+    String toSQL(Object entity, ToSQLContext toSQLContext);
+    /**
+     * 传入生成sql的上下文用来获取生成sql后的表达式内部的参数
+     * @return 包含sql和sql结果比如参数
+     */
+
+    default ToSQLResult toSQLResult(Object entity) {
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getUpdateExpressionBuilder().getExpressionContext().getTableContext(),true);
+        String sql = toSQL(entity, toSQLContext);
+        return new ToSQLResult(sql,toSQLContext);
+    }
 }
