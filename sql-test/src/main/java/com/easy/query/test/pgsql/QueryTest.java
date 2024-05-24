@@ -130,7 +130,7 @@ public class QueryTest extends PgSQLBaseTest {
                 .where(o -> o.eq(BlogEntity::getId, "97"))
                 .select(String.class,o->o.sqlFunc(o.fx().concat(BlogEntity::getId,BlogEntity::getId)));
         String sql = queryable.toSQL();
-        Assert.assertEquals("SELECT t.\"id\" || t.\"id\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
+        Assert.assertEquals("SELECT CONCAT(t.\"id\",t.\"id\") FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
         String blogEntity = queryable.firstOrNull();
         Assert.assertNotNull(blogEntity);
         Assert.assertEquals("9797", blogEntity);
@@ -141,7 +141,7 @@ public class QueryTest extends PgSQLBaseTest {
                 .where(o -> o.eq(BlogEntity::getId, "97"))
                 .select(String.class,o->o.sqlFunc(o.fx().concat(BlogEntity::getId,BlogEntity::getTitle)));
         String sql = queryable.toSQL();
-        Assert.assertEquals("SELECT t.\"id\" || t.\"title\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
+        Assert.assertEquals("SELECT CONCAT(t.\"id\",t.\"title\") FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
         String blogEntity = queryable.firstOrNull();
         Assert.assertNotNull(blogEntity);
         Assert.assertEquals("97title97", blogEntity);
