@@ -47,12 +47,12 @@ public class PgSQLLikeSQLFunction extends AbstractExpressionSQLFunction {
             }
         }
         if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_RIGHT){
-            return "{0} LIKE (({1})::text || '%')";
+            return "{0} LIKE (CONCAT(({1})::TEXT , '%'))";
         }
         if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_LEFT){
-            return "{0} LIKE ('%' || ({1})::text)";
+            return "{0} LIKE (CONCAT('%' , ({1})::TEXT))";
         }
-        return "{0} LIKE ('%' || ({1})::text || '%')";
+        return "{0} LIKE (CONCAT('%' , ({1})::TEXT , '%'))";
     }
 
     @Override
