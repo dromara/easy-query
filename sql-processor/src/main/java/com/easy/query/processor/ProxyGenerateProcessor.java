@@ -9,20 +9,18 @@ import com.easy.query.core.annotation.ProxyProperty;
 import com.easy.query.core.annotation.ValueObject;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.processor.templates.AptCreatorHelper;
-import com.easy.query.processor.templates.AptFileCompiler;
-import com.easy.query.processor.templates.AptPropertyInfo;
-import com.easy.query.processor.templates.AptSelectPropertyInfo;
-import com.easy.query.processor.templates.AptSelectorInfo;
-import com.easy.query.processor.templates.AptValueObjectInfo;
-import com.easy.query.processor.templates.PropertyColumn;
+import com.easy.query.processor.helper.AptCreatorHelper;
+import com.easy.query.processor.helper.AptFileCompiler;
+import com.easy.query.processor.helper.AptPropertyInfo;
+import com.easy.query.processor.helper.AptSelectPropertyInfo;
+import com.easy.query.processor.helper.AptSelectorInfo;
+import com.easy.query.processor.helper.AptValueObjectInfo;
+import com.easy.query.processor.helper.PropertyColumn;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -56,8 +54,8 @@ import java.util.regex.Pattern;
  *
  * @author xuejiaming
  */
-@SupportedAnnotationTypes({"com.easy.query.core.annotation.EntityProxy"})
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
+//@SupportedAnnotationTypes({"com.easy.query.core.annotation.EntityProxy"})
+//@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ProxyGenerateProcessor extends AbstractProcessor {
     private static final Map<String, String> TYPE_MAPPING = new HashMap<>();
     private static final Map<String, PropertyColumn> TYPE_COLUMN_MAPPING = new HashMap<>();
@@ -109,17 +107,28 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         this.elementUtils = processingEnv.getElementUtils();
         this.typeUtils = processingEnv.getTypeUtils();
     }
+    @Override
+    public Set<String> getSupportedAnnotationTypes() {
+        Set<String> supportedAnnotationTypes = new HashSet<>();
+        supportedAnnotationTypes.add(EntityProxy.class.getCanonicalName());
+        return supportedAnnotationTypes;
+    }
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
+    }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (!roundEnv.processingOver()) {
-            EasyQueryProxyProperties props = new EasyQueryProxyProperties(filer);
-
-            String enable = props.getProperties().getProperty("processor.enable", "");
-            if ("false".equalsIgnoreCase(enable)) {
-                return true;
-            }
-            String basePath = props.getProperties().getProperty("processor.basePath", "");
+//            EasyQueryProxyProperties props = new EasyQueryProxyProperties(filer);
+//
+//            String enable = props.getProperties().getProperty("processor.enable", "");
+//            if ("false".equalsIgnoreCase(enable)) {
+//                return true;
+//            }
+            String basePath = "";
 //
 //            //upperCase, lowerCase, upperCamelCase, lowerCamelCase
 //            String proxyNameStyle = props.getProperties().getProperty("processor.proxyInstanceNameStyle", "upperCase");

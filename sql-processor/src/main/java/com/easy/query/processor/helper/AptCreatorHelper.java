@@ -1,4 +1,4 @@
-package com.easy.query.processor.templates;
+package com.easy.query.processor.helper;
 
 /**
  * create time 2023/11/8 16:46

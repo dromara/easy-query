@@ -1,4 +1,4 @@
-package com.easy.query.processor.templates;
+package com.easy.query.processor.helper;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
