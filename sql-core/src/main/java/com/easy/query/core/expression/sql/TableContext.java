@@ -24,7 +24,7 @@ public final class TableContext {
 
     public void addTable(TableAvailable table) {
         int size = aliasMapping.size();
-        aliasMapping.put(table, new TableAliasSchema(table, size));
+        aliasMapping.putIfAbsent(table, new TableAliasSchema(table, size));
     }
 
     public boolean isEmpty() {

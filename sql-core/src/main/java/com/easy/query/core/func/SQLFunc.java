@@ -148,14 +148,14 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
 
     SQLFunction subQueryValue(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
-    default SQLFunction subQueryExistsValue(Query<?> query) {
-        return subQueryExistsValue(o -> o.subQuery(query),true);
+    default SQLFunction exists(Query<?> query) {
+        return exists(o -> o.subQuery(query),true);
     }
-    default SQLFunction subQueryExistsValue(Query<?> query,boolean exists) {
-        return subQueryExistsValue(o -> o.subQuery(query),exists);
+    default SQLFunction exists(Query<?> query, boolean exists) {
+        return exists(o -> o.subQuery(query),exists);
     }
 
-    SQLFunction subQueryExistsValue(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean exists);
+    SQLFunction exists(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean exists);
 
     /**
      * 取反

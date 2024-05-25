@@ -69,20 +69,37 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
         getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(getQueryable().limit(1))));
     }
 
+    /**
+     * 不存在任意一个满足条件
+     * @param whereExpression
+     */
     default void none(SQLExpression1<T1Proxy> whereExpression) {
         where(whereExpression).none();
     }
 
+    /**
+     * 不存在任意一个满足条件
+     */
     default void none() {
         getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.none(getQueryable().limit(1))));
     }
+
+    /**
+     * 返回boolean表示是否存在任意匹配项
+     * @return
+     */
     default ColumnFunctionComparableBooleanChainExpression<Boolean> anyValue(){
         Query<?> anyQuery = getQueryable().limit(1).select("1");
-        return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryExistsValue(anyQuery), Boolean.class);
+        return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.exists(anyQuery), Boolean.class);
     }
+
+    /**
+     * 返回boolean表示是否没有任意一项被匹配到
+     * @return
+     */
     default ColumnFunctionComparableBooleanChainExpression<Boolean> noneValue(){
         Query<?> anyQuery = getQueryable().limit(1).select("1");
-        return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryExistsValue(anyQuery,false), Boolean.class);
+        return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.exists(anyQuery,false), Boolean.class);
     }
 
     default ColumnFunctionComparableNumberChainExpression<Long> count(SQLExpression1<T1Proxy> whereExpression) {

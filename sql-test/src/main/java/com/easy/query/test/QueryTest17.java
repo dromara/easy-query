@@ -803,4 +803,8 @@ public class QueryTest17 extends BaseTest {
 //        Integer groupKey2 = result.getValue2();
 //        BigDecimal scoreSum = result.getValue3();
 //    }
+
+//    public void xxx(){
+//        easyEntityQuery.queryable(Topic.class)
+//    }
 }
