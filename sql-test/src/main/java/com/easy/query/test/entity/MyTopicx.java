@@ -3,7 +3,7 @@ package com.easy.query.test.entity;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
-import com.easy.query.test.entity.proxy.MyTopicProxy;
+import com.easy.query.test.entity.proxy.MyTopicxProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @Table("t_topic")
 @EntityProxy
-public class MyTopic extends BaseModel3<MyTopic,MyTopicProxy> {
+public class MyTopicx extends BaseModelx<MyTopicxProxy,MyTopicx> {
     @Column(primaryKey = true)
     private String id;
     private Integer stars;

@@ -11,7 +11,10 @@ import com.easy.query.core.util.EasyObjectUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -87,6 +90,9 @@ public class EntityQueryProxyManager {
             Object proxy = creator.get();
             return EasyObjectUtil.typeCast(proxy);
         }
+        if(!ProxyEntityAvailable.class.isAssignableFrom(entityClass)){
+            throw new EasyQueryInvalidOperationException(String.format("%s is not implements ProxyEntityAvailable",EasyClassUtil.getSimpleName(entityClass)));
+        }
 
         Class<?> proxyTableClass = Arrays.stream(entityClass.getGenericInterfaces()).map(t -> {
 
@@ -114,7 +120,11 @@ public class EntityQueryProxyManager {
         }).filter(t -> t != null).findFirst().orElse(null);
 
         if(proxyTableClass==null){
-            throw new EasyQueryInvalidOperationException(String.format("%s is not implements ProxyEntityAvailable",EasyClassUtil.getSimpleName(entityClass)));
+            proxyTableClass=getProxyGenericType(entityClass, ProxyEntityAvailable.class);
+            if(proxyTableClass==null){
+                throw new EasyQueryInvalidOperationException(String.format("Cannot find the ProxyEntityAvailable proxy type for %s",EasyClassUtil.getSimpleName(entityClass)));
+            }
+
         }
 
         FastBean fastBean = new FastBean(proxyTableClass);
@@ -126,4 +136,59 @@ public class EntityQueryProxyManager {
         return EasyObjectUtil.typeCast(proxy);
     }
 
+
+
+    public static Class<?> getProxyGenericType(Class<?> clazz, Class<?> targetInterface) {
+        Map<String, Type> typeMap = new HashMap<>();
+        return getGenericType(clazz, targetInterface, typeMap);
+    }
+
+    private static Class<?> getGenericType(Class<?> clazz, Class<?> targetInterface,  Map<String, Type> typeMap) {
+        // 解析父类的泛型参数
+        Type superClass = clazz.getGenericSuperclass();
+        if (superClass instanceof ParameterizedType) {
+            resolveTypeArguments((ParameterizedType) superClass, typeMap);
+        }
+
+        // 解析实现的接口的泛型参数
+        Type[] genericInterfaces = clazz.getGenericInterfaces();
+        for (Type genericInterface : genericInterfaces) {
+            if (genericInterface instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
+                if (parameterizedType.getRawType().equals(targetInterface)) {
+                    Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                    if (actualTypeArguments.length > 1) {
+                        Type type = actualTypeArguments[1];
+                        if (type instanceof Class) {
+                            return (Class<?>) type;
+                        } else if (type instanceof TypeVariable) {
+                            String typeName = ((TypeVariable<?>) type).getName();
+                            Type resolvedType = typeMap.get(typeName);
+                            if (resolvedType instanceof Class) {
+                                return (Class<?>) resolvedType;
+                            }
+                        }
+                    }
+                } else {
+                    resolveTypeArguments(parameterizedType, typeMap);
+                }
+            }
+        }
+
+        // 递归解析父类
+        Class<?> superclass = clazz.getSuperclass();
+        if (superclass != null && !superclass.equals(Object.class)) {
+            return getGenericType(superclass, targetInterface, typeMap);
+        }
+
+       return null;
+    }
+
+    private static void resolveTypeArguments(ParameterizedType parameterizedType, Map<String, Type> typeMap) {
+        Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+        TypeVariable<?>[] typeVariables = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
+        for (int i = 0; i < typeVariables.length; i++) {
+            typeMap.putIfAbsent(typeVariables[i].getName(), actualTypeArguments[i]);
+        }
+    }
 }

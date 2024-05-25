@@ -18,6 +18,9 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.MyTopic;
+import com.easy.query.test.entity.MyTopic4;
+import com.easy.query.test.entity.MyTopicx;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.TopicProxy;
@@ -804,7 +807,19 @@ public class QueryTest17 extends BaseTest {
 //        BigDecimal scoreSum = result.getValue3();
 //    }
 
-//    public void xxx(){
-//        easyEntityQuery.queryable(Topic.class)
-//    }
+    @Test
+    public void xxx(){
+        List<MyTopic> list = easyEntityQuery.queryable(MyTopic.class)
+                .where(m -> m.id().eq("123"))
+                .toList();
+
+
+        List<MyTopicx> list1 = easyEntityQuery.queryable(MyTopicx.class)
+                .where(m -> m.id().eq("123"))
+                .toList();
+        List<MyTopic4> list2 = easyEntityQuery.queryable(MyTopic4.class)
+                .where(m -> m.id().eq("123"))
+                .toList();
+    }
+
 }
