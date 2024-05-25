@@ -8,5 +8,5 @@ import com.easy.query.core.proxy.ProxyEntity;
  *
  * @author xuejiaming
  */
-public abstract class BaseModel3<TEntity, TProxy extends ProxyEntity<TProxy, TEntity>> extends BaseModel2<TEntity, TProxy> {
+public abstract class BaseModel3<TEntity1, TProxy extends ProxyEntity<TProxy, TEntity1>> extends BaseModel2<TEntity1, TProxy> {
 }

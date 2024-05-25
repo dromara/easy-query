@@ -9,5 +9,5 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
  *
  * @author xuejiaming
  */
-public abstract class BaseModel<TEntity, TProxy extends ProxyEntity<TProxy, TEntity>> implements ProxyEntityAvailable<TEntity, TProxy> {
+public abstract class BaseModel<TEntity2, TProxy3 extends ProxyEntity<TProxy3, TEntity2>> implements ProxyEntityAvailable<TEntity2, TProxy3> {
 }

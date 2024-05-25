@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class FindMain1 {
+public class FindMain2 {
 
     public static void main(String[] args) {
         try {
@@ -31,32 +31,20 @@ public class FindMain1 {
         return getGenericType(clazz, targetInterface, typeMap);
     }
 
-    private static Class<?> getGenericType(Class<?> clazz, Class<?> targetInterface,  Map<TypeVariable<?>, Type> typeMap) throws ClassNotFoundException {
-        // 解析父类的泛型参数
+    private static Class<?> getGenericType(Class<?> clazz, Class<?> targetInterface, Map<TypeVariable<?>, Type> typeMap) throws ClassNotFoundException {
+        // 解析当前类的父类
         Type superClass = clazz.getGenericSuperclass();
         if (superClass instanceof ParameterizedType) {
             resolveTypeArguments((ParameterizedType) superClass, typeMap);
         }
 
-        // 解析实现的接口的泛型参数
+        // 解析当前类实现的接口
         Type[] genericInterfaces = clazz.getGenericInterfaces();
         for (Type genericInterface : genericInterfaces) {
             if (genericInterface instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
                 if (parameterizedType.getRawType().equals(targetInterface)) {
-                    Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-                    if (actualTypeArguments.length > 1) {
-                        Type type = actualTypeArguments[1];
-                        if (type instanceof Class) {
-                            return (Class<?>) type;
-                        } else if (type instanceof TypeVariable) {
-                            String typeName = ((TypeVariable<?>) type).getName();
-                            Type resolvedType = typeMap.get(typeName);
-                            if (resolvedType instanceof Class) {
-                                return (Class<?>) resolvedType;
-                            }
-                        }
-                    }
+                    return getClassForType(parameterizedType.getActualTypeArguments()[1], typeMap);
                 } else {
                     resolveTypeArguments(parameterizedType, typeMap);
                 }
@@ -66,7 +54,7 @@ public class FindMain1 {
         // 递归解析父类
         Class<?> superclass = clazz.getSuperclass();
         if (superclass != null && !superclass.equals(Object.class)) {
-            return getGenericType(superclass, targetInterface, typeMap);
+            return getGenericType(superclass, targetInterface,typeMap);
         }
 
         throw new ClassNotFoundException("Cannot find the second generic type for " + clazz.getName());
@@ -76,7 +64,23 @@ public class FindMain1 {
         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
         TypeVariable<?>[] typeVariables = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
         for (int i = 0; i < typeVariables.length; i++) {
-            typeMap.putIfAbsent(typeVariables[i], actualTypeArguments[i]);
+            typeMap.put(typeVariables[i], actualTypeArguments[i]);
         }
+    }
+
+    private static Class<?> getClassForType(Type type, Map<TypeVariable<?>, Type> typeMap) {
+        if (type instanceof Class<?>) {
+            return (Class<?>) type;
+        } else if (type instanceof TypeVariable<?>) {
+            Type resolvedType = typeMap.get(type);
+            if (resolvedType instanceof Class<?>) {
+                return (Class<?>) resolvedType;
+            } else {
+                return getClassForType(resolvedType, typeMap);
+            }
+        } else if (type instanceof ParameterizedType) {
+            return (Class<?>) ((ParameterizedType) type).getRawType();
+        }
+        throw new IllegalArgumentException("Unable to resolve type to a class: " + type);
     }
 }
