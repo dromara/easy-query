@@ -48,6 +48,7 @@ import com.easy.query.core.func.def.impl.ReplaceSQLFunction;
 import com.easy.query.core.func.def.impl.RightPadSQLFunction;
 import com.easy.query.core.func.def.impl.RoundSQLFunction;
 import com.easy.query.core.func.def.impl.StringCompareToSQLFunction;
+import com.easy.query.core.func.def.impl.SubQueryExistsSQLFunction;
 import com.easy.query.core.func.def.impl.SubQuerySQLFunction;
 import com.easy.query.core.func.def.impl.SubStringSQLFunction;
 import com.easy.query.core.func.def.impl.SumSQLFunction;
@@ -180,6 +181,16 @@ public class SQLFuncImpl implements SQLFunc {
     public SQLFunction subQueryValue(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new SubQuerySQLFunction(getColumnExpressions(sqlExpression));
     }
+
+    @Override
+    public SQLFunction subQueryExistsValue(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean exists) {
+        SubQueryExistsSQLFunction existsSQLFunction = new SubQueryExistsSQLFunction(getColumnExpressions(sqlExpression));
+        if(!exists){
+            return not(x->x.sqlFunc(existsSQLFunction));
+        }
+        return existsSQLFunction;
+    }
+
     //    @Override
 //    public SQLFunction join(String separator, List<ColumnExpression> concatExpressions) {
 //        return new StringJoinSQLFunction(separator, concatExpressions);

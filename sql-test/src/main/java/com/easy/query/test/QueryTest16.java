@@ -763,7 +763,49 @@ public class QueryTest16 extends BaseTest {
     }
 
     @Test
-    public  void docSub(){
+    public void docSub() {
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+
+                List<Draft2<String, Boolean>> list = easyEntityQuery.queryable(Company.class)
+                        .where(com -> com.name().like("xx公司"))
+                        .select(com -> Select.DRAFT.of(
+                                com.id(),
+                                com.users().noneValue()
+                        )).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,(NOT EXISTS((SELECT 1 FROM `t_user` t2 WHERE t2.`company_id` = t.`id` LIMIT 1))) AS `value2` FROM `t_company` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+
+                List<Draft2<String, Boolean>> list = easyEntityQuery.queryable(Company.class)
+                        .where(com -> com.name().like("xx公司"))
+                        .select(com -> Select.DRAFT.of(
+                                com.id(),
+                                com.users().anyValue()
+                        )).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,EXISTS((SELECT 1 FROM `t_user` t2 WHERE t2.`company_id` = t.`id` LIMIT 1)) AS `value2` FROM `t_company` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
         {
 
             ListenerContext listenerContext = new ListenerContext();
@@ -774,7 +816,7 @@ public class QueryTest16 extends BaseTest {
                         .where(com -> com.name().like("xx公司"))
                         .select(com -> Select.DRAFT.of(
                                 com.id(),
-                                com.users().where(user->user.name().likeMatchLeft("李")).sum(x->x.age())
+                                com.users().where(user -> user.name().likeMatchLeft("李")).sum(x -> x.age())
                         )).toList();
             } catch (Exception ignore) {
             }
@@ -816,7 +858,28 @@ public class QueryTest16 extends BaseTest {
                         .where(com -> com.name().like("xx公司"))
                         .select(com -> Select.DRAFT.of(
                                 com.id(),
-                                com.users().where(user->user.name().likeMatchLeft("李")).count()
+                                com.users().count()
+                        )).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,(SELECT COUNT(*) FROM `t_user` t2 WHERE t2.`company_id` = t.`id`) AS `value2` FROM `t_company` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+
+                List<Draft2<String, Long>> list = easyEntityQuery.queryable(Company.class)
+                        .where(com -> com.name().like("xx公司"))
+                        .select(com -> Select.DRAFT.of(
+                                com.id(),
+                                com.users().where(user -> user.name().likeMatchLeft("李")).count()
                         )).toList();
             } catch (Exception ignore) {
             }

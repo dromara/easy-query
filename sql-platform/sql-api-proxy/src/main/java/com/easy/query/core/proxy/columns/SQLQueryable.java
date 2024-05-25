@@ -16,8 +16,10 @@ import com.easy.query.core.proxy.columns.impl.EasySQLPredicateQueryable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.core.ProxyFlatElementEntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableAnyChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableBooleanChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -64,7 +66,7 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
      * 存在任意一个满足条件
      */
     default void any() {
-        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(getQueryable().limit(1).select("1"))));
+        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(getQueryable().limit(1))));
     }
 
     default void none(SQLExpression1<T1Proxy> whereExpression) {
@@ -72,7 +74,15 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     }
 
     default void none() {
-        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.none(getQueryable().limit(1).select("1"))));
+        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.none(getQueryable().limit(1))));
+    }
+    default ColumnFunctionComparableBooleanChainExpression<Boolean> anyValue(){
+        Query<?> anyQuery = getQueryable().limit(1).select("1");
+        return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryExistsValue(anyQuery), Boolean.class);
+    }
+    default ColumnFunctionComparableBooleanChainExpression<Boolean> noneValue(){
+        Query<?> anyQuery = getQueryable().limit(1).select("1");
+        return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryExistsValue(anyQuery,false), Boolean.class);
     }
 
     default ColumnFunctionComparableNumberChainExpression<Long> count(SQLExpression1<T1Proxy> whereExpression) {
