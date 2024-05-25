@@ -64,6 +64,15 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum() {
         return sum(false);
     }
+    /**
+     * 计算求和 SUM(age)
+     *
+     * @param <T> 任意数字类型
+     * @return 计算求和 SUM(age)
+     */
+    default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum(Class<T> resultClass) {
+        return sum(false).setPropertyType(resultClass);
+    }
 
     /**
      * 计算去重求和 SUM(DISTINCT age)
@@ -74,17 +83,24 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum(boolean distinct) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-//            return PropTypeColumn.columnFuncSelector();
-//            if (this instanceof DSLSQLFunctionAvailable) {
-//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-//                return fx.sum(sqlFunction).distinct(distinct);
-//            } else {
-//                return fx.sum(this.getValue()).distinct(distinct);
-//            }
             return fx.sum(x->{
                 PropTypeColumn.columnFuncSelector(x,this);
             }).distinct(distinct);
         }, getPropertyType());
+    }
+    /**
+     * 计算去重求和 SUM(DISTINCT age)
+     *
+     * @param distinct 是否去重
+     * @param <T>      任意数字类型
+     * @return 计算去重求和 SUM(DISTINCT age)
+     */
+    default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum(boolean distinct,Class<T> resultClass) {
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            return fx.sum(x->{
+                PropTypeColumn.columnFuncSelector(x,this);
+            }).distinct(distinct);
+        }, getPropertyType()).setPropertyType(resultClass);
     }
 
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> sumBigDecimal() {

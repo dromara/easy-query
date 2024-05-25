@@ -736,4 +736,71 @@ public class QueryTest17 extends BaseTest {
 
         }
     }
+
+//    @Test
+//    public void testxxxxa(){
+////        LocalDateTime begin = LocalDateTime.now();
+////        LocalDateTime end = LocalDateTime.now();
+////        BlogEntity blogEntity = null;
+////
+////        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+////                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+////                .where(blogEntity!=null,b -> {
+////                    b.content().like(blogEntity.getContent());
+////                }).toList();
+////
+////        List<BlogEntityTitleOnly> list1 = easyEntityQuery.queryable(BlogEntity.class)
+////                .where(b -> {
+////                    b.content().like("123");
+////                })
+////                .select(b -> {
+////                    BlogEntityTitleOnlyProxy r = new BlogEntityTitleOnlyProxy();
+////                    r.title().set(b.title());
+////                    return r;
+////                })
+////                .where(b -> {
+////                    b.title().like("4556");
+////                }).toList();
+//
+//
+////        List<Draft1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
+////                .where(b -> {
+////                    b.content().like("123");
+////                })
+////                .select(b -> Select.DRAFT.of(
+////                        b.title()
+////                ))
+////                .where(s -> {
+////                    s.value1().like("4556");
+////                }).toList();
+////
+////        List<Draft2<String, String>> list1 = easyEntityQuery.queryable(BlogEntity.class)
+////                .where(b -> {
+////                    b.content().like("123");
+////                })
+////                .select(b -> Select.DRAFT.of(
+////                        b.title(),
+////                        b.content()
+////                ))
+////                .where(s -> {
+////                    s.value1().like("4556");
+////                }).toList();
+//
+//        Draft3<String, Integer, BigDecimal> result = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(b -> {
+//                    b.content().like("123");
+//                })
+//                .groupBy(b -> GroupKeys.TABLE1.of(
+//                        b.content(),
+//                        b.star()
+//                ))
+//                .select(group -> Select.DRAFT.of(
+//                        group.key1(),
+//                        group.key2(),
+//                        group.groupTable().score().sum(BigDecimal.class)
+//                )).firstOrNull();
+//        String groupKey1 = result.getValue1();
+//        Integer groupKey2 = result.getValue2();
+//        BigDecimal scoreSum = result.getValue3();
+//    }
 }

@@ -2,7 +2,10 @@ package com.easy.query.test;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.blogtest.Company;
 import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
@@ -755,6 +758,72 @@ public class QueryTest16 extends BaseTest {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t4.`a` AS `a`,t4.`b` AS `b` FROM ( (SELECT t.`a` AS `a`,t.`b` AS `b` FROM `t_user` t)  UNION ALL  (SELECT t2.`a` AS `a`,t2.`b` AS `b` FROM `t_user1` t2) ) t4", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%小明%(String),%管理员%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+
+    @Test
+    public  void docSub(){
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+
+                List<Draft2<String, Integer>> list = easyEntityQuery.queryable(Company.class)
+                        .where(com -> com.name().like("xx公司"))
+                        .select(com -> Select.DRAFT.of(
+                                com.id(),
+                                com.users().where(user->user.name().likeMatchLeft("李")).sum(x->x.age())
+                        )).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,IFNULL((SELECT SUM(t2.`age`) FROM `t_user` t2 WHERE t2.`company_id` = t.`id` AND t2.`name` LIKE ?),0) AS `value2` FROM `t_company` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("李%(String),%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+
+                List<Draft2<String, Long>> list = easyEntityQuery.queryable(Company.class)
+                        .where(com -> com.name().like("xx公司"))
+                        .select(com -> Select.DRAFT.of(
+                                com.id(),
+                                com.users().count()
+                        )).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,(SELECT COUNT(*) FROM `t_user` t2 WHERE t2.`company_id` = t.`id`) AS `value2` FROM `t_company` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+
+                List<Draft2<String, Long>> list = easyEntityQuery.queryable(Company.class)
+                        .where(com -> com.name().like("xx公司"))
+                        .select(com -> Select.DRAFT.of(
+                                com.id(),
+                                com.users().where(user->user.name().likeMatchLeft("李")).count()
+                        )).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `value1`,(SELECT COUNT(*) FROM `t_user` t2 WHERE t2.`company_id` = t.`id` AND t2.`name` LIKE ?) AS `value2` FROM `t_company` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("李%(String),%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
     }

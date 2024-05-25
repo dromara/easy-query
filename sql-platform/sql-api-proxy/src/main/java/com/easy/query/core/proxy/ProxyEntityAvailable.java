@@ -10,7 +10,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
  */
 public interface ProxyEntityAvailable<TEntity, TProxy extends ProxyEntity<TProxy, TEntity>> {
     /**
-     * 这个接口即将废弃掉
+     * 这个方法即将废弃掉
      * 并且后续更新插件将不会实现该接口
      * @return
      */
