@@ -1624,7 +1624,7 @@ public class QueryTest extends BaseTest {
 
         String sql = q1.union(q2, q3).where(o -> o.eq(Topic::getId, "123321")).toSQL();
 
-        Assert.assertEquals("SELECT t7.`id`,t7.`stars`,t7.`title`,t7.`create_time` FROM ( (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t6.`id`,t6.`stars`,t6.`title`,t6.`create_time` FROM `t_topic` t6 WHERE t6.`create_time` >= ?)  UNION  (SELECT t6.`id`,t6.`stars`,t6.`title`,t6.`create_time` FROM `t_topic` t6 LEFT JOIN `t_blog` t6 ON t6.`deleted` = ? AND t6.`id` = t6.`id` WHERE t6.`content` IS NOT NULL AND t6.`stars` IS NOT NULL) ) t7 WHERE t7.`id` = ?", sql);
+        Assert.assertEquals("SELECT t7.`id`,t7.`stars`,t7.`title`,t7.`create_time` FROM ( (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`create_time` >= ?)  UNION  (SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `t_topic` t2 LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t2.`id` = t3.`id` WHERE t3.`content` IS NOT NULL AND t2.`stars` IS NOT NULL) ) t7 WHERE t7.`id` = ?", sql);
     }
 
     @Test
@@ -1646,7 +1646,8 @@ public class QueryTest extends BaseTest {
 
         String sql = q1.union(q2, q3).where(o -> o.eq(TopicUnion::getId, "123321")).toSQL();
 
-        Assert.assertEquals("SELECT t8.`id`,t8.`stars`,t8.`title` FROM ( (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t8.`id`,t8.`stars`,t8.`title` FROM `t_topic` t8 WHERE t8.`create_time` >= ?)  UNION  (SELECT t8.`id`,t8.`stars`,t8.`title` FROM `t_topic` t8 LEFT JOIN `t_blog` t8 ON t8.`deleted` = ? AND t8.`id` = t8.`id` WHERE t8.`content` IS NOT NULL AND t8.`stars` IS NOT NULL) ) t8 WHERE t8.`id` = ?", sql);
+//        Assert.assertEquals("SELECT t8.`id`,t8.`stars`,t8.`title` FROM ( (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t8.`id`,t8.`stars`,t8.`title` FROM `t_topic` t8 WHERE t8.`create_time` >= ?)  UNION  (SELECT t8.`id`,t8.`stars`,t8.`title` FROM `t_topic` t8 LEFT JOIN `t_blog` t8 ON t8.`deleted` = ? AND t8.`id` = t8.`id` WHERE t8.`content` IS NOT NULL AND t8.`stars` IS NOT NULL) ) t8 WHERE t8.`id` = ?", sql);
+        Assert.assertEquals("SELECT t8.`id`,t8.`stars`,t8.`title` FROM ( (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t2.`id`,t2.`stars`,t2.`title` FROM `t_topic` t2 WHERE t2.`create_time` >= ?)  UNION  (SELECT t4.`id`,t4.`stars`,t4.`title` FROM `t_topic` t4 LEFT JOIN `t_blog` t5 ON t5.`deleted` = ? AND t4.`id` = t5.`id` WHERE t5.`content` IS NOT NULL AND t4.`stars` IS NOT NULL) ) t8 WHERE t8.`id` = ?", sql);
     }
 
     @Test
@@ -1666,7 +1667,7 @@ public class QueryTest extends BaseTest {
 
         String sql = q1.union(q2).where(o -> o.eq(TopicUnion::getId, "123321")).toSQL();
 
-        Assert.assertEquals("SELECT t5.`id`,t5.`stars`,t5.`title` FROM ( (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t5.`id` AS `id`,t5.`star` AS `stars`,t5.`content` AS `title` FROM `t_blog` t5 WHERE t5.`deleted` = ? AND t5.`create_time` >= ?) ) t5 WHERE t5.`id` = ?", sql);
+        Assert.assertEquals("SELECT t5.`id`,t5.`stars`,t5.`title` FROM ( (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t2.`id` AS `id`,t2.`star` AS `stars`,t2.`content` AS `title` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`create_time` >= ?) ) t5 WHERE t5.`id` = ?", sql);
     }
 
     @Test

@@ -1118,7 +1118,7 @@ public class RelationTest extends BaseTest {
                 }
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t1.`id`,t1.`class_id`,t1.`name` FROM ( (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`name` LIKE ? AND t1.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`name` LIKE ? AND t1.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`name` LIKE ? AND t1.`class_id` = ? LIMIT 2) ) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("SELECT t1.`id`,t1.`class_id`,t1.`name` FROM ( (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`name` LIKE ? AND t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`name` LIKE ? AND t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`name` LIKE ? AND t.`class_id` = ? LIMIT 2) ) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
                     Assert.assertEquals("%123%(String),class1(String),%123%(String),class2(String),%123%(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 }
 
@@ -1526,7 +1526,7 @@ public class RelationTest extends BaseTest {
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT t1.`id`,t1.`class_id`,t1.`name` FROM ( (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t1.`id`,t1.`class_id`,t1.`name` FROM `school_student` t1 WHERE t1.`class_id` = ? LIMIT 2) ) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("SELECT t1.`id`,t1.`class_id`,t1.`name` FROM ( (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` = ? LIMIT 2) ) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 listenerContextManager.clear();
             }
