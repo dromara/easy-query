@@ -20,6 +20,7 @@ import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyTopic;
 import com.easy.query.test.entity.MyTopic4;
+import com.easy.query.test.entity.MyTopic5;
 import com.easy.query.test.entity.MyTopicx;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
@@ -818,6 +819,9 @@ public class QueryTest17 extends BaseTest {
                 .where(m -> m.id().eq("123"))
                 .toList();
         List<MyTopic4> list2 = easyEntityQuery.queryable(MyTopic4.class)
+                .where(m -> m.id().eq("123"))
+                .toList();
+        List<MyTopic5> list3 = easyEntityQuery.queryable(MyTopic5.class)
                 .where(m -> m.id().eq("123"))
                 .toList();
     }
