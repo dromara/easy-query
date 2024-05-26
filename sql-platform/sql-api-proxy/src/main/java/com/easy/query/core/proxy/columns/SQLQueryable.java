@@ -99,7 +99,7 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
      */
     default ColumnFunctionComparableBooleanChainExpression<Boolean> noneValue(){
         Query<?> anyQuery = getQueryable().limit(1).select("1");
-        return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.exists(anyQuery,false), Boolean.class);
+        return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.not(f.exists(anyQuery)), Boolean.class);
     }
 
     default ColumnFunctionComparableNumberChainExpression<Long> count(SQLExpression1<T1Proxy> whereExpression) {

@@ -1,6 +1,5 @@
 package com.easy.query.core.exception;
 
-import com.easy.query.core.common.ErrorCode;
 
 /**
  * @FileName: EasyQueryInvalidOperationException.java
@@ -11,9 +10,6 @@ import com.easy.query.core.common.ErrorCode;
 public class EasyQueryInvalidOperationException extends EasyQueryException{
     public EasyQueryInvalidOperationException(String msg) {
         super(msg);
-    }
-    public EasyQueryInvalidOperationException(ErrorCode errorCode, String msg) {
-        super(errorCode.errorMsg(msg));
     }
 
     public EasyQueryInvalidOperationException(Throwable e) {

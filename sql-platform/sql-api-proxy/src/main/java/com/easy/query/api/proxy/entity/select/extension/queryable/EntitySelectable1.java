@@ -4,16 +4,12 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DraftResult;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
-import com.easy.query.core.proxy.core.draft.DraftFetcher;
-import com.easy.query.core.proxy.sql.Select;
 
 import java.util.Collection;
 import java.util.Collections;

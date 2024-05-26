@@ -183,12 +183,8 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction exists(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean exists) {
-        SubQueryExistsSQLFunction existsSQLFunction = new SubQueryExistsSQLFunction(getColumnExpressions(sqlExpression));
-        if(!exists){
-            return not(x->x.sqlFunc(existsSQLFunction));
-        }
-        return existsSQLFunction;
+    public SQLFunction exists(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SubQueryExistsSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     //    @Override

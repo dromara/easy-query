@@ -2,7 +2,6 @@ package com.easy.query.core.func.def.impl;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
-import com.easy.query.core.func.column.ColumnSubQueryExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 
 import java.util.List;
