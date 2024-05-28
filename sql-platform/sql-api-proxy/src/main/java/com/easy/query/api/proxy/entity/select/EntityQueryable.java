@@ -25,7 +25,6 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
-import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -55,6 +54,7 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
         EntityUnionable1<T1Proxy,T1>,
         EntityGroupable1<T1Proxy,T1>,
         EntityJoinable1<T1Proxy,T1>,
+//        EntityMultiable1<T1Proxy,T1>,
         EntityTreeable1<T1Proxy,T1>,
         EntityAvailable<T1Proxy,T1> {
 

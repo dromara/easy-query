@@ -38,7 +38,8 @@ public class AbcMain {
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
                 .build();
         Topic topic = new Topic();
-        String id = topic.getId();
+        topic.setId("123");
+        System.out.println(topic.getId());
 
         EasyEntityQuery easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         //不需要实现接口但是使用方式有点区别

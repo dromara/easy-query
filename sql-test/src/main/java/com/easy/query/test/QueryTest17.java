@@ -826,4 +826,27 @@ public class QueryTest17 extends BaseTest {
                 .toList();
     }
 
+
+//    @Test
+//    public void multiFrom1(){
+//
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//
+//            List<Topic> list = easyEntityQuery.queryable(Topic.class)
+//                    .from(BlogEntity.class, SysUser.class)
+//                    .where((t1, b2, s3) -> {
+//                        t1.id().eq(b2.id());
+//                        b2.content().eq(s3.address());
+//                    }).toList();
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_company` t WHERE IFNULL((SELECT AVG(t1.`age`) FROM `t_user` t1 WHERE t1.`company_id` = t.`id`),0) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("18(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//    }
+
 }
