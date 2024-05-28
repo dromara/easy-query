@@ -11,6 +11,7 @@ import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -765,6 +766,7 @@ public class QueryTest16 extends BaseTest {
     @Test
     public void docSub() {
 
+
         {
 
             ListenerContext listenerContext = new ListenerContext();
@@ -887,6 +889,64 @@ public class QueryTest16 extends BaseTest {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id` AS `value1`,(SELECT COUNT(*) FROM `t_user` t2 WHERE t2.`company_id` = t.`id` AND t2.`name` LIKE ?) AS `value2` FROM `t_company` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("李%(String),%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+
+    @Test
+    public void testDocSub(){
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                List<Company> list = easyEntityQuery.queryable(Company.class)
+                        .where(com -> {
+                            com.users().where(u -> {
+                                u.age().gt(18);
+                            }).any();
+                        }).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_company` t WHERE EXISTS (SELECT 1 FROM `t_user` t1 WHERE t1.`company_id` = t.`id` AND t1.`age` > ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("18(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                List<Company> list = easyEntityQuery.queryable(Company.class)
+                        .where(com -> {
+                            com.users().flatElement().age().gt(18);
+                        }).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_company` t WHERE EXISTS (SELECT 1 FROM `t_user` t1 WHERE t1.`company_id` = t.`id` AND t1.`age` > ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("18(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                List<Company> list = easyEntityQuery.queryable(Company.class)
+                        .where(com -> {
+                            com.users().avg(u->u.age()).gt(BigDecimal.valueOf(18));
+                        }).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_company` t WHERE IFNULL((SELECT AVG(t1.`age`) FROM `t_user` t1 WHERE t1.`company_id` = t.`id`),0) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("18(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
     }

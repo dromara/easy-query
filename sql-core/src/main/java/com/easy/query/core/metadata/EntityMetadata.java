@@ -252,6 +252,13 @@ public class EntityMetadata {
             ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true);
             acceptColumnOption(null, columnOption, columnAllIndex);
         }
+        if(EasyCollectionUtil.isEmpty(property2ColumnMap.keySet())){
+            if (log instanceof NoLoggingImpl) {
+                System.out.println("NoLogging:" + EasyClassUtil.getSimpleName(entityClass)+" not found property bean, plz add get set method");
+            } else {
+                log.warn(EasyClassUtil.getSimpleName(entityClass)+" not found property, plz add bean get set method");
+            }
+        }
         //初始化拦截器
         entityGlobalInterceptorConfigurationInit(configuration);
 
