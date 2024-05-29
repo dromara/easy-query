@@ -11,6 +11,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.func.SQLFunction;
@@ -21,6 +22,7 @@ import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
+import com.easy.query.sqllite.config.SQLLiteDatabaseConfiguration;
 import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
@@ -971,6 +973,317 @@ public class QueryTest14 extends BaseTest {
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("MERGE INTO \"t_topic\" t1 USING (SELECT ? AS \"stars\",? AS \"title\",? AS \"create_time\" FROM DUAL ) t2 ON (t1.\"id\" = t2.\"id\") WHEN MATCHED THEN UPDATE SET t1.\"stars\" = t2.\"stars\",t1.\"title\" = t2.\"title\",t1.\"create_time\" = t2.\"create_time\" WHEN NOT MATCHED THEN INSERT (\"stars\",\"title\",\"create_time\") VALUES (t2.\"stars\",t2.\"title\",t2.\"create_time\")", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("999(Integer),title999(String),2020-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                TopicAuto topicAuto = new TopicAuto();
+                topicAuto.setStars(999);
+                topicAuto.setTitle("title" + 999);
+                topicAuto.setCreateTime(LocalDateTime.of(2020, 1, 1, 1, 1));
+                Assert.assertNull(topicAuto.getId());
+                long l = defaultEasyEntityQuery.insertable(topicAuto)
+                        .onConflictThen(null)
+                        .executeRows();
+            } catch (Exception ignore) {
+                Assert.assertTrue(ignore instanceof EasyQueryInvalidOperationException);
+                Assert.assertEquals("TopicAuto no constraint property", ignore.getMessage());
+            }
+            Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
+            listenerContextManager.clear();
+        }
+
+    }
+
+    @Test
+    public void test3() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(2);
+                    op.setMaxShardingQueryLimit(1);
+                })
+                .useDatabaseConfigure(new SQLLiteDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .build();
+        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+        {
+
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                try {
+
+                    List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                            .where(b -> b.id().eq("123"))
+                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .select(group -> {
+                                BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                                blogEntityProxy.title().set(group.key1());
+                                blogEntityProxy.star().set(group.groupTable().id().intCount());
+                                return blogEntityProxy;
+                            }).limit(10).toList();
+                } catch (Exception ignore) {
+                }
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\" LIMIT 10", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
+
+
+            {
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
+                try {
+
+                    List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                            .where(b -> b.id().eq("123"))
+                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .select(group -> {
+                                BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                                blogEntityProxy.title().set(group.key1());
+                                blogEntityProxy.star().set(group.groupTable().id().intCount());
+                                return blogEntityProxy;
+                            }).limit(20, 10).toList();
+                } catch (Exception ignore) {
+                }
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\" LIMIT 10 OFFSET 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                listenerContextManager.clear();
+            }
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                        .where(b -> b.id().eq("123"))
+                        .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                        .select(group -> {
+                            BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                            blogEntityProxy.title().set(group.key1());
+                            blogEntityProxy.star().set(group.groupTable().id().intCount());
+                            return blogEntityProxy;
+                        }).orderBy(b -> b.star().asc()).limit(20, 10).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t1.\"title\" AS \"title\",t1.\"star\" AS \"star\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") t1 ORDER BY t1.\"star\" ASC LIMIT 10 OFFSET 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
+                        .where(b -> b.id().eq("123"))
+                        .orderBy(b -> b.star().asc())
+                        .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                        .select(group -> {
+                            BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
+                            blogEntityProxy.title().set(group.key1());
+                            blogEntityProxy.star().set(group.groupTable().id().intCount());
+                            return blogEntityProxy;
+                        }).limit(20, 10).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\" ORDER BY t.\"star\" ASC LIMIT 10 OFFSET 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+
+            String sql = defaultEasyEntityQuery
+                    .queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                    .where((t1, b2) -> t1.id().like(b2.title()))
+                    .toSQL();
+            Assert.assertEquals("SELECT t.\"id\",t.\"stars\",t.\"title\",t.\"create_time\" FROM \"t_topic\" t LEFT JOIN \"t_blog\" t1 ON t1.\"deleted\" = ? AND t.\"id\" = t1.\"id\" WHERE t.\"id\" LIKE CONCAT('%',t1.\"title\",'%')", sql);
+
+        }
+        {
+
+            TopicAuto topicAuto = new TopicAuto();
+            topicAuto.setStars(999);
+            topicAuto.setTitle("title" + 999);
+            topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
+            Assert.assertNull(topicAuto.getId());
+            String sql = defaultEasyEntityQuery.insertable(topicAuto)
+                    .asTableLink(o -> o + "1")
+                    .onConflictThen(o -> o.FETCHER.stars().title(), x -> x.title())
+                    .toSQL(topicAuto);
+
+
+            Assert.assertEquals("REPLACE INTO 1\"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?)", sql);
+
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                Topic topicAuto = new Topic();
+                topicAuto.setId("111xxa");
+                topicAuto.setStars(999);
+                topicAuto.setTitle("title" + 999);
+                topicAuto.setCreateTime(LocalDateTime.of(2020, 1, 1, 1, 1));
+                long l = defaultEasyEntityQuery.insertable(topicAuto)
+                        .onConflictThen(null, o -> o.FETCHER.stars().id())
+                        .executeRows();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("INSERT INTO \"t_topic\" (\"id\",\"stars\",\"title\",\"create_time\") SELECT ?,?,?,? WHERE NOT EXISTS(SELECT 1 FROM \"t_topic\" t  WHERE (t.\"stars\" = ? AND t.\"id\" = ?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("111xxa(String),999(Integer),title999(String),2020-01-01T01:01(LocalDateTime),999(Integer),111xxa(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                Topic topicAuto = new Topic();
+                topicAuto.setId("111xxa");
+                topicAuto.setStars(999);
+                topicAuto.setTitle("title" + 999);
+                topicAuto.setCreateTime(LocalDateTime.of(2020, 1, 1, 1, 1));
+                long l = defaultEasyEntityQuery.insertable(topicAuto)
+                        .onConflictThen(null, o -> o.FETCHER.stars())
+                        .executeRows();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("INSERT INTO \"t_topic\" (\"id\",\"stars\",\"title\",\"create_time\") SELECT ?,?,?,? WHERE NOT EXISTS(SELECT 1 FROM \"t_topic\" t  WHERE (t.\"stars\" = ?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("111xxa(String),999(Integer),title999(String),2020-01-01T01:01(LocalDateTime),999(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                TopicAuto topicAuto = new TopicAuto();
+                topicAuto.setStars(999);
+                topicAuto.setTitle("title" + 999);
+                topicAuto.setCreateTime(LocalDateTime.of(2020, 1, 1, 1, 1));
+                long l = defaultEasyEntityQuery.insertable(topicAuto)
+                        .onConflictThen(null, o -> o.FETCHER.stars().id())
+                        .executeRows();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") SELECT ?,?,? WHERE NOT EXISTS(SELECT 1 FROM \"t_topic_auto\" t  WHERE (t.\"stars\" = ?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("999(Integer),title999(String),2020-01-01T01:01(LocalDateTime),999(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                TopicAuto topicAuto = new TopicAuto();
+                topicAuto.setStars(999);
+                topicAuto.setTitle("title" + 999);
+                topicAuto.setCreateTime(LocalDateTime.of(2020, 1, 1, 1, 1));
+                Assert.assertNull(topicAuto.getId());
+                long l = defaultEasyEntityQuery.insertable(topicAuto)
+                        .onConflictThen(o -> o.FETCHER.stars().title())
+                        .executeRows();
+            } catch (Exception ignore) {
+                Assert.assertTrue(ignore instanceof EasyQuerySQLCommandException);
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("REPLACE INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("999(Integer),title999(String),2020-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                TopicAuto topicAuto = new TopicAuto();
+                topicAuto.setStars(999);
+                topicAuto.setTitle("title" + 999);
+                topicAuto.setCreateTime(LocalDateTime.of(2020, 1, 1, 1, 1));
+                Assert.assertNull(topicAuto.getId());
+                long l = defaultEasyEntityQuery.insertable(topicAuto)
+                        .onConflictThen(o -> o.FETCHER.stars().title(), x -> x.id())
+                        .executeRows();
+            } catch (Exception ignore) {
+                Assert.assertTrue(ignore instanceof EasyQuerySQLCommandException);
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("REPLACE INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("999(Integer),title999(String),2020-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                Topic topicAuto = new Topic();
+                topicAuto.setStars(999);
+                topicAuto.setTitle("title" + 999);
+                topicAuto.setCreateTime(LocalDateTime.of(2020, 1, 1, 1, 1));
+                Assert.assertNull(topicAuto.getId());
+                long l = defaultEasyEntityQuery.insertable(topicAuto)
+                        .onConflictThen(o -> o.FETCHER.allFields())
+                        .executeRows();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("REPLACE INTO \"t_topic\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("999(Integer),title999(String),2020-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
