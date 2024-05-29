@@ -197,11 +197,19 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
 
     @Override
     public AsSelector columnFunc(TableAvailable table, SQLFunction sqlFunction, String propertyAlias) {
-        ResultColumnInfo resultColumnInfo = getResultColumnName(propertyAlias);
-        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
-                .toSQLSegment(expressionContext, table, runtimeContext, resultColumnInfo.getColumnAsName());
-        FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, resultColumnInfo.getColumnMetadata(), runtimeContext, sqlSegment, sqlFunction.getAggregationType(), resultColumnInfo.getColumnAsName());
-        sqlBuilderSegment.append(funcColumnSegment);
+        if(propertyAlias==null){
+
+            SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                    .toSQLSegment(expressionContext, table, runtimeContext, null);
+            FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, null, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), null);
+            sqlBuilderSegment.append(funcColumnSegment);
+        }else{
+            ResultColumnInfo resultColumnInfo = getResultColumnName(propertyAlias);
+            SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                    .toSQLSegment(expressionContext, table, runtimeContext, resultColumnInfo.getColumnAsName());
+            FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, resultColumnInfo.getColumnMetadata(), runtimeContext, sqlSegment, sqlFunction.getAggregationType(), resultColumnInfo.getColumnAsName());
+            sqlBuilderSegment.append(funcColumnSegment);
+        }
 //        columnAppendSQLFunction(table,property,sqlFunction,propertyAlias);
 //        sqlActionExpression.apply();
         return this;

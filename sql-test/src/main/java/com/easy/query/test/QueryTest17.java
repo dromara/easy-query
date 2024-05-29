@@ -12,6 +12,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -661,8 +662,8 @@ public class QueryTest17 extends BaseTest {
                     })
                     .select(t -> {
                         TopicProxy topicProxy = new TopicProxy();
-                        topicProxy.selectColumn(t,"id");
-                        topicProxy.selectColumn(t,"title");
+                        topicProxy.selectColumn(t, "id");
+                        topicProxy.selectColumn(t, "title");
                         return topicProxy;
                     }).toList();
 
@@ -701,7 +702,7 @@ public class QueryTest17 extends BaseTest {
     }
 
     @Test
-     public void testxxx9(){
+    public void testxxx9() {
         Class<Topic> topicClass = Topic.class;
         TopicProxy topicProxy = EntityQueryProxyManager.create(topicClass);
         Assert.assertNotNull(topicProxy);
@@ -717,7 +718,7 @@ public class QueryTest17 extends BaseTest {
 
 
     @Test
-    public void textLikeFunc(){
+    public void textLikeFunc() {
 
 
         {
@@ -809,7 +810,7 @@ public class QueryTest17 extends BaseTest {
 //    }
 
     @Test
-    public void xxx(){
+    public void xxx() {
         List<MyTopic> list = easyEntityQuery.queryable(MyTopic.class)
                 .where(m -> m.id().eq("123"))
                 .toList();
@@ -827,7 +828,7 @@ public class QueryTest17 extends BaseTest {
     }
 
 
-//    @Test
+    //    @Test
 //    public void multiFrom1(){
 //
 //        {
@@ -848,5 +849,280 @@ public class QueryTest17 extends BaseTest {
 //            listenerContextManager.clear();
 //        }
 //    }
+    @Test
+    public void testNativeSQL() {
 
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                    .where(b -> {
+                        b.id().eq("123");
+                    }).orderBy(t -> {
+                        t.expression().sql("RAND()");
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? ORDER BY RAND()", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Topic> list = easyQuery.queryable(Topic.class)
+                    .where(b -> {
+                        b.eq(Topic::getId, "123");
+                    }).orderByAsc(t -> {
+                        t.sqlNativeSegment("RAND()");
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? ORDER BY RAND()", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Topic> list = easyQueryClient.queryable(Topic.class)
+                    .where(b -> {
+                        b.eq("id", "123");
+                    }).orderByAsc(t -> {
+                        t.sqlNativeSegment("RAND()");
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? ORDER BY RAND()", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+    }
+
+    @Test
+    public void testNativeSQL1() {
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                    .where(b -> {
+                        b.id().eq("123");
+                    }).orderBy(t -> {
+                        t.expression().sql("IFNULL({0},{1}) DESC", c -> {
+                            c.expression(t.stars()).value(1);
+                        });
+                        t.expression().sql("RAND()");
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? ORDER BY IFNULL(`stars`,?) DESC,RAND()", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Topic> list = easyQuery.queryable(Topic.class)
+                    .where(b -> {
+                        b.eq(Topic::getId, "123");
+                    }).orderByAsc(t -> {
+                        t.sqlNativeSegment("IFNULL({0},{1}) DESC", c -> {
+                            c.expression(Topic::getStars).value(1);
+                        });
+                        t.sqlNativeSegment("RAND()");
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? ORDER BY IFNULL(`stars`,?) DESC,RAND()", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Topic> list = easyQueryClient.queryable(Topic.class)
+                    .where(b -> {
+                        b.eq("id", "123");
+                    }).orderByAsc(t -> {
+                        t.sqlNativeSegment("IFNULL({0},{1}) DESC", c -> {
+                            c.expression("stars").value(1);
+                        });
+                        t.sqlNativeSegment("RAND()");
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? ORDER BY IFNULL(`stars`,?) DESC,RAND()", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+    }
+
+    @Test
+    public void testNativeSQL2() {
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                    .where(b -> {
+                        b.id().eq("123");
+                        b.expression().sql("{0}!={1}", c -> {
+                            c.expression(b.stars()).expression(b.createTime());
+                        });
+                    }).orderBy(t -> {
+                        t.expression().sql("IFNULL({0},{1}) DESC", c -> {
+                            c.expression(t.stars()).value(1);
+                        });
+                        t.expression().sql("RAND()");
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? AND `stars`!=`create_time` ORDER BY IFNULL(`stars`,?) DESC,RAND()", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Topic> list = easyQuery.queryable(Topic.class)
+                    .where(b -> {
+                        b.eq(Topic::getId, "123");
+                        b.sqlNativeSegment("{0}!={1}", c -> {
+                            c.expression(Topic::getStars).expression(Topic::getCreateTime);
+                        });
+                    }).orderByAsc(t -> {
+                        t.sqlNativeSegment("IFNULL({0},{1}) DESC", c -> {
+                            c.expression(Topic::getStars).value(1);
+                        });
+                        t.sqlNativeSegment("RAND()");
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? AND `stars`!=`create_time` ORDER BY IFNULL(`stars`,?) DESC,RAND()", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Topic> list = easyQueryClient.queryable(Topic.class)
+                    .where(b -> {
+                        b.eq("id", "123");
+                        b.sqlNativeSegment("{0}!={1}", c -> {
+                            c.expression("stars").expression("createTime");
+                        });
+                    }).orderByAsc(t -> {
+                        t.sqlNativeSegment("IFNULL({0},{1}) DESC", c -> {
+                            c.expression("stars").value(1);
+                        });
+                        t.sqlNativeSegment("RAND()");
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? AND `stars`!=`create_time` ORDER BY IFNULL(`stars`,?) DESC,RAND()", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+    }
+
+    @Test
+    public void testNativeSQL3() {
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Draft2<Double, Integer>> list = easyEntityQuery.queryable(Topic.class)
+                    .where(b -> {
+                        b.id().eq("123");
+                    }).select(t -> Select.DRAFT.of(
+                            t.expression().sqlType("RAND()").setPropertyType(Double.class),
+                            t.expression().sqlType("IFNULL({0},{1})", c -> {
+                                c.expression(t.stars()).value(1);
+                            }).setPropertyType(Integer.class)
+                    )).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT RAND() AS `value1`,IFNULL(t.`stars`,?) AS `value2` FROM `t_topic` t WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+
+        {
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                    .where(b -> {
+                        b.id().eq("123");
+                    }).select(Topic.class,t -> Select.of(
+                            t.expression().sqlType("RAND()",c->{
+                                c.setAlias(t.stars());
+                            }).setPropertyType(Double.class),
+                            t.expression().sqlType("IFNULL({0},{1})", c -> {
+                                c.expression(t.stars());
+                                c.value(1);
+                                c.setAlias(t.createTime());
+                            }).setPropertyType(Integer.class)
+                    )).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT RAND() AS `stars`,IFNULL(t.`stars`,?) AS `createTime` FROM `t_topic` t WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+    }
 }

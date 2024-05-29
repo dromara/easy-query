@@ -33,6 +33,10 @@ public interface SQLNativeProxyExpressionChain<TChain> {
     TChain format(Object formatVal);
 
     TChain setAlias(String alias);
+    default <TEntityProxy extends ProxyEntity<TEntityProxy, TEntity>, TEntity, TProperty> TChain setAlias(SQLColumn<TEntityProxy, TProperty> sqlColumn){
+        return setAlias(sqlColumn.getValue());
+    }
+
     /**
      * 因为默认{@link MessageFormat#format(Object)}会将参数"ifnull(id,'')"改为"ifnull(id,')"
      * 会认为单引号是转义符所以这边需要将单引号全部改为双引号,所以采用和输入文本一样的风格
