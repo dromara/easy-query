@@ -36,6 +36,9 @@ public class EasyExecuteUpdateExecutor extends AbstractExecutor<AffectedRowsExec
         ExecutionUnit executionUnit = commandExecuteUnit.getExecutionUnit();
         SQLRouteUnit sqlRouteUnit = executionUnit.getSQLRouteUnit();
         String sql = sqlRouteUnit.getSQL();
+//        if(sql==null){
+//            return new AffectedRowsExecuteResult(0);
+//        }
         List<SQLParameter> parameters = sqlRouteUnit.getParameters();
         boolean isSharding = streamMergeContext.isSharding();
         boolean configReplica = streamMergeContext.configReplica();

@@ -6,6 +6,7 @@ import com.easy.query.api4j.func.LambdaSQLFunc;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
@@ -25,6 +26,9 @@ import com.easy.query.test.entity.MyTopic5;
 import com.easy.query.test.entity.MyTopicx;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
+import com.easy.query.test.entity.base.Province;
+import com.easy.query.test.entity.base.ProvinceVO;
+import com.easy.query.test.entity.base.proxy.ProvinceVOProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
@@ -35,8 +39,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * create time 2024/5/6 17:16
@@ -1074,6 +1081,23 @@ public class QueryTest17 extends BaseTest {
     @Test
     public void testNativeSQL3() {
 
+//        easyEntityQuery.queryable(BlogEntity.class)
+//                .where(b -> b.content().like("123"))
+//                .groupBy(b -> GroupKeys.TABLE1.of())
+
+
+        List<Topic> topics=new ArrayList<>();
+        Map<String, List<Topic>> collect = topics.stream().collect(Collectors.groupingBy(x -> x.getId()));
+
+        List<Draft1<String>> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> b.content().like("123"))
+                .groupBy(b -> GroupKeys.TABLE1.of(
+                        b.createTime().nullOrDefault(LocalDateTime.now()).format("yyyy-MM-dd")
+                )).select(group -> Select.DRAFT.of(
+                        group.key1()
+                )).toList();
+        System.out.println("1");
+
         {
 
             ListenerContext listenerContext = new ListenerContext();
@@ -1099,6 +1123,7 @@ public class QueryTest17 extends BaseTest {
         }
 
         {
+            NameConversion service = easyEntityQuery.getRuntimeContext().getService(NameConversion.class);
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
@@ -1124,5 +1149,40 @@ public class QueryTest17 extends BaseTest {
             Assert.assertEquals("1(Integer),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
         }
+
     }
+
+    @Test
+    public void testSubFrom(){
+        List<Province> list = easyEntityQuery.queryable(Province.class)
+                .where(p -> {
+                    p.code().eq("123");
+                }).select(p -> p.FETCHER.code().name().fetchProxy())
+                .toList();
+    }
+
+    @Test
+    public void testSubFrom1(){
+        List<ProvinceVO> list = easyEntityQuery.queryable(Province.class)
+                .where(p -> {
+                    p.code().eq("123");
+                }).select(p -> {
+                    ProvinceVOProxy r = new ProvinceVOProxy();
+                    r.myName().set(p.code());
+                    r.myCode().set(p.name());
+                    return r;
+                }).where(p -> {
+                    p.myCode().like("123");
+                }).toList();
+
+
+        List<ProvinceVO> list2 = easyEntityQuery.queryable(Province.class)
+                .where(p -> {
+                    p.code().eq("123");
+                }).select(ProvinceVO.class,p -> Select.of(
+                        p.code().as(ProvinceVO.Fields.myName),
+                        p.name().as(ProvinceVO.Fields.myCode)
+                )).toList();
+    }
+
 }

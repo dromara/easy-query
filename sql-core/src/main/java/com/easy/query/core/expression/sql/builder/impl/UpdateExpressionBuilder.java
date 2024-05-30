@@ -37,6 +37,8 @@ import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEnti
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
@@ -58,6 +60,7 @@ import java.util.function.Predicate;
  * @Date: 2023/3/4 17:05
  */
 public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBuilder implements EntityUpdateExpressionBuilder {
+
     protected final boolean isExpressionUpdate;
     protected SQLBuilderSegment setColumns;
     protected PredicateSegment where;
@@ -160,14 +163,30 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     private EntityUpdateSQLExpression toUpdateExpression() {
 
         checkTable();
-        if (EasySQLSegmentUtil.isEmpty(setColumns)) {
-            throw new EasyQueryException("'UPDATE' statement without 'SET' execute wrong");
-        }
+//        if (EasySQLSegmentUtil.isEmpty(setColumns)) {
+//            log.warn("'UPDATE' statement without 'SET',not generate sql execute");
+//        }
         if (EasySQLSegmentUtil.isEmpty(where)) {
             throw new EasyQueryException("'UPDATE' statement without 'WHERE'");
         }
-        EntityTableExpressionBuilder tableExpressionBuilder = getTable(0);
+//        EntityTableExpressionBuilder tableExpressionBuilder = getTable(0);
+//        TableAvailable entityTable = tableExpressionBuilder.getEntityTable();
+//        if (EasySQLSegmentUtil.isEmpty(setColumns)) {
+//            SetterImpl setter = new SetterImpl(this, getSetColumns());
+//            if(EasyCollectionUtil.isNotEmpty(entityTable.getEntityMetadata().getKeyProperties())){
+//                for (String keyProperty : entityTable.getEntityMetadata().getKeyProperties()) {
+//                    setter.setWithColumn(entityTable,keyProperty,keyProperty);
+//                }
+//            }else{
+//                String firstProperty = EasyCollectionUtil.first(entityTable.getEntityMetadata().getProperties());
+//                setter.setWithColumn(entityTable,firstProperty,firstProperty);
+//            }
+//            SQLExpressionInvokeFactory easyQueryLambdaFactory = getRuntimeContext().getSQLExpressionInvokeFactory();
+//            WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(entityTable, this, where);
+//            sqlPredicate.sqlNativeSegment("1=2");
+//        }
 
+        EntityTableExpressionBuilder tableExpressionBuilder = getTable(0);
         SQLBuilderSegment updateSetSQLSegment = buildSetSQLSegment(tableExpressionBuilder);
         //逻辑删除
         PredicateSegment sqlWhere = sqlPredicateFilter(tableExpressionBuilder, where);

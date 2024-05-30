@@ -2,7 +2,9 @@ package com.easy.query.core.expression.executor.query.base;
 
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
+import com.easy.query.core.util.EasyStringUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +27,9 @@ public class PredicateExecutionCreator extends BaseExecutionCreator{
     @Override
     protected List<ExecutionUnit> createExecutionUnits() {
         ExecutionUnit executionUnit = createExecutionUnit(dataSource, easyEntitySQLExpression, null, false,null);
+        if (EasyStringUtil.isBlank(executionUnit.getSQLRouteUnit().getSQL())) {
+            return new ArrayList<>(0);
+        }
         return Collections.singletonList(executionUnit);
     }
 }

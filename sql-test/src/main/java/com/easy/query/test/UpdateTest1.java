@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.util.EasySQLUtil;
@@ -490,7 +491,6 @@ public class UpdateTest1 extends BaseTest {
     @Test
     public void testUpdate5() {
 
-
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         Supplier<Exception> f = () -> {
@@ -525,5 +525,42 @@ public class UpdateTest1 extends BaseTest {
         Assert.assertEquals("UPDATE `_abc`.`t_blog_abc` SET `title` = (CASE WHEN `title` = ? THEN ? ELSE ? END) WHERE `deleted` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),1(String),2(String),false(Boolean),2xxxa(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+    @Test
+    public void updateNoSet(){
+        {
+
+            long l = easyEntityQuery.updatable(Topic.class)
+                    .where(t -> t.id().eq("xxxmmnbv"))
+                    .executeRows();
+            Assert.assertEquals(0,l);
+        }
+        {
+
+            easyEntityQuery.updatable(Topic.class)
+                    .where(t -> t.id().eq("xxxmmnbv"))
+                    .executeRows(0,"123");
+        }
+    }
+
+
+
+    @Test
+    public void updateTest51() {
+        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        try {
+
+            trackManager.begin();
+            Topic topic = easyQuery.queryable(Topic.class).asTracking()
+                    .whereById("1").firstNotNull();
+
+            long l = easyQuery.updatable(topic).executeRows();
+            Assert.assertEquals(0, l);
+        } finally {
+
+            trackManager.release();
+        }
+        Assert.assertFalse(trackManager.currentThreadTracking());
     }
 }

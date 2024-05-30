@@ -1,14 +1,16 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
-import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.UpdateSetSQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
+import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
@@ -22,6 +24,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public  class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
+    private static final Log log= LogFactory.getLog(UpdateSQLExpressionImpl.class);
     protected final SQLBuilderSegment setColumns;
     protected final PredicateSegment where;
     protected final List<EntityTableSQLExpression> tables=new ArrayList<>(1);
@@ -65,6 +68,7 @@ public  class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         if(EasySQLSegmentUtil.isEmpty(setColumns)){
+            log.warn("'UPDATE' statement without 'SET',not generate sql execute");
             return null;
         }
         EntityTableSQLExpression easyTableSQLExpression = tables.get(0);

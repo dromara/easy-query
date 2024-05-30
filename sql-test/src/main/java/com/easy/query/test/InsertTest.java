@@ -650,6 +650,22 @@ public class InsertTest extends BaseTest {
 
     @Test
     public void insertTableLinkTest1() {
+//        {
+//
+//            Topic topicAuto = new Topic();
+//            topicAuto.setStars(999);
+//            topicAuto.setTitle("title" + 999);
+//            topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
+//            Assert.assertNull(topicAuto.getId());
+//            String sql = easyEntityQuery.insertable(topicAuto)
+//                    .asTableLink(o -> o + "1")
+//                    .onConflictThen(o->o.FETCHER.allFields())
+//                    .toSQL(topicAuto);
+//
+//
+//            Assert.assertEquals("INSERT INTO 1`t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`)", sql);
+//
+//        }
         {
 
             TopicAuto topicAuto = new TopicAuto();
