@@ -169,6 +169,12 @@ public class RelationTest extends BaseTest {
         try {
             relationInit(ids);
             {
+                List<SchoolClassVO> list = easyEntityQuery.queryable(SchoolStudent.class)
+                        .where(s -> s.name().like("123"))
+                        .select(SchoolClassVO.class, x -> x.schoolStudentAddress().FETCHER.allFields())
+                        .toList();
+            }
+            {
                 boolean exception=true;
                 try {
 

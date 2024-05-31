@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * @author xuejiaming
@@ -238,7 +239,7 @@ public class EasyCollectionUtil {
         return result;
     }
 
-    public static <TSource> TSource firstOrDefault(List<TSource> source, java.util.function.Predicate<TSource> predicate, TSource def) {
+    public static <TSource> TSource firstOrDefault(Collection<TSource> source, java.util.function.Predicate<TSource> predicate, TSource def) {
         if (source == null) {
             return def;
         }
@@ -251,6 +252,23 @@ public class EasyCollectionUtil {
             }
         }
         return def;
+    }
+    public static <TSource> TSource firstOrDefaultOrElseGet(Collection<TSource> source, java.util.function.Predicate<TSource> predicate, Supplier<TSource> defFunc) {
+        if (defFunc==null){
+            throw new IllegalArgumentException("defFunc");
+        }
+        if (source == null) {
+            return defFunc.get();
+        }
+        if (source.isEmpty()) {
+            return defFunc.get();
+        }
+        for (TSource tSource : source) {
+            if (predicate.test(tSource)) {
+                return tSource;
+            }
+        }
+        return defFunc.get();
     }
 
     public static <TSource> TSource firstOrDefault(List<TSource> source, TSource def) {

@@ -208,7 +208,10 @@ public abstract class AbstractSelector<TChain> {
 
     public TChain columnAll(TableAvailable table) {
         if (table.isAnonymous()) {
-            EntityTableExpressionBuilder entityTableExpressionBuilder = EasyCollectionUtil.firstOrDefault(entityQueryExpressionBuilder.getTables(), t -> Objects.equals(table, t.getEntityTable()), null);
+
+            EntityTableExpressionBuilder entityTableExpressionBuilder = EasyCollectionUtil.firstOrDefaultOrElseGet(entityQueryExpressionBuilder.getTables(), t -> Objects.equals(table, t.getEntityTable()), ()->{
+                return EasyCollectionUtil.firstOrDefault(entityQueryExpressionBuilder.getRelationTables().values(), t -> Objects.equals(table, t.getEntityTable()), null);
+            });
             if (entityTableExpressionBuilder == null) {
                 throw new EasyQueryInvalidOperationException("not found table in expression context:" + EasyClassUtil.getSimpleName(table.getEntityClass()));
             }

@@ -116,7 +116,9 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
             return this;
         } else {
 
-            EntityTableExpressionBuilder tableExpressionBuilder = EasyCollectionUtil.firstOrDefault(entityQueryExpressionBuilder.getTables(), t -> Objects.equals(table, t.getEntityTable()), null);
+            EntityTableExpressionBuilder tableExpressionBuilder = EasyCollectionUtil.firstOrDefaultOrElseGet(entityQueryExpressionBuilder.getTables(), t -> Objects.equals(table, t.getEntityTable()), ()->{
+                return EasyCollectionUtil.firstOrDefault(entityQueryExpressionBuilder.getRelationTables().values(), t -> Objects.equals(table, t.getEntityTable()), null);
+            });
             if(tableExpressionBuilder==null){
                 throw new EasyQueryInvalidOperationException("not found table in expression context:"+ EasyClassUtil.getSimpleName(table.getEntityClass()));
             }
