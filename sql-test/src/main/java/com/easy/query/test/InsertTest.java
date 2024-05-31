@@ -594,6 +594,21 @@ public class InsertTest extends BaseTest {
             Map<String, Object> stringObjectHashMap = new LinkedHashMap<>();
             stringObjectHashMap.put("id", 123);
             stringObjectHashMap.put("name", "小明");
+            easyQuery.mapInsertable(Arrays.asList(stringObjectHashMap))
+                    .asTable("aaaaa")
+                    .batch()
+                    .executeRows();
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("INSERT INTO `aaaaa` (`id`,`name`) VALUES (?,?)", sql);
+        }
+        try {
+            Map<String, Object> stringObjectHashMap = new LinkedHashMap<>();
+            stringObjectHashMap.put("id", 123);
+            stringObjectHashMap.put("name", "小明");
             easyQuery.mapInsertable(stringObjectHashMap)
                     .asTable("aaaaa")
                     .executeRows();

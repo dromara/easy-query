@@ -30,8 +30,6 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.SQLFunctionTranslateImpl;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
@@ -126,13 +124,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
             return this;
         } else {
 
-            EntityTableExpressionBuilder tableBuilder = EasyCollectionUtil.firstOrDefaultOrElseGet(entityQueryExpressionBuilder.getTables(), t -> Objects.equals(table, t.getEntityTable()), ()->{
-                return EasyCollectionUtil.firstOrDefault(entityQueryExpressionBuilder.getRelationTables().values(), t -> Objects.equals(table, t.getEntityTable()), null);
-            });
-            if (tableBuilder == null) {
-                ;
-                throw new EasyQueryInvalidOperationException("not found table in expression context:" + EasyClassUtil.getSimpleName(table.getEntityClass()));
-            }
+            EntityTableExpressionBuilder tableBuilder = getTableExpressionBuilderByTable(table);
             return columnAll(tableBuilder);
         }
     }
