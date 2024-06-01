@@ -16,6 +16,7 @@ import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLOrderByColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWhereAggregatePredicateImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -100,6 +101,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return entityQueryable.firstOrNull(resultClass);
     }
 
+    @NotNull
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code) {
         return entityQueryable.firstNotNull(resultClass, msg, code);
@@ -119,6 +121,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return entityQueryable.singleNotNull(resultClass, msg, code);
     }
 
+    @NotNull
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         return entityQueryable.firstNotNull(resultClass,throwFunc);

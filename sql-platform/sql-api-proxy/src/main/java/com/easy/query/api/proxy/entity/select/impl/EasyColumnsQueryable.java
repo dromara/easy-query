@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.entity.select.impl;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
@@ -143,6 +144,7 @@ public class EasyColumnsQueryable<TEntity> implements Query<List<TEntity>> {
         return getNavigates(entity);
     }
 
+    @NotNull
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         Object entity = queryable.firstNotNull(queryable.queryClass(), throwFunc);

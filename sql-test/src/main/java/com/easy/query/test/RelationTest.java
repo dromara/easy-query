@@ -182,9 +182,17 @@ public class RelationTest extends BaseTest {
                     List<SchoolClassAOProp8> list = easyEntityQuery.queryable(SchoolClass.class)
                             .selectAutoInclude(SchoolClassAOProp8.class)
                             .toList();
+                    boolean anyMatch1 = list.stream().anyMatch(o -> o.getSchoolStudents().size() > 0);
+                    Assert.assertTrue(anyMatch1);
                     for (SchoolClassAOProp8 schoolClassAOProp8 : list) {
+                        if(!schoolClassAOProp8.getSchoolStudents().isEmpty()){
+                            boolean anyMatch = schoolClassAOProp8.getSchoolStudents().stream().anyMatch(o -> o.getClassNames().size() > 0);
+                            Assert.assertTrue(anyMatch);
+                        }
                         for (SchoolClassAOProp8.SchoolStudentAO schoolStudentAO : schoolClassAOProp8.getSchoolStudents()) {
+                            for (String className : schoolStudentAO.getClassNames()) {
 
+                            }
                         }
                     }
                     exception=false;

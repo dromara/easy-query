@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasySelectFlatQueryable;
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -128,11 +129,13 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
 
+    @NotNull
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code) {
         return getClientQueryable().firstNotNull(resultClass, msg, code);
     }
 
+    @NotNull
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         return getClientQueryable().firstNotNull(resultClass, throwFunc);

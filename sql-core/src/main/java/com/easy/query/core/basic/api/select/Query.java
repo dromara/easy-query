@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.executor.MapAble;
 import com.easy.query.core.basic.api.select.executor.QueryExecutable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
@@ -144,7 +145,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
      * @return
      */
-    default T firstOrNull() {
+    default @Nullable T firstOrNull() {
         return firstOrNull(queryClass());
     }
 
@@ -156,13 +157,13 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      * @param code
      * @return
      */
-    default T firstNotNull(String msg, String code) {
+    default @NotNull T firstNotNull(String msg, String code) {
         return firstNotNull(queryClass(), msg, code);
     }
-    default <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code){
+    default <TR> @NotNull TR firstNotNull(Class<TR> resultClass, String msg, String code){
         return firstNotNull(resultClass,()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createFirstNotNullException(this,msg,code));
     }
-    default T firstNotNull(Supplier<RuntimeException> throwFunc){
+    default @NotNull T firstNotNull(Supplier<RuntimeException> throwFunc){
         return firstNotNull(queryClass(),throwFunc);
     }
     /**
@@ -170,7 +171,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      */
-    default T singleOrNull() {
+    default @Nullable T singleOrNull() {
         return singleOrNull(queryClass());
     }
 
@@ -184,14 +185,14 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      * @throws EasyQuerySingleNotNullException 如果查询不到数据
      */
-    default T singleNotNull(String msg, String code) {
+    default @NotNull T singleNotNull(String msg, String code) {
         return singleNotNull(queryClass(), msg, code);
     }
 
-    default <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code){
+    default <TR> @NotNull TR singleNotNull(Class<TR> resultClass, String msg, String code){
         return singleNotNull(resultClass,()->getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createSingleNotNullException(this,msg,code));
     }
-    default T singleNotNull(Supplier<RuntimeException> throwFunc){
+    default @NotNull T singleNotNull(Supplier<RuntimeException> throwFunc){
         return singleNotNull(queryClass(),throwFunc);
     }
 
@@ -237,7 +238,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      *
      * @return 获取查询结果集
      */
-    default List<T> toList() {
+    default @NotNull List<T> toList() {
         return toList(queryClass());
     }
     /**
@@ -264,7 +265,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      *
      * @return
      */
-    default JdbcStreamResult<T> toStreamResult(SQLConsumer<Statement> configurer) {
+    default @NotNull JdbcStreamResult<T> toStreamResult(SQLConsumer<Statement> configurer) {
         return toStreamResult(queryClass(),configurer);
     }
     /**
@@ -273,7 +274,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      *
      * @return
      */
-    default Query<T> distinct() {
+    default @NotNull Query<T> distinct() {
         return distinct(true);
     }
 
@@ -285,7 +286,7 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
      * @param condition
      * @return
      */
-    Query<T> distinct(boolean condition);
+    @NotNull Query<T> distinct(boolean condition);
 
     default Query<T> limit(long rows) {
         return limit(true, rows);

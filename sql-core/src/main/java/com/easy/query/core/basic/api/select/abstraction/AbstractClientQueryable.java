@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
@@ -320,6 +321,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return EasyCollectionUtil.firstOrNull(list);
     }
 
+    @NotNull
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         TR result = firstOrNull(resultClass);
