@@ -1,6 +1,7 @@
 package com.easy.query.test.kt
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery
+import com.easy.query.api.proxy.client.DefaultEasyProxyQuery
 import com.easy.query.api.proxy.client.EasyEntityQuery
 import com.easy.query.api.proxy.client.EasyProxyQuery
 import com.easy.query.api4j.client.EasyQuery
@@ -22,6 +23,7 @@ open class BaseKtTest {
         var easyQueryClient: EasyQueryClient? = null
         var easyKtQuery: EasyKtQuery? = null
         var easyEntityQuery: EasyEntityQuery? = null
+        var easyProxyQuery: EasyProxyQuery? = null
         init {
             // 在这里编写静态初始化代码
             LogFactory.useStdOutLogging();
@@ -41,6 +43,7 @@ open class BaseKtTest {
                 .build()
             easyKtQuery= DefaultEasyKtQuery(easyQueryClient);
             easyEntityQuery= DefaultEasyEntityQuery(easyQueryClient);
+            easyProxyQuery= DefaultEasyProxyQuery(easyQueryClient);
         }
 
         // 伴生对象的其他成员（可以包括属性、方法等）

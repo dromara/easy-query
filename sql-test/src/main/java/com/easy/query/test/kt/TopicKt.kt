@@ -4,8 +4,6 @@ import com.easy.query.core.annotation.Column
 import com.easy.query.core.annotation.EntityProxy
 import com.easy.query.core.annotation.Table
 
-import com.easy.query.core.proxy.ProxyEntityAvailable;
-
 @Table("t_topic")
 @EntityProxy
  class TopicKt {
