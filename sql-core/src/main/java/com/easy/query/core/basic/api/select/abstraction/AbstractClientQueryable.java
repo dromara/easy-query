@@ -22,7 +22,7 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
-import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByStreamValue;
+import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByValue;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterable;
@@ -747,7 +747,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //
 //                        }
 //                    }
-                    return new MappingPathIterator(o.values().collect(Collectors.toList()));
+                    return new MappingPathIterator(o.values());
                 }).collect(Collectors.toList());
 
     }
@@ -789,25 +789,30 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             return;
         }
         List<NavigateFlatProperty> navigateFlatProperties = mappingPathIterator.next();
-        List<GroupByStreamValue<String, NavigateFlatProperty>> navigateFlatGroupProperties = EasyUtil.groupBy(navigateFlatProperties.stream(), x -> x.getProperty()).collect(Collectors.toList());
-        for (GroupByStreamValue<String, NavigateFlatProperty> navigateFlatGroupProperty : navigateFlatGroupProperties) {
+        List<GroupByValue<String, NavigateFlatProperty>> navigateFlatGroupProperties = EasyUtil.groupBy(navigateFlatProperties.stream(), x -> x.getProperty()).collect(Collectors.toList());
+        for (GroupByValue<String, NavigateFlatProperty> navigateFlatGroupProperty : navigateFlatGroupProperties) {
             String propertyName = navigateFlatGroupProperty.key();
             NavigateMetadata entityNavigateMetadata = entityMetadata.getNavigateOrNull(propertyName);
             //既不是导航属性也不是column属性就抛错
             if (entityNavigateMetadata == null) {
-                ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(propertyName);
+                NavigateFlatProperty navigateFlatProperty = EasyCollectionUtil.firstOrNull(navigateFlatGroupProperty.values());
+                if(navigateFlatProperty!=null){
 
-                if(columnMetadata==null){
-                    String warningMessage = String.format("NavigateFlat:%s not found navigate property:[%s]", EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()), propertyName);
-                    throw new EasyQueryInvalidOperationException(warningMessage);
+                    if(navigateFlatProperty.getNavigateFlatMetadata().isBasicType()){
+                        ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(propertyName);
+                        if(columnMetadata!=null){
+                            continue;
+                        }
+                    }
                 }
+                String warningMessage = String.format("NavigateFlat:%s not found navigate property:[%s]", EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()), propertyName);
+                throw new EasyQueryInvalidOperationException(warningMessage);
 //
 //                if (log instanceof NoLoggingImpl) {
 //                    System.out.println("NoLogging:" + warningMessage);
 //                } else {
 //                    log.warn(warningMessage);
 //                }
-                continue;
             }
 //            List<NavigateFlatProperty> flatProperties = navigateFlatGroupProperty.values().collect(Collectors.toList());
             //获取当前属性没有后续的属性了的 path最后一个是navigate那么就不可以是自定义dto只能是table

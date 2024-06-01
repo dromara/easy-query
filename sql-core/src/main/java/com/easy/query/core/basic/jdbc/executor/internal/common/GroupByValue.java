@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.common;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 /**
  * create time 2023/4/14 17:00
@@ -8,7 +8,7 @@ import java.util.stream.Stream;
  *
  * @author xuejiaming
  */
-public interface GroupByStreamValue<K, V> {
+public interface GroupByValue<K, V> {
     K key();
-    Stream<V> values();
+    List<V> values();
 }

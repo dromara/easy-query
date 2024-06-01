@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.common;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 /**
  * create time 2023/4/15 16:58
@@ -8,11 +8,11 @@ import java.util.stream.Stream;
  *
  * @author xuejiaming
  */
-public class GroupByStreamValueImpl<K, V> implements GroupByStreamValue<K, V> {
+public class GroupByValueImpl<K, V> implements GroupByValue<K, V> {
     private final K key;
-    private final Stream<V> values;
+    private final List<V> values;
 
-    public GroupByStreamValueImpl(K key, Stream<V> values) {
+    public GroupByValueImpl(K key, List<V> values) {
         this.key = key;
         this.values = values;
     }
@@ -23,7 +23,7 @@ public class GroupByStreamValueImpl<K, V> implements GroupByStreamValue<K, V> {
     }
 
     @Override
-    public Stream<V> values() {
+    public List<V> values() {
         return values;
     }
 }
