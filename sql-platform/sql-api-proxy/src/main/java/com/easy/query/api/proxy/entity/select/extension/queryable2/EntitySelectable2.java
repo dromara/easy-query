@@ -42,9 +42,21 @@ public interface EntitySelectable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
 
     /**
+     * 自动查询结构化DTO
+     * <blockquote><pre>
+     *     {@code
+     *      List<SchoolClassAOProp6> list = easyEntityQuery.queryable(SchoolClass.class)
+     *                         .leftJoin(Topic.class,(s, t2) -> s.id().eq(t2.id()))
+     *                         .selectAutoInclude(SchoolClassAOProp6.class,(s,t2)->Select.of(
+     *                                 //s.FETCHER.allFields(), //不需要执行
+     *                                 t2.stars().nullOrDefault(1).as(SchoolClassAOProp6::getName1)
+     *                         ))
+     *                         .toList();
      *
-     * @param resultClass
-     * @param extraSelectExpression 额外属性映射
+     *                 }
+     * </pre></blockquote>
+     * @param resultClass 返回的结构化dto
+     * @param extraSelectExpression 额外select表达式增强,默认会执行映射allFields所以不再需要执行主表得allFields
      * @return
      * @param <TR>
      */
@@ -52,8 +64,28 @@ public interface EntitySelectable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return selectAutoInclude(resultClass, extraSelectExpression, false);
     }
 
-    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLSelectAsExpression> selectExpression, boolean replace) {
-        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy());
+    /**
+     * 自动查询结构化DTO
+     * <blockquote><pre>
+     *     {@code
+     *      List<SchoolClassAOProp6> list = easyEntityQuery.queryable(SchoolClass.class)
+     *                         .leftJoin(Topic.class,(s, t2) -> s.id().eq(t2.id()))
+     *                         .selectAutoInclude(SchoolClassAOProp6.class,(s,t2)->Select.of(
+     *                                 //s.FETCHER.allFields(), //不需要执行
+     *                                 t2.stars().nullOrDefault(1).as(SchoolClassAOProp6::getName1)
+     *                         ),false)
+     *                         .toList();
+     *
+     *                 }
+     * </pre></blockquote>
+     * @param resultClass 返回的结构化dto
+     * @param extraSelectExpression 额外select表达式增强,默认会执行映射allFields所以不再需要执行主表得allFields
+     * @param replace false:表示当前的selectAutoInclude里面的东西不去替换前面的include,如果false表示以表达式前面的include为准,true:表示以selectAutoInclude里面的为准
+     * @return
+     * @param <TR>
+     */
+    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLSelectAsExpression> extraSelectExpression, boolean replace) {
+        SQLSelectAsExpression sqlSelectAsExpression = extraSelectExpression.apply(get1Proxy(), get2Proxy());
         return getClientQueryable2().selectAutoInclude(resultClass, (columnAsSelector1, columnAsSelector2) -> {
             if (sqlSelectAsExpression != null) {
                 sqlSelectAsExpression.accept(columnAsSelector1.getAsSelector());
