@@ -190,6 +190,7 @@ public class RelationTest extends BaseTest {
                     exception=false;
 
                 }catch (Exception ex){
+                    System.out.println(ex.getMessage());
                     exception=true;
                 }
                 Assert.assertFalse(exception);
