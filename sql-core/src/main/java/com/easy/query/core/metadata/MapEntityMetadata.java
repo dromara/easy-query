@@ -1,6 +1,7 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
+import com.easy.query.core.util.EasyFieldCheckUtil;
 
 import java.util.Map;
 
@@ -18,21 +19,22 @@ public class MapEntityMetadata extends EntityMetadata{
 
     @Override
     public String getColumnName(String propertyName) {
-        return propertyName;
+        return EasyFieldCheckUtil.toCheckField(propertyName);
     }
 
     @Override
     public ColumnMetadata getColumnNotNull(String propertyName) {
-        ColumnOption columnOption = new ColumnOption(false, this, propertyName);
+        String checkField = EasyFieldCheckUtil.toCheckField(propertyName);
+        ColumnOption columnOption = new ColumnOption(false, this, checkField);
         columnOption.setGetterCaller(obj->{
             if(obj instanceof Map){
-                return ((Map)obj).get(propertyName);
+                return ((Map)obj).get(checkField);
             }
             return null;
         });
         columnOption.setSetterCaller((obj,val)->{
             if(obj instanceof Map){
-                ((Map)obj).put(propertyName,val);
+                ((Map)obj).put(checkField,val);
             }
         });
         return new MapColumnMetadata(columnOption);
