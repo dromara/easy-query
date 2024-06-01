@@ -14,6 +14,7 @@ import com.easy.query.test.dto.autodto.SchoolClassAOProp3;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp4;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp5;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp6;
+import com.easy.query.test.dto.autodto.SchoolClassAOProp8;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.Area;
 import com.easy.query.test.entity.base.City;
@@ -173,6 +174,27 @@ public class RelationTest extends BaseTest {
                         .where(s -> s.name().like("123"))
                         .select(SchoolClassVO.class, x -> x.schoolStudentAddress().FETCHER.allFields())
                         .toList();
+            }
+            {
+                System.out.println("4");
+                boolean exception=true;
+                try {
+                    List<SchoolClassAOProp8> list = easyEntityQuery.queryable(SchoolClass.class)
+                            .selectAutoInclude(SchoolClassAOProp8.class)
+                            .toList();
+                    for (SchoolClassAOProp8 schoolClassAOProp8 : list) {
+                        for (SchoolClassAOProp8.SchoolStudentAO schoolStudentAO : schoolClassAOProp8.getSchoolStudents()) {
+
+                        }
+                    }
+                    exception=false;
+
+                }catch (Exception ex){
+                    exception=true;
+                }
+                Assert.assertFalse(exception);
+                System.out.println("1");
+
             }
             {
                 boolean exception=true;
