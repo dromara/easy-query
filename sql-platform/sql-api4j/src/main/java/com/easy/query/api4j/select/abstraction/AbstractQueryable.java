@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * @author xuejiaming
@@ -155,6 +156,11 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
         return entityQueryable.toStreamResult(resultClass,configurer);
+    }
+
+    @Override
+    public <TR> TR streamBy(Function<Stream<T1>, TR> fetcher, SQLConsumer<Statement> configurer) {
+        return entityQueryable.streamBy(fetcher,configurer);
     }
 
     @Override

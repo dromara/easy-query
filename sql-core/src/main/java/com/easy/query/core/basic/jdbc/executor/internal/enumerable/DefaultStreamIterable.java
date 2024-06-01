@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
@@ -29,6 +30,7 @@ public class DefaultStreamIterable<T> implements StreamIterable<T> {
         this.streamResultSet = streamResultSet;
     }
 
+    @NotNull
     @Override
     public Iterator<T> iterator() {
         try {

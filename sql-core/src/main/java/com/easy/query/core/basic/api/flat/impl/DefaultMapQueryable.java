@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * create time 2024/3/26 16:01
@@ -352,5 +353,10 @@ public class DefaultMapQueryable implements MapQueryable {
     public MapQueryable unionAll(Collection<MapQueryable> mapQueryables) {
         ClientQueryable<Map<String, Object>> unionQueryable = this.queryable.unionAll(mapQueryables.stream().map(o -> o.getClientQueryable()).collect(Collectors.toList()));
         return new DefaultMapQueryable(unionQueryable);
+    }
+
+    @Override
+    public <TR> TR streamBy(Function<Stream<Map<String, Object>>, TR> fetcher, SQLConsumer<Statement> configurer) {
+        return this.queryable.streamBy(fetcher,configurer);
     }
 }

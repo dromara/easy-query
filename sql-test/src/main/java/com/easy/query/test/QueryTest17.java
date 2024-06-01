@@ -42,6 +42,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -1185,4 +1186,27 @@ public class QueryTest17 extends BaseTest {
                 )).toList();
     }
 
+    @Test
+    public void testOptional(){
+        Optional<Topic> topic = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    t.id().eq("1");
+                }).streamBy(s -> s.findFirst());
+        boolean present = topic.isPresent();
+        System.out.println(present);
+        Topic topic1 = topic.orElse(null);
+
+        List<Topic> topics = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    t.id().eq("1");
+                }).streamBy(s -> s.collect(Collectors.toList()));
+
+
+        Map<String, Topic> mapWithMap = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    t.id().eq("1");
+                }).streamBy(s -> s.collect(Collectors.toMap(o -> o.getId(), o -> o, (k1, k2) -> k2)));
+        System.out.println("1");
+    }
 }
+

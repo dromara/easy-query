@@ -119,6 +119,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author xuejiaming
@@ -541,6 +543,27 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return new JdbcResultWrap<>(executeMethod, expressionContext, entityMetadata, jdbcResult);
     }
 
+    @Override
+    public <TR> TR streamBy(Function<Stream<T1>, TR> fetcher, SQLConsumer<Statement> configurer) {
+        ExpressionContext expressionContext = this.entityQueryExpressionBuilder.getExpressionContext();
+        try (JdbcStreamResult<T1> streamResult = toStreamResult(configurer)) {
+            StreamIterable<T1> streamIterable = streamResult.getStreamIterable();
+            Stream<T1> stream = StreamSupport.stream(streamIterable.spliterator(), false);
+            //为了支持streamBy下的include处理必须要进行stream的二次迭代
+            if (expressionContext.hasIncludes()||expressionContext.hasFills()) {
+                EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(queryClass());
+                List<T1> result = stream.collect(Collectors.toList());
+                if (EasyCollectionUtil.isNotEmpty(result)) {
+                    doIncludes(expressionContext, entityMetadata, result);
+                    doFills(expressionContext, result);
+                }
+                return fetcher.apply(result.stream());
+            }
+            return fetcher.apply(stream);
+        } catch (SQLException sqlException) {
+            throw new EasyQuerySQLCommandException(sqlException);
+        }
+    }
 
     private <TR> void doIncludes(ExpressionContext expressionContext, EntityMetadata entityMetadata, List<TR> result) {
 
@@ -647,6 +670,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     /**
      * 如果存在include那么就需要对select的结果进行补齐关联id
+     *
      * @param sqlNative
      * @param table
      */
@@ -708,10 +732,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         TableAvailable entityTable = table.getEntityTable();
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
         selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace);
-        selectAutoIncludeFlat0(entityMetadataManager,this, entityMetadata, resultEntityMetadata);
+        selectAutoIncludeFlat0(entityMetadataManager, this, entityMetadata, resultEntityMetadata);
     }
 
-    private void selectAutoIncludeFlat0(EntityMetadataManager entityMetadataManager,ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata) {
+    private void selectAutoIncludeFlat0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata) {
         Collection<NavigateFlatMetadata> navigateFlatMetadatas = resultEntityMetadata.getNavigateFlatMetadatas();
         if (EasyCollectionUtil.isNotEmpty(navigateFlatMetadatas)) {
             List<MappingPathIterator> mappingPathIterators = getMappingPathIterators(navigateFlatMetadatas);
@@ -780,7 +804,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
                         selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, replace);
-                        selectAutoIncludeFlat0(entityMetadataManager,with, entityEntityMetadata, navigateEntityMetadata);
+                        selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata);
                         return with;
                     });
         }
@@ -798,11 +822,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             //既不是导航属性也不是column属性就抛错
             if (entityNavigateMetadata == null) {
                 NavigateFlatProperty navigateFlatProperty = EasyCollectionUtil.firstOrNull(navigateFlatGroupProperty.values());
-                if(navigateFlatProperty!=null){
+                if (navigateFlatProperty != null) {
 
-                    if(navigateFlatProperty.getNavigateFlatMetadata().isBasicType()){
+                    if (navigateFlatProperty.getNavigateFlatMetadata().isBasicType()) {
                         ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(propertyName);
-                        if(columnMetadata!=null){
+                        if (columnMetadata != null) {
                             continue;
                         }
                     }
@@ -845,14 +869,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             //检查是否存在自定义dto
                             for (NavigateFlatProperty customPathType : customPathTypes) {
                                 Class<?> navigatePropertyType = customPathType.getNavigateFlatMetadata().getNavigatePropertyType();
-                                if (Objects.equals(propertyName,customPathType.getProperty())&&!Objects.equals(with.queryClass(),navigatePropertyType)) {
-                                    if (EasyCollectionUtil.isNotEmpty(navigateFlatBasicProps)){
+                                if (Objects.equals(propertyName, customPathType.getProperty()) && !Objects.equals(with.queryClass(), navigatePropertyType)) {
+                                    if (EasyCollectionUtil.isNotEmpty(navigateFlatBasicProps)) {
                                         throw new EasyQueryInvalidOperationException("NavigateFlat only supports basic types and database types");
                                     }
                                 }
                             }
                         }
-                        if(EasyCollectionUtil.isEmpty(customPathTypes)){
+                        if (EasyCollectionUtil.isEmpty(customPathTypes)) {
                             if (EasyCollectionUtil.isNotEmpty(navigateFlatBasicProps)) {
                                 with = with.select(z -> {
                                     for (NavigateFlatProperty navigateFlatProp : navigateFlatBasicProps) {

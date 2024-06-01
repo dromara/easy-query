@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * create time 2023/6/23 22:08
@@ -146,6 +147,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return getClientQueryable().singleNotNull(resultClass, throwFunc);
     }
 
+    @NotNull
     @Override
     public T1 findNotNull(Object id, Supplier<RuntimeException> throwFunc) {
         return getClientQueryable().findNotNull(id, throwFunc);
@@ -169,6 +171,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
         return clientQueryable.toStreamResult(resultClass, configurer);
+    }
+
+    @Override
+    public <TR> TR streamBy(Function<Stream<T1>, TR> fetcher, SQLConsumer<Statement> configurer) {
+        return clientQueryable.streamBy(fetcher, configurer);
     }
 
     @Override
