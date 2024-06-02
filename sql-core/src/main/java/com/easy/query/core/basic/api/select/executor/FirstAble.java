@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.api.select.executor;
 
+import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.exception.AssertExceptionFactory;
@@ -17,8 +19,10 @@ public interface FirstAble<T> extends QueryAvailable<T> {
     /**
      * 当未查询到结果返回null
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     *
      * @return
      */
+    @Nullable
     T firstOrNull();
 
     /**
@@ -31,21 +35,22 @@ public interface FirstAble<T> extends QueryAvailable<T> {
      * public class Topic{}
      *  }
      * </pre></blockquote>
+     *
      * @return
      */
-    default T firstNotNull(){
-        return firstNotNull(null,null);
+    default @NotNull T firstNotNull() {
+        return firstNotNull(null, null);
     }
 
     /**
      * 当未查询到结果 将会抛出 {@link EasyQueryFirstNotNullException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
      *
-     * @param msg
-     * @return
+     * @param msg 错误消息
+     * @return 返回查询对象结果
      * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(Query, String, String)} 自定义
      */
-    default T firstNotNull(String msg) {
+    default @NotNull T firstNotNull(String msg) {
         return firstNotNull(msg, null);
     }
 
@@ -53,11 +58,20 @@ public interface FirstAble<T> extends QueryAvailable<T> {
      * 当未查询到结果 将会抛出 {@link EasyQueryFirstNotNullException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
      *
-     * @param msg
-     * @param code
-     * @return
+     * @param msg  错误消息
+     * @param code 错误码
+     * @return 返回查询对象结果
      * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(Query, String, String)} 自定义
      */
+    @NotNull
     T firstNotNull(String msg, String code);
+
+    /**
+     * 当未查询到结果 将会抛出 {@code throwFunc.get()}
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?] LIMIT 1
+     * @param throwFunc
+     * @return
+     */
+    @NotNull
     T firstNotNull(Supplier<RuntimeException> throwFunc);
 }
