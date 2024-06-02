@@ -1,6 +1,7 @@
 package com.easy.query.core.util;
 
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 /**
  * create time 2023/10/11 22:29
@@ -59,6 +60,17 @@ public class EasyArrayUtil {
         }
     }
 
+    public static <TSource> boolean any(TSource[] sources, Predicate<TSource> predicate) {
+        if (isEmpty(sources)) {
+            return false;
+        }
+        for (TSource source : sources) {
+            if (predicate.test(source)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 //    public static <TSource, TElement> Iterable<TElement> select(TSource[] sources, Selector<TSource, TElement> selector) {
 //        int size = sources.length;

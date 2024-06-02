@@ -7,9 +7,8 @@ package com.easy.query.core.util;
  * @author xuejiaming
  */
 
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQueryInvalidFieldCheckException;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -26,24 +25,24 @@ public class EasyFieldCheckUtil {
 
         if (value != null) {
             if (containsAny(value, ";", "--")) {
-                throw new EasyQueryInvalidOperationException(String.format("%s format error", value));
+                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error", value));
             } else if (containsAny(value, "//") && (value.length() - value.replace("/", "").length()) >= 4) {
-                throw new EasyQueryInvalidOperationException(String.format("%s format error", value));
+                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error", value));
             } else if (containsAny(value, "'") && (value.length() - value.replace("'", "").length()) % 2 != 0) {
-                throw new EasyQueryInvalidOperationException(String.format("%s format error", value));
+                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error", value));
             } else if (isUpdateSql(value, "/", "/")) {
-                throw new EasyQueryInvalidOperationException(String.format("%s format error  %s不能存在  /+【update drop 等】+/", value, value));
+                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error  %s不能存在  /+【update drop 等】+/", value, value));
             } else if (isUpdateSql(value, "/", " ")) {
-                throw new EasyQueryInvalidOperationException(String.format("%s format error  %s不能存在  /+【update drop 等】+空格", value, value));
+                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error  %s不能存在  /+【update drop 等】+空格", value, value));
             } else if (isUpdateSql(value, " ", "/")) {
-                throw new EasyQueryInvalidOperationException(String.format("%s format error  %s不能存在  空格+【update drop 等】+/", value, value));
+                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error  %s不能存在  空格+【update drop 等】+/", value, value));
             } else if (value.toLowerCase().contains(" update ") ||
                     value.toLowerCase().contains(" delete ") ||
                     value.toLowerCase().contains(" drop ") ||
                     value.toLowerCase().contains(" alert ") ||
                     value.toLowerCase().contains(" create ") ||
                     value.toLowerCase().contains(" insert ")) {
-                throw new EasyQueryInvalidOperationException(String.format("%s format error  %s不能存在  空格+【update drop 等】+空格", value, value));
+                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error  %s不能存在  空格+【update drop 等】+空格", value, value));
             }
         }
         return value;
@@ -60,26 +59,13 @@ public class EasyFieldCheckUtil {
     }
 
     private static boolean containsAny(String value, String... searchStrings) {
-        return Arrays.stream(searchStrings).anyMatch(value::contains);
+        return EasyArrayUtil.any(searchStrings,value::contains);
     }
 
     public static boolean containsChinese(String input) {
         String pattern = "[\\u4e00-\\u9fa5]";
         return Pattern.compile(pattern).matcher(input).find();
     }
-
-    public static boolean isRegexWNoContainsChinese(String value) {
-        return !containsChinese(value) && value.matches("^\\w+$");
-    }
-
-    public static String toCheckRegexW(String value) {
-        if (value.matches("^\\w+$")) {
-            return value;
-        } else {
-            throw new EasyQueryInvalidOperationException(String.format("ToCheckRegexW %s format error", value));
-        }
-    }
-
     public static String toLower(String value, boolean isAutoToLower) {
         if (value == null) return null;
         return isAutoToLower ? value.toLowerCase() : value;
