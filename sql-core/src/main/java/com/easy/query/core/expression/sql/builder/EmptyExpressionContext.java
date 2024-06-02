@@ -10,7 +10,6 @@ import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
-import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -174,16 +173,6 @@ public class EmptyExpressionContext implements ExpressionContext{
 
     @Override
     public boolean hasIncludes() {
-        return false;
-    }
-
-    @Override
-    public List<FillExpression> getFills() {
-        return null;
-    }
-
-    @Override
-    public boolean hasFills() {
         return false;
     }
 

@@ -80,7 +80,6 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.logging.Log;
@@ -88,7 +87,6 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.metadata.FillParams;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.MappingPathIterator;
@@ -109,12 +107,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -399,9 +395,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                    throw new EasyQuerySingleMoreElementException("single query has more element in result set.");
 //                }
                 if (i >= 1) {
-                    RuntimeException singleMoreElementException = runtimeContext.getAssertExceptionFactory().createSingleMoreElementException(this);
-                    assert singleMoreElementException != null;
-                    throw singleMoreElementException;
+                    throw runtimeContext.getAssertExceptionFactory().createSingleMoreElementException(this);
                 }
                 next = iterator.next();
                 i++;
@@ -417,7 +411,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             ExpressionContext expressionContext = jdbcResultWrap.getExpressionContext();
             EntityMetadata entityMetadata = jdbcResultWrap.getEntityMetadata();
             doIncludes(expressionContext, entityMetadata, Collections.singletonList(next));
-            doFills(expressionContext, Collections.singletonList(next));
         }
         //将当前方法设置为unknown
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
@@ -512,7 +505,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (ExecuteMethodEnum.LIST == executeMethod || ExecuteMethodEnum.FIRST == executeMethod || ExecuteMethodEnum.SINGLE == executeMethod || ExecuteMethodEnum.FIND == executeMethod) {
             if (EasyCollectionUtil.isNotEmpty(result)) {
                 doIncludes(expressionContext, entityMetadata, result);
-                doFills(expressionContext, result);
             }
         }
         //将当前方法设置为unknown
@@ -546,22 +538,18 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public <TR> TR streamBy(Function<Stream<T1>, TR> fetcher, SQLConsumer<Statement> configurer) {
         ExpressionContext expressionContext = this.entityQueryExpressionBuilder.getExpressionContext();
-        try (JdbcStreamResult<T1> streamResult = toStreamResult(configurer)) {
-            StreamIterable<T1> streamIterable = streamResult.getStreamIterable();
-            Stream<T1> stream = StreamSupport.stream(streamIterable.spliterator(), false);
-            //为了支持streamBy下的include处理必须要进行stream的二次迭代
-            if (expressionContext.hasIncludes()||expressionContext.hasFills()) {
-                EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(queryClass());
-                List<T1> result = stream.collect(Collectors.toList());
-                if (EasyCollectionUtil.isNotEmpty(result)) {
-                    doIncludes(expressionContext, entityMetadata, result);
-                    doFills(expressionContext, result);
-                }
-                return fetcher.apply(result.stream());
+        //为了支持streamBy下的include处理必须要进行stream的二次迭代
+        if (expressionContext.hasIncludes()) {
+            List<T1> result = this.toList();
+            return fetcher.apply(result.stream());
+        }else{
+            try (JdbcStreamResult<T1> streamResult = toStreamResult(configurer)) {
+                StreamIterable<T1> streamIterable = streamResult.getStreamIterable();
+                Stream<T1> stream = StreamSupport.stream(streamIterable.spliterator(), false);
+                return fetcher.apply(stream);
+            } catch (SQLException sqlException) {
+                throw new EasyQuerySQLCommandException(sqlException);
             }
-            return fetcher.apply(stream);
-        } catch (SQLException sqlException) {
-            throw new EasyQuerySQLCommandException(sqlException);
         }
     }
 
@@ -576,63 +564,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
                 IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(includeParserResult, runtimeContext);
                 includeProcess.process();
-            }
-        }
-    }
-
-    private <TR> void doFills(ExpressionContext expressionContext, List<TR> result) {
-
-        if (expressionContext.hasFills()) {
-            for (FillExpression fill : expressionContext.getFills()) {
-                if (!Objects.equals(queryClass(), fill.getFillFromEntityClass())) {
-                    throw new EasyQueryInvalidOperationException("fill expression should from entity class:" + EasyClassUtil.getSimpleName(fill.getFillFromEntityClass()) + ",now:" + EasyClassUtil.getSimpleName(queryClass()));
-                }
-                FillParams fillParams = new FillParams(fill.getTargetProperty());
-                ClientQueryable<?> fillQueryable = fill.getFillSQLFuncExpression().apply(fillParams);
-//                if (!Objects.equals(fillQueryable.queryClass(), fillParams.getOriginalEntityClass())) {
-//                    throw new EasyQueryInvalidOperationException("fill expression should select original entity class:" + EasyClassUtil.getSimpleName(fillParams.getOriginalEntityClass()) + ",now:" + EasyClassUtil.getSimpleName(fillQueryable.queryClass()));
-//                }
-                List<?> relationIds = result.stream().map(o -> fill.getSelfProperty().apply(o)).filter(Objects::nonNull)
-                        .distinct()
-                        .collect(Collectors.toList());
-                fillParams.getRelationIds().addAll(relationIds);
-                List<?> list = fillQueryable.toList();
-
-                EntityMetadata targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(fillQueryable.queryClass());
-                ColumnMetadata targetColumnMetadata = targetEntityMetadata.getColumnNotNull(fill.getTargetProperty());
-
-                if (fill.isMany()) {
-                    HashMap<Object, List<Object>> map = new HashMap<>();
-                    for (Object o : list) {
-                        Object relationId = targetColumnMetadata.getGetterCaller().apply(o);
-                        List<Object> objects = map.computeIfAbsent(relationId, k -> new ArrayList<>());
-                        objects.add(o);
-                    }
-                    BiConsumer<Object, Collection<?>> produceMany = fill.getProduceMany();
-                    for (TR tr : result) {
-                        Object relationId = fill.getSelfProperty().apply(tr);
-                        List<Object> objects = map.get(relationId);
-                        if (fillParams.isConsumeNull() || objects != null) {
-                            produceMany.accept(tr, objects);
-                        }
-                    }
-                } else {
-
-                    HashMap<Object, Object> map = new HashMap<>();
-                    for (Object o : list) {
-                        Object relationId = targetColumnMetadata.getGetterCaller().apply(o);
-                        map.put(relationId, o);
-                    }
-                    BiConsumer<Object, ?> produceOne = fill.getProduceOne();
-                    for (TR tr : result) {
-                        Object relationId = fill.getSelfProperty().apply(tr);
-                        Object object = map.get(relationId);
-                        if (fillParams.isConsumeNull() || object != null) {
-                            produceOne.accept(tr, EasyObjectUtil.typeCastNullable(object));
-                        }
-                    }
-                }
-
             }
         }
     }

@@ -80,7 +80,7 @@ public class EasyQueryProperties {
      */
     private long multiConnWaitTimeoutMillis = 5000L;
     /**
-     * 分片获取连接数繁忙是否打印 获取耗时大于{@param multiConnWaitTimeoutMillis}的80%视为繁忙
+     * 分片获取连接数繁忙是否打印 获取耗时大于{@code multiConnWaitTimeoutMillis}的80%视为繁忙
      */
     private boolean warningBusy = true;
 

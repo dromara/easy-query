@@ -15,7 +15,6 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
-import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -55,7 +54,6 @@ public class EasyExpressionContext implements ExpressionContext {
     private boolean hasSubQuery;
     private ValueFilter valueFilter;
     private Map<NavigateMetadata, IncludeNavigateExpression> includes;
-    private List<FillExpression> fills;
     private List<ExpressionBuilder> declareExpressions;
     private Consumer<Object> forEachConfigurer;
 
@@ -266,19 +264,6 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public List<FillExpression> getFills() {
-        if (fills == null) {
-            fills = new ArrayList<>();
-        }
-        return fills;
-    }
-
-    @Override
-    public boolean hasFills() {
-        return EasyCollectionUtil.isNotEmpty(fills);
-    }
-
-    @Override
     public Map<TableAvailable, Map<String, ColumnIncludeExpression>> getColumnIncludeMaps() {
         if (columnIncludeMaps == null) {
             this.columnIncludeMaps = new HashMap<>();
@@ -334,9 +319,6 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.relationExtraMetadata = this.relationExtraMetadata;
         if (hasIncludes()) {
             easyExpressionContext.getIncludes().putAll(this.includes);
-        }
-        if (hasFills()) {
-            easyExpressionContext.getFills().addAll(this.fills);
         }
         if (hasColumnIncludeMaps()) {
             easyExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
