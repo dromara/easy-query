@@ -6,6 +6,7 @@ import com.easy.query.core.common.cache.DefaultMemoryCache;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -127,7 +128,7 @@ public class EntityQueryProxyManager {
 
         }
 
-        FastBean fastBean = new FastBean(proxyTableClass);
+        FastBean fastBean = EasyBeanUtil.getFastBean(proxyTableClass);
         Supplier<Object> beanConstructorCreator = fastBean.getBeanConstructorCreator();
         Supplier<Object> objectSupplier = proxyConstructorCache.computeIfAbsent(entityClass, key -> {
             return beanConstructorCreator;

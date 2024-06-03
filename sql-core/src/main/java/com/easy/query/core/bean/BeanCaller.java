@@ -4,6 +4,7 @@
 //import com.easy.query.core.expression.lambda.PropertySetterCaller;
 //
 //import java.beans.PropertyDescriptor;
+//import java.util.function.Supplier;
 //
 ///**
 // * create time 2023/6/12 20:29
@@ -13,6 +14,7 @@
 // */
 //public interface BeanCaller {
 //    Class<?> getBeanClass();
+//    Supplier<Object> getBeanConstructorCreator();
 //    Property<Object,?> getBeanGetter(PropertyDescriptor prop);
 //    PropertySetterCaller<Object> getBeanSetter(PropertyDescriptor prop);
 //}

@@ -25,6 +25,7 @@ import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyAesUtil;
 import com.easy.query.core.util.EasyBase64Util;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyBitwiseUtil;
 import com.easy.query.core.util.EasyCheck;
 import com.easy.query.core.util.EasyClassUtil;
@@ -739,7 +740,7 @@ public class GenericTest extends BaseTest {
     }
     @Test
     public void createTest1() {
-        FastBean fastBean = new FastBean(BlogEntity.class);
+        FastBean fastBean = EasyBeanUtil.getFastBean(BlogEntity.class);
         Supplier<Object> lambdaCreate = fastBean.getBeanConstructorCreator();
         Object o = lambdaCreate.get();
         Assert.assertNotNull(o);

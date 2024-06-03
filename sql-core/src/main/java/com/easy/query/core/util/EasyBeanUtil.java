@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.common.bean.DefaultFastBean;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
@@ -10,6 +11,7 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -19,7 +21,7 @@ import java.util.function.Predicate;
  * @Date: 2023/3/18 22:09
  */
 public class EasyBeanUtil {
-
+    public static Function<Class<?>,FastBean> FAST_BEAN_FUNCTION= DefaultFastBean::new;
 
     public static Set<String> getBeanMatchProperties(EntityMetadataManager entityMetadataManager, Object entity, Predicate<Object> propertyPredicate) {
 
@@ -148,7 +150,7 @@ public class EasyBeanUtil {
     }
 
     public static FastBean getFastBean(Class<?> entityClass) {
-        return new FastBean(entityClass);
+        return FAST_BEAN_FUNCTION.apply(entityClass);
 //        return EasyMapUtil.computeIfAbsent(CLASS_PROPERTY_FAST_BEAN_CACHE,entityClass, key->new FastBean(entityClass));
     }
 }

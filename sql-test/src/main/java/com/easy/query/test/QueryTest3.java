@@ -1,15 +1,11 @@
 package com.easy.query.test;
 
-import com.easy.query.api.proxy.base.IntegerProxy;
-import com.easy.query.api.proxy.base.LongProxy;
 import com.easy.query.api.proxy.base.MapProxy;
-import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api4j.extension.SQL4JFunc;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.dynamic.sort.ObjectSortBuilder;
 import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
@@ -23,39 +19,31 @@ import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQueryTableNotInSQLContextException;
 import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
-import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.extension.client.SQLClientFunc;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
-import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.common.MyPager;
 import com.easy.query.test.common.PageResult;
-import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.BlogQuery1Request;
 import com.easy.query.test.dto.BlogQuery2Request;
+import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.UserBookEncryptVO;
-import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
-import com.easy.query.test.dto.proxy.TopicSubQueryBlogProxy;
-import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUserEncrypt;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicGenericKey;
 import com.easy.query.test.entity.UserBookEncrypt;
-import com.easy.query.test.entity.base.TopicTestProxy;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
-import com.easy.query.test.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.solon.EqUser;
-import com.easy.query.test.listener.ListenerContext;
+import lombok.var;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1861,6 +1849,14 @@ public class QueryTest3 extends BaseTest {
                 .queryable(TopicGenericKey.class)
                 .whereById("1" )
                 .toPageResult(new MyPager<>(1, 2));
+
+       var pageResult1 = easyQuery
+                .queryable(TopicGenericKey.class)
+                .whereById("1" )
+                .select(TopicTypeVO.class)
+                .toPageResult(new MyPager<>(1, 2));
+        List<TopicTypeVO> list = pageResult1.getList();
+
         Assert.assertEquals(1, pageResult.getTotalCount());
         Assert.assertEquals("1" , pageResult.getList().get(0).getId());
     }
