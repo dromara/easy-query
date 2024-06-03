@@ -7,6 +7,7 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
+import com.easy.query.core.exception.EasyQueryInvalidFieldCheckException;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
@@ -17,6 +18,7 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasyFieldCheckUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
@@ -1188,6 +1190,31 @@ public class QueryTest17 extends BaseTest {
 
     @Test
     public void testOptional(){
+        {
+
+            boolean ex1=false;
+            try {
+                String checkField = EasyFieldCheckUtil.toCheckField("1=1 or name");
+            }catch (Exception ex){
+                ex1=true;
+                Assert.assertTrue(ex instanceof EasyQueryInvalidFieldCheckException);
+                Assert.assertEquals("column name has unsafe char: [=].",ex.getMessage());
+            }
+            Assert.assertTrue(ex1);
+        }
+        {
+
+            boolean ex1=false;
+            try {
+                String checkField = EasyFieldCheckUtil.toCheckField(" name");
+            }catch (Exception ex){
+                ex1=true;
+                Assert.assertTrue(ex instanceof EasyQueryInvalidFieldCheckException);
+                Assert.assertEquals("column name must not has space char.",ex.getMessage());
+            }
+            Assert.assertTrue(ex1);
+        }
+
         Optional<Topic> topic = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
                     t.id().eq("1");

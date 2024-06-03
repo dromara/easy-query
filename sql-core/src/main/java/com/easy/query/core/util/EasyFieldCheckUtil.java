@@ -9,70 +9,36 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.exception.EasyQueryInvalidFieldCheckException;
 
-import java.util.regex.Pattern;
 
-/**
- * 参考代码
- * 代码参考 <a href="https://github.com/DotNetNext/SqlSugar">SqlSugar</a>
- * https://github.com/DotNetNext/SqlSugar/blob/master/Src/Asp.NetCore2/SqlSugar/Utilities/DbExtensions.cs
- */
 public class EasyFieldCheckUtil {
 
-    public static String toCheckField(String value) {
-        if (StaticConfig.Check_FieldFunc != null) {
-            return StaticConfig.Check_FieldFunc.apply(value);
-        }
+    private static final char[] UN_SAFE_CHARS = "'`\"<>&+=#-;".toCharArray();
 
-        if (value != null) {
-            if (containsAny(value, ";", "--")) {
-                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error", value));
-            } else if (containsAny(value, "//") && (value.length() - value.replace("/", "").length()) >= 4) {
-                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error", value));
-            } else if (containsAny(value, "'") && (value.length() - value.replace("'", "").length()) % 2 != 0) {
-                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error", value));
-            } else if (isUpdateSql(value, "/", "/")) {
-                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error  %s不能存在  /+【update drop 等】+/", value, value));
-            } else if (isUpdateSql(value, "/", " ")) {
-                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error  %s不能存在  /+【update drop 等】+空格", value, value));
-            } else if (isUpdateSql(value, " ", "/")) {
-                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error  %s不能存在  空格+【update drop 等】+/", value, value));
-            } else if (value.toLowerCase().contains(" update ") ||
-                    value.toLowerCase().contains(" delete ") ||
-                    value.toLowerCase().contains(" drop ") ||
-                    value.toLowerCase().contains(" alert ") ||
-                    value.toLowerCase().contains(" create ") ||
-                    value.toLowerCase().contains(" insert ")) {
-                throw new EasyQueryInvalidFieldCheckException(String.format("%s format error  %s不能存在  空格+【update drop 等】+空格", value, value));
+    private static boolean isUnSafeChar(char ch) {
+        for (char c : UN_SAFE_CHARS) {
+            if (c == ch) {
+                return true;
             }
         }
-        return value;
+        return false;
     }
 
-    private static boolean isUpdateSql(String value, String left, String right) {
-        value = value.toLowerCase();
-        return value.contains(left + "update" + right) ||
-                value.contains(left + "delete" + right) ||
-                value.contains(left + "drop" + right) ||
-                value.contains(left + "alert" + right) ||
-                value.contains(left + "create" + right) ||
-                value.contains(left + "insert" + right);
-    }
+    public static String toCheckField(String column) {
 
-    private static boolean containsAny(String value, String... searchStrings) {
-        return EasyArrayUtil.any(searchStrings,value::contains);
-    }
+        if (EasyStringUtil.isBlank(column)) {
+            throw new EasyQueryInvalidFieldCheckException("column name must not be empty");
+        }
 
-    public static boolean containsChinese(String input) {
-        String pattern = "[\\u4e00-\\u9fa5]";
-        return Pattern.compile(pattern).matcher(input).find();
-    }
-    public static String toLower(String value, boolean isAutoToLower) {
-        if (value == null) return null;
-        return isAutoToLower ? value.toLowerCase() : value;
-    }
-
-    public static String toUpper(String value, boolean isAutoToUpper) {
-        if (value == null) return null;
-        return isAutoToUpper ? value.toUpperCase() : value;
+        int strLen = column.length();
+        for (int i = 0; i < strLen; ++i) {
+            char ch = column.charAt(i);
+            if (Character.isWhitespace(ch)) {
+                throw new EasyQueryInvalidFieldCheckException("column name must not has space char.");
+            }
+            if (isUnSafeChar(ch)) {
+                throw new EasyQueryInvalidFieldCheckException("column name has unsafe char: [" + ch + "].");
+            }
+        }
+        return column;
     }
 }
