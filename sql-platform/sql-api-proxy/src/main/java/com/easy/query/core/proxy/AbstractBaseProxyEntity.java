@@ -8,7 +8,6 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
-import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -131,92 +130,142 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     }
 
     protected <TProperty> SQLColumn<TProxy, TProperty> get(String property, @Nullable Class<TProperty> propType) {
-        return new SQLColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLColumn<TProxy, TProperty> column =  new SQLColumnImpl<>(entitySQLContext, table, property, propType);
+        column._setProxy(castChain());
+        return column;
     }
 
     protected <TProperty> SQLDateTimeColumn<TProxy, TProperty> getDateTimeColumn(String property, @Nullable Class<TProperty> propType) {
-        return new SQLDateTimeColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLDateTimeColumn<TProxy, TProperty> column=  new SQLDateTimeColumnImpl<>(entitySQLContext, table, property, propType);
+        column._setProxy(castChain());
+        return column;
     }
 
     protected <TProperty> SQLNumberColumn<TProxy, TProperty> getNumberColumn(String property, @Nullable Class<TProperty> propType) {
-        return new SQLNumberColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLNumberColumn<TProxy, TProperty> column= new SQLNumberColumnImpl<>(entitySQLContext, table, property, propType);
+        column._setProxy(castChain());
+        return column;
     }
 
     protected <TProperty> SQLStringColumn<TProxy, TProperty> getStringColumn(String property, @Nullable Class<TProperty> propType) {
-        return new SQLStringColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLStringColumn<TProxy, TProperty> column= new SQLStringColumnImpl<>(entitySQLContext, table, property, propType);
+        column._setProxy(castChain());
+        return column;
     }
 
     protected <TProperty> SQLBooleanColumn<TProxy, TProperty> getBooleanColumn(String property, @Nullable Class<TProperty> propType) {
-        return new SQLBooleanColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLBooleanColumn<TProxy, TProperty> column= new SQLBooleanColumnImpl<>(entitySQLContext, table, property, propType);
+        column._setProxy(castChain());
+        return column;
     }
 
     protected <TProperty> SQLAnyColumn<TProxy, TProperty> getAnyColumn(String property, @Nullable Class<TProperty> propType) {
-        return new SQLAnyColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLAnyColumn<TProxy, TProperty> column=  new SQLAnyColumnImpl<>(entitySQLContext, table, property, propType);
+        column._setProxy(castChain());
+        return column;
     }
 
 
     protected <TProperty> SQLAnyTypeColumn<TProxy,TProperty> getAnyTypeColumn(String property, @Nullable Class<TProperty> propType) {
-        return new SQLAnyTypeColumnImpl<>(entitySQLContext, table, property,propType);
+        SQLAnyTypeColumn<TProxy, TProperty> column= new SQLAnyTypeColumnImpl<>(entitySQLContext, table, property,propType);
+        column._setProxy(castChain());
+        return column;
     }
 
     protected SQLBigDecimalTypeColumn<TProxy> getBigDecimalTypeColumn(String property) {
-        return new SQLBigDecimalTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLBigDecimalTypeColumn<TProxy> column= new SQLBigDecimalTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLBooleanTypeColumn<TProxy> getBooleanTypeColumn(String property) {
-        return new SQLBooleanTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLBooleanTypeColumn<TProxy> column= new SQLBooleanTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLByteTypeColumn<TProxy> getByteTypeColumn(String property) {
-        return new SQLByteTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLByteTypeColumn<TProxy> column= new SQLByteTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLDateTypeColumn<TProxy> getSQLDateTypeColumn(String property) {
-        return new SQLDateTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLDateTypeColumn<TProxy> column= new SQLDateTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLDoubleTypeColumn<TProxy> getDoubleTypeColumn(String property) {
-        return new SQLDoubleTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLDoubleTypeColumn<TProxy> column= new SQLDoubleTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLFloatTypeColumn<TProxy> getFloatTypeColumn(String property) {
-        return new SQLFloatTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLFloatTypeColumn<TProxy> column= new SQLFloatTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLIntegerTypeColumn<TProxy> getIntegerTypeColumn(String property) {
-        return new SQLIntegerTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLIntegerTypeColumn<TProxy> column= new SQLIntegerTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLLocalDateTimeTypeColumn<TProxy> getLocalDateTimeTypeColumn(String property) {
-        return new SQLLocalDateTimeTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLLocalDateTimeTypeColumn<TProxy> column= new SQLLocalDateTimeTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLLocalDateTypeColumn<TProxy> getLocalDateTypeColumn(String property) {
-        return new SQLLocalDateTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLLocalDateTypeColumn<TProxy> column=  new SQLLocalDateTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLLocalTimeTypeColumn<TProxy> getLocalTimeTypeColumn(String property) {
-        return new SQLLocalTimeTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLLocalTimeTypeColumn<TProxy> column= new SQLLocalTimeTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLLongTypeColumn<TProxy> getLongTypeColumn(String property) {
-        return new SQLLongTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLLongTypeColumn<TProxy> column= new SQLLongTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLShortTypeColumn<TProxy> getShortTypeColumn(String property) {
-        return new SQLShortTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLShortTypeColumn<TProxy> column=  new SQLShortTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
 
     protected SQLStringTypeColumn<TProxy> getStringTypeColumn(String property) {
-        return new SQLStringTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLStringTypeColumn<TProxy> column= new SQLStringTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLTimestampTypeColumn<TProxy> getTimestampTypeColumn(String property) {
-        return new SQLTimestampTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLTimestampTypeColumn<TProxy> column=  new SQLTimestampTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLTimeTypeColumn<TProxy> getTimeTypeColumn(String property) {
-        return new SQLTimeTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLTimeTypeColumn<TProxy> column= new SQLTimeTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLUtilDateTypeColumn<TProxy> getUtilDateTypeColumn(String property) {
-        return new SQLUtilDateTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLUtilDateTypeColumn<TProxy> column= new SQLUtilDateTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
     protected SQLUUIDTypeColumn<TProxy> getUUIDTypeColumn(String property) {
-        return new SQLUUIDTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLUUIDTypeColumn<TProxy> column= new SQLUUIDTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        return column;
     }
 
 
 
     @Deprecated
     protected <TProperty> SQLNavigateColumn<TProxy, TProperty> getNavigate(String property, Class<TProperty> propType) {
-        return new SQLNavigateColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLNavigateColumnImpl<TProxy, TProperty> column = new SQLNavigateColumnImpl<>(entitySQLContext, table, property, propType);
+        column._setProxy(castChain());
+        return column;
     }
 
     protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> TPropertyProxy getNavigate(String property, TPropertyProxy propertyProxy) {
@@ -297,5 +346,9 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             return navValue;
         }
         return parentNavValue+"."+navValue;
+    }
+
+    protected TProxy castChain() {
+        return (TProxy)this;
     }
 }

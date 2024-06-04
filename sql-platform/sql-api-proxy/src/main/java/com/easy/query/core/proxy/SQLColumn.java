@@ -17,7 +17,9 @@ public interface SQLColumn<TProxy, TProperty> extends ColumnComparableExpression
 
     default SQLAnyColumn<TProxy, TProperty> asAny() {
         Class<?> propertyType = getPropertyType();
-        return new SQLAnyColumnImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), EasyObjectUtil.typeCastNullable(propertyType));
+        SQLAnyColumnImpl<TProxy, TProperty> column = new SQLAnyColumnImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), EasyObjectUtil.typeCastNullable(propertyType));
+        column._setProxy(castChain());
+        return column;
     }
 
     @Override
@@ -25,4 +27,5 @@ public interface SQLColumn<TProxy, TProperty> extends ColumnComparableExpression
         _setPropertyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
+    void _setProxy(TProxy tProxy);
 }

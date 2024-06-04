@@ -22,11 +22,6 @@ public @interface EntityProxy {
      * @return
      */
     String value() default "";
-    /**
-     * 生成代理对象扩展
-     * @return
-     */
-    Class<?> extension() default Object.class;
 
     /**
      * 需要忽略生成的属性

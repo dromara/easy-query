@@ -336,9 +336,4 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
         }
         return castChain();
     }
-
-    @Override
-    default TProxy castChain() {
-        return (TProxy) this;
-    }
 }

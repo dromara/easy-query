@@ -28,7 +28,7 @@ public class SQLAnyTypeColumnImpl<TProxy,TProperty> extends SQLColumnImpl<TProxy
     }
 
     @Override
-    public SQLAnyTypeColumn<TProperty, TProperty> create(TableAvailable table, EntitySQLContext entitySQLContext) {
+    public SQLAnyTypeColumn<TProxy, TProperty> create(TableAvailable table, EntitySQLContext entitySQLContext) {
         return new SQLAnyTypeColumnImpl<>(entitySQLContext,table,property, EasyObjectUtil.typeCastNullable(propType));
     }
 }

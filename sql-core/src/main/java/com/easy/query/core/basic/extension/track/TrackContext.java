@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.extension.track;
 
+import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.exception.EasyQueryException;
 
 import java.util.Objects;
@@ -19,8 +21,9 @@ public interface TrackContext {
      * @param entity
      * @return
      */
-    EntityState getTrackEntityState(Object entity);
-    default EntityState getTrackEntityStateNotNull(Object entity){
+   @Nullable
+   EntityState getTrackEntityState(Object entity);
+    default @NotNull EntityState getTrackEntityStateNotNull(Object entity){
         EntityState trackEntityState = getTrackEntityState(entity);
         Objects.requireNonNull(trackEntityState,"cant get track entity state");
         return trackEntityState;

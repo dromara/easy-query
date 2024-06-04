@@ -12,6 +12,7 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
  * @author xuejiaming
  */
 public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProperty> {
+    protected TProxy tProxy;
     protected final EntitySQLContext entitySQLContext;
     protected final TableAvailable table;
     protected final String property;
@@ -50,4 +51,15 @@ public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProp
         this.propType=clazz;
     }
 
+
+    @Override
+    public TProxy castChain() {
+        return tProxy;
+    }
+
+
+    @Override
+    public void _setProxy(TProxy tProxy) {
+        this.tProxy=tProxy;
+    }
 }

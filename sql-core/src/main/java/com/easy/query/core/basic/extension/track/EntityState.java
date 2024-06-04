@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.extension.track;
 
+import com.easy.query.core.metadata.EntityMetadataManager;
+
 /**
  * @FileName: EntryState.java
  * @Description: 文件说明

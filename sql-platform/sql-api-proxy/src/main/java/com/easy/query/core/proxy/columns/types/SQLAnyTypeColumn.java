@@ -10,5 +10,5 @@ import com.easy.query.core.proxy.columns.SQLAnyColumn;
  * @author xuejiaming
  */
 public interface SQLAnyTypeColumn<TProxy,TProperty> extends SQLAnyColumn<TProxy, TProperty>,
-        ProxyEntity<SQLAnyTypeColumn<TProperty,TProperty>, TProperty> {
+        ProxyEntity<SQLAnyTypeColumn<TProxy,TProperty>, TProperty> {
 }
