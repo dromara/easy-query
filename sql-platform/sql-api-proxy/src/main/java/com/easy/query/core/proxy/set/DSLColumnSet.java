@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -27,24 +28,27 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,TablePropColumn, EntitySQLContextAvailable {
-    default void set(TProperty val) {
-        set(true, val);
+public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TProperty>, ChainCast<TProxy>, TablePropColumn, EntitySQLContextAvailable {
+    default TProxy set(TProperty val) {
+        return set(true, val);
     }
 
-    default void set(boolean condition, TProperty val) {
+    default TProxy set(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), val));
         }
-    }
-    default void setNull() {
-        setNull(true);
+        return castChain();
     }
 
-    default void setNull(boolean condition) {
+    default TProxy setNull() {
+        return setNull(true);
+    }
+
+    default TProxy setNull(boolean condition) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), null));
         }
+        return castChain();
     }
 //
 //    default void set(SQLColumn<?, TProperty> column) {
@@ -71,6 +75,7 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
 //            getEntitySQLContext().accept(new SQLColumnSetSQLFunctionValueImpl(getTable(), getValue(), val));
 //        }
 //    }
+
     /**
      * 支持function函数
      *
@@ -92,66 +97,73 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
      *   })
      * }
      * </pre></blockquote>
+     *
      * @param val
      * @param <TResult>
      */
-    default <TResult extends PropTypeColumn<TProperty>> void set(TResult val) {
-        set(true, val);
+    default <TResult extends PropTypeColumn<TProperty>> TProxy set(TResult val) {
+        return set(true, val);
     }
 
-    default <TResult extends PropTypeColumn<TProperty>> void set(boolean condition, TResult val) {
+    default <TResult extends PropTypeColumn<TProperty>> TProxy set(boolean condition, TResult val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(getTable(), getValue(), val));
         }
+        return castChain();
     }
 
-    default void setSQL(String sqlSegment) {
-        setSQL(sqlSegment, c -> {
+    default TProxy setSQL(String sqlSegment) {
+        return setSQL(sqlSegment, c -> {
         });
     }
 
-    default void setSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        setSQL(true, sqlSegment, contextConsume);
+    default TProxy setSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+        return setSQL(true, sqlSegment, contextConsume);
     }
 
 
-    default void setSQL(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    default TProxy setSQL(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetNativeSQLImpl(getTable(), getValue(), sqlSegment, contextConsume));
         }
+        return castChain();
     }
 
     /**
      * 设置子查询
      * o.userCount().set(subQuery)
      * select (select count(*) from table) as userCount
+     *
      * @param subQuery 子查询
      */
-    default void setSubQuery(Query<TProperty> subQuery) {
-        setSubQuery(true, subQuery);
+    default TProxy setSubQuery(Query<TProperty> subQuery) {
+        return setSubQuery(true, subQuery);
     }
 
     /**
      * 设置子查询
      * o.userCount().set(subQuery)
      * select (select count(*) from table) as userCount
+     *
      * @param condition 是否使用这个查询赋值
-     * @param subQuery 子查询
+     * @param subQuery  子查询
      */
-    default void setSubQuery(boolean condition, Query<TProperty> subQuery) {
+    default TProxy setSubQuery(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnSetSubQueryImpl(getTable(), getValue(), subQuery));
         }
+        return castChain();
     }
 
     /**
      * 查询表达式
      * x.title().sqlSelectExpression(o.content())
      * select content as title from table
+     *
      * @param sqlSelectExpression 查询表达式
      */
-    default void setExpression(SQLSelectExpression sqlSelectExpression) {
-        setExpression(true, sqlSelectExpression);
+    default TProxy setExpression(SQLSelectExpression sqlSelectExpression) {
+        return setExpression(true, sqlSelectExpression);
     }
 
 
@@ -159,13 +171,15 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
      * 查询表达式
      * x.title().sqlSelectExpression(o.content())
      * select content as title from table
-     * @param condition 是否追加这个select
+     *
+     * @param condition           是否追加这个select
      * @param sqlSelectExpression 查询表达式
      */
-    default void setExpression(boolean condition, SQLSelectExpression sqlSelectExpression) {
+    default TProxy setExpression(boolean condition, SQLSelectExpression sqlSelectExpression) {
         if (condition) {
             getEntitySQLContext().accept(sqlSelectExpression.as(getValue()));
         }
+        return castChain();
     }
 
     /**
@@ -177,14 +191,15 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
      *                         }))
      *                    }
      * </pre></blockquote>
-     * @param column 对一或者对多的导航属性
+     *
+     * @param column                 对一或者对多的导航属性
      * @param <TSourcePropertyProxy> 对一或者对一类型代理
-     * @param <TSourceProperty> 对一或者对一类型
+     * @param <TSourceProperty>      对一或者对一类型
      */
     @Deprecated
-    default < TSourcePropertyProxy extends ProxyEntity<TSourcePropertyProxy,TSourceProperty>,TSourceProperty extends ProxyEntityAvailable<TSourceProperty , TSourcePropertyProxy>>
-    void setNavigate(SQLColumn<?,TSourceProperty> column) {
-      setNavigate(column,null);
+    default <TSourcePropertyProxy extends ProxyEntity<TSourcePropertyProxy, TSourceProperty>, TSourceProperty extends ProxyEntityAvailable<TSourceProperty, TSourcePropertyProxy>>
+    TProxy setNavigate(SQLColumn<?, TSourceProperty> column) {
+        return setNavigate(column, null);
     }
 
     /**
@@ -197,19 +212,21 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
      *                         }))
      *                    }
      * </pre></blockquote>
-     * @param column 对一或者对多的导航属性
+     *
+     * @param column                   对一或者对多的导航属性
      * @param navigateSelectExpression 映射的结果返回方法
-     * @param <TPropertyProxy> 返回映射的对多对一类型代理
-     * @param <TSourcePropertyProxy> 对一或者对一类型代理
-     * @param <TSourceProperty> 对一或者对一类型
+     * @param <TPropertyProxy>         返回映射的对多对一类型代理
+     * @param <TSourcePropertyProxy>   对一或者对一类型代理
+     * @param <TSourceProperty>        对一或者对一类型
      */
     @Deprecated
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TSourcePropertyProxy extends ProxyEntity<TSourcePropertyProxy,TSourceProperty>,TSourceProperty extends ProxyEntityAvailable<TSourceProperty , TSourcePropertyProxy>>
-    void setNavigate(SQLColumn<?,TSourceProperty> column
-            , SQLFuncExpression1<TSourcePropertyProxy,TPropertyProxy> navigateSelectExpression) {
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TSourcePropertyProxy extends ProxyEntity<TSourcePropertyProxy, TSourceProperty>, TSourceProperty extends ProxyEntityAvailable<TSourceProperty, TSourcePropertyProxy>>
+    TProxy setNavigate(SQLColumn<?, TSourceProperty> column
+            , SQLFuncExpression1<TSourcePropertyProxy, TPropertyProxy> navigateSelectExpression) {
         Class<TSourceProperty> propertyType = EasyObjectUtil.typeCastNullable(column.getPropertyType());
         TSourcePropertyProxy tSourcePropertyProxy = EntityQueryProxyManager.create(propertyType);
-        getEntitySQLContext().accept(new SQLColumnIncludeColumnImpl<>(column.getTable(), column.getValue(), getValue(),tSourcePropertyProxy,navigateSelectExpression));
+        getEntitySQLContext().accept(new SQLColumnIncludeColumnImpl<>(column.getTable(), column.getValue(), getValue(), tSourcePropertyProxy, navigateSelectExpression));
+        return castChain();
     }
 //
 //    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>> void setNavigate(TPropertyProxy columnProxy) {
@@ -224,90 +241,104 @@ public interface DSLColumnSet<TProperty> extends PropTypeColumn<TProperty>,Table
 
     /**
      * 自增 a+1
-     *  update set age=age+1
+     * update set age=age+1
      */
-    default void increment() {
-        increment(true);
+    default TProxy increment() {
+        return increment(true);
     }
 
     /**
      * 自增 a+1
      * update set age=age+1
+     *
      * @param condition 是否生效
      */
-    default void increment(boolean condition) {
+    default TProxy increment(boolean condition) {
         if (condition) {
             increment(1);
         }
+        return castChain();
     }
 
     /**
      * 自减 a-1
      * update set age=age-1
      */
-    default void decrement() {
-        decrement(true);
+    default TProxy decrement() {
+        return decrement(true);
     }
 
     /**
      * 自减 a-1
      * update set age=age-1
+     *
      * @param condition 是否生效
      */
-    default void decrement(boolean condition) {
+    default TProxy decrement(boolean condition) {
         if (condition) {
             decrement(1);
         }
+        return castChain();
     }
 
 
     /**
      * 自增 a+?
      * update set age=age+?
+     *
      * @param val
      * @param <T>
      */
-    default <T extends Number> void increment(Number val) {
-        increment(true, val);
+    default <T extends Number> TProxy increment(Number val) {
+        return increment(true, val);
     }
 
     /**
      * 自增 a+?
      * update set age=age+?
+     *
      * @param condition
      * @param val
      * @param <T>
      */
-    default <T extends Number> void increment(boolean condition, Number val) {
+    default <T extends Number> TProxy increment(boolean condition, Number val) {
         if (condition) {
 //            getEntitySQLContext().accept(new SQLColumnSetImpl(x -> {
 //                x.setIncrementNumber(true, getTable(), getValue(), val);
 //            }));
             getEntitySQLContext().accept(new SQLColumnIncrementImpl(getTable(), getValue(), val));
         }
+        return castChain();
     }
 
     /**
      * 自减 a-?
      * update set age=age-?
+     *
      * @param val
      * @param <T>
      */
-    default <T extends Number> void decrement(Number val) {
-        decrement(true, val);
+    default <T extends Number> TProxy decrement(Number val) {
+        return decrement(true, val);
     }
 
     /**
      * 自减 a-?
      * update set age=age-?
+     *
      * @param condition
      * @param val
      * @param <T>
      */
-    default <T extends Number> void decrement(boolean condition, Number val) {
+    default <T extends Number> TProxy decrement(boolean condition, Number val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLColumnDecrementImpl(getTable(), getValue(), val));
         }
+        return castChain();
     }
 
+    @Override
+    default TProxy castChain() {
+        return (TProxy) this;
+    }
 }

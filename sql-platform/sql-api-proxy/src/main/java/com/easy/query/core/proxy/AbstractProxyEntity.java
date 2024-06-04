@@ -220,7 +220,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      */
     public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectAll(TRProxy proxy) {
         entitySQLContext.accept(new SQLSelectAllImpl(proxy.getEntitySQLContext(),proxy.getTable(), new TablePropColumn[0]));
-        return castProxy();
+        return castChain();
     }
 
     /**
@@ -242,7 +242,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      */
     public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectIgnores(TablePropColumn... ignoreTableProps) {
         entitySQLContext.accept(new SQLSelectIgnoreImpl(ignoreTableProps));
-        return castProxy();
+        return castChain();
     }
 
     /**
@@ -261,7 +261,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      */
     public TProxy selectExpression(SQLSelectAsExpression... sqlSelectAsExpression) {
         entitySQLContext.accept(sqlSelectAsExpression);
-        return castProxy();
+        return castChain();
     }
     /**
      * 支持动态select+动态group取列防止sql注入
@@ -270,7 +270,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      */
     public TProxy selectColumn(SQLTableOwner sqlTableOwner, String property) {
         entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property));
-        return castProxy();
+        return castChain();
     }
     /**
      * 支持动态select+动态selectAs取列防止sql注入
@@ -280,7 +280,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      */
     public TProxy selectColumnAs(SQLTableOwner sqlTableOwner,String property,String propertyAlias) {
         entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property,propertyAlias));
-        return castProxy();
+        return castChain();
     }
 
 
@@ -304,18 +304,14 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 //        entitySQLContext.accept(new SQLSelectAsOnlyImpl(this.getTable(),this.getEntitySQLContext(),selectorConsumer));
 //    }
 
-    private TProxy castProxy(){
-        return (TProxy)this;
-    }
-
     /**
      * 增强当前代理对象
      * @param selectExpression 选择表达式
      * @return 返回增强后的当前代理对象
      */
     public TProxy adapter(Consumer<TProxy> selectExpression) {
-        selectExpression.accept(castProxy());
-        return castProxy();
+        selectExpression.accept(castChain());
+        return castChain();
     }
 
     /**
@@ -391,5 +387,9 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable)columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(),columnProxy,navigateSelectExpression));
+    }
+
+    private TProxy castChain() {
+        return (TProxy)this;
     }
 }

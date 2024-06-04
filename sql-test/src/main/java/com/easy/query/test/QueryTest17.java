@@ -1177,6 +1177,15 @@ public class QueryTest17 extends BaseTest {
                 }).where(p -> {
                     p.myCode().like("123");
                 }).toList();
+        List<ProvinceVO> list1 = easyEntityQuery.queryable(Province.class)
+                .where(p -> {
+                    p.code().eq("123");
+                }).select(p -> new ProvinceVOProxy()
+                        .myName().set(p.code())
+                        .myCode().set(p.name())
+                ).where(p -> {
+                    p.myCode().like("123");
+                }).toList();
 
 
         List<ProvinceVO> list2 = easyEntityQuery.queryable(Province.class)
@@ -1227,7 +1236,6 @@ public class QueryTest17 extends BaseTest {
                 .where(t -> {
                     t.id().eq("1");
                 }).streamBy(s -> s.collect(Collectors.toList()));
-
 
         Map<String, Topic> mapWithMap = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {

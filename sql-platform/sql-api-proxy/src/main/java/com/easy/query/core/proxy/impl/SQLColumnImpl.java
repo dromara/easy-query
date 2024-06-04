@@ -49,4 +49,5 @@ public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProp
     public <TR> void _setPropertyType(Class<TR> clazz) {
         this.propType=clazz;
     }
+
 }

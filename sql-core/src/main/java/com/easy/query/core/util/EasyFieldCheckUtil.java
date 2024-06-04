@@ -9,7 +9,11 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.exception.EasyQueryInvalidFieldCheckException;
 
-
+/**
+ * 参考了mybatis-flex的的检查代码
+ * <a href="https://gitee.com/mybatis-flex/mybatis-flex">mybatis-flex</a>
+ *
+ */
 public class EasyFieldCheckUtil {
 
     private static final char[] UN_SAFE_CHARS = "'`\"<>&+=#-;".toCharArray();

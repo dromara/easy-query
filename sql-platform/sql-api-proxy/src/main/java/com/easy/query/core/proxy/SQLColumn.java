@@ -13,7 +13,7 @@ import com.easy.query.core.util.EasyObjectUtil;
  * @author xuejiaming
  */
 public interface SQLColumn<TProxy, TProperty> extends ColumnComparableExpression<TProperty>,
-        PropTypeColumn<TProperty>, DSLColumnSet<TProperty> {
+        PropTypeColumn<TProperty>, DSLColumnSet<TProxy,TProperty> {
 
     default SQLAnyColumn<TProxy, TProperty> asAny() {
         Class<?> propertyType = getPropertyType();

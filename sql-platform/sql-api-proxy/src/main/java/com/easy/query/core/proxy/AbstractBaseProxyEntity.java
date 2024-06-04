@@ -8,6 +8,7 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
+import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -83,7 +84,7 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ProxyEntity<TProxy, TEntity>, EntitySQLContextAvailable {
+public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ProxyEntity<TProxy, TEntity>,  EntitySQLContextAvailable {
 
     protected TableAvailable table;
     protected EntitySQLContext entitySQLContext = new ColumnSelectSQLContext();
