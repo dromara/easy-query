@@ -26,11 +26,14 @@ import com.easy.query.test.entity.MyTopic;
 import com.easy.query.test.entity.MyTopic4;
 import com.easy.query.test.entity.MyTopic5;
 import com.easy.query.test.entity.MyTopicx;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.base.Province;
 import com.easy.query.test.entity.base.ProvinceVO;
 import com.easy.query.test.entity.base.proxy.ProvinceVOProxy;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
@@ -1166,6 +1169,15 @@ public class QueryTest17 extends BaseTest {
 
     @Test
     public void testSubFrom1(){
+        try {
+            //保证能编译通过
+            List<SysUser> list3 = easyEntityQuery.queryable(Province.class)
+                    .select(p -> new SysUserProxy()
+                            .blogs().set(p.cities(), c -> new BlogEntityProxy())
+                            .id().set("1")).toList();
+        }catch (Exception ex){
+
+        }
         List<ProvinceVO> list = easyEntityQuery.queryable(Province.class)
                 .where(p -> {
                     p.code().eq("123");

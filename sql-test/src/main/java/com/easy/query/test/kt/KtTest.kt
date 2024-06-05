@@ -4,7 +4,6 @@ import com.easy.query.core.enums.SQLRangeEnum
 import com.easy.query.core.exception.EasyQuerySQLCommandException
 import com.easy.query.core.exception.EasyQuerySQLStatementException
 import com.easy.query.core.expression.lambda.Property
-import kapt.compile.com.easy.query.test.kt.proxy.TopicKtProxy
 import org.junit.Assert
 import org.junit.Test
 import java.math.BigDecimal

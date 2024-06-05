@@ -472,7 +472,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     }
                     if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
                         includeManyProperty = true;
-                        aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLQueryable");
+//                        aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLQueryable");
+                        aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLManyQueryable");
                     }
                 }
                 //todo

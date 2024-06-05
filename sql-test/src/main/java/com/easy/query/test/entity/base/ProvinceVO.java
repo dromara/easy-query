@@ -16,4 +16,7 @@ import lombok.experimental.FieldNameConstants;
 public class ProvinceVO {
     private String myCode;
     private String myName;
+//
+//    @Navigate(RelationTypeEnum.OneToMany)
+//    private List<BlogEntity> blogs;
 }
