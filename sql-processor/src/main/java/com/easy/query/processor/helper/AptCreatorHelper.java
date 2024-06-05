@@ -39,7 +39,7 @@ public class AptCreatorHelper {
                 if (property.isIncludeProperty() && property.getNavigateProxyName() != null) {
                     if (property.isIncludeManyProperty()) {
                         String fieldString = AptConstant.FIELD_NAVIGATES_TEMPLATE
-                                .replace("@{entityClass}", property.getEntityName())
+                                .replace("@{entityClassProxy}", aptFileCompiler.getEntityClassProxyName())
                                 .replace("@{propertyProxy}", property.getNavigateProxyName())
                                 .replace("@{comment}", property.getComment())
                                 .replace("@{propertyType}", property.getPropertyType())

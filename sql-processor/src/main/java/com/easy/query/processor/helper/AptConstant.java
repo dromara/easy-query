@@ -69,7 +69,7 @@ public class AptConstant {
      */
     public static final String FIELD_NAVIGATES_TEMPLATE = "\n" +
             "    @{comment}\n" +
-            "    public SQLManyQueryable<@{entityClass}Proxy,@{propertyProxy},@{propertyType}> @{proxyProperty}(){\n" +
+            "    public SQLManyQueryable<@{entityClassProxy},@{propertyProxy},@{propertyType}> @{proxyProperty}(){\n" +
             "        return getNavigateMany(\"@{property}\",new @{propertyProxy}());\n" +
             "    }";
     public static final String FIELD_VALUE_OBJECT_TEMPLATE = "\n" +
