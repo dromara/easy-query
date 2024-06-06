@@ -3,7 +3,9 @@ package com.easy.query.api.proxy.entity.update.impl;
 import com.easy.query.api.proxy.entity.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.function.Function;
@@ -98,5 +100,10 @@ public class EasyEmptyEntityUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> 
     @Override
     public ClientEntityUpdatable<T> getClientUpdate() {
         return null;
+    }
+
+    @Override
+    public EntityUpdatable<TProxy, T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        return this;
     }
 }

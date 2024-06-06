@@ -3,8 +3,10 @@ package com.easy.query.api.proxy.entity.delete.abstraction;
 import com.easy.query.api.proxy.entity.delete.EntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.function.Function;
@@ -122,6 +124,11 @@ public abstract class AbstractEntityDeletable<TProxy extends ProxyEntity<TProxy,
     @Override
     public EntityDeletable<TProxy, T> batch(boolean use) {
         entityObjectDeletable.batch(use);
+        return this;
+    }
+    @Override
+    public EntityDeletable<TProxy, T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        entityObjectDeletable.behaviorConfigure(configure);
         return this;
     }
 }

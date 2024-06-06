@@ -3,7 +3,9 @@ package com.easy.query.core.basic.api.insert.map;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -104,6 +106,11 @@ public class EasyEmptyMapClientInsertable implements MapClientInsertable<Map<Str
 
     @Override
     public MapClientInsertable<Map<String, Object>> asTableLink(Function<String, String> linkAs) {
+        return this;
+    }
+
+    @Override
+    public MapClientInsertable<Map<String, Object>> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
         return this;
     }
 }

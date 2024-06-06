@@ -15,6 +15,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -254,4 +255,6 @@ public interface OverrideKtQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> extends Kt
     KtQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> asTableLink(Function<String, String> linkAs);
     @Override
     KtQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> filterConfigure(ValueFilter valueFilter);
+    @Override
+    KtQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> behaviorConfigure(SQLExpression1<EasyBehavior> configure);
 }

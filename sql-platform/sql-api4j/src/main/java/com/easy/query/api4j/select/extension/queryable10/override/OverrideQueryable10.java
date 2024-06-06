@@ -16,6 +16,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -40,9 +41,10 @@ public interface OverrideQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ex
     Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> whereById(boolean condition, Object id);
 
     @Override
-    default <TProperty> Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> whereByIds(Collection<TProperty> ids){
-        return whereByIds(true,ids);
+    default <TProperty> Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
     }
+
     @Override
     <TProperty> Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> whereByIds(boolean condition, Collection<TProperty> ids);
 
@@ -252,6 +254,10 @@ public interface OverrideQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ex
 
     @Override
     Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> asTableLink(Function<String, String> linkAs);
+
     @Override
     Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> filterConfigure(ValueFilter valueFilter);
+
+    @Override
+    Queryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> behaviorConfigure(SQLExpression1<EasyBehavior> configure);
 }

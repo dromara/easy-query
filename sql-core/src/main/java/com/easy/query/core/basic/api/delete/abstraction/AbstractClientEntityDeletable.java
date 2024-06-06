@@ -10,9 +10,11 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.ArrayList;
@@ -96,6 +98,13 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
     @Override
     public ClientEntityDeletable<T> asAlias(String alias) {
         entityDeleteExpressionBuilder.getRecentlyTable().asAlias(alias);
+        return this;
+    }
+    @Override
+    public ClientEntityDeletable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        if(configure!=null){
+            configure.apply(entityDeleteExpressionBuilder.getExpressionContext().getBehavior());
+        }
         return this;
     }
 

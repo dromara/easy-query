@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.insert;
 
+import com.easy.query.core.basic.api.internal.BehaviorConfigure;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.SQLBatchExecute;
 import com.easy.query.core.basic.api.internal.SQLExecuteRows;
@@ -19,7 +20,13 @@ import java.util.Collection;
  * @Description: 文件说明
  * @Date: 2023/2/20 08:48
  */
-public interface Insertable<T, TChain> extends SQLExecuteRows, Interceptable<TChain>, TableReNameable<TChain>, SQLExecuteStrategy<TChain>, SQLOnDuplicateKeyIgnore<TChain>, SQLBatchExecute<TChain> {
+public interface Insertable<T, TChain> extends SQLExecuteRows,
+        Interceptable<TChain>,
+        TableReNameable<TChain>,
+        SQLExecuteStrategy<TChain>,
+        SQLOnDuplicateKeyIgnore<TChain>,
+        BehaviorConfigure<TChain>,
+        SQLBatchExecute<TChain> {
     TChain insert(T entity);
 
     TChain insert(Collection<T> entities);

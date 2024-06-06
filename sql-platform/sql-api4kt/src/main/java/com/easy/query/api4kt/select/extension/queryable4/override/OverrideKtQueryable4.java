@@ -15,6 +15,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -25,25 +26,26 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface OverrideKtQueryable4<T1, T2, T3,T4> extends KtQueryable<T1>, KtQueryable4Available<T1, T2,T3,T4> {
+public interface OverrideKtQueryable4<T1, T2, T3, T4> extends KtQueryable<T1>, KtQueryable4Available<T1, T2, T3, T4> {
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> cloneQueryable();
+    KtQueryable4<T1, T2, T3, T4> cloneQueryable();
 
     @Override
-    default KtQueryable4<T1,T2,T3,T4> whereById(Object id) {
+    default KtQueryable4<T1, T2, T3, T4> whereById(Object id) {
         return whereById(true, id);
     }
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> whereById(boolean condition, Object id);
+    KtQueryable4<T1, T2, T3, T4> whereById(boolean condition, Object id);
 
     @Override
-   default  <TProperty> KtQueryable4<T1,T2,T3,T4> whereByIds(Collection<TProperty> ids){
-        return whereByIds(true,ids);
+    default <TProperty> KtQueryable4<T1, T2, T3, T4> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
     }
+
     @Override
-    <TProperty> KtQueryable4<T1,T2,T3,T4> whereByIds(boolean condition, Collection<TProperty> ids);
+    <TProperty> KtQueryable4<T1, T2, T3, T4> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
      * 仅支持主表的动态对象查询
@@ -52,7 +54,7 @@ public interface OverrideKtQueryable4<T1, T2, T3,T4> extends KtQueryable<T1>, Kt
      * @return
      */
     @Override
-    default KtQueryable4<T1,T2,T3,T4> whereObject(Object object) {
+    default KtQueryable4<T1, T2, T3, T4> whereObject(Object object) {
         return whereObject(true, object);
     }
 
@@ -64,48 +66,48 @@ public interface OverrideKtQueryable4<T1, T2, T3,T4> extends KtQueryable<T1>, Kt
      * @return
      */
     @Override
-    KtQueryable4<T1,T2,T3,T4> whereObject(boolean condition, Object object);
+    KtQueryable4<T1, T2, T3, T4> whereObject(boolean condition, Object object);
 
 
     @Override
-    default KtQueryable4<T1,T2,T3,T4> where(SQLExpression1<SQLKtWherePredicate<T1>> whereExpression) {
+    default KtQueryable4<T1, T2, T3, T4> where(SQLExpression1<SQLKtWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> where(boolean condition, SQLExpression1<SQLKtWherePredicate<T1>> whereExpression);
+    KtQueryable4<T1, T2, T3, T4> where(boolean condition, SQLExpression1<SQLKtWherePredicate<T1>> whereExpression);
 
     @Override
-    default KtQueryable4<T1,T2,T3,T4> groupBy(SQLExpression1<SQLKtGroupBySelector<T1>> selectExpression) {
+    default KtQueryable4<T1, T2, T3, T4> groupBy(SQLExpression1<SQLKtGroupBySelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> groupBy(boolean condition, SQLExpression1<SQLKtGroupBySelector<T1>> selectExpression);
+    KtQueryable4<T1, T2, T3, T4> groupBy(boolean condition, SQLExpression1<SQLKtGroupBySelector<T1>> selectExpression);
 
     @Override
-    default KtQueryable4<T1,T2,T3,T4> having(SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression) {
+    default KtQueryable4<T1, T2, T3, T4> having(SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression) {
         return having(true, predicateExpression);
     }
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> having(boolean condition, SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression);
+    KtQueryable4<T1, T2, T3, T4> having(boolean condition, SQLExpression1<SQLKtWhereAggregatePredicate<T1>> predicateExpression);
 
     @Override
-    default KtQueryable4<T1,T2,T3,T4> orderByAsc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
+    default KtQueryable4<T1, T2, T3, T4> orderByAsc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> orderByAsc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression);
+    KtQueryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression);
 
     @Override
-    default KtQueryable4<T1,T2,T3,T4> orderByDesc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
+    default KtQueryable4<T1, T2, T3, T4> orderByDesc(SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> orderByDesc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression);
+    KtQueryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression1<SQLKtOrderBySelector<T1>> selectExpression);
 
     /**
      * @param configuration
@@ -113,7 +115,7 @@ public interface OverrideKtQueryable4<T1, T2, T3,T4> extends KtQueryable<T1>, Kt
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取}
      */
     @Override
-    default KtQueryable4<T1,T2,T3,T4> orderByObject(ObjectSort configuration) {
+    default KtQueryable4<T1, T2, T3, T4> orderByObject(ObjectSort configuration) {
         return orderByObject(true, configuration);
     }
 
@@ -124,61 +126,61 @@ public interface OverrideKtQueryable4<T1, T2, T3,T4> extends KtQueryable<T1>, Kt
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取
      */
     @Override
-    KtQueryable4<T1,T2,T3,T4> orderByObject(boolean condition, ObjectSort configuration);
+    KtQueryable4<T1, T2, T3, T4> orderByObject(boolean condition, ObjectSort configuration);
 
     @Override
-    default <TREntity> KtQueryable4<T1,T2,T3,T4> include(SQLFuncExpression1<SQLKtNavigateInclude<T1>, KtQueryable<TREntity>> navigateIncludeSQLExpression) {
+    default <TREntity> KtQueryable4<T1, T2, T3, T4> include(SQLFuncExpression1<SQLKtNavigateInclude<T1>, KtQueryable<TREntity>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);
     }
 
     @Override
-    <TREntity> KtQueryable4<T1,T2,T3,T4> include(boolean condition, SQLFuncExpression1<SQLKtNavigateInclude<T1>, KtQueryable<TREntity>> navigateIncludeSQLExpression);
+    <TREntity> KtQueryable4<T1, T2, T3, T4> include(boolean condition, SQLFuncExpression1<SQLKtNavigateInclude<T1>, KtQueryable<TREntity>> navigateIncludeSQLExpression);
 
     @Override
-    default KtQueryable4<T1,T2,T3,T4> limit(long rows) {
+    default KtQueryable4<T1, T2, T3, T4> limit(long rows) {
         return limit(true, rows);
     }
 
     @Override
-    default KtQueryable4<T1,T2,T3,T4> limit(boolean condition, long rows) {
+    default KtQueryable4<T1, T2, T3, T4> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
     @Override
-    default KtQueryable4<T1,T2,T3,T4> limit(long offset, long rows) {
+    default KtQueryable4<T1, T2, T3, T4> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> limit(boolean condition, long offset, long rows);
+    KtQueryable4<T1, T2, T3, T4> limit(boolean condition, long offset, long rows);
 
-    default KtQueryable4<T1,T2,T3,T4> distinct() {
+    default KtQueryable4<T1, T2, T3, T4> distinct() {
         return distinct(true);
     }
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> distinct(boolean condition);
+    KtQueryable4<T1, T2, T3, T4> distinct(boolean condition);
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> disableLogicDelete();
+    KtQueryable4<T1, T2, T3, T4> disableLogicDelete();
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> enableLogicDelete();
+    KtQueryable4<T1, T2, T3, T4> enableLogicDelete();
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> useLogicDelete(boolean enable);
+    KtQueryable4<T1, T2, T3, T4> useLogicDelete(boolean enable);
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> noInterceptor();
+    KtQueryable4<T1, T2, T3, T4> noInterceptor();
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> useInterceptor(String name);
+    KtQueryable4<T1, T2, T3, T4> useInterceptor(String name);
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> noInterceptor(String name);
+    KtQueryable4<T1, T2, T3, T4> noInterceptor(String name);
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> useInterceptor();
+    KtQueryable4<T1, T2, T3, T4> useInterceptor();
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
@@ -187,22 +189,22 @@ public interface OverrideKtQueryable4<T1, T2, T3,T4> extends KtQueryable<T1>, Kt
      * @return
      */
     @Override
-    KtQueryable4<T1,T2,T3,T4> asTracking();
+    KtQueryable4<T1, T2, T3, T4> asTracking();
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> asNoTracking();
+    KtQueryable4<T1, T2, T3, T4> asNoTracking();
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> queryLargeColumn(boolean queryLarge);
+    KtQueryable4<T1, T2, T3, T4> queryLargeColumn(boolean queryLarge);
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+    KtQueryable4<T1, T2, T3, T4> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+    KtQueryable4<T1, T2, T3, T4> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> useConnectionMode(ConnectionModeEnum connectionMode);
+    KtQueryable4<T1, T2, T3, T4> useConnectionMode(ConnectionModeEnum connectionMode);
 
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableName}
@@ -213,7 +215,7 @@ public interface OverrideKtQueryable4<T1, T2, T3,T4> extends KtQueryable<T1>, Kt
      * @return
      */
     @Override
-    default KtQueryable4<T1,T2,T3,T4> asTable(String tableName) {
+    default KtQueryable4<T1, T2, T3, T4> asTable(String tableName) {
         return asTable(old -> tableName);
     }
 
@@ -226,31 +228,35 @@ public interface OverrideKtQueryable4<T1, T2, T3,T4> extends KtQueryable<T1>, Kt
      * @return
      */
     @Override
-    KtQueryable4<T1,T2,T3,T4> asTable(Function<String, String> tableNameAs);
+    KtQueryable4<T1, T2, T3, T4> asTable(Function<String, String> tableNameAs);
 
     @Override
-    default KtQueryable4<T1,T2,T3,T4> asSchema(String schema) {
+    default KtQueryable4<T1, T2, T3, T4> asSchema(String schema) {
         return asSchema(old -> schema);
     }
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> asSchema(Function<String, String> schemaAs);
+    KtQueryable4<T1, T2, T3, T4> asSchema(Function<String, String> schemaAs);
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> asAlias(String alias);
+    KtQueryable4<T1, T2, T3, T4> asAlias(String alias);
 
     /**
      * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
      * @return
      */
     @Override
-    default KtQueryable4<T1,T2,T3,T4> asTableLink(String linkAs) {
+    default KtQueryable4<T1, T2, T3, T4> asTableLink(String linkAs) {
         return asTableLink(o -> linkAs);
     }
 
 
     @Override
-    KtQueryable4<T1,T2,T3,T4> asTableLink(Function<String, String> linkAs);
+    KtQueryable4<T1, T2, T3, T4> asTableLink(Function<String, String> linkAs);
+
     @Override
-    KtQueryable4<T1,T2,T3,T4> filterConfigure(ValueFilter valueFilter);
+    KtQueryable4<T1, T2, T3, T4> filterConfigure(ValueFilter valueFilter);
+
+    @Override
+    KtQueryable4<T1, T2, T3, T4> behaviorConfigure(SQLExpression1<EasyBehavior> configure);
 }

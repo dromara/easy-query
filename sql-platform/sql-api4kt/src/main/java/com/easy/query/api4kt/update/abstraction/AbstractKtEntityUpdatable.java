@@ -3,7 +3,9 @@ package com.easy.query.api4kt.update.abstraction;
 import com.easy.query.api4kt.update.KtEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.function.Function;
 
@@ -112,6 +114,11 @@ public abstract class AbstractKtEntityUpdatable<T> implements KtEntityUpdatable<
     @Override
     public KtEntityUpdatable<T> asTableLink(Function<String, String> linkAs) {
         entityObjectUpdatable.asTableLink(linkAs);
+        return this;
+    }
+    @Override
+    public KtEntityUpdatable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        entityObjectUpdatable.behaviorConfigure(configure);
         return this;
     }
 }

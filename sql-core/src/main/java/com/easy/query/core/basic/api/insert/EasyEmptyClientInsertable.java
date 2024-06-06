@@ -7,6 +7,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -117,6 +118,10 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties) {
+        return this;
+    }
+    @Override
+    public ClientInsertable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
         return this;
     }
 

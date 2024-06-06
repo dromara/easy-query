@@ -2,7 +2,9 @@ package com.easy.query.api.proxy.entity.update.abstraction;
 
 import com.easy.query.api.proxy.entity.update.ExpressionUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.function.Function;
@@ -93,6 +95,11 @@ public abstract class AbstractExpressionUpdatable<TProxy extends ProxyEntity<TPr
     @Override
     public ExpressionUpdatable<TProxy,T> useLogicDelete(boolean enable) {
         clientExpressionUpdatable.useLogicDelete(enable);
+        return this;
+    }
+    @Override
+    public ExpressionUpdatable<TProxy,T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        clientExpressionUpdatable.behaviorConfigure(configure);
         return this;
     }
 

@@ -12,6 +12,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -238,4 +239,6 @@ public interface ClientOverrideQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> extend
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> filterConfigure(ValueFilter valueFilter);
     @Override
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> tableLogicDelete(Supplier<Boolean> tableLogicDel);
+    @Override
+    ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> behaviorConfigure(SQLExpression1<EasyBehavior> configure);
 }

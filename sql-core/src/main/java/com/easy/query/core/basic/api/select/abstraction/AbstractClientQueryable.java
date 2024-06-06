@@ -80,6 +80,7 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.logging.Log;
@@ -1413,6 +1414,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public ClientQueryable<T1> tableLogicDelete(Supplier<Boolean> tableLogicDel) {
         entityQueryExpressionBuilder.getRecentlyTable().setTableLogicDelete(tableLogicDel);
+        return this;
+    }
+
+    @Override
+    public ClientQueryable<T1> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        if(configure!=null){
+            configure.apply(entityQueryExpressionBuilder.getExpressionContext().getBehavior());
+        }
         return this;
     }
 }

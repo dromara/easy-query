@@ -8,6 +8,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -156,6 +157,11 @@ public abstract class AbstractExpressionDeletable<T> implements ExpressionDeleta
     @Override
     public ExpressionDeletable<T> asTableLink(Function<String, String> linkAs) {
         expressionObjectDeletable.asTableLink(linkAs);
+        return this;
+    }
+    @Override
+    public ExpressionDeletable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        expressionObjectDeletable.behaviorConfigure(configure);
         return this;
     }
 }

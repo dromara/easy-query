@@ -13,6 +13,7 @@ import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -226,4 +227,10 @@ public abstract class AbstractOverrideClientQueryable3<T1, T2, T3> extends Abstr
         super.tableLogicDelete(tableLogicDel);
         return getClientQueryable3();
     }
+    @Override
+    public ClientQueryable3<T1, T2, T3> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        super.behaviorConfigure(configure);
+        return getClientQueryable3();
+    }
+
 }

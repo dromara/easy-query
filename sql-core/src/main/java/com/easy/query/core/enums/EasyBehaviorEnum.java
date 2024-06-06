@@ -35,7 +35,11 @@ public enum EasyBehaviorEnum {
     /**
      * 更新删除忽略版本号
      */
-    IGNORE_VERSION(1<<9);
+    IGNORE_VERSION(1<<9),
+    /**
+     * 本次执行是否使用jdbc监听器
+     */
+    JDBC_LISTEN(1<<10);
 
     private final int code;
 

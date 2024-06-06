@@ -31,6 +31,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.Statement;
@@ -384,6 +385,11 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Queryable<T1> useLogicDelete(boolean enable) {
         entityQueryable.useLogicDelete(enable);
+        return this;
+    }
+    @Override
+    public Queryable<T1> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        entityQueryable.behaviorConfigure(configure);
         return this;
     }
 

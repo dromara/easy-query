@@ -3,7 +3,9 @@ package com.easy.query.api.proxy.entity.insert;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
@@ -122,6 +124,12 @@ public class EasyEntityOnlyInsertable<T> implements EntityOnlyInsertable<T> {
     @Override
     public EntityOnlyInsertable<T> asTableLink(Function<String, String> linkAs) {
         clientInsertable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
+    public EntityOnlyInsertable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        clientInsertable.behaviorConfigure(configure);
         return this;
     }
 }

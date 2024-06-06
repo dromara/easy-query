@@ -16,6 +16,7 @@ import com.easy.query.api.proxy.entity.select.extension.queryable.EntitySelectab
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityTreeable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityUnionable1;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.internal.BehaviorConfigure;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
@@ -42,6 +43,7 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
         TableReNameable<EntityQueryable<T1Proxy, T1>>,
         TableLogicDeletable<EntityQueryable<T1Proxy, T1>>,
         QueryStrategy<EntityQueryable<T1Proxy, T1>>,
+        BehaviorConfigure<EntityQueryable<T1Proxy, T1>>,
         ClientEntityQueryableAvailable<T1>,
         EntityFilterable1<T1Proxy,T1>,
         EntityCountable1<T1Proxy,T1>,

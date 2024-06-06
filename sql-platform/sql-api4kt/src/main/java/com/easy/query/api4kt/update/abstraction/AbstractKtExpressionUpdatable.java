@@ -2,7 +2,9 @@ package com.easy.query.api4kt.update.abstraction;
 
 import com.easy.query.api4kt.update.KtExpressionUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.function.Function;
 
@@ -110,6 +112,11 @@ public abstract class AbstractKtExpressionUpdatable<T> implements KtExpressionUp
     @Override
     public KtExpressionUpdatable<T> asTableLink(Function<String, String> linkAs) {
         clientExpressionUpdatable.asTableLink(linkAs);
+        return this;
+    }
+    @Override
+    public KtExpressionUpdatable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        clientExpressionUpdatable.behaviorConfigure(configure);
         return this;
     }
 }

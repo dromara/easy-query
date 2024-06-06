@@ -16,6 +16,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -26,25 +27,26 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface OverrideQueryable7<T1, T2, T3,T4,T5,T6,T7> extends Queryable<T1>, Queryable7Available<T1, T2,T3,T4,T5,T6,T7> {
+public interface OverrideQueryable7<T1, T2, T3, T4, T5, T6, T7> extends Queryable<T1>, Queryable7Available<T1, T2, T3, T4, T5, T6, T7> {
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> cloneQueryable();
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> cloneQueryable();
 
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> whereById(Object id) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> whereById(Object id) {
         return whereById(true, id);
     }
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> whereById(boolean condition, Object id);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> whereById(boolean condition, Object id);
 
     @Override
-    default <TProperty> Queryable7<T1,T2,T3,T4,T5,T6,T7> whereByIds(Collection<TProperty> ids) {
+    default <TProperty> Queryable7<T1, T2, T3, T4, T5, T6, T7> whereByIds(Collection<TProperty> ids) {
         return whereByIds(true, ids);
     }
+
     @Override
-    <TProperty> Queryable7<T1,T2,T3,T4,T5,T6,T7> whereByIds(boolean condition, Collection<TProperty> ids);
+    <TProperty> Queryable7<T1, T2, T3, T4, T5, T6, T7> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
      * 仅支持主表的动态对象查询
@@ -53,7 +55,7 @@ public interface OverrideQueryable7<T1, T2, T3,T4,T5,T6,T7> extends Queryable<T1
      * @return
      */
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> whereObject(Object object) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> whereObject(Object object) {
         return whereObject(true, object);
     }
 
@@ -65,48 +67,48 @@ public interface OverrideQueryable7<T1, T2, T3,T4,T5,T6,T7> extends Queryable<T1
      * @return
      */
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> whereObject(boolean condition, Object object);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> whereObject(boolean condition, Object object);
 
 
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
 
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression);
 
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> having(SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> having(SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {
         return having(true, predicateExpression);
     }
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression);
 
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> orderByAsc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> orderByAsc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
 
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> orderByDesc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> orderByDesc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
 
 
     /**
@@ -115,7 +117,7 @@ public interface OverrideQueryable7<T1, T2, T3,T4,T5,T6,T7> extends Queryable<T1
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
      */
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> orderByObject(ObjectSort configuration) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> orderByObject(ObjectSort configuration) {
         return orderByObject(true, configuration);
     }
 
@@ -126,61 +128,61 @@ public interface OverrideQueryable7<T1, T2, T3,T4,T5,T6,T7> extends Queryable<T1
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
      */
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> orderByObject(boolean condition, ObjectSort configuration);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> orderByObject(boolean condition, ObjectSort configuration);
 
     @Override
-    default <TREntity> Queryable7<T1,T2,T3,T4,T5,T6,T7> include(SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression) {
+    default <TREntity> Queryable7<T1, T2, T3, T4, T5, T6, T7> include(SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);
     }
 
     @Override
-    <TREntity> Queryable7<T1,T2,T3,T4,T5,T6,T7> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression);
+    <TREntity> Queryable7<T1, T2, T3, T4, T5, T6, T7> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression);
 
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> limit(long rows) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> limit(long rows) {
         return limit(true, rows);
     }
 
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> limit(boolean condition, long rows) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> limit(long offset, long rows) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> limit(boolean condition, long offset, long rows);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> limit(boolean condition, long offset, long rows);
 
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> distinct() {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> distinct() {
         return distinct(true);
     }
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> distinct(boolean condition);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> distinct(boolean condition);
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> disableLogicDelete();
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> disableLogicDelete();
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> enableLogicDelete();
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> enableLogicDelete();
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> useLogicDelete(boolean enable);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> useLogicDelete(boolean enable);
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> noInterceptor();
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> noInterceptor();
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> useInterceptor(String name);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> useInterceptor(String name);
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> noInterceptor(String name);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> noInterceptor(String name);
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> useInterceptor();
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> useInterceptor();
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
@@ -189,22 +191,22 @@ public interface OverrideQueryable7<T1, T2, T3,T4,T5,T6,T7> extends Queryable<T1
      * @return
      */
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> asTracking();
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> asTracking();
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> asNoTracking();
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> asNoTracking();
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> queryLargeColumn(boolean queryLarge);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> queryLargeColumn(boolean queryLarge);
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> useConnectionMode(ConnectionModeEnum connectionMode);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> useConnectionMode(ConnectionModeEnum connectionMode);
 
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableName}
@@ -215,7 +217,7 @@ public interface OverrideQueryable7<T1, T2, T3,T4,T5,T6,T7> extends Queryable<T1
      * @return
      */
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> asTable(String tableName) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> asTable(String tableName) {
         return asTable(old -> tableName);
     }
 
@@ -228,31 +230,35 @@ public interface OverrideQueryable7<T1, T2, T3,T4,T5,T6,T7> extends Queryable<T1
      * @return
      */
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> asTable(Function<String, String> tableNameAs);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> asTable(Function<String, String> tableNameAs);
 
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> asSchema(String schema) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> asSchema(String schema) {
         return asSchema(old -> schema);
     }
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> asSchema(Function<String, String> schemaAs);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> asSchema(Function<String, String> schemaAs);
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> asAlias(String alias);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> asAlias(String alias);
 
     /**
      * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
      * @return
      */
     @Override
-    default Queryable7<T1,T2,T3,T4,T5,T6,T7> asTableLink(String linkAs) {
+    default Queryable7<T1, T2, T3, T4, T5, T6, T7> asTableLink(String linkAs) {
         return asTableLink(o -> linkAs);
     }
 
 
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> asTableLink(Function<String, String> linkAs);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> asTableLink(Function<String, String> linkAs);
+
     @Override
-    Queryable7<T1,T2,T3,T4,T5,T6,T7> filterConfigure(ValueFilter valueFilter);
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> filterConfigure(ValueFilter valueFilter);
+
+    @Override
+    Queryable7<T1, T2, T3, T4, T5, T6, T7> behaviorConfigure(SQLExpression1<EasyBehavior> configure);
 }

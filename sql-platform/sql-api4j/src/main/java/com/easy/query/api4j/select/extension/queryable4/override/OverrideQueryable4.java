@@ -16,6 +16,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -26,26 +27,26 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface OverrideQueryable4<T1, T2, T3,T4> extends Queryable<T1>, Queryable4Available<T1, T2,T3,T4> {
+public interface OverrideQueryable4<T1, T2, T3, T4> extends Queryable<T1>, Queryable4Available<T1, T2, T3, T4> {
 
     @Override
-    Queryable4<T1,T2,T3,T4> cloneQueryable();
+    Queryable4<T1, T2, T3, T4> cloneQueryable();
 
     @Override
-    default Queryable4<T1,T2,T3,T4> whereById(Object id) {
+    default Queryable4<T1, T2, T3, T4> whereById(Object id) {
         return whereById(true, id);
     }
 
     @Override
-    Queryable4<T1,T2,T3,T4> whereById(boolean condition, Object id);
+    Queryable4<T1, T2, T3, T4> whereById(boolean condition, Object id);
 
     @Override
-   default  <TProperty> Queryable4<T1,T2,T3,T4> whereByIds(Collection<TProperty> ids){
-        return whereByIds(true,ids);
+    default <TProperty> Queryable4<T1, T2, T3, T4> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
     }
 
     @Override
-    <TProperty> Queryable4<T1,T2,T3,T4> whereByIds(boolean condition, Collection<TProperty> ids);
+    <TProperty> Queryable4<T1, T2, T3, T4> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
      * 仅支持主表的动态对象查询
@@ -54,7 +55,7 @@ public interface OverrideQueryable4<T1, T2, T3,T4> extends Queryable<T1>, Querya
      * @return
      */
     @Override
-    default Queryable4<T1,T2,T3,T4> whereObject(Object object) {
+    default Queryable4<T1, T2, T3, T4> whereObject(Object object) {
         return whereObject(true, object);
     }
 
@@ -66,48 +67,48 @@ public interface OverrideQueryable4<T1, T2, T3,T4> extends Queryable<T1>, Querya
      * @return
      */
     @Override
-    Queryable4<T1,T2,T3,T4> whereObject(boolean condition, Object object);
+    Queryable4<T1, T2, T3, T4> whereObject(boolean condition, Object object);
 
 
     @Override
-    default Queryable4<T1,T2,T3,T4> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
+    default Queryable4<T1, T2, T3, T4> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    Queryable4<T1,T2,T3,T4> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
+    Queryable4<T1, T2, T3, T4> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
 
     @Override
-    default Queryable4<T1,T2,T3,T4> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
+    default Queryable4<T1, T2, T3, T4> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
     @Override
-    Queryable4<T1,T2,T3,T4> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression);
+    Queryable4<T1, T2, T3, T4> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression);
 
     @Override
-    default Queryable4<T1,T2,T3,T4> having(SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {
+    default Queryable4<T1, T2, T3, T4> having(SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {
         return having(true, predicateExpression);
     }
 
     @Override
-    Queryable4<T1,T2,T3,T4> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression);
+    Queryable4<T1, T2, T3, T4> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression);
 
     @Override
-    default Queryable4<T1,T2,T3,T4> orderByAsc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
+    default Queryable4<T1, T2, T3, T4> orderByAsc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    Queryable4<T1,T2,T3,T4> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
+    Queryable4<T1, T2, T3, T4> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
 
     @Override
-    default Queryable4<T1,T2,T3,T4> orderByDesc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
+    default Queryable4<T1, T2, T3, T4> orderByDesc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    Queryable4<T1,T2,T3,T4> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
+    Queryable4<T1, T2, T3, T4> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
 
 
     /**
@@ -116,7 +117,7 @@ public interface OverrideQueryable4<T1, T2, T3,T4> extends Queryable<T1>, Querya
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
      */
     @Override
-    default Queryable4<T1,T2,T3,T4> orderByObject(ObjectSort configuration) {
+    default Queryable4<T1, T2, T3, T4> orderByObject(ObjectSort configuration) {
         return orderByObject(true, configuration);
     }
 
@@ -127,61 +128,61 @@ public interface OverrideQueryable4<T1, T2, T3,T4> extends Queryable<T1>, Querya
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
      */
     @Override
-    Queryable4<T1,T2,T3,T4> orderByObject(boolean condition, ObjectSort configuration);
+    Queryable4<T1, T2, T3, T4> orderByObject(boolean condition, ObjectSort configuration);
 
     @Override
-    default <TREntity> Queryable4<T1,T2,T3,T4> include(SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression) {
+    default <TREntity> Queryable4<T1, T2, T3, T4> include(SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);
     }
 
     @Override
-    <TREntity> Queryable4<T1,T2,T3,T4> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression);
+    <TREntity> Queryable4<T1, T2, T3, T4> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression);
 
     @Override
-    default Queryable4<T1,T2,T3,T4> limit(long rows) {
+    default Queryable4<T1, T2, T3, T4> limit(long rows) {
         return limit(true, rows);
     }
 
     @Override
-    default Queryable4<T1,T2,T3,T4> limit(boolean condition, long rows) {
+    default Queryable4<T1, T2, T3, T4> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
     @Override
-    default Queryable4<T1,T2,T3,T4> limit(long offset, long rows) {
+    default Queryable4<T1, T2, T3, T4> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
     @Override
-    Queryable4<T1,T2,T3,T4> limit(boolean condition, long offset, long rows);
+    Queryable4<T1, T2, T3, T4> limit(boolean condition, long offset, long rows);
 
-    default Queryable4<T1,T2,T3,T4> distinct() {
+    default Queryable4<T1, T2, T3, T4> distinct() {
         return distinct(true);
     }
 
     @Override
-    Queryable4<T1,T2,T3,T4> distinct(boolean condition);
+    Queryable4<T1, T2, T3, T4> distinct(boolean condition);
 
     @Override
-    Queryable4<T1,T2,T3,T4> disableLogicDelete();
+    Queryable4<T1, T2, T3, T4> disableLogicDelete();
 
     @Override
-    Queryable4<T1,T2,T3,T4> enableLogicDelete();
+    Queryable4<T1, T2, T3, T4> enableLogicDelete();
 
     @Override
-    Queryable4<T1,T2,T3,T4> useLogicDelete(boolean enable);
+    Queryable4<T1, T2, T3, T4> useLogicDelete(boolean enable);
 
     @Override
-    Queryable4<T1,T2,T3,T4> noInterceptor();
+    Queryable4<T1, T2, T3, T4> noInterceptor();
 
     @Override
-    Queryable4<T1,T2,T3,T4> useInterceptor(String name);
+    Queryable4<T1, T2, T3, T4> useInterceptor(String name);
 
     @Override
-    Queryable4<T1,T2,T3,T4> noInterceptor(String name);
+    Queryable4<T1, T2, T3, T4> noInterceptor(String name);
 
     @Override
-    Queryable4<T1,T2,T3,T4> useInterceptor();
+    Queryable4<T1, T2, T3, T4> useInterceptor();
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
@@ -190,22 +191,22 @@ public interface OverrideQueryable4<T1, T2, T3,T4> extends Queryable<T1>, Querya
      * @return
      */
     @Override
-    Queryable4<T1,T2,T3,T4> asTracking();
+    Queryable4<T1, T2, T3, T4> asTracking();
 
     @Override
-    Queryable4<T1,T2,T3,T4> asNoTracking();
+    Queryable4<T1, T2, T3, T4> asNoTracking();
 
     @Override
-    Queryable4<T1,T2,T3,T4> queryLargeColumn(boolean queryLarge);
+    Queryable4<T1, T2, T3, T4> queryLargeColumn(boolean queryLarge);
 
     @Override
-    Queryable4<T1,T2,T3,T4> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+    Queryable4<T1, T2, T3, T4> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
     @Override
-    Queryable4<T1,T2,T3,T4> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+    Queryable4<T1, T2, T3, T4> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
     @Override
-    Queryable4<T1,T2,T3,T4> useConnectionMode(ConnectionModeEnum connectionMode);
+    Queryable4<T1, T2, T3, T4> useConnectionMode(ConnectionModeEnum connectionMode);
 
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableName}
@@ -216,7 +217,7 @@ public interface OverrideQueryable4<T1, T2, T3,T4> extends Queryable<T1>, Querya
      * @return
      */
     @Override
-    default Queryable4<T1,T2,T3,T4> asTable(String tableName) {
+    default Queryable4<T1, T2, T3, T4> asTable(String tableName) {
         return asTable(old -> tableName);
     }
 
@@ -229,31 +230,35 @@ public interface OverrideQueryable4<T1, T2, T3,T4> extends Queryable<T1>, Querya
      * @return
      */
     @Override
-    Queryable4<T1,T2,T3,T4> asTable(Function<String, String> tableNameAs);
+    Queryable4<T1, T2, T3, T4> asTable(Function<String, String> tableNameAs);
 
     @Override
-    default Queryable4<T1,T2,T3,T4> asSchema(String schema) {
+    default Queryable4<T1, T2, T3, T4> asSchema(String schema) {
         return asSchema(old -> schema);
     }
 
     @Override
-    Queryable4<T1,T2,T3,T4> asSchema(Function<String, String> schemaAs);
+    Queryable4<T1, T2, T3, T4> asSchema(Function<String, String> schemaAs);
 
     @Override
-    Queryable4<T1,T2,T3,T4> asAlias(String alias);
+    Queryable4<T1, T2, T3, T4> asAlias(String alias);
 
     /**
      * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
      * @return
      */
     @Override
-    default Queryable4<T1,T2,T3,T4> asTableLink(String linkAs) {
+    default Queryable4<T1, T2, T3, T4> asTableLink(String linkAs) {
         return asTableLink(o -> linkAs);
     }
 
 
     @Override
-    Queryable4<T1,T2,T3,T4> asTableLink(Function<String, String> linkAs);
+    Queryable4<T1, T2, T3, T4> asTableLink(Function<String, String> linkAs);
+
     @Override
-    Queryable4<T1,T2,T3,T4> filterConfigure(ValueFilter valueFilter);
+    Queryable4<T1, T2, T3, T4> filterConfigure(ValueFilter valueFilter);
+
+    @Override
+    Queryable4<T1, T2, T3, T4> behaviorConfigure(SQLExpression1<EasyBehavior> configure);
 }

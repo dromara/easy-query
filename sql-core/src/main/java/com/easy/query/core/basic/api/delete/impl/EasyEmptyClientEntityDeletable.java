@@ -3,8 +3,10 @@ package com.easy.query.core.basic.api.delete.impl;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.function.Function;
 
@@ -105,6 +107,11 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
 
     @Override
     public ClientEntityDeletable<T> batch(boolean use) {
+        return this;
+    }
+
+    @Override
+    public ClientEntityDeletable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
         return this;
     }
 }

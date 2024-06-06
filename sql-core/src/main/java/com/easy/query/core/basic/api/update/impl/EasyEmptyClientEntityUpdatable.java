@@ -8,6 +8,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.function.Function;
 
@@ -125,5 +126,10 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     @Override
     public EntityUpdateExpressionBuilder getUpdateExpressionBuilder() {
         throw new NullPointerException("empty entity can not get EntityUpdateExpressionBuilder");
+    }
+
+    @Override
+    public ClientEntityUpdatable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        return this;
     }
 }

@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.delete;
 
+import com.easy.query.core.basic.api.internal.BehaviorConfigure;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.SQLExecuteExpectRows;
@@ -17,7 +18,10 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  * @Date: 2023/2/28 12:19
  */
 public interface Deletable<T, TChain> extends SQLExecuteExpectRows,
-        Interceptable<TChain>, LogicDeletable<TChain>, TableReNameable<TChain> {
+        Interceptable<TChain>,
+        LogicDeletable<TChain>,
+        BehaviorConfigure<TChain>,
+        TableReNameable<TChain> {
     ExpressionContext getExpressionContext();
 
     EntityDeleteExpressionBuilder getDeleteExpressionBuilder();

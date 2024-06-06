@@ -31,6 +31,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.Statement;
@@ -475,6 +476,12 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     @Override
     public KtQueryable<T1> filterConfigure(ValueFilter valueFilter) {
         entityQueryable.filterConfigure(valueFilter);
+        return this;
+    }
+
+    @Override
+    public KtQueryable<T1> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        entityQueryable.behaviorConfigure(configure);
         return this;
     }
 

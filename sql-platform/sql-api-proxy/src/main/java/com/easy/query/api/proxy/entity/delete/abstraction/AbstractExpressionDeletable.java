@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
@@ -17,13 +18,13 @@ import java.util.function.Function;
  * @Description: 文件说明
  * @Date: 2023/3/1 22:30
  */
-public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TProxy, T>, T> implements ExpressionDeletable<TProxy,T> {
+public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TProxy, T>, T> implements ExpressionDeletable<TProxy, T> {
     private final TProxy tProxy;
     private final ClientExpressionDeletable<T> expressionObjectDeletable;
 
-    public AbstractExpressionDeletable(TProxy tProxy,ClientExpressionDeletable<T> expressionObjectDeletable) {
+    public AbstractExpressionDeletable(TProxy tProxy, ClientExpressionDeletable<T> expressionObjectDeletable) {
         this.expressionObjectDeletable = expressionObjectDeletable;
-        this.tProxy = tProxy.create(expressionObjectDeletable.getDeleteExpressionBuilder().getTable(0).getEntityTable(),expressionObjectDeletable.getDeleteExpressionBuilder(), getExpressionContext().getRuntimeContext());
+        this.tProxy = tProxy.create(expressionObjectDeletable.getDeleteExpressionBuilder().getTable(0).getEntityTable(), expressionObjectDeletable.getDeleteExpressionBuilder(), getExpressionContext().getRuntimeContext());
     }
 
     @Override
@@ -50,7 +51,7 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
 //    }
 
     @Override
-    public ExpressionDeletable<TProxy,T> where(boolean condition, SQLExpression1<TProxy> whereExpression) {
+    public ExpressionDeletable<TProxy, T> where(boolean condition, SQLExpression1<TProxy> whereExpression) {
         if (condition) {
             expressionObjectDeletable.where(where -> {
                 tProxy.getEntitySQLContext()._where(where.getFilter(), () -> {
@@ -62,7 +63,7 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> withVersion(boolean condition, Object versionValue) {
+    public ExpressionDeletable<TProxy, T> withVersion(boolean condition, Object versionValue) {
         if (condition) {
             expressionObjectDeletable.withVersion(versionValue);
         }
@@ -70,7 +71,7 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> whereById(boolean condition, Object id) {
+    public ExpressionDeletable<TProxy, T> whereById(boolean condition, Object id) {
 
         if (condition) {
             expressionObjectDeletable.whereById(id);
@@ -79,7 +80,7 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
     }
 
     @Override
-    public <TProperty> ExpressionDeletable<TProxy,T> whereByIds(boolean condition, Collection<TProperty> ids) {
+    public <TProperty> ExpressionDeletable<TProxy, T> whereByIds(boolean condition, Collection<TProperty> ids) {
 
         if (condition) {
             expressionObjectDeletable.whereByIds(ids);
@@ -88,31 +89,31 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> useLogicDelete(boolean enable) {
+    public ExpressionDeletable<TProxy, T> useLogicDelete(boolean enable) {
         expressionObjectDeletable.useLogicDelete(enable);
         return this;
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> allowDeleteStatement(boolean allow) {
+    public ExpressionDeletable<TProxy, T> allowDeleteStatement(boolean allow) {
         expressionObjectDeletable.allowDeleteStatement(allow);
         return this;
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> asTable(Function<String, String> tableNameAs) {
+    public ExpressionDeletable<TProxy, T> asTable(Function<String, String> tableNameAs) {
         expressionObjectDeletable.asTable(tableNameAs);
         return this;
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> asSchema(Function<String, String> schemaAs) {
+    public ExpressionDeletable<TProxy, T> asSchema(Function<String, String> schemaAs) {
         expressionObjectDeletable.asSchema(schemaAs);
         return this;
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> asAlias(String alias) {
+    public ExpressionDeletable<TProxy, T> asAlias(String alias) {
         expressionObjectDeletable.asAlias(alias);
         return this;
     }
@@ -123,30 +124,31 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> noInterceptor() {
+    public ExpressionDeletable<TProxy, T> noInterceptor() {
         expressionObjectDeletable.noInterceptor();
         return this;
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> useInterceptor(String name) {
+    public ExpressionDeletable<TProxy, T> useInterceptor(String name) {
         expressionObjectDeletable.useInterceptor(name);
         return this;
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> noInterceptor(String name) {
+    public ExpressionDeletable<TProxy, T> noInterceptor(String name) {
         expressionObjectDeletable.noInterceptor(name);
         return this;
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> useInterceptor() {
+    public ExpressionDeletable<TProxy, T> useInterceptor() {
         expressionObjectDeletable.useInterceptor();
         return this;
     }
+
     @Override
-    public ExpressionDeletable<TProxy,T> ignoreVersion(boolean ignored) {
+    public ExpressionDeletable<TProxy, T> ignoreVersion(boolean ignored) {
         expressionObjectDeletable.ignoreVersion(ignored);
         return this;
     }
@@ -157,8 +159,14 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
     }
 
     @Override
-    public ExpressionDeletable<TProxy,T> asTableLink(Function<String, String> linkAs) {
+    public ExpressionDeletable<TProxy, T> asTableLink(Function<String, String> linkAs) {
         expressionObjectDeletable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
+    public ExpressionDeletable<TProxy, T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        expressionObjectDeletable.behaviorConfigure(configure);
         return this;
     }
 }

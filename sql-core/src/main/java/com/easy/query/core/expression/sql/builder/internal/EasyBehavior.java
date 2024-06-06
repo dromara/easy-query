@@ -10,7 +10,7 @@ import com.easy.query.core.util.EasyBitwiseUtil;
  * @author xuejiaming
  */
 public final class EasyBehavior {
-    private static int DEFAULT_BEHAVIOR = EasyBehaviorEnum.LOGIC_DELETE.getCode() | EasyBehaviorEnum.USE_INTERCEPTOR.getCode() | EasyBehaviorEnum.QUERY_LARGE_COLUMN.getCode();
+    public static int DEFAULT_BEHAVIOR = EasyBehaviorEnum.LOGIC_DELETE.getCode() | EasyBehaviorEnum.USE_INTERCEPTOR.getCode() | EasyBehaviorEnum.QUERY_LARGE_COLUMN.getCode()| EasyBehaviorEnum.JDBC_LISTEN.getCode();
     private int behavior = DEFAULT_BEHAVIOR;
 
     public boolean isDefaultBehavior() {

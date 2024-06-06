@@ -15,6 +15,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -25,197 +26,204 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public abstract class AbstractOverrideQueryable5<T1, T2, T3,T4,T5> extends AbstractQueryable<T1> implements Queryable5Available<T1, T2, T3,T4,T5> {
+public abstract class AbstractOverrideQueryable5<T1, T2, T3, T4, T5> extends AbstractQueryable<T1> implements Queryable5Available<T1, T2, T3, T4, T5> {
 
-    protected final ClientQueryable5<T1, T2, T3,T4,T5> entityQueryable5;
+    protected final ClientQueryable5<T1, T2, T3, T4, T5> entityQueryable5;
 
-    public AbstractOverrideQueryable5(ClientQueryable5<T1, T2, T3,T4,T5> entityQueryable5) {
+    public AbstractOverrideQueryable5(ClientQueryable5<T1, T2, T3, T4, T5> entityQueryable5) {
         super(entityQueryable5);
         this.entityQueryable5 = entityQueryable5;
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> orderBy(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression, boolean asc) {
+    public Queryable5<T1, T2, T3, T4, T5> orderBy(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression, boolean asc) {
         super.orderBy(condition, selectExpression, asc);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> orderByObject(boolean condition, ObjectSort configuration) {
+    public Queryable5<T1, T2, T3, T4, T5> orderByObject(boolean condition, ObjectSort configuration) {
         super.orderByObject(condition, configuration);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> whereById(boolean condition, Object id) {
+    public Queryable5<T1, T2, T3, T4, T5> whereById(boolean condition, Object id) {
         super.whereById(condition, id);
         return getQueryable5();
     }
 
     @Override
-    public <TProperty> Queryable5<T1, T2,T3,T4,T5> whereByIds(boolean condition, Collection<TProperty> ids) {
+    public <TProperty> Queryable5<T1, T2, T3, T4, T5> whereByIds(boolean condition, Collection<TProperty> ids) {
         super.whereByIds(condition, ids);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> whereObject(boolean condition, Object object) {
+    public Queryable5<T1, T2, T3, T4, T5> whereObject(boolean condition, Object object) {
         super.whereObject(condition, object);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
+    public Queryable5<T1, T2, T3, T4, T5> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         super.where(condition, whereExpression);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
+    public Queryable5<T1, T2, T3, T4, T5> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
         super.groupBy(condition, selectExpression);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {
+    public Queryable5<T1, T2, T3, T4, T5> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {
         super.having(condition, predicateExpression);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
+    public Queryable5<T1, T2, T3, T4, T5> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
+    public Queryable5<T1, T2, T3, T4, T5> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         super.orderByDesc(condition, selectExpression);
         return getQueryable5();
     }
 
     @Override
-    public <TREntity> Queryable5<T1, T2,T3,T4,T5> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression) {
+    public <TREntity> Queryable5<T1, T2, T3, T4, T5> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression) {
         super.include(condition, navigateIncludeSQLExpression);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> limit(boolean condition, long offset, long rows) {
+    public Queryable5<T1, T2, T3, T4, T5> limit(boolean condition, long offset, long rows) {
         super.limit(condition, offset, rows);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> distinct(boolean condition) {
+    public Queryable5<T1, T2, T3, T4, T5> distinct(boolean condition) {
         super.distinct(condition);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> disableLogicDelete() {
+    public Queryable5<T1, T2, T3, T4, T5> disableLogicDelete() {
         super.disableLogicDelete();
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> enableLogicDelete() {
+    public Queryable5<T1, T2, T3, T4, T5> enableLogicDelete() {
         super.enableLogicDelete();
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> useLogicDelete(boolean enable) {
+    public Queryable5<T1, T2, T3, T4, T5> useLogicDelete(boolean enable) {
         super.useLogicDelete(enable);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> noInterceptor() {
+    public Queryable5<T1, T2, T3, T4, T5> noInterceptor() {
         super.noInterceptor();
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> useInterceptor(String name) {
+    public Queryable5<T1, T2, T3, T4, T5> useInterceptor(String name) {
         super.useInterceptor(name);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> noInterceptor(String name) {
+    public Queryable5<T1, T2, T3, T4, T5> noInterceptor(String name) {
         super.noInterceptor(name);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> useInterceptor() {
+    public Queryable5<T1, T2, T3, T4, T5> useInterceptor() {
         super.useInterceptor();
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> asTracking() {
+    public Queryable5<T1, T2, T3, T4, T5> asTracking() {
         super.asTracking();
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> asNoTracking() {
+    public Queryable5<T1, T2, T3, T4, T5> asNoTracking() {
         super.asNoTracking();
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> queryLargeColumn(boolean queryLarge) {
+    public Queryable5<T1, T2, T3, T4, T5> queryLargeColumn(boolean queryLarge) {
         super.queryLargeColumn(queryLarge);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
+    public Queryable5<T1, T2, T3, T4, T5> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         super.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
+    public Queryable5<T1, T2, T3, T4, T5> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
         super.useMaxShardingQueryLimit(maxShardingQueryLimit);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> useConnectionMode(ConnectionModeEnum connectionMode) {
+    public Queryable5<T1, T2, T3, T4, T5> useConnectionMode(ConnectionModeEnum connectionMode) {
         super.useConnectionMode(connectionMode);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> asTable(Function<String, String> tableNameAs) {
+    public Queryable5<T1, T2, T3, T4, T5> asTable(Function<String, String> tableNameAs) {
         super.asTable(tableNameAs);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> asSchema(Function<String, String> schemaAs) {
+    public Queryable5<T1, T2, T3, T4, T5> asSchema(Function<String, String> schemaAs) {
         super.asSchema(schemaAs);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> asAlias(String alias) {
+    public Queryable5<T1, T2, T3, T4, T5> asAlias(String alias) {
         super.asAlias(alias);
         return getQueryable5();
     }
 
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> asTableLink(Function<String, String> linkAs) {
+    public Queryable5<T1, T2, T3, T4, T5> asTableLink(Function<String, String> linkAs) {
         super.asTableLink(linkAs);
         return getQueryable5();
     }
+
     @Override
-    public Queryable5<T1, T2,T3,T4,T5> filterConfigure(ValueFilter valueFilter) {
+    public Queryable5<T1, T2, T3, T4, T5> filterConfigure(ValueFilter valueFilter) {
         super.filterConfigure(valueFilter);
+        return getQueryable5();
+    }
+
+    @Override
+    public Queryable5<T1, T2, T3, T4, T5> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        super.behaviorConfigure(configure);
         return getQueryable5();
     }
 }

@@ -16,6 +16,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -26,26 +27,26 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface OverrideQueryable5<T1, T2, T3,T4,T5> extends Queryable<T1>, Queryable5Available<T1, T2,T3,T4,T5> {
+public interface OverrideQueryable5<T1, T2, T3, T4, T5> extends Queryable<T1>, Queryable5Available<T1, T2, T3, T4, T5> {
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> cloneQueryable();
+    Queryable5<T1, T2, T3, T4, T5> cloneQueryable();
 
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> whereById(Object id) {
+    default Queryable5<T1, T2, T3, T4, T5> whereById(Object id) {
         return whereById(true, id);
     }
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> whereById(boolean condition, Object id);
+    Queryable5<T1, T2, T3, T4, T5> whereById(boolean condition, Object id);
 
     @Override
-    default <TProperty> Queryable5<T1,T2,T3,T4,T5> whereByIds(Collection<TProperty> ids){
-        return whereByIds(true,ids);
+    default <TProperty> Queryable5<T1, T2, T3, T4, T5> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
     }
 
     @Override
-    <TProperty> Queryable5<T1,T2,T3,T4,T5> whereByIds(boolean condition, Collection<TProperty> ids);
+    <TProperty> Queryable5<T1, T2, T3, T4, T5> whereByIds(boolean condition, Collection<TProperty> ids);
 
     /**
      * 仅支持主表的动态对象查询
@@ -54,7 +55,7 @@ public interface OverrideQueryable5<T1, T2, T3,T4,T5> extends Queryable<T1>, Que
      * @return
      */
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> whereObject(Object object) {
+    default Queryable5<T1, T2, T3, T4, T5> whereObject(Object object) {
         return whereObject(true, object);
     }
 
@@ -66,48 +67,48 @@ public interface OverrideQueryable5<T1, T2, T3,T4,T5> extends Queryable<T1>, Que
      * @return
      */
     @Override
-    Queryable5<T1,T2,T3,T4,T5> whereObject(boolean condition, Object object);
+    Queryable5<T1, T2, T3, T4, T5> whereObject(boolean condition, Object object);
 
 
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
+    default Queryable5<T1, T2, T3, T4, T5> where(SQLExpression1<SQLWherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
+    Queryable5<T1, T2, T3, T4, T5> where(boolean condition, SQLExpression1<SQLWherePredicate<T1>> whereExpression);
 
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
+    default Queryable5<T1, T2, T3, T4, T5> groupBy(SQLExpression1<SQLGroupBySelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression);
+    Queryable5<T1, T2, T3, T4, T5> groupBy(boolean condition, SQLExpression1<SQLGroupBySelector<T1>> selectExpression);
 
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> having(SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {
+    default Queryable5<T1, T2, T3, T4, T5> having(SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression) {
         return having(true, predicateExpression);
     }
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression);
+    Queryable5<T1, T2, T3, T4, T5> having(boolean condition, SQLExpression1<SQLWhereAggregatePredicate<T1>> predicateExpression);
 
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> orderByAsc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
+    default Queryable5<T1, T2, T3, T4, T5> orderByAsc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
+    Queryable5<T1, T2, T3, T4, T5> orderByAsc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
 
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> orderByDesc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
+    default Queryable5<T1, T2, T3, T4, T5> orderByDesc(SQLExpression1<SQLOrderBySelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
+    Queryable5<T1, T2, T3, T4, T5> orderByDesc(boolean condition, SQLExpression1<SQLOrderBySelector<T1>> selectExpression);
 
 
     /**
@@ -116,7 +117,7 @@ public interface OverrideQueryable5<T1, T2, T3,T4,T5> extends Queryable<T1>, Que
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
      */
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> orderByObject(ObjectSort configuration) {
+    default Queryable5<T1, T2, T3, T4, T5> orderByObject(ObjectSort configuration) {
         return orderByObject(true, configuration);
     }
 
@@ -127,61 +128,61 @@ public interface OverrideQueryable5<T1, T2, T3,T4,T5> extends Queryable<T1>, Que
      * @throws EasyQueryOrderByInvalidOperationException 当配置{@link ObjectSort} 为{@code  DynamicModeEnum.STRICT}排序设置的属性不存在当前排序对象里面或者当前查询对象无法获取 {@link SQLColumnSelector}
      */
     @Override
-    Queryable5<T1,T2,T3,T4,T5> orderByObject(boolean condition, ObjectSort configuration);
+    Queryable5<T1, T2, T3, T4, T5> orderByObject(boolean condition, ObjectSort configuration);
 
     @Override
-    default <TREntity> Queryable5<T1,T2,T3,T4,T5> include(SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression) {
+    default <TREntity> Queryable5<T1, T2, T3, T4, T5> include(SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);
     }
 
     @Override
-    <TREntity> Queryable5<T1,T2,T3,T4,T5> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression);
+    <TREntity> Queryable5<T1, T2, T3, T4, T5> include(boolean condition, SQLFuncExpression1<SQLNavigateInclude<T1>, Queryable<TREntity>> navigateIncludeSQLExpression);
 
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> limit(long rows) {
+    default Queryable5<T1, T2, T3, T4, T5> limit(long rows) {
         return limit(true, rows);
     }
 
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> limit(boolean condition, long rows) {
+    default Queryable5<T1, T2, T3, T4, T5> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> limit(long offset, long rows) {
+    default Queryable5<T1, T2, T3, T4, T5> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> limit(boolean condition, long offset, long rows);
+    Queryable5<T1, T2, T3, T4, T5> limit(boolean condition, long offset, long rows);
 
-    default Queryable5<T1,T2,T3,T4,T5> distinct() {
+    default Queryable5<T1, T2, T3, T4, T5> distinct() {
         return distinct(true);
     }
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> distinct(boolean condition);
+    Queryable5<T1, T2, T3, T4, T5> distinct(boolean condition);
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> disableLogicDelete();
+    Queryable5<T1, T2, T3, T4, T5> disableLogicDelete();
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> enableLogicDelete();
+    Queryable5<T1, T2, T3, T4, T5> enableLogicDelete();
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> useLogicDelete(boolean enable);
+    Queryable5<T1, T2, T3, T4, T5> useLogicDelete(boolean enable);
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> noInterceptor();
+    Queryable5<T1, T2, T3, T4, T5> noInterceptor();
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> useInterceptor(String name);
+    Queryable5<T1, T2, T3, T4, T5> useInterceptor(String name);
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> noInterceptor(String name);
+    Queryable5<T1, T2, T3, T4, T5> noInterceptor(String name);
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> useInterceptor();
+    Queryable5<T1, T2, T3, T4, T5> useInterceptor();
 
     /**
      * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
@@ -190,22 +191,22 @@ public interface OverrideQueryable5<T1, T2, T3,T4,T5> extends Queryable<T1>, Que
      * @return
      */
     @Override
-    Queryable5<T1,T2,T3,T4,T5> asTracking();
+    Queryable5<T1, T2, T3, T4, T5> asTracking();
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> asNoTracking();
+    Queryable5<T1, T2, T3, T4, T5> asNoTracking();
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> queryLargeColumn(boolean queryLarge);
+    Queryable5<T1, T2, T3, T4, T5> queryLargeColumn(boolean queryLarge);
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+    Queryable5<T1, T2, T3, T4, T5> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+    Queryable5<T1, T2, T3, T4, T5> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> useConnectionMode(ConnectionModeEnum connectionMode);
+    Queryable5<T1, T2, T3, T4, T5> useConnectionMode(ConnectionModeEnum connectionMode);
 
     /**
      * 将当前表达式最近的一张表的表名修改成 {@param tableName}
@@ -216,7 +217,7 @@ public interface OverrideQueryable5<T1, T2, T3,T4,T5> extends Queryable<T1>, Que
      * @return
      */
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> asTable(String tableName) {
+    default Queryable5<T1, T2, T3, T4, T5> asTable(String tableName) {
         return asTable(old -> tableName);
     }
 
@@ -229,31 +230,35 @@ public interface OverrideQueryable5<T1, T2, T3,T4,T5> extends Queryable<T1>, Que
      * @return
      */
     @Override
-    Queryable5<T1,T2,T3,T4,T5> asTable(Function<String, String> tableNameAs);
+    Queryable5<T1, T2, T3, T4, T5> asTable(Function<String, String> tableNameAs);
 
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> asSchema(String schema) {
+    default Queryable5<T1, T2, T3, T4, T5> asSchema(String schema) {
         return asSchema(old -> schema);
     }
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> asSchema(Function<String, String> schemaAs);
+    Queryable5<T1, T2, T3, T4, T5> asSchema(Function<String, String> schemaAs);
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> asAlias(String alias);
+    Queryable5<T1, T2, T3, T4, T5> asAlias(String alias);
 
     /**
      * @param linkAs 别名 FROM | LEFT JOIN | RIGHT JOIN
      * @return
      */
     @Override
-    default Queryable5<T1,T2,T3,T4,T5> asTableLink(String linkAs) {
+    default Queryable5<T1, T2, T3, T4, T5> asTableLink(String linkAs) {
         return asTableLink(o -> linkAs);
     }
 
 
     @Override
-    Queryable5<T1,T2,T3,T4,T5> asTableLink(Function<String, String> linkAs);
+    Queryable5<T1, T2, T3, T4, T5> asTableLink(Function<String, String> linkAs);
+
     @Override
-    Queryable5<T1,T2,T3,T4,T5> filterConfigure(ValueFilter valueFilter);
+    Queryable5<T1, T2, T3, T4, T5> filterConfigure(ValueFilter valueFilter);
+
+    @Override
+    Queryable5<T1, T2, T3, T4, T5> behaviorConfigure(SQLExpression1<EasyBehavior> configure);
 }

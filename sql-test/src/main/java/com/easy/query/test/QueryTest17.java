@@ -7,6 +7,7 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidFieldCheckException;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.func.SQLFunc;
@@ -45,6 +46,7 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -1092,7 +1094,7 @@ public class QueryTest17 extends BaseTest {
 //                .groupBy(b -> GroupKeys.TABLE1.of())
 
 
-        List<Topic> topics=new ArrayList<>();
+        List<Topic> topics = new ArrayList<>();
         Map<String, List<Topic>> collect = topics.stream().collect(Collectors.groupingBy(x -> x.getId()));
 
         List<Draft1<String>> list1 = easyEntityQuery.queryable(BlogEntity.class)
@@ -1136,8 +1138,8 @@ public class QueryTest17 extends BaseTest {
             List<Topic> list = easyEntityQuery.queryable(Topic.class)
                     .where(b -> {
                         b.id().eq("123");
-                    }).select(Topic.class,t -> Select.of(
-                            t.expression().sqlType("RAND()",c->{
+                    }).select(Topic.class, t -> Select.of(
+                            t.expression().sqlType("RAND()", c -> {
                                 c.setAlias(t.stars());
                             }).setPropertyType(Double.class),
                             t.expression().sqlType("IFNULL({0},{1})", c -> {
@@ -1159,7 +1161,7 @@ public class QueryTest17 extends BaseTest {
     }
 
     @Test
-    public void testSubFrom(){
+    public void testSubFrom() {
         List<Province> list = easyEntityQuery.queryable(Province.class)
                 .where(p -> {
                     p.code().eq("123");
@@ -1168,14 +1170,14 @@ public class QueryTest17 extends BaseTest {
     }
 
     @Test
-    public void testSubFrom1(){
+    public void testSubFrom1() {
         try {
             //保证能编译通过
             List<SysUser> list3 = easyEntityQuery.queryable(Province.class)
                     .select(p -> new SysUserProxy()
                             .blogs().set(p.cities(), c -> new BlogEntityProxy())
                             .id().set("1")).toList();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         List<ProvinceVO> list = easyEntityQuery.queryable(Province.class)
@@ -1203,35 +1205,38 @@ public class QueryTest17 extends BaseTest {
         List<ProvinceVO> list2 = easyEntityQuery.queryable(Province.class)
                 .where(p -> {
                     p.code().eq("123");
-                }).select(ProvinceVO.class,p -> Select.of(
+                }).select(ProvinceVO.class, p -> Select.of(
                         p.code().as(ProvinceVO.Fields.myName),
                         p.name().as(ProvinceVO.Fields.myCode)
                 )).toList();
     }
 
     @Test
-    public void testOptional(){
+    public void testOptional() {
+
+
         {
 
-            boolean ex1=false;
+
+            boolean ex1 = false;
             try {
                 String checkField = EasyFieldCheckUtil.toCheckField("1=1 or name");
-            }catch (Exception ex){
-                ex1=true;
+            } catch (Exception ex) {
+                ex1 = true;
                 Assert.assertTrue(ex instanceof EasyQueryInvalidFieldCheckException);
-                Assert.assertEquals("column name has unsafe char: [=].",ex.getMessage());
+                Assert.assertEquals("column name has unsafe char: [=].", ex.getMessage());
             }
             Assert.assertTrue(ex1);
         }
         {
 
-            boolean ex1=false;
+            boolean ex1 = false;
             try {
                 String checkField = EasyFieldCheckUtil.toCheckField(" name");
-            }catch (Exception ex){
-                ex1=true;
+            } catch (Exception ex) {
+                ex1 = true;
                 Assert.assertTrue(ex instanceof EasyQueryInvalidFieldCheckException);
-                Assert.assertEquals("column name must not has space char.",ex.getMessage());
+                Assert.assertEquals("column name must not has space char.", ex.getMessage());
             }
             Assert.assertTrue(ex1);
         }
@@ -1254,6 +1259,23 @@ public class QueryTest17 extends BaseTest {
                     t.id().eq("1");
                 }).streamBy(s -> s.collect(Collectors.toMap(o -> o.getId(), o -> o, (k1, k2) -> k2)));
         System.out.println("1");
+
+        easyQueryClient.queryable(Topic.class)
+                .behaviorConfigure(b->{
+                    b.removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
+                })
+                .where(t -> {
+                    t.eq(t, "id","name");
+                }).getSQLEntityExpressionBuilder().getExpressionContext().getBehavior();
+    }
+    @Test
+    public void testOptional1(){
+        Optional<Topic> topic = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    t.id().eq("1");
+                    t.id().nullOrDefault("1").like("123");
+                    t.id().nullOrDefault("2").in(Arrays.asList("1", "2", "3"));
+                }).streamBy(s -> s.findFirst());
     }
 }
 

@@ -2,7 +2,9 @@ package com.easy.query.api4j.update.abstraction;
 
 import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.function.Function;
 
@@ -108,6 +110,11 @@ public abstract class AbstractExpressionUpdatable<T> implements ExpressionUpdata
     @Override
     public ExpressionUpdatable<T> asTableLink(Function<String, String> linkAs) {
         clientExpressionUpdatable.asTableLink(linkAs);
+        return this;
+    }
+    @Override
+    public ExpressionUpdatable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        clientExpressionUpdatable.behaviorConfigure(configure);
         return this;
     }
 }

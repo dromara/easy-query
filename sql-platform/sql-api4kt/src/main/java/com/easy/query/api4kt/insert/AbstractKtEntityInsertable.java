@@ -10,6 +10,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import kotlin.reflect.KProperty1;
 
 import java.util.Collection;
@@ -166,6 +167,11 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
     @Override
     public KtEntityInsertable<T> asTableLink(Function<String, String> linkAs) {
         clientInsertable.asTableLink(linkAs);
+        return this;
+    }
+    @Override
+    public KtEntityInsertable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        clientInsertable.behaviorConfigure(configure);
         return this;
     }
 }

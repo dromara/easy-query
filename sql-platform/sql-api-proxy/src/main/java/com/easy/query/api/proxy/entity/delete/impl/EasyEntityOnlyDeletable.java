@@ -3,8 +3,10 @@ package com.easy.query.api.proxy.entity.delete.impl;
 import com.easy.query.api.proxy.entity.delete.EntityOnlyDeletable;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.function.Function;
 
@@ -17,10 +19,11 @@ import java.util.function.Function;
 public class EasyEntityOnlyDeletable<T> implements EntityOnlyDeletable<T> {
     private final ClientEntityDeletable<T> clientEntityDeletable;
 
-    public EasyEntityOnlyDeletable(ClientEntityDeletable<T> clientEntityDeletable){
+    public EasyEntityOnlyDeletable(ClientEntityDeletable<T> clientEntityDeletable) {
 
         this.clientEntityDeletable = clientEntityDeletable;
     }
+
     @Override
     public ExpressionContext getExpressionContext() {
         return clientEntityDeletable.getExpressionContext();
@@ -86,7 +89,7 @@ public class EasyEntityOnlyDeletable<T> implements EntityOnlyDeletable<T> {
 
     @Override
     public void executeRows(long expectRows, String msg, String code) {
-        clientEntityDeletable.executeRows(expectRows,msg,code);
+        clientEntityDeletable.executeRows(expectRows, msg, code);
     }
 
     @Override
@@ -115,6 +118,12 @@ public class EasyEntityOnlyDeletable<T> implements EntityOnlyDeletable<T> {
     @Override
     public EntityOnlyDeletable<T> asTableLink(Function<String, String> linkAs) {
         clientEntityDeletable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
+    public EntityOnlyDeletable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        clientEntityDeletable.behaviorConfigure(configure);
         return this;
     }
 }

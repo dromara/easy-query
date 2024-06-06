@@ -8,8 +8,10 @@ import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -25,17 +27,18 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public abstract class AbstractMapClientUpdatable extends AbstractSQLExecuteRows<MapClientUpdatable<Map<String,Object>>> implements MapClientUpdatable<Map<String,Object>>{
-    protected final List<Map<String,Object>> entities;
+public abstract class AbstractMapClientUpdatable extends AbstractSQLExecuteRows<MapClientUpdatable<Map<String, Object>>> implements MapClientUpdatable<Map<String, Object>> {
+    protected final List<Map<String, Object>> entities;
     protected final EntityTableExpressionBuilder table;
     protected final EntityMetadata entityMetadata;
     protected final MapUpdateExpressionBuilder mapUpdateExpressionBuilder;
-    public AbstractMapClientUpdatable(Collection<Map<String,Object>> entities, MapUpdateExpressionBuilder mapUpdateExpressionBuilder) {
+
+    public AbstractMapClientUpdatable(Collection<Map<String, Object>> entities, MapUpdateExpressionBuilder mapUpdateExpressionBuilder) {
         super(mapUpdateExpressionBuilder);
         if (entities == null || entities.isEmpty()) {
             throw new EasyQueryException("不支持空对象的update");
         }
-        this.entities= new ArrayList<>(entities);
+        this.entities = new ArrayList<>(entities);
 
         this.mapUpdateExpressionBuilder = mapUpdateExpressionBuilder;
         QueryRuntimeContext runtimeContext = this.mapUpdateExpressionBuilder.getRuntimeContext();
@@ -44,6 +47,7 @@ public abstract class AbstractMapClientUpdatable extends AbstractSQLExecuteRows<
         table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
         this.mapUpdateExpressionBuilder.addSQLEntityTableExpression(table);
     }
+
     @Override
     public long executeRows() {
         if (EasyCollectionUtil.isNotEmpty(entities)) {
@@ -82,6 +86,14 @@ public abstract class AbstractMapClientUpdatable extends AbstractSQLExecuteRows<
     @Override
     public MapClientUpdatable<Map<String, Object>> asTableLink(Function<String, String> linkAs) {
         mapUpdateExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+
+    @Override
+    public MapClientUpdatable<Map<String, Object>> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        if (configure != null) {
+            configure.apply(mapUpdateExpressionBuilder.getExpressionContext().getBehavior());
+        }
         return this;
     }
 

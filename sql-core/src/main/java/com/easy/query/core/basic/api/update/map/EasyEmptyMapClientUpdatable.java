@@ -1,7 +1,9 @@
 package com.easy.query.core.basic.api.update.map;
 
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -75,6 +77,10 @@ public class EasyEmptyMapClientUpdatable implements MapClientUpdatable<Map<Strin
 
     @Override
     public MapClientUpdatable<Map<String, Object>> asTableLink(Function<String, String> linkAs) {
+        return this;
+    }
+    @Override
+    public MapClientUpdatable<Map<String, Object>> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
         return this;
     }
 

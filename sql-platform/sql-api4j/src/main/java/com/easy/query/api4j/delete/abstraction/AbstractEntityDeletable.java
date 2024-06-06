@@ -3,8 +3,10 @@ package com.easy.query.api4j.delete.abstraction;
 import com.easy.query.api4j.delete.EntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.function.Function;
 
@@ -115,6 +117,11 @@ public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
     @Override
     public EntityDeletable<T> asTableLink(Function<String, String> linkAs) {
         entityObjectDeletable.asTableLink(linkAs);
+        return this;
+    }
+    @Override
+    public EntityDeletable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        entityObjectDeletable.behaviorConfigure(configure);
         return this;
     }
 }

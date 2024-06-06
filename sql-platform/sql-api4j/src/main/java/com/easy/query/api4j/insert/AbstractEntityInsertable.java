@@ -11,6 +11,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -118,7 +119,7 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
 
     @Override
     public String toSQL(T entity, ToSQLContext toSQLContext) {
-        return clientInsertable.toSQL(entity,toSQLContext);
+        return clientInsertable.toSQL(entity, toSQLContext);
     }
 
     @Override
@@ -135,7 +136,7 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
 
     @Override
     public EntityInsertable<T> onConflictDoUpdate(Property<T, ?> constraintProperty, SQLExpression1<SQLColumnOnlySelector<T>> setColumnSelector) {
-        clientInsertable.onConflictDoUpdate(EasyLambdaUtil.getPropertyName(constraintProperty),setSelector->{
+        clientInsertable.onConflictDoUpdate(EasyLambdaUtil.getPropertyName(constraintProperty), setSelector -> {
             setColumnSelector.apply(new SQLColumnOnlySelectorImpl<>(setSelector));
         });
         return this;
@@ -144,7 +145,7 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
 
     @Override
     public EntityInsertable<T> onDuplicateKeyUpdate(SQLExpression1<SQLColumnOnlySelector<T>> setColumnSelector) {
-        clientInsertable.onDuplicateKeyUpdate(setSelector->{
+        clientInsertable.onDuplicateKeyUpdate(setSelector -> {
             setColumnSelector.apply(new SQLColumnOnlySelectorImpl<>(setSelector));
         });
         return this;
@@ -158,7 +159,7 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
 
     @Override
     public EntityInsertable<T> columnConfigure(SQLExpression1<SQLColumnConfigurer<T>> columnConfigureExpression) {
-        clientInsertable.columnConfigure(configurer->{
+        clientInsertable.columnConfigure(configurer -> {
             columnConfigureExpression.apply(new SQLColumnConfigurerImpl<>(configurer));
         });
         return this;
@@ -167,6 +168,12 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
     @Override
     public EntityInsertable<T> asTableLink(Function<String, String> linkAs) {
         clientInsertable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
+    public EntityInsertable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        clientInsertable.behaviorConfigure(configure);
         return this;
     }
 }

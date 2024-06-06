@@ -4,7 +4,9 @@ import com.easy.query.api.proxy.entity.update.EntityOnlyUpdatable;
 import com.easy.query.api.proxy.entity.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.function.Function;
@@ -109,6 +111,11 @@ public class EasyEntityOnlyUpdate<T> implements EntityOnlyUpdatable<T> {
     @Override
     public EntityOnlyUpdatable<T> asTableLink(Function<String, String> linkAs) {
         clientEntityUpdatable.asTableLink(linkAs);
+        return this;
+    }
+    @Override
+    public EntityOnlyUpdatable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        clientEntityUpdatable.behaviorConfigure(configure);
         return this;
     }
 }

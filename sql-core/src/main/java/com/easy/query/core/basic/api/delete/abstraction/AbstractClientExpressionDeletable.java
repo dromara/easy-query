@@ -23,6 +23,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePre
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
@@ -166,6 +167,13 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionDeletable<T> asTableLink(Function<String, String> linkAs) {
         entityDeleteExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+    @Override
+    public ClientExpressionDeletable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+        if(configure!=null){
+            configure.apply(entityDeleteExpressionBuilder.getExpressionContext().getBehavior());
+        }
         return this;
     }
 
