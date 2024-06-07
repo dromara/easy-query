@@ -1,28 +1,25 @@
-//package com.easy.query.core.annotation;
-//
-//import com.easy.query.core.enums.RelationMappingTypeEnum;
-//
-//import java.lang.annotation.Documented;
-//import java.lang.annotation.ElementType;
-//import java.lang.annotation.Retention;
-//import java.lang.annotation.RetentionPolicy;
-//import java.lang.annotation.Target;
-//
-///**
-// * create time 2024/5/14 08:41
-// * 文件说明
-// *
-// * @author xuejiaming
-// */
-//@Documented
-//@Retention(RetentionPolicy.RUNTIME)
-//@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
-//public @interface NavigateJoin {
-//    //    /**
-////     * 一对多比如SchoolClass映射多个schoolTeachers
-////     * 那么当{@code basicMappingPropPath} 为 [schoolTeachers]且是基本类型那么会将schoolTeachers的主键进行赋值如果需要其他属性
-////     * 则使用[schoolTeachers.name]schoolTeacherNames
-////     * @return
-////     */
-//    String[] mappingPath() default {};
-//}
+package com.easy.query.core.annotation;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * create time 2024/5/14 08:41
+ * entity对象表不会生效
+ *
+ * @author xuejiaming
+ */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+public @interface NavigateJoin {
+
+    /**
+     * 用来快速join relationType为ToOne的对象，比如userDTO下有这个{"address","name"}就是join获取 address然后把address.name赋值到这个对象
+     * @return
+     */
+    String[] value() default {};
+}

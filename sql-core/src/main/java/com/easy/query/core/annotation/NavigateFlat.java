@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 /**
  * create time 2024/5/14 08:41
- * 文件说明
+ * entity对象表不会生效
  *
  * @author xuejiaming
  */

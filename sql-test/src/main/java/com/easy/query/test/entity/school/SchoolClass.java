@@ -6,6 +6,7 @@ import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import lombok.Data;
 import lombok.ToString;
@@ -47,4 +48,7 @@ public class SchoolClass implements ProxyEntityAvailable<SchoolClass , SchoolCla
 //            , targetMappingProperty = "teacherId")
 
     private List<SchoolTeacher> schoolTeachers;
+
+    @Navigate(RelationTypeEnum.OneToOne)
+    private Topic topic;
 }

@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  * @Description: 文件说明
  * @Date: 2023/3/3 23:31
  */
-public class TableExpressionBuilder implements EntityTableExpressionBuilder {
+public class DefaultTableExpressionBuilder implements EntityTableExpressionBuilder {
 
     protected final TableAvailable entityTable;
     protected final MultiTableTypeEnum multiTableType;
@@ -32,7 +32,7 @@ public class TableExpressionBuilder implements EntityTableExpressionBuilder {
     protected Function<String, String> schemaAs;
     protected Function<String, String> linkAs;
 
-    public TableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
+    public DefaultTableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
         this.multiTableType = multiTableType;
         this.runtimeContext = runtimeContext;

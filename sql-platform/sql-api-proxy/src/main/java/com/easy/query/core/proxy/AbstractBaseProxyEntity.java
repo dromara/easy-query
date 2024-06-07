@@ -4,25 +4,16 @@ import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.expression.RelationEntityTableAvailable;
-import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
-import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
-import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.columns.SQLBooleanColumn;
-import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.SQLDateTimeColumn;
+import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.SQLNavigateColumn;
 import com.easy.query.core.proxy.columns.SQLNumberColumn;
 import com.easy.query.core.proxy.columns.SQLQueryable;
@@ -77,6 +68,7 @@ import com.easy.query.core.proxy.core.ColumnSelectSQLContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasyRelationalUtil;
 
 import java.util.Objects;
 
@@ -280,28 +272,9 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             tPropertyProxy.setNavValue(property);
             return tPropertyProxy;
         }else{
-
-            QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
-            EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new RelationTableKey(table.getEntityClass(), propertyProxy.getEntityClass()), key -> {
-                EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(propertyProxy.getEntityClass());
-                TableAvailable leftTable = getTable();
-                RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key,leftTable, entityMetadata, false);
-                TableExpressionBuilder tableExpressionBuilder = new TableExpressionBuilder(rightTable, MultiTableTypeEnum.LEFT_JOIN, runtimeContext);
-                AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-                NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-
-                SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
-                WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(rightTable, entityExpressionBuilder, andPredicateSegment);
-                sqlPredicate.and(()->{
-                    sqlPredicate.eq(true,new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary());
-                    if(navigateMetadata.hasPredicateFilterExpression()){
-                        navigateMetadata.predicateFilterApply(sqlPredicate);
-                    }
-                });
-                tableExpressionBuilder.getOn().addPredicateSegment(andPredicateSegment);
-                return tableExpressionBuilder;
-            });
-            TPropertyProxy tPropertyProxy = propertyProxy.create(entityTableExpressionBuilder.getEntityTable(), this.entitySQLContext);
+            TableAvailable leftTable = getTable();
+            TableAvailable relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, leftTable, property);
+            TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.entitySQLContext);
             tPropertyProxy.setNavValue(getFullNavValue(property));
             return tPropertyProxy;
         }

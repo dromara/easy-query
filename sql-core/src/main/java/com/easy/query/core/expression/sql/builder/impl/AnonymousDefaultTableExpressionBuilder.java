@@ -20,10 +20,10 @@ import java.util.function.Supplier;
  * @Description: 匿名实体表表达式
  * @Date: 2023/3/3 23:31
  */
-public class AnonymousTableExpressionBuilder extends TableExpressionBuilder implements AnonymousEntityTableExpressionBuilder {
+public class AnonymousDefaultTableExpressionBuilder extends DefaultTableExpressionBuilder implements AnonymousEntityTableExpressionBuilder {
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
 
-    public AnonymousTableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+    public AnonymousDefaultTableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         super(entityTable, multiTableType, entityQueryExpressionBuilder.getRuntimeContext());
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
     }

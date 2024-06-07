@@ -26,9 +26,11 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.MapEntityMetadata;
+import com.easy.query.core.metadata.NavigateJoinMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyUtil;
 
@@ -151,12 +153,17 @@ public abstract class AbstractSelector<TChain> {
                     if (includeNavigateParams.getTable() == table) {
                         NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
                         String navigateAutoMappingPropertyName = navigateMetadata.getPropertyName();
-                        if (targetEntityMetadata.getNavigateOrNull(navigateAutoMappingPropertyName) != null) {
+                        NavigateMetadata navigateOrNull = targetEntityMetadata.getNavigateOrNull(navigateAutoMappingPropertyName);
+                        if ( navigateOrNull!= null) {
                             columnInclude(table, navigateAutoMappingPropertyName, navigateAutoMappingPropertyName, s -> {
                                 TableAvailable entityTable = s.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
                                 if (s.getEntityQueryExpressionBuilder().getProjects().isEmpty()) {
                                     s.columnAll(entityTable);
                                 }
+                                Class<?> navigatePropertyType = navigateOrNull.getNavigatePropertyType();
+                                EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigatePropertyType);
+                                selectAutoIncludeJoin0(s,s.getEntityQueryExpressionBuilder(),entityMetadata);
+
                             });
                         }
                     }
@@ -165,6 +172,23 @@ public abstract class AbstractSelector<TChain> {
         }
     }
 
+    private void selectAutoIncludeJoin0(AsSelector asSelector,EntityQueryExpressionBuilder sqlEntityExpressionBuilder, EntityMetadata resultEntityMetadata) {
+        Collection<NavigateJoinMetadata> navigateJoinMetadatas = resultEntityMetadata.getNavigateJoinMetadatas();
+        if (EasyCollectionUtil.isNotEmpty(navigateJoinMetadatas)) {
+            for (NavigateJoinMetadata navigateJoinMetadata : navigateJoinMetadatas) {
+                TableAvailable relationTable=null;
+                if(navigateJoinMetadata.getMappingPath().length<2){
+                    throw new EasyQueryInvalidOperationException("navigate join mapping length < 2");
+                }
+                for (int i = 0; i < navigateJoinMetadata.getMappingPath().length-1; i++) {
+                    String navigateEntityProperty = navigateJoinMetadata.getMappingPath()[i];
+                    relationTable = EasyRelationalUtil.getRelationTable(sqlEntityExpressionBuilder, sqlEntityExpressionBuilder.getTable(0).getEntityTable(), navigateEntityProperty);
+                }
+                String navigateBasicTypeProperty = navigateJoinMetadata.getMappingPath()[navigateJoinMetadata.getMappingPath().length - 1];
+                asSelector.columnAs(relationTable,navigateBasicTypeProperty,navigateJoinMetadata.getProperty());
+            }
+        }
+    }
     public TChain columnIgnore(TableAvailable table, String property) {
         sqlBuilderSegment.getSQLSegments().removeIf(sqlSegment -> {
             if (sqlSegment instanceof SQLEntitySegment) {

@@ -9,7 +9,7 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.columns.SQLNavigateColumn;
-import com.easy.query.core.proxy.columns.SQLQueryable;
+import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 
 /**
@@ -48,16 +48,23 @@ public class SchoolClassProxy extends AbstractProxyEntity<SchoolClassProxy, Scho
      * 一对多 一个班级多个学生
      * {@link SchoolClass#getSchoolStudents}
      */
-    public SQLQueryable<com.easy.query.test.entity.school.proxy.SchoolStudentProxy, com.easy.query.test.entity.school.SchoolStudent> schoolStudents() {
-        return getNavigates("schoolStudents", new com.easy.query.test.entity.school.proxy.SchoolStudentProxy());
+    public SQLManyQueryable<SchoolClassProxy, com.easy.query.test.entity.school.proxy.SchoolStudentProxy, com.easy.query.test.entity.school.SchoolStudent> schoolStudents() {
+        return getNavigateMany("schoolStudents", new com.easy.query.test.entity.school.proxy.SchoolStudentProxy());
     }
 
     /**
      * 中间表多对多配置,其中mappingClass表示中间表,selfMappingProperty表示中间表的哪个字段和当前表对应,
      * {@link SchoolClass#getSchoolTeachers}
      */
-    public SQLQueryable<com.easy.query.test.entity.school.proxy.SchoolTeacherProxy, com.easy.query.test.entity.school.SchoolTeacher> schoolTeachers() {
-        return getNavigates("schoolTeachers", new com.easy.query.test.entity.school.proxy.SchoolTeacherProxy());
+    public SQLManyQueryable<SchoolClassProxy, com.easy.query.test.entity.school.proxy.SchoolTeacherProxy, com.easy.query.test.entity.school.SchoolTeacher> schoolTeachers() {
+        return getNavigateMany("schoolTeachers", new com.easy.query.test.entity.school.proxy.SchoolTeacherProxy());
+    }
+
+    /**
+     * {@link SchoolClass#getTopic}
+     */
+    public com.easy.query.test.entity.proxy.TopicProxy topic() {
+        return getNavigate("topic", new com.easy.query.test.entity.proxy.TopicProxy());
     }
 
 

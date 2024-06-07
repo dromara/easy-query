@@ -11,12 +11,12 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.impl.AnonymousTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.DeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.InsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.InsertMapExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.QueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.impl.TableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.DefaultTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.UpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.UpdateMapExpressionBuilder;
 
@@ -34,12 +34,12 @@ public  class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFa
 
     @Override
     public EntityTableExpressionBuilder createEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
-        return new TableExpressionBuilder(tableAvailable,multiTableType,runtimeContext);
+        return new DefaultTableExpressionBuilder(tableAvailable,multiTableType,runtimeContext);
     }
 
     @Override
     public EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        return new AnonymousTableExpressionBuilder(tableAvailable,multiTableType, entityQueryExpressionBuilder);
+        return new AnonymousDefaultTableExpressionBuilder(tableAvailable,multiTableType, entityQueryExpressionBuilder);
     }
 
     @Override
