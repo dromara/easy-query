@@ -250,6 +250,7 @@ public class DefaultMapQueryable implements MapQueryable {
         return this.queryable.singleOrNull(resultClass);
     }
 
+    @NotNull
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         return this.queryable.singleNotNull(resultClass,throwFunc);

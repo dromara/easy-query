@@ -348,6 +348,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return EasyCollectionUtil.firstOrNull(list);
     }
 
+    @NotNull
     @Override
     public T1 findNotNull(Object id, Supplier<RuntimeException> throwFunc) {
         T1 result = findOrNull(id);
@@ -359,6 +360,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return result;
     }
 
+    @NotNull
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         TR result = singleOrNull(resultClass);

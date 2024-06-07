@@ -58,7 +58,7 @@ public class EmptyExpressionContext implements ExpressionContext{
 
     @Override
     public EasyBehavior getBehavior() {
-        return null;
+        return EasyBehavior.DEFAULT;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.api.select.executor;
 
+import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
@@ -8,7 +10,7 @@ import java.util.function.Supplier;
 
 /**
  * create time 2023/10/7 15:04
- * 文件说明
+ * 返回至多一条结果的接口
  *
  * @author xuejiaming
  */
@@ -19,12 +21,12 @@ public interface SingleResultAble<T> extends QueryAvailable<T> {
      * 并且select并不是表的全部而是映射到 {@code resultClass} 上
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
      *
-     * @param resultClass
-     * @param <TR>
-     * @return
+     * @param resultClass 返回结果类型
+     * @param <TR>        返回类型泛型
+     * @return 返回类型TR的实例对象
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      */
-
+    @Nullable
     <TR> TR singleOrNull(Class<TR> resultClass);
 
     /**
@@ -33,28 +35,16 @@ public interface SingleResultAble<T> extends QueryAvailable<T> {
      * <blockquote><pre>
      * {@code
      *
-     * @EasyAssertMessage(
-     *         notNull = "未找到主题信息",
-     *         singleMoreThan = "找到多条主题信息"
-     * )
+     * @EasyAssertMessage("未找到主题信息")
      * public class Topic{}
      *
-     *
-     * @EasyAssertMessage(
-     *         //notNull = "未找到主题信息",
-     *         firstNotNull = "未找到主题信息",
-     *         singleNotNull = "未找到主题信息",
-     *         singleMoreThan = "找到多条主题信息"
-     * )
-     * public class Topic{}
-     *                    }
      * </pre></blockquote>
      *
-     *
-     * @param resultClass
-     * @return
-     * @param <TR>
+     * @param resultClass 返回结果类型
+     * @param <TR>返回类型泛型
+     * @return 返回类型TR的实例对象
      */
+    @NotNull
     default <TR> TR singleNotNull(Class<TR> resultClass) {
         return singleNotNull(resultClass, null, null);
     }
@@ -63,14 +53,15 @@ public interface SingleResultAble<T> extends QueryAvailable<T> {
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
      *
-     * @param resultClass
-     * @param msg
-     * @param <TR>
-     * @return
+     * @param resultClass 返回结果类型
+     * @param msg         错误消息
+     * @param <TR>        返回类型泛型
+     * @return 返回类型TR的实例对象
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
-     * @throws EasyQuerySingleNotNullException 如果查询不到数据
+     * @throws EasyQuerySingleNotNullException     如果查询不到数据
      */
 
+    @NotNull
     default <TR> TR singleNotNull(Class<TR> resultClass, String msg) {
         return singleNotNull(resultClass, msg, null);
     }
@@ -79,14 +70,26 @@ public interface SingleResultAble<T> extends QueryAvailable<T> {
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
      *
-     * @param resultClass 返回结果
-     * @param msg
-     * @param code
-     * @param <TR>
-     * @return
+     * @param resultClass 返回结果类型
+     * @param msg         错误消息
+     * @param code        错误code
+     * @param <TR>        返回类型泛型
+     * @return 返回类型TR的实例对象
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
-     * @throws EasyQuerySingleNotNullException 如果查询不到数据
+     * @throws EasyQuerySingleNotNullException     如果查询不到数据
      */
+    @NotNull
     <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code);
-    <TR> TR singleNotNull(Class<TR> resultClass,Supplier<RuntimeException> throwFunc);
+
+    /**
+     * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link RuntimeException}自定义异常
+     * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
+     *
+     * @param resultClass 返回结果类型
+     * @param throwFunc   自定义抛错
+     * @param <TR>        返回类型泛型
+     * @return 返回类型TR的实例对象
+     */
+    @NotNull
+    <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc);
 }

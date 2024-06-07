@@ -89,6 +89,7 @@ public abstract class BaseTest {
     public static ListenerContextManager listenerContextManager;
 
     static {
+//        EasyBeanUtil.FAST_BEAN_FUNCTION = ReflectBean::new;
         LogFactory.useStdOutLogging();
         init();
     }
@@ -141,7 +142,7 @@ public abstract class BaseTest {
     }
 
     public static void initEasyQuery() {
-        listenerContextManager=new ListenerContextManager();
+        listenerContextManager = new ListenerContextManager();
         MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
         easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
@@ -163,7 +164,7 @@ public abstract class BaseTest {
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);
-        easyProxyQuery=new DefaultEasyProxyQuery(easyQueryClient);
+        easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
@@ -204,7 +205,7 @@ public abstract class BaseTest {
     }
 
     public static void initData() {
-        easyQuery.deletable(BlogEntity.class).where(o->o.isNotBank(BlogEntity::getId)).disableLogicDelete().allowDeleteStatement(true).executeRows();
+        easyQuery.deletable(BlogEntity.class).where(o -> o.isNotBank(BlogEntity::getId)).disableLogicDelete().allowDeleteStatement(true).executeRows();
         boolean any = easyQuery.queryable(BlogEntity.class).any();
         if (!any) {
 

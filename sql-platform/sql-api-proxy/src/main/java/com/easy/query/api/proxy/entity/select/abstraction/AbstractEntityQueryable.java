@@ -143,6 +143,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return getClientQueryable().firstNotNull(resultClass, throwFunc);
     }
 
+    @NotNull
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         return getClientQueryable().singleNotNull(resultClass, throwFunc);

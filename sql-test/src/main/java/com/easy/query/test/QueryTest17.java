@@ -1270,6 +1270,8 @@ public class QueryTest17 extends BaseTest {
     }
     @Test
     public void testOptional1(){
+        TopicProxy table = TopicProxy.createTable();
+        System.out.println(table);
         Optional<Topic> topic = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
                     t.id().eq("1");

@@ -158,6 +158,7 @@ public class GenericTest extends BaseTest {
         Assert.assertFalse(easyBehavior.hasBehavior(EasyBehaviorEnum.LOGIC_DELETE));
         easyBehavior.removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         easyBehavior.removeBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
+        easyBehavior.removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
         Assert.assertTrue(easyBehavior.isDefaultBehavior());
     }
 
