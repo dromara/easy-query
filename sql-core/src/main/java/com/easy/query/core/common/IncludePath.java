@@ -12,12 +12,14 @@ public class IncludePath {
     private final Class<?> from;
     private final Class<?> to;
     private final String property;
+    private int deep;
 
-    public IncludePath(Class<?> from, Class<?> to,String property){
+    public IncludePath(Class<?> from, Class<?> to,String property,int deep){
 
         this.from = from;
         this.to = to;
         this.property = property;
+        this.deep = deep;
     }
 
     @Override
@@ -35,5 +37,13 @@ public class IncludePath {
 
     public Class<?> getTo() {
         return to;
+    }
+
+    public int getDeep() {
+        return deep;
+    }
+
+    public void setDeep(int deep) {
+        this.deep = deep;
     }
 }

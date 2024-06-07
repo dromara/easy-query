@@ -665,7 +665,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EntityTableExpressionBuilder table = getSQLEntityExpressionBuilder().getTable(0);
         TableAvailable entityTable = table.getEntityTable();
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
-        selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace);
+        selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace,0);
         selectAutoIncludeFlat0(entityMetadataManager, this, entityMetadata, resultEntityMetadata);
     }
 
@@ -712,7 +712,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     }
 
-    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, boolean replace) {
+    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, boolean replace,int deep) {
         Collection<NavigateMetadata> resultNavigateMetadatas = resultEntityMetadata.getNavigateMetadatas();
         if (EasyCollectionUtil.isEmpty(resultNavigateMetadatas)) {
             return;
@@ -725,7 +725,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             }
             //循环引用检查
             IncludeCirculateChecker circulateChecker = includeCirculateChecker == null ? new IncludeCirculateChecker() : includeCirculateChecker;
-            if (circulateChecker.includePathRepeat(new IncludePath(entityNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getPropertyName()))) {
+            if (circulateChecker.includePathRepeat(new IncludePath(entityNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getPropertyName(),deep))) {
                 continue;
             }
 //            String navigatePropName = resultNavigateMetadata.isBasicType() ? resultNavigateMetadata.getMappingProp().split("//.")[0] : resultNavigateMetadata.getPropertyName();
@@ -737,7 +737,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         ClientQueryable<Object> with = t.with(resultNavigateMetadata.getPropertyName());
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
-                        selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, replace);
+                        selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, replace,deep+1);
                         selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata);
                         return with;
                     });

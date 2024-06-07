@@ -6,6 +6,7 @@ import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.dialect.Dialect;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.job.EasyTimeJobManager;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.solon.sharding.demo.configuration.DataSourceNamed;
 import com.easy.query.solon.sharding.demo.configuration.MyDataSourceNamed;
 import org.noear.solon.Solon;
@@ -18,6 +19,7 @@ import org.noear.solon.Solon;
  */
 public class App {
     public static void main(String[] args) {
+        EasyBeanUtil.FAST_BEAN_FUNCTION = ReflectBean::new;
         Solon.start(App.class,args,app->{
             app.onEvent(EasyQueryBuilderConfiguration.class,e->{
                 String name = e.getName();
