@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasySelectFlatQueryable;
+import com.easy.query.api.proxy.util.EasyProxyUtil;
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
@@ -36,8 +37,6 @@ import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
-import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.core.FlatEntitySQLContext;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -957,20 +956,19 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(SQLFuncExpression1<T1Proxy, TRProxy> fetchResultExpression) {
         TRProxy resultProxy = fetchResultExpression.apply(get1Proxy());
-        String navValue = getNavValue(resultProxy);
+        String navValue = EasyProxyUtil.getNavValue(resultProxy);
         return new EasySelectFlatQueryable<>(clientQueryable, navValue, resultProxy).toList();
     }
-
-    private <TRProxy extends ProxyEntity<TRProxy, TR>, TR> String getNavValue(TRProxy resultProxy) {
-        String navValue = resultProxy.getNavValue();
-        if(navValue==null){
-            EntitySQLContext entitySQLContext = resultProxy.getEntitySQLContext();
-            if(entitySQLContext instanceof FlatEntitySQLContext){
-                FlatEntitySQLContext flatEntitySQLContext = (FlatEntitySQLContext) entitySQLContext;
-                navValue = flatEntitySQLContext.getNavValue();
-            }
-        }
-        return navValue;
-
-    }
+//
+//    private <TRProxy extends ProxyEntity<TRProxy, TR>, TR> String getNavValue(TRProxy resultProxy) {
+//         String navValue = resultProxy.getNavValue();
+//        if(navValue==null){
+//            EntitySQLContext entitySQLContext = resultProxy.getEntitySQLContext();
+//            if(entitySQLContext instanceof FlatEntitySQLContext){
+//                FlatEntitySQLContext flatEntitySQLContext = (FlatEntitySQLContext) entitySQLContext;
+//                navValue = flatEntitySQLContext.getNavValue();
+//            }
+//        }
+//        return navValue;
+//    }
 }

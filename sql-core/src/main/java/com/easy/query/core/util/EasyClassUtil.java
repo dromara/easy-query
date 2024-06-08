@@ -134,10 +134,14 @@ public class EasyClassUtil {
                     || clazz == BigDecimal.class || clazz == BigInteger.class || clazz == Boolean.class
                     || clazz == java.util.Date.class || clazz == java.sql.Date.class
                     || clazz == java.sql.Timestamp.class || clazz == java.time.LocalDateTime.class
-                    || clazz == java.time.LocalDate.class || clazz == java.time.LocalTime.class|| clazz == java.util.UUID.class);
+                    || clazz == java.time.LocalDate.class || clazz == java.time.LocalTime.class || clazz == java.util.UUID.class);
         } else {
             return false;
         }
+    }
+
+    public static boolean isBasicTypeOrEnum(Class<?> clazz) {
+        return isBasicType(clazz) || isEnumType(clazz);
     }
 
     public static Class<?> getObjectTypeWhenPrimitive(Class<?> propertyType) {
@@ -176,6 +180,16 @@ public class EasyClassUtil {
             throw new EasyQueryException(e);
         }
     }
+    public static Object getStaticFieldValue(Field field){
+        try {
+            field.setAccessible(true);
+            return field.get(null);
+        } catch (IllegalAccessException e) {
+            throw new EasyQueryException("cant get static field value.",e);
+        }finally {
+            field.setAccessible(false);
+        }
+    }
 
     public static Map newMapInstanceOrNull(Class<?> clazz) {
         if (Map.class.equals(clazz)) {
@@ -211,7 +225,6 @@ public class EasyClassUtil {
         LinkedHashMap<String, Field> fields = getAllFields0(clazz);
         return fields.values();
     }
-
     private static LinkedHashMap<String, Field> getAllFields0(Class<?> clazz) {
         LinkedHashMap<String, Field> fields = new LinkedHashMap<>();
         // 递归获取父类的所有Field
@@ -226,6 +239,29 @@ public class EasyClassUtil {
         }
         return fields;
     }
+    public static Collection<Field> getAllFields(Class<?> clazz,Map<String,Field> staticFields) {
+        LinkedHashMap<String, Field> fields = getAllFields0(clazz,staticFields);
+        return fields.values();
+    }
+    private static LinkedHashMap<String, Field> getAllFields0(Class<?> clazz,Map<String,Field> staticFields) {
+        LinkedHashMap<String, Field> fields = new LinkedHashMap<>();
+        // 递归获取父类的所有Field
+        Class<?> superClass = clazz.getSuperclass();
+        if (superClass != null) {
+            LinkedHashMap<String, Field> allFields0 = getAllFields0(superClass,staticFields);
+            fields.putAll(allFields0);
+        }
+        // 获取当前类的所有Field
+        for (Field declaredField : clazz.getDeclaredFields()) {
+            if(Modifier.isStatic(declaredField.getModifiers())){
+                staticFields.put(declaredField.getName(), declaredField);
+            }else{
+                fields.put(declaredField.getName(), declaredField);
+            }
+        }
+        return fields;
+    }
+
 
     /**
      * Scans all classes accessible from the context class loader which belong to the given package and subpackages.

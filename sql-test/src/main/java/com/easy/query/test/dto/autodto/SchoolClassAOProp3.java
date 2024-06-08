@@ -2,7 +2,9 @@ package com.easy.query.test.dto.autodto;
 
 import com.easy.query.core.annotation.NavigateFlat;
 import com.easy.query.core.enums.RelationMappingTypeEnum;
+import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.test.entity.school.SchoolClass;
+import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import lombok.Data;
 
 import java.util.List;
@@ -23,6 +25,10 @@ public class SchoolClassAOProp3 {
 //    @Navigate(value = RelationTypeEnum.OneToMany)
     //完整配置,property忽略表示对应的主键
 //    @Navigate(value = RelationTypeEnum.OneToMany,selfProperty = "id",targetProperty = "classId")
+
+    public static final MappingPath schoolStudentsIdsFlat= SchoolClassProxy.TABLE.schoolStudents().flatElement().id();
+
+//    @NavigateFlat(value = RelationMappingTypeEnum.ToMany, mapping = "schoolStudentsIdsFlat")
     @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolStudents","id"})
     private List<String> schoolStudentsIds;
     @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","id"})

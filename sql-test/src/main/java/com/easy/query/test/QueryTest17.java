@@ -2,17 +2,23 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
+import com.easy.query.api.proxy.util.EasyProxyUtil;
 import com.easy.query.api4j.func.LambdaSQLFunc;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
+import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidFieldCheckException;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.parser.core.available.EmptyTableAvailable;
+import com.easy.query.core.expression.parser.core.available.MappingPath;
+import com.easy.query.core.expression.sql.builder.EmptyEntityExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.SQLConstantExpression;
+import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
@@ -22,6 +28,7 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyFieldCheckUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
+import com.easy.query.test.dto.autodto.SchoolClassAOProp3;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyTopic;
 import com.easy.query.test.entity.MyTopic4;
@@ -36,6 +43,8 @@ import com.easy.query.test.entity.base.proxy.ProvinceVOProxy;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
+import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
+import com.easy.query.test.entity.school.proxy.SchoolTeacherProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.nop.MyObject;
@@ -1279,5 +1288,17 @@ public class QueryTest17 extends BaseTest {
                     t.id().nullOrDefault("2").in(Arrays.asList("1", "2", "3"));
                 }).streamBy(s -> s.findFirst());
     }
+
+    @Test
+    public void testaaa(){
+        SchoolClassProxy schoolClassProxy = SchoolClassProxy.createTable().create(EmptyTableAvailable.DEFAULT, EmptyEntityExpressionBuilder.DEFAULT, EmptyQueryRuntimeContext.DEFAULT);
+        SQLStringTypeColumn<SchoolTeacherProxy> id = schoolClassProxy.schoolStudents()
+                .flatElement().schoolClass().schoolTeachers().flatElement().id();
+        MappingPath schoolStudentsIdsFlat = SchoolClassAOProp3.schoolStudentsIdsFlat;
+        String navValue = EasyProxyUtil.getFullNavValue(id);
+        Assert.assertEquals("schoolStudents.schoolClass.schoolTeachers.id",navValue);
+        Assert.assertEquals("schoolStudents.id",schoolStudentsIdsFlat.__getMappingPath());
+    }
+
 }
 

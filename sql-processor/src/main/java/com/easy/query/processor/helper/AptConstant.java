@@ -25,6 +25,9 @@ public class AptConstant {
             "public class @{entityClassProxy} extends AbstractProxyEntity<@{entityClassProxy}, @{entityClass}> {\n" +
             "\n" +
             "    private static final Class<@{entityClass}> entityClass = @{entityClass}.class;\n" +
+            "\n" +
+            "    public static final @{entityClassProxy} TABLE = createTable().createEmpty();" +
+            "\n" +
             "    public static @{entityClassProxy} createTable() {\n" +
             "        return new @{entityClassProxy}();\n" +
             "    }\n" +

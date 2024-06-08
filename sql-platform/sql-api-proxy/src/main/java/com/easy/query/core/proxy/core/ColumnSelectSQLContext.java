@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.core;
 
+import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
@@ -80,7 +81,7 @@ public class ColumnSelectSQLContext implements EntitySQLContext {
 
     @Override
     public QueryRuntimeContext getRuntimeContext() {
-        throw new UnsupportedOperationException();
+        return EmptyQueryRuntimeContext.DEFAULT;
     }
 
 

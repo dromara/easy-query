@@ -6,9 +6,11 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.SQLPredicateQueryable;
 import com.easy.query.core.proxy.columns.SQLQueryable;
+import com.easy.query.core.proxy.core.EmptyFlatEntitySQLContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
@@ -118,5 +120,12 @@ public class EmptySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, 
     @Override
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> TProxy set(SQLQueryable<TPropertyProxy, TProperty> columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<T1Proxy, T1>> navigateSelectExpression) {
         return tProxy;
+    }
+
+    @Override
+    public T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression) {
+        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new EmptyFlatEntitySQLContext(getNavValue()));
+        tPropertyProxy.setNavValue(getNavValue());
+        return tPropertyProxy;
     }
 }

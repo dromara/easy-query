@@ -1,9 +1,12 @@
 package com.easy.query.core.proxy;
 
 
+import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.EmptyTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.builder.EmptyEntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
@@ -30,6 +33,9 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
            return create(table,getEntitySQLContext());
        }
        return create(table,new ProxyEntitySQLContext(entityExpressionBuilder,runtimeContext));
+   }
+   default TProxy createEmpty(){
+       return create(EmptyTableAvailable.DEFAULT, EmptyEntityExpressionBuilder.DEFAULT, EmptyQueryRuntimeContext.DEFAULT);
    }
     TProxy create(TableAvailable table, EntitySQLContext entitySQLContext);
 }

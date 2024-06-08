@@ -40,10 +40,11 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     TableAvailable getOriginalTable();
 
     String getNavValue();
+
     T1Proxy getProxy();
 
     @Override
-   default String getValue(){
+    default String getValue() {
         return getNavValue();
     }
 
@@ -71,6 +72,7 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
 
     /**
      * 不存在任意一个满足条件
+     *
      * @param whereExpression
      */
     default void none(SQLExpression1<T1Proxy> whereExpression) {
@@ -86,18 +88,20 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
 
     /**
      * 返回boolean表示是否存在任意匹配项
+     *
      * @return
      */
-    default ColumnFunctionComparableBooleanChainExpression<Boolean> anyValue(){
+    default ColumnFunctionComparableBooleanChainExpression<Boolean> anyValue() {
         Query<?> anyQuery = getQueryable().limit(1).select("1");
         return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.exists(anyQuery), Boolean.class);
     }
 
     /**
      * 返回boolean表示是否没有任意一项被匹配到
+     *
      * @return
      */
-    default ColumnFunctionComparableBooleanChainExpression<Boolean> noneValue(){
+    default ColumnFunctionComparableBooleanChainExpression<Boolean> noneValue() {
         Query<?> anyQuery = getQueryable().limit(1).select("1");
         return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.not(f.exists(anyQuery)), Boolean.class);
     }
@@ -162,23 +166,25 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
 
     /**
      * 请升级到2.0.24+
+     *
      * @param columnProxy
-     * @return
      * @param <TPropertyProxy>
      * @param <TProperty>
+     * @return
      */
     @Deprecated
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> Object set(SQLQueryable<TPropertyProxy, TProperty> columnProxy) {
-       return set(columnProxy, null);
+        return set(columnProxy, null);
     }
 
     /**
      * 请升级到2.0.24+
+     *
      * @param columnProxy
      * @param navigateSelectExpression
-     * @return
      * @param <TPropertyProxy>
      * @param <TProperty>
+     * @return
      */
     @Deprecated
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> Object set(SQLQueryable<TPropertyProxy, TProperty> columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<T1Proxy, T1>> navigateSelectExpression) {
@@ -189,14 +195,16 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     /**
      * 暂开集合元素
      * 用户返回集合元素
+     *
      * @return
      */
     default T1Proxy flatElement() {
         return flatElement(null);
     }
+
     default T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression) {
         QueryRuntimeContext runtimeContext = this.getProxy().getEntitySQLContext().getRuntimeContext();
-        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this,runtimeContext,getNavValue(),flatAdapterExpression));
+        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this, runtimeContext, getNavValue(), flatAdapterExpression));
         tPropertyProxy.setNavValue(getNavValue());
         return tPropertyProxy;
     }

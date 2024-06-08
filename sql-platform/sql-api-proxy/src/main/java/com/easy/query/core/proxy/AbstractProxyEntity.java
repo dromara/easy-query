@@ -34,7 +34,6 @@ import java.util.function.Supplier;
  */
 public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractBaseProxyEntity<TProxy, TEntity> {
 
-
     protected <TPropertyProxy extends SQLColumn<TProxy, TProperty>, TProperty> TPropertyProxy getValueObject(TPropertyProxy propertyProxy) {
         propertyProxy._setProxy(castChain());
         return propertyProxy;

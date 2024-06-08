@@ -35,7 +35,7 @@ public class SchoolClassAOProp10 {
     public static class  SchoolStudentAO{
         private String id;
         private String name;
-        @NavigateJoin({
+        @NavigateJoin(mappingPath = {
                 "schoolStudentAddress",
                 "address"
         })

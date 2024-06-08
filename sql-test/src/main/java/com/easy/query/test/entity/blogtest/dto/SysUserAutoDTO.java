@@ -27,7 +27,7 @@ public class SysUserAutoDTO {
             "addr"
     })
     private String myAddress1;
-    @NavigateJoin({
+    @NavigateJoin(mappingPath = {
             "address",
             "addr"
     })

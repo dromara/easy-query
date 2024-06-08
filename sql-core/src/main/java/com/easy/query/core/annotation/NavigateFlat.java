@@ -26,4 +26,10 @@ public @interface NavigateFlat {
 //     * @return
 //     */
     String[] mappingPath() default {};
+
+    /**
+     * 如果静态对象名称等于字段名称+_PATH,比如userName那么你编写
+     * @return
+     */
+    String pathAlias() default "";
 }

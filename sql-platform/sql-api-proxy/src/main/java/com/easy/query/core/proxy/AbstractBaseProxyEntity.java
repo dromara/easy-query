@@ -3,6 +3,7 @@ package com.easy.query.core.proxy;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -267,9 +268,9 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
         //vo
-        if(entityExpressionBuilder == null || entitySQLContext.methodIsInclude()){
+        if(entityExpressionBuilder == null || entitySQLContext.methodIsInclude()||entityExpressionBuilder.getRuntimeContext() instanceof  EmptyQueryRuntimeContext){
             TPropertyProxy tPropertyProxy = propertyProxy.create(null, this.getEntitySQLContext());
-            tPropertyProxy.setNavValue(property);
+            tPropertyProxy.setNavValue(getFullNavValue(property));
             return tPropertyProxy;
         }else{
             TableAvailable leftTable = getTable();
@@ -282,12 +283,12 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
 
     protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLQueryable<TPropertyProxy, TProperty> getNavigates(String property, TPropertyProxy propertyProxy) {
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
+        QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
-        if(entityExpressionBuilder==null){
-            propertyProxy.setNavValue(property);
+        if(entityExpressionBuilder==null||runtimeContext instanceof EmptyQueryRuntimeContext){
+            propertyProxy.setNavValue(getFullNavValue(property));
             return new EmptySQLQueryable<>(this.entitySQLContext,propertyProxy);
         }else{
-            QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
             TableAvailable leftTable = getTable();
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
             ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)                    ;
@@ -320,13 +321,13 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLManyQueryable<TProxy,TPropertyProxy, TProperty> getNavigateMany(String property, TPropertyProxy propertyProxy) {
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
-        if(entityExpressionBuilder==null){
-            propertyProxy.setNavValue(property);
+        QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
+        if(entityExpressionBuilder==null||runtimeContext instanceof EmptyQueryRuntimeContext){
+            propertyProxy.setNavValue(getFullNavValue(property));
             SQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EmptySQLManyQueryable<>(this.entitySQLContext, propertyProxy);
             query._setProxy(castChain());
             return query;
         }else{
-            QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
             TableAvailable leftTable = getTable();
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
             ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)                    ;
