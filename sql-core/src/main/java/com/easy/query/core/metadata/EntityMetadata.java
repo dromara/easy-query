@@ -252,7 +252,7 @@ public class EntityMetadata {
                 }
                 NavigateJoin navigateJoin = field.getAnnotation(NavigateJoin.class);
                 if (navigateJoin != null) {
-                    createNavigateJoinMappingMetadata(navigateJoin,staticFields, property);
+                    createNavigateJoinMappingMetadata(navigateJoin, staticFields, property);
                 }
             }
 
@@ -336,6 +336,7 @@ public class EntityMetadata {
         }
         return navigateJoin.mappingPath();
     }
+
     private String[] getMappingPath(String mapping, Map<String, Field> staticFields, String[] def) {
         if (EasyStringUtil.isNotBlank(mapping)) {
             Field field = staticFields.get(mapping);
@@ -359,6 +360,14 @@ public class EntityMetadata {
             throw new EasyQueryInvalidOperationException("navigate flat, mappingPath at least two path");
         }
         RelationMappingTypeEnum relationMappingType = navigateFlat.value();
+        if (relationMappingType == RelationMappingTypeEnum.UNKNOWN) {
+            Class<?> propertyType = fastBeanProperty.getPropertyType();
+            if (Collection.class.isAssignableFrom(propertyType)) {
+                relationMappingType = RelationMappingTypeEnum.ToMany;
+            } else {
+                relationMappingType = RelationMappingTypeEnum.ToOne;
+            }
+        }
         boolean toMany = relationMappingType.equals(RelationMappingTypeEnum.ToMany);
         Class<?> navigateType = getNavigateType(toMany, field, fastBeanProperty);
         if (navigateType == null) {
@@ -372,7 +381,7 @@ public class EntityMetadata {
         property2NavigateFlatMap.put(property, navigateFlatMetadata);
     }
 
-    private void createNavigateJoinMappingMetadata(NavigateJoin navigateJoin,Map<String, Field> staticFields, String property) {
+    private void createNavigateJoinMappingMetadata(NavigateJoin navigateJoin, Map<String, Field> staticFields, String property) {
         String[] mappingPath = getJoinMappingPath(navigateJoin, staticFields);
         if (mappingPath.length <= 1) {
             throw new EasyQueryInvalidOperationException("navigate join, mappingPath at least two path");
