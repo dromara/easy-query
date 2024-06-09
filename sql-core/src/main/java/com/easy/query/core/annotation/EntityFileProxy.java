@@ -52,5 +52,5 @@ public @interface EntityFileProxy {
      * 修正版本号
      * @return
      */
-    int revision() default 1;
+    int revision() default 2;
 }
