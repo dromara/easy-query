@@ -44,4 +44,7 @@ public class SysUser implements ProxyEntityAvailable<SysUser , SysUserProxy> {
 
     @Navigate(value = RelationTypeEnum.ManyToOne,selfProperty = Fields.companyId)
     private Company company;
+
+    @Navigate(value = RelationTypeEnum.OneToMany,targetProperty = "userId")
+    private List<UserBook> books;
 }

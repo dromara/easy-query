@@ -22,7 +22,7 @@ public @interface NavigateFlat {
      * 无需再指定value值会自动推断如果无法推断在指定即可
      * @return
      */
-    RelationMappingTypeEnum value() default RelationMappingTypeEnum.UNKNOWN;
+    RelationMappingTypeEnum value() default RelationMappingTypeEnum.AUTO;
     //    /**
 //     * 一对多比如SchoolClass映射多个schoolTeachers
 //     * 那么当{@code basicMappingPropPath} 为 [schoolTeachers]且是基本类型那么会将schoolTeachers的主键进行赋值如果需要其他属性

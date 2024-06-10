@@ -9,5 +9,5 @@ package com.easy.query.core.enums;
 public enum RelationMappingTypeEnum {
     ToOne,
     ToMany,
-    UNKNOWN
+    AUTO
 }

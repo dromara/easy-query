@@ -6,7 +6,6 @@ import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import lombok.Data;
-import lombok.experimental.FieldNameConstants;
 
 import java.util.List;
 
@@ -17,7 +16,6 @@ import java.util.List;
  * @author xuejiaming
  */
 @Data
-@FieldNameConstants(onlyExplicitlyIncluded = true)
 public class SchoolClassAOProp11 {
 
     //    @Column(primaryKey = true)//主键
@@ -32,11 +30,13 @@ public class SchoolClassAOProp11 {
 //    @NavigateFlat(value = RelationMappingTypeEnum.ToMany, mapping = "schoolStudentsIdsFlat")
 //    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mapping = "schoolStudentsIdsPath")
 
-    @FieldNameConstants.Include
     private static final MappingPath SCHOOL_STUDENT_ID_PATH= SchoolClassProxy.TABLE.schoolStudents().flatElement().id();
 
-    @NavigateFlat(value = RelationMappingTypeEnum.ToMany, pathAlias = Fields.SCHOOL_STUDENT_ID_PATH)
+    @NavigateFlat(pathAlias = "SCHOOL_STUDENT_ID_PATH")
     private List<String> schoolStudentsIds;
+
+
+
     @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","id"})
     private List<String> schoolTeachersClassIds;
     @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","name"})

@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
@@ -826,5 +827,28 @@ public class InsertTest extends BaseTest {
                 Assert.assertEquals(i+100+1191+2991+2999+1000+1,(int)testInc.getId());
             }
         }
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .behaviorConfigure(config -> {
+                    config.removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
+                }).toList();
+////
+//        Topic topic = new Topic();
+//        easyEntityQuery.deletable(topic)
+//                .behaviorConfigure(config->{
+//                    config.removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
+//                }).executeRows();
+//
+//
+//        easyEntityQuery.updatable(Topic.class)
+//                .behaviorConfigure(config->{
+//                    config.removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
+//                })
+//                .setColumns(t -> {
+//                    t.title().set("123");
+//                })
+//                .where(t -> {
+//                    t.id().eq("123");
+//                })
+//                .executeRows();
     }
 }

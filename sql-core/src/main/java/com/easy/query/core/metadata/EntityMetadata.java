@@ -360,7 +360,7 @@ public class EntityMetadata {
             throw new EasyQueryInvalidOperationException("navigate flat, mappingPath at least two path");
         }
         RelationMappingTypeEnum relationMappingType = navigateFlat.value();
-        if (relationMappingType == RelationMappingTypeEnum.UNKNOWN) {
+        if (relationMappingType == RelationMappingTypeEnum.AUTO) {
             Class<?> propertyType = fastBeanProperty.getPropertyType();
             if (Collection.class.isAssignableFrom(propertyType)) {
                 relationMappingType = RelationMappingTypeEnum.ToMany;
