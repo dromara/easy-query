@@ -6,6 +6,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLConstantExpression;
@@ -130,9 +131,12 @@ public class Expression {
      * @return 返回元素sql片段
      */
     public PropTypeColumn<Object> sqlType(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+        return sqlType(sqlSegment,contextConsume,Object.class);
+    }
+    public <T> PropTypeColumn<T> sqlType(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume, Class<T> resultClass) {
         return new SQLNativeSegmentExpressionImpl(entitySQLContext, sqlSegment, c -> {
             contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c.getSQLNativeExpressionContext()));
-        });
+        }).setPropertyType(resultClass);
     }
 
 

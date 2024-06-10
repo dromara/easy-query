@@ -28,13 +28,13 @@ public class SQLNativeSegmentExpressionImpl implements PropTypeColumn<Object>, D
 
 
     private final EntitySQLContext entitySQLContext;
-    private final String sqlSegemnt;
+    private final String sqlSegment;
     private final SQLExpression1<SQLNativeChainExpressionContext> consume;
     private Class<?> propType;
 
-    public SQLNativeSegmentExpressionImpl(EntitySQLContext entitySQLContext, String sqlSegemnt, SQLExpression1<SQLNativeChainExpressionContext> consume){
+    public SQLNativeSegmentExpressionImpl(EntitySQLContext entitySQLContext, String sqlSegment, SQLExpression1<SQLNativeChainExpressionContext> consume){
         this.entitySQLContext = entitySQLContext;
-        this.sqlSegemnt = sqlSegemnt;
+        this.sqlSegment = sqlSegment;
         this.consume = consume;
 
         this.propType = Object.class;
@@ -126,7 +126,7 @@ public class SQLNativeSegmentExpressionImpl implements PropTypeColumn<Object>, D
     @Override
     public Function<SQLFunc, SQLFunction> func() {
         return f->{
-            return f.nativeSql(sqlSegemnt,consume);
+            return f.nativeSql(sqlSegment,consume);
         };
     }
 }
