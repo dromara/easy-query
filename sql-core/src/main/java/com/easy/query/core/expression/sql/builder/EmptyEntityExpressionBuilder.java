@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
@@ -29,7 +30,7 @@ public class EmptyEntityExpressionBuilder implements EntityExpressionBuilder{
 
     @Override
     public QueryRuntimeContext getRuntimeContext() {
-        return null;
+        return EmptyQueryRuntimeContext.DEFAULT;
     }
 
     @Override

@@ -44,6 +44,8 @@ import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
+import com.easy.query.test.entity.school.proxy.SchoolStudentAddressProxy;
+import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.entity.school.proxy.SchoolTeacherProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
@@ -1291,6 +1293,9 @@ public class QueryTest17 extends BaseTest {
 
     @Test
     public void testaaa(){
+        SQLStringTypeColumn<SchoolStudentAddressProxy> address = SchoolStudentProxy.createTable().createEmpty().schoolStudentAddress().address();
+        String fullNavValue = EasyProxyUtil.getFullNavValue(address);
+        System.out.println(fullNavValue);
         SchoolClassProxy schoolClassProxy = SchoolClassProxy.createTable().create(EmptyTableAvailable.DEFAULT, EmptyEntityExpressionBuilder.DEFAULT, EmptyQueryRuntimeContext.DEFAULT);
         SQLStringTypeColumn<SchoolTeacherProxy> id = schoolClassProxy.schoolStudents()
                 .flatElement().schoolClass().schoolTeachers().flatElement().id();
