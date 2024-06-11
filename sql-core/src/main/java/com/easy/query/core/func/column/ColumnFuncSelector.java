@@ -1,8 +1,6 @@
 package com.easy.query.core.func.column;
 
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -21,7 +19,7 @@ public interface ColumnFuncSelector {
     ColumnFuncSelector value(Object val);
 //    ColumnFuncSelector sqlParameter(SQLParameter sqlParameter);
     ColumnFuncSelector format(Object valFormat);
-    ColumnFuncSelector predicate(SQLExpression1<Filter> filterExpression);
+//    ColumnFuncSelector predicate(SQLExpression1<Filter> filterExpression);
     ColumnFuncSelector sql(SQLSegment sqlSegment);
    default ColumnFuncSelector sqlFunc(SQLFunction sqlFunction){
        return sqlFunc(null,sqlFunction);

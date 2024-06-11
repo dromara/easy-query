@@ -17,4 +17,5 @@ public interface ColumnFunctionComparableAnyChainExpression<T> extends ColumnFun
         ColumnFuncComparableExpression.super.setPropertyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
+   void executeSQL();
 }

@@ -5,6 +5,7 @@ import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
@@ -144,6 +145,15 @@ public class ColumnFunctionComparableAnyChainExpressionImpl<TProperty> implement
         this.propType = clazz;
     }
 
+    @Override
+    public void executeSQL() {
+        SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
+        SQLFunction sqlFunction = func.apply(fx);
+        String sqlSegment = sqlFunction.sqlSegment(getTable());
+        getEntitySQLContext()._executeNativeSql(sqlSegment,c->{
+            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(getTable(), c.getSQLNativeExpressionContext()));
+        });
+    }
 }
 //        if(condition){
 //            return new SQLPredicateImpl(f->{

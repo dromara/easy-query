@@ -1305,5 +1305,6 @@ public class QueryTest17 extends BaseTest {
         Assert.assertEquals("schoolStudents.id",schoolStudentsIdsFlat.__getMappingPath());
     }
 
+
 }
 

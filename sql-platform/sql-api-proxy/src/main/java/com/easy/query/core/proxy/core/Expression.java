@@ -6,7 +6,6 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLConstantExpression;
@@ -21,6 +20,8 @@ import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctio
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableStringChainExpressionImpl;
+import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
+import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLNativeSegmentExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -53,6 +54,17 @@ public class Expression {
         return new Expression(entitySQLContextAvailable.getEntitySQLContext());
     }
 
+    public ColumnFunctionComparableAnyChainExpression<Object> sqlSegment(String sqlSegment){
+        return sqlSegment(sqlSegment, x->{}, Object.class);
+    }
+    public ColumnFunctionComparableAnyChainExpression<Object> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume){
+        return sqlSegment(sqlSegment,contextConsume, Object.class);
+    }
+    public <TR>  ColumnFunctionComparableAnyChainExpression<TR> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume, Class<TR> resultClass){
+        return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext,null,null,f->{
+            return f.anySQLFunction(sqlSegment,c->contextConsume.apply(new ProxyColumnFuncSelectorImpl(c)));
+        }, resultClass);
+    }
 
     /**
      * 支持where having order

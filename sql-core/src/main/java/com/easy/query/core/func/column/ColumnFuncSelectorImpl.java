@@ -66,11 +66,11 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
         concatExpressions.add(new ColumnFuncFormatExpressionImpl(valFormat));
         return this;
     }
-
-    @Override
-    public ColumnFuncSelector predicate(SQLExpression1<Filter> filterExpression) {
-        return null;
-    }
+//
+//    @Override
+//    public ColumnFuncSelector predicate(SQLExpression1<Filter> filterExpression) {
+//        return null;
+//    }
 
     @Override
     public ColumnFuncSelector sql(SQLSegment sqlSegment) {
