@@ -268,11 +268,16 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
         //vo
-        if(entityExpressionBuilder == null || entitySQLContext.methodIsInclude()||entityExpressionBuilder.getRuntimeContext() instanceof  EmptyQueryRuntimeContext){
+        if(entityExpressionBuilder == null || entitySQLContext.methodIsInclude()){
             TPropertyProxy tPropertyProxy = propertyProxy.create(null, this.getEntitySQLContext());
             tPropertyProxy.setNavValue(getFullNavValue(property));
             return tPropertyProxy;
         }else{
+            if(entityExpressionBuilder.getRuntimeContext() instanceof  EmptyQueryRuntimeContext){
+                TPropertyProxy tPropertyProxy = propertyProxy.create(getTable(), this.getEntitySQLContext());
+                tPropertyProxy.setNavValue(getFullNavValue(property));
+                return tPropertyProxy;
+            }
             TableAvailable leftTable = getTable();
             TableAvailable relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, leftTable, property);
             TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.entitySQLContext);
