@@ -194,6 +194,7 @@ public abstract class BaseTest {
         configuration.applyColumnValueSQLConverter(new UserAgeColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new StudentSizeColumnValueSQLConverter());
         configuration.applyGeneratedKeySQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
+        configuration.applyNavigateExtraFilterStrategy(new com.easy.query.test.entity.navf.RoleJoin.RoleJoinType());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRoute(new TopicShardingTableRoute());
         tableRouteManager.addRoute(new TopicShardingTimeTableRoute());

@@ -130,7 +130,7 @@ public class MsSQLInsertSQLExpression extends InsertSQLExpressionImpl {
             sql.append(String.join(",", sqlColumns));
             sql.append(") VALUES (");
             sql.append(sqlColumns.stream().map(o -> "t2." + o).collect(Collectors.joining(",")));
-            sql.append(")");
+            sql.append(");");
 
             return sql.toString();
         }
