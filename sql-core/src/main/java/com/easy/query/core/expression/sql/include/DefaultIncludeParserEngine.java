@@ -281,7 +281,8 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                         includeParseContext.setIncludeQueryableExpression(() -> {
                             ClientQueryable<?> includeQueryable = includeQueryableExpression.apply();
                             EntityQueryExpressionBuilder sqlEntityExpressionBuilder = includeQueryable.getSQLEntityExpressionBuilder();
-                            includeQueryable.select(aliasNavigateMetadata.getNavigatePropertyType(), t -> {
+                            Class<?> aliasClassType = includeParseContext.getIncludeNavigateParams().getFlatClassType() == null ? aliasNavigateMetadata.getNavigatePropertyType() : includeParseContext.getIncludeNavigateParams().getFlatClassType();
+                            includeQueryable.select(aliasClassType, t -> {
                                 t.columnAll();
                                 EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                             });
@@ -295,7 +296,9 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                         includeParseContext.setIncludeQueryableExpression(() -> {
                             ClientQueryable<?> includeQueryable = includeQueryableExpression.apply();
                             EntityQueryExpressionBuilder sqlEntityExpressionBuilder = includeQueryable.getSQLEntityExpressionBuilder();
-                            return includeQueryable.select(aliasNavigateMetadata.getNavigatePropertyType(), t -> {
+                            Class<?> aliasClassType = includeParseContext.getIncludeNavigateParams().getFlatClassType() == null ? aliasNavigateMetadata.getNavigatePropertyType() : includeParseContext.getIncludeNavigateParams().getFlatClassType();
+
+                            return includeQueryable.select(aliasClassType, t -> {
                                 columnIncludeExpression.getIncludeSelectorExpression().apply(t.getAsSelector());
                                 EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                                 EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());

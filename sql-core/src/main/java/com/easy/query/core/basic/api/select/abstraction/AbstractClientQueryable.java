@@ -675,7 +675,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     private void selectAutoIncludeFlat0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata) {
         Collection<NavigateFlatMetadata> navigateFlatMetadatas = resultEntityMetadata.getNavigateFlatMetadatas();
         if (EasyCollectionUtil.isNotEmpty(navigateFlatMetadatas)) {
-            MappingPathTreeNode mappingPathTreeRoot = getMappingPathTree(navigateFlatMetadatas);
+            MappingPathTreeNode mappingPathTreeRoot = getMappingPathTree(navigateFlatMetadatas, resultEntityMetadata);
             selectAutoIncludeFlat0(entityMetadataManager, clientQueryable, entityMetadata, mappingPathTreeRoot, true);
 //            for (MappingPathTreeNode mappingPathTree : mappingPathTreeRoot.getChildren()) {
 //                
@@ -703,11 +703,16 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }
     }
 
-    private MappingPathTreeNode getMappingPathTree(Collection<NavigateFlatMetadata> navigateFlatMetadataCollection) {
+    private MappingPathTreeNode getMappingPathTree(Collection<NavigateFlatMetadata> navigateFlatMetadataCollection, EntityMetadata navigateEntityMetadata) {
         MappingPathTreeNode root = new MappingPathTreeNode("EASY-QUERY-ROOT");
         for (NavigateFlatMetadata navigateFlatMetadata : navigateFlatMetadataCollection) {
             String[] mappingPath = navigateFlatMetadata.getMappingPath();
-            MappingPathTreeBuilder.insertPath(root, mappingPath, navigateFlatMetadata);
+            MappingPathTreeBuilder.insertPath(root, mappingPath, navigateFlatMetadata, path -> {
+                NavigateMetadata navigateOrNull = navigateEntityMetadata.getNavigateOrNull(path);
+                if (navigateOrNull != null) {
+                    throw new EasyQueryInvalidOperationException(String.format("In the selectAutoInclude query, the relational propoerty [%s] of the class [%s] should appear in both @Navigate and @NavigateFlat.", path, EasyClassUtil.getSimpleName(navigateEntityMetadata.getEntityClass())));
+                }
+            });
         }
         return root;
 //        return EasyUtil.groupBy(navigateFlatMetadataCollection.stream(), o -> o.getMappingPath()[0])
@@ -784,7 +789,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             }
 //            List<NavigateFlatProperty> flatProperties = navigateFlatGroupProperty.values().collect(Collectors.toList());
             //获取当前属性没有后续的属性了的 path最后一个是navigate那么就不可以是自定义dto只能是table
-            boolean basicType = mappingPathTreeChild.getNavigateFlatMetadataList().stream().anyMatch(o -> !o.isBasicType()&&o.getMappingPath().length==mappingPathTreeChild.getDeep());
+            boolean basicType = mappingPathTreeChild.getNavigateFlatMetadataList().stream().anyMatch(o -> !o.isBasicType() && o.getMappingPath().length == mappingPathTreeChild.getDeep());
 //            List<MappingPathTreeNode> customPathTypes = mappingPathTreeChild.getChildren().stream().filter(o -> !o.getNavigateFlatMetadata().isBasicType() && !o.hasChildren()).collect(Collectors.toList());
 //            String navigatePropName = resultNavigateMetadata.isBasicType() ? resultNavigateMetadata.getMappingProp().split("//.")[0] : resultNavigateMetadata.getPropertyName();
 
@@ -795,6 +800,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             List<MappingPathTreeNode> navigateFlatBasicProps = mappingPathTreeChild.getChildren().stream().filter(o -> {
                 return o.anyBasicType() && o.allBasicType(size) && !o.hasChildren();
             }).collect(Collectors.toList());
+
 
             clientQueryable
                     .include(t -> {
@@ -812,18 +818,25 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                        }
                         selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, mappingPathTreeChild, false);
 
-                        if (basicType && mappingPathTreeChild.anyBasicType()) {
+                        if (basicType) {
                             //检查是否存在自定义dto
-                            List<NavigateFlatMetadata> navigateFlatMetadataList = mappingPathTreeChild.getNavigateFlatMetadataList().stream().filter(o -> !o.isBasicType()).collect(Collectors.toList());
-                            for (NavigateFlatMetadata navigateFlatMetadata : navigateFlatMetadataList) {
+                            List<NavigateFlatMetadata> navigateFlatMetadataList = mappingPathTreeChild.getNavigateFlatMetadataList().stream().filter(o -> !o.isBasicType() && o.getMappingPath().length == mappingPathTreeChild.getDeep() && Objects.equals(propertyName, o.getMappingPath()[o.getMappingPath().length - 1])).collect(Collectors.toList());
+                            if (EasyCollectionUtil.isNotEmpty(navigateFlatMetadataList)) {
+                                if (EasyCollectionUtil.isNotSingle(navigateFlatMetadataList)) {
+                                    throw new EasyQueryInvalidOperationException(String.format("In the class [%s], @NavigateFlat only allows one associated attribute: [%s] to exist.", EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()), propertyName));
+                                }
+                                NavigateFlatMetadata navigateFlatMetadata = EasyCollectionUtil.first(navigateFlatMetadataList);
 
                                 Class<?> navigatePropertyType = navigateFlatMetadata.getNavigatePropertyType();
-                                if (Objects.equals(propertyName, mappingPathTreeChild.getName()) && !Objects.equals(with.queryClass(), navigatePropertyType)) {
-                                    throw new EasyQueryInvalidOperationException("NavigateFlat only supports basic types and database types");
+                                //表示VO对象并不是最终的对象
+                                if (mappingPathTreeChild.hasChildren()) {
+                                    if (EasyCollectionUtil.isEmpty(navigateFlatBasicProps) && !Objects.equals(with.queryClass(), navigatePropertyType)) {
+                                        throw new EasyQueryInvalidOperationException(String.format("@NavigateFlat cannot simultaneously include non-database related objects: [%s] and its object properties.", EasyClassUtil.getSimpleName(navigatePropertyType)));
+                                    }
                                 }
+                                t.getIncludeNavigateParams().setFlatClassType(navigatePropertyType);
                             }
-                        }
-                        if (!(basicType && mappingPathTreeChild.anyBasicType())) {
+                        } else {
                             if (EasyCollectionUtil.isNotEmpty(navigateFlatBasicProps)) {
                                 with = with.select(z -> {
                                     for (MappingPathTreeNode navigateFlatBasicProp : navigateFlatBasicProps) {

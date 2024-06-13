@@ -20,19 +20,22 @@ public class NavigateFlatMetadata {
     private final Class<?> navigatePropertyType;
     private final boolean basicType;
     private final PropertySetterCaller<Object> beanSetter;
+    private final String property;
 
     public NavigateFlatMetadata(EntityMetadata entityMetadata,
                                 RelationMappingTypeEnum relationMappingType,
                                 String[] mappingPath,
                                 Class<?> navigatePropertyType,
                                 boolean basicType,
-                                PropertySetterCaller<Object> beanSetter) {
+                                PropertySetterCaller<Object> beanSetter,
+                                String property) {
         this.entityMetadata = entityMetadata;
         this.relationMappingType = relationMappingType;
         this.mappingPath = mappingPath;
         this.navigatePropertyType = navigatePropertyType;
         this.basicType=basicType;
         this.beanSetter = beanSetter;
+        this.property = property;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -57,5 +60,9 @@ public class NavigateFlatMetadata {
 
     public Class<?> getNavigatePropertyType() {
         return navigatePropertyType;
+    }
+
+    public String getProperty() {
+        return property;
     }
 }

@@ -11,6 +11,7 @@ import com.easy.query.test.dto.autodto.SchoolClassAO;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp10;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp11;
+import com.easy.query.test.dto.autodto.SchoolClassAOProp12;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp2;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp3;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp4;
@@ -18,6 +19,7 @@ import com.easy.query.test.dto.autodto.SchoolClassAOProp5;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp6;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp8;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp9;
+import com.easy.query.test.dto.autodto.SchoolStudentDTOxxx;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.Area;
 import com.easy.query.test.entity.base.City;
@@ -175,16 +177,81 @@ public class RelationTest extends BaseTest {
 
             {
                 System.out.println("4");
-                boolean exception=true;
+                boolean exception = true;
                 try {
-                    List<SchoolClassAOProp5> list = easyEntityQuery.queryable(SchoolClass.class)
-                            .selectAutoInclude(SchoolClassAOProp5.class)
+                    List<SchoolClassAOProp12> list = easyEntityQuery.queryable(SchoolClass.class)
+                            .selectAutoInclude(SchoolClassAOProp12.class)
                             .toList();
-                    exception=false;
+                    exception = false;
 
-                }catch (Exception ex){
-                    Assert.assertTrue(ex instanceof  EasyQueryInvalidOperationException);
-                    Assert.assertEquals("NavigateFlat only supports basic types and database types",ex.getMessage());
+                } catch (Exception ex) {
+                    Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
+                    Assert.assertEquals("@NavigateFlat cannot simultaneously include non-database related objects: [SchoolStudentAO] and its object properties.", ex.getMessage());
+                }
+                Assert.assertTrue(exception);
+                System.out.println("1");
+
+            }
+
+            {
+                System.out.println("4");
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+                int i = 0;
+                List<SchoolClassAOProp5> list = easyEntityQuery.queryable(SchoolClass.class)
+                        .selectAutoInclude(SchoolClassAOProp5.class)
+                        .toList();
+                for (SchoolClassAOProp5 schoolClassAOProp5 : list) {
+                    for (SchoolClassAOProp5.SchoolStudentAO schoolStudentAO : schoolClassAOProp5.getSchoolTeachersClassList()) {
+                        i++;
+                    }
+                }
+                Assert.assertTrue(i>0);
+
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
+
+                {
+
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                    Assert.assertEquals("SELECT `id`,`name` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+                    Assert.assertEquals("SELECT t.`id` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+
+                System.out.println("1");
+            }
+            {
+                System.out.println("4");
+                boolean exception = true;
+                try {
+                    List<SchoolStudentDTOxxx> list = easyEntityQuery.queryable(SchoolStudent.class)
+                            .selectAutoInclude(SchoolStudentDTOxxx.class)
+                            .toList();
+                    exception = false;
+
+                } catch (Exception ex) {
+                    Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
+                    Assert.assertEquals("In the selectAutoInclude query, the relational propoerty [schoolClass] of the class [SchoolStudentDTOxxx] should appear in both @Navigate and @NavigateFlat.", ex.getMessage());
                 }
                 Assert.assertTrue(exception);
                 System.out.println("1");
@@ -209,8 +276,8 @@ public class RelationTest extends BaseTest {
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
                         Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class1",o.getId())&&Objects.equals("班级1",o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class2",o.getId())&&Objects.equals("班级2",o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
                         Assert.assertEquals(2, schoolTeachersClassList.size());
                     } else if (schoolClassAOProp2.getName().equals("班级2")) {
                         Assert.assertTrue(schoolStudentsIds.contains("2"));
@@ -218,8 +285,8 @@ public class RelationTest extends BaseTest {
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
                         Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class1",o.getId())&&Objects.equals("班级1",o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class2",o.getId())&&Objects.equals("班级2",o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
                         Assert.assertEquals(2, schoolTeachersClassList.size());
                     } else {
                         Assert.assertTrue(schoolStudentsIds.isEmpty());
@@ -338,29 +405,29 @@ public class RelationTest extends BaseTest {
                 System.out.println("4");
                 ListenerContext listenerContext = new ListenerContext(true);
                 listenerContextManager.startListen(listenerContext);
-                    List<SchoolClassAOProp10> list = easyEntityQuery.queryable(SchoolClass.class)
-                            .selectAutoInclude(SchoolClassAOProp10.class)
-                            .toList();
+                List<SchoolClassAOProp10> list = easyEntityQuery.queryable(SchoolClass.class)
+                        .selectAutoInclude(SchoolClassAOProp10.class)
+                        .toList();
 
-                    Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                    Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+                Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                    {
+                {
 
-                        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                        Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                    }
-                    {
-                        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                        Assert.assertEquals("SELECT t.`id`,t.`name`,t1.`address` AS `stu_address`,t.`class_id` AS `__relation__classId` FROM `school_student` t LEFT JOIN `school_student_address` t1 ON t1.`student_id` = t.`id` WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                        Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                    }
-                    {
-                        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                        Assert.assertEquals("SELECT `name`,`id` AS `__relation__id` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                        Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                    }
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                    Assert.assertEquals("SELECT t.`id`,t.`name`,t1.`address` AS `stu_address`,t.`class_id` AS `__relation__classId` FROM `school_student` t LEFT JOIN `school_student_address` t1 ON t1.`student_id` = t.`id` WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                    Assert.assertEquals("SELECT `name`,`id` AS `__relation__id` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
 
             }
 
@@ -372,7 +439,7 @@ public class RelationTest extends BaseTest {
             }
             {
                 System.out.println("4");
-                boolean exception=true;
+                boolean exception = true;
                 try {
                     List<SchoolClassAOProp8> list = easyEntityQuery.queryable(SchoolClass.class)
                             .selectAutoInclude(SchoolClassAOProp8.class)
@@ -380,7 +447,7 @@ public class RelationTest extends BaseTest {
                     boolean anyMatch1 = list.stream().anyMatch(o -> o.getSchoolStudents().size() > 0);
                     Assert.assertTrue(anyMatch1);
                     for (SchoolClassAOProp8 schoolClassAOProp8 : list) {
-                        if(!schoolClassAOProp8.getSchoolStudents().isEmpty()){
+                        if (!schoolClassAOProp8.getSchoolStudents().isEmpty()) {
                             boolean anyMatch = schoolClassAOProp8.getSchoolStudents().stream().anyMatch(o -> o.getClassNames().size() > 0);
                             Assert.assertTrue(anyMatch);
                         }
@@ -390,26 +457,26 @@ public class RelationTest extends BaseTest {
                             }
                         }
                     }
-                    exception=false;
+                    exception = false;
 
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     System.out.println(ex.getMessage());
-                    exception=true;
+                    exception = true;
                 }
                 Assert.assertFalse(exception);
                 System.out.println("1");
 
             }
             {
-                boolean exception=true;
+                boolean exception = true;
                 try {
 
                     List<String> list = easyEntityQuery.queryable(SchoolStudent.class)
                             .toList(x -> x.schoolStudentAddress().address());
-                    exception=false;
-                }catch (Exception ex){
+                    exception = false;
+                } catch (Exception ex) {
                     Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
-                    Assert.assertEquals(ex.getMessage(),"flatElement result only allowed use in toList");
+                    Assert.assertEquals(ex.getMessage(), "flatElement result only allowed use in toList");
                 }
                 Assert.assertTrue(exception);
                 System.out.println(1);
@@ -423,8 +490,8 @@ public class RelationTest extends BaseTest {
                 ListenerContext listenerContext = new ListenerContext(true);
                 listenerContextManager.startListen(listenerContext);
                 List<SchoolClassAOProp6> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .leftJoin(Topic.class,(s, t2) -> s.id().eq(t2.id()))
-                        .selectAutoInclude(SchoolClassAOProp6.class,(s,t2)->Select.of(
+                        .leftJoin(Topic.class, (s, t2) -> s.id().eq(t2.id()))
+                        .selectAutoInclude(SchoolClassAOProp6.class, (s, t2) -> Select.of(
                                 t2.stars().nullOrDefault(1).as(SchoolClassAOProp6::getName1)
                         ))
                         .toList();
@@ -432,7 +499,7 @@ public class RelationTest extends BaseTest {
                     List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
                     List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
                     List<SchoolClass> schoolTeachersClassList = schoolClassAOProp2.getSchoolTeachersClassList();
-                    Assert.assertEquals("1",schoolClassAOProp2.getName1());
+                    Assert.assertEquals("1", schoolClassAOProp2.getName1());
                     if (schoolClassAOProp2.getName().equals("班级1")) {
                         Assert.assertTrue(schoolStudentsIds.contains("1"));
                         Assert.assertTrue(schoolStudentsIds.contains("3"));
@@ -440,8 +507,8 @@ public class RelationTest extends BaseTest {
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
                         Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class1",o.getId())&&Objects.equals("班级1",o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class2",o.getId())&&Objects.equals("班级2",o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
                         Assert.assertEquals(2, schoolTeachersClassList.size());
                     } else if (schoolClassAOProp2.getName().equals("班级2")) {
                         Assert.assertTrue(schoolStudentsIds.contains("2"));
@@ -449,8 +516,8 @@ public class RelationTest extends BaseTest {
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
                         Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class1",o.getId())&&Objects.equals("班级1",o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class2",o.getId())&&Objects.equals("班级2",o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
                         Assert.assertEquals(2, schoolTeachersClassList.size());
                     } else {
                         Assert.assertTrue(schoolStudentsIds.isEmpty());
@@ -517,8 +584,8 @@ public class RelationTest extends BaseTest {
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
                         Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class1",o.getId())&&Objects.equals("班级1",o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class2",o.getId())&&Objects.equals("班级2",o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
                         Assert.assertEquals(2, schoolTeachersClassList.size());
                     } else if (schoolClassAOProp2.getName().equals("班级2")) {
                         Assert.assertTrue(schoolStudentsIds.contains("2"));
@@ -529,8 +596,8 @@ public class RelationTest extends BaseTest {
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
                         Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
                         Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class1",o.getId())&&Objects.equals("班级1",o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o->Objects.equals("class2",o.getId())&&Objects.equals("班级2",o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
                         Assert.assertEquals(2, schoolTeachersClassList.size());
                     } else {
                         Assert.assertTrue(schoolStudentsIds.isEmpty());

@@ -26,6 +26,7 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
     private boolean mappingFlat=false;
     private List<NavigateFlatMetadata> navigateFlatMetadataList;
     private EntityMetadata flatQueryEntityMetadata;
+    private Class<?> flatClassType;
     public IncludeNavigateParams(){
         relationIds =new ArrayList<>();
     }
@@ -107,6 +108,14 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
 
     public void setFlatQueryEntityMetadata(EntityMetadata flatQueryEntityMetadata) {
         this.flatQueryEntityMetadata = flatQueryEntityMetadata;
+    }
+
+    public Class<?> getFlatClassType() {
+        return flatClassType;
+    }
+
+    public void setFlatClassType(Class<?> flatClassType) {
+        this.flatClassType = flatClassType;
     }
 
     @Override

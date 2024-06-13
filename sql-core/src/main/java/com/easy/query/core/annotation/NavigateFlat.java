@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
 /**
  * create time 2024/5/14 08:41
  * entity对象表不会生效
+ * NavigateFlat支持获取穿透数据库对象到VO
+ * 如果NavigateFlat了一个VO又在同级对象下获取了这个VO的id那么将会报错
  *
  * @author xuejiaming
  */

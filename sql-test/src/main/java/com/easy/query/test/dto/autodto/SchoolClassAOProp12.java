@@ -14,7 +14,7 @@ import java.util.List;
  * @author xuejiaming
  */
 @Data
-public class SchoolClassAOProp5 {
+public class SchoolClassAOProp12 {
 
     //    @Column(primaryKey = true)//主键
 //    private String id;
@@ -23,18 +23,18 @@ public class SchoolClassAOProp5 {
 //    @Navigate(value = RelationTypeEnum.OneToMany)
     //完整配置,property忽略表示对应的主键
 //    @Navigate(value = RelationTypeEnum.OneToMany,selfProperty = "id",targetProperty = "classId")
-//    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolStudents","id"})
-//    private List<String> schoolStudentsIds;
-//    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","id"})
-//    private List<String> schoolTeachersClassIds;
-//    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","name"})
-//    private List<String> schoolTeachersClassId1s;
+    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolStudents","id"})
+    private List<String> schoolStudentsIds;
+    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","id"})
+    private List<String> schoolTeachersClassIds;
+    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","name"})
+    private List<String> schoolTeachersClassId1s;
     @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses"})
     private List<SchoolStudentAO> schoolTeachersClassList;
 
     @Data
     public static class  SchoolStudentAO{
         private String id;
-//        private String name;
+        private String name;
     }
 }
