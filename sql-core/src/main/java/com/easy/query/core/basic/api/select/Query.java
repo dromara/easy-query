@@ -19,6 +19,8 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -174,6 +176,43 @@ public interface Query<T> extends QueryAvailable<T> , QueryExecutable<T>, MapAbl
     default @Nullable T singleOrNull() {
         return singleOrNull(queryClass());
     }
+
+    /**
+     * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
+     * 返回值包装成 Optional 以便后续调用
+     * @return
+     * @throws EasyQuerySingleMoreElementException 如果大于一条数据
+     */
+    default Optional<T> singleOptional(){
+        return Optional.ofNullable(singleOrNull(queryClass()));
+    }
+
+    /**
+     * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
+     * 查询出来的结果值如果为 null 则返回默认值
+     * @param defaultValue  默认值， 当查询结果为 null 时返回默认值
+     * @return
+     * @throws EasyQuerySingleMoreElementException 如果大于一条数据
+     */
+    default T singleOrDefault(T defaultValue){
+        T singleOrNull = singleOrNull(queryClass());
+        return singleOrNull == null ? defaultValue : singleOrNull;
+    }
+
+    /**
+     * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
+     * 查询出来的结果值如果经 usingDefault 判断为 true 则返回 defaultValue
+     * @param defaultValue 默认值， 当 usingDefault.test(singleOrNullValue) 为 true 时返回默认值
+     * @param usingDefault 判断是否使用默认值
+     * @return
+     * @throws EasyQuerySingleMoreElementException 如果大于一条数据
+     */
+    default T singleOrDefault(T defaultValue, Predicate<T> usingDefault){
+        T singleOrNullValue = singleOrNull(queryClass());
+        return (usingDefault != null && usingDefault.test(singleOrNullValue)) ? defaultValue : singleOrNullValue;
+    }
+
+
 
     /**
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
