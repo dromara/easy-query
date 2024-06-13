@@ -5,7 +5,10 @@ import com.easy.query.core.expression.parser.core.base.SimpleSQLTableOwner;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.util.EasyArrayUtil;
+
+import java.util.Collection;
 
 /**
  * create time 2023/10/11 22:39
@@ -15,6 +18,23 @@ import com.easy.query.core.util.EasyArrayUtil;
  */
 public interface ProxyColumnFuncSelector {
     ColumnFuncSelector getColumnConcatSelector();
+   default <TProxy,T> ProxyColumnFuncSelector expression(SQLColumn<TProxy, T> sqlColumn){
+       return column(sqlColumn);
+   }
+   default ProxyColumnFuncSelector expression(Query<?> subQuery){
+       return subQuery(subQuery);
+   }
+   default ProxyColumnFuncSelector expression(DSLSQLFunctionAvailable dslsqlFunctionAvailable){
+       getColumnConcatSelector().sqlFuncExpression(dslsqlFunctionAvailable.getTable(), dslsqlFunctionAvailable.func());
+       return this;
+   }
+   default ProxyColumnFuncSelector expression(SQLFunction sqlFunction){
+       return sqlFunc(sqlFunction);
+   }
+   default <T> ProxyColumnFuncSelector collection(Collection<T> collections){
+       getColumnConcatSelector().collection(collections);
+       return this;
+   }
    default <TProxy,T> ProxyColumnFuncSelector column(SQLColumn<TProxy, T> sqlColumn){
        getColumnConcatSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
        return this;

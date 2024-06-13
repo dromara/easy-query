@@ -75,10 +75,10 @@ public class MsSQLInsertSQLExpression extends InsertSQLExpressionImpl {
                     throw new EasyQueryInvalidOperationException("insert not support:" + EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE.name() + ",column type:" + EasyClassUtil.getSimpleName(sqlSegment.getClass()));
                 }
                 InsertUpdateSetColumnSQLSegment sqlEntitySegment = (InsertUpdateSetColumnSQLSegment) sqlSegment;
-                String propertyName = sqlEntitySegment.getPropertyName();
-                if (constraintPropertyNames.contains(propertyName) || keyProperties.contains(propertyName) || !duplicateKeyUpdateColumnsSet.contains(propertyName)) {
-                    continue;
-                }
+//                String propertyName = sqlEntitySegment.getPropertyName();
+//                if (constraintPropertyNames.contains(propertyName) || keyProperties.contains(propertyName) || !duplicateKeyUpdateColumnsSet.contains(propertyName)) {
+//                    continue;
+//                }
                 if (mergeAliasSql.length() != 0) {
                     mergeAliasSql.append(",");
                 }

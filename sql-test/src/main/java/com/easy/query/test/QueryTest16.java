@@ -5,6 +5,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.Company;
 import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.entity.navf.UVO;
@@ -1028,5 +1029,27 @@ public class QueryTest16 extends BaseTest {
             Assert.assertEquals("0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
+    }
+
+    @Test
+    public void testxxc(){
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .where(b -> {
+                    b.id().eq("123");
+                }).orderBy(t -> {
+                    t.expression().sqlSegment("RAND()").executeSQL();
+                }).toList();
+
+
+        List<Draft2<Double, Integer>> list1 = easyEntityQuery.queryable(Topic.class)
+                .where(b -> {
+                    b.id().eq("123");
+                }).select(t -> Select.DRAFT.of(
+                        t.expression().sqlSegment("RAND()").setPropertyType(Double.class),
+                        t.expression().sqlSegment("IFNULL({0},{1})", c -> {
+                            c.expression(t.stars().nullOrDefault(1)).value(2);
+                        },Integer.class)
+                )).toList();
+
     }
 }

@@ -160,6 +160,7 @@ public abstract class BaseTest {
                     op.setReverseOffsetThreshold(10);
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
+//                .replaceService(Dialect.class, DefaultDialect.class)
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();

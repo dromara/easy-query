@@ -1,20 +1,23 @@
 package com.easy.query.core.func.column;
 
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.impl.ColumSQLExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFuncExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFuncFormatExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFuncValueExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFunctionExpressionImpl;
+import com.easy.query.core.func.column.impl.ColumnLazyFunctionExpressionImpl;
+import com.easy.query.core.func.column.impl.ColumnMultiValueExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnSubQueryExpressionImpl;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * create time 2023/10/11 22:39
@@ -55,7 +58,18 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
         return this;
     }
 
-//    @Override
+    @Override
+    public <T> ColumnFuncSelector collection(Collection<T> collections) {
+        concatExpressions.add(new ColumnMultiValueExpressionImpl(collections));
+        return this;
+    }
+
+    @Override
+    public ColumnFuncSelector sqlFuncExpression(TableAvailable table, Function<SQLFunc, SQLFunction> sqlFunctionCreator) {
+        concatExpressions.add(new ColumnLazyFunctionExpressionImpl(table,sqlFunctionCreator));
+        return this;
+    }
+    //    @Override
 //    public ColumnFuncSelector sqlParameter(SQLParameter sqlParameter) {
 //        concatExpressions.add(new ColumnFuncSQLParameterExpressionImpl(sqlParameter));
 //        return this;

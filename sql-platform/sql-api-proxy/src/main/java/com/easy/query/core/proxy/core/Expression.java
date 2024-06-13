@@ -60,6 +60,26 @@ public class Expression {
     public ColumnFunctionComparableAnyChainExpression<Object> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume){
         return sqlSegment(sqlSegment,contextConsume, Object.class);
     }
+
+    /**
+     * 返回group或者selectDraft自定义sql片段
+     * <blockquote><pre>
+     * {@code
+     *
+     *  .select((t, t1, t2) -> new QueryVOProxy() {{
+     *      t.sqlType("IFNull({0},{1})",c->c.expression(t.id()).value("1"));
+     *      //指定返回类型给draft类型进行明确
+     *      //t.sqlType("IFNull({0},{1})",c->c.expression(t.id()).value("1")).setPropertyType(String.class);
+     *  }}).toList();
+     * }
+     * </blockquote></pre>
+     *
+     * @param sqlSegment 片段
+     * @param contextConsume 片段参数
+     * @param resultClass 类型
+     * @return 返回元素sql片段
+     * @param <TR>
+     */
     public <TR>  ColumnFunctionComparableAnyChainExpression<TR> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume, Class<TR> resultClass){
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext,null,null,f->{
             return f.anySQLFunction(sqlSegment,c->contextConsume.apply(new ProxyColumnFuncSelectorImpl(c)));
@@ -82,21 +102,8 @@ public class Expression {
      * @param sqlSegment
      * @param contextConsume
      */
-    public void sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        sql(true, sqlSegment, contextConsume);
-    }
-
-    /**
-     * 支持where having order
-     *
-     * @param condition
-     * @param sqlSegment
-     * @param contextConsume
-     */
-    public void sql(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        if (condition) {
-            entitySQLContext._executeNativeSql(sqlSegment, contextConsume);
-        }
+    public void sql(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume) {
+        sqlSegment( sqlSegment, contextConsume).executeSQL();
     }
 
 //    public SQLExecutor sqlExecutor(String sqlSegment){
@@ -120,6 +127,7 @@ public class Expression {
      * @param sqlSegment
      * @return
      */
+    @Deprecated
     public PropTypeColumn<Object> sqlType(String sqlSegment) {
         return sqlType(sqlSegment, c -> {
         });
@@ -142,9 +150,11 @@ public class Expression {
      * @param contextConsume 片段参数
      * @return 返回元素sql片段
      */
+    @Deprecated
     public PropTypeColumn<Object> sqlType(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         return sqlType(sqlSegment,contextConsume,Object.class);
     }
+    @Deprecated
     public <T> PropTypeColumn<T> sqlType(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume, Class<T> resultClass) {
         return new SQLNativeSegmentExpressionImpl(entitySQLContext, sqlSegment, c -> {
             contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c.getSQLNativeExpressionContext()));

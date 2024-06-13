@@ -3,12 +3,15 @@ package com.easy.query.core.func.def;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.SQLFunctionTranslateImpl;
 import com.easy.query.core.func.column.ColumSQLExpression;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncFormatExpression;
 import com.easy.query.core.func.column.ColumnFuncValueExpression;
 import com.easy.query.core.func.column.ColumnFunctionExpression;
+import com.easy.query.core.func.column.ColumnLazyFunctionExpression;
+import com.easy.query.core.func.column.ColumnMultiValueExpression;
 import com.easy.query.core.func.column.ColumnPropertyExpression;
 import com.easy.query.core.func.column.ColumnSubQueryExpression;
 import com.easy.query.core.util.EasyClassUtil;
@@ -50,6 +53,9 @@ public abstract class AbstractExpressionSQLFunction extends AbstractSQLFunction 
         } else if (columnExpression instanceof ColumnFuncValueExpression) {
             ColumnFuncValueExpression concatValueExpression = (ColumnFuncValueExpression) columnExpression;
             context.value(concatValueExpression.getValue());
+        } else if (columnExpression instanceof ColumnMultiValueExpression) {
+            ColumnMultiValueExpression columnMultiValueExpression = (ColumnMultiValueExpression) columnExpression;
+            context.collection(columnMultiValueExpression.getValues());
         } else if (columnExpression instanceof ColumnFuncFormatExpression) {
             ColumnFuncFormatExpression concatFormatExpression = (ColumnFuncFormatExpression) columnExpression;
             context.format(concatFormatExpression.getFormat());
@@ -61,6 +67,13 @@ public abstract class AbstractExpressionSQLFunction extends AbstractSQLFunction 
             TableAvailable tableOrNull = columnFunctionExpression.getTableOrNull();
             TableAvailable sqlFunctionTable = tableOrNull == null ? context.getDefaultTable() : tableOrNull;
             SQLSegment sqlSegment = new SQLFunctionTranslateImpl(columnFunctionExpression.getSQLFunction()).toSQLSegment(context.getExpressionContext(), sqlFunctionTable, context.getRuntimeContext(),null);
+            context.sql(sqlSegment);
+        } else if(columnExpression instanceof ColumnLazyFunctionExpression){
+            ColumnLazyFunctionExpression columnFunctionExpression = (ColumnLazyFunctionExpression) columnExpression;
+            TableAvailable tableOrNull = columnFunctionExpression.getTableOrNull();
+            TableAvailable sqlFunctionTable = tableOrNull == null ? context.getDefaultTable() : tableOrNull;
+            SQLFunction sqlFunction = columnFunctionExpression.getSQLFunctionCreator().apply(context.getRuntimeContext().fx());
+            SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction).toSQLSegment(context.getExpressionContext(), sqlFunctionTable, context.getRuntimeContext(),null);
             context.sql(sqlSegment);
         }else if(columnExpression instanceof ColumnSubQueryExpression){
             ColumnSubQueryExpression columnSubQueryExpression = (ColumnSubQueryExpression) columnExpression;
