@@ -137,10 +137,12 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
     private void checkTable() {
         int tableCount = getTables().size();
         if (tableCount == 0) {
-            throw new EasyQueryException("未找到查询表信息");
+            //未找到查询表信息
+            throw new EasyQueryException("not found any table in delete expression build.");
         }
         if (tableCount > 1) {
-            throw new EasyQueryException("找到多张表信息");
+            //找到多张表信息
+            throw new EasyQueryInvalidOperationException("not support multi table in delete expression build.");
         }
     }
 

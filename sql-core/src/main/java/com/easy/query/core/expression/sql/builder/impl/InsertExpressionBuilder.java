@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
@@ -78,10 +79,12 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
     private void checkTable() {
         int tableCount = getTables().size();
         if (tableCount == 0) {
-            throw new EasyQueryException("未找到查询表信息");
+            //未找到查询表信息
+            throw new EasyQueryException("not found any table in delete expression build.");
         }
         if (tableCount > 1) {
-            throw new EasyQueryException("找到多张表信息");
+            //找到多张表信息
+            throw new EasyQueryInvalidOperationException("not support multi table in delete expression build.");
         }
     }
 

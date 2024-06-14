@@ -21,6 +21,15 @@ import java.util.function.Supplier;
  * @author xuejiaming
  */
 public class UpdateTest1 extends BaseTest {
+
+//    @Test
+//    public void testUpdate0() {
+//        easyEntityQuery.updatable(SysUser.class)
+//                .setColumns(s -> s.id().set("123x xx"))
+//                .where(s -> {
+//                    s.myBlog().id().eq("123e");
+//                }).executeRows();
+//    }
     @Test
     public void testUpdate1() {
 

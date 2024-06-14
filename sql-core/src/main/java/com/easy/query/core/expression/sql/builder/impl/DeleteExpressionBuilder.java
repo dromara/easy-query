@@ -155,10 +155,12 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
         int tableCount = getTables().size();
         if (tableCount == 0) {
-            throw new EasyQueryException("未找到查询表信息");
+            //未找到查询表信息
+            throw new EasyQueryException("not found any table in delete expression build.");
         }
         if (tableCount > 1) {
-            throw new EasyQueryException("找到多张表信息");
+            //找到多张表信息
+            throw new EasyQueryInvalidOperationException("not support multi table in delete expression build.");
         }
         if (expressionDelete) {
             return toDeleteExpression();
@@ -189,7 +191,8 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             return easyUpdateSQLExpression;
         } else {
             if (expressionContext.isDeleteThrow()) {
-                throw new EasyQueryInvalidOperationException("无法执行删除命令,因为默认配置了不允许物理删除操作,如有需要物理删除请调用[.allowDeleteStatement(true)]");
+                //无法执行删除命令,因为默认配置了不允许物理删除操作,如有需要物理删除请调用[.allowDeleteStatement(true)]
+                throw new EasyQueryInvalidOperationException("The delete operation cannot be executed because physical deletion is not allowed by default configuration. If physical deletion is needed, please call [.allowDeleteStatement(true)].");
             }
             EntityDeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(entitySQLExpressionMetadata, table.toExpression());
             PredicateSegment where = buildWherePredicateSegment(table);
@@ -216,7 +219,8 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
             return easyUpdateSQLExpression;
         } else {
             if (expressionContext.isDeleteThrow()) {
-                throw new EasyQueryInvalidOperationException("无法执行删除命令,因为默认配置了不允许物理删除操作,如有需要物理删除请调用[.allowDeleteStatement(true)]");
+                //无法执行删除命令,因为默认配置了不允许物理删除操作,如有需要物理删除请调用[.allowDeleteStatement(true)]
+                throw new EasyQueryInvalidOperationException("The delete operation cannot be executed because physical deletion is not allowed by default configuration. If physical deletion is needed, please call [.allowDeleteStatement(true)].");
             }
             EntityDeleteSQLExpression easyDeleteSQLExpression = expressionFactory.createEasyDeleteSQLExpression(entitySQLExpressionMetadata, table.toExpression());
 
