@@ -1,5 +1,7 @@
 package com.easy.query.test.vo;
 
+import com.easy.query.core.annotation.Column;
+import com.easy.query.test.entity.BaseEntity;
 import lombok.Data;
 
 /**
@@ -9,7 +11,9 @@ import lombok.Data;
  * @author xuejiaming
  */
 @Data
-public class TestUserAAA {
+public class TestUserAAA extends BaseEntity {
+    @Column(primaryKey = true)
+    private String id;
 
     private Integer lineFlag;
 

@@ -55,7 +55,7 @@ public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpre
     }
 
     @Override
-    default <TR> ColumnFuncComparableExpression<TR> setPropertyType(Class<TR> clazz) {
+    default <TR> ColumnFuncComparableExpression<TR> asAnyType(Class<TR> clazz) {
         _setPropertyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }

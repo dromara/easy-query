@@ -652,58 +652,64 @@ public class QueryTest16 extends BaseTest {
 //        System.out.println(entityMetadata.getProperties());
 //    }
 
-    @Test
-    public void test9_1() {
-
-//        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-//                .where(user -> {
-//                    user.id().in(
-//                            easyEntityQuery.queryable(UserBook.class)
-//                                    .where(u_book -> {
-//                                        u_book.name().like("java高级开发");
-//                                    }).select(u_book -> u_book.userId())
-//                    );
-//                }).toList();
-
-
-//        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-//                .where(user -> {
-//                    user.expression().exists(()->{
-//                        return easyEntityQuery.queryable(UserBook.class)
-//                                .where(u_book -> {
-//                                    u_book.userId().eq(user.id());
-//                                    u_book.name().like("java高级开发");
-//                                });
-//                    });
-//                }).toList();
-//        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-//                .where(user -> {
-//                    user.books().any(book -> {
-//                        book.name().like("java高级开发");
-//                    });
-//                }).toList();
-//        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-//                .where(user -> {
-//                    user.books().flatElement().name().like("java高级开发");
-//                }).toList();
-//        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-//                .where(user -> {
-//                    user.expression().subQuery(() -> {
-//                        return easyEntityQuery.queryable(UserBook.class)
-//                                .where(u_book -> {
-//                                    u_book.author().eq("金庸");
-//                                    u_book.userId().eq(user.id());
-//                                }).selectCount();
-//                    }).gt(2L);
-//                }).toList();
-
-//        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-//                .where(user -> {
-//                    user.books().where(book -> {
-//                        book.author().eq("金庸");
-//                    }).count().gt(2L);
-//                }).toList();
-    }
+//    @Test
+//    public void test9_1() {
+////        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+////                .where(user -> {
+////                    user.books().where(book -> {
+////                        book.author().eq("金庸");
+////                    }).count().gt(2L);
+////                }).toList();
+//
+////        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+////                .where(user -> {
+////                    user.id().in(
+////                            easyEntityQuery.queryable(UserBook.class)
+////                                    .where(u_book -> {
+////                                        u_book.name().like("java高级开发");
+////                                    }).select(u_book -> u_book.userId())
+////                    );
+////                }).toList();
+//
+//
+////        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+////                .where(user -> {
+////                    user.expression().exists(()->{
+////                        return easyEntityQuery.queryable(UserBook.class)
+////                                .where(u_book -> {
+////                                    u_book.userId().eq(user.id());
+////                                    u_book.name().like("java高级开发");
+////                                });
+////                    });
+////                }).toList();
+////        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+////                .where(user -> {
+////                    user.books().any(book -> {
+////                        book.name().like("java高级开发");
+////                    });
+////                }).toList();
+////        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+////                .where(user -> {
+////                    user.books().flatElement().name().like("java高级开发");
+////                }).toList();
+////        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+////                .where(user -> {
+////                    user.expression().subQuery(() -> {
+////                        return easyEntityQuery.queryable(UserBook.class)
+////                                .where(u_book -> {
+////                                    u_book.author().eq("金庸");
+////                                    u_book.userId().eq(user.id());
+////                                }).selectCount();
+////                    }).gt(2L);
+////                }).toList();
+//
+////        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+////                .where(user -> {
+////                    user.books().where(book -> {
+////                        book.author().eq("金庸");
+////                    }).count().gt(2L);
+////                }).toList();
+//    }
 
     @Test
     public void test14() {
@@ -1045,7 +1051,7 @@ public class QueryTest16 extends BaseTest {
                 .where(b -> {
                     b.id().eq("123");
                 }).select(t -> Select.DRAFT.of(
-                        t.expression().sqlSegment("RAND()").setPropertyType(Double.class),
+                        t.expression().sqlSegment("RAND()").asAnyType(Double.class),
                         t.expression().sqlSegment("IFNULL({0},{1})", c -> {
                             c.expression(t.stars().nullOrDefault(1)).value(2);
                         },Integer.class)

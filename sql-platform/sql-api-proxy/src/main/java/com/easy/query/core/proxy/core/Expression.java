@@ -158,7 +158,7 @@ public class Expression {
     public <T> PropTypeColumn<T> sqlType(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume, Class<T> resultClass) {
         return new SQLNativeSegmentExpressionImpl(entitySQLContext, sqlSegment, c -> {
             contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c.getSQLNativeExpressionContext()));
-        }).setPropertyType(resultClass);
+        }).asAnyType(resultClass);
     }
 
 

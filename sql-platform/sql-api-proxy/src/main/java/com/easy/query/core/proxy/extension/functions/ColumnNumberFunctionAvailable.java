@@ -71,7 +71,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return 计算求和 SUM(age)
      */
     default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum(Class<T> resultClass) {
-        return sum(false).setPropertyType(resultClass);
+        return sum(false).asAnyType(resultClass);
     }
 
     /**
@@ -100,7 +100,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
             return fx.sum(x->{
                 PropTypeColumn.columnFuncSelector(x,this);
             }).distinct(distinct);
-        }, getPropertyType()).setPropertyType(resultClass);
+        }, getPropertyType()).asAnyType(resultClass);
     }
 
     default ColumnFunctionComparableNumberChainExpression<BigDecimal> sumBigDecimal() {

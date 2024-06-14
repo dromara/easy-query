@@ -2,7 +2,6 @@ package com.easy.query.api.proxy.util;
 
 import com.easy.query.core.proxy.ProxyNavValueAvailable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.core.FlatEntitySQLContext;
 
 /**
  * create time 2024/6/8 21:37
@@ -16,10 +15,7 @@ public class EasyProxyUtil {
         String navValue = proxyNavValueAvailable.getNavValue();
         if(navValue==null){
             EntitySQLContext entitySQLContext = proxyNavValueAvailable.getEntitySQLContext();
-            if(entitySQLContext instanceof FlatEntitySQLContext){
-                FlatEntitySQLContext flatEntitySQLContext = (FlatEntitySQLContext) entitySQLContext;
-                navValue = flatEntitySQLContext.getNavValue();
-            }
+            navValue = entitySQLContext.getNavValue();
         }
         return navValue;
     }

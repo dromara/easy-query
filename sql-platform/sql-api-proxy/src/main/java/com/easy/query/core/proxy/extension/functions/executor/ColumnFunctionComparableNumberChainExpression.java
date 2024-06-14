@@ -12,8 +12,8 @@ import com.easy.query.core.util.EasyObjectUtil;
 public interface ColumnFunctionComparableNumberChainExpression<T> extends ColumnFunctionComparableObjectChainExpression<T>,
         ColumnNumberFunctionAvailable<T> {
     @Override
-    default <TR> ColumnFunctionComparableNumberChainExpression<TR> setPropertyType(Class<TR> clazz) {
-        ColumnFunctionComparableObjectChainExpression.super.setPropertyType(clazz);
+    default <TR> ColumnFunctionComparableNumberChainExpression<TR> asAnyType(Class<TR> clazz) {
+        ColumnFunctionComparableObjectChainExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
 }

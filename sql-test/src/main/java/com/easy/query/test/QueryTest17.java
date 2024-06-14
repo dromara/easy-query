@@ -667,7 +667,7 @@ public class QueryTest17 extends BaseTest {
                 }).select(t -> Select.DRAFT.of(
                         t.expression().sqlType("({0} + interval 1 day)", c -> {
                             c.expression(t.createTime());
-                        }).setPropertyType(LocalDateTime.class)
+                        }).asAnyType(LocalDateTime.class)
                 )).toList();
 
     }
@@ -1126,10 +1126,10 @@ public class QueryTest17 extends BaseTest {
                     .where(b -> {
                         b.id().eq("123");
                     }).select(t -> Select.DRAFT.of(
-                            t.expression().sqlType("RAND()").setPropertyType(Double.class),
+                            t.expression().sqlType("RAND()").asAnyType(Double.class),
                             t.expression().sqlType("IFNULL({0},{1})", c -> {
                                 c.expression(t.stars()).value(1);
-                            }).setPropertyType(Integer.class)
+                            }).asAnyType(Integer.class)
                     )).toList();
 
             listenerContextManager.clear();
@@ -1152,12 +1152,12 @@ public class QueryTest17 extends BaseTest {
                     }).select(Topic.class, t -> Select.of(
                             t.expression().sqlType("RAND()", c -> {
                                 c.setAlias(t.stars());
-                            }).setPropertyType(Double.class),
+                            }).asAnyType(Double.class),
                             t.expression().sqlType("IFNULL({0},{1})", c -> {
                                 c.expression(t.stars());
                                 c.value(1);
                                 c.setAlias(t.createTime());
-                            }).setPropertyType(Integer.class)
+                            }).asAnyType(Integer.class)
                     )).toList();
 
             listenerContextManager.clear();

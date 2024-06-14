@@ -12,8 +12,8 @@ import com.easy.query.core.util.EasyObjectUtil;
 public interface ColumnFunctionComparableDateTimeChainExpression<T> extends ColumnFunctionComparableObjectChainExpression<T>,
         ColumnDateTimeFunctionAvailable<T> {
     @Override
-    default <TR> ColumnFunctionComparableDateTimeChainExpression<TR> setPropertyType(Class<TR> clazz) {
-        ColumnFunctionComparableObjectChainExpression.super.setPropertyType(clazz);
+    default <TR> ColumnFunctionComparableDateTimeChainExpression<TR> asAnyType(Class<TR> clazz) {
+        ColumnFunctionComparableObjectChainExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
 }

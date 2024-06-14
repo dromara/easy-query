@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.IntegerProxy;
 import com.easy.query.api.proxy.base.LongProxy;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.StringProxy;
@@ -166,7 +167,7 @@ public class QueryTest11 extends BaseTest {
                         });
                     })
                     .select(o -> new BlogEntityProxy().adapter(r -> {
-                        PropTypeColumn<BigDecimal> integerPropTypeColumn = o.expression().sqlType("1").setPropertyType(BigDecimal.class);
+                        PropTypeColumn<BigDecimal> integerPropTypeColumn = o.expression().sqlType("1").asAnyType(BigDecimal.class);
                         r.score().set(integerPropTypeColumn);
                     })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -440,9 +441,9 @@ public class QueryTest11 extends BaseTest {
     public void testx11() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        Query<TopicTypeEnum> query = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> o.id().eq("123")).selectColumn(o -> o.topicType());
+        Query<Integer> query = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> o.id().eq("123")).select(o -> new IntegerProxy(o.topicType().asAnyType(Integer.class)));
         List<TopicTypeTest1> list = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.topicType().in(query);
+            o.topicType().asAnyType(Integer.class).in(query);
         }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

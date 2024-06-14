@@ -10,6 +10,5 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
  * @author xuejiaming
  */
 public interface FlatEntitySQLContext extends EntitySQLContext{
-    String getNavValue();
     SQLFuncExpression1<?, SQLSelectAsExpression> getSelectAsExpressionFunction();
 }

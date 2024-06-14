@@ -387,7 +387,7 @@ public class QueryTest12 extends BaseTest {
                     r.score().set(
                             b.expression().sqlType("SUM({0})-SUM({1})", c -> {
                                 c.expression(b.score()).expression(b.score());
-                            }).setPropertyType(BigDecimal.class)
+                            }).asAnyType(BigDecimal.class)
                     );
                 })).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -488,7 +488,7 @@ public class QueryTest12 extends BaseTest {
                 .where(b -> {
                     SQLMathExpression.floor(b.score()).eq(BigDecimal.ZERO);
                 })
-                .selectColumn(b -> b.expression().sqlType("GROUP_CONCAT({0})", c -> c.expression(b.title())).setPropertyType(String.class));
+                .selectColumn(b -> b.expression().sqlType("GROUP_CONCAT({0})", c -> c.expression(b.title())).asAnyType(String.class));
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
                     Expression expression = b.expression();
@@ -648,7 +648,7 @@ public class QueryTest12 extends BaseTest {
                     PropTypeColumn<Integer> integerPropTypeColumn = b.expression().sqlType("case {0} when {1} then 1 else 0 end",
                             c -> {
                                 c.expression(b.groupTable().score()).value(1);
-                            }).setPropertyType(Integer.class);
+                            }).asAnyType(Integer.class);
                     blogEntityProxy.star().set(b.sum(integerPropTypeColumn));
                     return blogEntityProxy;
                 }).toList();
@@ -671,7 +671,7 @@ public class QueryTest12 extends BaseTest {
                     blogEntityProxy.score().set(b.min(b.expression().sqlType("case {0} when {1} then 1 else 0 end",
                             c -> {
                                 c.expression(b.groupTable().score()).value(1);
-                            }).setPropertyType(BigDecimal.class)));
+                            }).asAnyType(BigDecimal.class)));
                     return blogEntityProxy;
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -696,7 +696,7 @@ public class QueryTest12 extends BaseTest {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                     ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> b.id().eq("123"))
                             .then(1)
-                            .elseEnd("2").setPropertyType(BigDecimal.class);
+                            .elseEnd("2").asAnyType(BigDecimal.class);
 
                     blogEntityProxy.score().set(caseWhen);
                     return blogEntityProxy;
@@ -723,7 +723,7 @@ public class QueryTest12 extends BaseTest {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                     ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
                         b.id().eq("123");
-                    }).then(1).elseEnd("2").setPropertyType(BigDecimal.class);
+                    }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
                     blogEntityProxy.score().set(caseWhen);
 
                     return blogEntityProxy;
@@ -753,7 +753,7 @@ public class QueryTest12 extends BaseTest {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                     ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
                         b.id().eq("123");
-                    }).then(1).elseEnd("2").setPropertyType(BigDecimal.class);
+                    }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
                     blogEntityProxy.score().set(caseWhen);
 
                     return blogEntityProxy;
@@ -781,7 +781,7 @@ public class QueryTest12 extends BaseTest {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                     ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
                         b.id().eq("123");
-                    }).then(1).elseEnd("2").setPropertyType(BigDecimal.class);
+                    }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
                     blogEntityProxy.score().set(caseWhen);
 
                     return blogEntityProxy;
@@ -809,7 +809,7 @@ public class QueryTest12 extends BaseTest {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                     ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
                         b.id().eq("123");
-                    }).then(1).elseEnd("2").setPropertyType(BigDecimal.class);
+                    }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
                     blogEntityProxy.score().set(caseWhen);
 
                     return blogEntityProxy;
@@ -905,7 +905,7 @@ public class QueryTest12 extends BaseTest {
                     blogEntityProxy.score().set(b.min(b.expression().sqlType("case {0} when {1} then 1 else 0 end",
                             c -> {
                                 c.expression(b.groupTable().score()).value(1);
-                            }).setPropertyType(BigDecimal.class)));
+                            }).asAnyType(BigDecimal.class)));
                     return blogEntityProxy;
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

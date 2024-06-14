@@ -18,6 +18,10 @@ import java.util.Collection;
  */
 public interface ProxyColumnFuncSelector {
     ColumnFuncSelector getColumnConcatSelector();
+   default ProxyColumnFuncSelector keepStyle(){
+       getColumnConcatSelector().keepStyle();
+       return this;
+   }
    default <TProxy,T> ProxyColumnFuncSelector expression(SQLColumn<TProxy, T> sqlColumn){
        return column(sqlColumn);
    }

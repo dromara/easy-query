@@ -6,6 +6,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
@@ -259,7 +260,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
 
     @Deprecated
     protected <TProperty> SQLNavigateColumn<TProxy, TProperty> getNavigate(String property, Class<TProperty> propType) {
-        SQLNavigateColumnImpl<TProxy, TProperty> column = new SQLNavigateColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLNavigateColumnImpl<TProxy, TProperty> column = new SQLNavigateColumnImpl<>( getPropertyEntitySQLContext(property), table, property, propType);
         column._setProxy(castChain());
         return column;
     }
@@ -269,13 +270,16 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
         //vo
         if(entityExpressionBuilder == null || entitySQLContext.methodIsInclude()||entityExpressionBuilder.getRuntimeContext() instanceof  EmptyQueryRuntimeContext){
-            TPropertyProxy tPropertyProxy = propertyProxy.create(getTable(), this.getEntitySQLContext());
+            TPropertyProxy tPropertyProxy = propertyProxy.create(getTable(), getPropertyEntitySQLContext(property));
             tPropertyProxy.setNavValue(getFullNavValue(property));
             return tPropertyProxy;
         }else{
             TableAvailable leftTable = getTable();
+            if(leftTable==null){
+                throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table",property));
+            }
             TableAvailable relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, leftTable, property);
-            TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.entitySQLContext);
+            TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, getPropertyEntitySQLContext(property));
             tPropertyProxy.setNavValue(getFullNavValue(property));
             return tPropertyProxy;
         }
@@ -287,9 +291,12 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
         if(entityExpressionBuilder==null||runtimeContext instanceof EmptyQueryRuntimeContext){
             propertyProxy.setNavValue(getFullNavValue(property));
-            return new EmptySQLQueryable<>(this.entitySQLContext,propertyProxy);
+            return new EmptySQLQueryable<>(getPropertyEntitySQLContext(property),propertyProxy);
         }else{
             TableAvailable leftTable = getTable();
+            if(leftTable==null){
+                throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table",property));
+            }
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
             ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)                    ;
             if(navigateMetadata.getRelationType()== RelationTypeEnum.ManyToMany){
@@ -314,8 +321,13 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             }
             EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
             queryable.get1Proxy().setNavValue(getFullNavValue(property));
-            return new EasySQLQueryable<>(this.entitySQLContext, queryable,leftTable);
+            return new EasySQLQueryable<>(getPropertyEntitySQLContext(property), queryable,leftTable);
         }
+    }
+    private EntitySQLContext getPropertyEntitySQLContext(String property){
+        EntitySQLContext entitySQLContext = this.getEntitySQLContext();
+        entitySQLContext.setNavValue(getFullNavValue(property));
+        return entitySQLContext;
     }
 
     protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLManyQueryable<TProxy,TPropertyProxy, TProperty> getNavigateMany(String property, TPropertyProxy propertyProxy) {
@@ -324,11 +336,14 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
         if(entityExpressionBuilder==null||runtimeContext instanceof EmptyQueryRuntimeContext){
             propertyProxy.setNavValue(getFullNavValue(property));
-            SQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EmptySQLManyQueryable<>(this.entitySQLContext, propertyProxy);
+            SQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EmptySQLManyQueryable<>(getPropertyEntitySQLContext(property), propertyProxy);
             query._setProxy(castChain());
             return query;
         }else{
             TableAvailable leftTable = getTable();
+            if(leftTable==null){
+                throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table",property));
+            }
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
             ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)                    ;
             if(navigateMetadata.getRelationType()== RelationTypeEnum.ManyToMany){
@@ -353,7 +368,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             }
             EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
             queryable.get1Proxy().setNavValue(getFullNavValue(property));
-            EasySQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasySQLManyQueryable<>(this.entitySQLContext, queryable, leftTable);
+            EasySQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasySQLManyQueryable<>(getPropertyEntitySQLContext(property), queryable, leftTable);
             query._setProxy(castChain());
             return query;
         }

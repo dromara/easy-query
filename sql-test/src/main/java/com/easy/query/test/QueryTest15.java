@@ -921,7 +921,7 @@ public class QueryTest15 extends BaseTest {
                     PropTypeColumn<String> nullProperty = o.expression().sqlType("IFNULL({0},'')", c -> {
                         c.keepStyle();
                         c.expression(o.id());
-                    }).setPropertyType(String.class);
+                    }).asAnyType(String.class);
 
                     r.alias().set(nullProperty);
                 }))

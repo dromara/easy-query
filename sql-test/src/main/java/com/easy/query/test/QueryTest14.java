@@ -589,7 +589,7 @@ public class QueryTest14 extends BaseTest {
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
                     .where((b1, t2) -> {
-                        b1.id().like(t2.stars().setPropertyType(String.class));
+                        b1.id().like(t2.stars().asAnyType(String.class));
 
                     }).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -653,7 +653,7 @@ public class QueryTest14 extends BaseTest {
                     s1.expression().sql("{0} = IFNULL({1},1)", c -> c.expression(s1.id()).expression(t2.title()));
                 })
                 .select((s1, t2) -> Select.DRAFT.of(
-                        s1.expression().sqlType("IFNULL({0},2)", c -> c.expression(s1.idCard())).setPropertyType(String.class)
+                        s1.expression().sqlType("IFNULL({0},2)", c -> c.expression(s1.idCard())).asAnyType(String.class)
                 )).toList();
 
         List<TopicTypeVO> list2 = easyEntityQuery.queryable(SysUser.class)
@@ -664,7 +664,7 @@ public class QueryTest14 extends BaseTest {
                 })
                 .select((s1, t2) -> new TopicTypeVOProxy().adapter(r -> {
                     r.id().set(
-                            s1.expression().sqlType("IFNULL({0},2)", c -> c.expression(s1.idCard())).setPropertyType(String.class)
+                            s1.expression().sqlType("IFNULL({0},2)", c -> c.expression(s1.idCard())).asAnyType(String.class)
                     );
                 })).toList();
 

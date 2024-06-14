@@ -143,7 +143,7 @@ public class Relation2Test extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<MySchoolClass> list = easyEntityQuery.queryable(MySchoolClass.class)
                 .where(m -> {
-                    m.schoolStudents().where(x->x.name().like("1234")).sum(x->x.name().asAny().setPropertyType(BigDecimal.class)).gt(new BigDecimal("1"));
+                    m.schoolStudents().where(x->x.name().like("1234")).sum(x->x.name().asAny().asAnyType(BigDecimal.class)).gt(new BigDecimal("1"));
 //                    m.id().setSubQuery();
 //                    m.schoolStudents().where(x->x.name().like("123")).selectCount().
 //                    m.SQLConstant().valueOf(1L).gt(m.schoolStudents().where(x->x.name().like("123")).selectCount());
@@ -161,7 +161,7 @@ public class Relation2Test extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<MySchoolClass> list = easyEntityQuery.queryable(MySchoolClass.class)
                 .where(m -> {
-                    m.schoolStudents().where(x->x.name().like("1234")).avg(x->x.name().asAny().setPropertyType(BigDecimal.class)).gt(new BigDecimal("1"));
+                    m.schoolStudents().where(x->x.name().like("1234")).avg(x->x.name().asAny().asAnyType(BigDecimal.class)).gt(new BigDecimal("1"));
 //                    m.id().setSubQuery();
 //                    m.schoolStudents().where(x->x.name().like("123")).selectCount().
 //                    m.SQLConstant().valueOf(1L).gt(m.schoolStudents().where(x->x.name().like("123")).selectCount());
@@ -179,7 +179,7 @@ public class Relation2Test extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<MySchoolClass> list = easyEntityQuery.queryable(MySchoolClass.class)
                 .where(m -> {
-                    m.schoolStudents().where(x->x.name().like("1234")).sumBigDecimal(x->x.name().asAny().setPropertyType(BigDecimal.class)).gt(new BigDecimal("1"));
+                    m.schoolStudents().where(x->x.name().like("1234")).sumBigDecimal(x->x.name().asAny().asAnyType(BigDecimal.class)).gt(new BigDecimal("1"));
 //                    m.id().setSubQuery();
 //                    m.schoolStudents().where(x->x.name().like("123")).selectCount().
 //                    m.SQLConstant().valueOf(1L).gt(m.schoolStudents().where(x->x.name().like("123")).selectCount());
@@ -197,7 +197,7 @@ public class Relation2Test extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<MySchoolClass> list = easyEntityQuery.queryable(MySchoolClass.class)
                 .where(m -> {
-                    m.schoolStudents().where(x->x.name().like("1234")).max(x->x.name().asAny().setPropertyType(BigDecimal.class)).gt(new BigDecimal("1"));
+                    m.schoolStudents().where(x->x.name().like("1234")).max(x->x.name().asAny().asAnyType(BigDecimal.class)).gt(new BigDecimal("1"));
 //                    m.id().setSubQuery();
 //                    m.schoolStudents().where(x->x.name().like("123")).selectCount().
 //                    m.SQLConstant().valueOf(1L).gt(m.schoolStudents().where(x->x.name().like("123")).selectCount());

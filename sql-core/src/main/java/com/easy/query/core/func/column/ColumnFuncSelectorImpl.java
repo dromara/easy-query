@@ -11,6 +11,7 @@ import com.easy.query.core.func.column.impl.ColumnFuncExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFuncFormatExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFuncValueExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFunctionExpressionImpl;
+import com.easy.query.core.func.column.impl.ColumnKeepStyleExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnLazyFunctionExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnMultiValueExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnSubQueryExpressionImpl;
@@ -55,6 +56,12 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
     @Override
     public ColumnFuncSelector value(Object val) {
         concatExpressions.add(new ColumnFuncValueExpressionImpl(val));
+        return this;
+    }
+
+    @Override
+    public ColumnFuncSelector keepStyle() {
+        concatExpressions.add(ColumnKeepStyleExpressionImpl.DEFAULT);
         return this;
     }
 

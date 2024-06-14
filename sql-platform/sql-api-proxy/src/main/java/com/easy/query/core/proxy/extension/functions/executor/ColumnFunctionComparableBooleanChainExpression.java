@@ -12,8 +12,8 @@ import com.easy.query.core.util.EasyObjectUtil;
 public interface ColumnFunctionComparableBooleanChainExpression<T> extends ColumnFunctionComparableObjectChainExpression<T>,
         ColumnBooleanFunctionAvailable<T> {
     @Override
-    default <TR> ColumnFunctionComparableBooleanChainExpression<TR> setPropertyType(Class<TR> clazz) {
-        ColumnFunctionComparableObjectChainExpression.super.setPropertyType(clazz);
+    default <TR> ColumnFunctionComparableBooleanChainExpression<TR> asAnyType(Class<TR> clazz) {
+        ColumnFunctionComparableObjectChainExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
 }

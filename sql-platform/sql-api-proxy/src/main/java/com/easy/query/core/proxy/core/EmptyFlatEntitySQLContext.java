@@ -22,7 +22,7 @@ import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
  * @author xuejiaming
  */
 public class EmptyFlatEntitySQLContext implements FlatEntitySQLContext{
-    private final String navValue;
+    private  String navValue;
 
     public EmptyFlatEntitySQLContext(String navValue){
 
@@ -31,6 +31,11 @@ public class EmptyFlatEntitySQLContext implements FlatEntitySQLContext{
     @Override
     public String getNavValue() {
         return navValue;
+    }
+
+    @Override
+    public void setNavValue(String navValue) {
+        this.navValue=navValue;
     }
 
     @Override

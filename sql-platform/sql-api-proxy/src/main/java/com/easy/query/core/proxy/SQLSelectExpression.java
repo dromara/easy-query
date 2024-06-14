@@ -154,7 +154,7 @@ public interface SQLSelectExpression extends TablePropColumn{
 
     default <TProperty> PropTypeColumn<TProperty> toDraft(Class<TProperty> propType){
         if(PropTypeColumn.class.isAssignableFrom(this.getClass())){
-            PropTypeColumn<? extends TProperty> propTypeColumn = ((PropTypeColumn<?>) this).setPropertyType(propType);
+            PropTypeColumn<? extends TProperty> propTypeColumn = ((PropTypeColumn<?>) this).asAnyType(propType);
             return EasyObjectUtil.typeCastNullable(propTypeColumn);
         }
         return new SelectToDraftColumn<>(this,propType);

@@ -139,7 +139,7 @@ public class UpdateTest1 extends BaseTest {
             try {
                 easyEntityQuery.updatable(Topic.class)
                         .setColumns(o -> {
-                            o.title().set(o.stars().setPropertyType(String.class));
+                            o.title().set(o.stars().asAnyType(String.class));
                         })
                         .asSchema(x -> x + "_abc")
                         .asTable(o -> o + "_abc")

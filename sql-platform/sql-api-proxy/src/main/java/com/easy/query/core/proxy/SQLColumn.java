@@ -23,7 +23,7 @@ public interface SQLColumn<TProxy, TProperty> extends ColumnComparableExpression
     }
 
     @Override
-    default <TR> SQLColumn<TProxy, TR> setPropertyType(Class<TR> clazz) {
+    default <TR> SQLColumn<TProxy, TR> asAnyType(Class<TR> clazz) {
         _setPropertyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }

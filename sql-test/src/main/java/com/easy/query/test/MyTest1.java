@@ -551,7 +551,7 @@ public class MyTest1 extends BaseTest {
 
                         r.selectAll(o);
                         r.blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class)
-                                .where(x -> x.id().eq(o.id())).select(x -> new LongProxy(x.star().sum().setPropertyType(Long.class))));
+                                .where(x -> x.id().eq(o.id())).select(x -> new LongProxy(x.star().sum().asAnyType(Long.class))));
                     })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -1193,7 +1193,7 @@ public class MyTest1 extends BaseTest {
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
-                        t.expression().sqlType("SUBSTR({0},2,2)", c -> c.expression(t.title())).setPropertyType(String.class),
+                        t.expression().sqlType("SUBSTR({0},2,2)", c -> c.expression(t.title())).asAnyType(String.class),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
                 .select(o -> Select.DRAFT.of(
@@ -1229,7 +1229,7 @@ public class MyTest1 extends BaseTest {
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.TABLE2.of(
-                        t.expression().sqlType("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022, 1, 1, 1, 2))).setPropertyType(LocalDateTime.class),
+                        t.expression().sqlType("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022, 1, 1, 1, 2))).asAnyType(LocalDateTime.class),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
                 .select(o -> Select.DRAFT.of(

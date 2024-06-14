@@ -153,7 +153,7 @@ try{
     Draft1<BigDecimal> localDateTimeDraft12 = entityQuery.queryable(DamengMyTopic.class)
             .whereById(id)
             .select(o -> Select.DRAFT.of(
-                    o.expression().constant().valueOf(of).duration(o.expression().constant().valueOf(localDateTime),DateTimeDurationEnum.Seconds).setPropertyType(BigDecimal.class)
+                    o.expression().constant().valueOf(of).duration(o.expression().constant().valueOf(localDateTime),DateTimeDurationEnum.Seconds).asAnyType(BigDecimal.class)
             )).firstOrNull();
     Assert.assertEquals(BigDecimal.valueOf(-180).compareTo(localDateTimeDraft12.getValue1()),0);
     Draft3<Long, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(DamengMyTopic.class)
@@ -193,7 +193,7 @@ try{
     Draft1<BigDecimal> localDateTimeDraft121= entityQuery.queryable(DamengMyTopic.class)
             .whereById(id)
             .select(o -> Select.DRAFT.of(
-                    o.expression().constant().valueOf(of).duration(o.expression().constant().valueOf(of).plus(3, TimeUnit.MINUTES),DateTimeDurationEnum.Seconds).setPropertyType(BigDecimal.class)
+                    o.expression().constant().valueOf(of).duration(o.expression().constant().valueOf(of).plus(3, TimeUnit.MINUTES),DateTimeDurationEnum.Seconds).asAnyType(BigDecimal.class)
             )).firstOrNull();
 
     Assert.assertEquals(BigDecimal.valueOf(-180).compareTo(localDateTimeDraft121.getValue1()),0);

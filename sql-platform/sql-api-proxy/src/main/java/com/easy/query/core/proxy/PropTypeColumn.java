@@ -14,7 +14,7 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  */
 public interface PropTypeColumn<TProperty> extends PropTypeSetColumn<TProperty>{
     @Override
-    <TR> PropTypeColumn<TR> setPropertyType(Class<TR> clazz);
+    <TR> PropTypeColumn<TR> asAnyType(Class<TR> clazz);
     static <TR> void selectColumn(AsSelector asSelector, PropTypeColumn<TR> column){
 
         if(column instanceof DSLSQLFunctionAvailable){

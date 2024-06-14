@@ -571,7 +571,7 @@ public class DocTest extends BaseTest {
                     ))
                     .select(o -> new TopicProxy().adapter(r->{
                         r.id().set(o.key1());
-                        r.stars().set(o.count(o.groupTable().id()).setPropertyType(Integer.class));//count(id) as stars
+                        r.stars().set(o.count(o.groupTable().id()).asAnyType(Integer.class));//count(id) as stars
                     }))
 //                    .selectAs(Topic.class,(o, tr)->Select.of(
 //                            o.id(),

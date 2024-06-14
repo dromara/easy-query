@@ -21,8 +21,8 @@ public interface ColumnFunctionComparableStringChainExpression<T> extends Column
         DSLSQLFunctionAvailable {
 
     @Override
-    default <TR> ColumnFunctionComparableStringChainExpression<TR> setPropertyType(Class<TR> clazz) {
-        ColumnFunctionComparableObjectChainExpression.super.setPropertyType(clazz);
+    default <TR> ColumnFunctionComparableStringChainExpression<TR> asAnyType(Class<TR> clazz) {
+        ColumnFunctionComparableObjectChainExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
 
