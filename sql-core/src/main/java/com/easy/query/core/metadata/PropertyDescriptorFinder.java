@@ -42,11 +42,23 @@ public class PropertyDescriptorFinder {
         if(propertyName==null){
             throw new EasyQueryInvalidOperationException("propertyName is null");
         }
-        return firstOrNull(this.propertyDescriptors, o -> propertyName.equalsIgnoreCase(o.getName()));
+        if(mapFind){
+            return firstOrNull(this.propertyDescriptorMap, o -> propertyName.equalsIgnoreCase(o.getName()));
+        }else{
+            return firstOrNull(this.propertyDescriptors, o -> propertyName.equalsIgnoreCase(o.getName()));
+        }
     }
 
     private PropertyDescriptor firstOrNull(PropertyDescriptor[] ps, Predicate<PropertyDescriptor> predicate) {
         for (PropertyDescriptor p : ps) {
+            if (predicate.test(p)) {
+                return p;
+            }
+        }
+        return null;
+    }
+    private PropertyDescriptor firstOrNull(Map<String, PropertyDescriptor> propertyDescriptorMap, Predicate<PropertyDescriptor> predicate) {
+        for (PropertyDescriptor p : propertyDescriptorMap.values()) {
             if (predicate.test(p)) {
                 return p;
             }

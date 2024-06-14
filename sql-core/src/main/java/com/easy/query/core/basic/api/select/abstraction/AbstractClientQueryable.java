@@ -831,6 +831,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                                 //表示VO对象并不是最终的对象
                                 if (mappingPathTreeChild.hasChildren()) {
                                     if (EasyCollectionUtil.isEmpty(navigateFlatBasicProps) && !Objects.equals(with.queryClass(), navigatePropertyType)) {
+                                        //如果存在Flat一个数据库VO那么就不可以在对VO所属的对象路径进行基本类型的获取
+                                        //Flat [roles,menus] 那么就不可以Flat [roles,menus,id]
                                         throw new EasyQueryInvalidOperationException(String.format("@NavigateFlat cannot simultaneously include non-database related objects: [%s] and its object properties.", EasyClassUtil.getSimpleName(navigatePropertyType)));
                                     }
                                 }

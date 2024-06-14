@@ -51,4 +51,5 @@ public class ALLTYPE {
     private long numberLongBasic;
     private byte numberByteBasic;
     private boolean enableBasic;
+//    private Character enableBasicChar;
 }
