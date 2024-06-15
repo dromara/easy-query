@@ -239,7 +239,7 @@ public class LambdaQueryTest extends LambdaBaseTest
     public void q7()
     {
         DefTable defTable = elq.queryable(DefTable.class).select().firstOrNull();
-        System.out.println(defTable);
+        Assert.assertNotNull(defTable);
     }
 
     @Test
