@@ -86,12 +86,12 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-<!--        &lt;!&ndash;oracle驱动 &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>com.oracle</groupId>-->
-<!--            <artifactId>ojdbc6</artifactId>-->
-<!--            <version>11.2.0.3</version>-->
-<!--        </dependency>-->
+        <!--        &lt;!&ndash;oracle驱动 &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.oracle</groupId>-->
+        <!--            <artifactId>ojdbc6</artifactId>-->
+        <!--            <version>11.2.0.3</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-api4kt</artifactId>
@@ -194,5 +194,45 @@
             <artifactId>spring-jdbc</artifactId>
             <version>${spring.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-api-lambda</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- 编译插件，设置源码以及编译的jdk版本 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xplugin:ExpressionTree</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.easy-query</groupId>
+                            <artifactId>sql-api-lambda</artifactId>
+                            <version>${project.version}</version>
+                        </path>
+                        <path>
+                            <groupId>com.easy-query</groupId>
+                            <artifactId>sql-processor</artifactId>
+                            <version>${project.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.24</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

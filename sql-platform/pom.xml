@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>sql-api-proxy</module>
+        <module>sql-api-lambda</module>
     </modules>
 
     <properties>
