@@ -189,6 +189,12 @@ public class LQuery2<T1, T2> extends QueryBase
         return new LQuery<>(select, queryData.getDbType());
     }
 
+    public <R> LQuery<R> select(Class<R> r)
+    {
+        ClientQueryable<R> select = clientQueryable.select(r);
+        return new LQuery<>(select, queryData.getDbType());
+    }
+
     public <R> LQuery<R> select(@Expr Func2<T1, T2, R> expr)
     {
         throw new RuntimeException();

@@ -262,4 +262,34 @@ public class LambdaQueryTest extends LambdaBaseTest
         List<? extends TempResult> list = select.toList();
         Assert.assertEquals(1, list.size());
     }
+
+    @Test
+    public void q9()
+    {
+        LQuery<? extends TempResult> select = elq.queryable(DefTable.class)
+                .groupBy(g -> SqlFunctions.cast(g.getId(), SqlTypes.signed()))
+                .having(h -> h.key == 110)
+                .select(s -> new TempResult()
+                {
+                    int c1 = s.key;
+                    long b1 = s.count(b -> b.getNickname());
+                });
+        String sql = select.toSQL();
+        Assert.assertEquals("SELECT CAST(t.id AS SIGNED) AS c1,count(t.nickname) AS b1 FROM t_def_table t GROUP BY CAST(t.id AS SIGNED) HAVING CAST(t.id AS SIGNED) = ?", sql);
+        List<? extends TempResult> list = select.toList();
+        Assert.assertEquals(1, list.size());
+    }
+
+    @Test
+    public void q10()
+    {
+        LQuery<DefTable> select = elq.queryable(DefTable.class)
+                .where(w -> w.getNumber() % 2 == 0)
+                .select(DefTable.class);
+
+        String sql = select.toSQL();
+        Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t WHERE t.number % ? = ?", sql);
+        List<DefTable> list = select.toList();
+        Assert.assertEquals(500, list.size());
+    }
 }

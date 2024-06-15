@@ -1142,198 +1142,231 @@ public class SqlFunctions
 
     // region [字符串]
 
+    @Ext(dbType = DbType.H2, function = "ASCII({})")
     @Ext(dbType = DbType.MySQL, function = "ASCII({})")
     public static int ascii(String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "CHAR_LENGTH({})")
     @Ext(dbType = DbType.MySQL, function = "CHAR_LENGTH({})")
     public static int length(String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "CONCAT({},{})")
     @Ext(dbType = DbType.MySQL, function = "CONCAT({},{})")
     public static String concat(String s1, String s2, String... ss)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "CONCAT_WS({},{},{})")
     @Ext(dbType = DbType.MySQL, function = "CONCAT_WS({},{},{})")
     public static String join(String separator, String s1, String s2, String... ss)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "CHAR({})")
     @Ext(dbType = DbType.MySQL, function = "CHAR({})")
     public static <T extends Number> String toStr(T t)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "FORMAT({},{})")
     @Ext(dbType = DbType.MySQL, function = "FORMAT({},{})")
     public static <T extends Number> String format(T t, String format)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "HEX({})")
     @Ext(dbType = DbType.MySQL, function = "HEX({})")
     public static <T extends Number> String hex(T t)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "HEX({})")
     @Ext(dbType = DbType.MySQL, function = "HEX({})")
     public static String hex(String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "INSERT({},{},{},{})")
     @Ext(dbType = DbType.MySQL, function = "INSERT({},{},{},{})")
     public static String insert(String str, int pos, int length, String newStr)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "INSTR({},{})")
     @Ext(dbType = DbType.MySQL, function = "INSTR({},{})")
     public static int instr(String s1, String s2)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "LOWER({})")
     @Ext(dbType = DbType.MySQL, function = "LOWER({})")
     public static String toLower(String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "LEFT({},{})")
     @Ext(dbType = DbType.MySQL, function = "LEFT({},{})")
     public static String left(String string, int length)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "LENGTH({})")
     @Ext(dbType = DbType.MySQL, function = "LENGTH({})")
     public static int byteLength(String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "LPAD({},{},{})")
     @Ext(dbType = DbType.MySQL, function = "LPAD({},{},{})")
     public static String leftPad(String string, int length, String lpadString)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "LTRIM({})")
     @Ext(dbType = DbType.MySQL, function = "LTRIM({})")
     public static String trimStart(String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "LOCATE({},{})")
     @Ext(dbType = DbType.MySQL, function = "LOCATE({},{})")
     public static int locate(String subString, String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "LOCATE({},{},{})")
     @Ext(dbType = DbType.MySQL, function = "LOCATE({},{},{})")
     public static int locate(String subString, String string, int offset)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "REPEAT({},{})")
     @Ext(dbType = DbType.MySQL, function = "REPEAT({},{})")
     public static String repeat(String string, int number)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "REPLACE({},{},{})")
     @Ext(dbType = DbType.MySQL, function = "REPLACE({},{},{})")
     public static String replace(String cur, String subs, String news)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "REVERSE({})")
     @Ext(dbType = DbType.MySQL, function = "REVERSE({})")
     public static String reverse(String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "RIGHT({},{})")
     @Ext(dbType = DbType.MySQL, function = "RIGHT({},{})")
     public static String right(String string, int length)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "RPAD({},{},{})")
     @Ext(dbType = DbType.MySQL, function = "RPAD({},{},{})")
     public static String rightPad(String string, int length, String rpadString)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "RTRIM({})")
     @Ext(dbType = DbType.MySQL, function = "RTRIM({})")
     public static String trimEnd(String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "SPACE({})")
     @Ext(dbType = DbType.MySQL, function = "SPACE({})")
     public static String space(int number)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "STRCMP({},{})")
     @Ext(dbType = DbType.MySQL, function = "STRCMP({},{})")
     public static int compare(String s1, String s2)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "SUBSTR({},{})")
     @Ext(dbType = DbType.MySQL, function = "SUBSTR({},{})")
     public static String subStr(String string, int pos)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "SUBSTR({},{},{})")
     @Ext(dbType = DbType.MySQL, function = "SUBSTR({},{},{})")
     public static String subStr(String string, int pos, int length)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "SUBSTRING_INDEX({},{},{})")
     @Ext(dbType = DbType.MySQL, function = "SUBSTRING_INDEX({},{},{})")
     public static String subStrIndex(String string, String delimiter, int length)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "TRIM({})")
     @Ext(dbType = DbType.MySQL, function = "TRIM({})")
     public static String trim(String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "UPPER({})")
     @Ext(dbType = DbType.MySQL, function = "UPPER({})")
     public static String toUpper(String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "UNHEX({})")
     @Ext(dbType = DbType.MySQL, function = "UNHEX({})")
     public static byte[] unHex(String string)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "GROUP_CONCAT({})")
     @Ext(dbType = DbType.MySQL, function = "GROUP_CONCAT({})")
     public static byte[] groupConcat(String property)
     {
         throw new SqlFunctionInvokeException();
     }
 
+    @Ext(dbType = DbType.H2, function = "GROUP_CONCAT({property} SEPARATOR {delimiter})")
     @Ext(dbType = DbType.MySQL, function = "GROUP_CONCAT({property} SEPARATOR {delimiter})")
     public static <T> String groupJoin(String delimiter, T property)
     {
@@ -1341,6 +1374,7 @@ public class SqlFunctions
     }
 
     @SafeVarargs
+    @Ext(dbType = DbType.H2, function = "GROUP_CONCAT({properties} SEPARATOR {delimiter})")
     @Ext(dbType = DbType.MySQL, function = "GROUP_CONCAT({properties} SEPARATOR {delimiter})")
     public static <T> String groupJoin(String delimiter, T... properties)
     {

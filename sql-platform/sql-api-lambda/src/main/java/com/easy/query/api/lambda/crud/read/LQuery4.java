@@ -90,12 +90,12 @@ public class LQuery4<T1, T2, T3, T4> extends QueryBase
     // endregion
 
     // region [GROUP BY]
-    public <Key> GroupedQuery4<Key, T1, T2, T3,T4> groupBy(@Expr Func4<T1, T2, T3, T4, Key> expr)
+    public <Key> GroupedQuery4<Key, T1, T2, T3, T4> groupBy(@Expr Func4<T1, T2, T3, T4, Key> expr)
     {
         throw new RuntimeException();
     }
 
-    public <Key>GroupedQuery4<Key, T1, T2, T3,T4> groupBy(ExprTree<Func4<T1, T2, T3, T4, Key>> expr)
+    public <Key> GroupedQuery4<Key, T1, T2, T3, T4> groupBy(ExprTree<Func4<T1, T2, T3, T4, Key>> expr)
     {
         GroupBy groupBy = new GroupBy(expr.getTree());
         groupBy.analysis(clientQueryable, queryData);
@@ -107,6 +107,12 @@ public class LQuery4<T1, T2, T3, T4> extends QueryBase
     public LQuery<T1> select()
     {
         ClientQueryable<T1> select = clientQueryable.select(s -> s.columnAll());
+        return new LQuery<>(select, queryData.getDbType());
+    }
+
+    public <R> LQuery<R> select(Class<R> r)
+    {
+        ClientQueryable<R> select = clientQueryable.select(r);
         return new LQuery<>(select, queryData.getDbType());
     }
 

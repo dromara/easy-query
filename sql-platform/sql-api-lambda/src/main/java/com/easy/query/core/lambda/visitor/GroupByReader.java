@@ -17,30 +17,35 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.easy.query.core.lambda.util.ExpressionUtil.*;
-import static com.easy.query.core.lambda.util.SqlUtil.*;
+import static com.easy.query.core.lambda.util.SqlUtil.fieldName;
 
-
-public class GroupByVisitor extends BaseVisitor
+public class GroupByReader extends BaseVisitor
 {
-    public GroupByVisitor(List<ParameterExpression> parameters, DbType dbType)
+    private final Map<String, GroupExtData> groupExtDataMap = new HashMap<>();
+    private GroupExtData cur = new GroupExtData();
+
+    public GroupByReader(List<ParameterExpression> parameters, DbType dbType)
     {
-        super(parameters, dbType);
+        super(parameters,dbType);
+    }
+
+    public Map<String, GroupExtData> getGroupExtDataMap()
+    {
+        return groupExtDataMap;
+    }
+
+    public GroupExtData getCur()
+    {
+        return cur;
     }
 
     @Override
-    public void visit(NewExpression newExpression)
+    public void visit(VariableExpression variable)
     {
-        BlockExpression classBody = newExpression.getClassBody();
-        if (classBody == null) return;
-        List<Expression> expressions = classBody.getExpressions();
-        for (int i = 0; i < expressions.size(); i++)
-        {
-            visit(expressions.get(i));
-            if (i < expressions.size() - 1)
-            {
-                data.append(",");
-            }
-        }
+        cur = new GroupExtData();
+        visit(variable.getInit());
+        groupExtDataMap.put(variable.getName(), cur);
+        cur = null;
     }
 
     @Override
@@ -53,16 +58,27 @@ public class GroupByVisitor extends BaseVisitor
             {
                 int index = parameters.indexOf(parameter);
                 String fn = fieldName(methodCall.getMethod());
-                putField(index, fn);
+                putSqlValue(new SqlValue(SqlValue.Type.property, index, fn));
             }
             else
             {
                 throw new IllegalExpressionException(methodCall);
             }
         }
+        else if (SqlFunctions.class.isAssignableFrom(methodCall.getMethod().getDeclaringClass()))
+        {
+            visit(methodCall.getExpr());
+            matchSqlFunctions(methodCall,cur.exprData);
+        }
+        else if (SqlTypes.class.isAssignableFrom(methodCall.getMethod().getDeclaringClass()))
+        {
+            visit(methodCall.getExpr());
+            matchSqlTypes(methodCall,cur.exprData);
+        }
         else
         {
-            methodCallVisitor(methodCall);
+            //methodCallVisitor(methodCall);
+            throw new RuntimeException(methodCall.toString());
         }
     }
 
@@ -76,7 +92,7 @@ public class GroupByVisitor extends BaseVisitor
             {
                 int index = parameters.indexOf(parameter);
                 String fn = fieldName(fieldSelect.getField());
-                putField(index, fn);
+                putSqlValue(new SqlValue(SqlValue.Type.property, index, fn));
             }
             else
             {
@@ -85,19 +101,29 @@ public class GroupByVisitor extends BaseVisitor
         }
         else
         {
-            tryPutExprValue(fieldSelect);
+            if (hasParameter(fieldSelect) || isVoid(fieldSelect.getField().getType()))
+            {
+                throw new IllegalExpressionException(fieldSelect);
+            }
+            putSqlValue(new SqlValue(fieldSelect.getValue()));
         }
     }
 
     @Override
     public void visit(ConstantExpression constant)
     {
-        putValue(constant.getValue());
+        putSqlValue(new SqlValue(constant.getValue()));
     }
 
     @Override
     public void visit(ReferenceExpression reference)
     {
-        putValue(reference.getValue());
+        putSqlValue(new SqlValue(reference.getValue()));
+    }
+
+    private void putSqlValue(SqlValue sqlValue)
+    {
+        cur.exprData.append("{}");
+        cur.sqlValues.add(sqlValue);
     }
 }

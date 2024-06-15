@@ -49,55 +49,55 @@ public class BaseVisitor extends DeepFindVisitor
         return sqlValue;
     }
 
-    protected void matchSqlFunctions(MethodCallExpression methodCall)
+    protected void matchSqlFunctions(MethodCallExpression methodCall,StringBuilder sb)
     {
         Method callMethod = methodCall.getMethod();
         SqlFunctions.Ext[] exts = callMethod.getAnnotationsByType(SqlFunctions.Ext.class);
         // 没有Ext注解的直接使用函数名
         if (exts.length == 0)
         {
-            data.append(callMethod.getName()).append("(");
+            sb.append(callMethod.getName()).append("(");
             List<Expression> args = methodCall.getArgs();
             for (int i = 0; i < args.size(); i++)
             {
                 Expression arg = args.get(i);
                 visit(arg);
-                if (i < args.size() - 1) data.append(",");
+                if (i < args.size() - 1) sb.append(",");
             }
-            data.append(")");
+            sb.append(")");
         }
         else
         {
             String function = getTargetSqlFuncExt(exts).function();
-            tryReplace(methodCall, function, data);
+            tryReplace(methodCall, function, sb);
         }
     }
 
-    protected void matchSqlTypes(MethodCallExpression methodCall)
+    protected void matchSqlTypes(MethodCallExpression methodCall,StringBuilder sb)
     {
         Method callMethod = methodCall.getMethod();
         SqlTypes.Ext[] exts = callMethod.getAnnotationsByType(SqlTypes.Ext.class);
 
         if (exts.length == 0)
         {
-            data.append(callMethod.getName());
+            sb.append(callMethod.getName());
             if (!methodCall.getArgs().isEmpty())
             {
-                data.append("(");
+                sb.append("(");
                 List<Expression> args = methodCall.getArgs();
                 for (int i = 0; i < args.size(); i++)
                 {
                     Expression arg = args.get(i);
                     visit(arg);
-                    if (i < args.size() - 1) data.append(",");
+                    if (i < args.size() - 1) sb.append(",");
                 }
-                data.append(")");
+                sb.append(")");
             }
         }
         else
         {
             String type = getSqlTypeExtByMethod(exts).type();
-            tryReplace(methodCall, type, data);
+            tryReplace(methodCall, type, sb);
         }
     }
 
@@ -266,12 +266,12 @@ public class BaseVisitor extends DeepFindVisitor
         else if (SqlFunctions.class.isAssignableFrom(declaringClass))
         {
             visit(methodCall.getExpr());
-            matchSqlFunctions(methodCall);
+            matchSqlFunctions(methodCall,data);
         }
         else if (SqlTypes.class.isAssignableFrom(declaringClass))
         {
             visit(methodCall.getExpr());
-            matchSqlTypes(methodCall);
+            matchSqlTypes(methodCall,data);
         }
         else if (Iterable.class.isAssignableFrom(declaringClass))
         {

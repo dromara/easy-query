@@ -205,7 +205,6 @@
 
     <build>
         <plugins>
-            <!-- 编译插件，设置源码以及编译的jdk版本 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

@@ -8,6 +8,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.lambda.condition.criteria.Criteria;
 import com.easy.query.core.lambda.exception.IllegalExpressionException;
+import com.easy.query.core.lambda.visitor.GroupByReader;
 import com.easy.query.core.lambda.visitor.GroupByVisitor;
 import com.easy.query.core.lambda.visitor.SqlValue;
 import io.github.kiryu1223.expressionTree.expressions.*;
@@ -31,18 +32,24 @@ public class GroupBy extends Criteria
         this.expression = expression;
     }
 
-    private void readGroup()
+    private void readGroup(QueryData queryData)
     {
-
+        GroupByReader groupByReader = new GroupByReader(expression.getParameters(), queryData.getDbType());
+        expression.getBody().accept(groupByReader);
+        Map<String, GroupExtData> groupExtDataMap = groupByReader.getGroupExtDataMap();
+        // 空的GroupExtData说明碰到了非new class的情况，手动包装一下
+        if (groupExtDataMap.isEmpty())
+        {
+            groupExtDataMap.put("key", groupByReader.getCur());
+        }
+        queryData.setGroupExtDataMap(groupExtDataMap);
     }
 
     public void analysis(ClientQueryable<?> queryable, QueryData queryData)
     {
+        readGroup(queryData);
         GroupByVisitor groupBy = new GroupByVisitor(expression.getParameters(), queryData.getDbType());
         expression.getBody().accept(groupBy);
-
-        queryData.setGroupExtDataMap(groupBy.getGroupExtDataMap());
-
         queryable.groupBy(w -> w.sqlNativeSegment(groupBy.getData(), s ->
         {
             for (SqlValue sqlValue : groupBy.getSqlValue())
@@ -65,10 +72,9 @@ public class GroupBy extends Criteria
 
     public void analysis(ClientQueryable2<?, ?> queryable, QueryData queryData)
     {
+        readGroup(queryData);
         GroupByVisitor groupBy = new GroupByVisitor(expression.getParameters(), queryData.getDbType());
         expression.getBody().accept(groupBy);
-        queryData.setGroupExtDataMap(groupBy.getGroupExtDataMap());
-
         queryable.groupBy((w0, w1) -> w0.sqlNativeSegment(groupBy.getData(), s ->
         {
             for (SqlValue sqlValue : groupBy.getSqlValue())
@@ -96,10 +102,9 @@ public class GroupBy extends Criteria
 
     public void analysis(ClientQueryable3<?, ?, ?> queryable, QueryData queryData)
     {
+        readGroup(queryData);
         GroupByVisitor groupBy = new GroupByVisitor(expression.getParameters(), queryData.getDbType());
         expression.getBody().accept(groupBy);
-        queryData.setGroupExtDataMap(groupBy.getGroupExtDataMap());
-
         queryable.groupBy((w0, w1, w2) -> w0.sqlNativeSegment(groupBy.getData(), s ->
         {
             for (SqlValue sqlValue : groupBy.getSqlValue())
