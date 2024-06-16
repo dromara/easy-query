@@ -1,7 +1,9 @@
 package com.easy.query.api.proxy.extension.casewhen;
 
+import com.easy.query.api.proxy.util.EasyParamExpressionUtil;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.SQLSegmentParamExpressionImpl;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -41,18 +43,8 @@ public class CaseWhenEntityBuilder {
 //        return this;
 //    }
     public <TProperty> ColumnFunctionComparableAnyChainExpression<TProperty> elseEnd(Object elseValue){
-        SQLFunction sqlFunction = caseWhenBuilder.elseEnd(elseValue);
-        return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext,null,null,f->sqlFunction);
-    }
-    public <TProperty,T extends SQLTableOwner & DSLSQLFunctionAvailable> ColumnFunctionComparableAnyChainExpression<TProperty> elseEnd(T elseValue){
-        SQLFunction sqlFunction = elseValue.func().apply(entitySQLContext.getRuntimeContext().fx());
-        ExpressionContext expressionContext = entitySQLContext.getEntityExpressionBuilder().getExpressionContext();
-        SQLSegmentParamExpressionImpl sqlSegmentParamExpression = new SQLSegmentParamExpressionImpl(sqlFunction, expressionContext, elseValue.getTable(), expressionContext.getRuntimeContext(), null);
-        SQLFunction caseWhenSQLFunction = caseWhenBuilder.elseEnd(sqlSegmentParamExpression);
-        return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext,null,null,f->caseWhenSQLFunction);
-    }
-    public <TProperty> ColumnFunctionComparableAnyChainExpression<TProperty> elseEnd(SQLColumn<?, ?> elseSQLColumn){
-        SQLFunction sqlFunction = caseWhenBuilder.elseEndColumn(elseSQLColumn.getTable(),elseSQLColumn.getValue());
+        ParamExpression paramExpression = EasyParamExpressionUtil.getParamExpression(entitySQLContext, elseValue);
+        SQLFunction sqlFunction = caseWhenBuilder.elseEnd(paramExpression);
         return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext,null,null,f->sqlFunction);
     }
 }

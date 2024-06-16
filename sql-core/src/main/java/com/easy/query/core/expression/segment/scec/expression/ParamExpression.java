@@ -7,4 +7,5 @@ package com.easy.query.core.expression.segment.scec.expression;
  * @author xuejiaming
  */
 public interface ParamExpression {
+
 }

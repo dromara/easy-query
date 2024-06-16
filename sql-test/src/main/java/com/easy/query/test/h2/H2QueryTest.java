@@ -213,7 +213,7 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void allTypeTest1_1() {
         ALLTYPE1 alltype = new ALLTYPE1();
-        alltype.setId("1234");
+        alltype.setId("1234x");
 
         alltype.setNumberDecimal(new BigDecimal("12.33"));
         alltype.setNumberFloat(12.3f);
@@ -245,7 +245,7 @@ public class H2QueryTest extends H2BaseTest {
         long l = easyQuery.insertable(alltype).executeRows();
         Assert.assertEquals(1, l);
         ALLTYPE1 alltype1 = easyQuery.queryable(ALLTYPE1.class)
-                .whereById("1234").firstOrNull();
+                .whereById("1234x").firstOrNull();
         Assert.assertNotNull(alltype1);
         Assert.assertEquals(alltype1.getId(), alltype.getId());
         Assert.assertEquals(alltype1.getNumberDecimal(), alltype.getNumberDecimal());

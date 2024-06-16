@@ -2,12 +2,15 @@ package com.easy.query.core.proxy.core;
 
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenThenEntityBuilder;
+import com.easy.query.api.proxy.extension.ifequals.IfEqualsThenEntityBuilder;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
@@ -25,6 +28,7 @@ import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLNativeSegmentExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -280,6 +284,38 @@ public class Expression {
                 stringExpressions.apply(new ConcatExpressionSelectorImpl(entitySQLContext.getRuntimeContext().fx(), o));
             });
         }, String.class);
+    }
+    public <TProperty> IfEqualsThenEntityBuilder ifEquals(PropTypeColumn<TProperty> column,PropTypeColumn<TProperty> targetValue) {
+        CaseWhenThenEntityBuilder caseWhenThenEntityBuilder = new CaseWhenEntityBuilder(entitySQLContext).caseWhen(() -> {
+            this.sql("{0} = {1}",c->{
+                setParameters(c,column);
+                setParameters(c,targetValue);
+            });
+        });
+        return new IfEqualsThenEntityBuilder(caseWhenThenEntityBuilder);
+    }
+    public <TProperty> IfEqualsThenEntityBuilder ifEquals(PropTypeColumn<TProperty> column,Object targetValue) {
+        CaseWhenThenEntityBuilder caseWhenThenEntityBuilder = new CaseWhenEntityBuilder(entitySQLContext).caseWhen(() -> {
+            this.sql("{0} = {1}",c->{
+                setParameters(c,column);
+                c.value(targetValue);
+            });
+        });
+        return new IfEqualsThenEntityBuilder(caseWhenThenEntityBuilder);
+    }
+    private void setParameters(ProxyColumnFuncSelector selector,PropTypeColumn<?> column){
+
+        if(column instanceof SQLColumn){
+            selector.expression((SQLColumn)column);
+        }else if(column instanceof Query){
+            selector.expression((Query)column);
+        }else if(column instanceof DSLSQLFunctionAvailable){
+            selector.expression((DSLSQLFunctionAvailable)column);
+        }else if(column instanceof SQLFunction){
+            selector.expression((SQLFunction)column);
+        }else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**

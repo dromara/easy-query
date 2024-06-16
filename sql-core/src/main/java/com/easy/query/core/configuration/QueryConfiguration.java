@@ -84,9 +84,9 @@ public class QueryConfiguration {
         easyVersionStrategyMap.put(VersionUUIDStrategy.class, new VersionUUIDStrategy());
         easyVersionStrategyMap.put(VersionTimestampStrategy.class, new VersionTimestampStrategy());
         shardingInitializerMap.put(UnShardingInitializer.class, UnShardingInitializer.INSTANCE);
-        valueUpdateAtomicTrackMap.put(IntegerNotNullValueUpdateAtomicTrack.class,new IntegerNotNullValueUpdateAtomicTrack());
-        valueUpdateAtomicTrackMap.put(LongNotNullValueUpdateAtomicTrack.class,new LongNotNullValueUpdateAtomicTrack());
-        valueUpdateAtomicTrackMap.put(ConcurrentValueUpdateAtomicTrack.class,new ConcurrentValueUpdateAtomicTrack());
+        valueUpdateAtomicTrackMap.put(IntegerNotNullValueUpdateAtomicTrack.class, new IntegerNotNullValueUpdateAtomicTrack());
+        valueUpdateAtomicTrackMap.put(LongNotNullValueUpdateAtomicTrack.class, new LongNotNullValueUpdateAtomicTrack());
+        valueUpdateAtomicTrackMap.put(ConcurrentValueUpdateAtomicTrack.class, new ConcurrentValueUpdateAtomicTrack());
     }
 
     public boolean deleteThrow() {
@@ -104,7 +104,7 @@ public class QueryConfiguration {
     public void applyInterceptor(Interceptor easyInterceptor) {
         String interceptorName = easyInterceptor.name();
         if (EasyStringUtil.isBlank(interceptorName)) {
-            throw new EasyQueryException(EasyClassUtil.getInstanceSimpleName(easyInterceptor) + "cant get interceptor name");
+            throw new EasyQueryException("interceptor :[" + EasyClassUtil.getInstanceSimpleName(easyInterceptor) + "] cant get name");
         }
         if (interceptorMap.containsKey(interceptorName)) {
             throw new EasyQueryException("global interceptor:" + interceptorName + ",repeat");
@@ -138,13 +138,15 @@ public class QueryConfiguration {
         }
         globalLogicDeleteStrategyMap.put(strategy, globalLogicDeleteStrategy);
     }
+
     public void applyNavigateExtraFilterStrategy(NavigateExtraFilterStrategy navigateExtraFilterStrategy) {
-        Objects.requireNonNull(navigateExtraFilterStrategy,"navigateExtraFilterStrategy is null");
+        Objects.requireNonNull(navigateExtraFilterStrategy, "navigateExtraFilterStrategy is null");
         if (navigateExtraFilterStrategyMap.containsKey(navigateExtraFilterStrategy.getClass())) {
             throw new EasyQueryException("navigate extra filter strategy:" + EasyClassUtil.getSimpleName(navigateExtraFilterStrategy.getClass()) + ",repeat");
         }
         navigateExtraFilterStrategyMap.put(navigateExtraFilterStrategy.getClass(), navigateExtraFilterStrategy);
     }
+
     public NavigateExtraFilterStrategy getNavigateExtraFilterStrategy(Class<? extends NavigateExtraFilterStrategy> strategy) {
         return navigateExtraFilterStrategyMap.get(strategy);
     }
@@ -255,18 +257,20 @@ public class QueryConfiguration {
             throw new EasyQueryException("ValueConverter:" + EasyClassUtil.getSimpleName(converterClass) + ",repeat");
         }
         valueConverterMap.put(converterClass, valueConverter);
-        if(EnumValueAutoConverter.class.isAssignableFrom(converterClass)){
-            EnumValueAutoConverter<?, ?> enumValueAutoConverter=EasyObjectUtil.typeCastNullable(valueConverter);
+        if (EnumValueAutoConverter.class.isAssignableFrom(converterClass)) {
+            EnumValueAutoConverter<?, ?> enumValueAutoConverter = EasyObjectUtil.typeCastNullable(valueConverter);
             enumValueAutoConverters.add(enumValueAutoConverter);
         }
     }
-    public List<EnumValueAutoConverter<?, ?>> getEnumValueAutoConverters(){
+
+    public List<EnumValueAutoConverter<?, ?>> getEnumValueAutoConverters() {
         return enumValueAutoConverters;
     }
 
     public ValueConverter<?, ?> getValueConverter(Class<? extends ValueConverter<?, ?>> converterClass) {
         return valueConverterMap.get(converterClass);
     }
+
     public void applyValueUpdateAtomicTrack(ValueUpdateAtomicTrack<?> trackValueUpdate) {
         Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = EasyObjectUtil.typeCastNullable(trackValueUpdate.getClass());
         if (valueUpdateAtomicTrackMap.containsKey(trackValueUpdateClass)) {
@@ -278,6 +282,7 @@ public class QueryConfiguration {
     public ValueUpdateAtomicTrack<?> getValueUpdateAtomicTrack(Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass) {
         return valueUpdateAtomicTrackMap.get(trackValueUpdateClass);
     }
+
     public void applyColumnValueSQLConverter(ColumnValueSQLConverter columnValueSQLConverter) {
         Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = columnValueSQLConverter.getClass();
         if (columnValueSQLConverterMap.containsKey(columnValueSQLConverterClass)) {
@@ -289,6 +294,7 @@ public class QueryConfiguration {
     public ColumnValueSQLConverter getColumnValueSQLConverter(Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass) {
         return columnValueSQLConverterMap.get(columnValueSQLConverterClass);
     }
+
     public void applyGeneratedKeySQLColumnGenerator(GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator) {
         Class<? extends GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorClass = generatedKeySQLColumnGenerator.getClass();
         if (generatedSQLColumnGeneratorMap.containsKey(generatedKeySQLColumnGeneratorClass)) {

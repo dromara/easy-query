@@ -84,7 +84,7 @@ public class LambdaQueryTest extends LambdaBaseTest
     public void allTypeTest1()
     {
         ALLTYPE alltype = new ALLTYPE();
-        alltype.setId("123");
+        alltype.setId("1234");
 
         alltype.setNumberDecimal(new BigDecimal("12.33"));
         alltype.setNumberFloat(12.3f);
@@ -115,7 +115,7 @@ public class LambdaQueryTest extends LambdaBaseTest
         long l = elq.insertable(alltype).executeRows();
         Assert.assertEquals(1, l);
         ALLTYPE alltype1 = elq.queryable(ALLTYPE.class)
-                .where(a -> a.getId() == "123").firstOrNull();
+                .where(a -> a.getId() == "1234").firstOrNull();
         Assert.assertNotNull(alltype1);
         Assert.assertEquals(alltype1.getId(), alltype.getId());
         Assert.assertEquals(alltype1.getNumberDecimal(), alltype.getNumberDecimal());
