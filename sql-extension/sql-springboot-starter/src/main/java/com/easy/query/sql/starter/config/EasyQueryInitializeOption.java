@@ -7,7 +7,6 @@ import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenera
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
-import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -32,7 +31,6 @@ public final class EasyQueryInitializeOption {
     private final Map<String, ValueConverter<?, ?>> valueConverterMap;
     private final Map<String, TableRoute<?>> tableRouteMap;
     private final Map<String, DataSourceRoute<?>> dataSourceRouteMap;
-    private final Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap;
     private final Map<String, JdbcTypeHandler> jdbcTypeHandlerMap;
     private final Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap;
     private final Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap;
@@ -70,10 +68,6 @@ public final class EasyQueryInitializeOption {
         return dataSourceRouteMap;
     }
 
-    public Map<String, ValueUpdateAtomicTrack<?>> getValueUpdateAtomicTrackMap() {
-        return valueUpdateAtomicTrackMap;
-    }
-
     public Map<String, JdbcTypeHandler> getJdbcTypeHandlerMap() {
         return jdbcTypeHandlerMap;
     }
@@ -93,7 +87,6 @@ public final class EasyQueryInitializeOption {
     public EasyQueryInitializeOption(Map<String, Interceptor> interceptorMap, Map<String, VersionStrategy> versionStrategyMap, Map<String, LogicDeleteStrategy> logicDeleteStrategyMap, Map<String, ShardingInitializer> shardingInitializerMap, Map<String, EncryptionStrategy> encryptionStrategyMap, Map<String, ValueConverter<?, ?>> valueConverterMap,
                                      Map<String, TableRoute<?>> tableRouteMap,
                                      Map<String, DataSourceRoute<?>> dataSourceRouteMap,
-                                     Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap,
                                      Map<String, JdbcTypeHandler> jdbcTypeHandlerMap,
                                      Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap,
                                      Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap,
@@ -107,7 +100,6 @@ public final class EasyQueryInitializeOption {
         this.valueConverterMap = valueConverterMap;
         this.tableRouteMap = tableRouteMap;
         this.dataSourceRouteMap = dataSourceRouteMap;
-        this.valueUpdateAtomicTrackMap = valueUpdateAtomicTrackMap;
         this.jdbcTypeHandlerMap = jdbcTypeHandlerMap;
         this.columnValueSQLConverterMap = columnValueSQLConverterMap;
         this.generatedKeySQLColumnGeneratorMap = generatedKeySQLColumnGeneratorMap;

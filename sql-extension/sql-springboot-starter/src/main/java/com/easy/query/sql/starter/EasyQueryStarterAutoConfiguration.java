@@ -18,7 +18,6 @@ import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenera
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
-import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
@@ -306,7 +305,6 @@ public class EasyQueryStarterAutoConfiguration {
                                                                Map<String, ValueConverter<?, ?>> valueConverterMap,
                                                                Map<String, TableRoute<?>> tableRouteMap,
                                                                Map<String, DataSourceRoute<?>> dataSourceRouteMap,
-                                                               Map<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap,
                                                                Map<String, JdbcTypeHandler> jdbcTypeHandlerMap,
                                                                Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap,
                                                                Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap,
@@ -320,7 +318,6 @@ public class EasyQueryStarterAutoConfiguration {
                 valueConverterMap,
                 tableRouteMap,
                 dataSourceRouteMap,
-                valueUpdateAtomicTrackMap,
                 jdbcTypeHandlerMap,
                 columnValueSQLConverterMap,
                 generatedKeySQLColumnGeneratorMap,

@@ -13,10 +13,6 @@ import com.easy.query.core.basic.extension.logicdel.impl.LocalDateLogicDeleteStr
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateTimeLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.impl.LongTimestampLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
-import com.easy.query.core.basic.extension.track.update.ConcurrentValueUpdateAtomicTrack;
-import com.easy.query.core.basic.extension.track.update.IntegerNotNullValueUpdateAtomicTrack;
-import com.easy.query.core.basic.extension.track.update.LongNotNullValueUpdateAtomicTrack;
-import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionIntStrategy;
 import com.easy.query.core.basic.extension.version.VersionLongStrategy;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
@@ -67,7 +63,6 @@ public class QueryConfiguration {
     private Map<Class<? extends ShardingInitializer>, ShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ValueConverter<?, ?>>, ValueConverter<?, ?>> valueConverterMap = new ConcurrentHashMap<>();
     private List<EnumValueAutoConverter<?, ?>> enumValueAutoConverters = new CopyOnWriteArrayList<>();
-    private Map<Class<? extends ValueUpdateAtomicTrack<?>>, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ColumnValueSQLConverter>, ColumnValueSQLConverter> columnValueSQLConverterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends GeneratedKeySQLColumnGenerator>, GeneratedKeySQLColumnGenerator> generatedSQLColumnGeneratorMap = new ConcurrentHashMap<>();
 
@@ -84,9 +79,6 @@ public class QueryConfiguration {
         easyVersionStrategyMap.put(VersionUUIDStrategy.class, new VersionUUIDStrategy());
         easyVersionStrategyMap.put(VersionTimestampStrategy.class, new VersionTimestampStrategy());
         shardingInitializerMap.put(UnShardingInitializer.class, UnShardingInitializer.INSTANCE);
-        valueUpdateAtomicTrackMap.put(IntegerNotNullValueUpdateAtomicTrack.class, new IntegerNotNullValueUpdateAtomicTrack());
-        valueUpdateAtomicTrackMap.put(LongNotNullValueUpdateAtomicTrack.class, new LongNotNullValueUpdateAtomicTrack());
-        valueUpdateAtomicTrackMap.put(ConcurrentValueUpdateAtomicTrack.class, new ConcurrentValueUpdateAtomicTrack());
     }
 
     public boolean deleteThrow() {
@@ -269,18 +261,6 @@ public class QueryConfiguration {
 
     public ValueConverter<?, ?> getValueConverter(Class<? extends ValueConverter<?, ?>> converterClass) {
         return valueConverterMap.get(converterClass);
-    }
-
-    public void applyValueUpdateAtomicTrack(ValueUpdateAtomicTrack<?> trackValueUpdate) {
-        Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = EasyObjectUtil.typeCastNullable(trackValueUpdate.getClass());
-        if (valueUpdateAtomicTrackMap.containsKey(trackValueUpdateClass)) {
-            throw new EasyQueryException("ValueUpdateAtomicTrack:" + EasyClassUtil.getSimpleName(trackValueUpdateClass) + ",repeat");
-        }
-        valueUpdateAtomicTrackMap.put(trackValueUpdateClass, trackValueUpdate);
-    }
-
-    public ValueUpdateAtomicTrack<?> getValueUpdateAtomicTrack(Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass) {
-        return valueUpdateAtomicTrackMap.get(trackValueUpdateClass);
     }
 
     public void applyColumnValueSQLConverter(ColumnValueSQLConverter columnValueSQLConverter) {

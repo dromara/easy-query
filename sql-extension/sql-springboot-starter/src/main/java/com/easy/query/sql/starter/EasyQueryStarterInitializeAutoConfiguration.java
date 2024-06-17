@@ -8,7 +8,6 @@ import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenera
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
-import com.easy.query.core.basic.extension.track.update.ValueUpdateAtomicTrack;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.sql.starter.config.JdbcTypeHandlerReplaceConfigurer;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
@@ -105,10 +104,6 @@ public class EasyQueryStarterInitializeAutoConfiguration {
         }
         for (Map.Entry<String, GeneratedKeySQLColumnGenerator> incrementSQLColumnGeneratorEntry : easyQueryInitializeOption.getGeneratedKeySQLColumnGeneratorMap().entrySet()) {
             configuration.applyGeneratedKeySQLColumnGenerator(incrementSQLColumnGeneratorEntry.getValue());
-        }
-
-        for (Map.Entry<String, ValueUpdateAtomicTrack<?>> valueUpdateAtomicTrackEntry : easyQueryInitializeOption.getValueUpdateAtomicTrackMap().entrySet()) {
-            configuration.applyValueUpdateAtomicTrack(valueUpdateAtomicTrackEntry.getValue());
         }
         for (Map.Entry<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyEntry : easyQueryInitializeOption.getNavigateExtraFilterStrategyMap().entrySet()) {
             configuration.applyNavigateExtraFilterStrategy(navigateExtraFilterStrategyEntry.getValue());

@@ -38,7 +38,7 @@ public class CaseWhenThenEntityBuilder {
         this.sqlActionExpression = sqlActionExpression;
     }
 
-    public CaseWhenEntityBuilder then(Object then) {
+    public <TV> CaseWhenEntityBuilder then(TV then) {
         caseWhenBuilderExpression.caseWhen(filter -> {
             entitySQLContext._where(filter, sqlActionExpression);
         }, EasyParamExpressionUtil.getParamExpression(entitySQLContext,then));
