@@ -9,6 +9,7 @@ import com.easy.query.api.lambda.crud.read.LQuery4;
 import com.easy.query.api.lambda.crud.update.LUpdate;
 import com.easy.query.api.lambda.db.DbType;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.lambda.common.UnsafeFastBean;
 import com.easy.query.core.util.EasyBeanUtil;
@@ -64,6 +65,16 @@ public class EasyLambdaQueryClient
         {
             return DbType.MySQL;
         }
+    }
+
+    public Transaction beginTransaction()
+    {
+        return easyQueryClient.beginTransaction();
+    }
+
+    public Transaction beginTransaction(int isolationLevel)
+    {
+        return easyQueryClient.beginTransaction(isolationLevel);
     }
 
     public <T> LInsert<T> insertable(T entity)
