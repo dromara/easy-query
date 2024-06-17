@@ -7,7 +7,7 @@ import io.github.kiryu1223.expressionTree.expressions.ExprTree;
 
 import java.math.BigDecimal;
 
-public abstract class SqlAggregation4<T1, T2, T3, T4> implements IAggregation
+public abstract class SqlAggregation8<T1, T2, T3, T4, T5, T6, T7, T8> implements IAggregation
 {
     public <R> long count(@Expr Func4<T1, T2, T3, T4, R> expr)
     {

@@ -21,6 +21,7 @@ import io.github.kiryu1223.expressionTree.expressions.ExprTree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 
 public class LQuery<T> extends QueryBase
@@ -45,19 +46,19 @@ public class LQuery<T> extends QueryBase
 //        return new LQuery2<>(from, queryData);
 //    }
 
-    //region [FROM]
-
-    public <Tn> LQuery2<T, Tn> from(Class<Tn> Tn)
-    {
-        return new LQuery2<>(clientQueryable.from(Tn), queryData.getDbType());
-    }
-
-    public <Tn, T3> LQuery3<T, Tn, T3> from(Class<Tn> Tn, Class<T3> t3)
-    {
-        return new LQuery3<>(clientQueryable.from(Tn, t3), queryData.getDbType());
-    }
-
-    //endregion
+//    //region [FROM]
+//
+//    public <Tn> LQuery2<T, Tn> from(Class<Tn> Tn)
+//    {
+//        return new LQuery2<>(clientQueryable.from(Tn), queryData.getDbType());
+//    }
+//
+//    public <Tn, T3> LQuery3<T, Tn, T3> from(Class<Tn> Tn, Class<T3> t3)
+//    {
+//        return new LQuery3<>(clientQueryable.from(Tn, t3), queryData.getDbType());
+//    }
+//
+//    //endregion
 
     //region [JOIN]
 
@@ -69,8 +70,8 @@ public class LQuery<T> extends QueryBase
     public <Tn> LQuery2<T, Tn> innerJoin(Class<Tn> target, ExprTree<Func2<T, Tn, Boolean>> expr)
     {
         Join join = new Join(expr.getTree());
-        ClientQueryable2<T, Tn> clientQueryable2 = join.innerJoin(target, clientQueryable, queryData);
-        return new LQuery2<>(clientQueryable2, queryData.getDbType());
+        ClientQueryable2<T, Tn> joinQuery = join.innerJoin(target, clientQueryable, queryData);
+        return new LQuery2<>(joinQuery, queryData.getDbType());
     }
 
     public <Tn> LQuery2<T, Tn> innerJoin(LQuery<Tn> target, @Expr Func2<T, Tn, Boolean> func)
@@ -81,8 +82,8 @@ public class LQuery<T> extends QueryBase
     public <Tn> LQuery2<T, Tn> innerJoin(LQuery<Tn> target, ExprTree<Func2<T, Tn, Boolean>> expr)
     {
         Join join = new Join(expr.getTree());
-        ClientQueryable2<T, Tn> clientQueryable2 = join.innerJoin(target.getClientQueryable(), clientQueryable, queryData);
-        return new LQuery2<>(clientQueryable2, queryData.getDbType());
+        ClientQueryable2<T, Tn> joinQuery = join.innerJoin(target.getClientQueryable(), clientQueryable, queryData);
+        return new LQuery2<>(joinQuery, queryData.getDbType());
     }
 
     public <Tn> LQuery2<T, Tn> leftJoin(Class<Tn> target, @Expr Func2<T, Tn, Boolean> func)
@@ -93,8 +94,8 @@ public class LQuery<T> extends QueryBase
     public <Tn> LQuery2<T, Tn> leftJoin(Class<Tn> target, ExprTree<Func2<T, Tn, Boolean>> expr)
     {
         Join join = new Join(expr.getTree());
-        ClientQueryable2<T, Tn> clientQueryable2 = join.leftJoin(target, clientQueryable, queryData);
-        return new LQuery2<>(clientQueryable2, queryData.getDbType());
+        ClientQueryable2<T, Tn> joinQuery = join.leftJoin(target, clientQueryable, queryData);
+        return new LQuery2<>(joinQuery, queryData.getDbType());
     }
 
     public <Tn> LQuery2<T, Tn> leftJoin(LQuery<Tn> target, @Expr Func2<T, Tn, Boolean> func)
@@ -105,8 +106,8 @@ public class LQuery<T> extends QueryBase
     public <Tn> LQuery2<T, Tn> leftJoin(LQuery<Tn> target, ExprTree<Func2<T, Tn, Boolean>> expr)
     {
         Join join = new Join(expr.getTree());
-        ClientQueryable2<T, Tn> clientQueryable2 = join.leftJoin(target.getClientQueryable(), clientQueryable, queryData);
-        return new LQuery2<>(clientQueryable2, queryData.getDbType());
+        ClientQueryable2<T, Tn> joinQuery = join.leftJoin(target.getClientQueryable(), clientQueryable, queryData);
+        return new LQuery2<>(joinQuery, queryData.getDbType());
     }
 
     public <Tn> LQuery2<T, Tn> rightJoin(Class<Tn> target, @Expr Func2<T, Tn, Boolean> func)
@@ -117,8 +118,8 @@ public class LQuery<T> extends QueryBase
     public <Tn> LQuery2<T, Tn> rightJoin(Class<Tn> target, ExprTree<Func2<T, Tn, Boolean>> expr)
     {
         Join join = new Join(expr.getTree());
-        ClientQueryable2<T, Tn> clientQueryable2 = join.rightJoin(target, clientQueryable, queryData);
-        return new LQuery2<>(clientQueryable2, queryData.getDbType());
+        ClientQueryable2<T, Tn> joinQuery = join.rightJoin(target, clientQueryable, queryData);
+        return new LQuery2<>(joinQuery, queryData.getDbType());
     }
 
     public <Tn> LQuery2<T, Tn> rightJoin(LQuery<Tn> target, @Expr Func2<T, Tn, Boolean> func)
@@ -129,8 +130,8 @@ public class LQuery<T> extends QueryBase
     public <Tn> LQuery2<T, Tn> rightJoin(LQuery<Tn> target, ExprTree<Func2<T, Tn, Boolean>> expr)
     {
         Join join = new Join(expr.getTree());
-        ClientQueryable2<T, Tn> clientQueryable2 = join.rightJoin(target.getClientQueryable(), clientQueryable, queryData);
-        return new LQuery2<>(clientQueryable2, queryData.getDbType());
+        ClientQueryable2<T, Tn> joinQuery = join.rightJoin(target.getClientQueryable(), clientQueryable, queryData);
+        return new LQuery2<>(joinQuery, queryData.getDbType());
     }
 
     //endregion
@@ -266,12 +267,71 @@ public class LQuery<T> extends QueryBase
 
     //region [OTHER]
 
+    public LQuery<T> distinct()
+    {
+        clientQueryable.distinct();
+        return this;
+    }
+
+    public LQuery<T> distinct(boolean condition)
+    {
+        clientQueryable.distinct(condition);
+        return this;
+    }
+
+    public boolean any()
+    {
+        return clientQueryable.any();
+    }
+
     public T firstOrNull()
     {
         return clientQueryable.firstOrNull();
     }
 
+    public <R> R firstOrNull(Class<R> r)
+    {
+        return clientQueryable.firstOrNull(r);
+    }
+
+    public T firstNotNull()
+    {
+        return clientQueryable.firstNotNull();
+    }
+
+    public T firstNotNull(String msg)
+    {
+        return clientQueryable.firstNotNull(msg);
+    }
+
+    public T firstNotNull(String msg, String code)
+    {
+        return clientQueryable.firstNotNull(msg, code);
+    }
+
+    public T firstNotNull(Supplier<RuntimeException> throwFunc)
+    {
+        return clientQueryable.firstNotNull(throwFunc);
+    }
+
+    public <R> R firstNotNull(Class<R> r)
+    {
+        return clientQueryable.firstNotNull(r);
+    }
+
+    public <R> R firstNotNull(Class<R> r, String msg)
+    {
+        return clientQueryable.firstNotNull(r, msg);
+    }
+
+    public <R> R firstNotNull(Class<R> r, String msg, String code)
+    {
+        return clientQueryable.firstNotNull(r, msg, code);
+    }
+
     //endregion
+
+    // region [toAny]
 
     public String toSQL()
     {
@@ -297,4 +357,6 @@ public class LQuery<T> extends QueryBase
         }
         return rList;
     }
+
+    // endregion
 }

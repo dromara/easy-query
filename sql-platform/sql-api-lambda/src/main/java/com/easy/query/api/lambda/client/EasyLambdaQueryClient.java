@@ -4,6 +4,8 @@ import com.easy.query.api.lambda.crud.create.LInsert;
 import com.easy.query.api.lambda.crud.delete.LDelete;
 import com.easy.query.api.lambda.crud.read.LQuery;
 import com.easy.query.api.lambda.crud.read.LQuery2;
+import com.easy.query.api.lambda.crud.read.LQuery3;
+import com.easy.query.api.lambda.crud.read.LQuery4;
 import com.easy.query.api.lambda.crud.update.LUpdate;
 import com.easy.query.api.lambda.db.DbType;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -68,6 +70,7 @@ public class EasyLambdaQueryClient
     {
         return new LInsert<>(easyQueryClient.insertable(entity), dbType);
     }
+
     public <T> LDelete<T> deletable(Class<T> c)
     {
         return new LDelete<>(easyQueryClient.deletable(c), dbType);
@@ -86,5 +89,15 @@ public class EasyLambdaQueryClient
     public <T1, T2> LQuery2<T1, T2> queryable(Class<T1> c1, Class<T2> c2)
     {
         return new LQuery2<>(easyQueryClient.queryable(c1).from(c2), dbType);
+    }
+
+    public <T1, T2, T3> LQuery3<T1, T2, T3> queryable(Class<T1> c1, Class<T2> c2, Class<T3> c3)
+    {
+        return new LQuery3<>(easyQueryClient.queryable(c1).from(c2, c3), dbType);
+    }
+
+    public <T1, T2, T3, T4> LQuery4<T1, T2, T3, T4> queryable(Class<T1> c1, Class<T2> c2, Class<T3> c3, Class<T4> c4)
+    {
+        return new LQuery4<>(easyQueryClient.queryable(c1).from(c2, c3, c4), dbType);
     }
 }

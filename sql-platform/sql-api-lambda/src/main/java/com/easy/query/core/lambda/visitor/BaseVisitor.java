@@ -49,7 +49,7 @@ public class BaseVisitor extends DeepFindVisitor
         return sqlValue;
     }
 
-    protected void matchSqlFunctions(MethodCallExpression methodCall,StringBuilder sb)
+    protected void matchSqlFunctions(MethodCallExpression methodCall, StringBuilder sb)
     {
         Method callMethod = methodCall.getMethod();
         SqlFunctions.Ext[] exts = callMethod.getAnnotationsByType(SqlFunctions.Ext.class);
@@ -73,7 +73,7 @@ public class BaseVisitor extends DeepFindVisitor
         }
     }
 
-    protected void matchSqlTypes(MethodCallExpression methodCall,StringBuilder sb)
+    protected void matchSqlTypes(MethodCallExpression methodCall, StringBuilder sb)
     {
         Method callMethod = methodCall.getMethod();
         SqlTypes.Ext[] exts = callMethod.getAnnotationsByType(SqlTypes.Ext.class);
@@ -184,12 +184,19 @@ public class BaseVisitor extends DeepFindVisitor
 
     protected SqlTypes.Ext getSqlTypeExtByMethod(SqlTypes.Ext[] exts)
     {
+        // 先获取对应当前db类型的注解
         List<SqlTypes.Ext> extList = Arrays.stream(exts).filter(f -> f.dbType() == dbType).collect(Collectors.toList());
         if (extList.isEmpty())
         {
-            throw new RuntimeException("当前数据库类型:" + dbType + "\n没有找到对应数据库类型对应的注解\n" + Arrays.toString(exts));
+            // 没有的话看看有没有other类型
+            extList = Arrays.stream(exts).filter(f -> f.dbType() == DbType.Other).collect(Collectors.toList());
+            // 都没有就报错
+            if (extList.isEmpty())
+            {
+                throw new RuntimeException("当前数据库类型:" + dbType + "\n没有找到对应数据库类型对应的注解\n" + Arrays.toString(exts));
+            }
         }
-        else if (extList.size() > 1)
+        if (extList.size() > 1)
         {
             throw new RuntimeException("当前数据库类型:" + dbType + "\n找到了多个对应数据库类型对应的注解" + Arrays.toString(exts));
         }
@@ -266,12 +273,12 @@ public class BaseVisitor extends DeepFindVisitor
         else if (SqlFunctions.class.isAssignableFrom(declaringClass))
         {
             visit(methodCall.getExpr());
-            matchSqlFunctions(methodCall,data);
+            matchSqlFunctions(methodCall, data);
         }
         else if (SqlTypes.class.isAssignableFrom(declaringClass))
         {
             visit(methodCall.getExpr());
-            matchSqlTypes(methodCall,data);
+            matchSqlTypes(methodCall, data);
         }
         else if (Iterable.class.isAssignableFrom(declaringClass))
         {

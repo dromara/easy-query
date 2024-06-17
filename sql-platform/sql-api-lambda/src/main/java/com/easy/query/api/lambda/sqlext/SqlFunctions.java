@@ -28,7 +28,7 @@ public class SqlFunctions
         /**
          * 目标数据库
          */
-        DbType dbType();
+        DbType dbType() default DbType.Other;
 
         /**
          * 实际函数展开

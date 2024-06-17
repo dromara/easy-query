@@ -1,7 +1,7 @@
 package com.easy.query.core.lambda.visitor;
 
-import com.easy.query.api.lambda.crud.read.IAggregation;
-import com.easy.query.api.lambda.crud.read.IGroup;
+import com.easy.query.api.lambda.crud.read.group.IAggregation;
+import com.easy.query.api.lambda.crud.read.group.IGroup;
 import com.easy.query.api.lambda.crud.read.QueryData;
 import com.easy.query.api.lambda.crud.read.group.GroupExtData;
 import com.easy.query.core.lambda.exception.IllegalExpressionException;
