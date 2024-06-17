@@ -1,6 +1,5 @@
 package com.easy.query.core.lambda.condition.join;
 
-import com.easy.query.api.lambda.crud.read.LQuery;
 import com.easy.query.api.lambda.crud.read.QueryData;
 import com.easy.query.core.basic.api.select.*;
 import com.easy.query.core.lambda.condition.criteria.Criteria;

@@ -14,7 +14,7 @@ public class Include extends Criteria
 
     public Include(LambdaExpression<?> expression)
     {
-        this(expression,0);
+        this(expression, 0);
     }
 
     public Include(LambdaExpression<?> expression, int groupSize)

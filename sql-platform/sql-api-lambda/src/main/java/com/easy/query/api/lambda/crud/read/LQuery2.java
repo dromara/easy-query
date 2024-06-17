@@ -12,8 +12,6 @@ import com.easy.query.core.lambda.condition.limit.Limit;
 import com.easy.query.core.lambda.condition.orderby.OrderBy;
 import com.easy.query.core.lambda.condition.select.Select;
 import com.easy.query.core.lambda.condition.where.Where;
-import com.easy.query.core.lambda.visitor.SqlValue;
-import com.easy.query.core.lambda.visitor.WhereVisitor;
 import io.github.kiryu1223.expressionTree.delegate.Func1;
 import io.github.kiryu1223.expressionTree.delegate.Func2;
 import io.github.kiryu1223.expressionTree.delegate.Func3;

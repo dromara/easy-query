@@ -1,7 +1,6 @@
 package com.easy.query.api.lambda.crud.read.group;
 
 import com.easy.query.api.lambda.sqlext.SqlFunctionInvokeException;
-import io.github.kiryu1223.expressionTree.delegate.Func4;
 import io.github.kiryu1223.expressionTree.delegate.Func7;
 import io.github.kiryu1223.expressionTree.expressions.Expr;
 import io.github.kiryu1223.expressionTree.expressions.ExprTree;

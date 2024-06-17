@@ -1,7 +1,6 @@
 package com.easy.query.api.lambda.crud.read;
 
 
-
 import com.easy.query.api.lambda.crud.read.group.GroupExtData;
 import com.easy.query.api.lambda.db.DbType;
 

@@ -7,7 +7,7 @@
         <groupId>com.easy-query</groupId>
         <artifactId>sql-platform</artifactId>
         <version>2.0.32</version>
-<!--        <relativePath>../../pom.xml</relativePath>-->
+        <!--        <relativePath>../../pom.xml</relativePath>-->
     </parent>
 
     <artifactId>sql-api-lambda</artifactId>

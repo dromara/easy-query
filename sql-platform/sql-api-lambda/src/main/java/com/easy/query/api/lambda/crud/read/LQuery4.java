@@ -111,7 +111,7 @@ public class LQuery4<T1, T2, T3, T4> extends QueryBase
     }
 
     // endregion
-    
+
     // region [WHERE]
     public LQuery4<T1, T2, T3, T4> where(@Expr Func4<T1, T2, T3, T4, Boolean> func)
     {

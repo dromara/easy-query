@@ -3,7 +3,6 @@ package com.easy.query.api.lambda.crud.read.group;
 import com.easy.query.api.lambda.crud.read.LQuery;
 import com.easy.query.api.lambda.crud.read.QueryBase;
 import com.easy.query.api.lambda.crud.read.QueryData;
-import com.easy.query.core.basic.api.select.ClientQueryable5;
 import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.lambda.condition.having.Having;
 import com.easy.query.core.lambda.condition.orderby.OrderBy;

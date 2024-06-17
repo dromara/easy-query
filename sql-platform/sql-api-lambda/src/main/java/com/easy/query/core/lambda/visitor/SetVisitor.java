@@ -9,8 +9,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.easy.query.core.lambda.util.ExpressionUtil.*;
-import static com.easy.query.core.lambda.util.SqlUtil.*;
+import static com.easy.query.core.lambda.util.ExpressionUtil.hasParameter;
+import static com.easy.query.core.lambda.util.SqlUtil.fieldName;
 
 public class SetVisitor extends BaseVisitor
 {

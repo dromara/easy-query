@@ -10,7 +10,6 @@ import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.lambda.condition.criteria.Criteria;
 import com.easy.query.core.lambda.visitor.SqlValue;
 import com.easy.query.core.lambda.visitor.WhereVisitor;
-import com.easy.query.core.metadata.EntityMetadata;
 import io.github.kiryu1223.expressionTree.expressions.LambdaExpression;
 
 public class Where extends Criteria

@@ -1,10 +1,8 @@
 package com.easy.query.api.lambda.crud.read;
 
-import com.easy.query.api.lambda.crud.read.group.GroupedQuery6;
 import com.easy.query.api.lambda.crud.read.group.GroupedQuery7;
 import com.easy.query.api.lambda.db.DbType;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.basic.api.select.ClientQueryable6;
 import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.lambda.condition.groupBy.GroupBy;
 import com.easy.query.core.lambda.condition.include.Include;
@@ -13,7 +11,6 @@ import com.easy.query.core.lambda.condition.orderby.OrderBy;
 import com.easy.query.core.lambda.condition.select.Select;
 import com.easy.query.core.lambda.condition.where.Where;
 import io.github.kiryu1223.expressionTree.delegate.Func1;
-import io.github.kiryu1223.expressionTree.delegate.Func6;
 import io.github.kiryu1223.expressionTree.delegate.Func7;
 import io.github.kiryu1223.expressionTree.expressions.Expr;
 import io.github.kiryu1223.expressionTree.expressions.ExprTree;
@@ -94,12 +91,12 @@ public class LQuery7<T1, T2, T3, T4, T5, T6, T7> extends QueryBase
     // endregion
 
     // region [GROUP BY]
-    public <Key> GroupedQuery7<Key, T1, T2, T3, T4, T5, T6,T7> groupBy(@Expr Func7<T1, T2, T3, T4, T5, T6, T7, Key> expr)
+    public <Key> GroupedQuery7<Key, T1, T2, T3, T4, T5, T6, T7> groupBy(@Expr Func7<T1, T2, T3, T4, T5, T6, T7, Key> expr)
     {
         throw new RuntimeException();
     }
 
-    public <Key> GroupedQuery7<Key, T1, T2, T3, T4, T5, T6,T7> groupBy(ExprTree<Func7<T1, T2, T3, T4, T5, T6, T7, Key>> expr)
+    public <Key> GroupedQuery7<Key, T1, T2, T3, T4, T5, T6, T7> groupBy(ExprTree<Func7<T1, T2, T3, T4, T5, T6, T7, Key>> expr)
     {
         GroupBy groupBy = new GroupBy(expr.getTree());
         groupBy.analysis(clientQueryable, queryData);

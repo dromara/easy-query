@@ -1,10 +1,8 @@
 package com.easy.query.api.lambda.crud.read;
 
-import com.easy.query.api.lambda.crud.read.group.GroupedQuery4;
 import com.easy.query.api.lambda.crud.read.group.GroupedQuery5;
 import com.easy.query.api.lambda.db.DbType;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.basic.api.select.ClientQueryable5;
 import com.easy.query.core.basic.api.select.ClientQueryable6;
 import com.easy.query.core.lambda.condition.groupBy.GroupBy;
@@ -15,7 +13,6 @@ import com.easy.query.core.lambda.condition.orderby.OrderBy;
 import com.easy.query.core.lambda.condition.select.Select;
 import com.easy.query.core.lambda.condition.where.Where;
 import io.github.kiryu1223.expressionTree.delegate.Func1;
-import io.github.kiryu1223.expressionTree.delegate.Func4;
 import io.github.kiryu1223.expressionTree.delegate.Func5;
 import io.github.kiryu1223.expressionTree.delegate.Func6;
 import io.github.kiryu1223.expressionTree.expressions.Expr;

@@ -20,6 +20,7 @@ public class GroupedQuery2<Key, T1, T2> extends QueryBase
         super(queryData);
         this.clientQueryable = clientQueryable;
     }
+
     // region [HAVING]
     public GroupedQuery2<Key, T1, T2> having(@Expr Func1<Group2<Key, T1, T2>, Boolean> func)
     {

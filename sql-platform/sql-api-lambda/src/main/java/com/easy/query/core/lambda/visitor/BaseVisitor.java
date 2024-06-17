@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.easy.query.core.lambda.util.ExpressionUtil.*;
-import static com.easy.query.core.lambda.util.SqlUtil.*;
+import static com.easy.query.core.lambda.util.SqlUtil.toSqlOp;
 
 public class BaseVisitor extends DeepFindVisitor
 {
