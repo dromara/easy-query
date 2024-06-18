@@ -10,6 +10,7 @@ import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
+import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
@@ -21,6 +22,7 @@ import com.easy.query.test.vo.TestUserAAA;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -182,6 +184,24 @@ public class QueryTest18 extends BaseTest {
                     SQLFunction sqlFunction = t.fx().nullOrDefault("id", "123");
                     t.sqlFunc(sqlFunction);
                 }).toList();
+//        LocalDateTime[]  times= new LocalDateTime[2];
+//        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+//                .where(t -> {
+//                    t.createTime().rangeClosed(getIndexValueOrNull(times, 0), getIndexValueOrNull(times, 1));
+//                }).toList();
+    }
+
+    public static <TValue> TValue getIndexValueOrNull(TValue[] values,int index){
+        if(index<0){
+            throw new IllegalArgumentException("index < 0.");
+        }
+        if(EasyArrayUtil.isEmpty(values)){
+            return null;
+        }
+        if(values.length<=index){
+            return null;
+        }
+        return values[index];
     }
 
 }
