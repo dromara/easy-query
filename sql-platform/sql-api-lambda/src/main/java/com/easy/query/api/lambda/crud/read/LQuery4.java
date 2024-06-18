@@ -5,6 +5,7 @@ import com.easy.query.api.lambda.db.DbType;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.basic.api.select.ClientQueryable5;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.lambda.condition.groupBy.GroupBy;
 import com.easy.query.core.lambda.condition.include.Include;
 import com.easy.query.core.lambda.condition.join.Join;
@@ -303,6 +304,11 @@ public class LQuery4<T1, T2, T3, T4> extends QueryBase
     public String toSQL()
     {
         return clientQueryable.toSQL();
+    }
+
+    public ToSQLResult toSQLResult()
+    {
+        return clientQueryable.toSQLResult();
     }
 
     public List<T1> toList()

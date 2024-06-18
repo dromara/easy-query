@@ -9,7 +9,7 @@ public interface IAggregation
         throw new SqlFunctionInvokeException();
     }
 
-    default <R> long count(int i)
+    default long count(int i)
     {
         throw new SqlFunctionInvokeException();
     }

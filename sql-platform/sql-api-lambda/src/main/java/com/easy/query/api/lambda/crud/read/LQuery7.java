@@ -4,14 +4,18 @@ import com.easy.query.api.lambda.crud.read.group.GroupedQuery7;
 import com.easy.query.api.lambda.db.DbType;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable7;
+import com.easy.query.core.basic.api.select.ClientQueryable8;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.lambda.condition.groupBy.GroupBy;
 import com.easy.query.core.lambda.condition.include.Include;
+import com.easy.query.core.lambda.condition.join.Join;
 import com.easy.query.core.lambda.condition.limit.Limit;
 import com.easy.query.core.lambda.condition.orderby.OrderBy;
 import com.easy.query.core.lambda.condition.select.Select;
 import com.easy.query.core.lambda.condition.where.Where;
 import io.github.kiryu1223.expressionTree.delegate.Func1;
 import io.github.kiryu1223.expressionTree.delegate.Func7;
+import io.github.kiryu1223.expressionTree.delegate.Func8;
 import io.github.kiryu1223.expressionTree.expressions.Expr;
 import io.github.kiryu1223.expressionTree.expressions.ExprTree;
 
@@ -33,6 +37,81 @@ public class LQuery7<T1, T2, T3, T4, T5, T6, T7> extends QueryBase
         super(new QueryData(dbType));
         this.clientQueryable = clientQueryable;
     }
+
+    //region [JOIN]
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> innerJoin(Class<Tn> target, @Expr Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean> func)
+    {
+        throw new RuntimeException();
+    }
+
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> innerJoin(Class<Tn> target, ExprTree<Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean>> expr)
+    {
+        Join join = new Join(expr.getTree());
+        ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, Tn> joinQuery = join.innerJoin(target, clientQueryable, queryData);
+        return new LQuery8<>(joinQuery, queryData.getDbType());
+    }
+
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> innerJoin(LQuery<Tn> target, @Expr Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean> func)
+    {
+        throw new RuntimeException();
+    }
+
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> innerJoin(LQuery<Tn> target, ExprTree<Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean>> expr)
+    {
+        Join join = new Join(expr.getTree());
+        ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, Tn> joinQuery = join.innerJoin(target.getClientQueryable(), clientQueryable, queryData);
+        return new LQuery8<>(joinQuery, queryData.getDbType());
+    }
+
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> leftJoin(Class<Tn> target, @Expr Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean> func)
+    {
+        throw new RuntimeException();
+    }
+
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> leftJoin(Class<Tn> target, ExprTree<Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean>> expr)
+    {
+        Join join = new Join(expr.getTree());
+        ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, Tn> joinQuery = join.leftJoin(target, clientQueryable, queryData);
+        return new LQuery8<>(joinQuery, queryData.getDbType());
+    }
+
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> leftJoin(LQuery<Tn> target, @Expr Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean> func)
+    {
+        throw new RuntimeException();
+    }
+
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> leftJoin(LQuery<Tn> target, ExprTree<Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean>> expr)
+    {
+        Join join = new Join(expr.getTree());
+        ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, Tn> joinQuery = join.leftJoin(target.getClientQueryable(), clientQueryable, queryData);
+        return new LQuery8<>(joinQuery, queryData.getDbType());
+    }
+
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> rightJoin(Class<Tn> target, @Expr Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean> func)
+    {
+        throw new RuntimeException();
+    }
+
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> rightJoin(Class<Tn> target, ExprTree<Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean>> expr)
+    {
+        Join join = new Join(expr.getTree());
+        ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, Tn> joinQuery = join.rightJoin(target, clientQueryable, queryData);
+        return new LQuery8<>(joinQuery, queryData.getDbType());
+    }
+
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> rightJoin(LQuery<Tn> target, @Expr Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean> func)
+    {
+        throw new RuntimeException();
+    }
+
+    public <Tn> LQuery8<T1, T2, T3, T4, T5, T6, T7, Tn> rightJoin(LQuery<Tn> target, ExprTree<Func8<T1, T2, T3, T4, T5, T6, T7, Tn, Boolean>> expr)
+    {
+        Join join = new Join(expr.getTree());
+        ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, Tn> joinQuery = join.rightJoin(target.getClientQueryable(), clientQueryable, queryData);
+        return new LQuery8<>(joinQuery, queryData.getDbType());
+    }
+
+    // endregion
 
     // region [WHERE]
     public LQuery7<T1, T2, T3, T4, T5, T6, T7> where(@Expr Func7<T1, T2, T3, T4, T5, T6, T7, Boolean> func)
@@ -225,6 +304,11 @@ public class LQuery7<T1, T2, T3, T4, T5, T6, T7> extends QueryBase
     public String toSQL()
     {
         return clientQueryable.toSQL();
+    }
+
+    public ToSQLResult toSQLResult()
+    {
+        return clientQueryable.toSQLResult();
     }
 
     public List<T1> toList()
