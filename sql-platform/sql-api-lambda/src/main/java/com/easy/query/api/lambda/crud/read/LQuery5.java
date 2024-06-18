@@ -2,9 +2,12 @@ package com.easy.query.api.lambda.crud.read;
 
 import com.easy.query.api.lambda.crud.read.group.GroupedQuery5;
 import com.easy.query.api.lambda.db.DbType;
+import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.api.pagination.Pager;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable5;
 import com.easy.query.core.basic.api.select.ClientQueryable6;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.lambda.condition.groupBy.GroupBy;
 import com.easy.query.core.lambda.condition.include.Include;
@@ -14,6 +17,7 @@ import com.easy.query.core.lambda.condition.orderby.OrderBy;
 import com.easy.query.core.lambda.condition.select.Select;
 import com.easy.query.core.lambda.condition.where.Where;
 import io.github.kiryu1223.expressionTree.delegate.Func1;
+import io.github.kiryu1223.expressionTree.delegate.Func2;
 import io.github.kiryu1223.expressionTree.delegate.Func5;
 import io.github.kiryu1223.expressionTree.delegate.Func6;
 import io.github.kiryu1223.expressionTree.expressions.Expr;
@@ -21,6 +25,7 @@ import io.github.kiryu1223.expressionTree.expressions.ExprTree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class LQuery5<T1, T2, T3, T4, T5> extends QueryBase
@@ -206,6 +211,24 @@ public class LQuery5<T1, T2, T3, T4, T5> extends QueryBase
         Select select = new Select(expr.getTree());
         return new LQuery<>(select.analysis(clientQueryable, queryData), queryData.getDbType());
     }
+
+    public <R> NoWayQuery<R> selectAutoInclude(Class<R> r)
+    {
+        Query<R> query = clientQueryable.selectAutoInclude(r);
+        return new NoWayQuery<>(query);
+    }
+
+    public <R> NoWayQuery<R> selectAutoInclude(@Expr Func5<T1, T2, T3, T4, T5, R> expr)
+    {
+        throw new RuntimeException();
+    }
+
+    public <R> NoWayQuery<R> selectAutoInclude(ExprTree<Func5<T1, T2, T3, T4, T5, R>> expr)
+    {
+        Select select = new Select(expr.getTree());
+        return new NoWayQuery<>(select.analysisAutoInclude(clientQueryable, queryData));
+    }
+
     // endregion
 
     // region [INCLUDE]
@@ -324,6 +347,31 @@ public class LQuery5<T1, T2, T3, T4, T5> extends QueryBase
             rList.add(func.invoke(t));
         }
         return rList;
+    }
+
+    public Map<String, Object> toMap()
+    {
+        return clientQueryable.toMap();
+    }
+
+    public List<Map<String, Object>> toMaps()
+    {
+        return clientQueryable.toMaps();
+    }
+
+    public EasyPageResult<T1> toPageResult(long pageIndex, long pageSize)
+    {
+        return clientQueryable.toPageResult(pageIndex, pageSize);
+    }
+
+    public EasyPageResult<T1> toPageResult(long pageIndex, long pageSize, long pageTotal)
+    {
+        return clientQueryable.toPageResult(pageIndex, pageSize, pageTotal);
+    }
+
+    public <TPageResult> TPageResult toPageResult(Pager<T1,TPageResult> pager)
+    {
+        return clientQueryable.toPageResult(pager);
     }
 
     // endregion

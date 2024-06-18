@@ -9,27 +9,27 @@ import java.math.BigDecimal;
 
 public abstract class SqlAggregation6<T1, T2, T3, T4, T5, T6> implements IAggregation
 {
-    public <R> long count(@Expr Func6<T1, T2, T3, T4, T5, T6, R> expr)
+    public <R> long count(Func6<T1, T2, T3, T4, T5, T6, R> expr)
     {
         throw new SqlFunctionInvokeException();
     }
 
-    public <R> BigDecimal sum(@Expr Func6<T1, T2, T3, T4, T5, T6, R> expr)
+    public <R> BigDecimal sum(Func6<T1, T2, T3, T4, T5, T6, R> expr)
     {
         throw new SqlFunctionInvokeException();
     }
 
-    public <R> BigDecimal avg(@Expr Func6<T1, T2, T3, T4, T5, T6, R> expr)
+    public <R> BigDecimal avg(Func6<T1, T2, T3, T4, T5, T6, R> expr)
     {
         throw new SqlFunctionInvokeException();
     }
 
-    public <R> R max(@Expr Func6<T1, T2, T3, T4, T5, T6, R> expr)
+    public <R> R max(Func6<T1, T2, T3, T4, T5, T6, R> expr)
     {
         throw new SqlFunctionInvokeException();
     }
 
-    public <R> R min(@Expr Func6<T1, T2, T3, T4, T5, T6, R> expr)
+    public <R> R min(Func6<T1, T2, T3, T4, T5, T6, R> expr)
     {
         throw new SqlFunctionInvokeException();
     }
