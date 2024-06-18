@@ -49,6 +49,7 @@ import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.UnKnownTypeHandler;
 import com.easy.query.core.common.bean.FastBean;
 import com.easy.query.core.common.bean.FastBeanProperty;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
@@ -184,7 +185,17 @@ public class EntityMetadata {
         Table table = EasyClassUtil.getAnnotation(entityClass, Table.class);
         if (table != null) {
             this.tableName = EasyStringUtil.defaultIfBank(table.value(), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
+
             this.schema = table.schema();
+            if (EasyStringUtil.isBlank(this.schema)) {
+                EasyQueryOption easyQueryOption = configuration.getEasyQueryOption();
+                //如果存在默认的schema那么就用这个
+                boolean hasDefaultSchema = EasyStringUtil.isNotBlank(easyQueryOption.getDefaultSchema());
+                if(hasDefaultSchema){
+                    this.schema = easyQueryOption.getDefaultSchema();
+                }
+            }
+
         }
         EasyAssertMessage easyAssertMessage = EasyClassUtil.getAnnotation(entityClass, EasyAssertMessage.class);
         if (easyAssertMessage != null) {
@@ -376,7 +387,7 @@ public class EntityMetadata {
 
 //        Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
         PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
-        NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, relationMappingType, mappingPath, navigateType, EasyClassUtil.isBasicTypeOrEnum(navigateType), beanSetter,property);
+        NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, relationMappingType, mappingPath, navigateType, EasyClassUtil.isBasicTypeOrEnum(navigateType), beanSetter, property);
 
         property2NavigateFlatMap.put(property, navigateFlatMetadata);
     }

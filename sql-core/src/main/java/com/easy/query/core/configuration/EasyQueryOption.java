@@ -123,12 +123,13 @@ public class EasyQueryOption {
     private final boolean warningColumnMiss;
     private final int shardingFetchSize;
     private final boolean mapToBeanStrict;
+    private final String defaultSchema;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql, boolean startTimeJob, boolean defaultTrack,
-                           int relationGroupSize,boolean keepNativeStyle,long reverseOffsetThreshold,boolean warningColumnMiss,int shardingFetchSize,boolean mapToBeanStrict) {
+                           int relationGroupSize,boolean keepNativeStyle,long reverseOffsetThreshold,boolean warningColumnMiss,int shardingFetchSize,boolean mapToBeanStrict,String defaultSchema) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -195,6 +196,7 @@ public class EasyQueryOption {
         this.warningColumnMiss = warningColumnMiss;
         this.shardingFetchSize = shardingFetchSize;
         this.mapToBeanStrict = mapToBeanStrict;
+        this.defaultSchema = defaultSchema;
     }
 
     public int getMaxShardingRouteCount() {
@@ -314,5 +316,9 @@ public class EasyQueryOption {
 
     public boolean isMapToBeanStrict() {
         return mapToBeanStrict;
+    }
+
+    public String getDefaultSchema() {
+        return defaultSchema;
     }
 }

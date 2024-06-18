@@ -78,6 +78,7 @@ public class EasyQueryOptionBuilder {
      * 映射结果集是否是严格的如果不严格则会尝试忽略大小写映射默认严格
      */
     private boolean mapToBeanStrict;
+    private String defaultSchema;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -107,6 +108,7 @@ public class EasyQueryOptionBuilder {
         this.warningColumnMiss = true;
         this.shardingFetchSize = 1000;
         this.mapToBeanStrict = true;
+        this.defaultSchema = null;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -237,6 +239,10 @@ public class EasyQueryOptionBuilder {
         this.mapToBeanStrict = mapToBeanStrict;
     }
 
+    public void setDefaultSchema(String defaultSchema) {
+        this.defaultSchema = defaultSchema;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -266,6 +272,7 @@ public class EasyQueryOptionBuilder {
                 this.reverseOffsetThreshold,
                 this.warningColumnMiss,
                 this.shardingFetchSize,
-                this.mapToBeanStrict);
+                this.mapToBeanStrict,
+                this.defaultSchema);
     }
 }

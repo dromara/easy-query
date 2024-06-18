@@ -7,6 +7,7 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.util.EasySQLUtil;
@@ -22,6 +23,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2024/6/13 12:19
@@ -153,6 +155,33 @@ public class QueryTest18 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE (CASE WHEN t.`id` = ? THEN t.`id` ELSE IFNULL(t.`id`,?) END) = ? AND EXISTS (SELECT 1 FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`title` = t.`id` AND t1.`content` = ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),1234(String),123xx(String),false(Boolean),(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+//    @Test
+//    public void test14(){
+//
+//        List<Map> list1 = easyQueryClient.queryable(Map.class)
+//                .asTable("t_user")
+//                .leftJoin(Map.class, (t, t1) -> {
+//                    t.eq(t1, "id", "uid");
+//                }).asTable("t_user_extra")
+//                .where((m1, m2) -> {
+//                    m1.eq("name","111");
+//                    m2.like("content","456");
+//                })
+//                .toList();
+//    }
+    @Test
+    public void test15(){
+        //配置来源数据库
+        List<String> columns = Arrays.asList("id", "stars", "title");
+        List<Topic> list = easyQueryClient.queryable(Topic.class)
+                .select(Topic.class,t -> {
+                    for (String column : columns) {
+                        t.column(column);
+                    }
+                    SQLFunction sqlFunction = t.fx().nullOrDefault("id", "123");
+                    t.sqlFunc(sqlFunction);
+                }).toList();
     }
 
 }

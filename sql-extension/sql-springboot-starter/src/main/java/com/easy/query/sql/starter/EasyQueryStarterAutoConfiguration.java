@@ -264,6 +264,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setShardingFetchSize(easyQueryProperties.getShardingFetchSize());
                     builder.setReverseOffsetThreshold(easyQueryProperties.getReverseOffsetThreshold());
                     builder.setMapToBeanStrict(easyQueryProperties.isMapToBeanStrict());
+                    builder.setDefaultSchema(easyQueryProperties.getDefaultSchema());
                 })
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)
