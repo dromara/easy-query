@@ -1,7 +1,7 @@
 package com.easy.query.sqllite.config;
 
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
-import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
@@ -17,7 +17,7 @@ import com.easy.query.sqllite.func.SQLiteFuncImpl;
 public class SQLLiteDatabaseConfiguration implements DatabaseConfiguration {
     @Override
     public void configure(ServiceCollection services) {
-        services.addService(Dialect.class, SQLLiteDialect.class);
+        services.addService(SQLKeyword.class, SQLLiteSQLKeyword.class);
         services.addService(ExpressionFactory.class, SQLiteExpressionFactory.class);
         services.addService(SQLFunc.class, SQLiteFuncImpl.class);
     }

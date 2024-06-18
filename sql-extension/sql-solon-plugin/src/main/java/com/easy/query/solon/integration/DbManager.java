@@ -29,6 +29,7 @@ import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
+import com.easy.query.gauss.db.config.GaussDBDatabaseConfiguration;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
@@ -192,6 +193,7 @@ public class DbManager {
             case ORACLE:return new OracleDatabaseConfiguration();
             case SQLITE:return new SQLLiteDatabaseConfiguration();
             case CLICKHOUSE:return new ClickHouseDatabaseConfiguration();
+            case GAUSS_DB:return new GaussDBDatabaseConfiguration();
         }
         return null;
     }

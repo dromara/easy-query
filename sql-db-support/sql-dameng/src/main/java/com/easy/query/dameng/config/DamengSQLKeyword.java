@@ -1,14 +1,14 @@
-package com.easy.query.gauss.db.config;
+package com.easy.query.dameng.config;
 
-import com.easy.query.core.configuration.dialect.AbstractDialect;
+import com.easy.query.core.configuration.dialect.AbstractSQLKeyword;
 
 /**
- * create time 2023/7/28 21:09
+ * create time 2023/7/27 10:48
  * 文件说明
  *
  * @author xuejiaming
  */
-public final class GaussDBDialect extends AbstractDialect {
+public final class DamengSQLKeyword extends AbstractSQLKeyword {
     @Override
     protected String getQuoteStart() {
         return "\"";

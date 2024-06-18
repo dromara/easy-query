@@ -8,7 +8,7 @@ import com.easy.query.core.util.EasyStringUtil;
  * @Date: 2023/2/12 09:22
  * @author xuejiaming
  */
-public abstract class AbstractDialect implements Dialect {
+public abstract class AbstractSQLKeyword implements SQLKeyword {
     protected abstract String getQuoteStart();
 
     protected abstract String getQuoteEnd();

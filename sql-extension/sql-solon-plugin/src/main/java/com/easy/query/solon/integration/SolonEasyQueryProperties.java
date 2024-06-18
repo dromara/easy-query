@@ -151,6 +151,7 @@ public class SolonEasyQueryProperties {
                 case "oracle":return DatabaseEnum.ORACLE;
                 case "sqlite":return DatabaseEnum.SQLITE;
                 case "clickhouse":return DatabaseEnum.CLICKHOUSE;
+                case "gauss_db":return DatabaseEnum.GAUSS_DB;
             }
             return null;
         });

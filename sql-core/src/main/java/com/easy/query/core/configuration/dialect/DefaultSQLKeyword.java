@@ -6,7 +6,7 @@ package com.easy.query.core.configuration.dialect;
  *
  * @author xuejiaming
  */
-public final class DefaultDialect implements Dialect {
+public final class DefaultSQLKeyword implements SQLKeyword {
 
     @Override
     public String getQuoteName(String keyword) {

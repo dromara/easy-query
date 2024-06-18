@@ -1,6 +1,6 @@
 package com.easy.query.kingbase.es.config;
 
-import com.easy.query.core.configuration.dialect.AbstractDialect;
+import com.easy.query.core.configuration.dialect.AbstractSQLKeyword;
 
 /**
  * create time 2023/7/28 21:09
@@ -8,7 +8,7 @@ import com.easy.query.core.configuration.dialect.AbstractDialect;
  *
  * @author xuejiaming
  */
-public final class KingbaseESDialect extends AbstractDialect {
+public final class KingbaseESSQLKeyword extends AbstractSQLKeyword {
     @Override
     protected String getQuoteStart() {
         return "\"";

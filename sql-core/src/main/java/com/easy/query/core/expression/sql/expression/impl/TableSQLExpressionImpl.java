@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -27,7 +27,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
     protected final MultiTableTypeEnum multiTableType;
     protected final QueryRuntimeContext runtimeContext;
-    protected final Dialect dialect;
+    protected final SQLKeyword SQLKeyWord;
     protected final TableAvailable entityTable;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
@@ -38,7 +38,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
         this.entityTable = entityTable;
         this.multiTableType = multiTableType;
         this.runtimeContext = runtimeContext;
-        this.dialect = runtimeContext.getQueryConfiguration().getDialect();
+        this.SQLKeyWord = runtimeContext.getQueryConfiguration().getDialect();
     }
 
     @Override
@@ -85,10 +85,10 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
     @Override
     public String getTableName() {
-        String tableName = dialect.getQuoteName(doGetTableName());
+        String tableName = SQLKeyWord.getQuoteName(doGetTableName());
         String schema = doGetSchema();
         if (EasyStringUtil.isNotBlank(schema)) {
-            return dialect.getQuoteName(schema) + "." + tableName;
+            return SQLKeyWord.getQuoteName(schema) + "." + tableName;
         }
         return tableName;
     }

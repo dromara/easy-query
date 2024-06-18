@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.migration.creator;
 
 import com.easy.query.core.basic.migration.TableCreator;
-import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -20,14 +20,14 @@ public abstract class AbstractTableCreator<TEntity> implements TableCreator<TEnt
     protected final QueryRuntimeContext runtimeContext;
     protected Function<String, String> tableNameAs;
     protected EntityMetadata entityMetadata;
-    protected Dialect dialect;
+    protected SQLKeyword SQLKeyWord;
 
     public AbstractTableCreator(Class<TEntity> entityClass, QueryRuntimeContext runtimeContext){
         this.entityClass = entityClass;
         this.runtimeContext = runtimeContext;
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         this.entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
-        this.dialect = runtimeContext.getQueryConfiguration().getDialect();
+        this.SQLKeyWord = runtimeContext.getQueryConfiguration().getDialect();
     }
 
     @Override

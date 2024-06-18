@@ -87,6 +87,12 @@
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
+            <artifactId>sql-gauss-db</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
             <artifactId>sql-api4j</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

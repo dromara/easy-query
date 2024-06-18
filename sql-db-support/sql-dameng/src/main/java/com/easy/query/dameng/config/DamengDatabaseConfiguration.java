@@ -1,7 +1,7 @@
 package com.easy.query.dameng.config;
 
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
-import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
@@ -17,7 +17,7 @@ import com.easy.query.dameng.func.DamengSQLFuncImpl;
 public class DamengDatabaseConfiguration implements DatabaseConfiguration {
     @Override
     public void configure(ServiceCollection services) {
-        services.addService(Dialect.class, DamengDialect.class);
+        services.addService(SQLKeyword.class, DamengSQLKeyword.class);
         services.addService(ExpressionFactory.class, DamengExpressionFactory.class);
         services.addService(SQLFunc.class, DamengSQLFuncImpl.class);
     }

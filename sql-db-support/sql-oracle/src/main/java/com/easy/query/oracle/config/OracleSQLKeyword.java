@@ -1,15 +1,14 @@
-package com.easy.query.pgsql.config;
+package com.easy.query.oracle.config;
 
-
-import com.easy.query.core.configuration.dialect.AbstractDialect;
+import com.easy.query.core.configuration.dialect.AbstractSQLKeyword;
 
 /**
- * create time 2023/5/4 09:03
+ * create time 2023/8/15 17:16
  * 文件说明
  *
  * @author xuejiaming
  */
-public final class PgSQLDialect extends AbstractDialect {
+public class OracleSQLKeyword extends AbstractSQLKeyword {
     @Override
     protected String getQuoteStart() {
         return "\"";

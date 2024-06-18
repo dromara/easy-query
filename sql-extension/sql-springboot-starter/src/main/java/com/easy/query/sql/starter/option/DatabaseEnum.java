@@ -38,5 +38,6 @@ public enum DatabaseEnum {
     MSSQL_ROW_NUMBER,
     ORACLE,
     SQLITE,
-    CLICKHOUSE
+    CLICKHOUSE,
+    GAUSS_DB
 }
