@@ -35,28 +35,4 @@ public abstract class SqlAggregation10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> 
         throw new SqlFunctionInvokeException();
     }
 
-    public <R> long count(ExprTree<Func10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R>> expr)
-    {
-        throw new SqlFunctionInvokeException();
-    }
-
-    public <R> BigDecimal sum(ExprTree<Func10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R>> expr)
-    {
-        throw new SqlFunctionInvokeException();
-    }
-
-    public <R> BigDecimal avg(ExprTree<Func10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R>> expr)
-    {
-        throw new SqlFunctionInvokeException();
-    }
-
-    public <R> R min(ExprTree<Func10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R>> expr)
-    {
-        throw new SqlFunctionInvokeException();
-    }
-
-    public <R> R max(ExprTree<Func10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R>> expr)
-    {
-        throw new SqlFunctionInvokeException();
-    }
 }

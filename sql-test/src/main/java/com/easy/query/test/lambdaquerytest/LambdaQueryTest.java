@@ -7,7 +7,6 @@ import com.easy.query.api.lambda.crud.read.LQuery3;
 import com.easy.query.api.lambda.crud.read.LQuery4;
 import com.easy.query.api.lambda.sqlext.SqlFunctions;
 import com.easy.query.api.lambda.sqlext.SqlTypes;
-import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.lambda.common.TempResult;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.h2.domain.*;
@@ -291,5 +290,83 @@ public class LambdaQueryTest extends LambdaBaseTest
         Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t WHERE t.number % ? = ?", sql);
         List<DefTable> list = select.toList();
         Assert.assertEquals(500, list.size());
+    }
+
+    // 展示用
+    @Deprecated
+    public void display()
+    {
+        // 创建一个可查询SysUser的表达式
+        LQuery<SysUser> queryable = elq.queryable(SysUser.class);
+
+        // 单个条件链式查询
+        List<SysUser> sysUsers1 = elq.queryable(SysUser.class)
+                .where(o -> o.getId() == "123xxx")
+                .toList();// toList表示查询结果集
+
+
+        // == 运算符会被翻译成sql中的 = 运算符，&& 运算符会被翻译成sql中的 AND 运算符 ，字符串的contains方法翻译成sql中的 LIKE 运算符
+        List<SysUser> sysUsers2 = elq.queryable(SysUser.class)
+                .where(o -> o.getId() == "123xxx" && o.getIdCard().contains("123"))
+                .toList();
+
+
+        // 多个where之间默认进行 AND 连接
+        List<SysUser> sysUsers3 = elq.queryable(SysUser.class)
+                .where(o -> o.getId() == "123xxx")
+                // AND
+                .where(o -> o.getIdCard().contains("123"))
+                .toList();
+
+
+        //返回单个对象没有查询到就返回null
+        SysUser sysUser1 = elq.queryable(SysUser.class)
+                .where(o -> o.getId() == "123xxx")
+                .where(o -> o.getIdCard().contains("123"))
+                .firstOrNull();
+
+
+        //采用创建时间倒序和id正序查询返回第一个
+        SysUser sysUser2 = elq.queryable(SysUser.class)
+                .where(o -> o.getId() == "123xxx")
+                .where(o -> o.getIdCard().contains("123"))
+                .orderBy(o -> o.getCreateTime())
+                .orderBy(o -> o.getId())
+                .firstOrNull();
+
+        //仅查询id和createTime两列
+        LQuery<SysUser> sysUserLQuery = elq.queryable(SysUser.class)
+                .where(o -> o.getId() == "123xxx")
+                .where(o -> o.getIdCard().contains("123"))
+                .orderBy(o -> o.getCreateTime())
+                .orderBy(o -> o.getId());
+
+        // 匿名类形式返回
+        List<? extends TempResult> list = sysUserLQuery
+                .select(s -> new TempResult()
+                {
+                    String tid = s.getId();
+                    LocalDateTime ct = s.getCreateTime();
+                })
+                .toList();
+
+        // 指定类型返回，自动与类字段映射，支持dto
+        // 此时会select全字段
+        SysUser sysUser3 = sysUserLQuery.select(SysUser.class).firstOrNull();
+
+        // select无参时等同于条件为queryable时填入的class
+        SysUser sysUser4 = sysUserLQuery.select().firstOrNull();
+
+
+        // 指定类型同时限制sql选择的字段
+        SysUser sysUser5 = sysUserLQuery
+                .select(s ->
+                {
+                    SysUser temp = new SysUser();
+                    temp.setId(s.getId());
+                    temp.setCreateTime(s.getCreateTime());
+                    //此时选择了SysUser的id和createTime字段
+                    return temp;
+                }).firstOrNull();
     }
 }

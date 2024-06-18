@@ -34,28 +34,4 @@ public abstract class SqlAggregation3<T1, T2, T3> implements IAggregation
         throw new SqlFunctionInvokeException();
     }
 
-    public <R> long count(ExprTree<Func3<T1, T2, T3, R>> expr)
-    {
-        throw new SqlFunctionInvokeException();
-    }
-
-    public <R> BigDecimal sum(ExprTree<Func3<T1, T2, T3, R>> expr)
-    {
-        throw new SqlFunctionInvokeException();
-    }
-
-    public <R> BigDecimal avg(ExprTree<Func3<T1, T2, T3, R>> expr)
-    {
-        throw new SqlFunctionInvokeException();
-    }
-
-    public <R> R min(ExprTree<Func3<T1, T2, T3, R>> expr)
-    {
-        throw new SqlFunctionInvokeException();
-    }
-
-    public <R> R max(ExprTree<Func3<T1, T2, T3, R>> expr)
-    {
-        throw new SqlFunctionInvokeException();
-    }
 }
