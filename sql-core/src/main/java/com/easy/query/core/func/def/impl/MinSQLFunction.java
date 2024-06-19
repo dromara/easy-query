@@ -40,6 +40,6 @@ public class MinSQLFunction extends AbstractExpressionSQLFunction{
 
     @Override
     public AggregationType getAggregationType() {
-        return AggregationType.MAX;
+        return AggregationType.MIN;
     }
 }

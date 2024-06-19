@@ -319,6 +319,53 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return EasyObjectUtil.typeCastNullable(value);
     }
 
+
+
+//    @Override
+//    public <TMember extends Comparable<?>> TMember maxOrDefault(String property, TMember def) {
+//
+//        setExecuteMethod(ExecuteMethodEnum.MAX);
+////        ColumnFunction maxFunction1 = runtimeContext.getColumnFunctionFactory().createMaxFunction();
+//        TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
+//        ClientQueryable<T1> cloneQueryable = cloneQueryable();
+//        cloneQueryable.getSQLEntityExpressionBuilder().getProjects().clear();
+//        SQLFunction SQLFunction = runtimeContext.fx().max(property);
+//        ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnNotNull(property);
+//        List<TMember> result =  cloneQueryable.select(x->x.sqlFunc(SQLFunction)).toList((Class<TMember>)columnMetadata.getPropertyType());
+//        setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
+//        TMember tMember = EasyCollectionUtil.firstOrNull(result);
+//        if(tMember==null){
+//            return def;
+//        }
+//        Object value = EasyJdbcExecutorUtil.fromValue(new EntityResultColumnMetadata(0, entityTable.getEntityMetadata(), columnMetadata), tMember);
+//        if(value==null){
+//            return def;
+//        }
+//        return EasyObjectUtil.typeCastNullable(value);
+//    }
+//
+//    @Override
+//    public <TMember> TMember minOrDefault(String property, TMember def) {
+//        setExecuteMethod(ExecuteMethodEnum.MIN);
+////        ColumnFunction maxFunction1 = runtimeContext.getColumnFunctionFactory().createMaxFunction();
+//        TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
+//        ClientQueryable<T1> cloneQueryable = cloneQueryable();
+//        cloneQueryable.getSQLEntityExpressionBuilder().getProjects().clear();
+//        SQLFunction minSQLFunction = runtimeContext.fx().min(property);
+//        ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnNotNull(property);
+//        List<TMember> result =  cloneQueryable.select(x->x.sqlFunc(minSQLFunction)).toList((Class<TMember>)columnMetadata.getPropertyType());
+//        setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
+//        TMember tMember = EasyCollectionUtil.firstOrNull(result);
+//        if(tMember==null){
+//            return def;
+//        }
+//        Object value = EasyJdbcExecutorUtil.fromValue(new EntityResultColumnMetadata(0, entityTable.getEntityMetadata(), columnMetadata), tMember);
+//        if(value==null){
+//            return def;
+//        }
+//        return EasyObjectUtil.typeCastNullable(value);
+//    }
+
     @Override
     public <TMember extends Number, TResult extends Number> TResult avgOrDefault(String property, TResult def, Class<TResult> resultClass) {
         setExecuteMethod(ExecuteMethodEnum.AVG);
