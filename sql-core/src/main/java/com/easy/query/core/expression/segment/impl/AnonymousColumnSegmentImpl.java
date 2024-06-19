@@ -12,9 +12,9 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  *
  * @author xuejiaming
  */
-public class AnonymousColumnSegmentImpl extends ColumnSegmentImpl{
+public class AnonymousColumnSegmentImpl extends ColumnSegmentImpl {
     public AnonymousColumnSegmentImpl(TableAvailable table, ExpressionContext expressionContext, String alias) {
-        super(table, null, expressionContext,alias);
+        super(table, null, expressionContext, alias);
     }
 
     @Override
@@ -24,13 +24,17 @@ public class AnonymousColumnSegmentImpl extends ColumnSegmentImpl{
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(),table,alias,toSQLContext);
-        return sqlColumnSegment +
-                " AS " + EasySQLExpressionUtil.getQuoteName(expressionContext.getRuntimeContext(), alias);
+        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), table, alias, toSQLContext);
+        String alias = getAlias();
+        if (alias != null) {
+            return sqlColumnSegment +
+                    " AS " + EasySQLExpressionUtil.getQuoteName(expressionContext.getRuntimeContext(), alias);
+        }
+        return sqlColumnSegment;
     }
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new AnonymousColumnSegmentImpl(table,expressionContext,alias);
+        return new AnonymousColumnSegmentImpl(table, expressionContext, alias);
     }
 }

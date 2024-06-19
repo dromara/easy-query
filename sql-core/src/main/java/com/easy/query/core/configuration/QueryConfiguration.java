@@ -18,7 +18,7 @@ import com.easy.query.core.basic.extension.version.VersionLongStrategy;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.basic.extension.version.VersionTimestampStrategy;
 import com.easy.query.core.basic.extension.version.VersionUUIDStrategy;
-import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.job.EasyTimeJobManager;
@@ -53,7 +53,7 @@ public class QueryConfiguration {
 
     private final NameConversion nameConversion;
     private final EasyTimeJobManager easyTimeJobManager;
-    private final Dialect dialect;
+    private final SQLKeyword SQLKeyWord;
     //    private Map<Class<?>, EntityTypeConfiguration<?>> entityTypeConfigurationMap = new HashMap<>();
     private Map<String, Interceptor> interceptorMap = new ConcurrentHashMap<>();
     private Map<String, LogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
@@ -69,9 +69,9 @@ public class QueryConfiguration {
     //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
 //    }
-    public QueryConfiguration(EasyQueryOption easyQueryOption, Dialect dialect, NameConversion nameConversion, EasyTimeJobManager easyTimeJobManager) {
+    public QueryConfiguration(EasyQueryOption easyQueryOption, SQLKeyword SQLKeyWord, NameConversion nameConversion, EasyTimeJobManager easyTimeJobManager) {
         this.easyQueryOption = easyQueryOption;
-        this.dialect = dialect;
+        this.SQLKeyWord = SQLKeyWord;
         this.nameConversion = nameConversion;
         this.easyTimeJobManager = easyTimeJobManager;
         easyVersionStrategyMap.put(VersionIntStrategy.class, new VersionIntStrategy());
@@ -89,8 +89,8 @@ public class QueryConfiguration {
         return nameConversion;
     }
 
-    public Dialect getDialect() {
-        return dialect;
+    public SQLKeyword getDialect() {
+        return SQLKeyWord;
     }
 
     public void applyInterceptor(Interceptor easyInterceptor) {

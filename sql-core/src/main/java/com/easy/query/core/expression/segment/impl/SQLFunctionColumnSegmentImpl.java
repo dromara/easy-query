@@ -52,6 +52,11 @@ public class SQLFunctionColumnSegmentImpl implements FuncColumnSegment {
     }
 
     @Override
+    public void setAlias(String alias) {
+        this.alias=alias;
+    }
+
+    @Override
     public String toSQL(ToSQLContext toSQLContext) {
         return sqlSegment.toSQL(toSQLContext);
     }

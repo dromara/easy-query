@@ -34,4 +34,8 @@ public class OrderBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements
     public String getAlias() {
         return null;
     }
+
+    @Override
+    public void setAlias(String alias) {
+    }
 }

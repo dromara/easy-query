@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectCountDistinctSegment;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -28,7 +29,19 @@ public class SelectCountDistinctSegmentImpl implements SelectCountDistinctSegmen
         if (EasyCollectionUtil.isEmpty(sqlSegments)) {
             return "COUNT(*)";
         }
-        String distinctColumns = sqlSegments.stream().map(o -> o.toSQL(toSQLContext)).collect(Collectors.joining(","));
+        String distinctColumns = sqlSegments.stream().map(o -> {
+            if (o instanceof SQLEntityAliasSegment) {
+                SQLEntityAliasSegment aliasSegment = (SQLEntityAliasSegment) o;
+                String alias = aliasSegment.getAlias();
+                if(alias!=null){
+                    aliasSegment.setAlias(null);
+                    String sql = o.toSQL(toSQLContext);
+                    aliasSegment.setAlias(alias);
+                    return sql;
+                }
+            }
+            return o.toSQL(toSQLContext);
+        }).collect(Collectors.joining(","));
         return "COUNT(DISTINCT " + distinctColumns + ")";
     }
 }

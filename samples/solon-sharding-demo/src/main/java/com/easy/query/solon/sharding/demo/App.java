@@ -3,7 +3,7 @@ package com.easy.query.solon.sharding.demo;
 import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.util.EasyBeanUtil;
@@ -26,7 +26,7 @@ public class App {
                 e.replaceService(DataSourceNamed.class,new MyDataSourceNamed(name));
                 e.replaceServiceFactory(QueryConfiguration.class, s->{
                     QueryConfiguration queryConfiguration = new QueryConfiguration(s.getService(EasyQueryOption.class)
-                            ,s.getService(Dialect.class)
+                            ,s.getService(SQLKeyword.class)
                             ,s.getService(NameConversion.class)
                             ,s.getService(EasyTimeJobManager.class)
                     );

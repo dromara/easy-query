@@ -42,4 +42,8 @@ public class OrderBySQLNativeSegment2Impl extends AbstractSQLNativeSegment2Impl 
     public String getAlias() {
         return null;
     }
+
+    @Override
+    public void setAlias(String alias) {
+    }
 }

@@ -9,8 +9,8 @@ import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintForm
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.configuration.dialect.DefaultDialect;
-import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.DefaultSQLKeyword;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
@@ -653,7 +653,7 @@ public class QueryTest15 extends BaseTest {
                     op.setReverseOffsetThreshold(10);
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
-                .replaceService(Dialect.class, DefaultDialect.class)
+                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
                 .replaceService(SQLParameterPrintFormat.class, MyBatisSQLParameterPrintFormat.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();

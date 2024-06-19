@@ -126,6 +126,10 @@ public class EasyQueryProperties {
      */
     private boolean mapToBeanStrict = true;
     /**
+     * 默认的对象schema
+     */
+    private String defaultSchema = null;
+    /**
      * 启用反向排序的偏移量阈值
      * 小于等于0表示不启用
      */
@@ -389,6 +393,14 @@ public class EasyQueryProperties {
 
     public void setMapToBeanStrict(boolean mapToBeanStrict) {
         this.mapToBeanStrict = mapToBeanStrict;
+    }
+
+    public String getDefaultSchema() {
+        return defaultSchema;
+    }
+
+    public void setDefaultSchema(String defaultSchema) {
+        this.defaultSchema = defaultSchema;
     }
 
     public EasyQueryProperties() {

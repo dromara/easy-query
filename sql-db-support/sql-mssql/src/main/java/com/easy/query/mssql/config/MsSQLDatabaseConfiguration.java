@@ -1,7 +1,7 @@
 package com.easy.query.mssql.config;
 
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
-import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
@@ -17,7 +17,7 @@ import com.easy.query.mssql.func.MsSQLFuncImpl;
 public class MsSQLDatabaseConfiguration implements DatabaseConfiguration {
     @Override
     public void configure(ServiceCollection services) {
-        services.addService(Dialect.class, MsSQLDialect.class);
+        services.addService(SQLKeyword.class, MsSQLSQLKeyword.class);
         services.addService(ExpressionFactory.class, MsSQLExpressionFactory.class);
         services.addService(SQLFunc.class, MsSQLFuncImpl.class);
     }

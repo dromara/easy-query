@@ -31,8 +31,8 @@ import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.core.configuration.dialect.DefaultDialect;
-import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.DefaultSQLKeyword;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
 import com.easy.query.core.context.DefaultEasyQueryRuntimeContext;
@@ -127,7 +127,7 @@ public class EasyQueryBuilderConfiguration {
 
     private void defaultConfiguration() {
         replaceService(EasyQueryDataSource.class, DefaultEasyQueryDataSource.class)
-                .replaceService(Dialect.class, DefaultDialect.class)
+                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
                 .replaceService(NameConversion.class, UnderlinedNameConversion.class)
                 .replaceService(QueryConfiguration.class)
                 .replaceService(EntityMetadataManager.class, DefaultEntityMetadataManager.class)

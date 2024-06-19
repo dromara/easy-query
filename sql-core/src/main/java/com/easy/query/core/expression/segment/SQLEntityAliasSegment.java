@@ -7,4 +7,5 @@ package com.easy.query.core.expression.segment;
  */
 public interface SQLEntityAliasSegment extends SQLEntitySegment {
     String getAlias();
+    void setAlias(String alias);
 }

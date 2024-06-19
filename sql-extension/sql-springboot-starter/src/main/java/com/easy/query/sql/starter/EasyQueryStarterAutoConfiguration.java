@@ -40,6 +40,7 @@ import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
+import com.easy.query.gauss.db.config.GaussDBDatabaseConfiguration;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
@@ -153,6 +154,12 @@ public class EasyQueryStarterAutoConfiguration {
     public DatabaseConfiguration pgsqlDatabaseConfiguration() {
         return new PgSQLDatabaseConfiguration();
     }
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "gauss_db")
+    @ConditionalOnMissingBean
+    public DatabaseConfiguration gaussDbDatabaseConfiguration() {
+        return new GaussDBDatabaseConfiguration();
+    }
 
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "dameng")
@@ -264,6 +271,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setShardingFetchSize(easyQueryProperties.getShardingFetchSize());
                     builder.setReverseOffsetThreshold(easyQueryProperties.getReverseOffsetThreshold());
                     builder.setMapToBeanStrict(easyQueryProperties.isMapToBeanStrict());
+                    builder.setDefaultSchema(easyQueryProperties.getDefaultSchema());
                 })
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)

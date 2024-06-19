@@ -1,6 +1,6 @@
-package com.easy.query.clickhouse.config;
+package com.easy.query.mysql.config;
 
-import com.easy.query.core.configuration.dialect.AbstractDialect;
+import com.easy.query.core.configuration.dialect.AbstractSQLKeyword;
 
 /**
  * create time 2023/4/26 17:24
@@ -8,7 +8,7 @@ import com.easy.query.core.configuration.dialect.AbstractDialect;
  *
  * @author xuejiaming
  */
-public final class ClickHouseDialect extends AbstractDialect {
+public final class MySQLSQLKeyword extends AbstractSQLKeyword {
     @Override
     public String getQuoteStart() {
         return "`";

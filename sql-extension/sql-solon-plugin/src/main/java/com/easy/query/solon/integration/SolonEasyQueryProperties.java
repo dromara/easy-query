@@ -111,6 +111,7 @@ public class SolonEasyQueryProperties {
     private final static boolean warningColumnMiss = true;
     private final static int shardingFetchSize = 1000;
     private final static boolean mapToBeanStrict = true;
+    private final static String defaultSchema = null;
     private final static long reverseOffsetThreshold = 0;
 
     private final Props props;
@@ -150,6 +151,7 @@ public class SolonEasyQueryProperties {
                 case "oracle":return DatabaseEnum.ORACLE;
                 case "sqlite":return DatabaseEnum.SQLITE;
                 case "clickhouse":return DatabaseEnum.CLICKHOUSE;
+                case "gauss_db":return DatabaseEnum.GAUSS_DB;
             }
             return null;
         });
@@ -315,6 +317,9 @@ public class SolonEasyQueryProperties {
     }
     public boolean getMapToBeanStrict() {
         return this.props.getBool("map-to-bean-strict",mapToBeanStrict);
+    }
+    public String getDefaultSchema() {
+        return this.props.getProperty("default-schema",defaultSchema);
     }
     public long getReverseOffsetThreshold() {
         return this.props.getLong("reverse-offset-threshold",reverseOffsetThreshold);

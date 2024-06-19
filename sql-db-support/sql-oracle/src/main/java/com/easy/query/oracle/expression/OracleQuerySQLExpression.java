@@ -2,7 +2,7 @@ package com.easy.query.oracle.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.KeywordTool;
-import com.easy.query.core.configuration.dialect.Dialect;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
@@ -53,8 +53,8 @@ public class OracleQuerySQLExpression  extends QuerySQLExpressionImpl {
     }
 
     protected String toSQL0(boolean root,ToSQLContext toSQLContext){
-        Dialect dialect = getRuntimeContext().getQueryConfiguration().getDialect();
-        String rowNum = dialect.getQuoteName(KeywordTool.ROW_NUM);
+        SQLKeyword SQLKeyWord = getRuntimeContext().getQueryConfiguration().getDialect();
+        String rowNum = SQLKeyWord.getQuoteName(KeywordTool.ROW_NUM);
         StringBuilder sql = new StringBuilder("SELECT ");
         if (this.distinct) {
             sql.append("DISTINCT ");

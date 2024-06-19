@@ -4,24 +4,35 @@ import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
+import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.dto.autodto.SchoolClassAOProp5;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.TopicProxy;
+import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.vo.BlogEntityVO1;
 import com.easy.query.test.vo.TestUserAAA;
+import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2024/6/13 12:19
@@ -30,6 +41,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public class QueryTest18 extends BaseTest {
+
     @Test
     public void test1() {
         ListenerContext listenerContext = new ListenerContext();
@@ -124,6 +136,7 @@ public class QueryTest18 extends BaseTest {
                 })
                 .toList();
     }
+
     @Test
     public void test11() {
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
@@ -134,6 +147,7 @@ public class QueryTest18 extends BaseTest {
                     });
                 }).toList();
     }
+
     @Test
     public void test13() {
 
@@ -143,7 +157,7 @@ public class QueryTest18 extends BaseTest {
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
                 .where(s -> {
-                    s.expression().caseWhen(()->s.id().eq("123")).then(s.id()).elseEnd(s.id().nullOrDefault("1234")).eq("123xx");
+                    s.expression().caseWhen(() -> s.id().eq("123")).then(s.id()).elseEnd(s.id().nullOrDefault("1234")).eq("123xx");
                     s.blogs().any(x -> {
                         x.content().eq("");
                     });
@@ -154,5 +168,111 @@ public class QueryTest18 extends BaseTest {
         Assert.assertEquals("123(String),1234(String),123xx(String),false(Boolean),(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
+    //    @Test
+//    public void test14(){
+//
+//        List<Map> list1 = easyQueryClient.queryable(Map.class)
+//                .asTable("t_user")
+//                .leftJoin(Map.class, (t, t1) -> {
+//                    t.eq(t1, "id", "uid");
+//                }).asTable("t_user_extra")
+//                .where((m1, m2) -> {
+//                    m1.eq("name","111");
+//                    m2.like("content","456");
+//                })
+//                .toList();
+//    }
+    @Test
+    public void test15() {
+        //配置来源数据库
+        List<String> columns = Arrays.asList("id", "stars", "title");
+        List<Topic> list = easyQueryClient.queryable(Topic.class)
+                .select(Topic.class, t -> {
+                    for (String column : columns) {
+                        t.column(column);
+                    }
+                    SQLFunction sqlFunction = t.fx().nullOrDefault("id", "123");
+                    t.sqlFunc(sqlFunction);
+                }).toList();
+//        LocalDateTime[]  times= new LocalDateTime[2];
+//        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+//                .where(t -> {
+//                    t.createTime().rangeClosed(getIndexValueOrNull(times, 0), getIndexValueOrNull(times, 1));
+//                }).toList();
+    }
+
+    public static <TValue> TValue getIndexValueOrNull(TValue[] values, int index) {
+        if (index < 0) {
+            throw new IllegalArgumentException("index < 0.");
+        }
+        if (EasyArrayUtil.isEmpty(values)) {
+            return null;
+        }
+        if (values.length <= index) {
+            return null;
+        }
+        return values[index];
+    }
+
+    @Test
+    public void test14() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        EasyPageResult<BlogEntityVO1> pageResult = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                .select(BlogEntityVO1.class, (t1, b2) -> Select.of(
+                        t1.FETCHER.id().stars(),
+                        b2.createTime()
+                )).distinct()
+                .toPageResult(1, 2);
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT COUNT(DISTINCT t.`id`,t.`stars`,t1.`create_time`) FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT DISTINCT t.`id`,t.`stars`,t1.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LIMIT 2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+
+    @Test
+    public void test16() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        EasyPageResult<BlogEntityVO1> pageResult = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                .select((t1, b2) -> new BlogEntityVO1Proxy()
+                        .score().set(t1.stars().asAnyType(BigDecimal.class))
+                ).distinct()
+                .toPageResult(1, 2);
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT COUNT(DISTINCT t.`stars`) FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT DISTINCT t.`stars` AS `score` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LIMIT 2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+
 
 }
