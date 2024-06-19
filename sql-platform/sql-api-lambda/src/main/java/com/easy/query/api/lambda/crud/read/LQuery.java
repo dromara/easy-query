@@ -388,20 +388,20 @@ public class LQuery<T> extends QueryBase
         return clientQueryable.toMaps();
     }
 
-    public EasyPageResult<T> toPageResult(long pageIndex, long pageSize)
-    {
-        return clientQueryable.toPageResult(pageIndex, pageSize);
-    }
-
-    public EasyPageResult<T> toPageResult(long pageIndex, long pageSize, long pageTotal)
-    {
-        return clientQueryable.toPageResult(pageIndex, pageSize, pageTotal);
-    }
-
-    public <TPageResult> TPageResult toPageResult(Pager<T,TPageResult> pager)
-    {
-        return clientQueryable.toPageResult(pager);
-    }
+//    public EasyPageResult<T> toPageResult(long pageIndex, long pageSize)
+//    {
+//        return clientQueryable.toPageResult(pageIndex, pageSize);
+//    }
+//
+//    public EasyPageResult<T> toPageResult(long pageIndex, long pageSize, long pageTotal)
+//    {
+//        return clientQueryable.toPageResult(pageIndex, pageSize, pageTotal);
+//    }
+//
+//    public <TPageResult> TPageResult toPageResult(Pager<T,TPageResult> pager)
+//    {
+//        return clientQueryable.toPageResult(pager);
+//    }
 
     // endregion
 }

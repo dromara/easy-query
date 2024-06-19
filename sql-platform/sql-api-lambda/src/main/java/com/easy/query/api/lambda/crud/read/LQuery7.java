@@ -359,20 +359,20 @@ public class LQuery7<T1, T2, T3, T4, T5, T6, T7> extends QueryBase
         return clientQueryable.toMaps();
     }
 
-    public EasyPageResult<T1> toPageResult(long pageIndex, long pageSize)
-    {
-        return clientQueryable.toPageResult(pageIndex, pageSize);
-    }
-
-    public EasyPageResult<T1> toPageResult(long pageIndex, long pageSize, long pageTotal)
-    {
-        return clientQueryable.toPageResult(pageIndex, pageSize, pageTotal);
-    }
-
-    public <TPageResult> TPageResult toPageResult(Pager<T1,TPageResult> pager)
-    {
-        return clientQueryable.toPageResult(pager);
-    }
+//    public EasyPageResult<T1> toPageResult(long pageIndex, long pageSize)
+//    {
+//        return clientQueryable.toPageResult(pageIndex, pageSize);
+//    }
+//
+//    public EasyPageResult<T1> toPageResult(long pageIndex, long pageSize, long pageTotal)
+//    {
+//        return clientQueryable.toPageResult(pageIndex, pageSize, pageTotal);
+//    }
+//
+//    public <TPageResult> TPageResult toPageResult(Pager<T1,TPageResult> pager)
+//    {
+//        return clientQueryable.toPageResult(pager);
+//    }
 
     // endregion
 }

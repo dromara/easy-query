@@ -90,7 +90,14 @@ public class SqlFunctions
     @Ext(dbType = DbType.MySQL, function = "NOW()")
     public static LocalDateTime now()
     {
-        throw new SqlFunctionInvokeException();
+        if (1 + 1 == 2)
+        {
+            throw new SqlFunctionInvokeException();
+        }
+        else
+        {
+            return LocalDateTime.now();
+        }
     }
 
     @Ext(dbType = DbType.H2, function = "UTC_TIMESTAMP()")

@@ -117,18 +117,18 @@ public class NoWayQuery<T>
         return stop.toMaps();
     }
 
-    public EasyPageResult<T> toPageResult(long pageIndex, long pageSize)
-    {
-        return stop.toPageResult(pageIndex, pageSize);
-    }
-
-    public EasyPageResult<T> toPageResult(long pageIndex, long pageSize, long pageTotal)
-    {
-        return stop.toPageResult(pageIndex, pageSize, pageTotal);
-    }
-
-    public <TPageResult> TPageResult toPageResult(Pager<T, TPageResult> pager)
-    {
-        return stop.toPageResult(pager);
-    }
+//    public EasyPageResult<T> toPageResult(long pageIndex, long pageSize)
+//    {
+//        return stop.toPageResult(pageIndex, pageSize);
+//    }
+//
+//    public EasyPageResult<T> toPageResult(long pageIndex, long pageSize, long pageTotal)
+//    {
+//        return stop.toPageResult(pageIndex, pageSize, pageTotal);
+//    }
+//
+//    public <TPageResult> TPageResult toPageResult(Pager<T, TPageResult> pager)
+//    {
+//        return stop.toPageResult(pager);
+//    }
 }
