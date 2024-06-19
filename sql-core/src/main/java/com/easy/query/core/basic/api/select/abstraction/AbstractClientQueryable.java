@@ -22,6 +22,7 @@ import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
@@ -84,6 +85,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -99,6 +101,7 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyJdbcExecutorUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -284,7 +287,17 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ColumnFunction maxFunction = runtimeContext.getColumnFunctionFactory().createMaxFunction();
         TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
         List<TMember> result = selectAggregateList(entityTable, maxFunction, property, null);
-        return EasyCollectionUtil.firstOrDefault(result, def);
+        setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
+        TMember tMember = EasyCollectionUtil.firstOrNull(result);
+        if(tMember==null){
+            return def;
+        }
+        ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnNotNull(property);
+        Object value = EasyJdbcExecutorUtil.fromValue(new EntityResultColumnMetadata(0, entityTable.getEntityMetadata(), columnMetadata), tMember);
+        if(value==null){
+            return def;
+        }
+        return EasyObjectUtil.typeCastNullable(value);
     }
 
     @Override
@@ -293,7 +306,17 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ColumnFunction minFunction = runtimeContext.getColumnFunctionFactory().createMinFunction();
         TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
         List<TMember> result = selectAggregateList(entityTable, minFunction, property, null);
-        return EasyCollectionUtil.firstOrDefault(result, def);
+        setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
+        TMember tMember = EasyCollectionUtil.firstOrNull(result);
+        if(tMember==null){
+            return def;
+        }
+        ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnNotNull(property);
+        Object value = EasyJdbcExecutorUtil.fromValue(new EntityResultColumnMetadata(0, entityTable.getEntityMetadata(), columnMetadata), tMember);
+        if(value==null){
+            return def;
+        }
+        return EasyObjectUtil.typeCastNullable(value);
     }
 
     @Override

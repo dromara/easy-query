@@ -7,7 +7,9 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.Company;
+import com.easy.query.test.entity.blogtest.SysRole;
 import com.easy.query.test.entity.blogtest.SysUser;
+import com.easy.query.test.entity.blogtest.proxy.SysUserProxy;
 import com.easy.query.test.entity.navf.UVO;
 import com.easy.query.test.entity.navf.User;
 import com.easy.query.test.listener.ListenerContext;
@@ -15,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -1058,4 +1061,74 @@ public class QueryTest16 extends BaseTest {
                 )).toList();
 
     }
+
+    @Test
+    public void test19(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+       try {
+           LocalDateTime begin = LocalDateTime.of(2020,1,1,1,2);
+           LocalDateTime end =LocalDateTime.of(2026,1,1,1,2);
+           List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                   .where(user -> {
+                       user.roles().configure(r->{
+                           r.asAlias("myRole");
+                       }).any(role -> {
+                           role.name().like("查询的角色名");
+                           role.createTime().rangeClosed(begin != null, begin, end != null, end);
+                       });
+                   }).toList();
+       }catch (Exception ex){
+
+       }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t WHERE EXISTS (SELECT 1 FROM `t_role` myRole WHERE EXISTS (SELECT 1 FROM `t_user_role` t2 WHERE t2.`role_id` = myRole.`id` AND t2.`user_id` = t.`id` LIMIT 1) AND myRole.`name` LIKE ? AND myRole.`create_time` >= ? AND myRole.`create_time` <= ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%查询的角色名%(String),2020-01-01T01:02(LocalDateTime),2026-01-01T01:02(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void test20(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+       try {
+           LocalDateTime begin = LocalDateTime.of(2020,1,1,1,2);
+           LocalDateTime end =LocalDateTime.of(2026,1,1,1,2);
+           List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                   .where(user -> {
+                       user.company().name().like("123");
+
+                       user.roles().configure(r->{
+                           r.asAlias("myRole");
+                       }).any(role -> {
+                           role.name().like("查询的角色名");
+                           role.createTime().rangeClosed(begin != null, begin, end != null, end);
+                       });
+                   }).toList();
+       }catch (Exception ex){
+
+       }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE t1.`name` LIKE ? AND EXISTS (SELECT 1 FROM `t_role` myRole WHERE EXISTS (SELECT 1 FROM `t_user_role` t3 WHERE t3.`role_id` = myRole.`id` AND t3.`user_id` = t.`id` LIMIT 1) AND myRole.`name` LIKE ? AND myRole.`create_time` >= ? AND myRole.`create_time` <= ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String),%查询的角色名%(String),2020-01-01T01:02(LocalDateTime),2026-01-01T01:02(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+//    @Test
+//    public void testxxxvvb(){
+//
+//        List<SysUser> userExists = easyEntityQuery.queryable(SysUser.class)
+//                .where(user -> {
+//
+//                    user.expression().exists(()->{
+//                        return easyEntityQuery.queryable(SysRole.class)
+//                                .where(role -> {
+//                                    role.name().eq("管理员");
+//                                    user.id().eq(role.id());
+////                                    SysUserProxy u = user.create(user.getTable(), role.getEntitySQLContext());
+////                                    u.id().eq(role.id());
+//                                });
+//                    });
+//                }).toList();
+//    }
 }
