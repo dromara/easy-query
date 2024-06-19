@@ -16,7 +16,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  */
 public class SQLColumnAsSegmentImpl implements SQLEntityAliasSegment {
     private final CloneableSQLSegment sqlColumnSegment;
-    private final String alias;
+    private String alias;
     private final QueryRuntimeContext runtimeContext;
 
     public SQLColumnAsSegmentImpl(CloneableSQLSegment sqlColumnSegment, String alias, QueryRuntimeContext runtimeContext){
@@ -28,7 +28,8 @@ public class SQLColumnAsSegmentImpl implements SQLEntityAliasSegment {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         String sqlColumn = sqlColumnSegment.toSQL(toSQLContext);
-        if(alias==null){
+        String alias = getAlias();
+        if(alias ==null){
             return sqlColumn;
         }
 
@@ -38,6 +39,10 @@ public class SQLColumnAsSegmentImpl implements SQLEntityAliasSegment {
     @Override
     public String getAlias() {
         return alias;
+    }
+    @Override
+    public void setAlias(String alias) {
+        this.alias=alias;
     }
 
     @Override

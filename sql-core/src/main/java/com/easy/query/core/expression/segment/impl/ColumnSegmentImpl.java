@@ -21,7 +21,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     protected final ColumnMetadata columnMetadata;
     protected final ExpressionContext expressionContext;
-    protected final String alias;
+    protected String alias;
 
     public ColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
         this(table, columnMetadata, expressionContext, null);
@@ -50,12 +50,17 @@ public class ColumnSegmentImpl implements ColumnSegment {
     }
 
     @Override
+    public void setAlias(String alias) {
+        this.alias=alias;
+    }
+
+    @Override
     public String toSQL(ToSQLContext toSQLContext) {
         String sqlOwnerColumn = getSQLOwnerColumn(toSQLContext);
-        if (alias == null) {
+        if (getAlias() == null) {
             return sqlOwnerColumn;
         }
-        return sqlOwnerColumn + " AS " + EasySQLExpressionUtil.getQuoteName(expressionContext.getRuntimeContext(), alias);
+        return sqlOwnerColumn + " AS " + EasySQLExpressionUtil.getQuoteName(expressionContext.getRuntimeContext(), getAlias());
     }
 
     private String getSQLOwnerColumn(ToSQLContext toSQLContext){
@@ -63,7 +68,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
     }
 
     protected boolean ignoreAlias(){
-        if(alias != null){
+        if(getAlias() != null){
             return true;
         }
         return false;

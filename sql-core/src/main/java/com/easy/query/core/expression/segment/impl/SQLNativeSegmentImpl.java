@@ -15,16 +15,23 @@ import com.easy.query.core.metadata.ColumnMetadata;
 public class SQLNativeSegmentImpl extends AbstractSQLNativeSegmentImpl implements SQLNativeSegment {
     protected final String sqlSegment;
     protected final SQLNativeExpression sqlNativeExpression;
+    private String alias;
 
     public SQLNativeSegmentImpl(ExpressionContext expressionContext, String sqlSegment, SQLNativeExpression sqlNativeExpression) {
         super(expressionContext,sqlSegment,sqlNativeExpression);
         this.sqlSegment = sqlSegment;
         this.sqlNativeExpression = sqlNativeExpression;
+        this.alias=sqlNativeExpression.getAlias();
     }
 
     @Override
     public String getAlias() {
-        return sqlNativeExpression.getAlias();
+        return this.alias;
+    }
+
+    @Override
+    public void setAlias(String alias) {
+        this.alias=alias;
     }
 
     @Override

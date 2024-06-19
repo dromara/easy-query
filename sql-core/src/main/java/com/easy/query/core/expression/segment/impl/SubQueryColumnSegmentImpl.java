@@ -27,7 +27,7 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 public class SubQueryColumnSegmentImpl implements SubQueryColumnSegment {
     private final TableAvailable table;
     private final Query<?> subQuery;
-    private final String alias;
+    private String alias;
     private final QueryRuntimeContext runtimeContext;
     private final boolean isAggregateColumn;
     private final AggregationType aggregationType;
@@ -71,6 +71,10 @@ public class SubQueryColumnSegmentImpl implements SubQueryColumnSegment {
     @Override
     public String getAlias() {
         return alias;
+    }
+    @Override
+    public void setAlias(String alias) {
+        this.alias=alias;
     }
 
     @Override

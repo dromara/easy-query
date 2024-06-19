@@ -80,6 +80,10 @@ public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment, Rever
     }
 
     @Override
+    public void setAlias(String alias) {
+    }
+
+    @Override
     public AggregationType getAggregationType() {
         return columnFunction.getAggregationType();
     }
