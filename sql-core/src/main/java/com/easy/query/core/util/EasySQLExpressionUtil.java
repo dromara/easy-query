@@ -10,6 +10,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable6;
 import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
+import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -23,6 +24,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.expression.builder.core.SQLNative;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression10;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
@@ -33,6 +35,7 @@ import com.easy.query.core.expression.lambda.SQLExpression7;
 import com.easy.query.core.expression.lambda.SQLExpression8;
 import com.easy.query.core.expression.lambda.SQLExpression9;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
@@ -283,6 +286,9 @@ public class EasySQLExpressionUtil {
     public static EntityQueryExpressionBuilder getCountEntityQueryExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, boolean isDistinct) {
         processRemoveOrderAndLimit(entityQueryExpressionBuilder);
         if (EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpressionBuilder)) {
+            if(entityQueryExpressionBuilder.isDistinct()){
+                return processSelectCountProject(entityQueryExpressionBuilder,true);
+            }
             return null;
         }
         if (EasySQLExpressionUtil.onlyNativeSqlExpression(entityQueryExpressionBuilder)) {
@@ -332,6 +338,13 @@ public class EasySQLExpressionUtil {
     private static EntityQueryExpressionBuilder processSelectCountProject(EntityQueryExpressionBuilder entityQueryExpressionBuilder, boolean isDistinct) {
         SQLSegmentFactory sqlSegmentFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
         if (isDistinct) {
+            if(EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getProjects())){
+                Class<?> queryClass = entityQueryExpressionBuilder.getQueryClass();
+              SQLExpression1<ColumnAsSelector<?,?>> selectExpression = ColumnAsSelector::columnAll;
+                SQLExpressionProvider<Object> sqlExpressionProvider = entityQueryExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLExpressionProvider(0, entityQueryExpressionBuilder);
+                ColumnAsSelector<?, ?> columnAsSelector = sqlExpressionProvider.getColumnAsSelector(entityQueryExpressionBuilder.getProjects(), queryClass);
+                    selectExpression.apply(columnAsSelector);
+            }
             SQLBuilderSegment sqlBuilderSegment = entityQueryExpressionBuilder.getProjects().cloneSQLBuilder();
             entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
             SQLSegment sqlSegment = sqlSegmentFactory.createSelectCountDistinctSegment(sqlBuilderSegment.getSQLSegments());

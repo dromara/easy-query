@@ -36,6 +36,13 @@ public interface Aggregatable1<T1> {
         return maxOrDefault(property, null);
     }
 
+    /**
+     * 获取最大值或者返回默认值
+     * @param property
+     * @param def
+     * @return
+     * @param <TMember>
+     */
     <TMember extends Comparable<?>> TMember maxOrDefault(String property, TMember def);
 
     default <TMember> TMember minOrNull(String property) {
