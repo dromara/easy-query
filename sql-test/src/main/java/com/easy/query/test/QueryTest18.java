@@ -8,8 +8,11 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -25,6 +28,7 @@ import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
+import com.easy.query.test.keytest.MyTestPrimaryKey;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.vo.BlogEntityVO1;
 import com.easy.query.test.vo.TestUserAAA;
@@ -373,5 +377,20 @@ public class QueryTest18 extends BaseTest {
             Assert.assertEquals("SELECT DISTINCT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LIMIT 2", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
+    }
+
+    @Test
+    public  void test111(){
+        MyTestPrimaryKey myTestPrimaryKey = new MyTestPrimaryKey();
+        Assert.assertNull(myTestPrimaryKey.getId());
+        try {
+            easyQuery.insertable(myTestPrimaryKey).executeRows();
+        }catch (Exception exception){
+
+        }
+        System.out.println(myTestPrimaryKey.getId());
+        Assert.assertNotNull(myTestPrimaryKey.getId());
+        Assert.assertEquals("18bb13b4-121e-429c-bcd9-9b89e2345d9d".length(),myTestPrimaryKey.getId().length());
+
     }
 }

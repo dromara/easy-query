@@ -6,6 +6,7 @@ import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
@@ -49,6 +50,7 @@ public final class ColumnOption {
     private ComplexPropType complexPropType;
     private ColumnValueSQLConverter columnValueSQLConverter;
     private GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator;
+    private PrimaryKeyGenerator primaryKeyGenerator;
     private PropertySetterCaller<Object> setterCaller;
     private Property<Object, ?> getterCaller;
     private JdbcTypeHandler jdbcTypeHandler;
@@ -215,6 +217,14 @@ public final class ColumnOption {
 
     public void setGeneratedKeySQLColumnGenerator(GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator) {
         this.generatedKeySQLColumnGenerator = generatedKeySQLColumnGenerator;
+    }
+
+    public PrimaryKeyGenerator getPrimaryKeyGenerator() {
+        return primaryKeyGenerator;
+    }
+
+    public void setPrimaryKeyGenerator(PrimaryKeyGenerator primaryKeyGenerator) {
+        this.primaryKeyGenerator = primaryKeyGenerator;
     }
 
     public ComplexPropType getComplexPropType() {

@@ -1,10 +1,12 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.extension.complex.ComplexPropType;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
@@ -112,6 +114,7 @@ public class ColumnMetadata {
      * 数据库生成键生成器
      */
     private final GeneratedKeySQLColumnGenerator generatedSQLColumnGenerator;
+    private final PrimaryKeyGenerator primaryKeyGenerator;
     /**
      * 当前对象属性setter调用方法
      */
@@ -134,10 +137,10 @@ public class ColumnMetadata {
         this.name = columnOption.getName();
         this.property = columnOption.getProperty();
         PropertyDescriptor propertyDescriptor = columnOption.getProperty();
-        if(propertyDescriptor!=null){
+        if (propertyDescriptor != null) {
             this.propertyType = propertyDescriptor.getPropertyType();
             this.primitive = propertyType.isPrimitive();
-        }else{
+        } else {
             this.propertyType = Object.class;
             this.primitive = false;
         }
@@ -156,6 +159,7 @@ public class ColumnMetadata {
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
 //        this.concurrentUpdateInTrack = columnOption.isConcurrentUpdateInTrack();
         this.generatedSQLColumnGenerator = columnOption.getGeneratedKeySQLColumnGenerator();
+        this.primaryKeyGenerator = columnOption.getPrimaryKeyGenerator();
 
         if (columnOption.getGetterCaller() == null) {
             throw new IllegalArgumentException("not found " + EasyClassUtil.getSimpleName(columnOption.getEntityMetadata().getEntityClass()) + "." + propertyName + " getter caller");
@@ -169,9 +173,9 @@ public class ColumnMetadata {
         this.complexPropType = columnOption.getComplexPropType();
         this.valueObject = columnOption.isValueObject();
         this.beanConstructorCreator = columnOption.getBeanConstructorCreator();
-        if(this.valueObject){
-            this.valueObjectColumnMetadataList =new ArrayList<>(columnOption.getValueObjectColumnOptions().size());
-        }else{
+        if (this.valueObject) {
+            this.valueObjectColumnMetadataList = new ArrayList<>(columnOption.getValueObjectColumnOptions().size());
+        } else {
             this.valueObjectColumnMetadataList = Collections.emptyList();
         }
     }
@@ -272,6 +276,10 @@ public class ColumnMetadata {
 
     public GeneratedKeySQLColumnGenerator getGeneratedSQLColumnGenerator() {
         return generatedSQLColumnGenerator;
+    }
+
+    public @Nullable PrimaryKeyGenerator getPrimaryKeyGenerator() {
+        return primaryKeyGenerator;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.insert;
 
+import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -21,12 +22,14 @@ import com.easy.query.core.expression.parser.core.base.impl.ColumnOnlySelectorIm
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -67,15 +70,57 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
         return this;
     }
 
-    protected void insertBefore() {
-        //是否使用自定义插入策略
+    /**
+     * 获取本次启用的拦截器
+     * @return
+     */
+    private List<EntityInterceptor> getEntityInterceptors() {
         List<EntityInterceptor> insertInterceptors = entityMetadata.getEntityInterceptors();
         if (EasyCollectionUtil.isNotEmpty(insertInterceptors)) {
             Predicate<Interceptor> interceptorFilter = entityInsertExpressionBuilder.getExpressionContext().getInterceptorFilter();
-            List<EntityInterceptor> entityInterceptors = EasyCollectionUtil.filter(insertInterceptors, interceptorFilter::test);
-            if (EasyCollectionUtil.isNotEmpty(entityInterceptors)) {
-                Class<?> entityClass = entityMetadata.getEntityClass();
-                for (T entity : entities) {
+            return EasyCollectionUtil.filter(insertInterceptors, interceptorFilter::test);
+        }
+        return Collections.emptyList();
+
+    }
+
+    /**
+     * 获取自定义columnMetadata
+     * @param entityMetadata
+     * @return
+     */
+    private List<ColumnMetadata> getKeyColumnMetadataList(EntityMetadata entityMetadata) {
+        if (entityMetadata.isHasPrimaryKeyGenerator()) {
+            Collection<String> keyProperties = entityMetadata.getKeyProperties();
+            List<ColumnMetadata> result = new ArrayList<>(keyProperties.size());
+            for (String keyProperty : keyProperties) {
+                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(keyProperty);
+                PrimaryKeyGenerator primaryKeyGenerator = columnMetadata.getPrimaryKeyGenerator();
+                if (primaryKeyGenerator != null) {
+                    result.add(columnMetadata);
+                }
+            }
+            return result;
+        }
+        return Collections.emptyList();
+    }
+
+    protected void insertBefore() {
+        //是否使用自定义插入策略
+        boolean hasPrimaryKeyGenerator = entityMetadata.isHasPrimaryKeyGenerator();
+        List<EntityInterceptor> entityInterceptors = getEntityInterceptors();
+        boolean hasInterceptor = EasyCollectionUtil.isNotEmpty(entityInterceptors);
+        if (hasPrimaryKeyGenerator || hasInterceptor) {
+            Class<?> entityClass = entityMetadata.getEntityClass();
+            List<ColumnMetadata> keyColumnMetadataList = getKeyColumnMetadataList(entityMetadata);
+            for (T entity : entities) {
+                //先进行primaryKey的设置在进行拦截器
+                if (hasPrimaryKeyGenerator) {
+                    for (ColumnMetadata columnMetadata : keyColumnMetadataList) {
+                        columnMetadata.getPrimaryKeyGenerator().setPrimaryKey(entity, columnMetadata);
+                    }
+                }
+                if (hasInterceptor) {
                     for (EntityInterceptor entityInterceptor : entityInterceptors) {
                         entityInterceptor.configureInsert(entityClass, entityInsertExpressionBuilder, entity);
                     }
@@ -175,7 +220,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate() {
-        onConflictThen0(null, x->x.columnAll());
+        onConflictThen0(null, x -> x.columnAll());
         return this;
     }
 
@@ -187,12 +232,13 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties) {
-        onConflictThen0(constraintProperties, x->x.columnAll());
+        onConflictThen0(constraintProperties, x -> x.columnAll());
         return this;
     }
+
     @Override
     public ClientInsertable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        if(configure!=null){
+        if (configure != null) {
             configure.apply(entityInsertExpressionBuilder.getExpressionContext().getBehavior());
         }
         return this;
@@ -206,7 +252,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public ClientInsertable<T> onDuplicateKeyUpdate() {
-        onConflictThen0(null, x->x.columnAll());
+        onConflictThen0(null, x -> x.columnAll());
         return this;
     }
 
@@ -227,9 +273,9 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
         if (setColumnSelector != null) {
             ColumnOnlySelectorImpl<T> columnUpdateSetSelector = new ColumnOnlySelectorImpl<>(entityTableExpressionBuilder.getEntityTable(), new OnlySelectorImpl(entityInsertExpressionBuilder.getRuntimeContext(), entityInsertExpressionBuilder.getExpressionContext(), entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns()));
             setColumnSelector.apply(columnUpdateSetSelector);
-            if(EasySQLSegmentUtil.isNotEmpty(entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns())){
+            if (EasySQLSegmentUtil.isNotEmpty(entityInsertExpressionBuilder.getDuplicateKeyUpdateColumns())) {
                 insertOrUpdateBehavior();
-            }else{
+            } else {
                 insertOrIgnoreBehavior();
             }
         } else {
@@ -258,7 +304,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     @Override
     public String toSQL(T entity) {
-        return toSQL(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext(),false));
+        return toSQL(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext(), false));
     }
 
     @Override
