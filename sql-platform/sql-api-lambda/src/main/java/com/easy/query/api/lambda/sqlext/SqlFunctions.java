@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAmount;
 
+@SuppressWarnings("all")
 public class SqlFunctions
 {
     // region [扩展注解]
@@ -63,7 +64,7 @@ public class SqlFunctions
 
     @Ext(dbType = DbType.H2, function = "AVG({})")
     @Ext(dbType = DbType.MySQL, function = "AVG({})")
-    public static <T extends Number> T AVG(T t)
+    public static <T extends Number> T avg(T t)
     {
         throw new SqlFunctionInvokeException();
     }

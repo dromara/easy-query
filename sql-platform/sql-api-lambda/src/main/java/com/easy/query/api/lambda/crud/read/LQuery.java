@@ -2,8 +2,6 @@ package com.easy.query.api.lambda.crud.read;
 
 import com.easy.query.api.lambda.crud.read.group.GroupedQuery;
 import com.easy.query.api.lambda.db.DbType;
-import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.api.pagination.Pager;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.Query;
@@ -21,8 +19,10 @@ import io.github.kiryu1223.expressionTree.expressions.Expr;
 import io.github.kiryu1223.expressionTree.expressions.ExprTree;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 
@@ -285,7 +285,129 @@ public class LQuery<T> extends QueryBase
     }
     // endregion
 
+    // region [UNION]
+
+    public LQuery<T> union(LQuery<T> q1)
+    {
+        clientQueryable.union(q1.getClientQueryable());
+        return this;
+    }
+
+    public LQuery<T> union(LQuery<T> q1, LQuery<T> q2)
+    {
+        clientQueryable.union(q1.getClientQueryable(), q2.getClientQueryable());
+        return this;
+    }
+
+    public LQuery<T> union(LQuery<T> q1, LQuery<T> q2, LQuery<T> q3)
+    {
+        clientQueryable.union(q1.getClientQueryable(), q2.getClientQueryable(), q3.getClientQueryable());
+        return this;
+    }
+
+    public LQuery<T> union(Collection<LQuery<T>> qs)
+    {
+        List<ClientQueryable<T>> clientQueryable = new ArrayList<>();
+        for (LQuery<T> q : qs)
+        {
+            clientQueryable.add(q.getClientQueryable());
+        }
+        this.clientQueryable.union(clientQueryable);
+        return this;
+    }
+
+    public LQuery<T> unionAll(LQuery<T> q1)
+    {
+        clientQueryable.unionAll(q1.getClientQueryable());
+        return this;
+    }
+
+    public LQuery<T> unionAll(LQuery<T> q1, LQuery<T> q2)
+    {
+        clientQueryable.unionAll(q1.getClientQueryable(), q2.getClientQueryable());
+        return this;
+    }
+
+    public LQuery<T> unionAll(LQuery<T> q1, LQuery<T> q2, LQuery<T> q3)
+    {
+        clientQueryable.unionAll(q1.getClientQueryable(), q2.getClientQueryable(), q3.getClientQueryable());
+        return this;
+    }
+
+    public LQuery<T> unionAll(Collection<LQuery<T>> qs)
+    {
+        List<ClientQueryable<T>> clientQueryable = new ArrayList<>();
+        for (LQuery<T> q : qs)
+        {
+            clientQueryable.add(q.getClientQueryable());
+        }
+        this.clientQueryable.unionAll(clientQueryable);
+        return this;
+    }
+
+    // endregion
+
     //region [OTHER]
+
+    public LQuery<T> asTable(String tableName)
+    {
+        clientQueryable.asTable(tableName);
+        return this;
+    }
+
+    public LQuery<T> asTable(Function<String, String> tableNameAs)
+    {
+        clientQueryable.asTable(tableNameAs);
+        return this;
+    }
+
+    public LQuery<T> asTracking()
+    {
+        clientQueryable.asTracking();
+        return this;
+    }
+
+    public LQuery<T> asNoTracking()
+    {
+        clientQueryable.asNoTracking();
+        return this;
+    }
+
+    public LQuery<T> enableLogicDelete()
+    {
+        clientQueryable.enableLogicDelete();
+        return this;
+    }
+
+    public LQuery<T> disableLogicDelete()
+    {
+        clientQueryable.disableLogicDelete();
+        return this;
+    }
+
+    public LQuery<T> useInterceptor()
+    {
+        clientQueryable.useInterceptor();
+        return this;
+    }
+
+    public LQuery<T> useInterceptor(String name)
+    {
+        clientQueryable.useInterceptor(name);
+        return this;
+    }
+
+    public LQuery<T> noInterceptor()
+    {
+        clientQueryable.noInterceptor();
+        return this;
+    }
+
+    public LQuery<T> noInterceptor(String name)
+    {
+        clientQueryable.noInterceptor(name);
+        return this;
+    }
 
     public LQuery<T> distinct()
     {
@@ -302,6 +424,26 @@ public class LQuery<T> extends QueryBase
     public boolean any()
     {
         return clientQueryable.any();
+    }
+
+    public void required()
+    {
+        clientQueryable.required();
+    }
+
+    public void required(String msg)
+    {
+        clientQueryable.required(msg);
+    }
+
+    public void required(String msg, String code)
+    {
+        clientQueryable.required(msg, code);
+    }
+
+    public void required(Supplier<RuntimeException> throwFunc)
+    {
+        clientQueryable.required(throwFunc);
     }
 
     public T firstOrNull()

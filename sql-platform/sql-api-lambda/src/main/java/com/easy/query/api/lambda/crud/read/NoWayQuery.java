@@ -37,6 +37,26 @@ public class NoWayQuery<T>
         return stop.any();
     }
 
+    public void required()
+    {
+        stop.required();
+    }
+
+    public void required(String msg)
+    {
+        stop.required(msg);
+    }
+
+    public void required(String msg, String code)
+    {
+        stop.required(msg, code);
+    }
+
+    public void required(Supplier<RuntimeException> throwFunc)
+    {
+        stop.required(throwFunc);
+    }
+
     public T firstOrNull()
     {
         return stop.firstOrNull();

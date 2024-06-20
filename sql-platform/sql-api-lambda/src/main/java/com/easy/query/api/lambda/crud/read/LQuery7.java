@@ -24,6 +24,7 @@ import io.github.kiryu1223.expressionTree.expressions.Expr;
 import io.github.kiryu1223.expressionTree.expressions.ExprTree;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -257,6 +258,60 @@ public class LQuery7<T1, T2, T3, T4, T5, T6, T7> extends QueryBase
     }
     // endregion
 
+    // region [UNION]
+
+    public LQuery<T1> union(LQuery<T1> q1)
+    {
+        return new LQuery<>(clientQueryable.union(q1.getClientQueryable()), queryData.getDbType());
+    }
+
+    public LQuery<T1> union(LQuery<T1> q1, LQuery<T1> q2)
+    {
+        return new LQuery<>(clientQueryable.union(q1.getClientQueryable(),q2.getClientQueryable()), queryData.getDbType());
+    }
+
+    public LQuery<T1> union(LQuery<T1> q1, LQuery<T1> q2, LQuery<T1> q3)
+    {
+        return new LQuery<>(clientQueryable.union(q1.getClientQueryable(),q2.getClientQueryable(),q3.getClientQueryable()), queryData.getDbType());
+    }
+
+    public LQuery<T1> union(Collection<LQuery<T1>> qs)
+    {
+        List<ClientQueryable<T1>> clientQueryable = new ArrayList<>();
+        for (LQuery<T1> q : qs)
+        {
+            clientQueryable.add(q.getClientQueryable());
+        }
+        return new LQuery<>(this.clientQueryable.union(clientQueryable), queryData.getDbType());
+    }
+
+    public LQuery<T1> unionAll(LQuery<T1> q1)
+    {
+        return new LQuery<>(clientQueryable.unionAll(q1.getClientQueryable()), queryData.getDbType());
+    }
+
+    public LQuery<T1> unionAll(LQuery<T1> q1, LQuery<T1> q2)
+    {
+        return new LQuery<>(clientQueryable.unionAll(q1.getClientQueryable(),q2.getClientQueryable()), queryData.getDbType());
+    }
+
+    public LQuery<T1> unionAll(LQuery<T1> q1, LQuery<T1> q2, LQuery<T1> q3)
+    {
+        return new LQuery<>(clientQueryable.unionAll(q1.getClientQueryable(),q2.getClientQueryable(),q3.getClientQueryable()), queryData.getDbType());
+    }
+
+    public LQuery<T1> unionAll(Collection<LQuery<T1>> qs)
+    {
+        List<ClientQueryable<T1>> clientQueryable = new ArrayList<>();
+        for (LQuery<T1> q : qs)
+        {
+            clientQueryable.add(q.getClientQueryable());
+        }
+        return new LQuery<>(this.clientQueryable.unionAll(clientQueryable), queryData.getDbType());
+    }
+
+    // endregion
+
     //region [OTHER]
 
     public LQuery7<T1, T2, T3, T4, T5, T6, T7> distinct()
@@ -274,6 +329,26 @@ public class LQuery7<T1, T2, T3, T4, T5, T6, T7> extends QueryBase
     public boolean any()
     {
         return clientQueryable.any();
+    }
+
+    public void required()
+    {
+        clientQueryable.required();
+    }
+
+    public void required(String msg)
+    {
+        clientQueryable.required(msg);
+    }
+
+    public void required(String msg, String code)
+    {
+        clientQueryable.required(msg, code);
+    }
+
+    public void required(Supplier<RuntimeException> throwFunc)
+    {
+        clientQueryable.required(throwFunc);
     }
 
     public T1 firstOrNull()
