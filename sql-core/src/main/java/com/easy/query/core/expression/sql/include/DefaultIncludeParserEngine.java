@@ -315,10 +315,18 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 EntityQueryExpressionBuilder sqlEntityExpressionBuilder = includeQueryable.getSQLEntityExpressionBuilder();
                 NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
                 if (sqlEntityExpressionBuilder.getProjects().isEmpty()) {
-                    return includeQueryable.select(t -> {
-                        t.columnAll();
-                        EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
-                    });
+                    Class<?> aliasClassType = includeParseContext.getIncludeNavigateParams().getFlatClassType();
+                    if(aliasClassType!=null){
+                        return includeQueryable.select(aliasClassType,t -> {
+                            t.columnAll();
+                            EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
+                        });
+                    }else {
+                        return includeQueryable.select(t -> {
+                            t.columnAll();
+                            EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
+                        });
+                    }
                 } else {
                     ColumnSelector<?> columnSelector = includeQueryable.getSQLExpressionProvider1().getColumnSelector(sqlEntityExpressionBuilder.getProjects());
                     EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, columnSelector.getSQLNative(), columnSelector.getTable());

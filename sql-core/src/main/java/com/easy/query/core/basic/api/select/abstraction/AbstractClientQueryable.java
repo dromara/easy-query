@@ -915,6 +915,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                                         z.column(navigateFlatBasicProp.getName());
                                     }
                                 });
+                            }else {
+                                if(mappingPathTreeChild.hasChildren()){
+                                    EntityQueryExpressionBuilder sqlEntityExpressionBuilder = with.getSQLEntityExpressionBuilder();
+                                    with = with.select(z -> {
+//                                        z.column(entityNavigateMetadata.getSelfPropertyOrPrimary());
+                                        EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
+                                    });
+                                }
                             }
                         }
                         return with;
