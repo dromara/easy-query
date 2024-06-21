@@ -21,6 +21,10 @@ public class EasyProxyUtil {
     }
 
     public static  String getFullNavValue(ProxyNavValueAvailable proxyNavValueAvailable) {
+        String navValue = proxyNavValueAvailable.getNavValue();
+        if(navValue!=null){
+            return navValue;
+        }
         return getNavValue(proxyNavValueAvailable)+"."+ proxyNavValueAvailable.getValue();
     }
 }

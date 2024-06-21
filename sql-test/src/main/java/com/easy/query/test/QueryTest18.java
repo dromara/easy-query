@@ -26,6 +26,7 @@ import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClass;
+import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.keytest.MyTestPrimaryKey;
@@ -111,6 +112,13 @@ public class QueryTest18 extends BaseTest {
         String s = address.__getMappingPath();
         System.out.println(s);
         Assert.assertEquals("schoolStudentAddress.address", s);
+    }
+    @Test
+    public void test8_1() {
+        MappingPath address = SchoolClassProxy.TABLE.schoolStudents().flatElement().schoolStudentAddress();
+        String s = address.__getMappingPath();
+        System.out.println(s);
+        Assert.assertEquals("schoolStudents.schoolStudentAddress", s);
     }
 
     @Test
