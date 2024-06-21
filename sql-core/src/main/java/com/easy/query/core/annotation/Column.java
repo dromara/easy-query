@@ -8,6 +8,8 @@ import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.generated.DefaultGeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
+import com.easy.query.core.basic.extension.generated.UnsupportPrimaryKeyGenerator;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.UnKnownTypeHandler;
 import com.easy.query.core.util.EasyStringUtil;
@@ -109,6 +111,14 @@ public @interface Column {
      */
     boolean autoSelect() default true;
     Class<? extends JdbcTypeHandler> typeHandler() default UnKnownTypeHandler.class;
+
+    /**
+     * 需要满足如下条件才会生效
+     * {@link #primaryKey} 为true,
+     * {@link #generatedKey()} 为false
+     * @return
+     */
+    Class<? extends PrimaryKeyGenerator> primaryKeyGenerator() default UnsupportPrimaryKeyGenerator.class;
 
 //    /**
 //     * 是否是并发字段,如果是并发字段支持并发控制更新

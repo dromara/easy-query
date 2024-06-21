@@ -48,6 +48,7 @@ import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.interceptor.Topic1Interceptor;
+import com.easy.query.test.keytest.MyTestPrimaryKeyGenerator;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
@@ -180,6 +181,7 @@ public abstract class BaseTest {
         configuration.applyNavigateExtraFilterStrategy(new BookNavigateExtraFilterStrategy());
         configuration.applyNavigateExtraFilterStrategy(new JoinType());
         configuration.applyNavigateExtraFilterStrategy(new RoleJoin.RoleJoinType());
+        configuration.applyPrimaryKeyGenerator(new MyTestPrimaryKeyGenerator());
 //        configuration.applyShardingInitializer(new FixShardingInitializer());
         configuration.applyShardingInitializer(new DataSourceAndTableShardingInitializer());
         configuration.applyShardingInitializer(new TopicShardingShardingInitializer());

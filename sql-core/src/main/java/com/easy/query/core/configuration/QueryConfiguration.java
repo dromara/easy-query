@@ -5,6 +5,8 @@ import com.easy.query.core.basic.extension.conversion.EnumValueAutoConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
+import com.easy.query.core.basic.extension.generated.UnsupportPrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
@@ -65,6 +67,7 @@ public class QueryConfiguration {
     private List<EnumValueAutoConverter<?, ?>> enumValueAutoConverters = new CopyOnWriteArrayList<>();
     private Map<Class<? extends ColumnValueSQLConverter>, ColumnValueSQLConverter> columnValueSQLConverterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends GeneratedKeySQLColumnGenerator>, GeneratedKeySQLColumnGenerator> generatedSQLColumnGeneratorMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends PrimaryKeyGenerator>, PrimaryKeyGenerator> primaryKeyGeneratorMap = new ConcurrentHashMap<>();
 
     //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
@@ -79,6 +82,7 @@ public class QueryConfiguration {
         easyVersionStrategyMap.put(VersionUUIDStrategy.class, new VersionUUIDStrategy());
         easyVersionStrategyMap.put(VersionTimestampStrategy.class, new VersionTimestampStrategy());
         shardingInitializerMap.put(UnShardingInitializer.class, UnShardingInitializer.INSTANCE);
+//        primaryKeyGeneratorMap.put(UnsupportPrimaryKeyGenerator.class, UnsupportPrimaryKeyGenerator.INSTANCE);
     }
 
     public boolean deleteThrow() {
@@ -285,5 +289,16 @@ public class QueryConfiguration {
 
     public GeneratedKeySQLColumnGenerator getGeneratedKeySQLColumnGenerator(Class<? extends GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGenerator) {
         return generatedSQLColumnGeneratorMap.get(generatedKeySQLColumnGenerator);
+    }
+    public void applyPrimaryKeyGenerator(PrimaryKeyGenerator primaryKeyGenerator) {
+        Class<? extends PrimaryKeyGenerator> primaryKeyGeneratorClass = primaryKeyGenerator.getClass();
+        if (primaryKeyGeneratorMap.containsKey(primaryKeyGeneratorClass)) {
+            throw new EasyQueryException("primary key generator:" + EasyClassUtil.getSimpleName(primaryKeyGeneratorClass) + ",repeat");
+        }
+        primaryKeyGeneratorMap.put(primaryKeyGeneratorClass, primaryKeyGenerator);
+    }
+
+    public PrimaryKeyGenerator getPrimaryKeyGenerator(Class<? extends PrimaryKeyGenerator> primaryKeyGenerator) {
+        return primaryKeyGeneratorMap.get(primaryKeyGenerator);
     }
 }

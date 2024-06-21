@@ -28,6 +28,8 @@ import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.DefaultGeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
+import com.easy.query.core.basic.extension.generated.UnsupportPrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
@@ -132,6 +134,7 @@ public class EntityMetadata {
     private ShardingInitConfig shardingInitConfig;
     private boolean hasValueObject;
     private boolean aliasQuery;
+    private boolean hasPrimaryKeyGenerator=false;
 
     /**
      * 查询过滤器
@@ -517,6 +520,18 @@ public class EntityMetadata {
                             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown");
                         }
                         columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
+                    }
+                }else if(column.primaryKey()){
+                    Class<? extends PrimaryKeyGenerator> primaryKeyGeneratorClass = column.primaryKeyGenerator();
+                    //非默认的主键生成器
+                    if(!Objects.equals(UnsupportPrimaryKeyGenerator.class,primaryKeyGeneratorClass)){
+
+                        PrimaryKeyGenerator primaryKeyGenerator = configuration.getPrimaryKeyGenerator(primaryKeyGeneratorClass);
+                        if (primaryKeyGenerator == null) {
+                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " primary key generator unknown");
+                        }
+                        columnOption.setPrimaryKeyGenerator(primaryKeyGenerator);
+                        this.hasPrimaryKeyGenerator=true;
                     }
                 }
                 columnOption.setGeneratedKey(generatedKey);
@@ -1082,5 +1097,9 @@ public class EntityMetadata {
 
     public @NotNull ErrorMessage getErrorMessage() {
         return errorMessage;
+    }
+
+    public boolean isHasPrimaryKeyGenerator() {
+        return hasPrimaryKeyGenerator;
     }
 }
