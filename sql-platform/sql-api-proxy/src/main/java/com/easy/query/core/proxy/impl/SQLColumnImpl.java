@@ -2,6 +2,7 @@ package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.proxy.ProxyNavValueAvailable;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 
@@ -11,14 +12,15 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
  *
  * @author xuejiaming
  */
-public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProperty> {
+public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProperty>, ProxyNavValueAvailable {
     protected TProxy tProxy;
     protected final EntitySQLContext entitySQLContext;
     protected final TableAvailable table;
     protected final String property;
-    protected  Class<?> propType;
+    protected Class<?> propType;
+    private String navValue;
 
-    public SQLColumnImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property,@Nullable Class<TProperty> propType) {
+    public SQLColumnImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, @Nullable Class<TProperty> propType) {
         this.entitySQLContext = entitySQLContext;
         this.table = table;
         this.property = property;
@@ -48,7 +50,7 @@ public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProp
 
     @Override
     public <TR> void _setPropertyType(Class<TR> clazz) {
-        this.propType=clazz;
+        this.propType = clazz;
     }
 
 
@@ -60,6 +62,16 @@ public class SQLColumnImpl<TProxy, TProperty> implements SQLColumn<TProxy, TProp
 
     @Override
     public void _setProxy(TProxy tProxy) {
-        this.tProxy=tProxy;
+        this.tProxy = tProxy;
+    }
+
+    @Override
+    public String getNavValue() {
+        return this.navValue;
+    }
+
+    @Override
+    public void setNavValue(String val) {
+        this.navValue = val;
     }
 }

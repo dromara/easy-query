@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy.core;
 
 import com.easy.query.core.annotation.Nullable;
+import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
@@ -21,22 +22,8 @@ import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
  *
  * @author xuejiaming
  */
-public class EmptyFlatEntitySQLContext implements FlatEntitySQLContext{
-    private  String navValue;
-
-    public EmptyFlatEntitySQLContext(String navValue){
-
-        this.navValue = navValue;
-    }
-    @Override
-    public String getNavValue() {
-        return navValue;
-    }
-
-    @Override
-    public void setNavValue(String navValue) {
-        this.navValue=navValue;
-    }
+public class EmptyFlatEntitySQLContext implements FlatEntitySQLContext {
+    public static final EmptyFlatEntitySQLContext DEFAULT = new EmptyFlatEntitySQLContext();
 
     @Override
     public SQLFuncExpression1<?, SQLSelectAsExpression> getSelectAsExpressionFunction() {
@@ -45,7 +32,7 @@ public class EmptyFlatEntitySQLContext implements FlatEntitySQLContext{
 
     @Override
     public QueryRuntimeContext getRuntimeContext() {
-        return null;
+        return EmptyQueryRuntimeContext.DEFAULT;
     }
 
     @Nullable

@@ -13,6 +13,7 @@ import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -27,6 +28,7 @@ import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
+import com.easy.query.test.entity.school.proxy.SchoolStudentAddressProxy;
 import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.keytest.MyTestPrimaryKey;
@@ -115,10 +117,54 @@ public class QueryTest18 extends BaseTest {
     }
     @Test
     public void test8_1() {
-        MappingPath address = SchoolClassProxy.TABLE.schoolStudents().flatElement().schoolStudentAddress();
-        String s = address.__getMappingPath();
-        System.out.println(s);
-        Assert.assertEquals("schoolStudents.schoolStudentAddress", s);
+        {
+            MappingPath address = SchoolStudentProxy.TABLE.schoolStudentAddress().address();
+            String s = address.__getMappingPath();
+            Assert.assertEquals("schoolStudentAddress.address", s);
+
+        }
+        {
+            MappingPath address = SchoolStudentProxy.TABLE.schoolStudentAddress().schoolStudent();
+            String s = address.__getMappingPath();
+            Assert.assertEquals("schoolStudentAddress.schoolStudent", s);
+
+        }
+        {
+            MappingPath address = SchoolStudentProxy.TABLE.schoolStudentAddress().studentId();
+            String s = address.__getMappingPath();
+            Assert.assertEquals("schoolStudentAddress.studentId", s);
+
+        }
+        {
+            MappingPath address = SchoolStudentProxy.TABLE.schoolStudentAddress().schoolStudent();
+            String s = address.__getMappingPath();
+            Assert.assertEquals("schoolStudentAddress.schoolStudent", s);
+
+        }
+        {
+
+            MappingPath address = SchoolClassProxy.TABLE.schoolStudents().flatElement().schoolStudentAddress();
+            String s = address.__getMappingPath();
+            Assert.assertEquals("schoolStudents.schoolStudentAddress", s);
+        }
+        {
+
+            MappingPath address1 = SchoolClassProxy.TABLE.schoolStudents().flatElement().schoolStudentAddress().studentId();
+            String s1 = address1.__getMappingPath();
+            Assert.assertEquals("schoolStudents.schoolStudentAddress.studentId", s1);
+        }
+        {
+
+            MappingPath address = SchoolClassProxy.TABLE.schoolStudents().flatElement().schoolStudentAddress();
+            String s = address.__getMappingPath();
+            Assert.assertEquals("schoolStudents.schoolStudentAddress", s);
+        }
+        {
+
+            MappingPath address1 = SchoolClassProxy.TABLE.schoolStudents().flatElement().schoolStudentAddress().studentId();
+            String s1 = address1.__getMappingPath();
+            Assert.assertEquals("schoolStudents.schoolStudentAddress.studentId", s1);
+        }
     }
 
     @Test
@@ -346,7 +392,6 @@ public class QueryTest18 extends BaseTest {
 
     @Test
     public void textDistinct1(){
-
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);

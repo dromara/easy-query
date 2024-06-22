@@ -80,15 +80,6 @@ public class ColumnSelectSQLContext implements EntitySQLContext {
     }
 
     @Override
-    public String getNavValue() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setNavValue(String navValue) {
-    }
-
-    @Override
     public QueryRuntimeContext getRuntimeContext() {
         return EmptyQueryRuntimeContext.DEFAULT;
     }

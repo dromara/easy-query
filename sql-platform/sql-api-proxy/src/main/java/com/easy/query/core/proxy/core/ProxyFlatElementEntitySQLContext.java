@@ -26,15 +26,13 @@ public class ProxyFlatElementEntitySQLContext implements FlatEntitySQLContext {
     private final SQLQueryable<?,?> sqlQueryable;
     private final FilterContext whereFilterContext;
     private final QueryRuntimeContext runtimeContext;
-    private String navValue;
     private final SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction;
 
-    public ProxyFlatElementEntitySQLContext(SQLQueryable<?,?> sqlQueryable, QueryRuntimeContext runtimeContext, String navValue, SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction) {
+    public ProxyFlatElementEntitySQLContext(SQLQueryable<?,?> sqlQueryable, QueryRuntimeContext runtimeContext, SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction) {
         this.sqlQueryable = sqlQueryable;
         this.whereFilterContext = sqlQueryable.getQueryable().getClientQueryable().getSQLExpressionProvider1().getWhereFilterContext();
 
         this.runtimeContext = runtimeContext;
-        this.navValue = navValue;
         this.sqlSelectAsExpressionFunction = sqlSelectAsExpressionFunction;
     }
 
@@ -104,16 +102,6 @@ public class ProxyFlatElementEntitySQLContext implements FlatEntitySQLContext {
     @Override
     public SQLSelectAsExpression getSelectAsExpression() {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getNavValue() {
-        return navValue;
-    }
-
-    @Override
-    public void setNavValue(String navValue) {
-        this.navValue=navValue;
     }
 
     @Override

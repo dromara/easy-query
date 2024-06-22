@@ -38,7 +38,6 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
     private final QueryRuntimeContext runtimeContext;
     private EntityExpressionAccept accept = EntityExpressionAccept.empty;
     private SQLSelectAsExpression sqlSelectAsExpression = null;
-    private String navValue;
 
     public ProxyEntitySQLContext(EntityExpressionBuilder entityExpressionBuilder, QueryRuntimeContext runtimeContext) {
         this.entityExpressionBuilder = entityExpressionBuilder;
@@ -82,16 +81,6 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
             sqlSelectAsExpression = SQLSelectAsExpression.empty;
         }
         sqlSelectAsExpression = sqlSelectAsExpression._concat(Select.of(selectAsExpressions));
-    }
-
-    @Override
-    public String getNavValue() {
-        return navValue;
-    }
-
-    @Override
-    public void setNavValue(String navValue) {
-        this.navValue = navValue;
     }
 
     @Override
