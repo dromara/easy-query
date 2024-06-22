@@ -1,6 +1,7 @@
 package com.easy.query.test.keytest;
 
 import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
+import com.easy.query.core.metadata.ColumnMetadata;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -17,4 +18,5 @@ public class MyTestPrimaryKeyGenerator implements PrimaryKeyGenerator {
     public Serializable getPrimaryKey() {
         return UUID.randomUUID().toString();
     }
+
 }

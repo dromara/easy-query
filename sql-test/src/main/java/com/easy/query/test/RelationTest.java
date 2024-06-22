@@ -176,6 +176,10 @@ public class RelationTest extends BaseTest {
             relationInit(ids);
 
             {
+                List<String> list = easyEntityQuery.queryable(SchoolClass.class)
+                        .toList(x -> x.schoolTeachers().flatElement().name());
+            }
+            {
                 System.out.println("4");
                 boolean exception = true;
                 try {
@@ -480,10 +484,6 @@ public class RelationTest extends BaseTest {
                 }
                 Assert.assertTrue(exception);
                 System.out.println(1);
-            }
-            {
-                List<String> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .toList(x -> x.schoolTeachers().flatElement().name());
             }
             {
                 System.out.println("6");

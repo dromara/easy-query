@@ -29,8 +29,6 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
  * @author xuejiaming
  */
 public interface EntitySQLContext {
-    String getNavValue();
-    void setNavValue(String navValue);
     QueryRuntimeContext getRuntimeContext();
 
     /**

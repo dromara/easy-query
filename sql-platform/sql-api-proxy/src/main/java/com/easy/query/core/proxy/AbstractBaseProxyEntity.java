@@ -80,12 +80,13 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ProxyEntity<TProxy, TEntity>,  EntitySQLContextAvailable {
+public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ProxyEntity<TProxy, TEntity>, EntitySQLContextAvailable {
 
     protected TableAvailable table;
     protected EntitySQLContext entitySQLContext = new ColumnSelectSQLContext();
 
     private String propValue;
+
     @Override
     public String getNavValue() {
         return propValue;
@@ -93,7 +94,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
 
     @Override
     public void setNavValue(String val) {
-        this.propValue=val;
+        this.propValue = val;
     }
 
     @Override
@@ -127,140 +128,172 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     }
 
     protected <TProperty> SQLColumn<TProxy, TProperty> get(String property, @Nullable Class<TProperty> propType) {
-        SQLColumn<TProxy, TProperty> column =  new SQLColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLColumn<TProxy, TProperty> column = new SQLColumnImpl<>(entitySQLContext, table, property, propType);
         column._setProxy(castChain());
         return column;
     }
 
     protected <TProperty> SQLDateTimeColumn<TProxy, TProperty> getDateTimeColumn(String property, @Nullable Class<TProperty> propType) {
-        SQLDateTimeColumn<TProxy, TProperty> column=  new SQLDateTimeColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLDateTimeColumn<TProxy, TProperty> column = new SQLDateTimeColumnImpl<>(entitySQLContext, table, property, propType);
         column._setProxy(castChain());
         return column;
     }
 
     protected <TProperty> SQLNumberColumn<TProxy, TProperty> getNumberColumn(String property, @Nullable Class<TProperty> propType) {
-        SQLNumberColumn<TProxy, TProperty> column= new SQLNumberColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLNumberColumn<TProxy, TProperty> column = new SQLNumberColumnImpl<>(entitySQLContext, table, property, propType);
         column._setProxy(castChain());
         return column;
     }
 
     protected <TProperty> SQLStringColumn<TProxy, TProperty> getStringColumn(String property, @Nullable Class<TProperty> propType) {
-        SQLStringColumn<TProxy, TProperty> column= new SQLStringColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLStringColumn<TProxy, TProperty> column = new SQLStringColumnImpl<>(entitySQLContext, table, property, propType);
         column._setProxy(castChain());
         return column;
     }
 
     protected <TProperty> SQLBooleanColumn<TProxy, TProperty> getBooleanColumn(String property, @Nullable Class<TProperty> propType) {
-        SQLBooleanColumn<TProxy, TProperty> column= new SQLBooleanColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLBooleanColumn<TProxy, TProperty> column = new SQLBooleanColumnImpl<>(entitySQLContext, table, property, propType);
         column._setProxy(castChain());
         return column;
     }
 
     protected <TProperty> SQLAnyColumn<TProxy, TProperty> getAnyColumn(String property, @Nullable Class<TProperty> propType) {
-        SQLAnyColumn<TProxy, TProperty> column=  new SQLAnyColumnImpl<>(entitySQLContext, table, property, propType);
+        SQLAnyColumn<TProxy, TProperty> column = new SQLAnyColumnImpl<>(entitySQLContext, table, property, propType);
         column._setProxy(castChain());
         return column;
     }
 
 
-    protected <TProperty> SQLAnyTypeColumn<TProxy,TProperty> getAnyTypeColumn(String property, @Nullable Class<TProperty> propType) {
-        SQLAnyTypeColumn<TProxy, TProperty> column= new SQLAnyTypeColumnImpl<>(entitySQLContext, table, property,propType);
+    protected <TProperty> SQLAnyTypeColumn<TProxy, TProperty> getAnyTypeColumn(String property, @Nullable Class<TProperty> propType) {
+        SQLAnyTypeColumn<TProxy, TProperty> column = new SQLAnyTypeColumnImpl<>(entitySQLContext, table, property, propType);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
 
     protected SQLBigDecimalTypeColumn<TProxy> getBigDecimalTypeColumn(String property) {
-        SQLBigDecimalTypeColumn<TProxy> column= new SQLBigDecimalTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLBigDecimalTypeColumn<TProxy> column = new SQLBigDecimalTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
+
     protected SQLBooleanTypeColumn<TProxy> getBooleanTypeColumn(String property) {
-        SQLBooleanTypeColumn<TProxy> column= new SQLBooleanTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLBooleanTypeColumn<TProxy> column = new SQLBooleanTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
+
     protected SQLByteTypeColumn<TProxy> getByteTypeColumn(String property) {
-        SQLByteTypeColumn<TProxy> column= new SQLByteTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLByteTypeColumn<TProxy> column = new SQLByteTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
+
     protected SQLDateTypeColumn<TProxy> getSQLDateTypeColumn(String property) {
-        SQLDateTypeColumn<TProxy> column= new SQLDateTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLDateTypeColumn<TProxy> column = new SQLDateTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
+
     protected SQLDoubleTypeColumn<TProxy> getDoubleTypeColumn(String property) {
-        SQLDoubleTypeColumn<TProxy> column= new SQLDoubleTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLDoubleTypeColumn<TProxy> column = new SQLDoubleTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
+
     protected SQLFloatTypeColumn<TProxy> getFloatTypeColumn(String property) {
-        SQLFloatTypeColumn<TProxy> column= new SQLFloatTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLFloatTypeColumn<TProxy> column = new SQLFloatTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
+
     protected SQLIntegerTypeColumn<TProxy> getIntegerTypeColumn(String property) {
-        SQLIntegerTypeColumn<TProxy> column= new SQLIntegerTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLIntegerTypeColumn<TProxy> column = new SQLIntegerTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
+
     protected SQLLocalDateTimeTypeColumn<TProxy> getLocalDateTimeTypeColumn(String property) {
-        SQLLocalDateTimeTypeColumn<TProxy> column= new SQLLocalDateTimeTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLLocalDateTimeTypeColumn<TProxy> column = new SQLLocalDateTimeTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
+
     protected SQLLocalDateTypeColumn<TProxy> getLocalDateTypeColumn(String property) {
-        SQLLocalDateTypeColumn<TProxy> column=  new SQLLocalDateTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLLocalDateTypeColumn<TProxy> column = new SQLLocalDateTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
+
     protected SQLLocalTimeTypeColumn<TProxy> getLocalTimeTypeColumn(String property) {
-        SQLLocalTimeTypeColumn<TProxy> column= new SQLLocalTimeTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLLocalTimeTypeColumn<TProxy> column = new SQLLocalTimeTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
+
     protected SQLLongTypeColumn<TProxy> getLongTypeColumn(String property) {
-        SQLLongTypeColumn<TProxy> column= new SQLLongTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLLongTypeColumn<TProxy> column = new SQLLongTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
+
     protected SQLShortTypeColumn<TProxy> getShortTypeColumn(String property) {
-        SQLShortTypeColumn<TProxy> column=  new SQLShortTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLShortTypeColumn<TProxy> column = new SQLShortTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
 
     protected SQLStringTypeColumn<TProxy> getStringTypeColumn(String property) {
-        SQLStringTypeColumn<TProxy> column= new SQLStringTypeColumnImpl<>(entitySQLContext, table, property);
+        SQLStringTypeColumn<TProxy> column = new SQLStringTypeColumnImpl<>(entitySQLContext, table, property);
         column._setProxy(castChain());
-        return column;
-    }
-    protected SQLTimestampTypeColumn<TProxy> getTimestampTypeColumn(String property) {
-        SQLTimestampTypeColumn<TProxy> column=  new SQLTimestampTypeColumnImpl<>(entitySQLContext, table, property);
-        column._setProxy(castChain());
-        return column;
-    }
-    protected SQLTimeTypeColumn<TProxy> getTimeTypeColumn(String property) {
-        SQLTimeTypeColumn<TProxy> column= new SQLTimeTypeColumnImpl<>(entitySQLContext, table, property);
-        column._setProxy(castChain());
-        return column;
-    }
-    protected SQLUtilDateTypeColumn<TProxy> getUtilDateTypeColumn(String property) {
-        SQLUtilDateTypeColumn<TProxy> column= new SQLUtilDateTypeColumnImpl<>(entitySQLContext, table, property);
-        column._setProxy(castChain());
-        return column;
-    }
-    protected SQLUUIDTypeColumn<TProxy> getUUIDTypeColumn(String property) {
-        SQLUUIDTypeColumn<TProxy> column= new SQLUUIDTypeColumnImpl<>(entitySQLContext, table, property);
-        column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
         return column;
     }
 
+    protected SQLTimestampTypeColumn<TProxy> getTimestampTypeColumn(String property) {
+        SQLTimestampTypeColumn<TProxy> column = new SQLTimestampTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
+        return column;
+    }
+
+    protected SQLTimeTypeColumn<TProxy> getTimeTypeColumn(String property) {
+        SQLTimeTypeColumn<TProxy> column = new SQLTimeTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
+        return column;
+    }
+
+    protected SQLUtilDateTypeColumn<TProxy> getUtilDateTypeColumn(String property) {
+        SQLUtilDateTypeColumn<TProxy> column = new SQLUtilDateTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
+        return column;
+    }
+
+    protected SQLUUIDTypeColumn<TProxy> getUUIDTypeColumn(String property) {
+        SQLUUIDTypeColumn<TProxy> column = new SQLUUIDTypeColumnImpl<>(entitySQLContext, table, property);
+        column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
+        return column;
+    }
 
 
     @Deprecated
     protected <TProperty> SQLNavigateColumn<TProxy, TProperty> getNavigate(String property, Class<TProperty> propType) {
-        SQLNavigateColumnImpl<TProxy, TProperty> column = new SQLNavigateColumnImpl<>( getPropertyEntitySQLContext(property), table, property, propType);
+        SQLNavigateColumnImpl<TProxy, TProperty> column = new SQLNavigateColumnImpl<>(this.getEntitySQLContext(), table, property, propType);
         column._setProxy(castChain());
         return column;
     }
@@ -269,17 +302,17 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
         //vo
-        if(entityExpressionBuilder == null || entitySQLContext.methodIsInclude()||entityExpressionBuilder.getRuntimeContext() instanceof  EmptyQueryRuntimeContext){
-            TPropertyProxy tPropertyProxy = propertyProxy.create(getTable(), getPropertyEntitySQLContext(property));
+        if (entityExpressionBuilder == null || entitySQLContext.methodIsInclude() || entityExpressionBuilder.getRuntimeContext() instanceof EmptyQueryRuntimeContext) {
+            TPropertyProxy tPropertyProxy = propertyProxy.create(getTable(), this.getEntitySQLContext());
             tPropertyProxy.setNavValue(getFullNavValue(property));
             return tPropertyProxy;
-        }else{
+        } else {
             TableAvailable leftTable = getTable();
-            if(leftTable==null){
-                throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table",property));
+            if (leftTable == null) {
+                throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table", property));
             }
             TableAvailable relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, leftTable, property);
-            TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, getPropertyEntitySQLContext(property));
+            TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.getEntitySQLContext());
             tPropertyProxy.setNavValue(getFullNavValue(property));
             return tPropertyProxy;
         }
@@ -289,20 +322,20 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
-        if(entityExpressionBuilder==null||runtimeContext instanceof EmptyQueryRuntimeContext){
+        if (entityExpressionBuilder == null || runtimeContext instanceof EmptyQueryRuntimeContext) {
             propertyProxy.setNavValue(getFullNavValue(property));
-            return new EmptySQLQueryable<>(getPropertyEntitySQLContext(property),propertyProxy);
-        }else{
+            return new EmptySQLQueryable<>(this.getEntitySQLContext(), propertyProxy);
+        } else {
             TableAvailable leftTable = getTable();
-            if(leftTable==null){
-                throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table",property));
+            if (leftTable == null) {
+                throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table", property));
             }
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-            ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)                    ;
-            if(navigateMetadata.getRelationType()== RelationTypeEnum.ManyToMany){
+            ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
+            if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
                 ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
-                clientQueryable.where(x->{
-                    x.and(()->{
+                clientQueryable.where(x -> {
+                    x.and(() -> {
                         ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
                             m.eq(x, navigateMetadata.getTargetMappingProperty(), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext));
                             m.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperty(), navigateMetadata.getSelfPropertyOrPrimary());
@@ -311,9 +344,9 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                         x.exists(subMappingQueryable);
                     });
                 });
-            }else{
+            } else {
                 clientQueryable.where(t -> {
-                    t.and(()->{
+                    t.and(() -> {
                         t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary());
                         navigateMetadata.predicateFilterApply(t);
                     });
@@ -321,35 +354,30 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             }
             EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
             queryable.get1Proxy().setNavValue(getFullNavValue(property));
-            return new EasySQLQueryable<>(getPropertyEntitySQLContext(property), queryable,leftTable);
+            return new EasySQLQueryable<>(this.getEntitySQLContext(), queryable, leftTable);
         }
     }
-    private EntitySQLContext getPropertyEntitySQLContext(String property){
-        EntitySQLContext entitySQLContext = this.getEntitySQLContext();
-        entitySQLContext.setNavValue(getFullNavValue(property));
-        return entitySQLContext;
-    }
 
-    protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLManyQueryable<TProxy,TPropertyProxy, TProperty> getNavigateMany(String property, TPropertyProxy propertyProxy) {
+    protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLManyQueryable<TProxy, TPropertyProxy, TProperty> getNavigateMany(String property, TPropertyProxy propertyProxy) {
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
         QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
-        if(entityExpressionBuilder==null||runtimeContext instanceof EmptyQueryRuntimeContext){
+        if (entityExpressionBuilder == null || runtimeContext instanceof EmptyQueryRuntimeContext) {
             propertyProxy.setNavValue(getFullNavValue(property));
-            SQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EmptySQLManyQueryable<>(getPropertyEntitySQLContext(property), propertyProxy);
+            SQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EmptySQLManyQueryable<>(this.getEntitySQLContext(), propertyProxy);
             query._setProxy(castChain());
             return query;
-        }else{
+        } else {
             TableAvailable leftTable = getTable();
-            if(leftTable==null){
-                throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table",property));
+            if (leftTable == null) {
+                throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table", property));
             }
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-            ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext)                    ;
-            if(navigateMetadata.getRelationType()== RelationTypeEnum.ManyToMany){
+            ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
+            if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
                 ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
-                clientQueryable.where(x->{
-                    x.and(()->{
+                clientQueryable.where(x -> {
+                    x.and(() -> {
                         ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
                             m.eq(x, navigateMetadata.getTargetMappingProperty(), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext));
                             m.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperty(), navigateMetadata.getSelfPropertyOrPrimary());
@@ -358,9 +386,9 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                         x.exists(subMappingQueryable);
                     });
                 });
-            }else{
+            } else {
                 clientQueryable.where(t -> {
-                    t.and(()->{
+                    t.and(() -> {
                         t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary());
                         navigateMetadata.predicateFilterApply(t);
                     });
@@ -368,20 +396,21 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             }
             EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
             queryable.get1Proxy().setNavValue(getFullNavValue(property));
-            EasySQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasySQLManyQueryable<>(getPropertyEntitySQLContext(property), queryable, leftTable);
+            EasySQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasySQLManyQueryable<>(this.getEntitySQLContext(), queryable, leftTable);
             query._setProxy(castChain());
             return query;
         }
     }
-    private String getFullNavValue(String navValue){
+
+    private String getFullNavValue(String navValue) {
         String parentNavValue = getNavValue();
-        if(parentNavValue==null){
+        if (parentNavValue == null) {
             return navValue;
         }
-        return parentNavValue+"."+navValue;
+        return parentNavValue + "." + navValue;
     }
 
     protected TProxy castChain() {
-        return (TProxy)this;
+        return (TProxy) this;
     }
 }

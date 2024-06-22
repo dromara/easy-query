@@ -124,7 +124,7 @@ public class EmptySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, 
 
     @Override
     public T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression) {
-        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new EmptyFlatEntitySQLContext(getNavValue()));
+        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), EmptyFlatEntitySQLContext.DEFAULT);
         tPropertyProxy.setNavValue(getNavValue());
         return tPropertyProxy;
     }

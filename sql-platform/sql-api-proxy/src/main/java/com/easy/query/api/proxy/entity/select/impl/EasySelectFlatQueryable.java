@@ -11,6 +11,7 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.core.FlatEntitySQLContext;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -42,7 +43,7 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
         }
 
         this.runtimeContext = queryable.getSQLEntityExpressionBuilder().getRuntimeContext();
-        this.resultBasicType = tProxy.getNavValue() == null && tProxy.getValue() != null;
+        this.resultBasicType = tProxy instanceof TablePropColumn;
         EntityMetadata entityMetadata = queryable.getSQLEntityExpressionBuilder().getTable(0).getEntityMetadata();
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         EntityMetadata queryEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryable.queryClass());
