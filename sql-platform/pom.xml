@@ -11,10 +11,8 @@
 
     <artifactId>sql-platform</artifactId>
     <packaging>pom</packaging>
-    <modules>
-        <module>sql-api-proxy</module>
-        <module>sql-api-lambda</module>
-    </modules>
+<!--    <modules>-->
+<!--    </modules>-->
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
