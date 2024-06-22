@@ -28,7 +28,7 @@ public class SqlFunctions
         /**
          * 目标数据库
          */
-        DbType dbType();
+        DbType dbType() default DbType.Other;
 
         /**
          * 实际函数展开
@@ -63,7 +63,7 @@ public class SqlFunctions
 
     @Ext(dbType = DbType.H2, function = "AVG({})")
     @Ext(dbType = DbType.MySQL, function = "AVG({})")
-    public static <T extends Number> T AVG(T t)
+    public static <T extends Number> T avg(T t)
     {
         throw new SqlFunctionInvokeException();
     }
@@ -90,7 +90,14 @@ public class SqlFunctions
     @Ext(dbType = DbType.MySQL, function = "NOW()")
     public static LocalDateTime now()
     {
-        throw new SqlFunctionInvokeException();
+        if (1 + 1 == 2)
+        {
+            throw new SqlFunctionInvokeException();
+        }
+        else
+        {
+            return LocalDateTime.now();
+        }
     }
 
     @Ext(dbType = DbType.H2, function = "UTC_TIMESTAMP()")

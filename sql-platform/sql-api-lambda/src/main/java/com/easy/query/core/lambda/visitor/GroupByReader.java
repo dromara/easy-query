@@ -5,18 +5,14 @@ import com.easy.query.api.lambda.db.DbType;
 import com.easy.query.api.lambda.sqlext.SqlFunctions;
 import com.easy.query.api.lambda.sqlext.SqlTypes;
 import com.easy.query.core.lambda.exception.IllegalExpressionException;
-import com.easy.query.core.lambda.util.ParamMatcher;
 import io.github.kiryu1223.expressionTree.expressions.*;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import static com.easy.query.core.lambda.util.ExpressionUtil.*;
+import static com.easy.query.core.lambda.util.ExpressionUtil.hasParameter;
+import static com.easy.query.core.lambda.util.ExpressionUtil.isVoid;
 import static com.easy.query.core.lambda.util.SqlUtil.fieldName;
 
 public class GroupByReader extends BaseVisitor
@@ -26,7 +22,7 @@ public class GroupByReader extends BaseVisitor
 
     public GroupByReader(List<ParameterExpression> parameters, DbType dbType)
     {
-        super(parameters,dbType);
+        super(parameters, dbType);
     }
 
     public Map<String, GroupExtData> getGroupExtDataMap()
@@ -68,12 +64,12 @@ public class GroupByReader extends BaseVisitor
         else if (SqlFunctions.class.isAssignableFrom(methodCall.getMethod().getDeclaringClass()))
         {
             visit(methodCall.getExpr());
-            matchSqlFunctions(methodCall,cur.exprData);
+            matchSqlFunctions(methodCall, cur.exprData);
         }
         else if (SqlTypes.class.isAssignableFrom(methodCall.getMethod().getDeclaringClass()))
         {
             visit(methodCall.getExpr());
-            matchSqlTypes(methodCall,cur.exprData);
+            matchSqlTypes(methodCall, cur.exprData);
         }
         else
         {

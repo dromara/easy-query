@@ -7,8 +7,8 @@ public class Main
 {
     public static void main(String[] args)
     {
-        int i=0;
-        String input ="{}";
+        int i = 0;
+        String input = "{}";
         // 正则表达式匹配 {}
         Pattern pattern = Pattern.compile("\\{}");
         Matcher matcher = pattern.matcher(input);
@@ -16,7 +16,8 @@ public class Main
         StringBuilder sb = new StringBuilder(input.length());
         // 遍历输入字符串
         int prevEnd = 0; // 上一个匹配的结束位置
-        while (matcher.find()) {
+        while (matcher.find())
+        {
             // 将从上一个匹配结束到当前匹配开始的部分添加到StringBuilder中
             sb.append(input.substring(prevEnd, matcher.start()));
             // 替换 {} 为 {index}
@@ -25,7 +26,8 @@ public class Main
             prevEnd = matcher.end();
         }
         // 如果输入字符串的末尾有未匹配的部分，将其添加到StringBuilder中
-        if (prevEnd < input.length()) {
+        if (prevEnd < input.length())
+        {
             sb.append(input.substring(prevEnd));
         }
 

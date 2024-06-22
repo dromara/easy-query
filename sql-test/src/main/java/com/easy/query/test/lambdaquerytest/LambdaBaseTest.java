@@ -15,6 +15,7 @@ public class LambdaBaseTest extends H2BaseTest
 
     public LambdaBaseTest()
     {
+
         elq = new EasyLambdaQueryClient(easyQuery.getEasyQueryClient(), MethodHandles.lookup());
     }
 

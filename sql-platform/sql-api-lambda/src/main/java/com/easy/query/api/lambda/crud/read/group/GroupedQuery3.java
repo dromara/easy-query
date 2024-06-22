@@ -14,14 +14,15 @@ import io.github.kiryu1223.expressionTree.expressions.ExprTree;
 
 public class GroupedQuery3<Key, T1, T2, T3> extends QueryBase
 {
-    protected final ClientQueryable3<T1, T2, T3> clientQueryable3;
+    protected final ClientQueryable3<T1, T2, T3> clientQueryable;
 
-    public GroupedQuery3(ClientQueryable3<T1, T2, T3> clientQueryable3, QueryData queryData)
+    public GroupedQuery3(ClientQueryable3<T1, T2, T3> clientQueryable, QueryData queryData)
     {
         super(queryData);
-        this.clientQueryable3 = clientQueryable3;
+        this.clientQueryable = clientQueryable;
     }
 
+    // region [HAVING]
     public GroupedQuery3<Key, T1, T2, T3> having(@Expr Func1<Group3<Key, T1, T2, T3>, Boolean> func)
     {
         throw new RuntimeException();
@@ -30,10 +31,12 @@ public class GroupedQuery3<Key, T1, T2, T3> extends QueryBase
     public GroupedQuery3<Key, T1, T2, T3> having(ExprTree<Func1<Group3<Key, T1, T2, T3>, Boolean>> expr)
     {
         Having having = new Having(expr.getTree());
-        having.analysis(clientQueryable3, queryData);
+        having.analysis(clientQueryable, queryData);
         return this;
     }
+    // endregion
 
+    // region [ORDER BY]
     public <R> GroupedQuery3<Key, T1, T2, T3> orderBy(@Expr Func1<Group3<Key, T1, T2, T3>, R> expr, boolean asc)
     {
         throw new RuntimeException();
@@ -42,7 +45,7 @@ public class GroupedQuery3<Key, T1, T2, T3> extends QueryBase
     public <R> GroupedQuery3<Key, T1, T2, T3> orderBy(ExprTree<Func1<Group3<Key, T1, T2, T3>, R>> expr, boolean asc)
     {
         OrderBy orderBy = new OrderBy(expr.getTree(), asc);
-        orderBy.analysis(clientQueryable3, queryData);
+        orderBy.analysis(clientQueryable, queryData);
         return this;
     }
 
@@ -54,10 +57,12 @@ public class GroupedQuery3<Key, T1, T2, T3> extends QueryBase
     public <R> GroupedQuery3<Key, T1, T2, T3> orderBy(ExprTree<Func1<Group3<Key, T1, T2, T3>, R>> expr)
     {
         OrderBy orderBy = new OrderBy(expr.getTree(), true);
-        orderBy.analysis(clientQueryable3, queryData);
+        orderBy.analysis(clientQueryable, queryData);
         return this;
     }
+    // endregion
 
+    // region [SELECT]
     public <R> LQuery<R> select(@Expr Func1<Group3<Key, T1, T2, T3>, R> expr)
     {
         throw new RuntimeException();
@@ -66,6 +71,7 @@ public class GroupedQuery3<Key, T1, T2, T3> extends QueryBase
     public <R> LQuery<R> select(ExprTree<Func1<Group3<Key, T1, T2, T3>, R>> expr)
     {
         Select select = new Select(expr.getTree());
-        return new LQuery<>(select.analysis(clientQueryable3, queryData), queryData.getDbType());
+        return new LQuery<>(select.analysis(clientQueryable, queryData), queryData.getDbType());
     }
+    // endregion
 }

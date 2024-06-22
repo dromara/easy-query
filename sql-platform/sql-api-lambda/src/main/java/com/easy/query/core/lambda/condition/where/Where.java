@@ -7,10 +7,11 @@ import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.basic.api.select.ClientQueryable4;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.lambda.condition.criteria.Criteria;
 import com.easy.query.core.lambda.visitor.SqlValue;
 import com.easy.query.core.lambda.visitor.WhereVisitor;
-import com.easy.query.core.metadata.EntityMetadata;
 import io.github.kiryu1223.expressionTree.expressions.LambdaExpression;
 
 public class Where extends Criteria
@@ -69,119 +70,6 @@ public class Where extends Criteria
     {
         WhereVisitor where = new WhereVisitor(expression.getParameters(), queryData.getDbType());
         expression.getBody().accept(where);
-        queryable.where(w -> w.sqlNativeSegment(where.getData(), s ->
-        {
-            for (SqlValue sqlValue : where.getSqlValue())
-            {
-                switch (sqlValue.type)
-                {
-                    case value:
-                        s.value(sqlValue.value);
-                        break;
-                    case property:
-                        if (sqlValue.index == 0)
-                        {
-                            s.expression(sqlValue.value.toString());
-                        }
-                        break;
-                }
-            }
-        }));
-    }
-
-    public void analysis(ClientQueryable2<?, ?> queryable, QueryData queryData)
-    {
-        WhereVisitor where = new WhereVisitor(expression.getParameters(), queryData.getDbType());
-        expression.getBody().accept(where);
-        queryable.where((w0, w1) -> w0.sqlNativeSegment(where.getData(), s ->
-        {
-            for (SqlValue sqlValue : where.getSqlValue())
-            {
-                switch (sqlValue.type)
-                {
-                    case value:
-                        s.value(sqlValue.value);
-                        break;
-                    case property:
-                        if (sqlValue.index == 0)
-                        {
-                            s.expression(w0, sqlValue.value.toString());
-                        }
-                        else if (sqlValue.index == 1)
-                        {
-                            s.expression(w1, sqlValue.value.toString());
-                        }
-                        break;
-                }
-            }
-        }));
-    }
-
-    public void analysis(ClientQueryable3<?, ?, ?> queryable, QueryData queryData)
-    {
-        WhereVisitor where = new WhereVisitor(expression.getParameters(), queryData.getDbType());
-        expression.getBody().accept(where);
-        queryable.where((w0, w1, w2) -> w0.sqlNativeSegment(where.getData(), s ->
-        {
-            for (SqlValue sqlValue : where.getSqlValue())
-            {
-                switch (sqlValue.type)
-                {
-                    case value:
-                        s.value(sqlValue.value);
-                        break;
-                    case property:
-                        if (sqlValue.index == 0)
-                        {
-                            s.expression(w0, sqlValue.value.toString());
-                        }
-                        else if (sqlValue.index == 1)
-                        {
-                            s.expression(w1, sqlValue.value.toString());
-                        }
-                        else if (sqlValue.index == 2)
-                        {
-                            s.expression(w2, sqlValue.value.toString());
-                        }
-                        break;
-                }
-            }
-        }));
-    }
-
-    public void analysis(ClientQueryable4<?, ?, ?, ?> queryable, QueryData queryData)
-    {
-        WhereVisitor where = new WhereVisitor(expression.getParameters(), queryData.getDbType());
-        expression.getBody().accept(where);
-        queryable.where((w0, w1, w2, w3) -> w0.sqlNativeSegment(where.getData(), s ->
-        {
-            for (SqlValue sqlValue : where.getSqlValue())
-            {
-                switch (sqlValue.type)
-                {
-                    case value:
-                        s.value(sqlValue.value);
-                        break;
-                    case property:
-                        if (sqlValue.index == 0)
-                        {
-                            s.expression(w0, sqlValue.value.toString());
-                        }
-                        else if (sqlValue.index == 1)
-                        {
-                            s.expression(w1, sqlValue.value.toString());
-                        }
-                        else if (sqlValue.index == 2)
-                        {
-                            s.expression(w2, sqlValue.value.toString());
-                        }
-                        else if (sqlValue.index == 3)
-                        {
-                            s.expression(w3, sqlValue.value.toString());
-                        }
-                        break;
-                }
-            }
-        }));
+        analysis0(queryable,queryData,where.getData(),where.getSqlValue());
     }
 }

@@ -6,14 +6,15 @@ import io.github.kiryu1223.expressionTree.expressions.*;
 
 import java.util.List;
 
-import static com.easy.query.core.lambda.util.ExpressionUtil.*;
-import static com.easy.query.core.lambda.util.SqlUtil.*;
+import static com.easy.query.core.lambda.util.ExpressionUtil.isVoid;
+import static com.easy.query.core.lambda.util.SqlUtil.fieldName;
+import static com.easy.query.core.lambda.util.SqlUtil.toSqlOp;
 
 public class WhereVisitor extends BaseVisitor
 {
     public WhereVisitor(List<ParameterExpression> parameters, DbType dbType)
     {
-        super(parameters,dbType);
+        super(parameters, dbType);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.easy.query.core.lambda.util;
 
-import com.easy.query.api.lambda.crud.read.IGroup;
+import com.easy.query.api.lambda.crud.read.group.IGroup;
 import io.github.kiryu1223.expressionTree.expressions.*;
 
 import java.lang.reflect.Field;

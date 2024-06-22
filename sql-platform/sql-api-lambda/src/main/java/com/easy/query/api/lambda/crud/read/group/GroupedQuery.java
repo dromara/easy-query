@@ -21,6 +21,7 @@ public class GroupedQuery<Key, T> extends QueryBase
         this.clientQueryable = entityQueryable;
     }
 
+    // region [HAVING]
     public GroupedQuery<Key, T> having(@Expr Func1<Group<Key, T>, Boolean> func)
     {
         throw new RuntimeException();
@@ -32,6 +33,10 @@ public class GroupedQuery<Key, T> extends QueryBase
         having.analysis(clientQueryable, queryData);
         return this;
     }
+
+    // endregion
+
+    // region [ORDER BY]
 
     public <R> GroupedQuery<Key, T> orderBy(@Expr Func1<Group<Key, T>, R> expr, boolean asc)
     {
@@ -45,6 +50,7 @@ public class GroupedQuery<Key, T> extends QueryBase
         return this;
     }
 
+
     public <R> GroupedQuery<Key, T> orderBy(@Expr Func1<Group<Key, T>, R> expr)
     {
         throw new RuntimeException();
@@ -56,6 +62,9 @@ public class GroupedQuery<Key, T> extends QueryBase
         orderBy.analysis(clientQueryable, queryData);
         return this;
     }
+    // endregion
+
+    // region [SELECT]
 
     public <R> LQuery<R> select(@Expr Func1<Group<Key, T>, R> expr)
     {
@@ -67,4 +76,6 @@ public class GroupedQuery<Key, T> extends QueryBase
         Select select = new Select(expr.getTree());
         return new LQuery<>(select.analysis(clientQueryable, queryData), queryData.getDbType());
     }
+
+    // endregion
 }
