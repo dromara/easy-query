@@ -40,6 +40,6 @@ public class GroupBy extends Criteria
         readGroup(queryData);
         GroupByVisitor groupBy = new GroupByVisitor(expression.getParameters(), queryData.getDbType());
         expression.getBody().accept(groupBy);
-        analysis0(queryable,queryData,groupBy.getData(),groupBy.getSqlValue());
+        analysisGroupBy(queryable,queryData,groupBy.getData(),groupBy.getSqlValue());
     }
 }

@@ -70,6 +70,6 @@ public class Where extends Criteria
     {
         WhereVisitor where = new WhereVisitor(expression.getParameters(), queryData.getDbType());
         expression.getBody().accept(where);
-        analysis0(queryable,queryData,where.getData(),where.getSqlValue());
+        analysisWhere(queryable,queryData,where.getData(),where.getSqlValue());
     }
 }
