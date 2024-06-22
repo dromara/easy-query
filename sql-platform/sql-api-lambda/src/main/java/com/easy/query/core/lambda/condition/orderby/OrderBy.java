@@ -25,6 +25,6 @@ public class OrderBy extends Criteria
     {
         HavingVisitor orderBy = new HavingVisitor(expression.getParameters(), queryData);
         expression.getBody().accept(orderBy);
-        analysis0(queryable, queryData, orderBy.getData() + (asc ? " ASC" : " DESC"), orderBy.getSqlValue());
+        analysisOrderBy(queryable, queryData, orderBy.getData() + (asc ? " ASC" : " DESC"), orderBy.getSqlValue());
     }
 }

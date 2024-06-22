@@ -24,6 +24,6 @@ public class Having extends Criteria
     {
         HavingVisitor having = new HavingVisitor(expression.getParameters(), queryData);
         expression.getBody().accept(having);
-        analysis0(queryable,queryData,having.getData(),having.getSqlValue());
+        analysisHaving(queryable,queryData,having.getData(),having.getSqlValue());
     }
 }
