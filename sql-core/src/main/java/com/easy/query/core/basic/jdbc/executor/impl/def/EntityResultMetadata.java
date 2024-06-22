@@ -7,6 +7,10 @@ import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasyStringUtil;
+
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * create time 2023/6/30 21:47
@@ -64,9 +68,18 @@ public class EntityResultMetadata<TR> implements ResultMetadata<TR> {
 
     @Override
     public ResultColumnMetadata getResultColumnOrNullByPropertyName(int index, String propertyName) {
+        if(propertyName==null){
+            return null;
+        }
         ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(propertyName);
         if (columnMetadata != null) {
             return new EntityResultColumnMetadata(index, entityMetadata, columnMetadata);
+        }else{
+            for (Map.Entry<String, ColumnMetadata> columnMetadataKv : entityMetadata.getProperty2ColumnMap().entrySet()) {
+                if(propertyName.equalsIgnoreCase(columnMetadataKv.getKey())){
+                    return new EntityResultColumnMetadata(index, entityMetadata, columnMetadataKv.getValue());
+                }
+            }
         }
         return null;
     }
