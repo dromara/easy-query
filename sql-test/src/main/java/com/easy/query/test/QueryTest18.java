@@ -401,4 +401,20 @@ public class QueryTest18 extends BaseTest {
         Assert.assertEquals("18bb13b4-121e-429c-bcd9-9b89e2345d9d".length(),myTestPrimaryKey.getId().length());
 
     }
+
+    @Test
+     public void test123(){
+        BlogEntity blogEntity = new BlogEntity();
+        blogEntity.setId("123");
+        easyEntityQuery.updatable(blogEntity)
+//                .setColumns(b -> b.FETCHER.content().order())
+//                .setIgnoreColumns(b->b.FETCHER.createTime().createBy())
+                .executeRows();
+        easyEntityQuery.updatable(blogEntity)
+//                .setColumns(b -> b.FETCHER.content().order())
+                .setIgnoreColumns(b->b.FETCHER.createTime().createBy().updateTime().updateBy())
+                .whereColumns(b -> b.FETCHER.columnKeys().order().content())
+                .executeRows();
+
+     }
 }

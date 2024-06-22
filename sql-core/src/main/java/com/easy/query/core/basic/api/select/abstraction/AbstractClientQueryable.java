@@ -868,8 +868,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             //获取下一次的基本属性
             int size = mappingPathTreeChild.getNavigateFlatMetadataList().size();
             List<MappingPathTreeNode> navigateFlatBasicProps = mappingPathTreeChild.getChildren().stream().filter(o -> {
-                return o.anyBasicType() && o.allBasicType(size) && !o.hasChildren();
+                return o.anyBasicType() && !o.hasChildren();
             }).collect(Collectors.toList());
+            boolean allChildrenIsProps = navigateFlatBasicProps.size() == size;
 
 
             clientQueryable
@@ -888,7 +889,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                        }
                         selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, mappingPathTreeChild, false);
 
-                        if (basicType) {
+                        if (basicType&&!allChildrenIsProps) {
                             //检查是否存在自定义dto
                             List<NavigateFlatMetadata> navigateFlatMetadataList = mappingPathTreeChild.getNavigateFlatMetadataList().stream().filter(o -> !o.isBasicType() && o.getMappingPath().length == mappingPathTreeChild.getDeep() && Objects.equals(propertyName, o.getMappingPath()[o.getMappingPath().length - 1])).collect(Collectors.toList());
                             if (EasyCollectionUtil.isNotEmpty(navigateFlatMetadataList)) {
@@ -900,7 +901,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                                 Class<?> navigatePropertyType = navigateFlatMetadata.getNavigatePropertyType();
                                 //表示VO对象并不是最终的对象
                                 if (mappingPathTreeChild.hasChildren()) {
-                                    if (EasyCollectionUtil.isEmpty(navigateFlatBasicProps) && !Objects.equals(with.queryClass(), navigatePropertyType)) {
+                                    if (EasyCollectionUtil.isNotEmpty(navigateFlatBasicProps) && !Objects.equals(with.queryClass(), navigatePropertyType)) {
                                         //如果存在Flat一个数据库VO那么就不可以在对VO所属的对象路径进行基本类型的获取
                                         //Flat [roles,menus] 那么就不可以Flat [roles,menus,id]
                                         throw new EasyQueryInvalidOperationException(String.format("@NavigateFlat cannot simultaneously include non-database related objects: [%s] and its object properties.", EasyClassUtil.getSimpleName(navigatePropertyType)));
@@ -910,9 +911,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             }
                         } else {
                             if (EasyCollectionUtil.isNotEmpty(navigateFlatBasicProps)) {
+                                EntityQueryExpressionBuilder sqlEntityExpressionBuilder = with.getSQLEntityExpressionBuilder();
                                 with = with.select(z -> {
                                     for (MappingPathTreeNode navigateFlatBasicProp : navigateFlatBasicProps) {
                                         z.column(navigateFlatBasicProp.getName());
+                                    }
+                                    if(!allChildrenIsProps){
+                                        EasySQLExpressionUtil.appendTargetExtraTargetProperty(entityNavigateMetadata,sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
                                     }
                                 });
                             }else {
@@ -921,6 +926,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                                     with = with.select(z -> {
 //                                        z.column(entityNavigateMetadata.getSelfPropertyOrPrimary());
                                         EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
+                                        EasySQLExpressionUtil.appendTargetExtraTargetProperty(entityNavigateMetadata,sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
                                     });
                                 }
                             }
