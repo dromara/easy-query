@@ -1,10 +1,7 @@
 package com.easy.query.api.lambda.crud.read;
 
-import com.easy.query.api.lambda.crud.read.group.GroupedQuery7;
 import com.easy.query.api.lambda.crud.read.group.GroupedQuery8;
 import com.easy.query.api.lambda.db.DbType;
-import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.api.pagination.Pager;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
@@ -211,21 +208,21 @@ public class LQuery8<T1, T2, T3, T4, T5, T6, T7, T8> extends QueryBase
         return new LQuery<>(select.analysis(clientQueryable, queryData), queryData.getDbType());
     }
 
-    public <R> NoWayQuery<R> selectAutoInclude(Class<R> r)
+    public <R> EndQuery<R> selectAutoInclude(Class<R> r)
     {
         Query<R> query = clientQueryable.selectAutoInclude(r);
-        return new NoWayQuery<>(query);
+        return new EndQuery<>(query);
     }
 
-    public <R> NoWayQuery<R> selectAutoInclude(@Expr Func8<T1, T2, T3, T4, T5, T6, T7, T8, R> expr)
+    public <R> EndQuery<R> selectAutoInclude(@Expr Func8<T1, T2, T3, T4, T5, T6, T7, T8, R> expr)
     {
         throw new RuntimeException();
     }
 
-    public <R> NoWayQuery<R> selectAutoInclude(ExprTree<Func8<T1, T2, T3, T4, T5, T6, T7, T8, R>> expr)
+    public <R> EndQuery<R> selectAutoInclude(ExprTree<Func8<T1, T2, T3, T4, T5, T6, T7, T8, R>> expr)
     {
         Select select = new Select(expr.getTree());
-        return new NoWayQuery<>(select.analysisAutoInclude(clientQueryable, queryData));
+        return new EndQuery<>(select.analysisAutoInclude(clientQueryable, queryData));
     }
 
     // endregion

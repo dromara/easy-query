@@ -240,21 +240,21 @@ public class LQuery<T> extends QueryBase
         return new LQuery<>(select.analysis(clientQueryable, queryData), queryData.getDbType());
     }
 
-    public <R> NoWayQuery<R> selectAutoInclude(Class<R> r)
+    public <R> EndQuery<R> selectAutoInclude(Class<R> r)
     {
         Query<R> query = clientQueryable.selectAutoInclude(r);
-        return new NoWayQuery<>(query);
+        return new EndQuery<>(query);
     }
 
-    public <R> NoWayQuery<R> selectAutoInclude(@Expr Func1<T, R> expr)
+    public <R> EndQuery<R> selectAutoInclude(@Expr Func1<T, R> expr)
     {
         throw new RuntimeException();
     }
 
-    public <R> NoWayQuery<R> selectAutoInclude(ExprTree<Func1<T, R>> expr)
+    public <R> EndQuery<R> selectAutoInclude(ExprTree<Func1<T, R>> expr)
     {
         Select select = new Select(expr.getTree());
-        return new NoWayQuery<>(select.analysisAutoInclude(clientQueryable, queryData));
+        return new EndQuery<>(select.analysisAutoInclude(clientQueryable, queryData));
     }
 
     // endregion

@@ -21,6 +21,7 @@ import static com.easy.query.core.lambda.util.SqlUtil.fieldName;
 public class SelectVisitor extends BaseVisitor
 {
     private String temp = "";
+    private int parIndex=0;
     private final QueryData queryData;
     private ParameterExpression curParameter;
 
@@ -28,6 +29,11 @@ public class SelectVisitor extends BaseVisitor
     {
         super(parameters, queryData.getDbType());
         this.queryData = queryData;
+    }
+
+    public int getParIndex()
+    {
+        return parIndex;
     }
 
     @Override
@@ -173,16 +179,14 @@ public class SelectVisitor extends BaseVisitor
         curParameter = variableExpression.getParameter();
     }
 
-//    @Override
-//    public void visit(ParameterExpression parameter)
-//    {
-//        if (parameters.contains(parameter))
-//        {
-//            int index = parameters.indexOf(parameter);
-//            data.append(indexBlock());
-//            sqlValue.add(new SqlValue(SqlValue.Type.property, index, "*"));
-//        }
-//    }
+    @Override
+    public void visit(ParameterExpression parameter)
+    {
+        if (parameters.contains(parameter))
+        {
+            parIndex = parameters.indexOf(parameter);
+        }
+    }
 
     @Override
     public void visit(ConstantExpression constant)

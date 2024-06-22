@@ -8,10 +8,11 @@ import com.easy.query.api.lambda.crud.read.LQuery4;
 import com.easy.query.api.lambda.sqlext.SqlFunctions;
 import com.easy.query.api.lambda.sqlext.SqlTypes;
 import com.easy.query.core.lambda.common.TempResult;
-import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.h2.domain.*;
+import com.easy.query.test.vo.BlogEntityVO1;
+import com.easy.query.test.vo.BlogEntityVO2;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -497,55 +498,253 @@ public class LambdaQueryTest extends LambdaBaseTest
 //                .toList();
 //
 //    }
+//
+//    @Deprecated
+//    public void display6()
+//    {
+//        LQuery<Topic> lQuery = elq
+//                .queryable(Topic.class)
+//                .where(o -> o.getId() == "3");
+//        //SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM t_topic t WHERE t.`id` = ?
+//        display7();
+//        List<BlogEntity> blogEntities = elq
+//                .queryable(BlogEntity.class)
+//                .leftJoin(lQuery, (a, b) -> a.getId() == b.getId())
+//                .where((a, b) -> a.getId() != null && b.getId() != null)
+//                .toList();
+//    }
+//
+//    @Deprecated
+//    public void display7()
+//    {
+//        // 不指定select字段的场合，此时会自动将从BlogEntity表查询的结果映射到BlogEntityTest对象上
+//        List<BlogEntityTest> list1 = elq.queryable(BlogEntity.class)
+//                .select(BlogEntityTest.class).toList();
+//
+//
+//        // 想要指定select字段的场合
+//        // 1.使用匿名对象
+//        String sql1 = elq.queryable(BlogEntity.class)
+//                .where(o -> o.getId() == "2")
+//                .select(o -> new TempResult()
+//                {
+//                    BigDecimal score = o.getOrder();//将查询的order映射到匿名对象的score上
+//                    // 填写更多你想要的字段{var a = o.getXxx()}
+//                })
+//                .limit(1).toSQL();
+//
+//        // 2. 使用java类型
+//        String sql2 = elq.queryable(BlogEntity.class)
+//                .where(o -> o.getId() == "2")
+//                .select(o ->
+//                {
+//                    BlogEntity blogEntity = new BlogEntity();
+//                    blogEntity.setScore(o.getOrder());//将查询的order映射到java对象的score上
+//                    // 填写更多你想要的字段{obj.setXxx(o.getXxx())}
+//                    return blogEntity;
+//                })
+//                .limit(1).toSQL();
+//
+//        // 两者等价
+//        Assert.assertEquals("SELECT t.`order` AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql1);
+//        Assert.assertEquals("SELECT t.`order` AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql2);
+//    }
+//
+//    @Deprecated
+//    public void display8()
+//    {
+//        List<String> list1 = elq.queryable(Topic.class)
+//                .where(f -> f.getId() == "1")
+//                .select(s -> s.getId())
+//                .toList();
+//
+//        List<Integer> list2 = elq.queryable(Topic.class)
+//                .where(f -> f.getId() == "1")
+//                .select(s -> s.getStars())
+//                .toList();
+//
+//        List<Map<String, Object>> list3 = elq.queryable(Topic.class)
+//                .where(f -> f.getId() == "1")
+//                .toMaps();
+//    }
+//
+//    @Deprecated
+//    public void display9()
+//    {
+//        List<TopicGroupTestDTO> topicGroupTestDTOS = elq.queryable(Topic.class)
+//                .where(o -> o.getId() == "3")
+//                // 这里相当于声明了一个有一个元素(id)的组(group)
+//                // 支持声明多个元素
+//                .groupBy(o -> new Grouper()
+//                {
+//                    String id = o.getId();
+//                    //int num = o.getStars();
+//                })
+//                // 出于安全考虑，groupBy之后想要tolist就必须显示的select字段
+//                .select(g ->
+//                {
+//                    TopicGroupTestDTO result = new TopicGroupTestDTO();
+//                    // 选择了Topic表的id字段
+//                    // 注意此时g.key.id代表了Topic的id字段，以此类推group多个字段时相当于g.key.xxx,等同于你在上面new Grouper(){...}时声明的字段
+//                    result.setId(g.key.id);
+//                    // 选择了Topic表的id字段,并且套了一层count聚合函数
+//                    result.setIdCount((int) g.count(s -> s.getId()));
+//                    // 选择了Topic表的id字段,并且套了一层min聚合函数
+//                    result.setIdMin(g.min(s -> s.getId()));
+//                    return result;
+//                })
+//                // 显然你可以使用匿名类，上下相等
+//                //.select(g -> new TempResult()
+//                //{
+//                //    String id = g.key;
+//                //    long idCount = g.count(s -> s.getId());
+//                //    String idMin = g.min(s -> s.getId());
+//                //})
+//                .toList();
+//    }
+//
+//    @Deprecated
+//    public void display10()
+//    {
+//        List<TopicGroupTestDTO> topicGroupTestDTOS = elq.queryable(Topic.class)
+//                .where(o -> o.getId() == "3")
+//                // 单个元素(id)的组(group)
+//                .groupBy(o -> o.getId())
+//                // 出于安全考虑，groupBy之后想要tolist就必须显示的select字段
+//                .select(g ->
+//                {
+//                    TopicGroupTestDTO result = new TopicGroupTestDTO();
+//                    // 选择了Topic表的id字段
+//                    // 注意此时g.key代表了Topic的id字段，因为只有一个对象，所以不需要g.key.xxx
+//                    result.setId(g.key);
+//                    // 选择了Topic表的id字段,并且套了一层count聚合函数
+//                    result.setIdCount((int) g.count(s -> s.getId()));
+//                    // 选择了Topic表的id字段,并且套了一层min聚合函数
+//                    result.setIdMin(g.min(s -> s.getId()));
+//                    return result;
+//                })
+//                .toList();
+//    }
+//
+//    @Deprecated
+//    public void display11()
+//    {
+////        List<BlogGroupIdAndName> list = easyEntityQuery.queryable(Topic.class)
+////                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+////                .where((t, b2) ->
+////                {
+////                    t.title().isNotNull();
+////                    t.createTime().le(LocalDateTime.of(2021, 3, 4, 5, 6));
+////                })
+////                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(t1.id(), b2.star()))
+////                .select(group -> new BlogGroupIdAndNameProxy()
+////                        .id().set(group.key1())
+////                        .idCount().set(group.groupTable().t2.id().count())
+////                ).toList();
+//
+//        List<BlogGroupIdAndName> list = elq.queryable(Topic.class)
+//                .leftJoin(BlogEntity.class, (t, b2) -> t.getId() == b2.getId())
+//                .where((t, b2) -> t.getTitle() != null
+//                        && (t.getCreateTime().isEqual(LocalDateTime.of(2021, 3, 4, 5, 6))
+//                        || t.getCreateTime().isBefore(LocalDateTime.of(2021, 3, 4, 5, 6))
+//                ))
+//                // 选择了两个元素的group
+//                .groupBy((t1, b2) -> new Grouper()
+//                {
+//                    String k1 = t1.getId();
+//                    int k2 = b2.getStar();
+//                })
+//                .select(group ->
+//                {
+//                    BlogGroupIdAndName blogGroupIdAndName = new BlogGroupIdAndName();
+//                    // group的k1(Topic表的id字段)映射到BlogGroupIdAndName类的id字段
+//                    blogGroupIdAndName.setId(group.key.k1);
+//                    // group的k2(COUNT(BlogEntity的id字段))映射到BlogGroupIdAndName类的idCount字段
+//                    blogGroupIdAndName.setIdCount(group.count((t1, t2) -> t2.getId()));
+//                    return blogGroupIdAndName;
+//                }).toList();
+//    }
 
-    @Deprecated
-    public void display6()
+    public void display12()
     {
-        LQuery<Topic> lQuery = elq
-                .queryable(Topic.class)
-                .where(o -> o.getId() == "3");
-        //SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM t_topic t WHERE t.`id` = ?
-        display7();
-        List<BlogEntity> blogEntities = elq
-                .queryable(BlogEntity.class)
-                .leftJoin(lQuery, (a, b) -> a.getId() == b.getId())
-                .where((a, b) -> a.getId() != null && b.getId() != null)
+        String sql1 = elq.queryable(DefTable.class).orderBy(a -> a.getId(), false).toSQL();
+        System.out.println(sql1);
+        String sql2 = elq.queryable(DefTable.class).leftJoin(DefTableLeft1.class, (t, t1) -> t.getId() == t1.getDefId())
+                .orderBy((a, b) -> a.getId(), false).toSQL();
+        System.out.println(sql2);
+
+        List<Topic> list1 = elq.queryable(Topic.class)
+                .orderBy(t -> t.getId())
                 .toList();
-    }
 
-    @Deprecated
-    public void display7()
-    {
-        // 不指定select字段的场合，此时会自动将从BlogEntity表查询的结果映射到BlogEntityTest对象上
-        List<BlogEntityTest> list1 = elq.queryable(BlogEntity.class)
-                .select(BlogEntityTest.class).toList();
+        List<Topic> list2 = elq.queryable(Topic.class)
+                .orderBy(t -> t.getId())
+                // 反向排序
+                .orderBy(t -> t.getCreateTime(), false)
+                .toList();
 
+        LQuery<Topic> queryable = elq.queryable(Topic.class);
 
-        // 想要指定select字段的场合
-        // 1.使用匿名对象
-        String sql1 = elq.queryable(BlogEntity.class)
+        // 后续考虑加入orderByIf
+        if (false)
+        {
+            queryable.orderBy(t -> t.getId());
+        }
+
+        queryable.orderBy(t -> t.getCreateTime(), false);
+        List<Topic> list4 = queryable.toList();
+
+        List<Topic> list5 = elq.queryable(Topic.class)
+                .orderBy(t -> SqlFunctions.dateFormat(t.getCreateTime(), "%Y-%m-%d"))
+                .toList();
+
+        //直接映射到BlogEntityVO1.class
+        elq.queryable(BlogEntity.class)
                 .where(o -> o.getId() == "2")
-                .select(o -> new TempResult()
-                {
-                    BigDecimal score = o.getOrder();//将查询的order映射到匿名对象的score上
-                    // 填写更多你想要的字段{var a = o.getXxx()}
-                })
-                .limit(1).toSQL();
+                .select(BlogEntityVO1.class).firstOrNull();
 
-        // 2. 使用java类型
-        String sql2 = elq.queryable(BlogEntity.class)
+        //只查询id和title,映射到logEntityVO2.class
+        elq.queryable(BlogEntity.class)
                 .where(o -> o.getId() == "2")
-                .select(o ->
+                .select(s ->
                 {
-                    BlogEntity blogEntity = new BlogEntity();
-                    blogEntity.setScore(o.getOrder());//将查询的order映射到java对象的score上
-                    // 填写更多你想要的字段{obj.setXxx(o.getXxx())}
-                    return blogEntity;
+                    BlogEntityVO2 vo2 = new BlogEntityVO2();
+                    vo2.setId(s.getId());
+                    vo2.setTitle(s.getTitle());
+                    return vo2;
                 })
-                .limit(1).toSQL();
+                .firstOrNull();
 
-        // 两者等价
-        Assert.assertEquals("SELECT t.`order` AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql1);
-        Assert.assertEquals("SELECT t.`order` AS `score` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql2);
+        //只查询id和title,映射到匿名类
+        elq.queryable(BlogEntity.class)
+                .where(o -> o.getId() == "2")
+                .select(s -> new TempResult()
+                {
+                    String id = s.getId();
+                    String tt = s.getTitle();
+                })
+                .firstOrNull();
+
+
+        List<Topic> list = elq.queryable(BlogEntity.class)
+                .where(b -> b.getStar() > 1)
+                //对其group by
+                .groupBy(b -> b.getId())
+                //生成中间对象并且变成匿名表(每次select都是生成匿名表,后续如果没有别的操作那么匿名表会被展开)
+                // select * from (select blogId,blogCount from xxx group by id) t
+                //如果select后续没有非终结操作那么会被展开为 select blogId,blogCount from xxx group by id
+                .select(g -> new TempResult()
+                {
+                    String blogId = g.key;
+                    long blogCount = g.count();
+                })
+                //对匿名表进行join
+                .leftJoin(Topic.class, (g, topic) -> g.blogId == topic.getId())
+                .where((g, topic) -> g.blogCount <= 123)
+                //再次生成匿名表
+                .select((g, topic) -> topic)
+                //后续无操作了所以会被展开
+                .toList();
+
     }
 }

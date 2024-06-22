@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAmount;
 
-@SuppressWarnings("all")
 public class SqlFunctions
 {
     // region [扩展注解]

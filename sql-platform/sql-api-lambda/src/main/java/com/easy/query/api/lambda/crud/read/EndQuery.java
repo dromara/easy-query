@@ -1,7 +1,5 @@
 package com.easy.query.api.lambda.crud.read;
 
-import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.api.pagination.Pager;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.common.ToSQLResult;
 import io.github.kiryu1223.expressionTree.delegate.Func1;
@@ -11,110 +9,110 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class NoWayQuery<T>
+public class EndQuery<T>
 {
-    private final Query<T> stop;
+    private final Query<T> end;
 
-    public NoWayQuery(Query<T> stop)
+    public EndQuery(Query<T> end)
     {
-        this.stop = stop;
+        this.end = end;
     }
 
-    public NoWayQuery<T> distinct()
+    public EndQuery<T> distinct()
     {
-        stop.distinct();
+        end.distinct();
         return this;
     }
 
-    public NoWayQuery<T> distinct(boolean condition)
+    public EndQuery<T> distinct(boolean condition)
     {
-        stop.distinct(condition);
+        end.distinct(condition);
         return this;
     }
 
     public boolean any()
     {
-        return stop.any();
+        return end.any();
     }
 
     public void required()
     {
-        stop.required();
+        end.required();
     }
 
     public void required(String msg)
     {
-        stop.required(msg);
+        end.required(msg);
     }
 
     public void required(String msg, String code)
     {
-        stop.required(msg, code);
+        end.required(msg, code);
     }
 
     public void required(Supplier<RuntimeException> throwFunc)
     {
-        stop.required(throwFunc);
+        end.required(throwFunc);
     }
 
     public T firstOrNull()
     {
-        return stop.firstOrNull();
+        return end.firstOrNull();
     }
 
     public <R> R firstOrNull(Class<R> r)
     {
-        return stop.firstOrNull(r);
+        return end.firstOrNull(r);
     }
 
     public T firstNotNull()
     {
-        return stop.firstNotNull();
+        return end.firstNotNull();
     }
 
     public T firstNotNull(String msg)
     {
-        return stop.firstNotNull(msg);
+        return end.firstNotNull(msg);
     }
 
     public T firstNotNull(String msg, String code)
     {
-        return stop.firstNotNull(msg, code);
+        return end.firstNotNull(msg, code);
     }
 
     public T firstNotNull(Supplier<RuntimeException> throwFunc)
     {
-        return stop.firstNotNull(throwFunc);
+        return end.firstNotNull(throwFunc);
     }
 
     public <R> R firstNotNull(Class<R> r)
     {
-        return stop.firstNotNull(r);
+        return end.firstNotNull(r);
     }
 
     public <R> R firstNotNull(Class<R> r, String msg)
     {
-        return stop.firstNotNull(r, msg);
+        return end.firstNotNull(r, msg);
     }
 
     public <R> R firstNotNull(Class<R> r, String msg, String code)
     {
-        return stop.firstNotNull(r, msg, code);
+        return end.firstNotNull(r, msg, code);
     }
 
     public String toSQL()
     {
-        return stop.toSQL();
+        return end.toSQL();
     }
 
     public ToSQLResult toSQLResult()
     {
-        return stop.toSQLResult();
+        return end.toSQLResult();
     }
 
     public List<T> toList()
     {
-        return stop.toList();
+        return end.toList();
     }
 
     public <R> List<R> toList(Func1<T, R> func)
@@ -129,12 +127,12 @@ public class NoWayQuery<T>
 
     public Map<String, Object> toMap()
     {
-        return stop.toMap();
+        return end.toMap();
     }
 
     public List<Map<String, Object>> toMaps()
     {
-        return stop.toMaps();
+        return end.toMaps();
     }
 
 //    public EasyPageResult<T> toPageResult(long pageIndex, long pageSize)
