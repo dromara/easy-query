@@ -167,7 +167,7 @@ public interface SQLDateTimeFunc {
      * @return 时间格式添加函数
      */
     default SQLFunction plusDateTimeYears(SQLFunction sqlFunction, int year) {
-        return plusDateTimeMonths(s -> {
+        return plusDateTimeYears(s -> {
             s.sqlFunc(sqlFunction).value(year);
         });
     }

@@ -14,6 +14,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
+import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -280,6 +281,12 @@ public class QueryTest18 extends BaseTest {
     @Test
     public void test14() {
 
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .include(s -> s.myBlog())
+                .includes(s -> s.blogs(), b -> {
+                    b.includes(x -> x.users());
+                }).toList();
+
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
 
@@ -461,5 +468,9 @@ public class QueryTest18 extends BaseTest {
                 .whereColumns(b -> b.FETCHER.columnKeys().order().content())
                 .executeRows();
 
-     }
+
+
+    }
+
+
 }

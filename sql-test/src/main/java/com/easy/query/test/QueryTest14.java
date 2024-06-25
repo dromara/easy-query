@@ -10,6 +10,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
@@ -687,6 +688,46 @@ public class QueryTest14 extends BaseTest {
 //                .where(b -> b.num().lt(1))
 //                .toList();
 //    }
+//
+    @Test
+    public void testxxxxx(){
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(2);
+                    op.setMaxShardingQueryLimit(1);
+                })
+                .useDatabaseConfigure(new OracleDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .build();
+        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                defaultEasyEntityQuery.insertable(new Topic())
+                        .setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS)
+                        .onConflictThen(o->o.FETCHER.stars(),o->o.FETCHER.allFields())
+                        .executeRows();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("MERGE INTO \"t_topic\" t1 USING (SELECT ? AS \"id\",? AS \"stars\",? AS \"title\",? AS \"create_time\" FROM DUAL ) t2 ON (t1.\"create_time\" = t2.\"create_time\" AND t1.\"id\" = t2.\"id\" AND t1.\"stars\" = t2.\"stars\" AND t1.\"title\" = t2.\"title\") WHEN NOT MATCHED THEN INSERT (\"id\",\"stars\",\"title\",\"create_time\") VALUES (t2.\"id\",t2.\"stars\",t2.\"title\",t2.\"create_time\")", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("null(null),null(null),null(null),null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+
 
     @Test
     public void test2() {
