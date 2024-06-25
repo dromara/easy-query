@@ -289,12 +289,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         List<TMember> result = selectAggregateList(entityTable, maxFunction, property, null);
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         TMember tMember = EasyCollectionUtil.firstOrNull(result);
-        if(tMember==null){
+        if (tMember == null) {
             return def;
         }
         ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnNotNull(property);
         Object value = EasyJdbcExecutorUtil.fromValue(new EntityResultColumnMetadata(0, entityTable.getEntityMetadata(), columnMetadata), tMember);
-        if(value==null){
+        if (value == null) {
             return def;
         }
         return EasyObjectUtil.typeCastNullable(value);
@@ -308,17 +308,16 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         List<TMember> result = selectAggregateList(entityTable, minFunction, property, null);
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         TMember tMember = EasyCollectionUtil.firstOrNull(result);
-        if(tMember==null){
+        if (tMember == null) {
             return def;
         }
         ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnNotNull(property);
         Object value = EasyJdbcExecutorUtil.fromValue(new EntityResultColumnMetadata(0, entityTable.getEntityMetadata(), columnMetadata), tMember);
-        if(value==null){
+        if (value == null) {
             return def;
         }
         return EasyObjectUtil.typeCastNullable(value);
     }
-
 
 
 //    @Override
@@ -889,7 +888,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                        }
                         selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, mappingPathTreeChild, false);
 
-                        if (basicType&&!allChildrenIsProps) {
+                        if (basicType && !allChildrenIsProps) {
                             //检查是否存在自定义dto
                             List<NavigateFlatMetadata> navigateFlatMetadataList = mappingPathTreeChild.getNavigateFlatMetadataList().stream().filter(o -> !o.isBasicType() && o.getMappingPath().length == mappingPathTreeChild.getDeep() && Objects.equals(propertyName, o.getMappingPath()[o.getMappingPath().length - 1])).collect(Collectors.toList());
                             if (EasyCollectionUtil.isNotEmpty(navigateFlatMetadataList)) {
@@ -916,17 +915,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                                     for (MappingPathTreeNode navigateFlatBasicProp : navigateFlatBasicProps) {
                                         z.column(navigateFlatBasicProp.getName());
                                     }
-                                    if(!allChildrenIsProps){
-                                        EasySQLExpressionUtil.appendTargetExtraTargetProperty(entityNavigateMetadata,sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
-                                    }
+                                    EasySQLExpressionUtil.appendTargetExtraTargetProperty(entityNavigateMetadata, sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
                                 });
-                            }else {
-                                if(mappingPathTreeChild.hasChildren()){
+                            } else {
+                                if (mappingPathTreeChild.hasChildren()) {
                                     EntityQueryExpressionBuilder sqlEntityExpressionBuilder = with.getSQLEntityExpressionBuilder();
                                     with = with.select(z -> {
 //                                        z.column(entityNavigateMetadata.getSelfPropertyOrPrimary());
                                         EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
-                                        EasySQLExpressionUtil.appendTargetExtraTargetProperty(entityNavigateMetadata,sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
+                                        EasySQLExpressionUtil.appendTargetExtraTargetProperty(entityNavigateMetadata, sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
                                     });
                                 }
                             }
