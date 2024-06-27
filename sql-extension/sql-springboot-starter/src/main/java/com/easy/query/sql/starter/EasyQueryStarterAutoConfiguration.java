@@ -15,6 +15,7 @@ import com.easy.query.core.basic.extension.formater.DefaultSQLParameterPrintForm
 import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
+import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
@@ -316,7 +317,8 @@ public class EasyQueryStarterAutoConfiguration {
                                                                Map<String, JdbcTypeHandler> jdbcTypeHandlerMap,
                                                                Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap,
                                                                Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap,
-                                                               Map<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap
+                                                               Map<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap,
+                                                               Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap
     ) {
         return new EasyQueryInitializeOption(interceptorMap,
                 versionStrategyMap,

@@ -6,7 +6,9 @@ import com.easy.query.cache.core.EasyCacheClient;
 import com.easy.query.cache.core.EasyCacheManager;
 import com.easy.query.cache.core.bootstrapper.EasyCacheBootstrapper;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easyquery.springbootdemo.cache.DefaultEasyCacheManager;
 import org.redisson.Redisson;
@@ -18,7 +20,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.io.Serializable;
 
 /**
  * create time 2023/7/4 22:32
@@ -28,6 +32,17 @@ import javax.sql.DataSource;
  */
 @Configuration
 public class MyConfiguration {
+
+
+
+//    @PostConstruct
+//    public  void init(EasyQuery easyQuery){
+//        QueryConfiguration queryConfiguration = easyQuery.getRuntimeContext().getQueryConfiguration();
+//        queryConfiguration.applyPrimaryKeyGenerator(new UUIDPrimaryKeyGenerator());
+//    }
+
+
+
     @Bean("myEasyQuery")
     @Primary
     public EasyQuery easyQuery(DataSource dataSource){
