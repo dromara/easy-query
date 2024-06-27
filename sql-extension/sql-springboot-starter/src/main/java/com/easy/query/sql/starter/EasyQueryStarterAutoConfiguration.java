@@ -318,8 +318,7 @@ public class EasyQueryStarterAutoConfiguration {
                                                                Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap,
                                                                Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap,
                                                                Map<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap,
-                                                               Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap
-    ) {
+                                                               Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap) {
         return new EasyQueryInitializeOption(interceptorMap,
                 versionStrategyMap,
                 logicDeleteStrategyMap,
@@ -331,6 +330,7 @@ public class EasyQueryStarterAutoConfiguration {
                 jdbcTypeHandlerMap,
                 columnValueSQLConverterMap,
                 generatedKeySQLColumnGeneratorMap,
-                navigateExtraFilterStrategyMap);
+                navigateExtraFilterStrategyMap,
+                primaryKeyGeneratorMap);
     }
 }
