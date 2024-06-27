@@ -4,6 +4,7 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.builder.Selector;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -138,6 +139,12 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
 
     @Override
     public TChain as(String propertyAlias) {
+        sqlSelectAsExpression = sqlSelectAsExpression.as(propertyAlias);
+        return (TChain) this;
+    }
+
+    @Override
+    public <TEntity, TR> TChain as(Property<TEntity, TR> propertyAlias) {
         sqlSelectAsExpression = sqlSelectAsExpression.as(propertyAlias);
         return (TChain) this;
     }

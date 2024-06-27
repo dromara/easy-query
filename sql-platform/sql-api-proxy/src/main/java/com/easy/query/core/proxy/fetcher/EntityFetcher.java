@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.fetcher;
 
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -16,6 +17,7 @@ import java.util.Collections;
  * @author xuejiaming
  */
 public interface EntityFetcher<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TChain extends EntityFetcher<TProxy, TEntity, TChain>> extends SQLSelectAsExpression {//SQLFetcherExpression {
+
     TProxy getProxy();
 
     TChain allFields();
@@ -80,6 +82,9 @@ public interface EntityFetcher<TProxy extends ProxyEntity<TProxy, TEntity>, TEnt
 
     @Override
     TChain as(String propertyAlias);
+
+    @Override
+    <TEntity, TR> TChain as(Property<TEntity, TR> propertyAlias);
 
     TProxy fetchProxy();
 

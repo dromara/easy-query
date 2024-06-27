@@ -7,6 +7,7 @@ import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
@@ -35,6 +36,7 @@ import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.keytest.MyTestPrimaryKey;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.vo.BlogEntityVO1;
+import com.easy.query.test.vo.BlogEntityVO2;
 import com.easy.query.test.vo.TestUserAAA;
 import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
 import org.junit.Assert;
@@ -42,6 +44,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -472,5 +475,23 @@ public class QueryTest18 extends BaseTest {
 
     }
 
+    @Test
+    public void test124(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntityVO2> list = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                .select(BlogEntityVO2.class, (t, b2) -> Select.of(
+                        t.FETCHER.allFields(),
+                        b2.FETCHER.id().as(BlogEntityVO2::getContent).top().as(BlogEntityVO2::getScore)
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`title`,t1.`id` AS `content`,t1.`top` AS `score` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 
 }

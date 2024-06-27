@@ -13,6 +13,7 @@ import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQueryTableNotInSQLContextException;
 import com.easy.query.core.proxy.core.Expression;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUserSQLEncryption;
@@ -24,6 +25,8 @@ import com.easy.query.test.entity.TopicTypeTest2;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.vo.BlogEntityVO1;
+import com.easy.query.test.vo.BlogEntityVO2;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1698,5 +1701,25 @@ public class UpdateTest extends BaseTest {
         Assert.assertEquals("UPDATE `a123123` SET `title` = CONCAT(SUBSTR(`title`,2,10),LOWER(`id`)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123zzzxxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+    @Test
+     public void testUpdateIdNull1(){
+
+         ListenerContext listenerContext = new ListenerContext();
+         listenerContextManager.startListen(listenerContext);
+             easyEntityQuery.updatable(Topic.class)
+                     .setColumns(t -> {
+                         t.title().set(t.title().subString(1, 10).concat(t.id().toLower()));
+                     })
+                     .whereById(null)
+                     .executeRows();
+         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+         Assert.assertEquals("UPDATE `a123123` SET `title` = CONCAT(SUBSTR(`title`,2,10),LOWER(`id`)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+         Assert.assertEquals("123zzzxxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+         listenerContextManager.clear();
+
+
     }
 }
