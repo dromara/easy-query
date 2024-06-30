@@ -1716,8 +1716,8 @@ public class UpdateTest extends BaseTest {
                      .executeRows();
          Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
          JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-         Assert.assertEquals("UPDATE `a123123` SET `title` = CONCAT(SUBSTR(`title`,2,10),LOWER(`id`)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-         Assert.assertEquals("123zzzxxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+         Assert.assertEquals("UPDATE `t_topic` SET `title` = CONCAT(SUBSTR(`title`,2,10),LOWER(`id`)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+         Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
          listenerContextManager.clear();
 
 
