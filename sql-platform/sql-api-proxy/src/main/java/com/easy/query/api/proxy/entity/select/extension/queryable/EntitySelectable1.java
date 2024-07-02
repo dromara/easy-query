@@ -46,10 +46,9 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *         .select(o->new TopicProxy())
      *          //表示入参o表自定义映射到返回结果TopicProxy中
      *          //SELECT t.`id` as `id`,t.`title` as `title` FROM ....
-     *         .select(o->new TopicProxy().adapter(r->{
-     *             r.id().set(o.id()); //手动指定赋值
-     *             r.title().set(o.title())
-     *         }))
+     *         .select(o->new TopicProxy()
+     *               .id().set(o.id())
+     *               .title().set(o.title()))
      *
      *          //最原始的写法和上述adapter一致
      *         .select(o->{
@@ -59,10 +58,10 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *            return r;
      *         })
      *          //表示入参o表自定义映射到返回结果TopicProxy中除了title 也可以不需要写到adapter内部
-     *         .select(o->new TopicProxy().adapter(r->{
-     *             r.selectAll(o);//相当于t.*
-     *             r.selectIgnores(o.title());//相当于从t.*中移除title列
-     *         }))
+     *         .select(o->new TopicProxy()
+     *              .selectAll(o);//相当于t.*
+     *              .selectIgnores(o.title());//相当于从t.*中移除title列
+     *         )
      *          //如果您的映射列名都一样那么可以通过selectExpression来处理大部分列
      *         .select(o->new TopicProxy().selectExpression(o.FETCHER.id().name().phone().departName()).adapter(r->{
      *             //这边处理别名
