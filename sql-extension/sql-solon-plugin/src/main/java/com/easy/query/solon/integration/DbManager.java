@@ -140,7 +140,6 @@ public class DbManager {
                     builder.setReverseOffsetThreshold(solonEasyQueryProperties.getReverseOffsetThreshold());
                     builder.setMapToBeanStrict(solonEasyQueryProperties.getMapToBeanStrict());
                     builder.setDefaultSchema(solonEasyQueryProperties.getDefaultSchema());
-                    builder.setThrowIfEntityInSelectAutoInclude(solonEasyQueryProperties.getThrowIfEntityInSelectAutoInclude());
                 });
         DatabaseConfiguration databaseConfigure = getDatabaseConfigure(solonEasyQueryProperties);
         if(databaseConfigure!=null){

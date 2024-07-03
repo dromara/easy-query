@@ -740,10 +740,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
 
-        EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
-        if(easyQueryOption.isThrowIfEntityInSelectAutoInclude()&& EasyStringUtil.isNotBlank(resultEntityMetadata.getTableName())){
-            throw new EasyQueryInvalidOperationException(String.format("The selectAutoInclude method cannot be used with the entity class:[%s]. If you need to use it, please set the throwIfEntityInSelectAutoInclude configuration item to false.",EasyClassUtil.getSimpleName(resultEntityMetadata.getEntityClass())));
-        }
         selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace, 0);
         selectAutoIncludeFlat0(entityMetadataManager, this, entityMetadata, resultEntityMetadata);
         selectAutoIncludeJoin0(resultClass, this, resultEntityMetadata);

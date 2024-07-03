@@ -130,10 +130,6 @@ public class EasyQueryProperties {
      */
     private String defaultSchema = null;
     /**
-     * 如果selectAutoInclude是entity对象则报错
-     */
-    private boolean throwIfEntityInSelectAutoInclude = true;
-    /**
      * 启用反向排序的偏移量阈值
      * 小于等于0表示不启用
      */
@@ -405,14 +401,6 @@ public class EasyQueryProperties {
 
     public void setDefaultSchema(String defaultSchema) {
         this.defaultSchema = defaultSchema;
-    }
-
-    public boolean isThrowIfEntityInSelectAutoInclude() {
-        return throwIfEntityInSelectAutoInclude;
-    }
-
-    public void setThrowIfEntityInSelectAutoInclude(boolean throwIfEntityInSelectAutoInclude) {
-        this.throwIfEntityInSelectAutoInclude = throwIfEntityInSelectAutoInclude;
     }
 
     public EasyQueryProperties() {
