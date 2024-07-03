@@ -79,6 +79,10 @@ public class EasyQueryOptionBuilder {
      */
     private boolean mapToBeanStrict;
     private String defaultSchema;
+    /**
+     * 如果selectAutoInclude是entity对象则报错
+     */
+    private boolean throwIfEntityInSelectAutoInclude;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -109,6 +113,7 @@ public class EasyQueryOptionBuilder {
         this.shardingFetchSize = 1000;
         this.mapToBeanStrict = true;
         this.defaultSchema = null;
+        this.throwIfEntityInSelectAutoInclude = true;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -243,6 +248,10 @@ public class EasyQueryOptionBuilder {
         this.defaultSchema = defaultSchema;
     }
 
+    public void setThrowIfEntityInSelectAutoInclude(boolean throwIfEntityInSelectAutoInclude) {
+        this.throwIfEntityInSelectAutoInclude = throwIfEntityInSelectAutoInclude;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -273,6 +282,7 @@ public class EasyQueryOptionBuilder {
                 this.warningColumnMiss,
                 this.shardingFetchSize,
                 this.mapToBeanStrict,
-                this.defaultSchema);
+                this.defaultSchema,
+                this.throwIfEntityInSelectAutoInclude);
     }
 }

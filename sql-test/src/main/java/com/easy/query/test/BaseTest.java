@@ -165,7 +165,7 @@ public abstract class BaseTest {
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
 //                .replaceService(Dialect.class, DefaultDialect.class)
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
-                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
+//                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);

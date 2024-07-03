@@ -32,6 +32,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.IncludeCirculateChecker;
 import com.easy.query.core.common.IncludePath;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
@@ -106,6 +107,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -735,7 +737,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EntityMetadata resultEntityMetadata = entityMetadataManager.getEntityMetadata(resultClass);
         EntityTableExpressionBuilder table = getSQLEntityExpressionBuilder().getTable(0);
         TableAvailable entityTable = table.getEntityTable();
+
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
+
+        EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
+        if(easyQueryOption.isThrowIfEntityInSelectAutoInclude()&& EasyStringUtil.isNotBlank(resultEntityMetadata.getTableName())){
+            throw new EasyQueryInvalidOperationException(String.format("The selectAutoInclude method cannot be used with the entity class:[%s]. If you need to use it, please set the throwIfEntityInSelectAutoInclude configuration item to false.",EasyClassUtil.getSimpleName(resultEntityMetadata.getEntityClass())));
+        }
         selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace, 0);
         selectAutoIncludeFlat0(entityMetadataManager, this, entityMetadata, resultEntityMetadata);
         selectAutoIncludeJoin0(resultClass, this, resultEntityMetadata);
@@ -792,6 +800,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, boolean replace, int deep) {
+
         Collection<NavigateMetadata> resultNavigateMetadatas = resultEntityMetadata.getNavigateMetadatas();
         if (EasyCollectionUtil.isEmpty(resultNavigateMetadatas)) {
             return;

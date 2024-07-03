@@ -125,11 +125,17 @@ public class EasyQueryOption {
     private final boolean mapToBeanStrict;
     private final String defaultSchema;
 
+    /**
+     * 如果selectAutoInclude是entity对象则报错
+     */
+    private final boolean throwIfEntityInSelectAutoInclude;
+
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql, boolean startTimeJob, boolean defaultTrack,
-                           int relationGroupSize,boolean keepNativeStyle,long reverseOffsetThreshold,boolean warningColumnMiss,int shardingFetchSize,boolean mapToBeanStrict,String defaultSchema) {
+                           int relationGroupSize,boolean keepNativeStyle,long reverseOffsetThreshold,boolean warningColumnMiss,int shardingFetchSize,boolean mapToBeanStrict,String defaultSchema,
+                           boolean throwIfEntityInSelectAutoInclude) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -197,6 +203,7 @@ public class EasyQueryOption {
         this.shardingFetchSize = shardingFetchSize;
         this.mapToBeanStrict = mapToBeanStrict;
         this.defaultSchema = defaultSchema;
+        this.throwIfEntityInSelectAutoInclude = throwIfEntityInSelectAutoInclude;
     }
 
     public int getMaxShardingRouteCount() {
@@ -320,5 +327,9 @@ public class EasyQueryOption {
 
     public String getDefaultSchema() {
         return defaultSchema;
+    }
+
+    public boolean isThrowIfEntityInSelectAutoInclude() {
+        return throwIfEntityInSelectAutoInclude;
     }
 }

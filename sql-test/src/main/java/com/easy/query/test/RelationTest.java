@@ -177,6 +177,23 @@ public class RelationTest extends BaseTest {
             relationInit(ids);
             {
                 System.out.println("4");
+                boolean exception = true;
+                try {
+                    List<SchoolStudent> list = easyEntityQuery.queryable(SchoolStudent.class)
+                            .selectAutoInclude(SchoolStudent.class)
+                            .toList();
+                    exception = false;
+
+                } catch (Exception ex) {
+                    Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
+                    Assert.assertEquals("The selectAutoInclude method cannot be used with the entity class:[SchoolStudent]. If you need to use it, please set the throwIfEntityInSelectAutoInclude configuration item to false.", ex.getMessage());
+                }
+                Assert.assertTrue(exception);
+                System.out.println("1");
+
+            }
+            {
+                System.out.println("4");
                     ListenerContext listenerContext = new ListenerContext(true);
                     listenerContextManager.startListen(listenerContext);
                     List<SchoolStudentDTOAO111> list = easyEntityQuery.queryable(SchoolStudent.class)

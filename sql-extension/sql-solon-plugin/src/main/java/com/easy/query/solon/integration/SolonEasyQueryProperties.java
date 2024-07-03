@@ -112,6 +112,10 @@ public class SolonEasyQueryProperties {
     private final static int shardingFetchSize = 1000;
     private final static boolean mapToBeanStrict = true;
     private final static String defaultSchema = null;
+    /**
+     * 如果selectAutoInclude是entity对象则报错
+     */
+    private final static boolean throwIfEntityInSelectAutoInclude = true;
     private final static long reverseOffsetThreshold = 0;
 
     private final Props props;
@@ -323,6 +327,9 @@ public class SolonEasyQueryProperties {
     }
     public long getReverseOffsetThreshold() {
         return this.props.getLong("reverse-offset-threshold",reverseOffsetThreshold);
+    }
+    public boolean getThrowIfEntityInSelectAutoInclude() {
+        return this.props.getBool("throw-if-entity-in-select-auto-include",throwIfEntityInSelectAutoInclude);
     }
 
 

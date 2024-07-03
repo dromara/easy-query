@@ -273,6 +273,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setReverseOffsetThreshold(easyQueryProperties.getReverseOffsetThreshold());
                     builder.setMapToBeanStrict(easyQueryProperties.isMapToBeanStrict());
                     builder.setDefaultSchema(easyQueryProperties.getDefaultSchema());
+                    builder.setThrowIfEntityInSelectAutoInclude(easyQueryProperties.isThrowIfEntityInSelectAutoInclude());
                 })
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)
