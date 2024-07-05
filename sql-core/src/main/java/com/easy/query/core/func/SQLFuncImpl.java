@@ -14,6 +14,7 @@ import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
 import com.easy.query.core.func.def.enums.NumberCalcEnum;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.func.def.impl.AbsSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
 import com.easy.query.core.func.def.impl.BankSQLFunction;
@@ -21,6 +22,7 @@ import com.easy.query.core.func.def.impl.CastSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.ConstSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
+import com.easy.query.core.func.def.impl.DateTime2PlusSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeDurationSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeFormatSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimePlusMonthSQLFunction;
@@ -254,6 +256,11 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction plusDateTime(SQLExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit) {
         return new DateTimePlusSQLFunction(getColumnExpressions(sqlExpression),duration,timeUnit);
+    }
+
+    @Override
+    public SQLFunction plusDateTime2(SQLExpression1<ColumnFuncSelector> sqlExpression, TimeUnitEnum timeUnit) {
+        return new DateTime2PlusSQLFunction(getColumnExpressions(sqlExpression),timeUnit);
     }
 
     @Override

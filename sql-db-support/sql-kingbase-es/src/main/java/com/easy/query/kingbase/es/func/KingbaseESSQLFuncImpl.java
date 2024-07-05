@@ -11,6 +11,7 @@ import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +32,7 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction dateTimeFormat(SQLExpression1<ColumnFuncSelector> sqlExpression, String javaFormat) {
         return new KingbaseESDateTimeFormatSQLFunction(getColumnExpressions(sqlExpression), javaFormat);
     }
+
     @Override
     public SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format) {
         return new KingbaseESDateTimeSQLFormatSQLFunction(getTable(tableOwner), property, format);
@@ -69,6 +71,7 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
     public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new KingbaseESAvgSQLFunction(getColumnExpressions(sqlExpression));
     }
+
     @Override
     public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new KingbaseESJoinSQLFunction(getColumnExpressions(sqlExpression));
@@ -76,12 +79,17 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
 
     @Override
     public SQLFunction cast(SQLExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz) {
-        return new KingbaseESCastSQLFunction(getColumnExpressions(sqlExpression),targetClazz);
+        return new KingbaseESCastSQLFunction(getColumnExpressions(sqlExpression), targetClazz);
     }
 
     @Override
     public SQLFunction plusDateTime(SQLExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit) {
-        return new KingbaseESDateTimePlusSQLFunction(getColumnExpressions(sqlExpression),duration,timeUnit);
+        return new KingbaseESDateTimePlusSQLFunction(getColumnExpressions(sqlExpression), duration, timeUnit);
+    }
+
+    @Override
+    public SQLFunction plusDateTime2(SQLExpression1<ColumnFuncSelector> sqlExpression, TimeUnitEnum timeUnit) {
+        return new KingbaseESDateTime2PlusSQLFunction(getColumnExpressions(sqlExpression), timeUnit);
     }
 
     @Override
@@ -93,9 +101,10 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction plusDateTimeYears(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new KingbaseESDateTimePlusYearSQLFunction(getColumnExpressions(sqlExpression));
     }
+
     @Override
     public SQLFunction dateTimeProperty(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeUnitEnum dateTimeUnitEnum) {
-        return new KingbaseESDateTimePropertySQLFunction(getColumnExpressions(sqlExpression),dateTimeUnitEnum);
+        return new KingbaseESDateTimePropertySQLFunction(getColumnExpressions(sqlExpression), dateTimeUnitEnum);
     }
 
     @Override
@@ -105,14 +114,14 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
 
     @Override
     public SQLFunction math(SQLExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
-        return new KingbaseESMathSQLFunction(getColumnExpressions(sqlExpression),mathMethodEnum);
+        return new KingbaseESMathSQLFunction(getColumnExpressions(sqlExpression), mathMethodEnum);
     }
 
     @Override
     public SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike) {
         KingbaseESLikeSQLFunction likeSQLFunction = new KingbaseESLikeSQLFunction(getColumnExpressions(sqlExpression), sqlLike);
-        if(!like){
-            return not(x->x.sqlFunc(likeSQLFunction));
+        if (!like) {
+            return not(x -> x.sqlFunc(likeSQLFunction));
         }
         return likeSQLFunction;
     }

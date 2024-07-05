@@ -3,9 +3,12 @@ package com.easy.query.core.proxy.extension.functions;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.PropColumn;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
@@ -58,6 +61,14 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
             } else {
                 return fx.plusDateTime(this.getValue(), duration, timeUnit);
             }
+        }, getPropertyType());
+    }
+    default <T extends Number> ColumnFunctionComparableDateTimeChainExpression<TProperty> plus(PropTypeColumn<T> propTypeColumn, TimeUnitEnum timeUnit) {
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
+            return fx.plusDateTime2(selector->{
+                PropTypeColumn.columnFuncSelector(selector,this);
+                PropTypeColumn.columnFuncSelector(selector,propTypeColumn);
+            },timeUnit);
         }, getPropertyType());
     }
 

@@ -9,6 +9,7 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +31,7 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
     public SQLFunction dateTimeFormat(SQLExpression1<ColumnFuncSelector> sqlExpression, String javaFormat) {
         return new SQLiteDateTimeFormatSQLFunction(getColumnExpressions(sqlExpression), javaFormat);
     }
+
     @Override
     public SQLFunction dateTimeSQLFormat(SQLTableOwner tableOwner, String property, String format) {
         return new SQLiteDateTimeSQLFormatSQLFunction(getTable(tableOwner), property, format);
@@ -69,18 +71,22 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
     public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new SQLiteAvgSQLFunction(getColumnExpressions(sqlExpression));
     }
+
     @Override
     public SQLFunction leftPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new SQLiteLeftPadSQLFunction(getColumnExpressions(sqlExpression));
     }
+
     @Override
     public SQLFunction rightPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new SQLiteRightPadSQLFunction(getColumnExpressions(sqlExpression));
     }
+
     @Override
     public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new SQLiteJoinSQLFunction(getColumnExpressions(sqlExpression));
     }
+
     @Override
     public SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new SQLiteLengthSQLFunction(getColumnExpressions(sqlExpression));
@@ -88,12 +94,17 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
 
     @Override
     public SQLFunction cast(SQLExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz) {
-        return new SQLiteCastSQLFunction(getColumnExpressions(sqlExpression),targetClazz);
+        return new SQLiteCastSQLFunction(getColumnExpressions(sqlExpression), targetClazz);
     }
 
     @Override
     public SQLFunction plusDateTime(SQLExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit) {
-        return new SQLiteDateTimePlusSQLFunction(getColumnExpressions(sqlExpression),duration,timeUnit);
+        return new SQLiteDateTimePlusSQLFunction(getColumnExpressions(sqlExpression), duration, timeUnit);
+    }
+
+    @Override
+    public SQLFunction plusDateTime2(SQLExpression1<ColumnFuncSelector> sqlExpression, TimeUnitEnum timeUnit) {
+        return new SQLiteDateTime2PlusSQLFunction(getColumnExpressions(sqlExpression), timeUnit);
     }
 
     @Override
@@ -105,9 +116,10 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
     public SQLFunction plusDateTimeYears(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new SQLiteDateTimePlusYearSQLFunction(getColumnExpressions(sqlExpression));
     }
+
     @Override
     public SQLFunction dateTimeProperty(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeUnitEnum dateTimeUnitEnum) {
-        return new SQLiteDateTimePropertySQLFunction(getColumnExpressions(sqlExpression),dateTimeUnitEnum);
+        return new SQLiteDateTimePropertySQLFunction(getColumnExpressions(sqlExpression), dateTimeUnitEnum);
     }
 
     @Override

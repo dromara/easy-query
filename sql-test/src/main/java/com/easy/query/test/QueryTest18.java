@@ -1,17 +1,24 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapTypeProxy;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.api.select.executor.PageAble;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
@@ -48,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * create time 2024/6/13 12:19
@@ -119,6 +127,7 @@ public class QueryTest18 extends BaseTest {
         System.out.println(s);
         Assert.assertEquals("schoolStudentAddress.address", s);
     }
+
     @Test
     public void test8_1() {
         {
@@ -345,6 +354,7 @@ public class QueryTest18 extends BaseTest {
             Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
+
     @Test
     public void test17() {
 
@@ -376,15 +386,16 @@ public class QueryTest18 extends BaseTest {
 
 
     @Test
-    public void test18(){
+    public void test18() {
         EntityQueryable2<TopicProxy, Topic, BlogEntityProxy, BlogEntity> query = easyEntityQuery.queryable(Topic.class)
                 .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()));
 
         long count = query.cloneQueryable().select((t, b2) -> t.id()).distinct().count();
         List<Topic> list = query.cloneQueryable().select(Topic.class).distinct().limit(1, 20).toList();
     }
+
     @Test
-     public void testMaxEnum(){
+    public void testMaxEnum() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -401,7 +412,7 @@ public class QueryTest18 extends BaseTest {
     }
 
     @Test
-    public void textDistinct1(){
+    public void textDistinct1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -414,6 +425,7 @@ public class QueryTest18 extends BaseTest {
 //        Assert.assertEquals("123(String),1234(String),123xx(String),false(Boolean),(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void textDistinct2() {
 
@@ -443,22 +455,22 @@ public class QueryTest18 extends BaseTest {
     }
 
     @Test
-    public  void test111(){
+    public void test111() {
         MyTestPrimaryKey myTestPrimaryKey = new MyTestPrimaryKey();
         Assert.assertNull(myTestPrimaryKey.getId());
         try {
             easyQuery.insertable(myTestPrimaryKey).executeRows();
-        }catch (Exception exception){
+        } catch (Exception exception) {
 
         }
         System.out.println(myTestPrimaryKey.getId());
         Assert.assertNotNull(myTestPrimaryKey.getId());
-        Assert.assertEquals("18bb13b4-121e-429c-bcd9-9b89e2345d9d".length(),myTestPrimaryKey.getId().length());
+        Assert.assertEquals("18bb13b4-121e-429c-bcd9-9b89e2345d9d".length(), myTestPrimaryKey.getId().length());
 
     }
 
     @Test
-     public void test123(){
+    public void test123() {
         BlogEntity blogEntity = new BlogEntity();
         blogEntity.setId("123");
         easyEntityQuery.updatable(blogEntity)
@@ -467,16 +479,15 @@ public class QueryTest18 extends BaseTest {
                 .executeRows();
         easyEntityQuery.updatable(blogEntity)
 //                .setColumns(b -> b.FETCHER.content().order())
-                .setIgnoreColumns(b->b.FETCHER.createTime().createBy().updateTime().updateBy())
+                .setIgnoreColumns(b -> b.FETCHER.createTime().createBy().updateTime().updateBy())
                 .whereColumns(b -> b.FETCHER.columnKeys().order().content())
                 .executeRows();
-
 
 
     }
 
     @Test
-    public void test124(){
+    public void test124() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -492,6 +503,40 @@ public class QueryTest18 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`title`,t1.`id` AS `content`,t1.`top` AS `score` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+
+
+    }
+
+    @Test
+    public void test125() {
+//        PageAble<BlogEntity> pageAble = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(b -> {
+//                    b.createTime().gt(LocalDateTime.now());
+//                }).orderBy(b -> {
+//                    b.createTime().asc();
+//                });
+//
+//        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = ((Query) pageAble).getSQLEntityExpressionBuilder();
+//        OrderBySQLBuilderSegment order = sqlEntityExpressionBuilder.getOrder();
+//        List<SQLSegment> sqlSegments = order.getSQLSegments();
+//        for (SQLSegment sqlSegment : sqlSegments) {
+//
+//            System.out.println(sqlSegment);
+//        }
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    b.createTime().plus(b.star(), TimeUnitEnum.HOURS).gt(LocalDateTime.of(2024,1,1,0,0));
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND date_add(`create_time`, interval (`star`) hour) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2024-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+
     }
 
 }

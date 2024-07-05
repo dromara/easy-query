@@ -34,7 +34,7 @@ public class DateTimeDurationSQLFunction extends AbstractExpressionSQLFunction {
             case Minutes:return "timestampdiff(MINUTE, {1}, {0})";
             case Seconds:return "timestampdiff(SECOND, {1}, {0})";
         }
-        throw new UnsupportedOperationException("不支持当前函数DateTimeDurationSQLFunction:"+ durationEnum);
+        throw new UnsupportedOperationException("not support current function DateTimeDurationSQLFunction:"+ durationEnum);
     }
 
     @Override

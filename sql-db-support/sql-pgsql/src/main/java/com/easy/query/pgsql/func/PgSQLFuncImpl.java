@@ -11,6 +11,7 @@ import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -83,6 +84,11 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction plusDateTime(SQLExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit) {
         return new PgSQLDateTimePlusSQLFunction(getColumnExpressions(sqlExpression),duration,timeUnit);
+    }
+
+    @Override
+    public SQLFunction plusDateTime2(SQLExpression1<ColumnFuncSelector> sqlExpression, TimeUnitEnum timeUnit) {
+        return new PgSQLDateTime2PlusSQLFunction(getColumnExpressions(sqlExpression),timeUnit);
     }
 
     @Override

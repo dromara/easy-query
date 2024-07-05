@@ -5,6 +5,7 @@ import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
@@ -111,6 +112,8 @@ public interface SQLDateTimeFunc {
      * @return 时间格式添加函数
      */
     SQLFunction plusDateTime(SQLExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit);
+
+    SQLFunction plusDateTime2(SQLExpression1<ColumnFuncSelector> sqlExpression, TimeUnitEnum timeUnit);
 
     /**
      * 时间格式添加函数
