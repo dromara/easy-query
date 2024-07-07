@@ -512,7 +512,7 @@ public class QueryTest11 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`topic_type`,`create_time` FROM `t_topic_type` WHERE  `create_time` >= date_add(NOW(), interval (?) month)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("-3(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("-3(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
@@ -531,7 +531,7 @@ public class QueryTest11 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`topic_type`,`create_time` FROM `t_topic_type` WHERE ? <= `create_time` AND `create_time` <= ? AND  `create_time` <= date_add(?, interval (?) month)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("2020-01-01T01:01(LocalDateTime),2022-01-01T01:01(LocalDateTime),2022-01-01T01:01(LocalDateTime),-3(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("2020-01-01T01:01(LocalDateTime),2022-01-01T01:01(LocalDateTime),2022-01-01T01:01(LocalDateTime),-3(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
@@ -678,7 +678,7 @@ public class QueryTest11 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT YEAR(t.`create_time`) AS `value1`,MONTH(t.`create_time`) AS `value2`,SUM(t.`star`) AS `value3` FROM `t_blog` t WHERE t.`deleted` = ? AND  t.`create_time` > date_add(NOW(), interval (?) month) GROUP BY YEAR(t.`create_time`),MONTH(t.`create_time`) ORDER BY YEAR(t.`create_time`) ASC,MONTH(t.`create_time`) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),-3(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("false(Boolean),-3(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
     }

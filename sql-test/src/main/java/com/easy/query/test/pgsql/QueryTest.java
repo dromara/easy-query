@@ -2,6 +2,7 @@ package com.easy.query.test.pgsql;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft7;
@@ -239,6 +240,89 @@ public void query10() {
                         o.createTime().duration(o.createTime().plus(1,TimeUnit.DAYS), DateTimeDurationEnum.Days),
                         o.createTime().duration(o.createTime().plus(2,TimeUnit.SECONDS),DateTimeDurationEnum.Seconds),
                         o.createTime().duration(o.createTime().plus(1,TimeUnit.DAYS).plus(3,TimeUnit.MINUTES),DateTimeDurationEnum.Minutes)
+                )).firstOrNull();
+        Assert.assertEquals(-1443,(long)draft4.getValue7());
+
+        entityQuery.deletable(BlogEntity.class)
+                .whereById(id)
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .executeRows();
+    }
+
+
+
+    @Test
+    public void testDraft9_1() {
+        String id = "123456zz91";
+        entityQuery.deletable(BlogEntity.class)
+                .whereById(id)
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .executeRows();
+        BlogEntity blog = new BlogEntity();
+        blog.setId(id);
+        blog.setCreateBy("z" );
+        blog.setCreateTime(LocalDateTime.of(2022, 1, 2, 3, 4, 5));
+        blog.setUpdateBy("z" );
+        blog.setUpdateTime(LocalDateTime.of(2022, 2, 3, 4, 5, 6));
+        blog.setTitle("titlez" );
+        blog.setContent("contentz" );
+        blog.setUrl("http://blog.easy-query.com/z" );
+        blog.setStar(1);
+        blog.setScore(new BigDecimal("1.2" ));
+        blog.setStatus(1);
+        blog.setOrder(new BigDecimal("1.2" ).multiply(BigDecimal.valueOf(1)));
+        blog.setIsTop(false);
+        blog.setTop(true);
+        blog.setDeleted(false);
+        entityQuery.insertable(blog)
+                .executeRows();
+        Draft3<LocalDateTime, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(BlogEntity.class)
+                .whereById(id)
+                .select(o -> Select.DRAFT.of(
+                        o.createTime().plus(1, TimeUnitEnum.DAYS),
+                        o.createTime().plus(2, TimeUnitEnum.SECONDS),
+                        o.createTime().plus(3, TimeUnitEnum.MINUTES)
+                )).firstOrNull();
+
+        Draft7<Long, Long, Long, Long, Long, Long, Long> draft3 = entityQuery.queryable(BlogEntity.class)
+                .whereById(id)
+                .select(o -> Select.DRAFT.of(
+                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days),
+                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
+                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),
+                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Seconds),
+                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS), DateTimeDurationEnum.Days),
+                        o.createTime().duration(o.createTime().plus(2,TimeUnitEnum.SECONDS),DateTimeDurationEnum.Seconds),
+                        o.createTime().duration(o.createTime().plus(3,TimeUnitEnum.MINUTES),DateTimeDurationEnum.Minutes)
+                )).firstOrNull();
+
+        Assert.assertNotNull(draft3);
+        Long value1 = draft3.getValue1();
+        Assert.assertEquals(-32, (long) value1);
+        Long value2 = draft3.getValue2();
+        Assert.assertEquals(-769, (long) value2);
+        Long value3 = draft3.getValue3();
+        Assert.assertEquals(-46141, (long) value3);
+        Long value4 = draft3.getValue4();
+        Assert.assertEquals(-2768461, (long) value4);
+        Long value5 = draft3.getValue5();
+        Assert.assertEquals(-1, (long) value5);
+        Long value6 = draft3.getValue6();
+        Assert.assertEquals(-2, (long) value6);
+        Long value7 = draft3.getValue7();
+        Assert.assertEquals(-3, (long) value7);
+        Draft7<Long, Long, Long, Long, Long, Long, Long> draft4 = entityQuery.queryable(BlogEntity.class)
+                .whereById(id)
+                .select(o -> Select.DRAFT.of(
+                        SQLMathExpression.abs(o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days)),
+                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
+                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),
+                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Seconds),
+                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS), DateTimeDurationEnum.Days),
+                        o.createTime().duration(o.createTime().plus(2,TimeUnitEnum.SECONDS),DateTimeDurationEnum.Seconds),
+                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS).plus(3,TimeUnitEnum.MINUTES),DateTimeDurationEnum.Minutes)
                 )).firstOrNull();
         Assert.assertEquals(-1443,(long)draft4.getValue7());
 

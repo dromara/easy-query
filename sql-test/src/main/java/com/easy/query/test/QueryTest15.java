@@ -784,7 +784,7 @@ public class QueryTest15 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y-%m') AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t WHERE t.`id` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m') >= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m') AND DATE_FORMAT(t.`create_time`,'%Y-%m') <= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m') GROUP BY DATE_FORMAT(t.`create_time`,'%Y-%m')", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("6261(String),-3(Integer),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("6261(String),-3(Long),-1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
 
@@ -830,7 +830,7 @@ public class QueryTest15 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`create_time` FROM `t_topic` t WHERE t.`id` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m') >= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m') AND DATE_FORMAT(t.`create_time`,'%Y-%m') <= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m')", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("6261(String),-3(Integer),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("6261(String),-3(Long),-1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
     @Test
@@ -864,7 +864,7 @@ public class QueryTest15 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`title` FROM `t_topic` t WHERE t.`id` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m') >= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m') AND DATE_FORMAT(t.`create_time`,'%Y-%m') <= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m')", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("6261(String),-3(Integer),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("6261(String),-3(Long),-1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 

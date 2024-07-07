@@ -48,11 +48,13 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
 
     /**
      * 最小精度为秒部分数据库支持秒以下精度
+     * 请使用{@link #plus(long, TimeUnitEnum)}
      *
      * @param duration
      * @param timeUnit
      * @return
      */
+    @Deprecated
     default ColumnFunctionComparableDateTimeChainExpression<TProperty> plus(long duration, TimeUnit timeUnit) {
         return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -61,6 +63,14 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
             } else {
                 return fx.plusDateTime(this.getValue(), duration, timeUnit);
             }
+        }, getPropertyType());
+    }
+    default ColumnFunctionComparableDateTimeChainExpression<TProperty> plus(long duration, TimeUnitEnum timeUnit) {
+        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
+            return fx.plusDateTime2(selector->{
+                PropTypeColumn.columnFuncSelector(selector,this);
+                selector.value(duration);
+            },timeUnit);
         }, getPropertyType());
     }
     default <T extends Number> ColumnFunctionComparableDateTimeChainExpression<TProperty> plus(PropTypeColumn<T> propTypeColumn, TimeUnitEnum timeUnit) {
@@ -72,26 +82,28 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
         }, getPropertyType());
     }
 
-    default ColumnFunctionComparableDateTimeChainExpression<TProperty> plusMonths(int month) {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.plusDateTimeMonths(sqlFunction, month);
-            } else {
-                return fx.plusDateTimeMonths(this.getValue(), month);
-            }
-        }, getPropertyType());
+    default ColumnFunctionComparableDateTimeChainExpression<TProperty> plusMonths(long month) {
+        return plus(month,TimeUnitEnum.MONTHS);
+//        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
+//            if (this instanceof DSLSQLFunctionAvailable) {
+//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+//                return fx.plusDateTimeMonths(sqlFunction, month);
+//            } else {
+//                return fx.plusDateTimeMonths(this.getValue(), month);
+//            }
+//        }, getPropertyType());
     }
 
-    default ColumnFunctionComparableDateTimeChainExpression<TProperty> plusYears(int year) {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.plusDateTimeYears(sqlFunction, year);
-            } else {
-                return fx.plusDateTimeYears(this.getValue(), year);
-            }
-        }, getPropertyType());
+    default ColumnFunctionComparableDateTimeChainExpression<TProperty> plusYears(long year) {
+        return plus(year,TimeUnitEnum.YEARS);
+//        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
+//            if (this instanceof DSLSQLFunctionAvailable) {
+//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+//                return fx.plusDateTimeYears(sqlFunction, year);
+//            } else {
+//                return fx.plusDateTimeYears(this.getValue(), year);
+//            }
+//        }, getPropertyType());
     }
 
     default ColumnFunctionComparableNumberChainExpression<Integer> dayOfYear() {

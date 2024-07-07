@@ -122,6 +122,7 @@ public interface SQLDateTimeFunc {
      * @param month
      * @return 时间格式添加函数
      */
+    @Deprecated
     default SQLFunction plusDateTimeMonths(String property, int month) {
         return plusDateTimeMonths(s -> {
             s.column(property).value(month);
@@ -135,6 +136,7 @@ public interface SQLDateTimeFunc {
      * @param month
      * @return 时间格式添加函数
      */
+    @Deprecated
     default SQLFunction plusDateTimeMonths(SQLFunction sqlFunction, int month) {
         return plusDateTimeMonths(s -> {
             s.sqlFunc(sqlFunction).value(month);
@@ -147,6 +149,7 @@ public interface SQLDateTimeFunc {
      * @param sqlExpression
      * @return 时间格式添加函数
      */
+    @Deprecated
     SQLFunction plusDateTimeMonths(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
@@ -156,6 +159,7 @@ public interface SQLDateTimeFunc {
      * @param year
      * @return 时间格式添加函数
      */
+    @Deprecated
     default SQLFunction plusDateTimeYears(String property, int year) {
         return plusDateTimeYears(s -> {
             s.column(property).value(year);
@@ -169,6 +173,7 @@ public interface SQLDateTimeFunc {
      * @param year
      * @return 时间格式添加函数
      */
+    @Deprecated
     default SQLFunction plusDateTimeYears(SQLFunction sqlFunction, int year) {
         return plusDateTimeYears(s -> {
             s.sqlFunc(sqlFunction).value(year);
@@ -181,6 +186,7 @@ public interface SQLDateTimeFunc {
      * @param sqlExpression
      * @return 时间格式添加函数
      */
+    @Deprecated
     SQLFunction plusDateTimeYears(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
 

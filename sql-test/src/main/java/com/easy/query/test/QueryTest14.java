@@ -16,6 +16,7 @@ import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
@@ -1914,6 +1915,26 @@ public class QueryTest14 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE  `create_time` < date_add(CAST(? AS DATETIME), interval (?) microsecond)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2020-01-01 01:01:00(String),86400000000(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testPlus_1() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.of(2020, 1, 1, 1, 1));
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    SQLConstantExpression constant = t.expression().constant();
+                    t.createTime().lt(
+                            constant.valueOf(format).toDateTime(LocalDateTime.class).plus(1, TimeUnitEnum.DAYS)
+                    );
+                }).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE  `create_time` < date_add(CAST(? AS DATETIME), interval (?) day)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2020-01-01 01:01:00(String),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
