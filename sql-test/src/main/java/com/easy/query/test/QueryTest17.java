@@ -1272,8 +1272,8 @@ public class QueryTest17 extends BaseTest {
         System.out.println("1");
 
         easyQueryClient.queryable(Topic.class)
-                .behaviorConfigure(b->{
-                    b.removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
+                .configure(b->{
+                    b.getBehavior().removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
                 })
                 .where(t -> {
                     t.eq(t, "id","name");

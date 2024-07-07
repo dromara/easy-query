@@ -13,6 +13,7 @@ import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
@@ -249,8 +250,8 @@ public abstract class AbstractOverrideClientQueryable6<T1, T2, T3, T4, T5, T6> e
         return getClientQueryable6();
     }
     @Override
-    public ClientQueryable6<T1, T2, T3, T4, T5,T6> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        super.behaviorConfigure(configure);
+    public ClientQueryable6<T1, T2, T3, T4, T5,T6> configure(SQLExpression1<ContextConfigurer> configurer) {
+        super.configure(configurer);
         return getClientQueryable6();
     }
 }

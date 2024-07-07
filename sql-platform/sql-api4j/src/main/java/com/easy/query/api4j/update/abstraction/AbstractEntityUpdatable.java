@@ -5,6 +5,7 @@ import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.function.Function;
@@ -117,8 +118,8 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
         return this;
     }
     @Override
-    public EntityUpdatable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        clientEntityUpdatable.behaviorConfigure(configure);
+    public EntityUpdatable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
+        clientEntityUpdatable.configure(configurer);
         return this;
     }
 }

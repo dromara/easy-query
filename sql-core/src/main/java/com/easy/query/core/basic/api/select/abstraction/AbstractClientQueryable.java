@@ -83,6 +83,8 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
@@ -1288,7 +1290,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <TProperty> ClientQueryable<T1> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
         if (condition) {
             IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
-
+            includeNavigateParams.setRelationGroupSize(entityQueryExpressionBuilder.getExpressionContext().getGroupSize());
             NavigateInclude<T1> navigateInclude = getSQLExpressionProvider1().getNavigateInclude(includeNavigateParams);
             ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
             boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
@@ -1533,10 +1535,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return this;
     }
 
+
     @Override
-    public ClientQueryable<T1> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        if (configure != null) {
-            configure.apply(entityQueryExpressionBuilder.getExpressionContext().getBehavior());
+    public ClientQueryable<T1> configure(SQLExpression1<ContextConfigurer> configurer) {
+        if (configurer != null) {
+            configurer.apply(new ContextConfigurerImpl(entityQueryExpressionBuilder.getExpressionContext()));
         }
         return this;
     }

@@ -140,17 +140,53 @@ public interface EasyQuery {
 
     <T> EntityInsertable<T> insertable(Collection<T> entities);
 
+    /**
+     * 表达式更新自定义条件和更新列
+     * @param entityClass
+     * @return
+     * @param <T>
+     */
     <T> ExpressionUpdatable<T> updatable(Class<T> entityClass);
 
+    /**
+     * 对象更新更新默认条件为主键
+     * @param entity
+     * @return
+     * @param <T>
+     */
     <T> EntityUpdatable<T> updatable(T entity);
 
+    /**
+     * 对象更新更新默认条件为主键
+     * @param entities
+     * @return
+     * @param <T>
+     */
     <T> EntityUpdatable<T> updatable(Collection<T> entities);
 
 
+    /**
+     * 对象删除,删除条件为对象主键
+     * @param entity
+     * @return
+     * @param <T>
+     */
     <T> EntityDeletable<T> deletable(T entity);
 
+    /**
+     * 对象删除,删除条件为对象主键
+     * @param entities
+     * @return
+     * @param <T>
+     */
     <T> EntityDeletable<T> deletable(Collection<T> entities);
 
+    /**
+     * 表达式删除
+     * @param entityClass
+     * @return
+     * @param <T>
+     */
     <T> ExpressionDeletable<T> deletable(Class<T> entityClass);
 
     /**

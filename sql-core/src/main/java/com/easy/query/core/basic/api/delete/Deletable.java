@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.delete;
 
-import com.easy.query.core.basic.api.internal.BehaviorConfigure;
+import com.easy.query.core.basic.api.internal.ContextConfigure;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.SQLExecuteExpectRows;
@@ -20,7 +20,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 public interface Deletable<T, TChain> extends SQLExecuteExpectRows,
         Interceptable<TChain>,
         LogicDeletable<TChain>,
-        BehaviorConfigure<TChain>,
+        ContextConfigure<TChain>,
         TableReNameable<TChain> {
     ExpressionContext getExpressionContext();
 

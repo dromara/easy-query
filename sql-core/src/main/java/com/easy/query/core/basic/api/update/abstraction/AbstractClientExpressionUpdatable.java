@@ -27,6 +27,8 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePre
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -187,9 +189,9 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     }
 
     @Override
-    public ClientExpressionUpdatable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        if(configure!=null){
-            configure.apply(entityUpdateExpressionBuilder.getExpressionContext().getBehavior());
+    public ClientExpressionUpdatable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
+        if(configurer!=null){
+            configurer.apply(new ContextConfigurerImpl(entityUpdateExpressionBuilder.getExpressionContext()));
         }
         return this;
     }

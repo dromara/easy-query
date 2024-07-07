@@ -10,6 +10,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import kotlin.reflect.KProperty1;
 
@@ -170,8 +171,8 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
         return this;
     }
     @Override
-    public KtEntityInsertable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        clientInsertable.behaviorConfigure(configure);
+    public KtEntityInsertable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
+        clientInsertable.configure(configurer);
         return this;
     }
 }

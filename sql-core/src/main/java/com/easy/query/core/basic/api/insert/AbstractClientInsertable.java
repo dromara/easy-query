@@ -21,6 +21,8 @@ import com.easy.query.core.expression.parser.core.base.impl.ColumnConfigurerImpl
 import com.easy.query.core.expression.parser.core.base.impl.ColumnOnlySelectorImpl;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -237,9 +239,9 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        if (configure != null) {
-            configure.apply(entityInsertExpressionBuilder.getExpressionContext().getBehavior());
+    public ClientInsertable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
+        if (configurer != null) {
+            configurer.apply(new ContextConfigurerImpl(entityInsertExpressionBuilder.getExpressionContext()));
         }
         return this;
     }

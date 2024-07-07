@@ -250,4 +250,14 @@ public class EmptyExpressionContext implements ExpressionContext{
     public boolean hasRelationExtraMetadata() {
         return false;
     }
+
+    @Override
+    public void setGroupSize(Integer groupSize) {
+
+    }
+
+    @Override
+    public Integer getGroupSize() {
+        return 0;
+    }
 }

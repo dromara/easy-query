@@ -11,6 +11,8 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -90,9 +92,9 @@ public abstract class AbstractMapClientUpdatable extends AbstractSQLExecuteRows<
     }
 
     @Override
-    public MapClientUpdatable<Map<String, Object>> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        if (configure != null) {
-            configure.apply(mapUpdateExpressionBuilder.getExpressionContext().getBehavior());
+    public MapClientUpdatable<Map<String, Object>> configure(SQLExpression1<ContextConfigurer> configurer) {
+        if (configurer != null) {
+            configurer.apply(new ContextConfigurerImpl(mapUpdateExpressionBuilder.getExpressionContext()));
         }
         return this;
     }

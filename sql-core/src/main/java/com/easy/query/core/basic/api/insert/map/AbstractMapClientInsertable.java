@@ -12,6 +12,8 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.EntityMetadata;
 
@@ -107,9 +109,9 @@ public abstract class AbstractMapClientInsertable implements MapClientInsertable
         return this;
     }
     @Override
-    public MapClientInsertable<Map<String,Object>> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        if(configure!=null){
-            configure.apply(entityInsertExpressionBuilder.getExpressionContext().getBehavior());
+    public MapClientInsertable<Map<String,Object>> configure(SQLExpression1<ContextConfigurer> configurer) {
+        if(configurer!=null){
+            configurer.apply(new ContextConfigurerImpl(entityInsertExpressionBuilder.getExpressionContext()));
         }
         return this;
     }

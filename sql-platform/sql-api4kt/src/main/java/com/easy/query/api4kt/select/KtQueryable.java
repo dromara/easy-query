@@ -15,7 +15,7 @@ import com.easy.query.api4kt.select.extension.queryable.SQLKtTreeable1;
 import com.easy.query.api4kt.select.extension.queryable.SQLKtUnionable1;
 import com.easy.query.api4kt.sql.SQLKtColumnSelector;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.api.internal.BehaviorConfigure;
+import com.easy.query.core.basic.api.internal.ContextConfigure;
 import com.easy.query.core.basic.api.internal.FilterConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
@@ -36,7 +36,7 @@ public interface KtQueryable<T1> extends Query<T1>,
         LogicDeletable<KtQueryable<T1>>,
         TableReNameable<KtQueryable<T1>>,
         QueryStrategy<KtQueryable<T1>>,
-        BehaviorConfigure<KtQueryable<T1>>,
+        ContextConfigure<KtQueryable<T1>>,
         FilterConfigurable<KtQueryable<T1>>,
         SQLKtAggregatable1<T1>,
         SQLKtGroupable1<T1>,

@@ -96,4 +96,6 @@ public interface ExpressionContext {
     Function<Class<?>,Boolean> getRelationLogicDelete();
     RelationExtraMetadata getRelationExtraMetadata();
     boolean hasRelationExtraMetadata();
+    void setGroupSize(Integer groupSize);
+    Integer getGroupSize();
 }

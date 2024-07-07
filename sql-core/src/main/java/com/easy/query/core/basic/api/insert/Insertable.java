@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.insert;
 
-import com.easy.query.core.basic.api.internal.BehaviorConfigure;
+import com.easy.query.core.basic.api.internal.ContextConfigure;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.SQLBatchExecute;
 import com.easy.query.core.basic.api.internal.SQLExecuteRows;
@@ -25,7 +25,7 @@ public interface Insertable<T, TChain> extends SQLExecuteRows,
         TableReNameable<TChain>,
         SQLExecuteStrategy<TChain>,
         SQLOnDuplicateKeyIgnore<TChain>,
-        BehaviorConfigure<TChain>,
+        ContextConfigure<TChain>,
         SQLBatchExecute<TChain> {
     TChain insert(T entity);
 

@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.function.Function;
@@ -121,8 +122,8 @@ public abstract class AbstractKtEntityDeletable<T> implements KtEntityDeletable<
     }
 
     @Override
-    public KtEntityDeletable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        clientEntityDeletable.behaviorConfigure(configure);
+    public KtEntityDeletable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
+        clientEntityDeletable.configure(configurer);
         return this;
     }
 }

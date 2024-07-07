@@ -13,6 +13,7 @@ import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
@@ -222,8 +223,8 @@ public abstract class AbstractOverrideClientQueryable2<T1,T2> extends AbstractCl
         return getClientQueryable2();
     }
     @Override
-    public ClientQueryable2<T1, T2> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        super.behaviorConfigure(configure);
+    public ClientQueryable2<T1, T2> configure(SQLExpression1<ContextConfigurer> configurer) {
+        super.configure(configurer);
         return getClientQueryable2();
     }
 }

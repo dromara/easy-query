@@ -28,6 +28,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -948,8 +949,8 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
     @Override
-    public EntityQueryable<T1Proxy, T1> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        clientQueryable.behaviorConfigure(configure);
+    public EntityQueryable<T1Proxy, T1> configure(SQLExpression1<ContextConfigurer> configurer) {
+        clientQueryable.configure(configurer);
         return this;
     }
 

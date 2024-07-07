@@ -9,6 +9,7 @@ import com.easy.query.core.expression.builder.impl.FetchSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectExpression;
@@ -119,8 +120,8 @@ public class AbstractEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> 
         return this;
     }
     @Override
-    public EntityInsertable<TProxy, T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        clientInsertable.behaviorConfigure(configure);
+    public EntityInsertable<TProxy, T> configure(SQLExpression1<ContextConfigurer> configurer) {
+        clientInsertable.configure(configurer);
         return this;
     }
 

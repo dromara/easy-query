@@ -16,6 +16,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
@@ -258,5 +259,5 @@ public interface OverrideQueryable3<T1, T2,T3> extends Queryable<T1>, Queryable3
     @Override
     Queryable3<T1,T2,T3>  filterConfigure(ValueFilter valueFilter);
     @Override
-    Queryable3<T1,T2,T3>  behaviorConfigure(SQLExpression1<EasyBehavior> configure);
+    Queryable3<T1,T2,T3>  configure(SQLExpression1<ContextConfigurer> configurer);
 }

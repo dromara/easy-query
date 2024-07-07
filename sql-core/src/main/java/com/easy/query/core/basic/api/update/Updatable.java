@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.update;
 
-import com.easy.query.core.basic.api.internal.BehaviorConfigure;
+import com.easy.query.core.basic.api.internal.ContextConfigure;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.SQLBatchExecute;
@@ -18,7 +18,7 @@ public interface Updatable<T, TChain> extends SQLExecuteExpectRows,
         Interceptable<TChain>,
         LogicDeletable<TChain>,
         TableReNameable<TChain>,
-        BehaviorConfigure<TChain>,
+        ContextConfigure<TChain>,
         SQLBatchExecute<TChain> {
     EntityUpdateExpressionBuilder getUpdateExpressionBuilder();
 }

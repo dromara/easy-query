@@ -35,16 +35,59 @@ public interface EasyEntityQuery extends EasyBaseQuery{
 
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityInsertable<TProxy,T> insertable(Collection<T> entities);
 
+    /**
+     * 表达式更新 更新条件和set值需要自定义
+     * @param entityClass
+     * @return
+     * @param <TProxy>
+     * @param <T>
+     */
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> ExpressionUpdatable<TProxy,T> updatable(Class<T> entityClass);
 
+    /**
+     * 对象更新 更新条件默认是对象的主键
+     * @param entity
+     * @return
+     * @param <TProxy>
+     * @param <T>
+     */
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityUpdatable<TProxy,T> updatable(T entity);
 
+    /**
+     * 对象更新 更新条件默认是对象的主键
+     * @param entities
+     * @return
+     * @param <TProxy>
+     * @param <T>
+     */
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityUpdatable<TProxy,T> updatable(Collection<T> entities);
 
+    /**
+     * 对象删除 删除条件为对象的主键
+     * @param entity
+     * @return
+     * @param <TProxy>
+     * @param <T>
+     */
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityDeletable<TProxy,T> deletable(T entity);
+
+    /**
+     * 对象删除 删除条件为对象的主键
+     * @param entities
+     * @return
+     * @param <TProxy>
+     * @param <T>
+     */
 
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityDeletable<TProxy,T> deletable(Collection<T> entities);
 
+    /**
+     * 表达式删除,删除条件自定义
+     * @param entityClass
+     * @return
+     * @param <TProxy>
+     * @param <T>
+     */
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> ExpressionDeletable<TProxy,T> deletable(Class<T> entityClass);
 
     default  <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>>  void loadInclude(T entity, SQLFuncExpression1<TProxy, PropColumn> navigateProperty){

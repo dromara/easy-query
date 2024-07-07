@@ -31,6 +31,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -391,8 +392,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return this;
     }
     @Override
-    public Queryable<T1> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        entityQueryable.behaviorConfigure(configure);
+    public Queryable<T1> configure(SQLExpression1<ContextConfigurer> configurer) {
+        entityQueryable.configure(configurer);
         return this;
     }
 

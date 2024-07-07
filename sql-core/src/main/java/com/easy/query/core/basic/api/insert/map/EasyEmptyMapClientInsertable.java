@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Map;
@@ -110,7 +111,7 @@ public class EasyEmptyMapClientInsertable implements MapClientInsertable<Map<Str
     }
 
     @Override
-    public MapClientInsertable<Map<String, Object>> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+    public MapClientInsertable<Map<String, Object>> configure(SQLExpression1<ContextConfigurer> configurer) {
         return this;
     }
 }

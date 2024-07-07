@@ -61,6 +61,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private ResultColumnMetadata[] propTypes;
     private Function<Class<?>, Boolean> relationLogicDelete;
     private RelationExtraMetadata relationExtraMetadata;
+    private Integer groupSize;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -379,5 +380,15 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public boolean hasRelationExtraMetadata() {
         return this.relationExtraMetadata!=null&&!this.relationExtraMetadata.getRelationExtraColumnMap().isEmpty();
+    }
+
+    @Override
+    public void setGroupSize(Integer groupSize) {
+        this.groupSize=groupSize;
+    }
+
+    @Override
+    public Integer getGroupSize() {
+        return groupSize;
     }
 }

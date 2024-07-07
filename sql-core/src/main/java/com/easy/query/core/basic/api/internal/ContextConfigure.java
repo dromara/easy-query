@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.internal;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 /**
@@ -9,11 +10,6 @@ import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
  *
  * @author xuejiaming
  */
-public interface BehaviorConfigure<TChain> {
-    /**
-     * 默认的行为{@link EasyBehavior#DEFAULT_BEHAVIOR }
-     * @param configure
-     * @return
-     */
-    TChain behaviorConfigure(SQLExpression1<EasyBehavior> configure);
+public interface ContextConfigure<TChain> {
+    TChain configure(SQLExpression1<ContextConfigurer> configurer);
 }

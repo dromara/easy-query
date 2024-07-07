@@ -828,8 +828,8 @@ public class InsertTest extends BaseTest {
             }
         }
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
-                .behaviorConfigure(config -> {
-                    config.removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
+                .configure(config -> {
+                    config.getBehavior().removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
                 }).toList();
 ////
 //        Topic topic = new Topic();

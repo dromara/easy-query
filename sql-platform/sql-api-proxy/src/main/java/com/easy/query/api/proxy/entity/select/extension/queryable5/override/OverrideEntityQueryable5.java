@@ -9,6 +9,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -232,6 +233,6 @@ public interface OverrideEntityQueryable5<T1Proxy extends ProxyEntity<T1Proxy, T
     @Override
     EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> tableLogicDelete(Supplier<Boolean> tableLogicDel);
     @Override
-    EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> behaviorConfigure(SQLExpression1<EasyBehavior> configure);
+    EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> configure(SQLExpression1<ContextConfigurer> configurer);
 
 }

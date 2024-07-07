@@ -6,6 +6,7 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.function.Function;
@@ -111,7 +112,7 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
     }
 
     @Override
-    public ClientEntityDeletable<T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+    public ClientEntityDeletable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
         return this;
     }
 }

@@ -5,6 +5,7 @@ import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -103,7 +104,7 @@ public class EasyEmptyEntityUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> 
     }
 
     @Override
-    public EntityUpdatable<TProxy, T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
+    public EntityUpdatable<TProxy, T> configure(SQLExpression1<ContextConfigurer> configurer) {
         return this;
     }
 }

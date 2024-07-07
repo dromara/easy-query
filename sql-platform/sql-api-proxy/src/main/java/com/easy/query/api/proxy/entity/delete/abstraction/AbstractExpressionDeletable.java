@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -165,8 +166,8 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
     }
 
     @Override
-    public ExpressionDeletable<TProxy, T> behaviorConfigure(SQLExpression1<EasyBehavior> configure) {
-        expressionObjectDeletable.behaviorConfigure(configure);
+    public ExpressionDeletable<TProxy, T> configure(SQLExpression1<ContextConfigurer> configurer) {
+        expressionObjectDeletable.configure(configurer);
         return this;
     }
 }
