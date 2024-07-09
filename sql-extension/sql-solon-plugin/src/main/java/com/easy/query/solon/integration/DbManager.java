@@ -61,10 +61,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class DbManager {
-    private static final Log log= LogFactory.getLog(DbManager.class);
+    private static final Log log = LogFactory.getLog(DbManager.class);
     private static DbManager _global = new DbManager();
     public static String DEFAULT_BEAN_NAME = "db1";
-    public InvokeTryFinally allInvokeTryFinally=null;
+    public InvokeTryFinally allInvokeTryFinally = null;
 
     public static DbManager global() {
         return _global;
@@ -80,7 +80,7 @@ public class DbManager {
             synchronized (bw.name().intern()) {
                 holder = dbMap.get(bw.name());
                 if (holder == null) {
-                    holder=build(bw);
+                    holder = build(bw);
 //                    bw.context().getBeansOfType()
                     dbMap.put(bw.name(), holder);
 //                    if(Utils.isBlank(DEFAULT_BEAN_NAME)){
@@ -92,6 +92,10 @@ public class DbManager {
         }
 
         return holder;
+    }
+
+    public static EasyQueryHolder getByName(String name) {
+        return dbMap.get(name);
     }
 
     /**
@@ -142,14 +146,16 @@ public class DbManager {
                     builder.setDefaultSchema(solonEasyQueryProperties.getDefaultSchema());
                 });
         DatabaseConfiguration databaseConfigure = getDatabaseConfigure(solonEasyQueryProperties);
-        if(databaseConfigure!=null){
+        if (databaseConfigure != null) {
             easyQueryBuilderConfiguration.useDatabaseConfigure(databaseConfigure);
         }
-        useNameConversion(solonEasyQueryProperties,easyQueryBuilderConfiguration);
+        useNameConversion(solonEasyQueryProperties, easyQueryBuilderConfiguration);
         SQLParameterPrintEnum sqlParameterPrint = solonEasyQueryProperties.getSQLParameterPrint();
-        switch (sqlParameterPrint){
-            case MYBATIS:easyQueryBuilderConfiguration
-                    .replaceService(SQLParameterPrintFormat.class, MyBatisSQLParameterPrintFormat.class);break;
+        switch (sqlParameterPrint) {
+            case MYBATIS:
+                easyQueryBuilderConfiguration
+                        .replaceService(SQLParameterPrintFormat.class, MyBatisSQLParameterPrintFormat.class);
+                break;
         }
         easyQueryBuilderConfiguration
                 .replaceService(DataSourceUnitFactory.class, SolonDataSourceUnitFactory.class)
@@ -159,7 +165,7 @@ public class DbManager {
         //推到事件中心，用于扩展
         EventBus.publish(easyQueryBuilderConfiguration);
 
-        EasyQueryClient easyQueryClient =easyQueryBuilderConfiguration.build();
+        EasyQueryClient easyQueryClient = easyQueryBuilderConfiguration.build();
         //扩展
         EventBus.publish(easyQueryClient.getRuntimeContext());
         EasyEntityQuery entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
@@ -167,60 +173,83 @@ public class DbManager {
         DefaultEasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
         EasyKtQuery easyKtQuery = new DefaultEasyKtQuery(easyQueryClient);
 
-        return new DefaultEasyQueryHolder(easyQueryClient,entityQuery,easyQuery,easyProxyQuery,easyKtQuery);
+        return new DefaultEasyQueryHolder(easyQueryClient, entityQuery, easyQuery, easyProxyQuery, easyKtQuery);
     }
 
-    private static void useNameConversion(SolonEasyQueryProperties solonEasyQueryProperties,EasyQueryBuilderConfiguration easyQueryBuilderConfiguration){
+    private static void useNameConversion(SolonEasyQueryProperties solonEasyQueryProperties, EasyQueryBuilderConfiguration easyQueryBuilderConfiguration) {
         NameConversionEnum nameConversion = solonEasyQueryProperties.getNameConversion();
-        switch (nameConversion){
-            case DEFAULT:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new DefaultNameConversion());break;
-            case UNDERLINED:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UnderlinedNameConversion());break;
-            case LOWER_CAMEL_CASE:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new LowerCamelCaseNameConversion());break;
-            case UPPER_CAMEL_CASE:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UpperCamelCaseNameConversion());break;
-            case UPPER_UNDERLINED:easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UpperUnderlinedNameConversion());break;
+        switch (nameConversion) {
+            case DEFAULT:
+                easyQueryBuilderConfiguration.replaceService(NameConversion.class, new DefaultNameConversion());
+                break;
+            case UNDERLINED:
+                easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UnderlinedNameConversion());
+                break;
+            case LOWER_CAMEL_CASE:
+                easyQueryBuilderConfiguration.replaceService(NameConversion.class, new LowerCamelCaseNameConversion());
+                break;
+            case UPPER_CAMEL_CASE:
+                easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UpperCamelCaseNameConversion());
+                break;
+            case UPPER_UNDERLINED:
+                easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UpperUnderlinedNameConversion());
+                break;
         }
     }
-    private static DatabaseConfiguration getDatabaseConfigure(SolonEasyQueryProperties solonEasyQueryProperties){
+
+    private static DatabaseConfiguration getDatabaseConfigure(SolonEasyQueryProperties solonEasyQueryProperties) {
         DatabaseEnum database = solonEasyQueryProperties.getDatabase();
-        switch (database){
-            case MYSQL:return new MySQLDatabaseConfiguration();
-            case PGSQL:return new PgSQLDatabaseConfiguration();
-            case MSSQL:return new MsSQLDatabaseConfiguration();
-            case H2:return new H2DatabaseConfiguration();
-            case DAMENG:return new DamengDatabaseConfiguration();
-            case KINGBASE_ES:return new KingbaseESDatabaseConfiguration();
-            case MSSQL_ROW_NUMBER:return new MsSQLRowNumberDatabaseConfiguration();
-            case ORACLE:return new OracleDatabaseConfiguration();
-            case SQLITE:return new SQLLiteDatabaseConfiguration();
-            case CLICKHOUSE:return new ClickHouseDatabaseConfiguration();
-            case GAUSS_DB:return new GaussDBDatabaseConfiguration();
+        switch (database) {
+            case MYSQL:
+                return new MySQLDatabaseConfiguration();
+            case PGSQL:
+                return new PgSQLDatabaseConfiguration();
+            case MSSQL:
+                return new MsSQLDatabaseConfiguration();
+            case H2:
+                return new H2DatabaseConfiguration();
+            case DAMENG:
+                return new DamengDatabaseConfiguration();
+            case KINGBASE_ES:
+                return new KingbaseESDatabaseConfiguration();
+            case MSSQL_ROW_NUMBER:
+                return new MsSQLRowNumberDatabaseConfiguration();
+            case ORACLE:
+                return new OracleDatabaseConfiguration();
+            case SQLITE:
+                return new SQLLiteDatabaseConfiguration();
+            case CLICKHOUSE:
+                return new ClickHouseDatabaseConfiguration();
+            case GAUSS_DB:
+                return new GaussDBDatabaseConfiguration();
         }
         return null;
     }
+
     public void reg(BeanWrap bw) {
         get(bw);
     }
 
-    private synchronized InvokeTryFinally getAllInvokeTryFinally(){
+    private synchronized InvokeTryFinally getAllInvokeTryFinally() {
 
-        if(allInvokeTryFinally!=null){
+        if (allInvokeTryFinally != null) {
             return allInvokeTryFinally;
         }
-        InvokeTryFinally invokeTryFinally= EmptyInvokeTryFinally.EMPTY;
+        InvokeTryFinally invokeTryFinally = EmptyInvokeTryFinally.EMPTY;
         Collection<EasyQueryHolder> values = dbMap.values();
         for (EasyQueryHolder holder : values) {
             TrackManager trackManager = holder.getEasyQueryClient().getRuntimeContext().getTrackManager();
-            invokeTryFinally=new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
+            invokeTryFinally = new EasyQueryTrackInvoker(invokeTryFinally, trackManager);
         }
-        allInvokeTryFinally=invokeTryFinally;
+        allInvokeTryFinally = invokeTryFinally;
         return allInvokeTryFinally;
     }
 
     public InvokeTryFinally getTrackInvokeTryFinally(String tag) {
-        InvokeTryFinally invokeTryFinally= EmptyInvokeTryFinally.EMPTY;
+        InvokeTryFinally invokeTryFinally = EmptyInvokeTryFinally.EMPTY;
         if (EasyStringUtil.isBlank(tag)) {
             //如果全部的已经设置了
-            if(allInvokeTryFinally!=null){
+            if (allInvokeTryFinally != null) {
                 return allInvokeTryFinally;
             }
             return getAllInvokeTryFinally();
@@ -228,24 +257,24 @@ public class DbManager {
         if (tag.contains(",")) {
             String[] names = tag.split(",");
             for (String name : names) {
-                EasyQueryHolder holder =dbMap.get(name);
-                if(holder==null){
-                    log.warn("can not get track managers name:["+name+"]");
+                EasyQueryHolder holder = dbMap.get(name);
+                if (holder == null) {
+                    log.warn("can not get track managers name:[" + name + "]");
                     continue;
                 }
                 TrackManager trackManager = holder.getEasyQueryClient().getRuntimeContext().getTrackManager();
-                invokeTryFinally=new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
+                invokeTryFinally = new EasyQueryTrackInvoker(invokeTryFinally, trackManager);
             }
             return invokeTryFinally;
 
         } else {
-            EasyQueryHolder holder =dbMap.get(tag);
-            if(holder==null){
-                log.warn("can not get track managers name:["+tag+"]");
+            EasyQueryHolder holder = dbMap.get(tag);
+            if (holder == null) {
+                log.warn("can not get track managers name:[" + tag + "]");
                 return EmptyInvokeTryFinally.EMPTY;
             }
             TrackManager trackManager = holder.getEasyQueryClient().getRuntimeContext().getTrackManager();
-            return new EasyQueryTrackInvoker(invokeTryFinally,trackManager);
+            return new EasyQueryTrackInvoker(invokeTryFinally, trackManager);
         }
 
     }
