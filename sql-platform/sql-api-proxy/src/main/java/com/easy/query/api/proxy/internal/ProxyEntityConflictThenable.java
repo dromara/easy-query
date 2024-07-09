@@ -25,6 +25,12 @@ public interface ProxyEntityConflictThenable<TProxy extends ProxyEntity<TProxy,T
 
     /**
      * 存在有争议的情况下处理
+     * 如果constraintPropertySelector所在的列的值为null那么insert的时候不会生成列需要这是更新策略为ALL_COLUMNS
+     <blockquote><pre>
+     * {@code
+     *  setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS)
+     *                    }
+     * </pre></blockquote>
      * @param updateSetSelector 选择需要更新的列 null || ()->null表示不更新
      * @param constraintPropertySelector null表示不指定使用主键
      * @return
