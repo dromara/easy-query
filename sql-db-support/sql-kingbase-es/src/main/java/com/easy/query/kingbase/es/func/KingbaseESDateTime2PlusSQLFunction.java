@@ -29,13 +29,13 @@ public class KingbaseESDateTime2PlusSQLFunction extends AbstractExpressionSQLFun
             throw new IllegalArgumentException("columnExpressions.size() != 2");
         }
         switch (timeUnit){
-            case MILLISECONDS: return "(({0})::timestamp+(({1})||' milliseconds')::interval)";
-            case SECONDS: return "(({0})::timestamp+(({1})||' second')::interval)";
-            case MINUTES: return "(({0})::timestamp+(({1})||' minute')::interval)";
-            case HOURS: return "(({0})::timestamp+(({1})||' hour')::interval)";
-            case DAYS: return "(({0})::timestamp+(({1})||' day')::interval)";
-            case MONTHS: return "(({0})::timestamp+(({1})||' month')::interval)";
-            case YEARS: return "(({0})::timestamp+(({1})||' year')::interval)";
+            case MILLISECONDS: return "(({0})::TIMESTAMP + CONCAT(({1}), ' milliseconds')::INTERVAL)";
+            case SECONDS: return "(({0})::TIMESTAMP + CONCAT(({1}), ' second')::INTERVAL)";
+            case MINUTES: return "(({0})::TIMESTAMP + CONCAT(({1}), ' minute')::INTERVAL)";
+            case HOURS: return "(({0})::TIMESTAMP + CONCAT(({1}), ' hour')::INTERVAL)";
+            case DAYS: return "(({0})::TIMESTAMP + CONCAT(({1}), ' day')::INTERVAL)";
+            case MONTHS: return "(({0})::TIMESTAMP + CONCAT(({1}), ' month')::INTERVAL)";
+            case YEARS: return "(({0})::TIMESTAMP + CONCAT(({1}), ' year')::INTERVAL)";
         }
         throw new UnsupportedOperationException("not support current function KingbaseESDateTime2PlusSQLFunction:"+ timeUnit);
     }

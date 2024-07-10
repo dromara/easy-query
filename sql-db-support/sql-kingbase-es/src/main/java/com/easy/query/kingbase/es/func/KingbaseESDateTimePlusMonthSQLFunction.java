@@ -26,7 +26,7 @@ public class KingbaseESDateTimePlusMonthSQLFunction extends AbstractExpressionSQ
         if(EasyCollectionUtil.isEmpty(columnExpressions)){
             throw new IllegalArgumentException("columnExpressions is empty");
         }
-        return "(({0})::timestamp+(({1})||' month')::interval)";
+        return "(({0})::TIMESTAMP + CONCAT(({1}),' month')::INTERVAL)";
     }
 
     @Override

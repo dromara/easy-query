@@ -26,7 +26,7 @@ public class KingbaseESDateTimePlusYearSQLFunction extends AbstractExpressionSQL
         if(EasyCollectionUtil.isEmpty(columnExpressions)){
             throw new IllegalArgumentException("columnExpressions is empty");
         }
-        return "(({0})::timestamp+(({1})||' year')::interval)";
+        return "(({0})::TIMESTAMP + CONCAT(({1}), ' year')::INTERVAL)";
     }
 
     @Override
