@@ -187,7 +187,7 @@ public class EntityMetadata {
 
         Table table = EasyClassUtil.getAnnotation(entityClass, Table.class);
         if (table != null) {
-            this.tableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass,table.value()), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
+            this.tableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass,table.value(),true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
 
             this.schema = table.schema();
             if (EasyStringUtil.isBlank(this.schema)) {
@@ -451,7 +451,7 @@ public class EntityMetadata {
         Column column = field.getAnnotation(Column.class);
         boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
         boolean autoSelect = column == null ? defaultAutoSelect : column.autoSelect();
-        String columnName = hasColumnName ? nameConversion.annotationCovert(entityClass,column.value()) : nameConversion.convert(property);
+        String columnName = hasColumnName ? nameConversion.annotationCovert(entityClass,column.value(),false) : nameConversion.convert(property);
         ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName);
 //            if (column != null) {
 //                columnMetadata.setNullable(column.nullable());

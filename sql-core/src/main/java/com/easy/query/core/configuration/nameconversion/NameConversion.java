@@ -13,7 +13,7 @@ public interface NameConversion {
     * @param name
     * @return
     */
-   default String annotationCovert(Class<?> entityClass,String name){
+   default String annotationCovert(Class<?> entityClass,String name,boolean tableAnnotation){
       return name;
    }
    /**
