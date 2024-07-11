@@ -2,6 +2,7 @@ package com.easy.query.springshardingdemo.controller;
 
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyProxyQuery;
+import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.metadata.ActualTable;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -35,6 +36,7 @@ import java.util.List;
 public class OrderTestController {
     private final EasyProxyQuery easyProxyQuery;
     private final EasyEntityQuery easyEntityQuery;
+    private final EasyQuery easyQuery;
 
     @GetMapping("/init")
     public Object init() {
@@ -165,16 +167,24 @@ public class OrderTestController {
 //    }
     @GetMapping("/testxxx")
     public Object testxxx() {
-        List<OrderGroupWithSumOrderNoVO> list = easyEntityQuery.queryable(OrderEntity.class)
-//                .where(o -> o.userId().eq("1"))
-                .groupBy(o -> GroupKeys.TABLE1.of(o.userId()))
-                .select(group -> {
-                    OrderGroupWithSumOrderNoVOProxy r = new OrderGroupWithSumOrderNoVOProxy();
-                    r.userId().set(group.key1());
-                    r.orderNoSum().set(group.groupTable().orderNo().sum());
-                    return r;
-                }).toList();
-        return list;
+//        List<OrderGroupWithSumOrderNoVO> list = easyEntityQuery.queryable(OrderEntity.class)
+////                .where(o -> o.userId().eq("1"))
+//                .groupBy(o -> GroupKeys.TABLE1.of(o.userId()))
+//                .select(group -> {
+//                    OrderGroupWithSumOrderNoVOProxy r = new OrderGroupWithSumOrderNoVOProxy();
+//                    r.userId().set(group.key1());
+//                    r.orderNoSum().set(group.groupTable().orderNo().sum());
+//                    return r;
+//                }).toList();
+        List<OrderGroupWithSumOrderNoVO> list1 = easyQuery.queryable(OrderEntity.class)
+                .where(o -> o.gt(OrderEntity::getCreateTime,LocalDateTime.of(2023,6,2,0,0)))
+                .where(o -> o.lt(OrderEntity::getCreateTime,LocalDateTime.of(2023,6,30,0,0)))
+                .groupBy(o -> o.column(OrderEntity::getUserId))
+                .select(OrderGroupWithSumOrderNoVO.class, o -> o.columnAs(OrderEntity::getUserId, OrderGroupWithSumOrderNoVO::getUserId)
+                        .columnSumAs(OrderEntity::getOrderNo, OrderGroupWithSumOrderNoVO::getOrderNoSum))
+                .toList();
+
+        return list1;
 
     }
 }

@@ -95,7 +95,7 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
         }
     }
     private List<PropertyGroup> getGroups(EntityQuerySQLExpression querySQLExpression) {
-        if (isShardingMerge() && EasySQLSegmentUtil.isNotEmpty(querySQLExpression.getGroup())) {
+        if (EasySQLSegmentUtil.isNotEmpty(querySQLExpression.getGroup())) {
             List<PropertyGroup> groups = new ArrayList<>();
             SQLBuilderSegment projects = querySQLExpression.getProjects();
             for (SQLSegment sqlSegment : querySQLExpression.getGroup().getSQLSegments()) {

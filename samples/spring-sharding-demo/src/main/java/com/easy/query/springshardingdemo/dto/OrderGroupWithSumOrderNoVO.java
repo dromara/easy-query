@@ -12,6 +12,6 @@ import lombok.Data;
 @Data
 @EntityProxy
 public class OrderGroupWithSumOrderNoVO {
-    private Integer orderNoSum;
+    private Long orderNoSum;
     private String userId;
 }
