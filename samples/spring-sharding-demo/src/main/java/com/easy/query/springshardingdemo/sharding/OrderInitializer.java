@@ -25,6 +25,11 @@ public class OrderInitializer extends AbstractShardingMonthInitializer<OrderEnti
         return LocalDateTime.of(2020,1,1,0,0,0);
     }
 
+    @Override
+    protected LocalDateTime getEndTime() {
+        return LocalDateTime.of(2023,12,12,0,0);
+    }
+
     /**
      * 格式化时间到数据源
      * @param time

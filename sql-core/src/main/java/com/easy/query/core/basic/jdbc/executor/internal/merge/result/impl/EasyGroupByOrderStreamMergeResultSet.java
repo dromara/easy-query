@@ -315,7 +315,13 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         if (value == null) {
             return 0;
         }
-        return ((BigDecimal) value).shortValue();
+        if(value instanceof Short){
+            return (Short)value;
+        }
+        if(value instanceof BigDecimal){
+            return ((BigDecimal) value).shortValue();
+        }
+        return new BigDecimal(value.toString()).shortValue();
     }
 
     @Override
@@ -325,7 +331,13 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         if (value == null) {
             return 0;
         }
-        return ((BigDecimal) value).longValue();
+        if(value instanceof Long){
+            return (Long)value;
+        }
+        if(value instanceof BigDecimal){
+            return ((BigDecimal) value).longValue();
+        }
+        return new BigDecimal(value.toString()).longValue();
     }
 
     @Override
@@ -335,7 +347,13 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         if (value == null) {
             return 0;
         }
-        return ((BigDecimal) value).intValue();
+        if(value instanceof Integer){
+            return (Integer)value;
+        }
+        if(value instanceof BigDecimal){
+            return ((BigDecimal) value).intValue();
+        }
+        return new BigDecimal(value.toString()).intValue();
     }
 
     @Override
@@ -345,7 +363,13 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         if (value == null) {
             return 0;
         }
-        return ((BigDecimal) value).floatValue();
+        if(value instanceof Float){
+            return (Float)value;
+        }
+        if(value instanceof BigDecimal){
+            return ((BigDecimal) value).floatValue();
+        }
+        return new BigDecimal(value.toString()).floatValue();
     }
 
     @Override
@@ -355,7 +379,13 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         if (value == null) {
             return 0;
         }
-        return ((BigDecimal) value).doubleValue();
+        if(value instanceof Double){
+            return (Double)value;
+        }
+        if(value instanceof BigDecimal){
+            return ((BigDecimal) value).doubleValue();
+        }
+        return new BigDecimal(value.toString()).doubleValue();
     }
 
     @Override
@@ -406,7 +436,13 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
         setWasNull(value == null);
-        return (BigDecimal) value;
+        if(value==null){
+            return null;
+        }
+        if(value instanceof BigDecimal){
+            return (BigDecimal) value;
+        }
+        return new BigDecimal(value.toString());
     }
 
     @Override

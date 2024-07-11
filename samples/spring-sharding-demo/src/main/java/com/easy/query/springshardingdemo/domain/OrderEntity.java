@@ -5,6 +5,8 @@ import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.ShardingDataSourceKey;
 import com.easy.query.core.annotation.ShardingTableKey;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.springshardingdemo.domain.proxy.OrderEntityProxy;
 import com.easy.query.springshardingdemo.sharding.OrderInitializer;
 import lombok.Data;
 
@@ -19,7 +21,7 @@ import java.time.LocalDateTime;
 @Data
 @Table(value = "t_order", shardingInitializer = OrderInitializer.class)
 @EntityProxy
-public class OrderEntity {
+public class OrderEntity implements ProxyEntityAvailable<OrderEntity , OrderEntityProxy> {
     @Column(primaryKey = true)
     private String id;
     private Integer orderNo;

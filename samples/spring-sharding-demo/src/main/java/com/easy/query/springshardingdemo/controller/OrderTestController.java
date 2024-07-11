@@ -1,11 +1,15 @@
 package com.easy.query.springshardingdemo.controller;
 
+import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.core.metadata.ActualTable;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.springshardingdemo.domain.OrderEntity;
 import com.easy.query.springshardingdemo.domain.OrderTest;
+import com.easy.query.springshardingdemo.dto.OrderGroupWithSumOrderNoVO;
+import com.easy.query.springshardingdemo.dto.proxy.OrderGroupWithSumOrderNoVOProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +34,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class OrderTestController {
     private final EasyProxyQuery easyProxyQuery;
+    private final EasyEntityQuery easyEntityQuery;
 
     @GetMapping("/init")
     public Object init() {
@@ -64,7 +69,7 @@ public class OrderTestController {
         return "成功插入:" + rows + ",其中路由对象生成耗时:" + (end - start) + "(ms),插入耗时:" + (insertEnd - insertStart) + "(ms)";
     }
 
-//
+    //
 //    @GetMapping("/groupByWithSumOrderNo")
 //    public Object groupByWithSumOrderNo() {
 //        long start = System.currentTimeMillis();
@@ -158,4 +163,18 @@ public class OrderTestController {
 //        long end = System.currentTimeMillis();
 //        return Arrays.asList(pageResult, (end - start) + "(ms)");
 //    }
+    @GetMapping("/testxxx")
+    public Object testxxx() {
+        List<OrderGroupWithSumOrderNoVO> list = easyEntityQuery.queryable(OrderEntity.class)
+//                .where(o -> o.userId().eq("1"))
+                .groupBy(o -> GroupKeys.TABLE1.of(o.userId()))
+                .select(group -> {
+                    OrderGroupWithSumOrderNoVOProxy r = new OrderGroupWithSumOrderNoVOProxy();
+                    r.userId().set(group.key1());
+                    r.orderNoSum().set(group.groupTable().orderNo().sum());
+                    return r;
+                }).toList();
+        return list;
+
+    }
 }

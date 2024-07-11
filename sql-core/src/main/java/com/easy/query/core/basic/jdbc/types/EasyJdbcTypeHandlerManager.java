@@ -1,6 +1,8 @@
 package com.easy.query.core.basic.jdbc.types;
 
 
+import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.jdbc.types.handler.BigDecimalTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.BlobTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.BooleanTypeHandler;
@@ -107,7 +109,9 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     }
 
     @Override
-    public void appendHandler(Class<?> type, JdbcTypeHandler typeHandler, boolean replace) {
+    public void appendHandler(@NotNull Class<?> type, JdbcTypeHandler typeHandler, boolean replace) {
+        Objects.requireNonNull(type,"type is null.");
+        Objects.requireNonNull(typeHandler,"typeHandler is null.");
         if(handlers.containsKey(type)){
             if(replace){
                 handlers.put(type,typeHandler);
@@ -116,17 +120,17 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
             handlers.put(type,typeHandler);
         }
     }
-
+    @NotNull
     @Override
-    public JdbcTypeHandler getHandler(Class<?> type) {
+    public JdbcTypeHandler getHandler(@Nullable Class<?> type) {
         if(type==null){
             return DEFAULT_HANDLER;
         }
         return handlers.getOrDefault(type,DEFAULT_HANDLER);
     }
-
+    @NotNull
     @Override
-    public JdbcTypeHandler getHandlerByHandlerClass(Class<?> handlerType) {
+    public JdbcTypeHandler getHandlerByHandlerClass(@Nullable Class<?> handlerType) {
         return handlers.values().stream().filter(o-> Objects.equals(o.getClass(),handlerType)).findFirst().orElseThrow(()->new EasyQueryInvalidOperationException("unknown type handler:"+ EasyClassUtil.getSimpleName(handlerType)));
     }
 }
