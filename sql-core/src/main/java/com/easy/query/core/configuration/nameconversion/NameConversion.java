@@ -9,6 +9,14 @@ package com.easy.query.core.configuration.nameconversion;
 public interface NameConversion {
 
    /**
+    * 注解的后置处理
+    * @param name
+    * @return
+    */
+   default String annotationCovert(String name){
+      return name;
+   }
+   /**
     * 属性名或者表名转成列名
     * @param name 属性名或者表名
     * @return 转换后的列名

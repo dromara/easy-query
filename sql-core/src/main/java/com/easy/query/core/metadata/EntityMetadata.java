@@ -134,7 +134,7 @@ public class EntityMetadata {
     private ShardingInitConfig shardingInitConfig;
     private boolean hasValueObject;
     private boolean aliasQuery;
-    private boolean hasPrimaryKeyGenerator=false;
+    private boolean hasPrimaryKeyGenerator = false;
 
     /**
      * 查询过滤器
@@ -194,7 +194,7 @@ public class EntityMetadata {
                 EasyQueryOption easyQueryOption = configuration.getEasyQueryOption();
                 //如果存在默认的schema那么就用这个
                 boolean hasDefaultSchema = EasyStringUtil.isNotBlank(easyQueryOption.getDefaultSchema());
-                if(hasDefaultSchema){
+                if (hasDefaultSchema) {
                     this.schema = easyQueryOption.getDefaultSchema();
                 }
             }
@@ -451,7 +451,7 @@ public class EntityMetadata {
         Column column = field.getAnnotation(Column.class);
         boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
         boolean autoSelect = column == null ? defaultAutoSelect : column.autoSelect();
-        String columnName = hasColumnName ? column.value() : nameConversion.convert(property);
+        String columnName = hasColumnName ? nameConversion.annotationCovert(column.value()) : nameConversion.convert(property);
         ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName);
 //            if (column != null) {
 //                columnMetadata.setNullable(column.nullable());
@@ -521,17 +521,17 @@ public class EntityMetadata {
                         }
                         columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
                     }
-                }else if(column.primaryKey()){
+                } else if (column.primaryKey()) {
                     Class<? extends PrimaryKeyGenerator> primaryKeyGeneratorClass = column.primaryKeyGenerator();
                     //非默认的主键生成器
-                    if(!Objects.equals(UnsupportPrimaryKeyGenerator.class,primaryKeyGeneratorClass)){
+                    if (!Objects.equals(UnsupportPrimaryKeyGenerator.class, primaryKeyGeneratorClass)) {
 
                         PrimaryKeyGenerator primaryKeyGenerator = configuration.getPrimaryKeyGenerator(primaryKeyGeneratorClass);
                         if (primaryKeyGenerator == null) {
                             throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " primary key generator unknown");
                         }
                         columnOption.setPrimaryKeyGenerator(primaryKeyGenerator);
-                        this.hasPrimaryKeyGenerator=true;
+                        this.hasPrimaryKeyGenerator = true;
                     }
                 }
                 columnOption.setGeneratedKey(generatedKey);

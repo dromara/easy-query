@@ -539,4 +539,10 @@ public class QueryTest18 extends BaseTest {
 
     }
 
+    @Test
+    public void testxx(){
+        List<Topic> list = easyEntityQuery.queryable(Topic.class).toList();
+    }
+
+
 }
