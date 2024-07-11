@@ -9,7 +9,7 @@ package com.easy.query.core.configuration.nameconversion;
 public interface NameConversion {
 
    /**
-    * 注解的后置处理
+    * 注解的后置处理包括@Table和@Column
     * @param name
     * @return
     */
