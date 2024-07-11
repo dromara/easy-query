@@ -451,7 +451,7 @@ public class EntityMetadata {
         Column column = field.getAnnotation(Column.class);
         boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
         boolean autoSelect = column == null ? defaultAutoSelect : column.autoSelect();
-        String columnName = hasColumnName ? nameConversion.annotationCovert(column.value()) : nameConversion.convert(property);
+        String columnName = hasColumnName ? nameConversion.annotationCovert(entityClass,column.value()) : nameConversion.convert(property);
         ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName);
 //            if (column != null) {
 //                columnMetadata.setNullable(column.nullable());
