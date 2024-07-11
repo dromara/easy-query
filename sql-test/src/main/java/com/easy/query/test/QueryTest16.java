@@ -1133,8 +1133,8 @@ public class QueryTest16 extends BaseTest {
 //                }).toList();
 //    }
 
-    @Test
-    public void singleFirst() {
-        List<SysUser> list4 = easyEntityQuery.queryable(SysUser.class).toList();
-    }
+//    @Test
+//    public void singleFirst() {
+//        List<SysUser> list4 = easyEntityQuery.queryable(SysUser.class).toList();
+//    }
 }

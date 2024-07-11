@@ -318,10 +318,7 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         if(value instanceof Short){
             return (Short)value;
         }
-        if(value instanceof BigDecimal){
-            return ((BigDecimal) value).shortValue();
-        }
-        return new BigDecimal(value.toString()).shortValue();
+        return ((Number) value).shortValue();
     }
 
     @Override
@@ -334,10 +331,7 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         if(value instanceof Long){
             return (Long)value;
         }
-        if(value instanceof BigDecimal){
-            return ((BigDecimal) value).longValue();
-        }
-        return new BigDecimal(value.toString()).longValue();
+        return ((Number) value).longValue();
     }
 
     @Override
@@ -350,10 +344,7 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         if(value instanceof Integer){
             return (Integer)value;
         }
-        if(value instanceof BigDecimal){
-            return ((BigDecimal) value).intValue();
-        }
-        return new BigDecimal(value.toString()).intValue();
+        return ((Number) value).intValue();
     }
 
     @Override
@@ -366,10 +357,7 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         if(value instanceof Float){
             return (Float)value;
         }
-        if(value instanceof BigDecimal){
-            return ((BigDecimal) value).floatValue();
-        }
-        return new BigDecimal(value.toString()).floatValue();
+        return ((Number) value).floatValue();
     }
 
     @Override
@@ -382,10 +370,7 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
         if(value instanceof Double){
             return (Double)value;
         }
-        if(value instanceof BigDecimal){
-            return ((BigDecimal) value).doubleValue();
-        }
-        return new BigDecimal(value.toString()).doubleValue();
+        return ((Number) value).doubleValue();
     }
 
     @Override
