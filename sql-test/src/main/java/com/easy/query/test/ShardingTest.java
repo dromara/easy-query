@@ -988,4 +988,13 @@ Assert.assertEquals(99,list.size());
         Assert.assertTrue(shardingDataSourcePropertyNames.contains("createTime"));
         Assert.assertEquals(entityMetadata.getShardingDataSourcePropertyName(),"createTime");
     }
+    @Test
+    public void shardingTest50(){
+        List<TopicShardingGroup> list1 = easyQuery.queryable(TopicSharding.class)
+                .where(o -> o.eq(TopicSharding::getId, 20000))
+                .groupBy(o -> o.column(TopicSharding::getTitle))
+                .orderByAsc(o->o.column(TopicSharding::getTitle))
+                .select(TopicShardingGroup.class, o -> o.column(TopicSharding::getTitle).columnCountAs(TopicSharding::getId, TopicShardingGroup::getIdCount))
+                .toList();
+    }
 }

@@ -9,6 +9,7 @@ import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -208,6 +209,8 @@ public abstract class BaseTest {
         DataSourceRouteManager dataSourceRouteManager = runtimeContext.getDataSourceRouteManager();
         dataSourceRouteManager.addRoute(new TopicShardingDataSourceTimeDataSourceRoute());
         dataSourceRouteManager.addRoute(new TopicShardingDataSourceRoute());
+
+
 
     }
 
