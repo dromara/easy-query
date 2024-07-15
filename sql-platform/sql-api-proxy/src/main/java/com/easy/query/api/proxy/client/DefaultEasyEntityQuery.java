@@ -57,6 +57,12 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
     }
 
     @Override
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> queryable(String sql, Class<T> entityClass, Collection<Object> params) {
+        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
+        return new EasyEntityQueryable<>(tProxy, easyQueryClient.queryable(sql, entityClass, params));
+    }
+
+    @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityInsertable<TProxy, T> insertable(T entity) {
         Objects.requireNonNull(entity, "entities is null");
         Class<T> aClass = EasyObjectUtil.typeCast(entity.getClass());
@@ -103,13 +109,13 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
     }
 
     @Override
-    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityDeletable<TProxy,T> deletable(T entity) {
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityDeletable<TProxy, T> deletable(T entity) {
         Objects.requireNonNull(entity, "entities is null");
         return new EasyEntityDeletable<>(easyQueryClient.deletable(entity));
     }
 
     @Override
-    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityDeletable<TProxy,T> deletable(Collection<T> entities) {
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityDeletable<TProxy, T> deletable(Collection<T> entities) {
         return new EasyEntityDeletable<>(easyQueryClient.deletable(entities));
     }
 

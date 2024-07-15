@@ -29,6 +29,7 @@ import java.util.List;
 public interface EasyEntityQuery extends EasyBaseQuery{
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityQueryable<TProxy, T> queryable(Class<T> entityClass);
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityQueryable<TProxy, T> queryable(String sql, Class<T> entityClass);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityQueryable<TProxy, T> queryable(String sql, Class<T> entityClass,Collection<Object> params);
 
 
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> EntityInsertable<TProxy,T> insertable(T entity);

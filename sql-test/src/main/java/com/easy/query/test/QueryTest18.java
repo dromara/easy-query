@@ -1,15 +1,19 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapTypeProxy;
+import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.executor.PageAble;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.lambda.Property;
@@ -22,12 +26,14 @@ import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
+import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp5;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
@@ -53,6 +59,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -541,7 +548,42 @@ public class QueryTest18 extends BaseTest {
 
     @Test
     public void testxx(){
-        List<Topic> list = easyEntityQuery.queryable(Topic.class).toList();
+//        List<Topic> list = easyEntityQuery.queryable(Topic.class).toList();
+
+//        EasyPageResult<Topic> pageResult = easyEntityQuery.queryable("select * from t_topic ", Topic.class)
+//                .toPageResult(1, 2);
+
+//
+//        List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class)
+//                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+//                .where((t1, b2) -> t1.id().eq("123"))
+//                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(
+//                        t1.id(), b2.content()
+//                ))
+//                .select(group -> Select.DRAFT.of(
+//                        group.key1(),
+//                        group.key2()
+//                )).toList();
+
+//
+//        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+//                .setDefaultDataSource(dataSource)
+//                .optionConfigure(op -> {
+//                    op.setDeleteThrowError(false);
+//                    op.setExecutorCorePoolSize(1);
+//                    op.setExecutorMaximumPoolSize(2);
+//                    op.setMaxShardingQueryLimit(1);
+//                })
+//                .useDatabaseConfigure(new OracleDatabaseConfiguration())
+//                .build();
+//        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+//        EasyPageResult<Topic> pageResult1 = defaultEasyEntityQuery.queryable("select * from t_topic ", Topic.class)
+//                .toPageResult(1, 2);
+
+        EasyPageResult<Topic> pageResult1 = easyEntityQuery.queryable("select * from t_topic where id!=? ", Topic.class, Arrays.asList("123"))
+                .where(t -> t.id().ne("456"))
+                .toPageResult(1, 2);
+
     }
 
 
