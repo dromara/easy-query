@@ -97,6 +97,9 @@ public class DbManager {
     public static EasyQueryHolder getByName(String name) {
         return dbMap.get(name);
     }
+    public static EasyQueryHolder removeByName(String name) {
+        return dbMap.remove(name);
+    }
 
     /**
      * 构建

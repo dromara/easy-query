@@ -580,9 +580,20 @@ public class QueryTest18 extends BaseTest {
 //        EasyPageResult<Topic> pageResult1 = defaultEasyEntityQuery.queryable("select * from t_topic ", Topic.class)
 //                .toPageResult(1, 2);
 
-        EasyPageResult<Topic> pageResult1 = easyEntityQuery.queryable("select * from t_topic where id!=? ", Topic.class, Arrays.asList("123"))
+        EasyPageResult<Topic> pageResult1 = easyEntityQuery.queryable("select * from t_topic where id != ? ", Topic.class, Arrays.asList("123"))
                 .where(t -> t.id().ne("456"))
                 .toPageResult(1, 2);
+
+        EntityQueryable<TopicProxy, Topic> joinTable = easyEntityQuery.queryable("select * from t_topic where id != ? ", Topic.class, Arrays.asList("123"));
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(joinTable, (b, t2) -> b.id().eq(t2.id()))
+                .where((b1, t2) -> {
+                    b1.createTime().gt(LocalDateTime.now());
+                    t2.createTime().format("yyyy").eq("2014");
+                }).select((b1, t2) -> Select.DRAFT.of(
+                        b1.id(),
+                        t2.id()
+                )).toList();
 
     }
 
