@@ -41,6 +41,7 @@ import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
+import com.easy.query.db2.config.DB2DatabaseConfiguration;
 import com.easy.query.gauss.db.config.GaussDBDatabaseConfiguration;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
@@ -174,6 +175,12 @@ public class EasyQueryStarterAutoConfiguration {
     @ConditionalOnMissingBean
     public DatabaseConfiguration kingbaseESDatabaseConfiguration() {
         return new KingbaseESDatabaseConfiguration();
+    }
+    @Bean
+    @ConditionalOnProperty(name = "easy-query.database", havingValue = "db2")
+    @ConditionalOnMissingBean
+    public DatabaseConfiguration dbB2DatabaseConfiguration() {
+        return new DB2DatabaseConfiguration();
     }
     @Bean
     @ConditionalOnProperty(name = "easy-query.database", havingValue = "sqlite")

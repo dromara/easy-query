@@ -91,6 +91,11 @@ public class DefaultEasyMultiEntityQuery implements EasyMultiEntityQuery {
     }
 
     @Override
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> queryable(String sql, Class<T> entityClass, Collection<Object> params) {
+        return tryGetEntityQuery().queryable(sql,entityClass,params);
+    }
+
+    @Override
     public Transaction beginTransaction(Integer isolationLevel) {
         return tryGetEntityQuery().beginTransaction(isolationLevel);
     }

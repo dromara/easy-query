@@ -39,6 +39,12 @@
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
+            <artifactId>sql-db2</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
             <artifactId>sql-mssql</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

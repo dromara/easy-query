@@ -39,5 +39,6 @@ public enum DatabaseEnum {
     ORACLE,
     SQLITE,
     CLICKHOUSE,
-    GAUSS_DB
+    GAUSS_DB,
+    DB2
 }
