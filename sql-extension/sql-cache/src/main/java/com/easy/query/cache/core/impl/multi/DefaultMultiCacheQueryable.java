@@ -136,7 +136,8 @@ public class DefaultMultiCacheQueryable<TEntity extends CacheMultiEntity> extend
     }
 
     protected List<String> getCacheAllIndex0(String aggregateId){
-        return easyQueryClient.queryable(entityClass).asNoTracking().where(o->o
+        return easyQueryClient.queryable(entityClass)
+                .noInterceptor().asNoTracking().where(o->o
                 .eq(getAggregateIdProperty(),aggregateId)
         ).select(String.class,o->o.column(getIdProperty()))
                 .toList();
@@ -150,6 +151,7 @@ public class DefaultMultiCacheQueryable<TEntity extends CacheMultiEntity> extend
      */
     protected List<TEntity> getEntities(String aggregateId, Collection<String> ids) {
         return easyQueryClient.queryable(entityClass)
+                .noInterceptor()
                 .asNoTracking()
                 .where(o->o.in(getIdProperty(),ids)
                         .eq(getAggregateIdProperty(),aggregateId)

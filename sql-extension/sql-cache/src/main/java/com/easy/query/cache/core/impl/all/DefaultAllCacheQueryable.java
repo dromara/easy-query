@@ -149,6 +149,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
 //        return new LinkedList<>();
         SQLExpression1<ColumnAsSelector<TEntity, String>> idProperty = x -> x.column(getIdProperty());
         return easyQueryClient.queryable(entityClass)
+                .noInterceptor()
                 .asNoTracking()
                 .select(String.class, idProperty)
                 .toList();

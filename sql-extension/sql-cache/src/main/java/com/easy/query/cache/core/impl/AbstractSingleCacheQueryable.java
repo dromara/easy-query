@@ -50,6 +50,7 @@ public abstract class AbstractSingleCacheQueryable<TEntity extends CacheEntity> 
     }
     protected  List<TEntity> getEntities(Collection<String> ids){
         return easyQueryClient.queryable(entityClass)
+                .noInterceptor()
                 .asNoTracking()
                 .where(o->o.in(getIdProperty(),ids)).toList();
     }
