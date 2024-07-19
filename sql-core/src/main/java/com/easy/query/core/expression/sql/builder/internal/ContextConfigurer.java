@@ -24,4 +24,8 @@ public interface ContextConfigurer {
      * @return
      */
     Integer getGroupSize();
+
+
+    void setResultSizeLimit(long resultSizeLimit);
+    long getResultSizeLimit();
 }

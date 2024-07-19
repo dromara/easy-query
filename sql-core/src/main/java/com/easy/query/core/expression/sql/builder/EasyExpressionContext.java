@@ -62,6 +62,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private Function<Class<?>, Boolean> relationLogicDelete;
     private RelationExtraMetadata relationExtraMetadata;
     private Integer groupSize;
+    private long resultSizeLimit;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -84,6 +85,8 @@ public class EasyExpressionContext implements ExpressionContext {
         this.connectionMode = null;
         this.sharding = false;
         this.valueFilter = AnyValueFilter.DEFAULT;
+//        this.groupSize=easyQueryOption.getRelationGroupSize();
+        this.resultSizeLimit = easyQueryOption.getResultSizeLimit();
     }
 
     @Override
@@ -371,24 +374,34 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public RelationExtraMetadata getRelationExtraMetadata() {
-        if(relationExtraMetadata==null){
-            this.relationExtraMetadata=new RelationExtraMetadata();
+        if (relationExtraMetadata == null) {
+            this.relationExtraMetadata = new RelationExtraMetadata();
         }
         return relationExtraMetadata;
     }
 
     @Override
     public boolean hasRelationExtraMetadata() {
-        return this.relationExtraMetadata!=null&&!this.relationExtraMetadata.getRelationExtraColumnMap().isEmpty();
+        return this.relationExtraMetadata != null && !this.relationExtraMetadata.getRelationExtraColumnMap().isEmpty();
     }
 
     @Override
     public void setGroupSize(Integer groupSize) {
-        this.groupSize=groupSize;
+        this.groupSize = groupSize;
     }
 
     @Override
     public Integer getGroupSize() {
         return groupSize;
+    }
+
+    @Override
+    public void setResultSizeLimit(long resultSizeLimit) {
+        this.resultSizeLimit = resultSizeLimit;
+    }
+
+    @Override
+    public long getResultSizeLimit() {
+        return resultSizeLimit;
     }
 }

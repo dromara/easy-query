@@ -260,4 +260,14 @@ public class EmptyExpressionContext implements ExpressionContext{
     public Integer getGroupSize() {
         return 0;
     }
+
+    @Override
+    public void setResultSizeLimit(long resultSizeLimit) {
+
+    }
+
+    @Override
+    public long getResultSizeLimit() {
+        return 0;
+    }
 }

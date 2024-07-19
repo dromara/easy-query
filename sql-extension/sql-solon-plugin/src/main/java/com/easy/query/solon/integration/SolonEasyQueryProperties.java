@@ -113,6 +113,7 @@ public class SolonEasyQueryProperties {
     private final static boolean mapToBeanStrict = true;
     private final static String defaultSchema = null;
     private final static long reverseOffsetThreshold = 0;
+    private final static long resultSizeLimit = -1;
 
     private final Props props;
 
@@ -324,6 +325,9 @@ public class SolonEasyQueryProperties {
     }
     public long getReverseOffsetThreshold() {
         return this.props.getLong("reverse-offset-threshold",reverseOffsetThreshold);
+    }
+    public long getResultSizeLimit() {
+        return this.props.getLong("result-size-limit",resultSizeLimit);
     }
 
 

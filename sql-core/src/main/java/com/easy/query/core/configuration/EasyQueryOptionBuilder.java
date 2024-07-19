@@ -79,6 +79,10 @@ public class EasyQueryOptionBuilder {
      */
     private boolean mapToBeanStrict;
     private String defaultSchema;
+    /**
+     * 小于等于0就是不限制
+     */
+    private long resultSizeLimit;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -109,6 +113,7 @@ public class EasyQueryOptionBuilder {
         this.shardingFetchSize = 1000;
         this.mapToBeanStrict = true;
         this.defaultSchema = null;
+        this.resultSizeLimit = -1L;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -243,6 +248,10 @@ public class EasyQueryOptionBuilder {
         this.defaultSchema = defaultSchema;
     }
 
+    public void setResultSizeLimit(long resultSizeLimit) {
+        this.resultSizeLimit = resultSizeLimit;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -273,6 +282,7 @@ public class EasyQueryOptionBuilder {
                 this.warningColumnMiss,
                 this.shardingFetchSize,
                 this.mapToBeanStrict,
-                this.defaultSchema);
+                this.defaultSchema,
+                this.resultSizeLimit);
     }
 }

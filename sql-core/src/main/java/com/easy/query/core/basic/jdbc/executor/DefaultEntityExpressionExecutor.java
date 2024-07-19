@@ -8,6 +8,8 @@ import com.easy.query.core.basic.jdbc.executor.internal.command.impl.DefaultQuer
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DefaultJdbcResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DefaultJdbcStreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcResult;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.ResultSizeLimitJdbcResult;
 import com.easy.query.core.basic.jdbc.executor.internal.result.AffectedRowsExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -38,7 +40,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor{
+public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor {
     private final EasyPrepareParser easyPrepareParser;
     private final ExecutionContextFactory executionContextFactory;
 
@@ -47,6 +49,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
         this.executionContextFactory = executionContextFactory;
     }
+
     @Override
     public <TR> List<TR> query(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         JdbcResult<TR> jdbcResult = queryStreamResultSet(executorContext, resultMetadata, entityQueryExpressionBuilder);
@@ -57,20 +60,26 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     public <TR> JdbcResult<TR> queryStreamResultSet(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         JdbcCommand<QueryExecuteResult> command = getJdbcCommand(executorContext, entityQueryExpressionBuilder);
         DefaultJdbcStreamResultSet<TR> jdbcStreamResultSet = new DefaultJdbcStreamResultSet<>(executorContext, resultMetadata, command);
-        return new DefaultJdbcResult<>(jdbcStreamResultSet);
+        long resultSizeLimit = executorContext.getExpressionContext().getResultSizeLimit();
+        return getJdbcResult(resultSizeLimit,jdbcStreamResultSet);
+    }
+    private <TR> JdbcResult<TR> getJdbcResult(long resultSizeLimit,JdbcStreamResult<TR> jdbcStreamResult){
+        if (resultSizeLimit > 0) {
+            return new ResultSizeLimitJdbcResult<>(resultSizeLimit, jdbcStreamResult);
+        }
+        return new DefaultJdbcResult<>(jdbcStreamResult);
     }
 
-    private JdbcCommand<QueryExecuteResult> getJdbcCommand(ExecutorContext executorContext,EntityQueryExpressionBuilder entityQueryExpressionBuilder){
-        if(!entityQueryExpressionBuilder.getExpressionContext().isSharding()){
+    private JdbcCommand<QueryExecuteResult> getJdbcCommand(ExecutorContext executorContext, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        if (!entityQueryExpressionBuilder.getExpressionContext().isSharding()) {
             ExecutionContext executionContext = executionContextFactory.createUnShardingJdbcExecutionContext(entityQueryExpressionBuilder);
             return getSQLQueryJdbcCommand(executorContext, executionContext);
-        }else{
+        } else {
             PrepareParseResult prepareParseResult = easyPrepareParser.parse(new QueryPredicateParseContextImpl(executorContext, entityQueryExpressionBuilder));
             ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
             return getQueryEntityJdbcCommand(executorContext, executionContext, (EasyQueryPrepareParseResult) prepareParseResult);
         }
     }
-
 
 
     @Override
@@ -84,7 +93,8 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(sql, sqlParameters);
         JdbcCommand<QueryExecuteResult> command = getSQLQueryJdbcCommand(executorContext, executionContext);
         DefaultJdbcStreamResultSet<TR> jdbcStreamResultSet = new DefaultJdbcStreamResultSet<>(executorContext, resultMetadata, command);
-        return new DefaultJdbcResult<>(jdbcStreamResultSet);
+        long resultSizeLimit = executorContext.getExpressionContext().getResultSizeLimit();
+        return getJdbcResult(resultSizeLimit,jdbcStreamResultSet);
     }
 
     @Override
@@ -140,10 +150,10 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
 
-
     private JdbcCommand<QueryExecuteResult> getSQLQueryJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext) {
         return new DefaultQueryJdbcCommand(new EasyStreamMergeContext(executorContext, executionContext));
     }
+
     private JdbcCommand<QueryExecuteResult> getQueryEntityJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, EasyQueryPrepareParseResult easyQueryPrepareParseResult) {
         return new DefaultQueryJdbcCommand(new ShardingQueryEasyStreamMergeContext(executorContext, executionContext, easyQueryPrepareParseResult));
     }

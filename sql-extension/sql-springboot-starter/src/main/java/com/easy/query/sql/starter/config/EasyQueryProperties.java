@@ -130,6 +130,10 @@ public class EasyQueryProperties {
      */
     private String defaultSchema = null;
     /**
+     * 全局限制查询结果大小
+     */
+    private long resultSizeLimit = -1;
+    /**
      * 启用反向排序的偏移量阈值
      * 小于等于0表示不启用
      */
@@ -401,6 +405,14 @@ public class EasyQueryProperties {
 
     public void setDefaultSchema(String defaultSchema) {
         this.defaultSchema = defaultSchema;
+    }
+
+    public long getResultSizeLimit() {
+        return resultSizeLimit;
+    }
+
+    public void setResultSizeLimit(long resultSizeLimit) {
+        this.resultSizeLimit = resultSizeLimit;
     }
 
     public EasyQueryProperties() {

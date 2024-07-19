@@ -98,4 +98,9 @@ public interface ExpressionContext {
     boolean hasRelationExtraMetadata();
     void setGroupSize(Integer groupSize);
     Integer getGroupSize();
+
+    void setResultSizeLimit(long resultSizeLimit);
+    long getResultSizeLimit();
+
+
 }

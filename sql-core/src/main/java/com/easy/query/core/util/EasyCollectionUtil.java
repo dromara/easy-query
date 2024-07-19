@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.exception.EasyQueryResultSizeLimitException;
 import com.easy.query.core.expression.lambda.Selector;
 
 import java.util.ArrayList;
@@ -28,29 +29,30 @@ public class EasyCollectionUtil {
     public static <T> List<T> emptyList() {
         return new ArrayList<>(0);
     }
-    public static String join(int size,String separator,String placeholder){
-        if(size <= 0){
+
+    public static String join(int size, String separator, String placeholder) {
+        if (size <= 0) {
             throw new IllegalArgumentException("size <= 0");
         }
-        if(size==1){
+        if (size == 1) {
             return placeholder;
         }
         StringBuilder sb = new StringBuilder().append(placeholder);
-        for (int i = 0; i < size-1; i++) {
+        for (int i = 0; i < size - 1; i++) {
             sb.append(separator).append(placeholder);
         }
         return sb.toString();
     }
 
-    public static <TElement> TElement getLastOrNull(List<TElement> list){
-        if(isEmpty(list)){
+    public static <TElement> TElement getLastOrNull(List<TElement> list) {
+        if (isEmpty(list)) {
             return null;
         }
-        return list.get(list.size()-1);
+        return list.get(list.size() - 1);
     }
 
-    public static <TElement> void replaceLast(List<TElement> list,TElement replaceElement){
-        list.remove(list.size()-1);
+    public static <TElement> void replaceLast(List<TElement> list, TElement replaceElement) {
+        list.remove(list.size() - 1);
         list.add(replaceElement);
     }
 
@@ -64,6 +66,24 @@ public class EasyCollectionUtil {
         do {
             TR next = iterator.next();
             list.add(next);
+        } while (iterator.hasNext());
+        return list;
+    }
+
+    public static <TR> List<TR> newArrayList(Iterable<TR> iterable, long limit) {
+        Iterator<TR> iterator = iterable.iterator();
+        boolean firstHasNext = iterator.hasNext();
+        if (!firstHasNext) {
+            return new ArrayList<>(0);
+        }
+        ArrayList<TR> list = new ArrayList<>();
+        do {
+            TR next = iterator.next();
+            list.add(next);
+            if (list.size() > limit) {
+                throw new EasyQueryResultSizeLimitException(limit, "query result more,size > " + limit);
+            }
+
         } while (iterator.hasNext());
         return list;
     }
@@ -253,8 +273,9 @@ public class EasyCollectionUtil {
         }
         return def;
     }
+
     public static <TSource> TSource firstOrDefaultOrElseGet(Collection<TSource> source, java.util.function.Predicate<TSource> predicate, Supplier<TSource> defFunc) {
-        if (defFunc==null){
+        if (defFunc == null) {
             throw new IllegalArgumentException("defFunc");
         }
         if (source == null) {

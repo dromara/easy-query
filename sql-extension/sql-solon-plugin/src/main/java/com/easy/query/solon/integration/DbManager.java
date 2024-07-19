@@ -148,6 +148,7 @@ public class DbManager {
                     builder.setReverseOffsetThreshold(solonEasyQueryProperties.getReverseOffsetThreshold());
                     builder.setMapToBeanStrict(solonEasyQueryProperties.getMapToBeanStrict());
                     builder.setDefaultSchema(solonEasyQueryProperties.getDefaultSchema());
+                    builder.setResultSizeLimit(solonEasyQueryProperties.getResultSizeLimit());
                 });
         DatabaseConfiguration databaseConfigure = getDatabaseConfigure(solonEasyQueryProperties);
         if (databaseConfigure != null) {

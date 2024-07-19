@@ -8,13 +8,14 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  *
  * @author xuejiaming
  */
-public class ContextConfigurerImpl implements ContextConfigurer{
+public class ContextConfigurerImpl implements ContextConfigurer {
     private final ExpressionContext expressionContext;
 
-    public ContextConfigurerImpl(ExpressionContext expressionContext){
+    public ContextConfigurerImpl(ExpressionContext expressionContext) {
 
         this.expressionContext = expressionContext;
     }
+
     @Override
     public EasyBehavior getBehavior() {
         return expressionContext.getBehavior();
@@ -28,5 +29,15 @@ public class ContextConfigurerImpl implements ContextConfigurer{
     @Override
     public Integer getGroupSize() {
         return expressionContext.getGroupSize();
+    }
+
+    @Override
+    public void setResultSizeLimit(long resultSizeLimit) {
+        expressionContext.setResultSizeLimit(resultSizeLimit);
+    }
+
+    @Override
+    public long getResultSizeLimit() {
+        return expressionContext.getResultSizeLimit();
     }
 }
