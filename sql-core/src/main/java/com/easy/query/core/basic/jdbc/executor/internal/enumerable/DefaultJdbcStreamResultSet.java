@@ -42,7 +42,7 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
     }
 
     @Override
-    public void doChunk(int size, Predicate<List<T>> chunk) throws SQLException {
+    public void toChunk(int size, Predicate<List<T>> chunk) throws SQLException {
         List<T> entities = new ArrayList<>(size);
         for (T result : this.getStreamIterable()) {
             entities.add(result);

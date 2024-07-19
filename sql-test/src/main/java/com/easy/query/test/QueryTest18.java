@@ -632,6 +632,22 @@ public class QueryTest18 extends BaseTest {
                     }
                 });
     }
+    @Test
+    public void testStreamChunk1() {
+        HashMap<String, BlogEntity> ids = new HashMap<>();
+        easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(b -> b.createTime().asc())
+                .orderBy(b -> b.id().asc())
+                .toChunk(20, blogs -> {
+                    Assert.assertTrue(blogs.size()<=20);
+                    for (BlogEntity blog : blogs) {
+                        if (ids.containsKey(blog.getId())) {
+                            throw new RuntimeException("id 重复:"+blog.getId());
+                        }
+                        ids.put(blog.getId(),blog);
+                    }
+                });
+    }
 
 
 }
