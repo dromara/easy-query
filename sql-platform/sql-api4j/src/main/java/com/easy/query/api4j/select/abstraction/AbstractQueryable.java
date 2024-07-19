@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -161,6 +162,11 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
         return entityQueryable.toStreamResult(resultClass,configurer);
+    }
+
+    @Override
+    public void toChunk(int size, Predicate<List<T1>> chunk) {
+        entityQueryable.toChunk(size,chunk);
     }
 
     @Override

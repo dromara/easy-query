@@ -27,6 +27,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.sql.Statement;
@@ -34,6 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -127,13 +129,13 @@ public class DefaultMapQueryable implements MapQueryable {
 
     @Override
     public MapQueryable limit(long offset, long rows) {
-        this.queryable.limit(offset,rows);
+        this.queryable.limit(offset, rows);
         return this;
     }
 
     @Override
     public MapQueryable limit(boolean condition, long offset, long rows) {
-        this.queryable.limit(condition,offset,rows);
+        this.queryable.limit(condition, offset, rows);
         return this;
     }
 
@@ -151,7 +153,7 @@ public class DefaultMapQueryable implements MapQueryable {
 
     @Override
     public MapQueryable useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
-        this.queryable.useShardingConfigure(maxShardingQueryLimit,connectionMode);
+        this.queryable.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return this;
     }
 
@@ -180,7 +182,7 @@ public class DefaultMapQueryable implements MapQueryable {
 
     @Override
     public <TR> String toSQL(Class<TR> resultClass, ToSQLContext toSQLContext) {
-        return this.queryable.toSQL(resultClass,toSQLContext);
+        return this.queryable.toSQL(resultClass, toSQLContext);
     }
 
     @Override
@@ -206,7 +208,7 @@ public class DefaultMapQueryable implements MapQueryable {
 
     @Override
     public Map<String, Object> findNotNull(Object id, Supplier<RuntimeException> throwFunc) {
-        return this.queryable.findNotNull(id,throwFunc);
+        return this.queryable.findNotNull(id, throwFunc);
     }
 
     @Override
@@ -217,7 +219,7 @@ public class DefaultMapQueryable implements MapQueryable {
     @NotNull
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
-        return this.queryable.firstNotNull(resultClass,throwFunc);
+        return this.queryable.firstNotNull(resultClass, throwFunc);
     }
 
     @Override
@@ -237,12 +239,12 @@ public class DefaultMapQueryable implements MapQueryable {
 
     @Override
     public <TResult> EasyPageResult<TResult> toPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, long pageTotal) {
-        return this.queryable.toPageResult(tResultClass,pageIndex,pageSize,pageTotal);
+        return this.queryable.toPageResult(tResultClass, pageIndex, pageSize, pageTotal);
     }
 
     @Override
     public <TResult> EasyPageResult<TResult> toShardingPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, List<Long> totalLines) {
-        return this.queryable.toShardingPageResult(tResultClass,pageIndex,pageSize,totalLines);
+        return this.queryable.toShardingPageResult(tResultClass, pageIndex, pageSize, totalLines);
     }
 
     @Override
@@ -253,12 +255,12 @@ public class DefaultMapQueryable implements MapQueryable {
     @NotNull
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
-        return this.queryable.singleNotNull(resultClass,throwFunc);
+        return this.queryable.singleNotNull(resultClass, throwFunc);
     }
 
     @Override
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
-        return this.queryable.toStreamResult(resultClass,configurer);
+        return this.queryable.toStreamResult(resultClass, configurer);
     }
 
     @Override
@@ -293,7 +295,7 @@ public class DefaultMapQueryable implements MapQueryable {
 
     @Override
     public MapQueryable orderBy(SQLExpression1<MapOrderBy> orderByExpression, boolean asc) {
-        orderByExpression.apply(new MapOrderByImpl(this.queryable,asc));
+        orderByExpression.apply(new MapOrderByImpl(this.queryable, asc));
         return this;
     }
 
@@ -350,6 +352,7 @@ public class DefaultMapQueryable implements MapQueryable {
         ClientQueryable<Map<String, Object>> unionQueryable = this.queryable.union(mapQueryables.stream().map(o -> o.getClientQueryable()).collect(Collectors.toList()));
         return new DefaultMapQueryable(unionQueryable);
     }
+
     @Override
     public MapQueryable unionAll(Collection<MapQueryable> mapQueryables) {
         ClientQueryable<Map<String, Object>> unionQueryable = this.queryable.unionAll(mapQueryables.stream().map(o -> o.getClientQueryable()).collect(Collectors.toList()));
@@ -358,6 +361,23 @@ public class DefaultMapQueryable implements MapQueryable {
 
     @Override
     public <TR> TR streamBy(Function<Stream<Map<String, Object>>, TR> fetcher, SQLConsumer<Statement> configurer) {
-        return this.queryable.streamBy(fetcher,configurer);
+        return this.queryable.streamBy(fetcher, configurer);
+    }
+
+    @Override
+    public void toChunk(int size, Predicate<List<Map<String, Object>>> chunk) {
+        int offset = 0;
+        while (true) {
+            MapQueryable cloneQueryable = this.cloneQueryable();
+            List<Map<String, Object>> list = cloneQueryable.limit(offset,size).toList();
+            offset += size;
+            if (EasyCollectionUtil.isEmpty(list)) {
+                break;
+            }
+            boolean hasNext = list.size() == size;
+            if (!chunk.test(list) || !hasNext) {
+                break;
+            }
+        }
     }
 }

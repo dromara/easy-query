@@ -45,6 +45,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.ValueFilter;
@@ -123,6 +124,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -527,6 +529,24 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
         setExecuteMethod(ExecuteMethodEnum.StreamResult, true);
         return toInternalStreamResult(resultClass, configurer);
+    }
+
+    @Override
+    public void toChunk(int size, Predicate<List<T1>> chunk) {
+        int offset=0;
+        while (true) {
+
+            ClientQueryable<T1> cloneQueryable = this.cloneQueryable();
+            List<T1> list = cloneQueryable.limit(offset,size).toList();
+            offset+=size;
+            if (EasyCollectionUtil.isEmpty(list)) {
+                break;
+            }
+            boolean hasNext = list.size() == size;
+            if (!chunk.test(list) || !hasNext) {
+                break;
+            }
+        }
     }
 
     /**

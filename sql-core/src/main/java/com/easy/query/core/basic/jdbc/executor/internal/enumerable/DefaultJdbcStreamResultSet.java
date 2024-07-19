@@ -4,8 +4,12 @@ import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.command.JdbcCommand;
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * create time 2023/7/31 16:58
@@ -25,7 +29,7 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
         this.command = command;
     }
     @Override
-    public StreamIterable<T> getStreamIterable()  throws SQLException {
+    public StreamIterable<T> getStreamIterable() throws SQLException {
         if(queryExecuteResult==null){
             this.queryExecuteResult=command.execute();
         }
@@ -35,6 +39,25 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
     @Override
     public ExecutorContext getExecutorContext() {
         return executorContext;
+    }
+
+    @Override
+    public void doChunk(int size, Predicate<List<T>> chunk) throws SQLException {
+        List<T> entities = new ArrayList<>(size);
+        for (T result : this.getStreamIterable()) {
+            entities.add(result);
+            if (entities.size() == size) {
+                boolean c = chunk.test(entities);
+                entities.clear();
+                if (!c) {
+                    break;
+                }
+            }
+        }
+        if (EasyCollectionUtil.isNotEmpty(entities)) {
+            chunk.test(entities);
+            entities.clear();
+        }
     }
 
     @Override

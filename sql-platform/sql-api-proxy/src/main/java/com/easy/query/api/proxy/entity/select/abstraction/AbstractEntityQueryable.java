@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -173,6 +174,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
         return clientQueryable.toStreamResult(resultClass, configurer);
+    }
+
+    @Override
+    public void toChunk(int size, Predicate<List<T1>> chunk) {
+        clientQueryable.toChunk(size,chunk);
     }
 
     @Override

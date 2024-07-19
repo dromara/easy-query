@@ -3,6 +3,8 @@ package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * create time 2023/7/31 16:57
@@ -13,6 +15,14 @@ import java.sql.SQLException;
 public interface JdbcStreamResult<T> extends AutoCloseable {
     StreamIterable<T> getStreamIterable()  throws SQLException;
     ExecutorContext getExecutorContext();
+
+    /**
+     * 分批处理
+     * @param size 每个批次大小
+     * @param chunk 返回true表示继续返回false表示中断
+     * @throws SQLException 抛出数据库异常
+     */
+    void doChunk(int size, Predicate<List<T>> chunk) throws SQLException;
 
     @Override
     void close() throws SQLException;

@@ -60,6 +60,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -535,7 +536,7 @@ public class QueryTest18 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
-                    b.createTime().plus(b.star(), TimeUnitEnum.HOURS).gt(LocalDateTime.of(2024,1,1,0,0));
+                    b.createTime().plus(b.star(), TimeUnitEnum.HOURS).gt(LocalDateTime.of(2024, 1, 1, 0, 0));
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -547,7 +548,7 @@ public class QueryTest18 extends BaseTest {
     }
 
     @Test
-    public void testxx(){
+    public void testxx() {
 //        List<Topic> list = easyEntityQuery.queryable(Topic.class).toList();
 
 //        EasyPageResult<Topic> pageResult = easyEntityQuery.queryable("select * from t_topic ", Topic.class)
@@ -595,6 +596,41 @@ public class QueryTest18 extends BaseTest {
                         t2.id()
                 )).toList();
 
+    }
+
+    @Test
+    public void testChunk1() {
+        HashMap<String, BlogEntity> ids = new HashMap<>();
+        easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(b -> b.createTime().asc())
+                .orderBy(b -> b.id().asc())
+                .toChunk(20, blogs -> {
+                    Assert.assertTrue(blogs.size()<=20);
+                    for (BlogEntity blog : blogs) {
+                        if (ids.containsKey(blog.getId())) {
+                            throw new RuntimeException("id 重复:"+blog.getId());
+                        }
+                        ids.put(blog.getId(),blog);
+                    }
+                    return true;
+                });
+    }
+
+    @Test
+    public void testChunk2() {
+        HashMap<String, BlogEntity> ids = new HashMap<>();
+        easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(b -> b.createTime().asc())
+                .orderBy(b -> b.id().asc())
+                .toChunk(20, blogs -> {
+                    Assert.assertTrue(blogs.size()<=20);
+                    for (BlogEntity blog : blogs) {
+                        if (ids.containsKey(blog.getId())) {
+                            throw new RuntimeException("id 重复:"+blog.getId());
+                        }
+                        ids.put(blog.getId(),blog);
+                    }
+                });
     }
 
 
