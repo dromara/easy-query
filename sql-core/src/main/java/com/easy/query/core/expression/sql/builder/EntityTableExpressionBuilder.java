@@ -19,6 +19,11 @@ public interface EntityTableExpressionBuilder extends TableExpressionBuilder {
     EntityMetadata getEntityMetadata();
 
     void setTableNameAs(Function<String, String> tableNameAs);
+
+    /**
+     * 设计逻辑删除
+     * @param tableLogicDel 返回false表示不启用逻辑删除
+     */
     void setTableLogicDelete(Supplier<Boolean> tableLogicDel);
 
     void setSchemaAs(Function<String, String> schemaAs);

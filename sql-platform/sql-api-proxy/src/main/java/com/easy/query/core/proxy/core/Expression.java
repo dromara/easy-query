@@ -3,9 +3,12 @@ package com.easy.query.core.proxy.core;
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenThenEntityBuilder;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -33,6 +36,7 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -309,4 +313,6 @@ public class Expression {
             }
         });
     }
+
+
 }

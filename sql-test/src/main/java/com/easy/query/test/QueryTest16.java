@@ -1,12 +1,15 @@
 package com.easy.query.test;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.Company;
+import com.easy.query.test.entity.blogtest.SysMenu;
 import com.easy.query.test.entity.blogtest.SysRole;
 import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.entity.blogtest.proxy.SysUserProxy;
@@ -84,6 +87,7 @@ public class QueryTest16 extends BaseTest {
 //    public void test6() {
 //        List<SysMenu> menus = easyEntityQuery.queryable(SysMenu.class)
 //                .where(s -> {
+////                    s.roles().configure(x->x.disableLogicDelete()).any();
 //                    //判断菜单下的角色存在角色的用户叫做小明的
 //                    s.roles().any(role -> {
 //                        role.users().any(user -> {
@@ -108,6 +112,9 @@ public class QueryTest16 extends BaseTest {
 //    public void test8() {
 //        List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
 //                .where(s -> {
+//                    s.address().relationLogicDelete(()->false);
+////                    EntityTableExpressionBuilder entityTableExpressionBuilder = s.getEntitySQLContext().getEntityExpressionBuilder().getRelationTables().get(new RelationTableKey(s.getEntityClass(), s.address().getTable().getEntityClass()));
+////                    entityTableExpressionBuilder.setTableLogicDelete(()->false);
 //                    //隐式子查询会自动join用户表和地址表
 //                    s.or(() -> {
 //                        s.address().city().eq("杭州市");

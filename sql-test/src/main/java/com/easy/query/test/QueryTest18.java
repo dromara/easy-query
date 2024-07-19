@@ -13,6 +13,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.executor.PageAble;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
@@ -56,6 +57,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -635,18 +637,20 @@ public class QueryTest18 extends BaseTest {
     @Test
     public void testStreamChunk1() {
         HashMap<String, BlogEntity> ids = new HashMap<>();
-        easyEntityQuery.queryable(BlogEntity.class)
-                .orderBy(b -> b.createTime().asc())
-                .orderBy(b -> b.id().asc())
-                .toChunk(20, blogs -> {
-                    Assert.assertTrue(blogs.size()<=20);
-                    for (BlogEntity blog : blogs) {
-                        if (ids.containsKey(blog.getId())) {
-                            throw new RuntimeException("id 重复:"+blog.getId());
-                        }
-                        ids.put(blog.getId(),blog);
+        try(JdbcStreamResult<BlogEntity> streamResult = easyEntityQuery.queryable(BlogEntity.class).toStreamResult(1000)){
+            //每20个一组消费
+            streamResult.toChunk(20, blogs -> {
+                Assert.assertTrue(blogs.size()<=20);
+                for (BlogEntity blog : blogs) {
+                    if (ids.containsKey(blog.getId())) {
+                        throw new RuntimeException("id 重复:"+blog.getId());
                     }
-                });
+                    ids.put(blog.getId(),blog);
+                }
+            });
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 
 

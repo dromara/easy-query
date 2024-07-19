@@ -2,11 +2,14 @@ package com.easy.query.core.proxy;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
@@ -23,6 +26,7 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -43,20 +47,22 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return property;
     }
 
-    public void or(SQLActionExpression sqlActionExpression){
-        or(true,sqlActionExpression);
+    public void or(SQLActionExpression sqlActionExpression) {
+        or(true, sqlActionExpression);
     }
-    public void or(boolean condition,SQLActionExpression sqlActionExpression){
-        if(condition){
+
+    public void or(boolean condition, SQLActionExpression sqlActionExpression) {
+        if (condition) {
             getEntitySQLContext()._whereOr(sqlActionExpression);
         }
     }
 
-    public void and(SQLActionExpression sqlActionExpression){
-        and(true,sqlActionExpression);
+    public void and(SQLActionExpression sqlActionExpression) {
+        and(true, sqlActionExpression);
     }
-    public void and(boolean condition,SQLActionExpression sqlActionExpression){
-        if(condition){
+
+    public void and(boolean condition, SQLActionExpression sqlActionExpression) {
+        if (condition) {
             getEntitySQLContext()._whereAnd(sqlActionExpression);
         }
     }
@@ -64,11 +70,13 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     /**
      * 支持where having order
      * 请使用{@link #expression()}或者{@link Expression#sql(String)}
+     *
      * @param sqlSegment
      */
     @Deprecated
-    public void executeSQL(String sqlSegment){
-        executeSQL(sqlSegment, c->{});
+    public void executeSQL(String sqlSegment) {
+        executeSQL(sqlSegment, c -> {
+        });
     }
 
     /**
@@ -79,8 +87,8 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * @param contextConsume
      */
     @Deprecated
-    public void executeSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
-        executeSQL(true,sqlSegment,contextConsume);
+    public void executeSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+        executeSQL(true, sqlSegment, contextConsume);
     }
 
     /**
@@ -92,12 +100,13 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * @param contextConsume
      */
     @Deprecated
-    public void executeSQL(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
-        if(condition){
-            getEntitySQLContext()._executeNativeSql(sqlSegment,contextConsume);
+    public void executeSQL(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+        if (condition) {
+            getEntitySQLContext()._executeNativeSql(sqlSegment, contextConsume);
         }
     }
-    protected <T, N> N __cast(T original){
+
+    protected <T, N> N __cast(T original) {
         return EasyObjectUtil.typeCastNullable(original);
     }
 
@@ -162,43 +171,62 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      *      })
      *  }
      * </pre></blockquote>
+     *
      * @param subQueryableFunc 创建子查询方法
-     * @return
      * @param <TSubQuery>
+     * @return
      */
     @Deprecated
     public <TSubQuery> PropTypeColumn<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
         Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
-        return new SQLDraftAsSelectImpl<>((alias, f)->{
-            f.columnSubQueryAs(()->subQueryQuery, alias);
-        },subQueryQuery.queryClass());
+        return new SQLDraftAsSelectImpl<>((alias, f) -> {
+            f.columnSubQueryAs(() -> subQueryQuery, alias);
+        }, subQueryQuery.queryClass());
     }
 
     /**
      * 所有主键列
+     *
      * @return 选择所有主键列的表达式
      */
     public SQLSelectAsExpression columnKeys() {
-        return new SQLSelectKeysImpl(this.getEntitySQLContext(),getTable());
+        return new SQLSelectKeysImpl(this.getEntitySQLContext(), getTable());
     }
 
-    /**
-     * 请使用{@link #expression()}或者{@link Expression#now()}
-     * @return
-     */
-    @Deprecated
-    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> _now() {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),null, null, SQLFunc::now,LocalDateTime.class);
-    }
+//    /**
+//     * 请使用{@link #expression()}或者{@link Expression#now()}
+//     *
+//     * @return
+//     */
+//    @Deprecated
+//    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> _now() {
+//        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), null, null, SQLFunc::now, LocalDateTime.class);
+//    }
 
     /**
-     * 请使用{@link #expression()}或者{@link Expression#utcNow()}
-     * @return
+     * 如果当前表示关联关系表则可以选择性的设置是否逻辑删除
+     * @param tableLogic
      */
-    @Deprecated
-    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> _utcNow() {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(),null, null, SQLFunc::utcNow,LocalDateTime.class);
+    public void relationLogicDelete(Supplier<Boolean> tableLogic) {
+        Map<RelationTableKey, EntityTableExpressionBuilder> relationTables = entitySQLContext.getEntityExpressionBuilder().getRelationTables();
+        TableAvailable tableAvailable = getTable();
+        for (EntityTableExpressionBuilder value : relationTables.values()) {
+            if (value.getEntityTable().equals(tableAvailable)) {
+                value.setTableLogicDelete(tableLogic);
+                break;
+            }
+        }
     }
+//
+//    /**
+//     * 请使用{@link #expression()}或者{@link Expression#utcNow()}
+//     *
+//     * @return
+//     */
+//    @Deprecated
+//    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> _utcNow() {
+//        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), null, null, SQLFunc::utcNow, LocalDateTime.class);
+//    }
 
     /**
      * 查询表所有属性字段,如果前面已经单独查询了那么会追加下去
@@ -213,13 +241,14 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      *  }));
      *  }
      * </pre></blockquote>
+     *
      * @param proxy
-     * @return
      * @param <TRProxy>
      * @param <TREntity>
+     * @return
      */
     public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectAll(TRProxy proxy) {
-        entitySQLContext.accept(new SQLSelectAllImpl(proxy.getEntitySQLContext(),proxy.getTable(), new TablePropColumn[0]));
+        entitySQLContext.accept(new SQLSelectAllImpl(proxy.getEntitySQLContext(), proxy.getTable(), new TablePropColumn[0]));
         return castChain();
     }
 
@@ -235,10 +264,11 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      *  }));
      *  }
      * </pre></blockquote>
+     *
      * @param ignoreTableProps
-     * @return
      * @param <TRProxy>
      * @param <TREntity>
+     * @return
      */
     public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectIgnores(TablePropColumn... ignoreTableProps) {
         entitySQLContext.accept(new SQLSelectIgnoreImpl(ignoreTableProps));
@@ -257,29 +287,34 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      *  }));
      *  }
      * </pre></blockquote>
+     *
      * @param sqlSelectAsExpression 要查询的表达式
      */
     public TProxy selectExpression(SQLSelectAsExpression... sqlSelectAsExpression) {
         entitySQLContext.accept(sqlSelectAsExpression);
         return castChain();
     }
+
     /**
      * 支持动态select+动态group取列防止sql注入
+     *
      * @param sqlTableOwner 要查询的表
-     * @param property 要查询的属性
+     * @param property      要查询的属性
      */
     public TProxy selectColumn(SQLTableOwner sqlTableOwner, String property) {
-        entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property));
+        entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(), sqlTableOwner.getTable(), property));
         return castChain();
     }
+
     /**
      * 支持动态select+动态selectAs取列防止sql注入
+     *
      * @param sqlTableOwner 要查询的表
-     * @param property 要查询的属性
+     * @param property      要查询的属性
      * @param propertyAlias 要查询的属性别名映射到返回结果的属性名称
      */
-    public TProxy selectColumnAs(SQLTableOwner sqlTableOwner,String property,String propertyAlias) {
-        entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(),sqlTableOwner.getTable(),property,propertyAlias));
+    public TProxy selectColumnAs(SQLTableOwner sqlTableOwner, String property, String propertyAlias) {
+        entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(), sqlTableOwner.getTable(), property, propertyAlias));
         return castChain();
     }
 
@@ -306,6 +341,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 增强当前代理对象
+     *
      * @param selectExpression 选择表达式
      * @return 返回增强后的当前代理对象
      */
@@ -317,6 +353,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     /**
      * {@link #expression()}或者{@link Expression#exists(Supplier)}
      * where exists(....)
+     *
      * @param subQueryFunc 子查询创建方法
      */
     @Deprecated
@@ -325,9 +362,10 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * {@link #expression()}或者{@link Expression#exists(boolean,Supplier)}
+     * {@link #expression()}或者{@link Expression#exists(boolean, Supplier)}
      * where exists(....)
-     * @param condition 为true是exists生效
+     *
+     * @param condition    为true是exists生效
      * @param subQueryFunc 子查询创建方法
      */
     @Deprecated
@@ -340,6 +378,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     /**
      * {@link #expression()}或者{@link Expression#notExists(Supplier)}
      * where not exists(....)
+     *
      * @param subQueryFunc 子查询创建方法
      */
     @Deprecated
@@ -351,7 +390,8 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     /**
      * {@link #expression()}或者{@link Expression#notExists(boolean, Supplier)}
      * where exists(....)
-     * @param condition 为true是not exists生效
+     *
+     * @param condition    为true是not exists生效
      * @param subQueryFunc 子查询创建方法
      */
     @Deprecated
@@ -363,29 +403,34 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 请使用SQLConstant方法
+     *
      * @return 数据库常量值构建方法
      */
     @Deprecated
-    public SQLConstantExpression SQLParameter(){
+    public SQLConstantExpression SQLParameter() {
         return new SQLConstantExpressionImpl(this.getEntitySQLContext());
     }
 
     /**
      * {@link #expression()}或者{@link Expression#constant()}
      * 创建常量值用于比较或者处理
+     *
      * @return 数据库常量值构建方法
      */
     @Deprecated
-    public SQLConstantExpression SQLConstant(){
+    public SQLConstantExpression SQLConstant() {
         return new SQLConstantExpressionImpl(this.getEntitySQLContext());
     }
-    public Expression expression(){
+
+    public Expression expression() {
         return Expression.of(entitySQLContext);
     }
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(TPropertyProxy columnProxy) {
-        set(columnProxy,null);
+
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(TPropertyProxy columnProxy) {
+        set(columnProxy, null);
     }
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
-        getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable)columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(),columnProxy,navigateSelectExpression));
+
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
+        getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable) columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy, navigateSelectExpression));
     }
 }
