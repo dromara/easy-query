@@ -806,7 +806,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.createTime().format("yyyy/MM/dd" ).le(o._now()))
+                    .where(o -> o.createTime().format("yyyy/MM/dd" ).le(o.expression().now()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -820,7 +820,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.createTime().le(o._now()))
+                    .where(o -> o.createTime().le(o.expression().now()))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

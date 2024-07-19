@@ -63,10 +63,7 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
         this.relationGroupSize = relationGroupSize;
     }
 
-    public int getQueryRelationGroupSize(int defGroupSize){
-        if(this.relationGroupSize==null){
-            return defGroupSize;
-        }
+    public Integer getQueryRelationGroupSize(){
         return this.relationGroupSize;
     }
 

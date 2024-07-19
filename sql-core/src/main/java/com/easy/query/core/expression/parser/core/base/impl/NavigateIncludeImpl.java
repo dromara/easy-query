@@ -38,7 +38,11 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         NavigateMetadata navigateMetadata = entityTable.getEntityMetadata().getNavigateNotNull(property);
         includeNavigateParams.setNavigateMetadata(navigateMetadata);
         includeNavigateParams.setTable(this.entityTable);
-        includeNavigateParams.setRelationGroupSize(groupSize);
+        if(groupSize==null){
+            includeNavigateParams.setRelationGroupSize(runtimeContext.getQueryConfiguration().getEasyQueryOption().getRelationGroupSize());
+        }else{
+            includeNavigateParams.setRelationGroupSize(groupSize);
+        }
         RelationTypeEnum relationType = navigateMetadata.getRelationType();
         //添加多对多中间表
         if(RelationTypeEnum.ManyToMany==relationType){

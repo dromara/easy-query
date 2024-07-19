@@ -117,8 +117,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 //                .collect(Collectors.toList());
 
 
-        EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
-        int queryRelationGroupSize = includeNavigateParams.getQueryRelationGroupSize(easyQueryOption.getRelationGroupSize());
+        int queryRelationGroupSize = includeNavigateParams.getQueryRelationGroupSize();
         if (RelationTypeEnum.ManyToMany == navigateMetadata.getRelationType()) {
             confirmMappingRows(queryRelationGroupSize, includeParseContext, relationIds);
             EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());

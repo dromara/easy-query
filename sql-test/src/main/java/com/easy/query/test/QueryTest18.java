@@ -16,6 +16,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.common.ToSQLResult;
+import com.easy.query.core.exception.EasyQueryResultSizeLimitException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
@@ -651,6 +652,23 @@ public class QueryTest18 extends BaseTest {
         }catch (SQLException e){
             throw new RuntimeException(e);
         }
+    }
+    @Test
+    public void testResultSizeLimit1(){
+        boolean exception=false;
+        try {
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                    .configure(x->{
+                        x.setResultSizeLimit(10);
+                    })
+                    .toList();
+        }catch (Exception ex){
+            exception=true;
+            Assert.assertTrue(ex instanceof EasyQueryResultSizeLimitException);
+            EasyQueryResultSizeLimitException ex1 = (EasyQueryResultSizeLimitException) ex;
+            Assert.assertEquals(10,ex1.getLimit());
+        }
+        Assert.assertTrue(exception);
     }
 
 

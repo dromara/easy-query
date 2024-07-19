@@ -85,7 +85,7 @@ public class EasyExpressionContext implements ExpressionContext {
         this.connectionMode = null;
         this.sharding = false;
         this.valueFilter = AnyValueFilter.DEFAULT;
-//        this.groupSize=easyQueryOption.getRelationGroupSize();
+        this.groupSize = easyQueryOption.getRelationGroupSize();
         this.resultSizeLimit = easyQueryOption.getResultSizeLimit();
     }
 

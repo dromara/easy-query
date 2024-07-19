@@ -242,9 +242,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         List<Object> relationIds = entities.stream().map(o -> getter.apply(o))
                 .filter(o -> o != null).distinct().collect(Collectors.toList());
         IncludeRelationIdContext includeRelationIdContext = new IncludeRelationIdContext();
-        EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
-        Integer groupSize = loadIncludeConfiguration.getGroupSize();
-        int queryRelationGroupSize = groupSize == null ? easyQueryOption.getRelationGroupSize() : groupSize;
+        Integer queryRelationGroupSize = loadIncludeConfiguration.getGroupSize();
         List<Map<String, Object>> mappingRows = null;
         if (RelationTypeEnum.ManyToMany == relationType) {
 
@@ -326,6 +324,8 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(firstClass);
         NavigateMetadata navigateMetadata = entityMetadata.getNavigateNotNull(navigateProperty);
         LoadIncludeConfiguration loadIncludeConfiguration = new LoadIncludeConfiguration();
+        EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
+        loadIncludeConfiguration.setGroupSize(easyQueryOption.getRelationGroupSize());
         if(configure!=null){
             configure.apply(loadIncludeConfiguration);
         }
