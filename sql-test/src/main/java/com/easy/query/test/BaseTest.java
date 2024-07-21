@@ -21,6 +21,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.test.common.TopicUpdateInterceptor;
 import com.easy.query.test.conversion.CertStatusColumnValueSQLConverter;
 import com.easy.query.test.conversion.EnumConverter;
 import com.easy.query.test.conversion.EnumValueConverter;
@@ -182,6 +183,7 @@ public abstract class BaseTest {
         configuration.applyInterceptor(new MyEntityInterceptor());
         configuration.applyInterceptor(new Topic1Interceptor());
         configuration.applyInterceptor(new MyTenantInterceptor());
+        configuration.applyInterceptor(new TopicUpdateInterceptor());
         configuration.applyNavigateExtraFilterStrategy(new BookNavigateExtraFilterStrategy());
         configuration.applyNavigateExtraFilterStrategy(new JoinType());
         configuration.applyNavigateExtraFilterStrategy(new RoleJoin.RoleJoinType());

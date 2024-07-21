@@ -43,6 +43,11 @@ public class OnlySelectorImpl implements OnlySelector {
     }
 
     @Override
+    public SQLBuilderSegment getSQLSegmentBuilder() {
+        return sqlSegmentBuilder;
+    }
+
+    @Override
     public OnlySelector columnKeys(TableAvailable table) {
         Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
         if(EasyCollectionUtil.isEmpty(keyProperties)){

@@ -17,7 +17,8 @@ public interface EntityInsertExpressionBuilder extends EntityExpressionBuilder, 
     void addDuplicateKey(String duplicateKey);
     @Override
     default EntityInsertSQLExpression toExpression() {
-        return toExpression(null);
+        throw new UnsupportedOperationException();
+//        return toExpression(null);
     }
 
     @Override

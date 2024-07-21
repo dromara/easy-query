@@ -33,6 +33,7 @@ import com.easy.query.core.basic.extension.generated.UnsupportPrimaryKeyGenerato
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
+import com.easy.query.core.basic.extension.interceptor.UpdateEntityColumnInterceptor;
 import com.easy.query.core.basic.extension.interceptor.UpdateSetInterceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
@@ -142,6 +143,7 @@ public class EntityMetadata {
     private final List<PredicateFilterInterceptor> predicateFilterInterceptors = new ArrayList<>();
     private final List<EntityInterceptor> entityInterceptors = new ArrayList<>();
     private final List<UpdateSetInterceptor> updateSetInterceptors = new ArrayList<>();
+    private final List<UpdateEntityColumnInterceptor> updateEntityColumnInterceptors = new ArrayList<>();
     private final Map<String, ColumnMetadata> property2ColumnMap = new LinkedHashMap<>();
     private final Map<String, NavigateMetadata> property2NavigateMap = new LinkedHashMap<>();
     private final Map<String, NavigateFlatMetadata> property2NavigateFlatMap = new LinkedHashMap<>();
@@ -789,6 +791,9 @@ public class EntityMetadata {
                     if (globalInterceptor instanceof UpdateSetInterceptor) {
                         updateSetInterceptors.add((UpdateSetInterceptor) globalInterceptor);
                     }
+                    if (globalInterceptor instanceof UpdateEntityColumnInterceptor) {
+                        updateEntityColumnInterceptors.add((UpdateEntityColumnInterceptor) globalInterceptor);
+                    }
                 }
             }
         }
@@ -974,6 +979,9 @@ public class EntityMetadata {
         return updateSetInterceptors;
     }
 
+    public List<UpdateEntityColumnInterceptor> getUpdateEntityColumnInterceptors() {
+        return updateEntityColumnInterceptors;
+    }
 
     public List<String> getGeneratedKeyColumns() {
         return generatedKeyColumns;

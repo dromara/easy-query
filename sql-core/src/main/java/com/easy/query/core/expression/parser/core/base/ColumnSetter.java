@@ -3,6 +3,7 @@ package com.easy.query.core.expression.parser.core.base;
 import com.easy.query.core.expression.builder.Setter;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.core.SQLSetPropertyNative;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 
 /**
  * create time 2023/6/1 08:40
@@ -11,6 +12,9 @@ import com.easy.query.core.expression.parser.core.base.core.SQLSetPropertyNative
  * @author xuejiaming
  */
 public interface ColumnSetter<T1> extends EntitySQLTableOwner<T1>, SQLSetPropertyNative<ColumnSetter<T1>> {
+   default SQLBuilderSegment getSQLBuilderSegment(){
+       return getSetter().getSQLBuilderSegment();
+   }
     Setter getSetter();
     /**
      * set column=val

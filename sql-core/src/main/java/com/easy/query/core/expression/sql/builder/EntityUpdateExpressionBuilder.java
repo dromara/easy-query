@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
@@ -26,5 +27,5 @@ public interface EntityUpdateExpressionBuilder extends EntityPredicateExpression
      EntityUpdateSQLExpression toExpression();
 
      @Override
-     EntityUpdateSQLExpression toExpression(Object entity);
+     EntityUpdateSQLExpression toExpression(@NotNull Object entity);
 }

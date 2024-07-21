@@ -2,6 +2,7 @@ package com.easy.query.core.expression.parser.core.base;
 
 import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 
 /**
  * @author xuejiaming
@@ -10,6 +11,9 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
  */
 public interface ColumnOnlySelector<T1> extends EntitySQLTableOwner<T1> {
     OnlySelector getOnlySelector();
+    default SQLBuilderSegment getSQLSegmentBuilder(){
+        return getOnlySelector().getSQLSegmentBuilder();
+    }
 
     ColumnOnlySelector<T1> columnKeys();
     ColumnOnlySelector<T1> column(String property);

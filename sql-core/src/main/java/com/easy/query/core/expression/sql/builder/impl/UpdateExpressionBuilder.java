@@ -1,6 +1,8 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.basic.extension.interceptor.UpdateEntityColumnInterceptor;
 import com.easy.query.core.basic.extension.interceptor.UpdateSetInterceptor;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityTrackProperty;
@@ -11,8 +13,11 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.builder.impl.OnlySelectorImpl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnOnlySelectorImpl;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -32,6 +37,7 @@ import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.ignore.EntityUpdateSetProcessor;
 import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
@@ -46,6 +52,7 @@ import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -151,12 +158,14 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         if (isExpressionUpdate) {
             return toUpdateExpression();
         } else {
-            return toExpression(null);
+            throw new UnsupportedOperationException();
+//            return toExpression(null);
         }
     }
 
     @Override
-    public EntityUpdateSQLExpression toExpression(Object entity) {
+    public EntityUpdateSQLExpression toExpression(@NotNull Object entity) {
+        Objects.requireNonNull(entity,"UpdateExpressionBuilder entity is null.");
         checkTable();
         EntityTableExpressionBuilder entityTableExpressionBuilder = getTables().get(0);
         return entityToExpression(entity, entityTableExpressionBuilder);
@@ -234,7 +243,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         return updateSet;
     }
 
-    public EntityUpdateSQLExpression entityToExpression(Object entity, EntityTableExpressionBuilder tableExpressionBuilder) {
+    public EntityUpdateSQLExpression entityToExpression(@NotNull Object entity, EntityTableExpressionBuilder tableExpressionBuilder) {
+
 
         TrackManager trackManager = expressionContext.getRuntimeContext().getTrackManager();
         TrackContext trackContext = trackManager.getCurrentTrackContext();
@@ -246,7 +256,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
         PredicateSegment sqlWhere = sqlPredicateFilter(tableExpressionBuilder, where);
         //替换掉配置的片段
-        SQLBuilderSegment updateSet = updateSetConfigurer(getUpdateSetSegment(sqlWhere, entity, tableExpressionBuilder, entityUpdateSetProcessor));
+        SQLBuilderSegment updateSet = updateSetConfigurer(tableExpressionBuilder,getUpdateSetSegment(sqlWhere, entity, tableExpressionBuilder, entityUpdateSetProcessor),entity);
 
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
@@ -256,7 +266,23 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         return easyUpdateSQLExpression;
     }
 
-    private SQLBuilderSegment updateSetConfigurer(SQLBuilderSegment updateSet) {
+    private SQLBuilderSegment updateSetConfigurer(TableExpressionBuilder tableExpressionBuilder, SQLBuilderSegment updateSet,@NotNull Object entity) {
+        EntityMetadata entityMetadata = tableExpressionBuilder.getEntityTable().getEntityMetadata();
+
+        //如果更新拦截器不为空
+        List<UpdateEntityColumnInterceptor> updateEntityColumnInterceptors = entityMetadata.getUpdateEntityColumnInterceptors();
+        if (EasyCollectionUtil.isNotEmpty(updateEntityColumnInterceptors)) {
+            TableAvailable entityTable = tableExpressionBuilder.getEntityTable();
+            ColumnOnlySelector<Object> columnOnlySelector = new ColumnOnlySelectorImpl<>(entityTable, new OnlySelectorImpl(runtimeContext, expressionContext, updateSet));
+
+            Predicate<Interceptor> interceptorFilter = getExpressionContext().getInterceptorFilter();
+            for (UpdateEntityColumnInterceptor updateEntityColumnInterceptor : updateEntityColumnInterceptors) {
+                if (interceptorFilter.test(updateEntityColumnInterceptor)) {
+                    updateEntityColumnInterceptor.configure(entityMetadata.getEntityClass(), this, columnOnlySelector,entity);
+                }
+            }
+        }
+
         boolean hasConfigure = columnConfigurers != null && !columnConfigurers.isEmpty();
         if (!hasConfigure) {
             return updateSet;

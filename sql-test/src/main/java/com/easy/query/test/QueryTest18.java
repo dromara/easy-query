@@ -670,6 +670,13 @@ public class QueryTest18 extends BaseTest {
         }
         Assert.assertTrue(exception);
     }
+    @Test
+    public void testPartition1(){
+//        easyEntityQuery.queryable(BlogEntity.class)
+//                .select(o -> Select.DRAFT.of(
+//                        o
+//                ))
+    }
 
 
 }

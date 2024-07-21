@@ -5,10 +5,12 @@ import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.index.SegmentIndex;
+import com.easy.query.core.expression.segment.index.EntitySegmentComparer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 
 /**
@@ -56,6 +58,17 @@ public abstract class AbstractSQLBuilderSegment implements SQLBuilderSegment {
             }
         }
         return false;
+    }
+
+    @Override
+    public void visit(Consumer<EntitySegmentComparer> visitorConsumer) {
+        for (SQLSegment sqlSegment : sqlSegments) {
+            if(sqlSegment instanceof SQLEntitySegment){
+                SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
+                EntitySegmentComparer entitySegmentComparerKey = new EntitySegmentComparer(sqlEntitySegment.getTable().getEntityClass(), sqlEntitySegment.getPropertyName());
+                visitorConsumer.accept(entitySegmentComparerKey);
+            }
+        }
     }
 
     @Override

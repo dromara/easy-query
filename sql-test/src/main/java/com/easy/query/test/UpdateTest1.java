@@ -7,6 +7,7 @@ import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicUpdate;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,7 +23,7 @@ import java.util.function.Supplier;
  */
 public class UpdateTest1 extends BaseTest {
 
-//    @Test
+    //    @Test
 //    public void testUpdate0() {
 //        easyEntityQuery.updatable(SysUser.class)
 //                .setColumns(s -> s.id().set("123x xx"))
@@ -537,22 +538,21 @@ public class UpdateTest1 extends BaseTest {
     }
 
     @Test
-    public void updateNoSet(){
+    public void updateNoSet() {
         {
 
             long l = easyEntityQuery.updatable(Topic.class)
                     .where(t -> t.id().eq("xxxmmnbv"))
                     .executeRows();
-            Assert.assertEquals(0,l);
+            Assert.assertEquals(0, l);
         }
         {
 
             easyEntityQuery.updatable(Topic.class)
                     .where(t -> t.id().eq("xxxmmnbv"))
-                    .executeRows(0,"123");
+                    .executeRows(0, "123");
         }
     }
-
 
 
     @Test
@@ -571,5 +571,71 @@ public class UpdateTest1 extends BaseTest {
             trackManager.release();
         }
         Assert.assertFalse(trackManager.currentThreadTracking());
+    }
+
+    @Test
+    public void updateTestUpdate() {
+        easyEntityQuery.updatable(TopicUpdate.class)
+                .setColumns(t -> {
+                    t.stars().set(123);
+                }).whereById("1098765xxx")
+                .executeRows();
+    }
+    @Test
+    public void updateTestUpdate1() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        TopicUpdate topicUpdate = new TopicUpdate();
+        topicUpdate.setId("1098765xxx");
+        topicUpdate.setCreateTime(LocalDateTime.of(2020,1,1,1,1));
+        topicUpdate.setTitle("123");
+        easyEntityQuery.updatable(topicUpdate)
+                .executeRows();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`title` = ?,`create_time` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("null(null),123(String),2024-01-01T01:01(LocalDateTime),1098765xxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void updateTestUpdate2() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
+        trackManager.begin();
+        TopicUpdate topicUpdate = new TopicUpdate();
+        topicUpdate.setId("1098765xxx");
+        topicUpdate.setCreateTime(LocalDateTime.of(2020,1,1,1,1));
+        topicUpdate.setTitle("123");
+        easyEntityQuery.addTracking(topicUpdate);
+        topicUpdate.setTitle("456");
+        easyEntityQuery.updatable(topicUpdate)
+                .executeRows();
+        trackManager.release();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("456(String),2024-01-01T01:01(LocalDateTime),1098765xxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void updateTestUpdate3() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        TopicUpdate topicUpdate = new TopicUpdate();
+        topicUpdate.setId("1098765xxx");
+        topicUpdate.setCreateTime(LocalDateTime.of(2020,1,1,1,1));
+        topicUpdate.setTitle("123");
+        easyEntityQuery.updatable(topicUpdate)
+                .setColumns(t -> t.FETCHER.title())
+                .executeRows();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),2024-01-01T01:01(LocalDateTime),1098765xxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }

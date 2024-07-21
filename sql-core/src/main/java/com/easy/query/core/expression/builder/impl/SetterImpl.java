@@ -43,6 +43,11 @@ public class SetterImpl implements Setter {
     }
 
     @Override
+    public SQLBuilderSegment getSQLBuilderSegment() {
+        return sqlBuilderSegment;
+    }
+
+    @Override
     public Setter set(boolean condition, TableAvailable table, String property, Object val) {
         if (condition) {
             sqlBuilderSegment.append(new UpdateColumnSetSegmentImpl(table, property, val, entityExpressionBuilder.getExpressionContext()));
