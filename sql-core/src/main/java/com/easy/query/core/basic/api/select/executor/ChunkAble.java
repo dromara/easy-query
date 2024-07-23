@@ -30,7 +30,7 @@ public interface ChunkAble<T> extends QueryAvailable<T> {
     default void toChunk(int size, Consumer<List<T>> chunk) {
         toChunk(size, list -> {
             chunk.accept(list);
-            return list.size() < size;
+            return list.size() <= size;
         });
     }
 

@@ -634,6 +634,7 @@ public class QueryTest18 extends BaseTest {
                         ids.put(blog.getId(),blog);
                     }
                 });
+        Assert.assertEquals(100,ids.size());
     }
     @Test
     public void testStreamChunk1() {

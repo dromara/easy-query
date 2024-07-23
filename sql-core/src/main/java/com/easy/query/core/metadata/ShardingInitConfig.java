@@ -38,7 +38,7 @@ public class ShardingInitConfig {
         return shardingSequenceConfig;
     }
 
-    public boolean isReverse(){
-        return reverseFactor>0d&&minReverseTotal>1L;
+    public boolean isReverse() {
+        return reverseFactor > 0d && minReverseTotal > 1L;
     }
 }

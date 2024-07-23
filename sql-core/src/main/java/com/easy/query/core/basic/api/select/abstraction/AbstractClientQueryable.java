@@ -543,7 +543,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 break;
             }
             boolean hasNext = list.size() == size;
-            if (!chunk.test(list) || !hasNext) {
+            boolean test = chunk.test(list);
+            if (!test || !hasNext) {
                 break;
             }
         }

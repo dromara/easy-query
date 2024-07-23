@@ -61,11 +61,13 @@ public class Expression {
         return new Expression(entitySQLContextAvailable.getEntitySQLContext());
     }
 
-    public ColumnFunctionComparableAnyChainExpression<Object> sqlSegment(String sqlSegment){
-        return sqlSegment(sqlSegment, x->{}, Object.class);
+    public ColumnFunctionComparableAnyChainExpression<Object> sqlSegment(String sqlSegment) {
+        return sqlSegment(sqlSegment, x -> {
+        }, Object.class);
     }
-    public ColumnFunctionComparableAnyChainExpression<Object> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume){
-        return sqlSegment(sqlSegment,contextConsume, Object.class);
+
+    public ColumnFunctionComparableAnyChainExpression<Object> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume) {
+        return sqlSegment(sqlSegment, contextConsume, Object.class);
     }
 
     /**
@@ -81,15 +83,15 @@ public class Expression {
      * }
      * </blockquote></pre>
      *
-     * @param sqlSegment 片段
+     * @param sqlSegment     片段
      * @param contextConsume 片段参数
-     * @param resultClass 类型
-     * @return 返回元素sql片段
+     * @param resultClass    类型
      * @param <TR>
+     * @return 返回元素sql片段
      */
-    public <TR>  ColumnFunctionComparableAnyChainExpression<TR> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume, Class<TR> resultClass){
-        return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext,null,null,f->{
-            return f.anySQLFunction(sqlSegment,c->contextConsume.apply(new ProxyColumnFuncSelectorImpl(c)));
+    public <TR> ColumnFunctionComparableAnyChainExpression<TR> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume, Class<TR> resultClass) {
+        return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext, null, null, f -> {
+            return f.anySQLFunction(sqlSegment, c -> contextConsume.apply(new ProxyColumnFuncSelectorImpl(c)));
         }, resultClass);
     }
 
@@ -102,6 +104,16 @@ public class Expression {
         sql(sqlSegment, c -> {
         });
     }
+    /**
+     * 支持where having order
+     *
+     * @param condition 是否执行
+     * @param sqlSegment
+     */
+    public void sql(boolean condition,String sqlSegment) {
+        sql(condition,sqlSegment, c -> {
+        });
+    }
 
     /**
      * 支持where having order
@@ -110,7 +122,20 @@ public class Expression {
      * @param contextConsume
      */
     public void sql(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume) {
-        sqlSegment( sqlSegment, contextConsume).executeSQL();
+        sql(true, sqlSegment, contextConsume);
+    }
+
+    /**
+     * 支持where having order
+     *
+     * @param condition 是否执行
+     * @param sqlSegment
+     * @param contextConsume
+     */
+    public void sql(boolean condition, String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume) {
+        if (condition) {
+            sqlSegment(sqlSegment, contextConsume).executeSQL();
+        }
     }
 
 //    public SQLExecutor sqlExecutor(String sqlSegment){
@@ -159,15 +184,15 @@ public class Expression {
      */
     @Deprecated
     public PropTypeColumn<Object> sqlType(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        return sqlType(sqlSegment,contextConsume,Object.class);
+        return sqlType(sqlSegment, contextConsume, Object.class);
     }
+
     @Deprecated
     public <T> PropTypeColumn<T> sqlType(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume, Class<T> resultClass) {
         return new SQLNativeSegmentExpressionImpl(entitySQLContext, sqlSegment, c -> {
             contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c.getSQLNativeExpressionContext()));
         }).asAnyType(resultClass);
     }
-
 
 
     /**
@@ -186,8 +211,8 @@ public class Expression {
      */
     public <TSubQuery> ColumnFunctionComparableAnyChainExpression<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
         Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
-        return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext,null,null,f->{
-            return f.anySQLFunction("{0}",c->c.subQuery(subQueryQuery));
+        return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext, null, null, f -> {
+            return f.anySQLFunction("{0}", c -> c.subQuery(subQueryQuery));
         }, subQueryQuery.queryClass());
     }
 
@@ -290,7 +315,6 @@ public class Expression {
     }
 
     /**
-     *
      * <blockquote><pre>
      * {@code
      *  // CONCAT(?,CAST(`id_card` AS SIGNED),?) LIKE ?
@@ -303,6 +327,7 @@ public class Expression {
      *  ).like(",2,");
      *    }
      * </pre></blockquote>
+     *
      * @param expressions 表达式
      * @return
      */

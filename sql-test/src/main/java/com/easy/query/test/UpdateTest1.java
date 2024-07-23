@@ -622,6 +622,7 @@ public class UpdateTest1 extends BaseTest {
     }
     @Test
     public void updateTestUpdate3() {
+
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         TopicUpdate topicUpdate = new TopicUpdate();
@@ -637,5 +638,10 @@ public class UpdateTest1 extends BaseTest {
         Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),2024-01-01T01:01(LocalDateTime),1098765xxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+
+
+
+
+
     }
 }
