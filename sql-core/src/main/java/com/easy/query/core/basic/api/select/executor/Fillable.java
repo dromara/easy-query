@@ -36,7 +36,7 @@ public interface Fillable<T1> {
      * @return
      */
     default <TREntity> Query<T1> fillMany(SQLFuncExpression<Query<TREntity>> fillSetterExpression, String targetProperty, String selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
-        return fillMany(fillSetterExpression, targetProperty, selfProperty, produce, true);
+        return fillMany(fillSetterExpression, targetProperty, selfProperty, produce, false);
     }
 
     /**
@@ -82,7 +82,7 @@ public interface Fillable<T1> {
      * @return
      */
     default <TREntity> Query<T1> fillOne(SQLFuncExpression<Query<TREntity>> fillSetterExpression, String targetProperty, String selfProperty, BiConsumer<T1, TREntity> produce) {
-        return fillOne(fillSetterExpression, targetProperty, selfProperty, produce, true);
+        return fillOne(fillSetterExpression, targetProperty, selfProperty, produce, false);
     }
 
     /**
