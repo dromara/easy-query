@@ -2,24 +2,34 @@ package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.annotation.Nullable;
+import com.easy.query.core.basic.api.select.executor.Fillable;
 import com.easy.query.core.basic.api.select.executor.MapAble;
 import com.easy.query.core.basic.api.select.executor.QueryExecutable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.ToSQLResult;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
 import com.easy.query.core.expression.lambda.SQLConsumer;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.fill.FillExpression;
+import com.easy.query.core.expression.sql.fill.FillParams;
+import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -29,7 +39,7 @@ import java.util.function.Supplier;
  * @Description: 文件说明
  * @Date: 2023/3/3 16:30
  */
-public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble<T> {
+public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble<T>, Fillable<T> {
 
     /**
      * 只clone表达式共享上下文
@@ -366,4 +376,85 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
     Query<T> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
     Query<T> useConnectionMode(ConnectionModeEnum connectionMode);
+
+    /**
+     * <blockquote><pre>
+     *     {@code
+     *          List<Province> provinces =  easyQuery.queryable(Province.class)
+     *                 .fillMany(()->{
+     *                     return easyQuery.queryable(City.class).where(c -> c.eq(City::getCode, "3306"));
+     *                 },"provinceCode", "code", (x, y) -> {
+     *                     x.setCities(new ArrayList<>(y));
+     *                 },false).toList();
+     *      }
+     * </pre></blockquote>
+     * @param fillSetterExpression
+     * @param targetProperty
+     * @param selfProperty
+     * @param produce
+     * @param consumeNull
+     * @return
+     * @param <TREntity>
+     */
+    @Override
+    default <TREntity> Query<T> fillMany(SQLFuncExpression<Query<TREntity>> fillSetterExpression, String targetProperty, String selfProperty, BiConsumer<T, Collection<TREntity>> produce, boolean consumeNull) {
+        SQLFuncExpression1<FillParams, Query<?>> fillQueryableExpression = EasySQLExpressionUtil.getFillSQLExpression(fillSetterExpression, targetProperty, consumeNull);
+        FillExpression fillExpression = new FillExpression(queryClass(), true, targetProperty, selfProperty, fillQueryableExpression);
+        fillExpression.setProduceMany(EasyObjectUtil.typeCastNullable(produce));
+        getSQLEntityExpressionBuilder().getExpressionContext().getFills().add(fillExpression);
+        return this;
+    }
+
+    /**
+     * <blockquote><pre>
+     *     {@code
+     *         List<City> cities = easyQuery.queryable(City.class)
+     *                 .fillOne(()->{
+     *                     return easyQuery.queryable(Province.class);
+     *                 },"code","provinceCode", (x, y) -> {
+     *                     x.setProvince(y);
+     *                 },false)
+     *                 .toList();
+     *      }
+     * </pre></blockquote>
+     * @param fillSetterExpression
+     * @param targetProperty
+     * @param selfProperty
+     * @param produce
+     * @param consumeNull
+     * @return
+     * @param <TREntity>
+     */
+    @Override
+    default <TREntity> Query<T> fillOne(SQLFuncExpression<Query<TREntity>> fillSetterExpression, String targetProperty, String selfProperty, BiConsumer<T, TREntity> produce, boolean consumeNull) {
+        SQLFuncExpression1<FillParams, Query<?>> fillQueryableExpression = EasySQLExpressionUtil.getFillSQLExpression(fillSetterExpression, targetProperty, consumeNull);
+        FillExpression fillExpression = new FillExpression(queryClass(), false, targetProperty, selfProperty, fillQueryableExpression);
+        fillExpression.setProduceOne(EasyObjectUtil.typeCastNullable(produce));
+        getSQLEntityExpressionBuilder().getExpressionContext().getFills().add(fillExpression);
+        return this;
+    }
+
+    //    @Override
+//    default  <TREntity> Query<T> fillMany(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, Collection<TREntity>> produce) {
+//        SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
+//            FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
+//            return fillSetterExpression.apply(fillSelector);
+//        };
+//        FillExpression fillExpression = new FillExpression(queryClass(), true, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), fillQueryableExpression);
+//        fillExpression.setProduceMany(EasyObjectUtil.typeCastNullable(produce));
+//        entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
+//        return this;
+//    }
+//
+//    @Override
+//    public <TREntity> Query<T1> fillOne(SQLFuncExpression1<FillSelector, ClientQueryable<TREntity>> fillSetterExpression, String targetProperty, Property<T1, ?> selfProperty, BiConsumer<T1, TREntity> produce) {
+//        SQLFuncExpression1<FillParams, ClientQueryable<?>> fillQueryableExpression = fillParams -> {
+//            FillSelectorImpl fillSelector = new FillSelectorImpl(runtimeContext, fillParams);
+//            return fillSetterExpression.apply(fillSelector);
+//        };
+//        FillExpression fillExpression = new FillExpression(queryClass(), false, targetProperty, EasyObjectUtil.typeCastNullable(selfProperty), fillQueryableExpression);
+//        fillExpression.setProduceOne(EasyObjectUtil.typeCastNullable(produce));
+//        entityQueryExpressionBuilder.getExpressionContext().getFills().add(fillExpression);
+//        return this;
+//    }
 }

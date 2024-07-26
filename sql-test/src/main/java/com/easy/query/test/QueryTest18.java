@@ -716,6 +716,6 @@ public class QueryTest18 extends BaseTest {
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(Topic.class);
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
         String singleKeyProperty = entityMetadata.getSingleKeyProperty();
-    }
 
+    }
 }

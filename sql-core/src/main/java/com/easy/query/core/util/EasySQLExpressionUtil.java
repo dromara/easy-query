@@ -10,6 +10,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable6;
 import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
@@ -34,15 +35,20 @@ import com.easy.query.core.expression.lambda.SQLExpression6;
 import com.easy.query.core.expression.lambda.SQLExpression7;
 import com.easy.query.core.expression.lambda.SQLExpression8;
 import com.easy.query.core.expression.lambda.SQLExpression9;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
+import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredicateImpl;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
@@ -65,6 +71,7 @@ import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpres
 import com.easy.query.core.expression.sql.expression.AnonymousUnionEntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.expression.sql.fill.FillParams;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
@@ -84,6 +91,24 @@ import java.util.Objects;
  */
 public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
+    }
+
+    public static <TR> SQLFuncExpression1<FillParams, Query<?>> getFillSQLExpression(SQLFuncExpression<Query<TR>> fillSetterExpression, String targetProperty,boolean consumeNull){
+        return fillParams -> {
+            fillParams.setConsumeNull(consumeNull);
+            Query<TR> q = fillSetterExpression.apply();
+            QueryRuntimeContext runtimeContext = q.getSQLEntityExpressionBuilder().getRuntimeContext();
+            PredicateSegment where = q.getSQLEntityExpressionBuilder().getWhere();
+            EntityTableExpressionBuilder table = q.getSQLEntityExpressionBuilder().getTable(0);
+
+            PredicateSegment predicateSegment = new AndPredicateSegment(true);
+            SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
+            TableAvailable entityTable = table.getEntityTable();
+            WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(entityTable, q.getSQLEntityExpressionBuilder(), predicateSegment);
+            sqlPredicate.in(targetProperty,fillParams.getRelationIds());
+            where.addPredicateSegment(predicateSegment);
+            return q;
+        };
     }
 
     public static boolean expressionInvokeRoot(ToSQLContext sqlContext) {

@@ -9,7 +9,7 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.test.entity.base.City;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.columns.SQLNavigateColumn;
-import com.easy.query.core.proxy.columns.SQLQueryable;
+import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 
 /**
@@ -22,6 +22,8 @@ import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 public class CityProxy extends AbstractProxyEntity<CityProxy, City> {
 
     private static final Class<City> entityClass = City.class;
+
+    public static final CityProxy TABLE = createTable().createEmpty();
 
     public static CityProxy createTable() {
         return new CityProxy();
@@ -54,8 +56,8 @@ public class CityProxy extends AbstractProxyEntity<CityProxy, City> {
     /**
      * {@link City#getAreas}
      */
-    public SQLQueryable<com.easy.query.test.entity.base.proxy.AreaProxy, com.easy.query.test.entity.base.Area> areas() {
-        return getNavigates("areas", new com.easy.query.test.entity.base.proxy.AreaProxy());
+    public SQLManyQueryable<CityProxy, com.easy.query.test.entity.base.proxy.AreaProxy, com.easy.query.test.entity.base.Area> areas() {
+        return getNavigateMany("areas", new com.easy.query.test.entity.base.proxy.AreaProxy());
     }
 
 
