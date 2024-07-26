@@ -1,21 +1,38 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.api.pagination.DefaultPageResult;
+import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.pagination.EasyPageResultProvider;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.Company;
+import com.easy.query.test.entity.blogtest.CompanyVO;
+import com.easy.query.test.entity.blogtest.CompanyVO1;
 import com.easy.query.test.entity.blogtest.SysMenu;
 import com.easy.query.test.entity.blogtest.SysRole;
 import com.easy.query.test.entity.blogtest.SysUser;
+import com.easy.query.test.entity.blogtest.proxy.CompanyProxy;
+import com.easy.query.test.entity.blogtest.proxy.CompanyVOProxy;
 import com.easy.query.test.entity.blogtest.proxy.SysUserProxy;
 import com.easy.query.test.entity.navf.UVO;
 import com.easy.query.test.entity.navf.User;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.listener.ListenerContextManager;
+import com.easy.query.test.listener.MyJdbcListener;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,6 +40,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * create time 2024/4/29 23:02
@@ -1140,8 +1158,178 @@ public class QueryTest16 extends BaseTest {
 //                }).toList();
 //    }
 
-//    @Test
+    //    @Test
 //    public void singleFirst() {
 //        List<SysUser> list4 = easyEntityQuery.queryable(SysUser.class).toList();
 //    }
+    @Test
+    public void testSubSum() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+
+            List<Draft2<String, Integer>> list = easyEntityQuery.queryable(Company.class)
+                    .where(com -> com.name().like("xx公司"))
+                    .limit(10, 20)
+                    .select(com -> com)
+                    .select(com -> Select.DRAFT.of(
+                            com.id(),
+                            com.users().sum(x -> x.age())
+                    )).toList();
+        } catch (Exception ignore) {
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id` AS `value1`,IFNULL((SELECT SUM(t3.`age`) FROM `t_user` t3 WHERE t3.`company_id` = t1.`id`),0) AS `value2` FROM (SELECT t.`id`,t.`name`,t.`create_time` FROM `t_company` t WHERE t.`name` LIKE ? LIMIT 20 OFFSET 10) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+    }
+
+    @Test
+    public void testSubSumOracle() {
+
+
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(2);
+                    op.setMaxShardingQueryLimit(1);
+                })
+                .useDatabaseConfigure(new OracleDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .build();
+        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+
+        {
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+
+                List<Draft2<String, Integer>> list = defaultEasyEntityQuery.queryable(Company.class)
+                        .where(com -> com.name().like("xx公司"))
+                        .limit(10, 20)
+                        .select(com -> com)
+                        .select(com -> Select.DRAFT.of(
+                                com.id(),
+                                com.users().sum(x -> x.age())
+                        )).toList();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t1.\"id\" AS \"value1\",NVL((SELECT SUM(t3.\"age\") FROM \"t_user\" t3 WHERE t3.\"company_id\" = t1.\"id\"),0) AS \"value2\" FROM (SELECT rt.* FROM(SELECT t.\"id\",t.\"name\",t.\"create_time\", ROWNUM AS \"__rownum__\" FROM \"t_company\" t WHERE t.\"name\" LIKE ? AND ROWNUM < 31) rt WHERE rt.\"__rownum__\" > 10) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+
+        }
+
+    }
+
+    @Test
+    public void testSubSumOracle2() {
+
+
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(2);
+                    op.setMaxShardingQueryLimit(1);
+                })
+                .useDatabaseConfigure(new OracleDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .build();
+        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        {
+            long pageIndex = 10;
+            long pageSize = 20;
+            //设置每次获取多少条
+            long take = pageSize <= 0 ? 1 : pageSize;
+            //设置当前页码最小1
+            long index = pageIndex <= 0 ? 1 : pageIndex;
+            //需要跳过多少条
+            long offset = (index - 1) * take;
+
+            EntityQueryable<CompanyProxy, Company> query = defaultEasyEntityQuery.queryable(Company.class)
+                    .where(com -> com.name().like("xx公司"));
+            try {
+                long total = query.cloneQueryable().count();
+            }catch (Exception ex){
+
+            }
+            try {
+                List<CompanyVO> list = query.limit(offset, pageSize)
+                        .select(com -> com)
+                        .select(com -> new CompanyVOProxy()
+                                .selectAll(com)
+                                .useTotalAge().set(com.users().sum(u -> u.age()))
+                        ).toList();
+            }catch (Exception ex){
+
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT COUNT(*) FROM \"t_company\" WHERE \"name\" LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg1 = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t1.\"id\",t1.\"name\",t1.\"create_time\",NVL((SELECT SUM(t3.\"age\") FROM \"t_user\" t3 WHERE t3.\"company_id\" = t1.\"id\"),0) AS \"use_total_age\" FROM (SELECT rt.* FROM(SELECT t.\"id\",t.\"name\",t.\"create_time\", ROWNUM AS \"__rownum__\" FROM \"t_company\" t WHERE t.\"name\" LIKE ? AND ROWNUM < 201) rt WHERE rt.\"__rownum__\" > 180) t1", jdbcExecuteAfterArg1.getBeforeArg().getSql());
+            Assert.assertEquals("%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg1.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+
+
+        }
+
+    }
+
+//    @Test
+//    public void testSubSumOracle4() {
+//
+//
+//        ListenerContextManager listenerContextManager = new ListenerContextManager();
+//        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+//        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+//                .setDefaultDataSource(dataSource)
+//                .optionConfigure(op -> {
+//                    op.setDeleteThrowError(false);
+//                    op.setExecutorCorePoolSize(1);
+//                    op.setExecutorMaximumPoolSize(2);
+//                    op.setMaxShardingQueryLimit(1);
+//                })
+//                .useDatabaseConfigure(new OracleDatabaseConfiguration())
+//                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+//                .build();
+//        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+//
+//        ListenerContext listenerContext = new ListenerContext(true);
+//        listenerContextManager.startListen(listenerContext);
+//
+//        {
+//            long pageIndex = 10;
+//            long pageSize = 20;
+//
+//            EasyPageResult<CompanyVO1> pageResult = defaultEasyEntityQuery.queryable(Company.class)
+//                    .where(com -> com.name().like("xx公司"))
+//                    .selectAutoInclude(CompanyVO1.class)
+//                    .toPageResult(pageIndex, pageSize);
+//
+//
+//
+//        }
+//
+//    }
+
 }

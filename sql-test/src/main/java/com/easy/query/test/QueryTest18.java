@@ -27,6 +27,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
@@ -62,10 +63,12 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -678,6 +681,41 @@ public class QueryTest18 extends BaseTest {
 //                        o
 //                ))
     }
+    @Test
+    public void testChunk3() {
+        HashMap<String, BlogEntity> ids = new HashMap<>();
+        easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(b -> b.createTime().asc())
+                .orderBy(b -> b.id().asc())
+                .toChunk(3, blogs -> {
+                    Assert.assertTrue(blogs.size()<=3);
+                    for (BlogEntity blog : blogs) {
+                        if (ids.containsKey(blog.getId())) {
+                            throw new RuntimeException("id 重复:"+blog.getId());
+                        }
+                        ids.put(blog.getId(),blog);
+                    }
+                });
+        Assert.assertEquals(100,ids.size());
+    }
+    @Test
+    public void testChunk4() {
+        AtomicInteger a=new AtomicInteger(0);
+        easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(b -> b.createTime().asc())
+                .orderBy(b -> b.id().asc())
+                .toChunk(3, blogs -> {
+                    for (BlogEntity blog : blogs) {
+                       a.incrementAndGet();
+                    }
+                    return true;
+                });
+        Assert.assertEquals(100,a.intValue());
 
+        EntityMetadataManager entityMetadataManager = easyEntityQuery.getRuntimeContext().getEntityMetadataManager();
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(Topic.class);
+        Collection<String> keyProperties = entityMetadata.getKeyProperties();
+        String singleKeyProperty = entityMetadata.getSingleKeyProperty();
+    }
 
 }

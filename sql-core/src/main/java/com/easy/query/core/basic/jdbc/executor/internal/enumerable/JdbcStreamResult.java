@@ -37,7 +37,7 @@ public interface JdbcStreamResult<T> extends AutoCloseable {
     default void toChunk(int size, Consumer<List<T>> chunk) throws SQLException {
         toChunk(size, list -> {
             chunk.accept(list);
-            return list.size() < size;
+            return list.size() <= size;
         });
     }
 
