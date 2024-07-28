@@ -682,7 +682,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     throw new EasyQueryInvalidOperationException("fill expression should from entity class:" + EasyClassUtil.getSimpleName(fill.getFillFromEntityClass()) + ",now:" + EasyClassUtil.getSimpleName(queryClass()));
                 }
                 FillParams fillParams = new FillParams(fill.getTargetProperty());
-                Query<?> fillQueryable = fill.getFillSQLFuncExpression().apply(fillParams);
 //                if (!Objects.equals(fillQueryable.queryClass(), fillParams.getOriginalEntityClass())) {
 //                    throw new EasyQueryInvalidOperationException("fill expression should select original entity class:" + EasyClassUtil.getSimpleName(fillParams.getOriginalEntityClass()) + ",now:" + EasyClassUtil.getSimpleName(fillQueryable.queryClass()));
 //                }
@@ -692,6 +691,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         .distinct()
                         .collect(Collectors.toList());
                 fillParams.getRelationIds().addAll(relationIds);
+                Query<?> fillQueryable = fill.getFillSQLFuncExpression().apply(fillParams);
                 List<?> list = fillQueryable.toList();
 
                 EntityMetadata targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(fillQueryable.queryClass());

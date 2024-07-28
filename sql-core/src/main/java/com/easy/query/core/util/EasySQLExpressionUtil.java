@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.api.select.ClientQueryableAvailable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable10;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
@@ -79,9 +80,14 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraColumn;
 import com.easy.query.core.metadata.RelationExtraMetadata;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -93,22 +99,56 @@ public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
     }
 
-    public static <TR> SQLFuncExpression1<FillParams, Query<?>> getFillSQLExpression(SQLFuncExpression<Query<TR>> fillSetterExpression, String targetProperty,boolean consumeNull){
-        return fillParams -> {
-            fillParams.setConsumeNull(consumeNull);
-            Query<TR> q = fillSetterExpression.apply();
-            QueryRuntimeContext runtimeContext = q.getSQLEntityExpressionBuilder().getRuntimeContext();
-            PredicateSegment where = q.getSQLEntityExpressionBuilder().getWhere();
-            EntityTableExpressionBuilder table = q.getSQLEntityExpressionBuilder().getTable(0);
+    public static <TR> SQLFuncExpression1<FillParams, Query<?>> getFillSQLExpression(SQLFuncExpression<Query<TR>> fillSetterExpression, String targetProperty, boolean consumeNull) {
 
-            PredicateSegment predicateSegment = new AndPredicateSegment(true);
-            SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
-            TableAvailable entityTable = table.getEntityTable();
-            WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(entityTable, q.getSQLEntityExpressionBuilder(), predicateSegment);
-            sqlPredicate.in(targetProperty,fillParams.getRelationIds());
-            where.addPredicateSegment(predicateSegment);
-            return q;
+        return fillParams -> {
+            Query<TR> queryable = fillSetterExpression.apply();
+            boolean hasLimit = queryable.getSQLEntityExpressionBuilder().hasLimit();
+            QueryRuntimeContext runtimeContext = queryable.getSQLEntityExpressionBuilder().getRuntimeContext();
+            fillParams.setConsumeNull(consumeNull);
+            if (hasLimit) {
+                if (EasyCollectionUtil.isNotEmpty(fillParams.getRelationIds()) && EasyCollectionUtil.isNotSingle(fillParams.getRelationIds())) {
+                    Iterator<Object> iterator = fillParams.getRelationIds().iterator();
+                    Object firstRelationId = iterator.next();
+                    Query<TR> firstQuery = getFillLimitQuery(queryable, targetProperty, Collections.singletonList(firstRelationId), runtimeContext);
+                    ArrayList<Query<TR>> otherQueryable = new ArrayList<>();
+                    while (iterator.hasNext()) {
+                        Object nextRelationId = iterator.next();
+                        Query<TR> nextQueryable = getFillLimitQuery(queryable, targetProperty, Collections.singletonList(nextRelationId), runtimeContext);
+                        otherQueryable.add(nextQueryable);
+                    }
+
+                    if (queryable instanceof ClientQueryable) {
+                        return ((ClientQueryable<TR>) firstQuery).unionAll(otherQueryable.stream().map(o -> (ClientQueryable<TR>) o).collect(Collectors.toList()));
+                    } else if (queryable instanceof ClientQueryableAvailable) {
+                        return ((ClientQueryableAvailable<TR>) queryable).getClientQueryable().unionAll(otherQueryable.stream().map(o -> ((ClientQueryableAvailable<TR>) o).getClientQueryable()).collect(Collectors.toList()));
+                    } else {
+                        throw new EasyQueryInvalidOperationException("not support fill limit");
+                    }
+                }
+            }
+
+
+            return getFillLimitQuery(queryable, targetProperty, fillParams.getRelationIds(), runtimeContext);
         };
+    }
+
+    private static <TR> Query<TR> getFillLimitQuery(Query<TR> queryable, String targetProperty, List<Object> relationIds, QueryRuntimeContext runtimeContext) {
+        Query<TR> q = queryable.cloneQueryable();
+        PredicateSegment where = q.getSQLEntityExpressionBuilder().getWhere();
+        EntityTableExpressionBuilder table = q.getSQLEntityExpressionBuilder().getTable(0);
+
+        PredicateSegment predicateSegment = new AndPredicateSegment(true);
+        SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
+        TableAvailable entityTable = table.getEntityTable();
+        WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(entityTable, q.getSQLEntityExpressionBuilder(), predicateSegment);
+        if (EasyCollectionUtil.isSingle(relationIds)) {
+            sqlPredicate.eq(targetProperty, relationIds.get(0));
+        } else {
+            sqlPredicate.in(targetProperty, relationIds);
+        }
+        where.addPredicateSegment(predicateSegment);
+        return q;
     }
 
     public static boolean expressionInvokeRoot(ToSQLContext sqlContext) {
@@ -311,8 +351,8 @@ public class EasySQLExpressionUtil {
     public static EntityQueryExpressionBuilder getCountEntityQueryExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, boolean isDistinct) {
         processRemoveOrderAndLimit(entityQueryExpressionBuilder);
         if (EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpressionBuilder)) {
-            if(entityQueryExpressionBuilder.isDistinct()){
-                return processSelectCountProject(entityQueryExpressionBuilder,true);
+            if (entityQueryExpressionBuilder.isDistinct()) {
+                return processSelectCountProject(entityQueryExpressionBuilder, true);
             }
             return null;
         }
@@ -363,12 +403,12 @@ public class EasySQLExpressionUtil {
     private static EntityQueryExpressionBuilder processSelectCountProject(EntityQueryExpressionBuilder entityQueryExpressionBuilder, boolean isDistinct) {
         SQLSegmentFactory sqlSegmentFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLSegmentFactory();
         if (isDistinct) {
-            if(EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getProjects())){
+            if (EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getProjects())) {
                 Class<?> queryClass = entityQueryExpressionBuilder.getQueryClass();
-              SQLExpression1<ColumnAsSelector<?,?>> selectExpression = ColumnAsSelector::columnAll;
+                SQLExpression1<ColumnAsSelector<?, ?>> selectExpression = ColumnAsSelector::columnAll;
                 SQLExpressionProvider<Object> sqlExpressionProvider = entityQueryExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLExpressionProvider(0, entityQueryExpressionBuilder);
                 ColumnAsSelector<?, ?> columnAsSelector = sqlExpressionProvider.getColumnAsSelector(entityQueryExpressionBuilder.getProjects(), queryClass);
-                    selectExpression.apply(columnAsSelector);
+                selectExpression.apply(columnAsSelector);
             }
             SQLBuilderSegment sqlBuilderSegment = entityQueryExpressionBuilder.getProjects().cloneSQLBuilder();
             entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
@@ -633,7 +673,7 @@ public class EasySQLExpressionUtil {
                 }
                 String alias = "__relation__" + selfPropertyOrPrimary;
                 ColumnMetadata columnMetadata = navigateMetadata.getEntityMetadata().getColumnNotNull(selfPropertyOrPrimary);
-                RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(selfPropertyOrPrimary, alias, columnMetadata,!hasSelfPropertyOrPrimary));
+                RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(selfPropertyOrPrimary, alias, columnMetadata, !hasSelfPropertyOrPrimary));
                 if (relationExtraColumn == null) {
                     if (!hasSelfPropertyOrPrimary) {
                         sqlNative.sqlNativeSegment("{0}", c -> {
@@ -668,7 +708,7 @@ public class EasySQLExpressionUtil {
         }
         String alias = "__relation__" + targetPropertyOrPrimary;
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(targetPropertyOrPrimary);
-        RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(targetPropertyOrPrimary, alias, columnMetadata,!hasTargetPropertyOrPrimary));
+        RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(targetPropertyOrPrimary, alias, columnMetadata, !hasTargetPropertyOrPrimary));
         if (relationExtraColumn == null) {
             if (!hasTargetPropertyOrPrimary) {
                 sqlNative.sqlNativeSegment("{0}", c -> {

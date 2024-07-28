@@ -2645,6 +2645,48 @@ public class RelationTest extends BaseTest {
             }
         }
     }
+    @Test
+    public void provinceTest4() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<Province> list =  easyQuery.queryable(Province.class)
+                .fillMany(()->{
+                    return easyQuery.queryable(City.class).where(c -> c.eq(City::getCode, "3306")).limit(2);
+                }, CityProxy.TABLE.provinceCode().getValue(), ProvinceProxy.TABLE.code().getValue(), (x, y) -> {
+                    x.setCities(new ArrayList<>(y));
+                },false).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2,listenerContext.getJdbcExecuteAfterArgs().size());
+        Assert.assertEquals("SELECT `code`,`name` FROM `t_province`", listenerContext.getJdbcExecuteAfterArgs().get(0).getBeforeArg().getSql());
+//        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(listenerContext.getJdbcExecuteAfterArgs().get(0).getBeforeArg().getSqlParameters().get(0)));
+         Assert.assertEquals("SELECT t1.`code`,t1.`province_code`,t1.`name` FROM ( (SELECT t.`code`,t.`province_code`,t.`name` FROM `t_city` t WHERE t.`code` = ? LIMIT 2)  UNION ALL  (SELECT t.`code`,t.`province_code`,t.`name` FROM `t_city` t WHERE t.`code` = ? AND t.`province_code` = ? LIMIT 2) ) t1", listenerContext.getJdbcExecuteAfterArgs().get(1).getBeforeArg().getSql());
+        Assert.assertEquals("3306(String),3306(String),33(String)", EasySQLUtil.sqlParameterToString(listenerContext.getJdbcExecuteAfterArgs().get(1).getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+//
+        List<City> list1 = easyQuery.queryable(City.class)
+                .fillOne(()->{
+                    return easyQuery.queryable(Province.class);
+                },"code","provinceCode", (x, y) -> {
+                    x.setProvince(y);
+                },false)
+                .toList();
+
+        Assert.assertEquals(2, list.size());
+        for (Province province : list) {
+            if ("浙江省".equals(province.getName())) {
+
+                Assert.assertNotNull(province.getCities());
+                for (City city : province.getCities()) {
+                    Assert.assertEquals("绍兴市", city.getName());
+                    Assert.assertEquals(province.getCode(), city.getProvinceCode());
+                    Assert.assertNull(city.getAreas());
+                }
+            }
+        }
+    }
 //    @Test
 //    public void provinceTest3() {
 //

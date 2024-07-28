@@ -3,6 +3,7 @@ package com.easy.query.api4j.select.extension.queryable;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.sql.SQLNavigateInclude;
 import com.easy.query.api4j.sql.impl.SQLNavigateIncludeImpl;
+import com.easy.query.core.basic.api.select.ClientQueryableAvailable;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
 /**

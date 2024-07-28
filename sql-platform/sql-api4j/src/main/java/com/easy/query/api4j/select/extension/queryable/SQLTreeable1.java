@@ -4,6 +4,7 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.select.impl.EasyQueryable;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryableAvailable;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;

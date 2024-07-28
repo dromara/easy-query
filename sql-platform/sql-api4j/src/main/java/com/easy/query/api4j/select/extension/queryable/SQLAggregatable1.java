@@ -1,6 +1,7 @@
 package com.easy.query.api4j.select.extension.queryable;
 
 import com.easy.query.api4j.util.EasyLambdaUtil;
+import com.easy.query.core.basic.api.select.ClientQueryableAvailable;
 import com.easy.query.core.expression.lambda.Property;
 
 import java.math.BigDecimal;
