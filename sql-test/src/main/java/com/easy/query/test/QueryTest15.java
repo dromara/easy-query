@@ -777,10 +777,14 @@ public class QueryTest15 extends BaseTest {
                     t.createTime().format("yyyy-MM").le(expression.now().plusMonths(-1).format("yyyy-MM"));
 
                 }).groupBy(t -> GroupKeys.TABLE1.of(t.createTime().format("yyyy-MM")))
-                .select(group -> Select.DRAFT.of(
-                        group.key1(),
-                        group.count()
-                )).toList();
+                .select(group -> {
+//                    group.groupTable().stars().sum();
+//                    group.sum(group.groupTable().stars());
+                    return Select.DRAFT.of(
+                            group.key1(),
+                            group.count()
+                    );
+                }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y-%m') AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t WHERE t.`id` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m') >= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m') AND DATE_FORMAT(t.`create_time`,'%Y-%m') <= DATE_FORMAT(date_add(NOW(), interval (?) month),'%Y-%m') GROUP BY DATE_FORMAT(t.`create_time`,'%Y-%m')", jdbcExecuteAfterArg.getBeforeArg().getSql());

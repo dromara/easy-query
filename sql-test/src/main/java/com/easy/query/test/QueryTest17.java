@@ -1268,19 +1268,20 @@ public class QueryTest17 extends BaseTest {
         Map<String, Topic> mapWithMap = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
                     t.id().eq("1");
-                }).streamBy(s -> s.collect(Collectors.toMap(o -> o.getId(), o -> o, (k1, k2) -> k2)));
+                }).streamBy(s -> s.collect(Collectors.toMap(o -> o.getId(), o -> o, (d1, d2) -> d2)));
         System.out.println("1");
 
         easyQueryClient.queryable(Topic.class)
-                .configure(b->{
+                .configure(b -> {
                     b.getBehavior().removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
                 })
                 .where(t -> {
-                    t.eq(t, "id","name");
+                    t.eq(t, "id", "name");
                 }).getSQLEntityExpressionBuilder().getExpressionContext().getBehavior();
     }
+
     @Test
-    public void testOptional1(){
+    public void testOptional1() {
         TopicProxy table = TopicProxy.createTable();
         System.out.println(table);
         Optional<Topic> topic = easyEntityQuery.queryable(Topic.class)
@@ -1292,7 +1293,7 @@ public class QueryTest17 extends BaseTest {
     }
 
     @Test
-    public void testaaa(){
+    public void testaaa() {
         SQLStringTypeColumn<SchoolStudentAddressProxy> address = SchoolStudentProxy.createTable().createEmpty().schoolStudentAddress().address();
         String fullNavValue = EasyProxyUtil.getFullNavValue(address);
         System.out.println(fullNavValue);
@@ -1301,8 +1302,49 @@ public class QueryTest17 extends BaseTest {
                 .flatElement().schoolClass().schoolTeachers().flatElement().id();
         MappingPath schoolStudentsIdsFlat = SchoolClassAOProp3.schoolStudentsIdsFlat;
         String navValue = EasyProxyUtil.getFullNavValue(id);
-        Assert.assertEquals("schoolStudents.schoolClass.schoolTeachers.id",navValue);
-        Assert.assertEquals("schoolStudents.id",schoolStudentsIdsFlat.__getMappingPath());
+        Assert.assertEquals("schoolStudents.schoolClass.schoolTeachers.id", navValue);
+        Assert.assertEquals("schoolStudents.id", schoolStudentsIdsFlat.__getMappingPath());
+
+
+//
+        List<ProvinceVO> list = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                .select(ProvinceVO.class, (t1, b2) -> Select.of(
+                        t1.FETCHER.allFields(),
+                        b2.createTime().as(ProvinceVO::getMyName)
+                )).toList();
+
+
+        List<ProvinceVO> list2 = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                .select((t1, b2) -> {
+                    ProvinceVOProxy provinceVOProxy = new ProvinceVOProxy();
+                    provinceVOProxy.selectAll(t1);
+                    provinceVOProxy.myName().set(
+                            t1.expression().sqlSegment("RANDOM()", c -> {
+                            }, String.class)
+                    );
+                    return provinceVOProxy;
+                }).toList();
+
+    }
+
+    @Test
+    public void xxx123() {
+
+        List<ProvinceVO> list1 = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(
+                        t1.id()
+                )).select(group -> {
+
+                    ProvinceVOProxy provinceVOProxy = new ProvinceVOProxy();
+                    provinceVOProxy.myCode().set(group.key1());
+                    provinceVOProxy.myName().set(
+                            group.groupTable().t2.title().join(",")
+                    );
+                    return provinceVOProxy;
+                }).toList();
     }
 
 

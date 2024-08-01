@@ -1,12 +1,15 @@
 package com.easy.query.core.proxy.columns;
 
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableBooleanChainExpressionImpl;
 
 import java.math.BigDecimal;
 
@@ -34,6 +37,19 @@ public interface SQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     void none(SQLExpression1<T1Proxy> whereExpression);
 
      void none();
+    /**
+     * 返回boolean表示是否存在任意匹配项
+     *
+     * @return
+     */
+    ColumnFunctionComparableBooleanChainExpression<Boolean> anyValue();
+
+    /**
+     * 返回boolean表示是否没有任意一项被匹配到
+     *
+     * @return
+     */
+    ColumnFunctionComparableBooleanChainExpression<Boolean> noneValue();
 
     ColumnFunctionComparableNumberChainExpression<Long> count(SQLExpression1<T1Proxy> whereExpression);
 

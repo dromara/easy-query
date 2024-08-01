@@ -8,6 +8,7 @@ import com.easy.query.core.proxy.columns.SQLPredicateQueryable;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
 
 import java.math.BigDecimal;
@@ -51,6 +52,16 @@ public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     public void none(SQLExpression1<T1Proxy> whereExpression) {
         sqlQueryable.getQueryable().where(whereExpression);
         sqlQueryable.none();
+    }
+
+    @Override
+    public ColumnFunctionComparableBooleanChainExpression<Boolean> anyValue() {
+        return sqlQueryable.anyValue();
+    }
+
+    @Override
+    public ColumnFunctionComparableBooleanChainExpression<Boolean> noneValue() {
+        return sqlQueryable.noneValue();
     }
 
     @Override

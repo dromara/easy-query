@@ -8,6 +8,7 @@ import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.executor.PageAble;
@@ -15,6 +16,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
 import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.exception.EasyQueryResultSizeLimitException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
@@ -35,8 +37,11 @@ import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComp
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyArrayUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
+import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp5;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
@@ -55,10 +60,14 @@ import com.easy.query.test.vo.BlogEntityVO1;
 import com.easy.query.test.vo.BlogEntityVO2;
 import com.easy.query.test.vo.TestUserAAA;
 import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
+import com.mysql.cj.MysqlConnection;
 import org.junit.Assert;
 import org.junit.Test;
+import org.postgresql.jdbc.PgConnection;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -718,4 +727,85 @@ public class QueryTest18 extends BaseTest {
         String singleKeyProperty = entityMetadata.getSingleKeyProperty();
 
     }
+
+    @Test
+    public void testDraft(){
+        Class<Draft2<String,String>> draft2Class= EasyObjectUtil.typeCastNullable(Draft2.class);
+        List<Draft2<String, String>> list = easyQuery.queryable(Topic.class)
+                .limit(true,100)
+                .where(t -> {
+                    t.ne(Topic::getId, "123");
+                }).select(draft2Class, t -> t.columnAs(Topic::getId, Draft2::getValue1).columnAs(Topic::getTitle, Draft2::getValue2))
+                .toList();
+        for (Draft2<String, String> stringLocalDateTimeDraft2 : list) {
+            String value1 = stringLocalDateTimeDraft2.getValue1();
+            String value2 = stringLocalDateTimeDraft2.getValue2();
+            System.out.println(value1);
+            System.out.println(value2);
+        }
+//        int limit=100;
+//        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+//                .where(t -> {
+//                    t.id().eq("123");
+//                })
+//                .limit(limit>0, limit).toList();
+//
+//        EntityQueryable<TopicProxy, Topic> where = easyEntityQuery.queryable(Topic.class)
+//                .where(t -> {
+//                    t.id().eq("123");
+//                });
+//        EntityQueryable<TopicProxy, Topic> topicProxyTopicEntityQueryable1 = where.cloneQueryable();
+//        EntityQueryable<TopicProxy, Topic> topicProxyTopicEntityQueryable2 = where.cloneQueryable();
+//
+//
+//        EasyPageResult<Topic> pageResult = getQuery().toPageResult(1, 2);
+//        processVOList(pageResult.getData());
+//        List<Topic> list2 = getQuery().toList();
+//        processVOList(list2);
+    }
+
+    private EasyPageResult<Topic> pageOrExport(int limit){
+        if(limit<0){
+            List<Topic> list = getQuery().toList();
+            return new DefaultPageResult<>(-1,list);
+        }
+        return getQuery().toPageResult(1, limit);
+    }
+    private EntityQueryable<TopicProxy, Topic> getQuery(){
+        return easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    t.id().eq("123");
+                });
+    }
+
+    private void processVOList(List<Topic> topics){
+        for (Topic topic : topics) {
+
+
+        }
+    }
+
+//    private EasyQueryClient buildClient(DataSource mydatasource,int type){
+//        EasyQueryBuilderConfiguration easyQueryBuilderConfiguration = EasyQueryBootstrapper.defaultBuilderConfiguration()
+//                .setDefaultDataSource(mydatasource)
+//                .optionConfigure(op -> {
+//                    op.setDeleteThrowError(false);
+//                    op.setExecutorCorePoolSize(1);
+//                    op.setExecutorMaximumPoolSize(2);
+//                    op.setMaxShardingQueryLimit(1);
+//                });
+//        try(Connection connection = mydatasource.getConnection()){
+//            Class<? extends Connection> aClass = connection.getClass();
+//            if(PgConnection.class.isAssignableFrom(aClass)){
+//                easyQueryBuilderConfiguration.useDatabaseConfigure(new PgSQLDatabaseConfiguration());
+//            }
+//            if(MysqlConnection.class.isAssignableFrom(aClass)){
+//                easyQueryBuilderConfiguration.useDatabaseConfigure(new MySQLDatabaseConfiguration());
+//            }
+//        }catch (SQLException ex){
+//            throw new RuntimeException(ex);
+//        }
+//        EasyQueryClient build = easyQueryBuilderConfiguration.build();
+//        return build;
+//    }
 }
