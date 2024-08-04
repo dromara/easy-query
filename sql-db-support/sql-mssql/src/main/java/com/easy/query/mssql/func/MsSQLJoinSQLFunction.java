@@ -15,10 +15,12 @@ import java.util.List;
  */
 public class MsSQLJoinSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
+    private final boolean distinct;
 
-    public MsSQLJoinSQLFunction(List<ColumnExpression> columnExpressions) {
+    public MsSQLJoinSQLFunction(List<ColumnExpression> columnExpressions,boolean distinct) {
 
         this.columnExpressions = columnExpressions;
+        this.distinct = distinct;
     }
 
     @Override
@@ -39,6 +41,9 @@ public class MsSQLJoinSQLFunction extends AbstractExpressionSQLFunction {
 //            columnExpressions.add(new ColumnSubQueryExpressionImpl(forXmlQuery));
 //            return "STUFF(({1} FOR XML PATH('')),1,LEN({0}),'')";
 //        }
+        if(distinct){
+            return "STRING_AGG(DISTINCT {1}, {0})";
+        }
         return "STRING_AGG({1}, {0})";
         //
     }

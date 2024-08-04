@@ -10,6 +10,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -49,17 +50,61 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class QueryTest16 extends BaseTest {
-//
-//    @Test
-//    public void test1() {
-//        List<SysUser> 收货员 = easyEntityQuery.queryable(SysUser.class)
-//                .where(s -> {
-//                    //筛选条件为角色集合里面有角色名称叫做收货员的
-//                    s.roles().where(role -> {
-//                        role.name().eq("收货员");
-//                    }).any();//any表示断言存在条件
+
+    @Test
+    public void test1() {
+//        List<Map> list = easyQueryClient.queryable(Map.class)
+//                .asTable("t_user").asAlias("xb")
+//                .leftJoin(Map.class, (m, m2) -> m.eq(m2, "id", "id1"))
+//                .asTable("t_address").asAlias("zz")
+//                .where((m1, m2) -> {
+//                    m1.eq("id", 123);
+//                    m2.eq("name", "456");
+//                }).select(Map.class, (m1, m2) -> {
+//                    m1.column("id").column("name");
+//                    m2.column("age").column("xx");
 //                }).toList();
-//    }
+
+
+//        List<SysUser> managers = easyEntityQuery.queryable(SysUser.class)
+//                .where(s -> {
+//                    //筛选条件为角色集合里面有角色名称叫做管理员的
+//                       s.roles().any(role -> {
+//                           role.name().eq("管理员");
+//                       });
+//                }).toList();
+
+//        List<SysUser> managers = easyEntityQuery.queryable(SysUser.class)
+//                .where(s -> {
+//                    //筛选条件为角色集合的数量大于等于3个
+//                    s.roles().count().ge(3L);
+//                }).toList();
+//        List<SysRole> roles = easyEntityQuery.queryable(SysRole.class)
+//                .where(role -> {
+//                    role.or(()->{
+//                        role.users().avg(u->u.age()).ge(BigDecimal.valueOf(15));
+//                        role.users().where(u->u.name().likeMatchLeft("金")).count().ge(2L);
+//                    });
+//                }).toList();
+
+//        List<SysUser> managers = easyEntityQuery.queryable(SysUser.class)
+//                .where(s -> {
+//                    //筛选条件为角色集合里面有角色名称叫做管理员的
+//                    s.roles().flatElement().menus().any(menu->{
+//                        menu.route().eq("/admin");
+//                    });
+//                }).toList();
+//        List<SysUser> managers = easyEntityQuery.queryable(SysUser.class)
+//                .where(s -> {
+//                    //筛选条件为角色集合里面有角色名称叫做管理员的
+//                    s.roles().flatElement().menus().flatElement().route().eq("/admin");;
+//                }).toList();
+//        List<SysUser> managers = easyEntityQuery.queryable(SysUser.class)
+//                .where(s -> {
+//                    //筛选条件为角色集合里面有角色名称叫做管理员的
+//                    s.roles().flatElement().name().eq("管理员");
+//                }).toList();
+    }
 //
 //    @Test
 //    public void test2() {

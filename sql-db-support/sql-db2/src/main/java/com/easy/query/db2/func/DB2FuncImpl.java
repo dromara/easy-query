@@ -63,8 +63,8 @@ public class DB2FuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new DB2JoinSQLFunction(getColumnExpressions(sqlExpression));
+    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
+        return new DB2JoinSQLFunction(getColumnExpressions(sqlExpression),distinct);
     }
 
     @Override

@@ -83,8 +83,8 @@ public class DamengSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new DamengJoinSQLFunction(getColumnExpressions(sqlExpression));
+    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
+        return new DamengJoinSQLFunction(getColumnExpressions(sqlExpression),distinct);
     }
 
     @Override

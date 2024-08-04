@@ -72,8 +72,8 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
         return new PgSQLAvgSQLFunction(getColumnExpressions(sqlExpression));
     }
     @Override
-    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new PgSQLJoinSQLFunction(getColumnExpressions(sqlExpression));
+    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
+        return new PgSQLJoinSQLFunction(getColumnExpressions(sqlExpression),distinct);
     }
 
     @Override

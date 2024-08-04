@@ -14,16 +14,21 @@ import java.util.List;
  */
 public class SQLiteJoinSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
+    private final boolean distinct;
 
-    public SQLiteJoinSQLFunction(List<ColumnExpression> columnExpressions) {
+    public SQLiteJoinSQLFunction(List<ColumnExpression> columnExpressions,boolean distinct) {
 
         this.columnExpressions = columnExpressions;
+        this.distinct = distinct;
     }
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         if(columnExpressions.size()!=2){
             throw new IllegalArgumentException("join arguments != 2");
+        }
+        if(distinct){
+            return "GROUP_CONCAT(DISTINCT {1}, {0})";
         }
         return "GROUP_CONCAT({1}, {0})";
     }

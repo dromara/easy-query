@@ -14,16 +14,21 @@ import java.util.List;
  */
 public class JoinSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
+    private final boolean distinct;
 
-    public JoinSQLFunction(List<ColumnExpression> columnExpressions) {
+    public JoinSQLFunction(List<ColumnExpression> columnExpressions,boolean distinct) {
 
         this.columnExpressions = columnExpressions;
+        this.distinct = distinct;
     }
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         if(columnExpressions.size()!=2){
             throw new IllegalArgumentException("join arguments != 2");
+        }
+        if(distinct){
+            return "GROUP_CONCAT(DISTINCT {1} SEPARATOR {0})";
         }
         return "GROUP_CONCAT({1} SEPARATOR {0})";
     }

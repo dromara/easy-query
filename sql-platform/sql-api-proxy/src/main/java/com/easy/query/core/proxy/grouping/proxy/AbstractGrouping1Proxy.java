@@ -230,10 +230,11 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
      * 请使用 age().join(",")
      * @param column
      * @param delimiter
+     * @param distinct
      * @return
      * @param <TProperty>
      */
-    public <TProperty> ColumnFunctionComparableStringChainExpression<String> join(PropTypeColumn<TProperty> column, String delimiter) {
+    public <TProperty> ColumnFunctionComparableStringChainExpression<String> join(PropTypeColumn<TProperty> column, String delimiter,boolean distinct) {
         if (column instanceof ColumnStringFunctionAvailable) {
             ColumnStringFunctionAvailable<TProperty> funcColumn = (ColumnStringFunctionAvailable<TProperty>) column;
             return funcColumn.join(delimiter);
@@ -242,7 +243,10 @@ public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, 
             return fx.join(x -> {
                 x.value(delimiter);
                 PropTypeColumn.columnFuncSelector(x, column);
-            });
+            },distinct);
         }, String.class);
+    }
+    public <TProperty> ColumnFunctionComparableStringChainExpression<String> join(PropTypeColumn<TProperty> column, String delimiter) {
+        return join(column,delimiter,false);
     }
 }

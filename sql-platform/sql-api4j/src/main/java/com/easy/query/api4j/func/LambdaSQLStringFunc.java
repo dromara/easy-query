@@ -109,7 +109,7 @@ public interface LambdaSQLStringFunc<T1> extends SQLFuncAvailable {
     default SQLFunction join(SQLExpression1<SQLColumnFuncSelector<T1>> sqlExpression){
         return getSQLFunc().join(x->{
             sqlExpression.apply(new SQLColumnFuncSelectorImpl<>(x));
-        });
+        },false);
     }
 
 

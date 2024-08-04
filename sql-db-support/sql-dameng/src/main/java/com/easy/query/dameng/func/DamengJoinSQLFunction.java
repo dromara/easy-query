@@ -19,10 +19,12 @@ import java.util.List;
  */
 public class DamengJoinSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
+    private final boolean distinct;
 
-    public DamengJoinSQLFunction(List<ColumnExpression> columnExpressions) {
+    public DamengJoinSQLFunction(List<ColumnExpression> columnExpressions, boolean distinct) {
 
         this.columnExpressions = columnExpressions;
+        this.distinct = distinct;
     }
 
     @Override
@@ -48,6 +50,9 @@ public class DamengJoinSQLFunction extends AbstractExpressionSQLFunction {
         ArrayList<String> orders = new ArrayList<>(i1);
         for (int i = 0; i < i1; i++) {
             orders.add("{" + (i + 2) + "}");
+        }
+        if(distinct){
+            return String.format("LISTAGG(DISTINCT TO_CHAR({1}), {0}) WITHIN GROUP(ORDER BY %s)", String.join(",", orders));
         }
         return String.format("LISTAGG(TO_CHAR({1}), {0}) WITHIN GROUP(ORDER BY %s)", String.join(",", orders));
     }

@@ -52,6 +52,7 @@ import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.nop.MyObject;
 import com.easy.query.test.nop.OtherTable;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1315,36 +1316,81 @@ public class QueryTest17 extends BaseTest {
                 )).toList();
 
 
-        List<ProvinceVO> list2 = easyEntityQuery.queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
-                .select((t1, b2) -> {
-                    ProvinceVOProxy provinceVOProxy = new ProvinceVOProxy();
-                    provinceVOProxy.selectAll(t1);
-                    provinceVOProxy.myName().set(
-                            t1.expression().sqlSegment("RANDOM()", c -> {
-                            }, String.class)
-                    );
-                    return provinceVOProxy;
-                }).toList();
+//        List<ProvinceVO> list2 = easyEntityQuery.queryable(Topic.class)
+//                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+//                .select((t1, b2) -> {
+//                    ProvinceVOProxy provinceVOProxy = new ProvinceVOProxy();
+//                    provinceVOProxy.selectAll(t1);
+//                    provinceVOProxy.myName().set(
+//                            t1.expression().sqlSegment("RANDOM()", c -> {
+//                            }, String.class)
+//                    );
+//                    return provinceVOProxy;
+//                }).toList();
 
     }
 
     @Test
     public void xxx123() {
 
-        List<ProvinceVO> list1 = easyEntityQuery.queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
-                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(
-                        t1.id()
-                )).select(group -> {
 
-                    ProvinceVOProxy provinceVOProxy = new ProvinceVOProxy();
-                    provinceVOProxy.myCode().set(group.key1());
-                    provinceVOProxy.myName().set(
-                            group.groupTable().t2.title().join(",")
-                    );
-                    return provinceVOProxy;
-                }).toList();
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<ProvinceVO> list1 = easyEntityQuery.queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                    .groupBy((t1, b2) -> GroupKeys.TABLE2.of(
+                            t1.id()
+                    )).select(group -> {
+
+                        ProvinceVOProxy provinceVOProxy = new ProvinceVOProxy();
+                        provinceVOProxy.myCode().set(group.key1());
+                        provinceVOProxy.myName().set(
+                                group.groupTable().t2.title().join(",")
+                        );
+                        return provinceVOProxy;
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `my_code`,GROUP_CONCAT(t1.`title` SEPARATOR ?) AS `my_name` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals(",(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<ProvinceVO> list1 = easyEntityQuery.queryable(Topic.class)
+                    .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
+                    .groupBy((t1, b2) -> GroupKeys.TABLE2.of(
+                            t1.id()
+                    )).select(group -> {
+
+                        ProvinceVOProxy provinceVOProxy = new ProvinceVOProxy();
+                        provinceVOProxy.myCode().set(group.key1());
+                        provinceVOProxy.myName().set(
+                                group.groupTable().t2.title().join(",",true)
+                        );
+                        return provinceVOProxy;
+                    }).toList();
+
+            listenerContextManager.clear();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `my_code`,GROUP_CONCAT(DISTINCT t1.`title` SEPARATOR ?) AS `my_name` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals(",(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        }
     }
 
 

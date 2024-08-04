@@ -75,8 +75,8 @@ public class GaussDBFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new GaussDBJoinSQLFunction(getColumnExpressions(sqlExpression));
+    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
+        return new GaussDBJoinSQLFunction(getColumnExpressions(sqlExpression),distinct);
     }
 
     @Override

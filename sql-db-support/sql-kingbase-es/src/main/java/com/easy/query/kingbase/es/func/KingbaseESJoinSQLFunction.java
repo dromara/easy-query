@@ -14,16 +14,21 @@ import java.util.List;
  */
 public class KingbaseESJoinSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
+    private final boolean distinct;
 
-    public KingbaseESJoinSQLFunction(List<ColumnExpression> columnExpressions) {
+    public KingbaseESJoinSQLFunction(List<ColumnExpression> columnExpressions,boolean distinct) {
 
         this.columnExpressions = columnExpressions;
+        this.distinct = distinct;
     }
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         if(columnExpressions.size()!=2){
             throw new IllegalArgumentException("join arguments != 2");
+        }
+        if(distinct){
+            return "STRING_AGG(DISTINCT ({1})::TEXT,{0})";
         }
         return "STRING_AGG(({1})::TEXT,{0})";
     }

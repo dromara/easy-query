@@ -74,7 +74,7 @@ public class ClickHouseFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
         return new ClickHouseJoinSQLFunction(getColumnExpressions(sqlExpression));
     }
 

@@ -73,8 +73,8 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new KingbaseESJoinSQLFunction(getColumnExpressions(sqlExpression));
+    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
+        return new KingbaseESJoinSQLFunction(getColumnExpressions(sqlExpression),distinct);
     }
 
     @Override

@@ -256,12 +256,15 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
     default ColumnFunctionComparableStringChainExpression<String> join(String delimiter) {
+        return join(delimiter,false);
+    }
+    default ColumnFunctionComparableStringChainExpression<String> join(String delimiter,boolean distinct) {
         return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.join(sqlFunction,delimiter);
+                return fx.join(sqlFunction,delimiter,distinct);
             } else {
-                return fx.join(this.getValue(),delimiter);
+                return fx.join(this.getValue(),delimiter,distinct);
             }
         }, String.class);
     }
