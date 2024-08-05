@@ -415,4 +415,390 @@ public void query10() {
         }
         System.out.println(list);
     }
+
+
+    @Test
+    public void testPartitionBy3(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Partition1<BlogEntity, Long>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().rankOver().partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(2L);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"id\",t1.\"create_time\",t1.\"update_time\",t1.\"create_by\",t1.\"update_by\",t1.\"deleted\",t1.\"title\",t1.\"content\",t1.\"url\",t1.\"star\",t1.\"publish_time\",t1.\"score\",t1.\"status\",t1.\"order\",t1.\"is_top\",t1.\"top\",t1.\"__partition__column1\" AS \"__partition__column1\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(RANK() OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Partition1<BlogEntity, Long> blogEntityLongPartition1 : list) {
+
+            BlogEntity entity = blogEntityLongPartition1.getEntity();
+            Assert.assertNotNull(entity);
+            Long partitionColumn1 = blogEntityLongPartition1.getPartitionColumn1();
+            Assert.assertNotNull(partitionColumn1);
+            Assert.assertEquals(1L, (long) partitionColumn1);
+
+        }
+        System.out.println(list);
+    }
+    @Test
+    public void testPartitionBy4(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<Long, String>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().rankOver().partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(2L);
+                }).select(p -> Select.DRAFT.of(
+                        p.partitionColumn1(),
+                        p.partitionTable().id()
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"__partition__column1\" AS \"value1\",t1.\"id\" AS \"value2\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(RANK() OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Draft2<Long, String> longStringDraft2 : list) {
+            String value2 = longStringDraft2.getValue2();
+            Long value1 = longStringDraft2.getValue1();
+        }
+        System.out.println(list);
+    }
+
+
+
+    @Test
+    public void testPartitionBy5(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Partition1<BlogEntity, Long>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().denseRankOver().partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(2L);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"id\",t1.\"create_time\",t1.\"update_time\",t1.\"create_by\",t1.\"update_by\",t1.\"deleted\",t1.\"title\",t1.\"content\",t1.\"url\",t1.\"star\",t1.\"publish_time\",t1.\"score\",t1.\"status\",t1.\"order\",t1.\"is_top\",t1.\"top\",t1.\"__partition__column1\" AS \"__partition__column1\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(DENSE_RANK() OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Partition1<BlogEntity, Long> blogEntityLongPartition1 : list) {
+
+            BlogEntity entity = blogEntityLongPartition1.getEntity();
+            Assert.assertNotNull(entity);
+            Long partitionColumn1 = blogEntityLongPartition1.getPartitionColumn1();
+            Assert.assertNotNull(partitionColumn1);
+            Assert.assertEquals(1L, (long) partitionColumn1);
+
+        }
+        System.out.println(list);
+    }
+    @Test
+    public void testPartitionBy6(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<Long, String>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().denseRankOver().partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(2L);
+                }).select(p -> Select.DRAFT.of(
+                        p.partitionColumn1(),
+                        p.partitionTable().id()
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"__partition__column1\" AS \"value1\",t1.\"id\" AS \"value2\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(DENSE_RANK() OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Draft2<Long, String> longStringDraft2 : list) {
+            String value2 = longStringDraft2.getValue2();
+            Long value1 = longStringDraft2.getValue1();
+        }
+        System.out.println(list);
+    }
+
+
+
+    @Test
+    public void testPartitionBy7(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Partition1<BlogEntity, Integer>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().sumOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(2);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"id\",t1.\"create_time\",t1.\"update_time\",t1.\"create_by\",t1.\"update_by\",t1.\"deleted\",t1.\"title\",t1.\"content\",t1.\"url\",t1.\"star\",t1.\"publish_time\",t1.\"score\",t1.\"status\",t1.\"order\",t1.\"is_top\",t1.\"top\",t1.\"__partition__column1\" AS \"__partition__column1\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(SUM(t.\"star\") OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Partition1<BlogEntity, Integer> blogEntityLongPartition1 : list) {
+
+            BlogEntity entity = blogEntityLongPartition1.getEntity();
+            Assert.assertNotNull(entity);
+            Integer partitionColumn1 = blogEntityLongPartition1.getPartitionColumn1();
+            Assert.assertNotNull(partitionColumn1);
+            Assert.assertEquals(1, (int)partitionColumn1);
+
+        }
+        System.out.println(list);
+    }
+    @Test
+    public void testPartitionBy8(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<Integer, String>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().sumOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(2);
+                }).select(p -> Select.DRAFT.of(
+                        p.partitionColumn1(),
+                        p.partitionTable().id()
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"__partition__column1\" AS \"value1\",t1.\"id\" AS \"value2\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(SUM(t.\"star\") OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Draft2<Integer, String> longStringDraft2 : list) {
+            String value2 = longStringDraft2.getValue2();
+            Integer value1 = longStringDraft2.getValue1();
+        }
+        System.out.println(list);
+    }
+
+
+    @Test
+    public void testPartitionBy9(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Partition1<BlogEntity, BigDecimal>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().avgOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(BigDecimal.valueOf(2));
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"id\",t1.\"create_time\",t1.\"update_time\",t1.\"create_by\",t1.\"update_by\",t1.\"deleted\",t1.\"title\",t1.\"content\",t1.\"url\",t1.\"star\",t1.\"publish_time\",t1.\"score\",t1.\"status\",t1.\"order\",t1.\"is_top\",t1.\"top\",t1.\"__partition__column1\" AS \"__partition__column1\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(AVG(t.\"star\") OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Partition1<BlogEntity, BigDecimal> blogEntityLongPartition1 : list) {
+
+            BlogEntity entity = blogEntityLongPartition1.getEntity();
+            Assert.assertNotNull(entity);
+            BigDecimal partitionColumn1 = blogEntityLongPartition1.getPartitionColumn1();
+            Assert.assertNotNull(partitionColumn1);
+            Assert.assertEquals(0,BigDecimal.ONE.compareTo(partitionColumn1));
+
+        }
+        System.out.println(list);
+    }
+    @Test
+    public void testPartitionBy10(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<BigDecimal, String>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().avgOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(BigDecimal.valueOf(2));
+                }).select(p -> Select.DRAFT.of(
+                        p.partitionColumn1(),
+                        p.partitionTable().id()
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"__partition__column1\" AS \"value1\",t1.\"id\" AS \"value2\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(AVG(t.\"star\") OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Draft2<BigDecimal, String> longStringDraft2 : list) {
+            String value2 = longStringDraft2.getValue2();
+            BigDecimal value1 = longStringDraft2.getValue1();
+        }
+        System.out.println(list);
+    }
+
+
+
+    @Test
+    public void testPartitionBy11(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Partition1<BlogEntity, Integer>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().maxOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(2);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"id\",t1.\"create_time\",t1.\"update_time\",t1.\"create_by\",t1.\"update_by\",t1.\"deleted\",t1.\"title\",t1.\"content\",t1.\"url\",t1.\"star\",t1.\"publish_time\",t1.\"score\",t1.\"status\",t1.\"order\",t1.\"is_top\",t1.\"top\",t1.\"__partition__column1\" AS \"__partition__column1\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(MAX(t.\"star\") OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Partition1<BlogEntity, Integer> blogEntityLongPartition1 : list) {
+
+            BlogEntity entity = blogEntityLongPartition1.getEntity();
+            Assert.assertNotNull(entity);
+            Integer partitionColumn1 = blogEntityLongPartition1.getPartitionColumn1();
+            Assert.assertNotNull(partitionColumn1);
+            Assert.assertEquals(1,(int)partitionColumn1);
+
+        }
+        System.out.println(list);
+    }
+    @Test
+    public void testPartitionBy12(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<Integer, String>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().maxOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(2);
+                }).select(p -> Select.DRAFT.of(
+                        p.partitionColumn1(),
+                        p.partitionTable().id()
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"__partition__column1\" AS \"value1\",t1.\"id\" AS \"value2\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(MAX(t.\"star\") OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Draft2<Integer, String> longStringDraft2 : list) {
+            String value2 = longStringDraft2.getValue2();
+            Integer value1 = longStringDraft2.getValue1();
+        }
+        System.out.println(list);
+    }
+
+    @Test
+    public void testPartitionBy13(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Partition1<BlogEntity, Integer>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().minOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(2);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"id\",t1.\"create_time\",t1.\"update_time\",t1.\"create_by\",t1.\"update_by\",t1.\"deleted\",t1.\"title\",t1.\"content\",t1.\"url\",t1.\"star\",t1.\"publish_time\",t1.\"score\",t1.\"status\",t1.\"order\",t1.\"is_top\",t1.\"top\",t1.\"__partition__column1\" AS \"__partition__column1\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(MIN(t.\"star\") OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Partition1<BlogEntity, Integer> blogEntityLongPartition1 : list) {
+
+            BlogEntity entity = blogEntityLongPartition1.getEntity();
+            Assert.assertNotNull(entity);
+            Integer partitionColumn1 = blogEntityLongPartition1.getPartitionColumn1();
+            Assert.assertNotNull(partitionColumn1);
+            Assert.assertEquals(1,(int)partitionColumn1);
+
+        }
+        System.out.println(list);
+    }
+    @Test
+    public void testPartitionBy14(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<Integer, String>> list = entityQuery.queryable(BlogEntity.class)
+                .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
+                .select(b -> Select.PARTITION.of(
+                        b,
+                        b.expression().minOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
+                )).where(partition -> {
+                    partition.partitionTable().star().gt(1);
+                    partition.partitionColumn1().lt(2);
+                }).select(p -> Select.DRAFT.of(
+                        p.partitionColumn1(),
+                        p.partitionTable().id()
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"__partition__column1\" AS \"value1\",t1.\"id\" AS \"value2\" FROM (SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\",(MIN(t.\"star\") OVER (PARTITION BY t.\"title\" ORDER BY t.\"create_time\" ASC)) AS \"__partition__column1\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" > ?) t1 WHERE t1.\"star\" > ? AND t1.\"__partition__column1\" < ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T01:01(LocalDateTime),1(Integer),2(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (Draft2<Integer, String> longStringDraft2 : list) {
+            String value2 = longStringDraft2.getValue2();
+            Integer value1 = longStringDraft2.getValue1();
+        }
+        System.out.println(list);
+    }
 }

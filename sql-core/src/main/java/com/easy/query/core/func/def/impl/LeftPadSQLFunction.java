@@ -1,5 +1,6 @@
 package com.easy.query.core.func.def.impl;
 
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
@@ -23,7 +24,7 @@ public class LeftPadSQLFunction extends AbstractExpressionSQLFunction {
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         if(columnExpressions.size()<2){
-            throw new IllegalArgumentException("pad left arguments < 2");
+            throw new EasyQueryInvalidOperationException("pad left arguments < 2");
         }
         if(columnExpressions.size()==2){
             return "LPAD({0}, {1})";

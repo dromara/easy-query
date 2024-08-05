@@ -15,10 +15,10 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class RankSQLFunction extends AbstractExpressionSQLFunction implements PartitionBySQLFunction {
+public class DenseRankOverSQLFunction extends AbstractExpressionSQLFunction implements PartitionBySQLFunction {
     private final List<ColumnExpression> columnExpressions;
 
-    public RankSQLFunction(List<ColumnExpression> columnExpressions) {
+    public DenseRankOverSQLFunction(List<ColumnExpression> columnExpressions) {
         this.columnExpressions = columnExpressions;
     }
 
@@ -26,7 +26,7 @@ public class RankSQLFunction extends AbstractExpressionSQLFunction implements Pa
     public String sqlSegment(TableAvailable defaultTable) {
         StringBuilder sql = new StringBuilder();
 
-        sql.append("(RANK() OVER (PARTITION BY {0}");
+        sql.append("(DENSE_RANK() OVER (PARTITION BY {0}");
         if (columnExpressions.size() > 1) {
             sql.append(" ORDER BY ");
             for (int i = 1; i < columnExpressions.size(); i++) {

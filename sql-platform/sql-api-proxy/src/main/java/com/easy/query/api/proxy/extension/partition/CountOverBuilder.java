@@ -5,28 +5,27 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparablePartitionByChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparablePartitionByChainExpressionImpl;
 
-
 /**
- * create time 2024/8/4 14:35
- * RowNumberBuilderExpression
+ * create time 2024/8/5 14:55
+ * 文件说明
  *
  * @author xuejiaming
  */
-public class RowNumberBuilder {
+public class CountOverBuilder {
+    private final PropTypeColumn<?> overColumn;
     private final EntitySQLContext entitySQLContext;
 
-    public RowNumberBuilder(EntitySQLContext entitySQLContext) {
+    public CountOverBuilder(PropTypeColumn<?> overColumn, EntitySQLContext entitySQLContext) {
+        this.overColumn = overColumn;
         this.entitySQLContext = entitySQLContext;
     }
 
     public <TProperty> ColumnFunctionComparablePartitionByChainExpression<Long> partitionBy(PropTypeColumn<TProperty> column){
-        return partitionBy(column, Long.class);
-    }
-    public <TNumber,TProperty> ColumnFunctionComparablePartitionByChainExpression<TNumber> partitionBy(PropTypeColumn<TProperty> column,Class<TNumber> clazz){
-        return new ColumnFunctionComparablePartitionByChainExpressionImpl<>(entitySQLContext, null, null, f->{
-            return f.rowNumberOver(x->{
+        return new ColumnFunctionComparablePartitionByChainExpressionImpl<>(entitySQLContext, column.getTable(), null, f->{
+            return f.countOver(x->{
+                PropTypeColumn.columnFuncSelector(x,this.overColumn);
                 PropTypeColumn.columnFuncSelector(x,column);
             });
-        } , clazz);
+        } , Long.class);
     }
 }

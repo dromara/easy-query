@@ -2,20 +2,20 @@ package com.easy.query.core.proxy.core;
 
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenThenEntityBuilder;
-import com.easy.query.api.proxy.extension.partition.DenseRankBuilder;
-import com.easy.query.api.proxy.extension.partition.RankBuilder;
-import com.easy.query.api.proxy.extension.partition.RowNumberBuilder;
+import com.easy.query.api.proxy.extension.partition.AvgOverBuilder;
+import com.easy.query.api.proxy.extension.partition.CountOverBuilder;
+import com.easy.query.api.proxy.extension.partition.DenseRankOverBuilder;
+import com.easy.query.api.proxy.extension.partition.MaxOverBuilder;
+import com.easy.query.api.proxy.extension.partition.MinOverBuilder;
+import com.easy.query.api.proxy.extension.partition.RankOverBuilder;
+import com.easy.query.api.proxy.extension.partition.RowNumberOverBuilder;
+import com.easy.query.api.proxy.extension.partition.SumOverBuilder;
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
-import com.easy.query.core.expression.parser.core.SQLTableOwner;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
-import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
@@ -33,14 +33,11 @@ import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLNativeSegmentExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -344,24 +341,43 @@ public class Expression {
     }
 
 
-    public RowNumberBuilder rowNumberOver(){
-        return new RowNumberBuilder(entitySQLContext);
+    /**
+     * 名次不会相同
+     * @return
+     */
+    public RowNumberOverBuilder rowNumberOver(){
+        return new RowNumberOverBuilder(entitySQLContext);
     }
 
     /**
      * 相同排名占用一位名次
      * @return
      */
-    public RankBuilder rankOver(){
-        return new RankBuilder(entitySQLContext);
+    public RankOverBuilder rankOver(){
+        return new RankOverBuilder(entitySQLContext);
     }
 
     /**
      * 相同排名不占用名次
      * @return
      */
-    public DenseRankBuilder denseRankOver(){
-        return new DenseRankBuilder(entitySQLContext);
+    public DenseRankOverBuilder denseRankOver(){
+        return new DenseRankOverBuilder(entitySQLContext);
     }
 
+    public <TProperty> CountOverBuilder countOver(PropTypeColumn<TProperty> countColumn){
+        return new CountOverBuilder(countColumn,entitySQLContext);
+    }
+    public <TProperty> SumOverBuilder<TProperty> sumOver(PropTypeColumn<TProperty> countColumn){
+        return new SumOverBuilder<>(countColumn,entitySQLContext);
+    }
+    public <TProperty> AvgOverBuilder avgOver(PropTypeColumn<TProperty> countColumn){
+        return new AvgOverBuilder(countColumn,entitySQLContext);
+    }
+    public <TProperty> MaxOverBuilder<TProperty> maxOver(PropTypeColumn<TProperty> countColumn){
+        return new MaxOverBuilder<>(countColumn,entitySQLContext);
+    }
+    public <TProperty> MinOverBuilder<TProperty> minOver(PropTypeColumn<TProperty> countColumn){
+        return new MinOverBuilder<>(countColumn,entitySQLContext);
+    }
 }

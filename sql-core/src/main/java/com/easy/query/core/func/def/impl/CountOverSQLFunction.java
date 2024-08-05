@@ -1,25 +1,13 @@
 package com.easy.query.core.func.def.impl;
 
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.builder.OrderSelector;
-import com.easy.query.core.expression.builder.impl.OrderSelectorImpl;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
-import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
-import com.easy.query.core.expression.segment.impl.DefaultSQLSegment;
-import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
-import com.easy.query.core.func.column.impl.ColumSQLExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFunctionExpressionImpl;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 import com.easy.query.core.func.def.PartitionBySQLFunction;
-import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasySQLExpressionUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,22 +16,25 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class RowNumberSQLFunction extends AbstractExpressionSQLFunction implements PartitionBySQLFunction {
+public class CountOverSQLFunction extends AbstractExpressionSQLFunction implements PartitionBySQLFunction {
     private final List<ColumnExpression> columnExpressions;
 
-    public RowNumberSQLFunction(List<ColumnExpression> columnExpressions) {
+    public CountOverSQLFunction(List<ColumnExpression> columnExpressions) {
         this.columnExpressions = columnExpressions;
     }
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
+        if (columnExpressions.size() < 2) {
+            throw new EasyQueryInvalidOperationException("count over columnExpressions < 2");
+        }
         StringBuilder sql = new StringBuilder();
 
-        sql.append("(ROW_NUMBER() OVER (PARTITION BY {0}");
+        sql.append("(COUNT({0}) OVER (PARTITION BY {1}");
         if (columnExpressions.size() > 1) {
             sql.append(" ORDER BY ");
-            for (int i = 1; i < columnExpressions.size(); i++) {
-                if(i>1){
+            for (int i = 2; i < columnExpressions.size(); i++) {
+                if (i > 2) {
                     sql.append(", ");
                 }
                 sql.append("{").append(i).append("}");

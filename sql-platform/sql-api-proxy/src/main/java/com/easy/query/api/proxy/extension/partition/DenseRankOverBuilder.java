@@ -7,26 +7,21 @@ import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctio
 
 /**
  * create time 2024/8/4 14:35
- * RowNumberBuilderExpression
  *
  * @author xuejiaming
  */
-public class DenseRankBuilder {
+public class DenseRankOverBuilder {
     private final EntitySQLContext entitySQLContext;
 
-    public DenseRankBuilder(EntitySQLContext entitySQLContext) {
+    public DenseRankOverBuilder(EntitySQLContext entitySQLContext) {
         this.entitySQLContext = entitySQLContext;
     }
 
     public <TProperty> ColumnFunctionComparablePartitionByChainExpression<Long> partitionBy(PropTypeColumn<TProperty> column) {
-        return partitionBy(column, Long.class);
-    }
-
-    public <TNumber, TProperty> ColumnFunctionComparablePartitionByChainExpression<TNumber> partitionBy(PropTypeColumn<TProperty> column, Class<TNumber> clazz) {
-        return new ColumnFunctionComparablePartitionByChainExpressionImpl<>(entitySQLContext, null, null, f -> {
+        return new ColumnFunctionComparablePartitionByChainExpressionImpl<>(entitySQLContext, column.getTable(), null, f -> {
             return f.denseRankNumberOver(x -> {
                 PropTypeColumn.columnFuncSelector(x, column);
             });
-        }, clazz);
+        }, Long.class);
     }
 }

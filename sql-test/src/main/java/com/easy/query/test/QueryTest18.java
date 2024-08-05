@@ -771,8 +771,8 @@ public class QueryTest18 extends BaseTest {
             List<Partition1<Topic, Integer>> list1 = easyEntityQuery.queryable(Topic.class)
                     .select(t -> Select.PARTITION.of(
                             t,
-                            t.expression().rowNumberOver().partitionBy(t.id(), Integer.class).orderBy(t.id())
-                                    .orderByDescending(t.createTime())
+                            t.expression().rowNumberOver().partitionBy(t.id()).orderBy(t.id())
+                                    .orderByDescending(t.createTime()).asAnyType(Integer.class)
                     ))
                     .where(p -> {
                         p.partitionTable().stars().gt(1);

@@ -17,13 +17,15 @@ import com.easy.query.core.func.def.enums.NumberCalcEnum;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.func.def.impl.AbsSQLFunction;
+import com.easy.query.core.func.def.impl.AvgOverSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
 import com.easy.query.core.func.def.impl.BankSQLFunction;
 import com.easy.query.core.func.def.impl.CastSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.ConstSQLFunction;
+import com.easy.query.core.func.def.impl.CountOverSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
-import com.easy.query.core.func.def.impl.DenseRankSQLFunction;
+import com.easy.query.core.func.def.impl.DenseRankOverSQLFunction;
 import com.easy.query.core.func.def.impl.DateTime2PlusSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeDurationSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeFormatSQLFunction;
@@ -39,7 +41,9 @@ import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
 import com.easy.query.core.func.def.impl.LikeSQLFunction;
 import com.easy.query.core.func.def.impl.MathSQLFunction;
+import com.easy.query.core.func.def.impl.MaxOverSQLFunction;
 import com.easy.query.core.func.def.impl.MaxSQLFunction;
+import com.easy.query.core.func.def.impl.MinOverSQLFunction;
 import com.easy.query.core.func.def.impl.MinSQLFunction;
 import com.easy.query.core.func.def.impl.NotBankSQLFunction;
 import com.easy.query.core.func.def.impl.NotEmptySQLFunction;
@@ -48,15 +52,16 @@ import com.easy.query.core.func.def.impl.NowSQLFunction;
 import com.easy.query.core.func.def.impl.NullDefaultSQLFunction;
 import com.easy.query.core.func.def.impl.NumberCalcSQLFunction;
 import com.easy.query.core.func.def.impl.OrderByNullsModeSQLFunction;
-import com.easy.query.core.func.def.impl.RankSQLFunction;
+import com.easy.query.core.func.def.impl.RankOverSQLFunction;
 import com.easy.query.core.func.def.impl.ReplaceSQLFunction;
 import com.easy.query.core.func.def.impl.RightPadSQLFunction;
 import com.easy.query.core.func.def.impl.RoundSQLFunction;
-import com.easy.query.core.func.def.impl.RowNumberSQLFunction;
+import com.easy.query.core.func.def.impl.RowNumberOverSQLFunction;
 import com.easy.query.core.func.def.impl.StringCompareToSQLFunction;
 import com.easy.query.core.func.def.impl.SubQueryExistsSQLFunction;
 import com.easy.query.core.func.def.impl.SubQuerySQLFunction;
 import com.easy.query.core.func.def.impl.SubStringSQLFunction;
+import com.easy.query.core.func.def.impl.SumOverSQLFunction;
 import com.easy.query.core.func.def.impl.SumSQLFunction;
 import com.easy.query.core.func.def.impl.ToLowerSQLFunction;
 import com.easy.query.core.func.def.impl.ToUpperSQLFunction;
@@ -330,16 +335,41 @@ public class SQLFuncImpl implements SQLFunc {
 
     @Override
     public PartitionBySQLFunction rowNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new RowNumberSQLFunction(getColumnExpressions(sqlExpression));
+        return new RowNumberOverSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
     public PartitionBySQLFunction rankNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new RankSQLFunction(getColumnExpressions(sqlExpression));
+        return new RankOverSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
     public PartitionBySQLFunction denseRankNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
-        return new DenseRankSQLFunction(getColumnExpressions(sqlExpression));
+        return new DenseRankOverSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public PartitionBySQLFunction countOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new CountOverSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public PartitionBySQLFunction sumOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SumOverSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public PartitionBySQLFunction avgOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new AvgOverSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public PartitionBySQLFunction maxOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MaxOverSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public PartitionBySQLFunction minOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MinOverSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

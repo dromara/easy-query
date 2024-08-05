@@ -12,7 +12,7 @@ public interface PropTypeSetColumn<TProperty> extends SQLSelectAsExpression, Pro
     <TR> PropTypeSetColumn<? extends TR> asAnyType(Class<TR> clazz);
 
     /**
-     * 使用asType
+     * 使用asAnyType
      *
      * @param clazz
      * @param <TR>

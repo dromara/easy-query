@@ -1,5 +1,6 @@
 package com.easy.query.core.func.def.impl;
 
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -15,22 +16,25 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class DenseRankSQLFunction extends AbstractExpressionSQLFunction implements PartitionBySQLFunction {
+public class AvgOverSQLFunction extends AbstractExpressionSQLFunction implements PartitionBySQLFunction {
     private final List<ColumnExpression> columnExpressions;
 
-    public DenseRankSQLFunction(List<ColumnExpression> columnExpressions) {
+    public AvgOverSQLFunction(List<ColumnExpression> columnExpressions) {
         this.columnExpressions = columnExpressions;
     }
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
+        if (columnExpressions.size() < 2) {
+            throw new EasyQueryInvalidOperationException("sum over columnExpressions < 2");
+        }
         StringBuilder sql = new StringBuilder();
 
-        sql.append("(DENSE_RANK() OVER (PARTITION BY {0}");
+        sql.append("(AVG({0}) OVER (PARTITION BY {1}");
         if (columnExpressions.size() > 1) {
             sql.append(" ORDER BY ");
-            for (int i = 1; i < columnExpressions.size(); i++) {
-                if(i>1){
+            for (int i = 2; i < columnExpressions.size(); i++) {
+                if (i > 2) {
                     sql.append(", ");
                 }
                 sql.append("{").append(i).append("}");

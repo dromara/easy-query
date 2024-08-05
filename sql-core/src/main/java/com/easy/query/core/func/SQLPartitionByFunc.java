@@ -14,4 +14,9 @@ public interface SQLPartitionByFunc {
     PartitionBySQLFunction rowNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression);
     PartitionBySQLFunction rankNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression);
     PartitionBySQLFunction denseRankNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    PartitionBySQLFunction countOver(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    PartitionBySQLFunction sumOver(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    PartitionBySQLFunction avgOver(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    PartitionBySQLFunction maxOver(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    PartitionBySQLFunction minOver(SQLExpression1<ColumnFuncSelector> sqlExpression);
 }
