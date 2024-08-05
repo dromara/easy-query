@@ -12,6 +12,7 @@ import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.exception.AssertExceptionFactory;
@@ -191,6 +192,11 @@ public class EmptyQueryRuntimeContext implements QueryRuntimeContext{
 
     @Override
     public SQLParameterPrintFormat getSQLParameterPrintFormat() {
+        return null;
+    }
+
+    @Override
+    public Column2MapKeyConversion getColumn2MapKeyConversion() {
         return null;
     }
 }

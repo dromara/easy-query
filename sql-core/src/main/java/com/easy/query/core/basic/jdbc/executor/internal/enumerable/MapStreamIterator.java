@@ -8,6 +8,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResul
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypes;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -47,6 +48,7 @@ public class MapStreamIterator<T> extends AbstractMapToStreamIterator<T> {
             throw new SQLException("cant create map:" + EasyClassUtil.getSimpleName(clazz));
         }
         JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getJdbcTypeHandlerManager();
+        Column2MapKeyConversion column2MapKeyConversion = context.getRuntimeContext().getColumn2MapKeyConversion();
 
         for (int i = 0; i < resultBasicMetadatas.length; i++) {
             if(mapCount==0){
@@ -59,7 +61,7 @@ public class MapStreamIterator<T> extends AbstractMapToStreamIterator<T> {
             }
             ResultBasicMetadata resultBasicMetadata = resultBasicMetadatas[i];
             Object value = resultBasicMetadata.getJdbcTypeHandler().getValue(resultBasicMetadata.getDataReader(),streamResultSet);
-            Object o = map.put(resultBasicMetadata.getColumnName(), value);
+            Object o = map.put(column2MapKeyConversion.convertToMapKey(resultBasicMetadata.getColumnName()), value);
             if (o != null) {
                 throw new IllegalStateException("Duplicate key found: " + resultBasicMetadata.getColumnName());
             }

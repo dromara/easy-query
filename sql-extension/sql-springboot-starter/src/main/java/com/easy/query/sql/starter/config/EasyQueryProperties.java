@@ -4,6 +4,7 @@ package com.easy.query.sql.starter.config;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.sql.starter.option.DatabaseEnum;
+import com.easy.query.sql.starter.option.MapKeyConversionEnum;
 import com.easy.query.sql.starter.option.NameConversionEnum;
 import com.easy.query.sql.starter.option.SQLParameterPrintEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,6 +25,7 @@ public class EasyQueryProperties {
     private DatabaseEnum database = DatabaseEnum.MYSQL;
     private SQLParameterPrintEnum sqlParameterPrint = SQLParameterPrintEnum.DEFAULT;
     private NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
+    private MapKeyConversionEnum mapKeyConversion = MapKeyConversionEnum.DEFAULT;
     private SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
     private SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
     private ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
@@ -413,6 +415,14 @@ public class EasyQueryProperties {
 
     public void setResultSizeLimit(long resultSizeLimit) {
         this.resultSizeLimit = resultSizeLimit;
+    }
+
+    public MapKeyConversionEnum getMapKeyConversion() {
+        return mapKeyConversion;
+    }
+
+    public void setMapKeyConversion(MapKeyConversionEnum mapKeyConversion) {
+        this.mapKeyConversion = mapKeyConversion;
     }
 
     public EasyQueryProperties() {

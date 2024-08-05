@@ -3,6 +3,7 @@ package com.easy.query.solon.integration;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.solon.integration.option.DatabaseEnum;
+import com.easy.query.solon.integration.option.MapKeyConversionEnum;
 import com.easy.query.solon.integration.option.NameConversionEnum;
 import com.easy.query.solon.integration.option.SQLParameterPrintEnum;
 import org.noear.solon.Utils;
@@ -22,6 +23,7 @@ public class SolonEasyQueryProperties {
     private final static Boolean deleteThrow = true;
     private final static DatabaseEnum database = DatabaseEnum.MYSQL;
     private final static NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
+    private final static MapKeyConversionEnum mapKeyConversion = MapKeyConversionEnum.DEFAULT;
     private final static SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
     private final static SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
     private final static ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
@@ -186,6 +188,19 @@ public class SolonEasyQueryProperties {
                 case "lower_camel_case":return NameConversionEnum.LOWER_CAMEL_CASE;
                 case "upper_camel_case":return NameConversionEnum.UPPER_CAMEL_CASE;
                 case "upper_underlined":return NameConversionEnum.UPPER_UNDERLINED;
+            }
+            return null;
+        });
+    }
+
+    public MapKeyConversionEnum getMapKeyConversionEnum() {
+        return getOrDef("map-key-conversion",mapKeyConversion,v->{
+            switch (v){
+                case "default":return MapKeyConversionEnum.DEFAULT;
+                case "lower":return MapKeyConversionEnum.LOWER;
+                case "upper":return MapKeyConversionEnum.UPPER;
+                case "lower_underlined":return MapKeyConversionEnum.LOWER_UNDERLINED;
+                case "upper_underlined":return MapKeyConversionEnum.UPPER_UNDERLINED;
             }
             return null;
         });

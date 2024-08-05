@@ -46,6 +46,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -787,6 +788,13 @@ public class QueryTest18 extends BaseTest {
         Assert.assertEquals("1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
+//    @Test
+//    public void testUppper1(){
+//        List<Map<String, Object>> maps = easyEntityQuery.queryable(Topic.class)
+//                .toMaps();
+//        System.out.println(maps);
+//    }
 
 //    private EasyQueryClient buildClient(DataSource mydatasource,int type){
 //        EasyQueryBuilderConfiguration easyQueryBuilderConfiguration = EasyQueryBootstrapper.defaultBuilderConfiguration()

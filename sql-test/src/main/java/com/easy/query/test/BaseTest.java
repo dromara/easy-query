@@ -14,6 +14,8 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.ShardingDataSource;
+import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.UpperColumn2MapKeyConversion;
 import com.easy.query.core.configuration.dialect.DefaultSQLKeyword;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -164,6 +166,7 @@ public abstract class BaseTest {
                     op.setStartTimeJob(true);
                     op.setReverseOffsetThreshold(10);
                 })
+//                .replaceService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class)
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
 //                .replaceService(Dialect.class, DefaultDialect.class)
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)

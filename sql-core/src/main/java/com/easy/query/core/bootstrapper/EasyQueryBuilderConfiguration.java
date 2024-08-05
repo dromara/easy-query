@@ -31,6 +31,8 @@ import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.DefaultColumn2MapKeyConversion;
 import com.easy.query.core.configuration.dialect.DefaultSQLKeyword;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
@@ -126,7 +128,7 @@ public class EasyQueryBuilderConfiguration {
     }
 
     private void defaultConfiguration() {
-        replaceService(EasyQueryDataSource.class, DefaultEasyQueryDataSource.class)
+                replaceService(EasyQueryDataSource.class, DefaultEasyQueryDataSource.class)
                 .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
                 .replaceService(NameConversion.class, UnderlinedNameConversion.class)
                 .replaceService(QueryConfiguration.class)
@@ -176,6 +178,7 @@ public class EasyQueryBuilderConfiguration {
                 //sql参数打印格式化
                 .replaceService(SQLParameterPrintFormat.class, DefaultSQLParameterPrintFormat.class)
                 .replaceService(SQLFunc.class, SQLFuncImpl.class)
+                .replaceService(Column2MapKeyConversion.class, DefaultColumn2MapKeyConversion.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }
@@ -184,6 +187,12 @@ public class EasyQueryBuilderConfiguration {
         this.dataSource = dataSource;
         return this;
     }
+
+    public EasyQueryBuilderConfiguration customConfigure(Consumer<ServiceCollection> configurer) {
+        configurer.accept(serviceCollection);
+        return this;
+    }
+
 
     /**
      * 添加服务如果已经存在则替换

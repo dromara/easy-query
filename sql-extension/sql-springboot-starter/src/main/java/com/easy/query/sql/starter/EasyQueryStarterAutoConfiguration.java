@@ -27,6 +27,12 @@ import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultStarterConfigurer;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.bootstrapper.StarterConfigurer;
+import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.DefaultColumn2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.LowerColumn2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.LowerUnderlinedColumn2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.UpperColumn2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.UpperUnderlinedColumn2MapKeyConversion;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
@@ -197,41 +203,6 @@ public class EasyQueryStarterAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "underlined", matchIfMissing = true)
-    @ConditionalOnMissingBean
-    public NameConversion underlinedNameConversion() {
-        return new UnderlinedNameConversion();
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "upper_underlined")
-    @ConditionalOnMissingBean
-    public NameConversion upperUnderlinedNameConversion() {
-        return new UpperUnderlinedNameConversion();
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "lower_camel_case")
-    @ConditionalOnMissingBean
-    public NameConversion lowerCamelCaseNameConversion() {
-        return new LowerCamelCaseNameConversion();
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "upper_camel_case")
-    @ConditionalOnMissingBean
-    public NameConversion upperCamelCaseNameConversion() {
-        return new UpperCamelCaseNameConversion();
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "easy-query.name-conversion", havingValue = "default")
-    @ConditionalOnMissingBean
-    public NameConversion defaultNameConversion() {
-        return new DefaultNameConversion();
-    }
-
-    @Bean
     @ConditionalOnMissingBean
     public StarterConfigurer starterConfigurer() {
         return new DefaultStarterConfigurer();
@@ -245,11 +216,47 @@ public class EasyQueryStarterAutoConfiguration {
     }
     @Bean
     @ConditionalOnMissingBean
-    public EasyQueryClient easyQueryClient(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer, NameConversion nameConversion) {
+    public EasyQueryClient easyQueryClient(DatabaseConfiguration databaseConfiguration, StarterConfigurer starterConfigurer) {
         EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(DataSourceUnitFactory.class, SpringDataSourceUnitFactory.class)
-                .replaceService(NameConversion.class, nameConversion)
+                .customConfigure(s->{
+                    switch (easyQueryProperties.getNameConversion()){
+                        case UNDERLINED:
+                            s.addService(NameConversion.class, UnderlinedNameConversion.class);
+                            break;
+                        case UPPER_UNDERLINED:
+                            s.addService(NameConversion.class, UpperUnderlinedNameConversion.class);
+                            break;
+                        case LOWER_CAMEL_CASE:
+                            s.addService(NameConversion.class, LowerCamelCaseNameConversion.class);
+                            break;
+                        case UPPER_CAMEL_CASE:
+                            s.addService(NameConversion.class, UpperCamelCaseNameConversion.class);
+                            break;
+                        case DEFAULT:
+                            s.addService(NameConversion.class, DefaultNameConversion.class);
+                            break;
+                    }
+
+                    switch (easyQueryProperties.getMapKeyConversion()){
+                        case LOWER:
+                            s.addService(Column2MapKeyConversion.class, LowerColumn2MapKeyConversion.class);
+                            break;
+                        case UPPER:
+                            s.addService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class);
+                            break;
+                        case LOWER_UNDERLINED:
+                            s.addService(Column2MapKeyConversion.class, LowerUnderlinedColumn2MapKeyConversion.class);
+                            break;
+                        case UPPER_UNDERLINED:
+                            s.addService(Column2MapKeyConversion.class, UpperUnderlinedColumn2MapKeyConversion.class);
+                            break;
+                        case DEFAULT:
+                            s.addService(Column2MapKeyConversion.class, DefaultColumn2MapKeyConversion.class);
+                            break;
+                    }
+                })
                 .replaceService(ConnectionManager.class, SpringConnectionManager.class)
                 .replaceService(SQLParameterPrintFormat.class, getSQLParameterPrintFormatClass())
                 .optionConfigure(builder -> {

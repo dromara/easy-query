@@ -18,6 +18,12 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
 import com.easy.query.core.common.EasyQueryTrackInvoker;
 import com.easy.query.core.common.EmptyInvokeTryFinally;
+import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.DefaultColumn2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.LowerColumn2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.LowerUnderlinedColumn2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.UpperColumn2MapKeyConversion;
+import com.easy.query.core.configuration.column2mapkey.UpperUnderlinedColumn2MapKeyConversion;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
@@ -41,6 +47,7 @@ import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.solon.integration.conn.SolonConnectionManager;
 import com.easy.query.solon.integration.conn.SolonDataSourceUnitFactory;
 import com.easy.query.solon.integration.option.DatabaseEnum;
+import com.easy.query.solon.integration.option.MapKeyConversionEnum;
 import com.easy.query.solon.integration.option.NameConversionEnum;
 import com.easy.query.solon.integration.option.SQLParameterPrintEnum;
 import com.easy.query.sqllite.config.SQLLiteDatabaseConfiguration;
@@ -155,6 +162,7 @@ public class DbManager {
             easyQueryBuilderConfiguration.useDatabaseConfigure(databaseConfigure);
         }
         useNameConversion(solonEasyQueryProperties, easyQueryBuilderConfiguration);
+        useMapKeyConversion(solonEasyQueryProperties, easyQueryBuilderConfiguration);
         SQLParameterPrintEnum sqlParameterPrint = solonEasyQueryProperties.getSQLParameterPrint();
         switch (sqlParameterPrint) {
             case MYBATIS:
@@ -198,6 +206,26 @@ public class DbManager {
                 break;
             case UPPER_UNDERLINED:
                 easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UpperUnderlinedNameConversion());
+                break;
+        }
+    }
+    private static void useMapKeyConversion(SolonEasyQueryProperties solonEasyQueryProperties, EasyQueryBuilderConfiguration easyQueryBuilderConfiguration) {
+        MapKeyConversionEnum mapKeyConversionEnum = solonEasyQueryProperties.getMapKeyConversionEnum();
+        switch (mapKeyConversionEnum) {
+            case LOWER:
+                easyQueryBuilderConfiguration.replaceService(Column2MapKeyConversion.class, LowerColumn2MapKeyConversion.class);
+                break;
+            case UPPER:
+                easyQueryBuilderConfiguration.replaceService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class);
+                break;
+            case LOWER_UNDERLINED:
+                easyQueryBuilderConfiguration.replaceService(Column2MapKeyConversion.class, LowerUnderlinedColumn2MapKeyConversion.class);
+                break;
+            case UPPER_UNDERLINED:
+                easyQueryBuilderConfiguration.replaceService(Column2MapKeyConversion.class, UpperUnderlinedColumn2MapKeyConversion.class);
+                break;
+            case DEFAULT:
+                easyQueryBuilderConfiguration.replaceService(Column2MapKeyConversion.class, DefaultColumn2MapKeyConversion.class);
                 break;
         }
     }

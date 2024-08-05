@@ -43,13 +43,14 @@ public class EasyStringUtil {
         char[] chars = s.toCharArray();
         StringBuilder temp = new StringBuilder();
         for (int i = 0; i < chars.length; i++) {
-            if (i!=0&&Character.isUpperCase(chars[i])) {
+            if (i != 0 && Character.isUpperCase(chars[i])) {
                 temp.append("_");
             }
             temp.append(Character.toLowerCase(chars[i]));
         }
         return temp.toString();
     }
+
     /**
      * 转下划线字符, eg AaaBbb => AAA_BBB
      */
@@ -57,7 +58,7 @@ public class EasyStringUtil {
         char[] chars = s.toCharArray();
         StringBuilder temp = new StringBuilder();
         for (int i = 0; i < chars.length; i++) {
-            if (i!=0&&Character.isUpperCase(chars[i])) {
+            if (i != 0 && Character.isUpperCase(chars[i])) {
                 temp.append("_");
             }
             temp.append(Character.toUpperCase(chars[i]));
@@ -80,6 +81,60 @@ public class EasyStringUtil {
             }
 
             sb.append(toUpperCaseFirstOne(splitArr[i].toLowerCase()));
+        }
+
+        return sb.toString();
+    }
+
+    public static String fromAllUpperNoUnderlined(String str) {
+
+        String[] splitArr = str.split("_");
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < splitArr.length; i++) {
+            sb.append(splitArr[i].toUpperCase());
+        }
+
+        return sb.toString();
+    }
+
+    public static String fromAllLowerNoUnderlined(String str) {
+
+        String[] splitArr = str.split("_");
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < splitArr.length; i++) {
+            sb.append(splitArr[i].toLowerCase());
+        }
+
+        return sb.toString();
+    }
+
+    public static String fromAllLowerWithUnderlined(String str) {
+
+        String[] splitArr = str.split("_");
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < splitArr.length; i++) {
+            if (i != 0) {
+                sb.append("_");
+            }
+            sb.append(splitArr[i].toLowerCase());
+        }
+
+        return sb.toString();
+    }
+
+    public static String fromAllUpperWithUnderlined(String str) {
+
+        String[] splitArr = str.split("_");
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < splitArr.length; i++) {
+            if (i != 0) {
+                sb.append("_");
+            }
+            sb.append(splitArr[i].toUpperCase());
         }
 
         return sb.toString();
@@ -119,8 +174,8 @@ public class EasyStringUtil {
 //        return str.substring(0, pos);
 //    }
 
-    public static String defaultIfBank(String value,String def){
-        if(EasyStringUtil.isBlank(value)){
+    public static String defaultIfBank(String value, String def) {
+        if (EasyStringUtil.isBlank(value)) {
             return def;
         }
         return value;
@@ -170,32 +225,37 @@ public class EasyStringUtil {
         }
         return true;
     }
+
     public static boolean endsWith(String str, String suffix) {
         if (str == null || suffix == null || !str.endsWith(suffix)) {
             return false;
         }
         return true;
     }
+
     public static String startWithRemove(String str, String prefix) {
-        if (!startsWith(str,prefix)) {
+        if (!startsWith(str, prefix)) {
             return str;
         }
         return str.substring(prefix.length());
     }
+
     public static String endWithRemove(String str, String suffix) {
-        if (!endsWith(str,suffix)) {
+        if (!endsWith(str, suffix)) {
             return str;
         }
         return str.substring(0, str.length() - suffix.length());
     }
-    public static String startWithDefault(String str, String prefix,String def) {
-        if (startsWith(str,prefix)) {
+
+    public static String startWithDefault(String str, String prefix, String def) {
+        if (startsWith(str, prefix)) {
             return prefix;
         }
         return def;
     }
-    public static String endWithDefault(String str, String suffix,String def) {
-        if (endsWith(str,suffix)) {
+
+    public static String endWithDefault(String str, String suffix, String def) {
+        if (endsWith(str, suffix)) {
             return suffix;
         }
         return def;
@@ -509,14 +569,15 @@ public class EasyStringUtil {
 
         return substrings;
     }
+
     public static String safeSubstringFirst(String input) {
         int[] codePoints = input.codePoints().toArray();
 
         StringBuilder currentSubstring = new StringBuilder();
-        if(codePoints.length==0){
+        if (codePoints.length == 0) {
             return EasyStringUtil.EMPTY;
         }
-        int codePoint=codePoints[0];
+        int codePoint = codePoints[0];
         if (Character.isHighSurrogate((char) codePoint)) {
             // 如果遇到高代理字符，先清空当前子串，将高代理字符存入
             currentSubstring.setLength(0);
@@ -538,7 +599,8 @@ public class EasyStringUtil {
 
         return EasyStringUtil.EMPTY;
     }
-    public static List<String> getStringCharSegments(String str, int maxCharLen,int otherCharLength,int chineseCharLength) {
+
+    public static List<String> getStringCharSegments(String str, int maxCharLen, int otherCharLength, int chineseCharLength) {
         ArrayList<String> segments = new ArrayList<>(str.length());
         for (int i = 0; i < str.length(); i++) {
             int len = 0;
@@ -551,13 +613,14 @@ public class EasyStringUtil {
             }
             segments.add(segmentBuilder.toString());
             //如果已经移动到最后一个字符,并且是刚好或者小于最大长度,那么说明后续没必要移动了
-            if(j==str.length()&&len<=maxCharLen){
+            if (j == str.length() && len <= maxCharLen) {
                 break;
             }
         }
         return segments;
     }
-    public static List<String> getStringSafeCharSegments(String str, int maxCharLen,int otherCharLength,int chineseCharLength) {
+
+    public static List<String> getStringSafeCharSegments(String str, int maxCharLen, int otherCharLength, int chineseCharLength) {
         ArrayList<String> segments = new ArrayList<>(str.length());
         String[] safeCharString = safeSubstring(str);
         for (int i = 0; i < safeCharString.length; i++) {
@@ -566,12 +629,12 @@ public class EasyStringUtil {
             int j = i;
             for (; j < safeCharString.length && len < maxCharLen; j++) {
                 String c = safeCharString[j];
-                len += (c.length()>1||isChinese(c)) ? chineseCharLength : otherCharLength;
+                len += (c.length() > 1 || isChinese(c)) ? chineseCharLength : otherCharLength;
                 segmentBuilder.append(c);
             }
             segments.add(segmentBuilder.toString());
             //如果已经移动到最后一个字符,并且是刚好或者小于最大长度,那么说明后续没必要移动了
-            if(j==safeCharString.length&&len<=maxCharLen){
+            if (j == safeCharString.length && len <= maxCharLen) {
                 break;
             }
         }
@@ -597,6 +660,7 @@ public class EasyStringUtil {
         }
         return groups;
     }
+
     public static String leftPad(String input, int totalWidth, char paddingChar) {
         if (input.length() >= totalWidth) {
             return input;

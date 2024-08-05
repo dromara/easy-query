@@ -12,6 +12,7 @@ import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.exception.AssertExceptionFactory;
@@ -76,4 +77,5 @@ public interface QueryRuntimeContext {
     JdbcExecutorListener getJdbcExecutorListener();
     AssertExceptionFactory getAssertExceptionFactory();
     SQLParameterPrintFormat getSQLParameterPrintFormat();
+    Column2MapKeyConversion getColumn2MapKeyConversion();
 }
