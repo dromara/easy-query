@@ -113,8 +113,6 @@ import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
-import com.easy.query.core.util.EasyStringUtil;
-import com.sun.xml.internal.stream.Entity;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
