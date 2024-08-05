@@ -853,6 +853,19 @@ public class QueryTest15 extends BaseTest {
         }
     }
     @Test
+    public void testColumn2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Integer i = easyEntityQuery.queryable(Topic.class).select(t -> t.stars()).firstOrNull();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`stars` FROM `t_topic` t LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("6261(String),-3(Integer),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+       Assert.assertNotNull(i);
+    }
+    @Test
     public void testFETCHER(){
 
         ListenerContext listenerContext = new ListenerContext();

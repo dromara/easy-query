@@ -27,11 +27,11 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public abstract class AbstractGrouping1Proxy<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TSourceProxy> extends AbstractProxyEntity<TProxy, TEntity> implements SQLGroupByExpression {
+public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity, TSourceProxy> extends AbstractProxyEntity<TProxy, TEntity> implements SQLGroupByExpression {
 
     private final TSourceProxy tSourceProxy;
 
-    public AbstractGrouping1Proxy(TSourceProxy tSourceProxy) {
+    public AbstractGroupingProxy(TSourceProxy tSourceProxy) {
         this.tSourceProxy = tSourceProxy;
     }
 

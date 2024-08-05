@@ -2,6 +2,9 @@ package com.easy.query.core.proxy.core;
 
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenThenEntityBuilder;
+import com.easy.query.api.proxy.extension.partition.DenseRankBuilder;
+import com.easy.query.api.proxy.extension.partition.RankBuilder;
+import com.easy.query.api.proxy.extension.partition.RowNumberBuilder;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
@@ -37,6 +40,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -339,5 +343,25 @@ public class Expression {
         });
     }
 
+
+    public RowNumberBuilder rowNumberOver(){
+        return new RowNumberBuilder(entitySQLContext);
+    }
+
+    /**
+     * 相同排名占用一位名次
+     * @return
+     */
+    public RankBuilder rankOver(){
+        return new RankBuilder(entitySQLContext);
+    }
+
+    /**
+     * 相同排名不占用名次
+     * @return
+     */
+    public DenseRankBuilder denseRankOver(){
+        return new DenseRankBuilder(entitySQLContext);
+    }
 
 }

@@ -13,7 +13,7 @@ import java.util.Collections;
  *
  * @author xuejiaming
  */
-public interface EntityUnionable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
+public interface IEntityUnion1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     default EntityQueryable<T1Proxy, T1> union(EntityQueryable<T1Proxy, T1> unionQueryable) {
         return union(Collections.singletonList(unionQueryable));
     }

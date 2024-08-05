@@ -9,6 +9,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnAsSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnSelectorImpl;
+import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.Map;
 
@@ -30,6 +31,7 @@ public class MapSelectorImpl extends AbstractMapTable implements MapSelector {
 
     @Override
     public ColumnAsSelector<?,?> getAsSelector(int tableIndex) {
-        return new ColumnAsSelectorImpl<>(getTable(tableIndex), new AsSelectorImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getProjects(), Map.class));
+        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(Map.class);
+        return new ColumnAsSelectorImpl<>(getTable(tableIndex), new AsSelectorImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getProjects(), entityMetadata));
     }
 }

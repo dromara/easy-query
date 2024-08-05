@@ -1,57 +1,33 @@
 package com.easy.query.test;
 
-import com.easy.query.api.proxy.base.MapTypeProxy;
-import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
-import com.easy.query.api.proxy.key.MapKey;
-import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.api4j.select.Queryable;
-import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.basic.api.select.executor.PageAble;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
-import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
-import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.exception.EasyQueryResultSizeLimitException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
-import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
-import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
-import com.easy.query.core.proxy.sql.GroupKeys;
+import com.easy.query.core.proxy.partition.Partition1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
-import com.easy.query.oracle.config.OracleDatabaseConfiguration;
-import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
-import com.easy.query.test.dto.autodto.SchoolClassAOProp5;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
-import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
-import com.easy.query.test.entity.school.proxy.SchoolStudentAddressProxy;
 import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.keytest.MyTestPrimaryKey;
@@ -60,25 +36,17 @@ import com.easy.query.test.vo.BlogEntityVO1;
 import com.easy.query.test.vo.BlogEntityVO2;
 import com.easy.query.test.vo.TestUserAAA;
 import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
-import com.mysql.cj.MysqlConnection;
 import org.junit.Assert;
 import org.junit.Test;
-import org.postgresql.jdbc.PgConnection;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * create time 2024/6/13 12:19
@@ -620,12 +588,12 @@ public class QueryTest18 extends BaseTest {
                 .orderBy(b -> b.createTime().asc())
                 .orderBy(b -> b.id().asc())
                 .toChunk(20, blogs -> {
-                    Assert.assertTrue(blogs.size()<=20);
+                    Assert.assertTrue(blogs.size() <= 20);
                     for (BlogEntity blog : blogs) {
                         if (ids.containsKey(blog.getId())) {
-                            throw new RuntimeException("id 重复:"+blog.getId());
+                            throw new RuntimeException("id 重复:" + blog.getId());
                         }
-                        ids.put(blog.getId(),blog);
+                        ids.put(blog.getId(), blog);
                     }
                     return true;
                 });
@@ -638,58 +606,62 @@ public class QueryTest18 extends BaseTest {
                 .orderBy(b -> b.createTime().asc())
                 .orderBy(b -> b.id().asc())
                 .toChunk(20, blogs -> {
-                    Assert.assertTrue(blogs.size()<=20);
+                    Assert.assertTrue(blogs.size() <= 20);
                     for (BlogEntity blog : blogs) {
                         if (ids.containsKey(blog.getId())) {
-                            throw new RuntimeException("id 重复:"+blog.getId());
+                            throw new RuntimeException("id 重复:" + blog.getId());
                         }
-                        ids.put(blog.getId(),blog);
+                        ids.put(blog.getId(), blog);
                     }
                 });
-        Assert.assertEquals(100,ids.size());
+        Assert.assertEquals(100, ids.size());
     }
+
     @Test
     public void testStreamChunk1() {
         HashMap<String, BlogEntity> ids = new HashMap<>();
-        try(JdbcStreamResult<BlogEntity> streamResult = easyEntityQuery.queryable(BlogEntity.class).toStreamResult(1000)){
+        try (JdbcStreamResult<BlogEntity> streamResult = easyEntityQuery.queryable(BlogEntity.class).toStreamResult(1000)) {
             //每20个一组消费
             streamResult.toChunk(20, blogs -> {
-                Assert.assertTrue(blogs.size()<=20);
+                Assert.assertTrue(blogs.size() <= 20);
                 for (BlogEntity blog : blogs) {
                     if (ids.containsKey(blog.getId())) {
-                        throw new RuntimeException("id 重复:"+blog.getId());
+                        throw new RuntimeException("id 重复:" + blog.getId());
                     }
-                    ids.put(blog.getId(),blog);
+                    ids.put(blog.getId(), blog);
                 }
             });
-        }catch (SQLException e){
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
     @Test
-    public void testResultSizeLimit1(){
-        boolean exception=false;
+    public void testResultSizeLimit1() {
+        boolean exception = false;
         try {
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-                    .configure(x->{
+                    .configure(x -> {
                         x.setResultSizeLimit(10);
                     })
                     .toList();
-        }catch (Exception ex){
-            exception=true;
+        } catch (Exception ex) {
+            exception = true;
             Assert.assertTrue(ex instanceof EasyQueryResultSizeLimitException);
             EasyQueryResultSizeLimitException ex1 = (EasyQueryResultSizeLimitException) ex;
-            Assert.assertEquals(10,ex1.getLimit());
+            Assert.assertEquals(10, ex1.getLimit());
         }
         Assert.assertTrue(exception);
     }
+
     @Test
-    public void testPartition1(){
+    public void testPartition1() {
 //        easyEntityQuery.queryable(BlogEntity.class)
 //                .select(o -> Select.DRAFT.of(
 //                        o
 //                ))
     }
+
     @Test
     public void testChunk3() {
         HashMap<String, BlogEntity> ids = new HashMap<>();
@@ -697,29 +669,30 @@ public class QueryTest18 extends BaseTest {
                 .orderBy(b -> b.createTime().asc())
                 .orderBy(b -> b.id().asc())
                 .toChunk(3, blogs -> {
-                    Assert.assertTrue(blogs.size()<=3);
+                    Assert.assertTrue(blogs.size() <= 3);
                     for (BlogEntity blog : blogs) {
                         if (ids.containsKey(blog.getId())) {
-                            throw new RuntimeException("id 重复:"+blog.getId());
+                            throw new RuntimeException("id 重复:" + blog.getId());
                         }
-                        ids.put(blog.getId(),blog);
+                        ids.put(blog.getId(), blog);
                     }
                 });
-        Assert.assertEquals(100,ids.size());
+        Assert.assertEquals(100, ids.size());
     }
+
     @Test
     public void testChunk4() {
-        AtomicInteger a=new AtomicInteger(0);
+        AtomicInteger a = new AtomicInteger(0);
         easyEntityQuery.queryable(BlogEntity.class)
                 .orderBy(b -> b.createTime().asc())
                 .orderBy(b -> b.id().asc())
                 .toChunk(3, blogs -> {
                     for (BlogEntity blog : blogs) {
-                       a.incrementAndGet();
+                        a.incrementAndGet();
                     }
                     return true;
                 });
-        Assert.assertEquals(100,a.intValue());
+        Assert.assertEquals(100, a.intValue());
 
         EntityMetadataManager entityMetadataManager = easyEntityQuery.getRuntimeContext().getEntityMetadataManager();
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(Topic.class);
@@ -729,10 +702,10 @@ public class QueryTest18 extends BaseTest {
     }
 
     @Test
-    public void testDraft(){
-        Class<Draft2<String,String>> draft2Class= EasyObjectUtil.typeCastNullable(Draft2.class);
+    public void testDraft() {
+        Class<Draft2<String, String>> draft2Class = EasyObjectUtil.typeCastNullable(Draft2.class);
         List<Draft2<String, String>> list = easyQuery.queryable(Topic.class)
-                .limit(true,100)
+                .limit(true, 100)
                 .where(t -> {
                     t.ne(Topic::getId, "123");
                 }).select(draft2Class, t -> t.columnAs(Topic::getId, Draft2::getValue1).columnAs(Topic::getTitle, Draft2::getValue2))
@@ -764,25 +737,55 @@ public class QueryTest18 extends BaseTest {
 //        processVOList(list2);
     }
 
-    private EasyPageResult<Topic> pageOrExport(int limit){
-        if(limit<0){
+    private EasyPageResult<Topic> pageOrExport(int limit) {
+        if (limit < 0) {
             List<Topic> list = getQuery().toList();
-            return new DefaultPageResult<>(-1,list);
+            return new DefaultPageResult<>(-1, list);
         }
         return getQuery().toPageResult(1, limit);
     }
-    private EntityQueryable<TopicProxy, Topic> getQuery(){
+
+    private EntityQueryable<TopicProxy, Topic> getQuery() {
         return easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
                     t.id().eq("123");
                 });
     }
 
-    private void processVOList(List<Topic> topics){
+    private void processVOList(List<Topic> topics) {
         for (Topic topic : topics) {
 
 
         }
+    }
+
+    @Test
+    public void testPartitionBy1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<Partition1<Topic, Integer>> list1 = easyEntityQuery.queryable(Topic.class)
+                    .select(t -> Select.PARTITION.of(
+                            t,
+                            t.expression().rowNumberOver().partitionBy(t.id(), Integer.class).orderBy(t.id())
+                                    .orderByDescending(t.createTime())
+                    ))
+                    .where(p -> {
+                        p.partitionTable().stars().gt(1);
+                        p.partitionColumn1().gt(1);
+                    }).toList();
+        }catch (Exception ex){
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time`,t1.`__partition__column1` AS `__partition__column1` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t.`id` ORDER BY t.`id` ASC, t.`create_time` DESC)) AS `__partition__column1` FROM `t_topic` t) t1 WHERE t1.`stars` > ? AND t1.`__partition__column1` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
 //    private EasyQueryClient buildClient(DataSource mydatasource,int type){
@@ -808,4 +811,5 @@ public class QueryTest18 extends BaseTest {
 //        EasyQueryClient build = easyQueryBuilderConfiguration.build();
 //        return build;
 //    }
+
 }

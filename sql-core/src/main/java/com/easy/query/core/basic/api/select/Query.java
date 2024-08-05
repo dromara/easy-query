@@ -9,7 +9,6 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamRes
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.ToSQLResult;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
@@ -300,8 +299,9 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @return 获取查询结果集
      */
     default @NotNull List<T> toList() {
-        return toList(queryClass());
+        return toList(queryClass(), queryEntityMetadata());
     }
+
 
     /**
      * 可迭代的流式结果集

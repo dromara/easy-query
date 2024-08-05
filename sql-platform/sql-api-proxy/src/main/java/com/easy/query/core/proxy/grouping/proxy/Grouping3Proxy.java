@@ -15,7 +15,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 public class Grouping3Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
         TKey2Proxy extends PropTypeColumn<TKey2>, TKey2,
         TKey3Proxy extends PropTypeColumn<TKey3>, TKey3,
-        TSourceProxy> extends AbstractGrouping1Proxy<Grouping3Proxy<TKey1Proxy, TKey1,TKey2Proxy, TKey2,TKey3Proxy, TKey3, TSourceProxy>, Grouping3<TKey1,TKey2,TKey3>,TSourceProxy> {
+        TSourceProxy> extends AbstractGroupingProxy<Grouping3Proxy<TKey1Proxy, TKey1,TKey2Proxy, TKey2,TKey3Proxy, TKey3, TSourceProxy>, Grouping3<TKey1,TKey2,TKey3>,TSourceProxy> {
 
     private static final Class<Grouping2> entityClass = Grouping2.class;
     private final TKey1Proxy k1;

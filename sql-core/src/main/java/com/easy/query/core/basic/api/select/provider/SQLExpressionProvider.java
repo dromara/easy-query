@@ -10,6 +10,7 @@ import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 
 /**
@@ -37,6 +38,7 @@ public interface SQLExpressionProvider<TEntity> {
     ColumnSelector<TEntity> getColumnSelector(SQLBuilderSegment sqlSegment0Builder);
 
     <TR> ColumnAsSelector<TEntity, TR> getColumnAsSelector(SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass);
+    <TR> ColumnAsSelector<TEntity, TR> getColumnAsSelector(SQLBuilderSegment sqlSegment0Builder, EntityMetadata resultEntityMetadata);
 
     <TR> ColumnAsSelector<TEntity, TR> getAutoColumnAsSelector(SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass);
 

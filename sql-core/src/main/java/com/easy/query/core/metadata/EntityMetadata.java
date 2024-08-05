@@ -155,7 +155,7 @@ public class EntityMetadata {
     private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
     private final Set<String> dataSources = new CopyOnWriteArraySet<>();
     protected EntityMetadataTypeEnum entityMetadataType = EntityMetadataTypeEnum.BEAN;
-    private Supplier<Object> beanConstructorCreator;
+    protected Supplier<Object> beanConstructorCreator;
 
     private DataReader dataReader;
 
@@ -178,6 +178,7 @@ public class EntityMetadata {
             entityMetadataType = EntityMetadataTypeEnum.BASIC_TYPE;
             return;
         }
+
 //        if(Draft.class.isAssignableFrom(entityClass)){
 //            entityMetadataType = EntityMetadataTypeEnum.DRAFT;
 //            return;

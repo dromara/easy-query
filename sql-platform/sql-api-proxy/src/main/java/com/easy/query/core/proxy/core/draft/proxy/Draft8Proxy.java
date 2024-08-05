@@ -2,6 +2,7 @@ package com.easy.query.core.proxy.core.draft.proxy;
 
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
+import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft8;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -29,51 +30,51 @@ public class Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8> extends AbstractDraftProxy<Dra
     /**
      * {@link Draft8#getValue1}
      */
-    public SQLAnyColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T1> value1() {
-        return getAnyColumn("value1",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[0]).map(o->o.getPropertyType()).orElse(null)));
+    public SQLAnyTypeColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T1> value1() {
+        return getAnyTypeColumn("value1",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[0]).map(o->o.getPropertyType()).orElse(null)));
     }
 
     /**
      * {@link Draft8#getValue2()}
      */
-    public SQLAnyColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T2> value2() {
-        return getAnyColumn("value2",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[1]).map(o->o.getPropertyType()).orElse(null)));
+    public SQLAnyTypeColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T2> value2() {
+        return getAnyTypeColumn("value2",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[1]).map(o->o.getPropertyType()).orElse(null)));
     }
     /**
      * {@link Draft8#getValue3()}
      */
-    public SQLAnyColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T3> value3() {
-        return getAnyColumn("value3",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[2]).map(o->o.getPropertyType()).orElse(null)));
+    public SQLAnyTypeColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T3> value3() {
+        return getAnyTypeColumn("value3",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[2]).map(o->o.getPropertyType()).orElse(null)));
     }
     /**
      * {@link Draft8#getValue4()}
      */
-    public SQLAnyColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T4> value4() {
-        return getAnyColumn("value4",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[3]).map(o->o.getPropertyType()).orElse(null)));
+    public SQLAnyTypeColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T4> value4() {
+        return getAnyTypeColumn("value4",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[3]).map(o->o.getPropertyType()).orElse(null)));
     }
     /**
      * {@link Draft8#getValue5()}
      */
-    public SQLAnyColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T5> value5() {
-        return getAnyColumn("value5",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[4]).map(o->o.getPropertyType()).orElse(null)));
+    public SQLAnyTypeColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T5> value5() {
+        return getAnyTypeColumn("value5",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[4]).map(o->o.getPropertyType()).orElse(null)));
     }
     /**
      * {@link Draft8#getValue6()}
      */
-    public SQLAnyColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T6> value6() {
-        return getAnyColumn("value6",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[5]).map(o->o.getPropertyType()).orElse(null)));
+    public SQLAnyTypeColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T6> value6() {
+        return getAnyTypeColumn("value6",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[5]).map(o->o.getPropertyType()).orElse(null)));
     }
     /**
      * {@link Draft8#getValue7()}
      */
-    public SQLAnyColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T7> value7() {
-        return getAnyColumn("value7",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[6]).map(o->o.getPropertyType()).orElse(null)));
+    public SQLAnyTypeColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T7> value7() {
+        return getAnyTypeColumn("value7",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[6]).map(o->o.getPropertyType()).orElse(null)));
     }
     /**
      * {@link Draft8#getValue8()}
      */
-    public SQLAnyColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T8> value8() {
-        return getAnyColumn("value8",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[7]).map(o->o.getPropertyType()).orElse(null)));
+    public SQLAnyTypeColumn<Draft8Proxy<T1,T2,T3,T4,T5,T6,T7,T8>, T8> value8() {
+        return getAnyTypeColumn("value8",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[7]).map(o->o.getPropertyType()).orElse(null)));
     }
 
 

@@ -29,6 +29,7 @@ import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.util.EasyUtil;
 
@@ -56,7 +57,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
 
     @Override
     public ColumnOrderSelectorImpl<TEntity> getOrderColumnSelector(boolean asc) {
-        ColumnOrderSelectorImpl<TEntity> order = new ColumnOrderSelectorImpl<>(table, new OrderSelectorImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getOrder()));
+        ColumnOrderSelectorImpl<TEntity> order = new ColumnOrderSelectorImpl<>(table, new OrderSelectorImpl(entityQueryExpressionBuilder.getRuntimeContext(),entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getOrder()));
         order.setAsc(asc);
         return order;
     }
@@ -98,7 +99,12 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
 
     @Override
     public <TR> ColumnAsSelector<TEntity, TR> getColumnAsSelector(SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
-        return new ColumnAsSelectorImpl<>(table, new AsSelectorImpl(entityQueryExpressionBuilder, sqlSegment0Builder, resultClass));
+        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
+        return getColumnAsSelector(sqlSegment0Builder,entityMetadata);
+    }
+    @Override
+    public <TR> ColumnAsSelector<TEntity, TR> getColumnAsSelector(SQLBuilderSegment sqlSegment0Builder, EntityMetadata resultEntityMetadata) {
+        return new ColumnAsSelectorImpl<>(table, new AsSelectorImpl(entityQueryExpressionBuilder, sqlSegment0Builder, resultEntityMetadata));
     }
 
     @Override

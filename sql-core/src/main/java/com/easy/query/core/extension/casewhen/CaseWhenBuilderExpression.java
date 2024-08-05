@@ -25,7 +25,7 @@ import java.util.List;
 public class CaseWhenBuilderExpression {
     private final QueryRuntimeContext runtimeContext;
     private final ExpressionContext expressionContext;
-    private List<Tuple2<SQLExpression1<Filter>, ParamExpression>> whens;
+    private final List<Tuple2<SQLExpression1<Filter>, ParamExpression>> whens;
 
     public CaseWhenBuilderExpression(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext){
         this.runtimeContext = runtimeContext;

@@ -47,7 +47,7 @@ public class DefaultObjectSortQueryExecutor implements ObjectSortQueryExecutor{
                     continue;
                 }
 
-                OrderSelectorImpl orderSelector = new OrderSelectorImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getOrder());
+                OrderSelectorImpl orderSelector = new OrderSelectorImpl(entityQueryExpressionBuilder.getRuntimeContext(),entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getOrder());
                 orderSelector.setAsc(objectSortEntry.isAsc());
                 orderSelector.column(entityTable, property);
             }

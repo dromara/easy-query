@@ -11,7 +11,7 @@ import com.easy.query.core.proxy.SQLGroupByExpression;
  *
  * @author xuejiaming
  */
-public interface EntityGroupable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
+public interface IEntityGroup1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     /**
      * SQL分组
      *

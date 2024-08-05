@@ -32,6 +32,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -202,6 +203,11 @@ public class DefaultMapQueryable implements MapQueryable {
     }
 
     @Override
+    public EntityMetadata queryEntityMetadata() {
+        return queryable.queryEntityMetadata();
+    }
+
+    @Override
     public Map<String, Object> findOrNull(Object id) {
         return this.queryable.findOrNull(id);
     }
@@ -225,6 +231,11 @@ public class DefaultMapQueryable implements MapQueryable {
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass) {
         return queryable.toList(resultClass);
+    }
+
+    @Override
+    public <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata) {
+        return queryable.toList(resultClass, resultEntityMetadata);
     }
 
     @Override

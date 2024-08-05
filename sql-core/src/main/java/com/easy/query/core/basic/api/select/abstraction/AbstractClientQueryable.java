@@ -114,6 +114,7 @@ import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
+import com.sun.xml.internal.stream.Entity;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -144,6 +145,7 @@ import java.util.stream.StreamSupport;
 public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1> {
     private static final Log log = LogFactory.getLog(AbstractClientQueryable.class);
     protected final Class<T1> t1Class;
+    protected final EntityMetadata entityMetadata;
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final QueryRuntimeContext runtimeContext;
     protected final SQLSegmentFactory sqlSegmentFactory;
@@ -154,8 +156,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return t1Class;
     }
 
+    @Override
+    public EntityMetadata queryEntityMetadata() {
+        return entityMetadata;
+    }
+
     public AbstractClientQueryable(Class<T1> t1Class, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         this.t1Class = t1Class;
+        this.entityMetadata = entityQueryExpressionBuilder.getTable(0).getEntityMetadata();
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
         this.sqlSegmentFactory = this.runtimeContext.getSQLSegmentFactory();
@@ -187,7 +195,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public long count() {
         setExecuteMethod(ExecuteMethodEnum.COUNT);
         EntityQueryExpressionBuilder countQueryExpressionBuilder = createCountQueryExpressionBuilder();
-        List<Long> result = toInternalListByExpression(countQueryExpressionBuilder, Long.class, false, null);
+        EntityMetadata resultEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Long.class);
+        List<Long> result = toInternalListByExpression(countQueryExpressionBuilder, Long.class,resultEntityMetadata, false, null);
         return EasyCollectionUtil.sum(result);
     }
 
@@ -458,8 +467,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <TR> TR singleOrNull(Class<TR> resultClass) {
         setExecuteMethod(ExecuteMethodEnum.SINGLE);
         boolean autoAllColumn = compensateSelect(resultClass);
+        EntityMetadata resultEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(resultClass);
         boolean printSql = runtimeContext.getQueryConfiguration().getEasyQueryOption().isPrintSql();
-        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass, autoAllColumn, statement -> {
+        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass,resultEntityMetadata, autoAllColumn, statement -> {
             statement.setFetchSize(2);
         });
         TR next = null;
@@ -496,7 +506,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             ExpressionContext expressionContext = jdbcResultWrap.getExpressionContext();
             EntityMetadata entityMetadata = jdbcResultWrap.getEntityMetadata();
             doIncludes(expressionContext, entityMetadata, Collections.singletonList(next));
-            doFills(expressionContext,entityMetadata, Collections.singletonList(next));
+            doFills(expressionContext, entityMetadata, Collections.singletonList(next));
         }
         //将当前方法设置为unknown
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
@@ -527,8 +537,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass) {
+        EntityMetadata resultEntityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
+        return toList(resultClass,resultEntityMetadata);
+    }
+
+    @Override
+    public <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata) {
         setExecuteMethod(ExecuteMethodEnum.LIST, true);
-        return toInternalList(resultClass);
+        return toInternalList(resultClass, resultEntityMetadata);
     }
 
     @Override
@@ -539,12 +555,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     @Override
     public void toChunk(int size, Predicate<List<T1>> chunk) {
-        int offset=0;
+        int offset = 0;
         while (true) {
 
             ClientQueryable<T1> cloneQueryable = this.cloneQueryable();
-            List<T1> list = cloneQueryable.limit(offset,size).toList();
-            offset+=size;
+            List<T1> list = cloneQueryable.limit(offset, size).toList();
+            offset += size;
             if (EasyCollectionUtil.isEmpty(list)) {
                 break;
             }
@@ -588,29 +604,29 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
      *
      * @return
      */
-    protected <TR> List<TR> toInternalList(Class<TR> resultClass) {
+    protected <TR> List<TR> toInternalList(Class<TR> resultClass,EntityMetadata resultEntityMetadata) {
         boolean autoAllColumn = compensateSelect(resultClass);
-        return toInternalListByExpression(entityQueryExpressionBuilder, resultClass, autoAllColumn, null);
+        return toInternalListByExpression(entityQueryExpressionBuilder, resultClass,resultEntityMetadata, autoAllColumn, null);
     }
 
     protected <TR> JdbcStreamResult<TR> toInternalStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
         boolean autoAllColumn = compensateSelect(resultClass);
-        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass, autoAllColumn, configurer);
+        EntityMetadata resultEntityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
+        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass,resultEntityMetadata, autoAllColumn, configurer);
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
         return jdbcResultWrap.getJdbcResult().getJdbcStreamResult();
     }
 
-    protected <TR> List<TR> toInternalListByExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Class<TR> resultClass, boolean autoAllColumn, SQLConsumer<Statement> configurer) {
+    protected <TR> List<TR> toInternalListByExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Class<TR> resultClass,EntityMetadata resultEntityMetadata, boolean autoAllColumn, SQLConsumer<Statement> configurer) {
 
-        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass, autoAllColumn, configurer);
+        JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass,resultEntityMetadata, autoAllColumn, configurer);
         List<TR> result = jdbcResultWrap.getJdbcResult().toList();
         ExecuteMethodEnum executeMethod = jdbcResultWrap.getExecuteMethod();
         ExpressionContext expressionContext = jdbcResultWrap.getExpressionContext();
-        EntityMetadata entityMetadata = jdbcResultWrap.getEntityMetadata();
         if (ExecuteMethodEnum.LIST == executeMethod || ExecuteMethodEnum.FIRST == executeMethod || ExecuteMethodEnum.SINGLE == executeMethod || ExecuteMethodEnum.FIND == executeMethod) {
             if (EasyCollectionUtil.isNotEmpty(result)) {
-                doIncludes(expressionContext, entityMetadata, result);
-                doFills(expressionContext,entityMetadata, result);
+                doIncludes(expressionContext, resultEntityMetadata, result);
+                doFills(expressionContext, resultEntityMetadata, result);
             }
         }
         //将当前方法设置为unknown
@@ -627,12 +643,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
      * @param <TR>
      * @return
      */
-    protected <TR> JdbcResultWrap<TR> toInternalStreamByExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Class<TR> resultClass, boolean autoAllColumn, SQLConsumer<Statement> configurer) {
+    protected <TR> JdbcResultWrap<TR> toInternalStreamByExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Class<TR> resultClass,EntityMetadata entityMetadata, boolean autoAllColumn, SQLConsumer<Statement> configurer) {
         ExpressionContext expressionContext = this.entityQueryExpressionBuilder.getExpressionContext();
         boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         ExecuteMethodEnum executeMethod = expressionContext.getExecuteMethod();
         EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-        EntityMetadata entityMetadata = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
         ExecutorContext executorContext = ExecutorContext.create(expressionContext, true, executeMethod, tracking);
         executorContext.setConfigurer(configurer);
         // todo data reader
@@ -645,7 +660,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <TR> TR streamBy(Function<Stream<T1>, TR> fetcher, SQLConsumer<Statement> configurer) {
         ExpressionContext expressionContext = this.entityQueryExpressionBuilder.getExpressionContext();
         //为了支持streamBy下的include处理必须要进行stream的二次迭代
-        if (expressionContext.hasIncludes()||expressionContext.hasFills()) {
+        if (expressionContext.hasIncludes() || expressionContext.hasFills()) {
             List<T1> result = this.toList();
             return fetcher.apply(result.stream());
         } else {
@@ -674,7 +689,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }
     }
 
-    private <TR> void doFills(ExpressionContext expressionContext,EntityMetadata entityMetadata, List<TR> result) {
+    private <TR> void doFills(ExpressionContext expressionContext, EntityMetadata entityMetadata, List<TR> result) {
 
         if (expressionContext.hasFills()) {
             for (FillExpression fill : expressionContext.getFills()) {
@@ -752,7 +767,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     @Override
     public <TR> ClientQueryable<TR> select(Class<TR> resultClass, SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression) {
-        ColumnAsSelector<T1, TR> sqlColumnSelector = getSQLExpressionProvider1().getColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
+        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
+        return select(resultClass, entityMetadata, selectExpression);
+    }
+
+    @Override
+    public <TR> ClientQueryable<TR> select(Class<TR> resultClass, EntityMetadata entityMetadata, SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression) {
+
+        ColumnAsSelector<T1, TR> sqlColumnSelector = getSQLExpressionProvider1().getColumnAsSelector(entityQueryExpressionBuilder.getProjects(), entityMetadata);
         selectExpression.apply(sqlColumnSelector);
         if (EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getProjects())) {
             SQLExpression1<ColumnAsSelector<T1, TR>> selectAllExpression = ColumnAsSelector::columnAll;
@@ -760,7 +782,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         } else {
             processorIncludeRelationProperty(sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
         }
-        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(resultClass, entityQueryExpressionBuilder);
+        return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(resultClass, entityMetadata, entityQueryExpressionBuilder);
     }
 
     /**
@@ -830,7 +852,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace, 0);
         selectAutoIncludeFlat0(entityMetadataManager, this, entityMetadata, resultEntityMetadata);
-        selectAutoIncludeJoin0(resultClass, this, resultEntityMetadata);
+        selectAutoIncludeJoin0(this, resultEntityMetadata);
     }
 
     private void selectAutoIncludeFlat0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata) {
@@ -844,11 +866,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }
     }
 
-    private <TR> void selectAutoIncludeJoin0(Class<TR> resultClass, ClientQueryable<?> clientQueryable, EntityMetadata resultEntityMetadata) {
+    private <TR> void selectAutoIncludeJoin0(ClientQueryable<?> clientQueryable, EntityMetadata resultEntityMetadata) {
         Collection<NavigateJoinMetadata> navigateJoinMetadatas = resultEntityMetadata.getNavigateJoinMetadatas();
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = clientQueryable.getSQLEntityExpressionBuilder();
         if (EasyCollectionUtil.isNotEmpty(navigateJoinMetadatas)) {
-            AsSelector asSelector = new AsSelectorImpl(sqlEntityExpressionBuilder, sqlEntityExpressionBuilder.getProjects(), resultClass);
+            AsSelector asSelector = new AsSelectorImpl(sqlEntityExpressionBuilder, sqlEntityExpressionBuilder.getProjects(), resultEntityMetadata);
             for (NavigateJoinMetadata navigateJoinMetadata : navigateJoinMetadatas) {
                 TableAvailable relationTable = null;
                 if (navigateJoinMetadata.getMappingPath().length < 2) {

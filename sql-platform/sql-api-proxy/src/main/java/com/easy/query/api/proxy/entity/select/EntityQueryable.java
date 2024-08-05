@@ -7,15 +7,15 @@ import com.easy.query.api.proxy.entity.select.extension.queryable.EntityAggregat
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityCountable1;
 //import com.easy.query.api.proxy.entity.select.extension.queryable.EntityFillable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityFilterable1;
-import com.easy.query.api.proxy.entity.select.extension.queryable.EntityGroupable1;
+import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityGroup1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityHavingable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityIncludeable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityIncludesable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityJoinable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityOrderable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntitySelectable1;
-import com.easy.query.api.proxy.entity.select.extension.queryable.EntityTreeable1;
-import com.easy.query.api.proxy.entity.select.extension.queryable.EntityUnionable1;
+import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityTree1;
+import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityUnion1;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.internal.ContextConfigure;
 import com.easy.query.core.basic.api.internal.Interceptable;
@@ -54,12 +54,12 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
         EntityAggregatable1<T1Proxy,T1>,
         EntityOrderable1<T1Proxy,T1>,
         EntitySelectable1<T1Proxy,T1>,
-        EntityUnionable1<T1Proxy,T1>,
-        EntityGroupable1<T1Proxy,T1>,
+        IEntityUnion1<T1Proxy,T1>,
+        IEntityGroup1<T1Proxy,T1>,
         EntityJoinable1<T1Proxy,T1>,
 //        EntityFillable1<T1Proxy,T1>,
 //        EntityMultiable1<T1Proxy,T1>,
-        EntityTreeable1<T1Proxy,T1>,
+        IEntityTree1<T1Proxy,T1>,
         EntityAvailable<T1Proxy,T1> {
 
 

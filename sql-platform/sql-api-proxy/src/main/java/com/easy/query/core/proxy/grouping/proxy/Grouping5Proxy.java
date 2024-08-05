@@ -17,8 +17,8 @@ public class Grouping5Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
         TKey4Proxy extends PropTypeColumn<TKey4>, TKey4,
         TKey5Proxy extends PropTypeColumn<TKey5>, TKey5,
         TSourceProxy>
-        extends AbstractGrouping1Proxy<Grouping5Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TKey3Proxy, TKey3, TKey4Proxy, TKey4, TKey5Proxy, TKey5, TSourceProxy>,
-        Grouping5<TKey1, TKey2, TKey3, TKey4, TKey5>, TSourceProxy> {
+        extends AbstractGroupingProxy<Grouping5Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TKey3Proxy, TKey3, TKey4Proxy, TKey4, TKey5Proxy, TKey5, TSourceProxy>,
+                Grouping5<TKey1, TKey2, TKey3, TKey4, TKey5>, TSourceProxy> {
 
     private static final Class<Grouping5> entityClass = Grouping5.class;
     private final TKey1Proxy k1;

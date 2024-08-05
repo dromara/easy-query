@@ -46,12 +46,12 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
     protected final Class<?> resultClass;
     protected final EntityMetadata resultEntityMetadata;
 
-    public AsSelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlBuilderSegment, Class<?> resultClass) {
+    public AsSelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlBuilderSegment, EntityMetadata resultEntityMetadata) {
         super(entityQueryExpressionBuilder, sqlBuilderSegment);
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
 
-        this.resultClass = resultClass;
-        this.resultEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(resultClass);
+        this.resultEntityMetadata = resultEntityMetadata;
+        this.resultClass = resultEntityMetadata.getEntityClass();
     }
 
     @Override
@@ -59,10 +59,10 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
         switch (resultEntityMetadata.getEntityMetadataType()) {
             case MAP:
             case BASIC_TYPE:
-                return new ResultColumnInfo(null,propertyAlias);
+                return new ResultColumnInfo(null, propertyAlias);
         }
         ColumnMetadata columnMetadata = resultEntityMetadata.getColumnNotNull(propertyAlias);
-        return new ResultColumnInfo(columnMetadata,columnMetadata.getName());
+        return new ResultColumnInfo(columnMetadata, columnMetadata.getName());
     }
 
     @Override
@@ -119,7 +119,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
     @Override
     public AsSelector columnAll(TableAvailable table) {
 
-        if (table.getEntityClass().equals(resultClass) || resultEntityMetadata.getEntityMetadataType() == EntityMetadataTypeEnum.MAP) {
+        if (table.getEntityClass().equals(resultClass) || resultEntityMetadata.getEntityMetadataType() == EntityMetadataTypeEnum.MAP || resultEntityMetadata.getEntityMetadataType() == EntityMetadataTypeEnum.PARTITION_BY) {
             super.columnAll(table);
             return this;
         } else {
@@ -150,7 +150,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
                     sqlBuilderSegment.append(columnSegment);
                 }
             }
-            autoColumnInclude(tableBuilder.getEntityTable(),entityMetadata);
+            autoColumnInclude(tableBuilder.getEntityTable(), entityMetadata);
         }
         return this;
     }
@@ -167,8 +167,8 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
 
     @Override
     public AsSelector columnFunc(TableAvailable table, String property, SQLFunction sqlFunction, String propertyAlias, SQLActionExpression sqlActionExpression) {
-        if(table==null||property==null){
-            if(EasyStringUtil.isBlank(propertyAlias)){
+        if (table == null || property == null) {
+            if (EasyStringUtil.isBlank(propertyAlias)) {
                 throw new EasyQueryInvalidOperationException("propertyAlias is bank");
             }
             ResultColumnInfo resultColumnInfo = getResultColumnName(propertyAlias);
@@ -178,7 +178,7 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
             sqlBuilderSegment.append(funcColumnSegment);
             sqlActionExpression.apply();
             return this;
-        }else{
+        } else {
             ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
             String columnAsName = propertyAlias == null ? columnMetadata.getName() : getResultColumnName(propertyAlias).getColumnAsName();
             SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
@@ -192,13 +192,13 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
 
     @Override
     public AsSelector columnFunc(TableAvailable table, SQLFunction sqlFunction, String propertyAlias) {
-        if(propertyAlias==null){
+        if (propertyAlias == null) {
 
             SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
                     .toSQLSegment(expressionContext, table, runtimeContext, null);
             FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, null, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), null);
             sqlBuilderSegment.append(funcColumnSegment);
-        }else{
+        } else {
             ResultColumnInfo resultColumnInfo = getResultColumnName(propertyAlias);
             SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
                     .toSQLSegment(expressionContext, table, runtimeContext, resultColumnInfo.getColumnAsName());
@@ -230,10 +230,10 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
 
     @Override
     public AsSelector sqlFunc(TableAvailable table, SQLFunction sqlFunction) {
-            String sqlSegment = sqlFunction.sqlSegment(table);
-            sqlNativeSegment(sqlSegment, context->{
-                sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,context));
-            });
+        String sqlSegment = sqlFunction.sqlSegment(table);
+        sqlNativeSegment(sqlSegment, context -> {
+            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, context));
+        });
         return this;
     }
 }

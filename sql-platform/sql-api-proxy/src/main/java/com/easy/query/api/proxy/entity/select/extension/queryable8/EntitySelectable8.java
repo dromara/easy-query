@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable8;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.common.tuple.MergeTuple8;

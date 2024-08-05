@@ -23,6 +23,7 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -67,6 +68,7 @@ public interface SQLClientApiFactory {
     <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> cloneQueryable(ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> source);
 
     <T> ClientQueryable<T> createQueryable(Class<T> clazz, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    <T> ClientQueryable<T> createQueryable(Class<T> clazz, EntityMetadata entityMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
 
 
     <T> ClientQueryable<T> createUnionQueryable(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLUnionEnum sqlUnion, Collection<ClientQueryable<T>> unionQueries);

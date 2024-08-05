@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -17,6 +18,8 @@ import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
+import com.easy.query.test.listener.ListenerContextManager;
+import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
 import com.easy.query.test.sharding.FixShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingTableRoute;
@@ -38,6 +41,7 @@ public class PgSQLBaseTest {
     public static HikariDataSource dataSource;
     public static EasyQuery easyQuery;
     public static EasyEntityQuery entityQuery;
+    public static ListenerContextManager listenerContextManager;
 
     static {
         LogFactory.useStdOutLogging();
@@ -62,6 +66,8 @@ public class PgSQLBaseTest {
     }
 
     public static void initEasyQuery() {
+        listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
         EasyQueryClient easyObjectQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
@@ -71,6 +77,7 @@ public class PgSQLBaseTest {
                     op.setMaxShardingQueryLimit(1);
                 })
                 .useDatabaseConfigure(new PgSQLDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .build();
         easyQuery = new DefaultEasyQuery(easyObjectQuery);
         entityQuery = new DefaultEasyEntityQuery(easyObjectQuery);

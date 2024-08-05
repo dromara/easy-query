@@ -2,6 +2,7 @@ package com.easy.query.core.proxy.core.draft.proxy;
 
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
+import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -30,8 +31,8 @@ public class Draft1Proxy<T1> extends AbstractDraftProxy<Draft1Proxy<T1>, Draft1<
     /**
      * {@link Draft1#getValue1}
      */
-    public SQLAnyColumn<Draft1Proxy<T1>, T1> value1() {
-        return getAnyColumn("value1",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[0]).map(o->o.getPropertyType()).orElse(null)));
+    public SQLAnyTypeColumn<Draft1Proxy<T1>, T1> value1() {
+        return getAnyTypeColumn("value1",EasyObjectUtil.typeCastNullable(Optional.ofNullable(getDraftPropTypes()[0]).map(o->o.getPropertyType()).orElse(null)));
     }
 
 

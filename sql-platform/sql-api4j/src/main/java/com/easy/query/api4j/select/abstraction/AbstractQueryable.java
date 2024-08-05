@@ -32,11 +32,12 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -58,6 +59,11 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public Class<T1> queryClass() {
         return entityQueryable.queryClass();
+    }
+
+    @Override
+    public EntityMetadata queryEntityMetadata() {
+        return entityQueryable.queryEntityMetadata();
     }
 
     public AbstractQueryable(ClientQueryable<T1> entityQueryable) {
@@ -157,6 +163,11 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass) {
         return entityQueryable.toList(resultClass);
+    }
+
+    @Override
+    public <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata) {
+        return entityQueryable.toList(resultClass,resultEntityMetadata);
     }
 
     @Override

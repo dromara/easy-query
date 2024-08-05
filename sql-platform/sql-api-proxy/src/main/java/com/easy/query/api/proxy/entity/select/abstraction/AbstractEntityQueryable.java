@@ -29,7 +29,7 @@ import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -46,6 +46,7 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 import java.math.BigDecimal;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -96,6 +97,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public Class<T1> queryClass() {
         return clientQueryable.queryClass();
+    }
+
+    @Override
+    public EntityMetadata queryEntityMetadata() {
+        return clientQueryable.queryEntityMetadata();
     }
 
     @Override
@@ -169,6 +175,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass) {
         return clientQueryable.toList(resultClass);
+    }
+
+    @Override
+    public <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata) {
+        return clientQueryable.toList(resultClass,resultEntityMetadata);
     }
 
     @Override

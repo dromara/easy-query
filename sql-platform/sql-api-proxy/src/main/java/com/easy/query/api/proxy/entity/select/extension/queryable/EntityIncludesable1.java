@@ -31,7 +31,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
         return includes(navigateIncludeSQLExpression, o -> {
         }, null);
     }
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition,SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression) {
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression) {
         return includes(condition,navigateIncludeSQLExpression, o -> {
         }, null);
     }
@@ -53,7 +53,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
         return includes(navigateIncludeSQLExpression, o -> {
         }, groupSize);
     }
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition,SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, Integer groupSize) {
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, Integer groupSize) {
         return includes(condition,navigateIncludeSQLExpression, o -> {
         }, groupSize);
     }
@@ -74,7 +74,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression) {
         return includes(true,navigateIncludeSQLExpression, includeAdapterExpression, null);
     }
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition,SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression) {
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression) {
         return includes(condition,navigateIncludeSQLExpression, includeAdapterExpression, null);
     }
 
@@ -92,7 +92,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      * @param <TPropertyProxy>
      * @param <TProperty>
      */
-    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition,SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize);
+    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize);
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy,TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize){
         return includes(true,navigateIncludeSQLExpression,includeAdapterExpression,groupSize);
     }

@@ -13,7 +13,7 @@ import com.easy.query.core.proxy.SQLColumn;
  *
  * @author xuejiaming
  */
-public interface EntityTreeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>{
+public interface IEntityTree1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>{
 
     default EntityQueryable<T1Proxy, T1> asTreeCTE(SQLFuncExpression1<T1Proxy,SQLColumn<T1Proxy, ?>> codePropertyExpression, SQLFuncExpression1<T1Proxy,SQLColumn<T1Proxy, ?>> parentCodePropertyExpression) {
         return asTreeCTE(codePropertyExpression, parentCodePropertyExpression, o -> {

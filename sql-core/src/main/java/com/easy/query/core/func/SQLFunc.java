@@ -15,7 +15,7 @@ import com.easy.query.core.func.def.impl.NativeSegmentSQLFunction;
  *
  * @author xuejiaming
  */
-public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFunc, SQLMathFunc, SQLNumberFunc {
+public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFunc, SQLMathFunc, SQLNumberFunc, SQLPartitionByFunc {
     /**
      * 如果property对应的值为null则返回def值
      * o.nullOrDefault("title","123")
@@ -183,6 +183,8 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
     default SQLFunction nativeSql(String sqlSegemnt, SQLExpression1<SQLNativeChainExpressionContext> consume) {
         return new NativeSegmentSQLFunction(sqlSegemnt, consume);
     }
-     SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean like, SQLLikeEnum sqlLike);
-     SQLFunction anySQLFunction(String sqlSegment,SQLExpression1<ColumnFuncSelector> sqlExpression);
+
+    SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike);
+
+    SQLFunction anySQLFunction(String sqlSegment, SQLExpression1<ColumnFuncSelector> sqlExpression);
 }

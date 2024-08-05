@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
+import com.easy.query.core.metadata.EntityMetadata;
+
 /**
  * create time 2023/10/7 15:06
  * 文件说明
@@ -13,4 +15,5 @@ public interface QueryAvailable<T> {
      * @return 当前查询的对象字节
      */
     Class<T> queryClass();
+    EntityMetadata queryEntityMetadata();
 }

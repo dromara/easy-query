@@ -99,7 +99,6 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
 
     @Override
     public @Nullable TableAvailable getTable() {
-//        Objects.requireNonNull(table, "cant found table in sql context");
         return table;
     }
 

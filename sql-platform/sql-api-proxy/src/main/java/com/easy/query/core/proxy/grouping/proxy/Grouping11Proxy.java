@@ -23,8 +23,8 @@ public class Grouping11Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
         TKey10Proxy extends PropTypeColumn<TKey10>, TKey10,
         TKey11Proxy extends PropTypeColumn<TKey11>, TKey11,
         TSourceProxy>
-        extends AbstractGrouping1Proxy<Grouping11Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TKey3Proxy, TKey3, TKey4Proxy, TKey4, TKey5Proxy, TKey5, TKey6Proxy, TKey6, TKey7Proxy, TKey7, TKey8Proxy, TKey8, TKey9Proxy, TKey9, TKey10Proxy, TKey10,TKey11Proxy, TKey11, TSourceProxy>,
-        Grouping11<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, TKey9, TKey10, TKey11>, TSourceProxy> {
+        extends AbstractGroupingProxy<Grouping11Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TKey3Proxy, TKey3, TKey4Proxy, TKey4, TKey5Proxy, TKey5, TKey6Proxy, TKey6, TKey7Proxy, TKey7, TKey8Proxy, TKey8, TKey9Proxy, TKey9, TKey10Proxy, TKey10,TKey11Proxy, TKey11, TSourceProxy>,
+                Grouping11<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, TKey9, TKey10, TKey11>, TSourceProxy> {
 
     private static final Class<Grouping11> entityClass = Grouping11.class;
     private final TKey1Proxy k1;

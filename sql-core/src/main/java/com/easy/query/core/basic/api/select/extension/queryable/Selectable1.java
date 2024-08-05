@@ -6,6 +6,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +57,8 @@ public interface Selectable1<T1> {
      * @return
      * @param <TR>
      */
-    <TR> ClientQueryable<TR> select(Class<TR> resultClass, SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression);
+     <TR> ClientQueryable<TR> select(Class<TR> resultClass, SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression);
+    <TR> ClientQueryable<TR> select(Class<TR> resultClass,EntityMetadata entityMetadata, SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression);
     default ClientQueryable<T1> select(ColumnSegment columnSegment, boolean clearAll) {
         return select(Collections.singletonList(columnSegment), clearAll);
     }

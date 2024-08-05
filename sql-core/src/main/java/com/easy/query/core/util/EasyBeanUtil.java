@@ -115,7 +115,6 @@ public class EasyBeanUtil {
         return parent;
     }
     public static void setPropertyValue(Object entity, EntityMetadata entityMetadata, ColumnMetadata columnMetadata, Object value, boolean withParents) {
-
         Object parent=entity;
         if (entityMetadata.isHasValueObject() && columnMetadata.getPropertyName().contains(".")) {
             parent = getParentPropertyValue(entity, entityMetadata, columnMetadata.getPropertyName(), withParents);

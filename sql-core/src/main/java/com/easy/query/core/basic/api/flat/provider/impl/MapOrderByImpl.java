@@ -24,7 +24,7 @@ public class MapOrderByImpl extends AbstractMapTable implements MapOrderBy {
 
     @Override
     public ColumnOrderSelector<?> getOrderBy(int tableIndex) {
-        ColumnOrderSelectorImpl<?> order = new ColumnOrderSelectorImpl<>(getTable(tableIndex), new OrderSelectorImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getOrder()));
+        ColumnOrderSelectorImpl<?> order = new ColumnOrderSelectorImpl<>(getTable(tableIndex), new OrderSelectorImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getOrder()));
         order.setAsc(asc);
         return order;
     }

@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable4;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.api.proxy.entity.select.EntityQueryable4;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.common.tuple.MergeTuple4;

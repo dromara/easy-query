@@ -9,6 +9,7 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
 import com.easy.query.core.func.def.AnySQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
+import com.easy.query.core.func.def.PartitionBySQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
@@ -22,6 +23,7 @@ import com.easy.query.core.func.def.impl.CastSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.ConstSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
+import com.easy.query.core.func.def.impl.DenseRankSQLFunction;
 import com.easy.query.core.func.def.impl.DateTime2PlusSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeDurationSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeFormatSQLFunction;
@@ -46,9 +48,11 @@ import com.easy.query.core.func.def.impl.NowSQLFunction;
 import com.easy.query.core.func.def.impl.NullDefaultSQLFunction;
 import com.easy.query.core.func.def.impl.NumberCalcSQLFunction;
 import com.easy.query.core.func.def.impl.OrderByNullsModeSQLFunction;
+import com.easy.query.core.func.def.impl.RankSQLFunction;
 import com.easy.query.core.func.def.impl.ReplaceSQLFunction;
 import com.easy.query.core.func.def.impl.RightPadSQLFunction;
 import com.easy.query.core.func.def.impl.RoundSQLFunction;
+import com.easy.query.core.func.def.impl.RowNumberSQLFunction;
 import com.easy.query.core.func.def.impl.StringCompareToSQLFunction;
 import com.easy.query.core.func.def.impl.SubQueryExistsSQLFunction;
 import com.easy.query.core.func.def.impl.SubQuerySQLFunction;
@@ -322,5 +326,20 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction anySQLFunction(String sqlSegment, SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new AnySQLFunction(sqlSegment, getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public PartitionBySQLFunction rowNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new RowNumberSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public PartitionBySQLFunction rankNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new RankSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public PartitionBySQLFunction denseRankNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DenseRankSQLFunction(getColumnExpressions(sqlExpression));
     }
 }
