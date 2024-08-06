@@ -9,7 +9,7 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.partition.Partition1;
-import com.easy.query.core.proxy.partition.metadata.PartitionBy1EntityMetadata;
+import com.easy.query.core.proxy.partition.metadata.Partition1EntityMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Optional;
@@ -57,8 +57,8 @@ public class Partition1Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1, TS
     @Override
     public EntityMetadata getEntityMetadata() {
         EntityMetadata entityMetadata = entityTable().getEntityMetadata();
-        Class<?> keyClass = Optional.ofNullable(getPartitionByPropTypes()[0]).map(o -> o.getPropertyType()).orElse(null);
+        Class<?> keyClass = partitionColumn1().getPropertyType();
         JdbcTypeHandler jdbcTypeHandler = entityTable().getEntitySQLContext().getRuntimeContext().getJdbcTypeHandlerManager().getHandler(keyClass);
-        return new PartitionBy1EntityMetadata(entityClass,entityMetadata,jdbcTypeHandler);
+        return new Partition1EntityMetadata(entityClass,entityMetadata,jdbcTypeHandler);
     }
 }
