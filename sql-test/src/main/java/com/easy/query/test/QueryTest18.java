@@ -46,7 +46,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -776,7 +775,7 @@ public class QueryTest18 extends BaseTest {
                                     .orderByDescending(t.createTime()).asAnyType(Integer.class)
                     ))
                     .where(p -> {
-                        p.partitionTable().stars().gt(1);
+                        p.entityTable().stars().gt(1);
                         p.partitionColumn1().gt(1);
                     }).toList();
         }catch (Exception ex){
@@ -785,6 +784,34 @@ public class QueryTest18 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time`,t1.`__partition__column1` AS `__partition__column1` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t.`id` ORDER BY t.`id` ASC, t.`create_time` DESC)) AS `__partition__column1` FROM `t_topic` t) t1 WHERE t1.`stars` > ? AND t1.`__partition__column1` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testPartitionBy1_1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<Partition1<Topic, Integer>> list1 = easyEntityQuery.queryable(Topic.class)
+                    .select(t -> Select.PARTITION.of(
+                            t,
+                            t.expression().rowNumberOver().partitionBy(t.id(),t.title()).orderBy(t.id())
+                                    .orderByDescending(t.createTime()).asAnyType(Integer.class)
+                    ))
+                    .where(p -> {
+                        p.entityTable().stars().gt(1);
+                        p.partitionColumn1().gt(1);
+                    }).toList();
+        }catch (Exception ex){
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time`,t1.`__partition__column1` AS `__partition__column1` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t.`id`, t.`title` ORDER BY t.`id` ASC, t.`create_time` DESC)) AS `__partition__column1` FROM `t_topic` t) t1 WHERE t1.`stars` > ? AND t1.`__partition__column1` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }

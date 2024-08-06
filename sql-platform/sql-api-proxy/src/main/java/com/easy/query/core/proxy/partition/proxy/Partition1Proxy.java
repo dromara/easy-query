@@ -42,23 +42,23 @@ public class Partition1Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1, TS
 
     @Override
     public void accept(AsSelector s) {
-        TSourceProxy partitionTable = partitionTable();
+        TSourceProxy partitionTable = entityTable();
         s.columnAll(partitionTable.getTable());
 //        selectTable.
     }
 
     @Override
     public Partition1Proxy<TKey1Proxy, TKey1, TSourceProxy, TSource> create(TableAvailable table, EntitySQLContext entitySQLContext) {
-        TSourceProxy tSourceProxy = partitionTable().create(table, entitySQLContext);
-        setSelectTable(tSourceProxy);
+        TSourceProxy tSourceProxy = entityTable().create(table, entitySQLContext);
+        setEntityTable(tSourceProxy);
         return super.create(table, entitySQLContext);
     }
 
     @Override
     public EntityMetadata getEntityMetadata() {
-        EntityMetadata entityMetadata = partitionTable().getEntityMetadata();
+        EntityMetadata entityMetadata = entityTable().getEntityMetadata();
         Class<?> keyClass = Optional.ofNullable(getPartitionByPropTypes()[0]).map(o -> o.getPropertyType()).orElse(null);
-        JdbcTypeHandler jdbcTypeHandler = partitionTable().getEntitySQLContext().getRuntimeContext().getJdbcTypeHandlerManager().getHandler(keyClass);
+        JdbcTypeHandler jdbcTypeHandler = entityTable().getEntitySQLContext().getRuntimeContext().getJdbcTypeHandlerManager().getHandler(keyClass);
         return new PartitionBy1EntityMetadata(entityClass,entityMetadata,jdbcTypeHandler);
     }
 }

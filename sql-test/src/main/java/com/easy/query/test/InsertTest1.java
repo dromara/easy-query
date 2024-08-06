@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 
 /**
@@ -113,7 +114,7 @@ public class InsertTest1 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         try {
-            HashMap<String,Object> map = new HashMap<>();
+            LinkedHashMap<String,Object> map = new LinkedHashMap<>();
             map.put("id","1");
             map.put("stars","2");
 

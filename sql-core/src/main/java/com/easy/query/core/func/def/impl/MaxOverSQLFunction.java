@@ -18,23 +18,31 @@ import java.util.List;
  */
 public class MaxOverSQLFunction extends AbstractExpressionSQLFunction implements PartitionBySQLFunction {
     private final List<ColumnExpression> columnExpressions;
+    private final int partitionByColumnSizePlusOne;
 
     public MaxOverSQLFunction(List<ColumnExpression> columnExpressions) {
         this.columnExpressions = columnExpressions;
+        this.partitionByColumnSizePlusOne = columnExpressions.size();
     }
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         if (columnExpressions.size() < 2) {
-            throw new EasyQueryInvalidOperationException("sum over columnExpressions < 2");
+            throw new EasyQueryInvalidOperationException("max over columnExpressions < 2");
         }
         StringBuilder sql = new StringBuilder();
 
-        sql.append("(MAX({0}) OVER (PARTITION BY {1}");
-        if (columnExpressions.size() > 1) {
+        sql.append("(MAX({0}) OVER (PARTITION BY ");
+        for (int i = 1; i < partitionByColumnSizePlusOne; i++) {
+            if (i > 1) {
+                sql.append(", ");
+            }
+            sql.append("{").append(i).append("}");
+        }
+        if (columnExpressions.size() > partitionByColumnSizePlusOne) {
             sql.append(" ORDER BY ");
-            for (int i = 2; i < columnExpressions.size(); i++) {
-                if (i > 2) {
+            for (int i = partitionByColumnSizePlusOne; i < columnExpressions.size(); i++) {
+                if (i > partitionByColumnSizePlusOne) {
                     sql.append(", ");
                 }
                 sql.append("{").append(i).append("}");

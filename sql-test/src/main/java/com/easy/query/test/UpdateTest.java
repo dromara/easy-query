@@ -1749,7 +1749,7 @@ public class UpdateTest extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         try {
-            HashMap<String,Object> map = new HashMap<>();
+            LinkedHashMap<String,Object> map = new LinkedHashMap<>();
             map.put("id","1");
             map.put("stars","2");
 

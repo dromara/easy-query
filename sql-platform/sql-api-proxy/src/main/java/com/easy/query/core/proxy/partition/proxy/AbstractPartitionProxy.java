@@ -34,11 +34,11 @@ public abstract class AbstractPartitionProxy<TProxy extends ProxyEntity<TProxy, 
         this.propTypes = new ResultColumnMetadata[capacity];
     }
 
-    public TSourceProxy partitionTable() {
+    public TSourceProxy entityTable() {
         return selectTable;
     }
 
-    protected void setSelectTable(TSourceProxy selectTable) {
+    protected void setEntityTable(TSourceProxy selectTable) {
         this.selectTable = selectTable;
     }
 
