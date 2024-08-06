@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.entity.insert.extension.ProxyColumnConfigurer;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
@@ -108,7 +109,7 @@ public class EasyEmptyEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T>
     }
 
     @Override
-    public EntityInsertable<TProxy, T> columnConfigure(SQLExpression1<ProxyColumnConfigurer<TProxy, T>> columnConfigureExpression) {
+    public EntityInsertable<TProxy, T> columnConfigure(SQLExpression2<TProxy, ProxyColumnConfigurer<TProxy, T>> columnConfigureExpression) {
         return this;
     }
 

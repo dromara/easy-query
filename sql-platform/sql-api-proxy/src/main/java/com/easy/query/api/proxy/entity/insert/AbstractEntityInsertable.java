@@ -7,6 +7,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.builder.impl.FetchSelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
@@ -138,12 +139,19 @@ public class AbstractEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> 
     }
 
     @Override
-    public EntityInsertable<TProxy, T> columnConfigure(SQLExpression1<ProxyColumnConfigurer<TProxy, T>> columnConfigureExpression) {
+    public EntityInsertable<TProxy, T> columnConfigure(SQLExpression2<TProxy, ProxyColumnConfigurer<TProxy, T>> columnConfigureExpression) {
         clientInsertable.columnConfigure(c->{
-            columnConfigureExpression.apply(new ProxyColumnConfigurerImpl<>(c.getConfigurer()));
+            columnConfigureExpression.apply(tProxy,new ProxyColumnConfigurerImpl<>(c.getConfigurer()));
         });
         return this;
     }
+    //    @Override
+//    public EntityInsertable<TProxy, T> columnConfigure(SQLExpression1<ProxyColumnConfigurer<TProxy, T>> columnConfigureExpression) {
+//        clientInsertable.columnConfigure(c->{
+//            columnConfigureExpression.apply(new ProxyColumnConfigurerImpl<>(c.getConfigurer()));
+//        });
+//        return this;
+//    }
 
     @Override
     public EntityInsertable<TProxy, T> onConflictThen(SQLFuncExpression1<TProxy, SQLSelectExpression> updateSetSelector, SQLFuncExpression1<TProxy, SQLSelectExpression> constraintPropertySelector) {

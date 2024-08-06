@@ -11,6 +11,7 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.MapColumnNullAssertPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.MapColumnValuePredicate;
+import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
 import com.easy.query.core.expression.segment.impl.UpdateMapColumnSegmentImpl;
 import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -28,6 +29,7 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,7 @@ import java.util.function.Predicate;
 public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressionBuilder implements MapUpdateExpressionBuilder {
 
     private final List<String> whereColumns;
+    protected Map<String, ColumnConfigurerContext> columnConfigurers;
 
     public UpdateMapExpressionBuilder(ExpressionContext expressionContext) {
         super(expressionContext, Map.class);
@@ -52,7 +55,10 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
 
     @Override
     public Map<String, ColumnConfigurerContext> getColumnConfigurer() {
-        throw new UnsupportedOperationException();
+        if (columnConfigurers == null) {
+            columnConfigurers = new HashMap<>();
+        }
+        return columnConfigurers;
     }
 
     @Override
@@ -107,6 +113,9 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
         for (EntityTableExpressionBuilder table : super.tables) {
             mapToUpdateExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
         }
+        if (columnConfigurers != null) {
+            mapToUpdateExpressionBuilder.getColumnConfigurer().putAll(columnConfigurers);
+        }
         return mapToUpdateExpressionBuilder;
     }
 
@@ -144,7 +153,7 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
 
 
         //替换掉配置的片段
-        SQLBuilderSegment updateSet =buildUpdateSetByWhere(where,map,tableExpressionBuilder);
+        SQLBuilderSegment updateSet = buildUpdateSetByWhere(where, map, tableExpressionBuilder);
 
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
@@ -153,7 +162,8 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
         where.copyTo(easyUpdateSQLExpression.getWhere());
         return easyUpdateSQLExpression;
     }
-    protected SQLBuilderSegment buildUpdateSetByWhere(PredicateSegment sqlWhere, Map<String,Object> map, EntityTableExpressionBuilder tableExpressionBuilder) {
+
+    protected SQLBuilderSegment buildUpdateSetByWhere(PredicateSegment sqlWhere, Map<String, Object> map, EntityTableExpressionBuilder tableExpressionBuilder) {
         SQLBuilderSegment updateSetSQLBuilderSegment = new UpdateSetSQLBuilderSegment();
         TableAvailable entityTable = tableExpressionBuilder.getEntityTable();
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
@@ -161,16 +171,26 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
         Set<String> columns = map.keySet();
 
 
+        boolean hasConfigure = columnConfigurers != null && !columnConfigurers.isEmpty();
         Set<String> ignorePropertySet = new HashSet<>(map.size());
         boolean clearIgnoreProperties = clearIgnoreProperties(ignorePropertySet, getRuntimeContext(), map);
         for (String column : columns) {
-            if(clearIgnoreProperties&&ignorePropertySet.contains(column)){
+            if (clearIgnoreProperties && ignorePropertySet.contains(column)) {
                 continue;
             }
             if (whereColumns.contains(column)) {
                 continue;
             }
-            updateSetSQLBuilderSegment.append(new UpdateMapColumnSegmentImpl(entityTable, column, runtimeContext));
+            UpdateMapColumnSegmentImpl updateMapColumnSegment = new UpdateMapColumnSegmentImpl(entityTable, column, runtimeContext);
+            if (hasConfigure) {
+                ColumnConfigurerContext columnConfigurerContext = columnConfigurers.get(column);
+                if (columnConfigurerContext != null) {
+                    InsertUpdateColumnConfigureSegmentImpl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegmentImpl(updateMapColumnSegment, getExpressionContext(), columnConfigurerContext.getSqlSegment(), columnConfigurerContext.getSqlNativeExpressionContext());
+                    updateSetSQLBuilderSegment.append(insertUpdateColumnConfigureSegment);
+                    continue;
+                }
+            }
+            updateSetSQLBuilderSegment.append(updateMapColumnSegment);
         }
         return updateSetSQLBuilderSegment;
     }
@@ -181,7 +201,7 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
             //以下应该二选一
             //todo 获取更新策略按需更新
             SQLExecuteStrategyEnum sqlStrategy = expressionContext.getSQLStrategy();
-            if (SQLExecuteStrategyEnum.DEFAULT== sqlStrategy) {
+            if (SQLExecuteStrategyEnum.DEFAULT == sqlStrategy) {
                 SQLExecuteStrategyEnum globalSQLStrategy = runtimeContext.getQueryConfiguration().getEasyQueryOption().getUpdateStrategy();
                 getCustomIgnoreProperties(ignorePropertySet, globalSQLStrategy, runtimeContext.getEntityMetadataManager(), map);
                 return true;

@@ -7,6 +7,7 @@ import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
 import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -21,6 +22,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -35,6 +37,7 @@ import java.util.function.Predicate;
  */
 public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder implements EntityInsertExpressionBuilder {
 
+    protected Map<String, ColumnConfigurerContext> columnConfigurers;
     public InsertMapExpressionBuilder(ExpressionContext expressionContext) {
         super(expressionContext, Map.class);
     }
@@ -117,6 +120,7 @@ public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder 
         SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
         //format
 
+        boolean hasConfigure = this.columnConfigurers != null && !columnConfigurers.isEmpty();
         Set<String> ignorePropertySet = new HashSet<>(map.size());
         boolean clearIgnoreProperties = clearIgnoreProperties(ignorePropertySet, getRuntimeContext(), map);
         for (String columnName : map.keySet()) {
@@ -124,6 +128,14 @@ public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder 
                 continue;
             }
             InsertUpdateSetColumnSQLSegment columnInsertSegment = sqlSegmentFactory.createInsertMapColumnSegment(columnName, runtimeContext);
+
+            if (hasConfigure) {
+                ColumnConfigurerContext columnConfigurerContext = this.columnConfigurers.get(columnName);
+                if (columnConfigurerContext != null) {
+                    insertCloneColumns.append(new InsertUpdateColumnConfigureSegmentImpl(columnInsertSegment, getExpressionContext(), columnConfigurerContext.getSqlSegment(), columnConfigurerContext.getSqlNativeExpressionContext()));
+                    continue;
+                }
+            }
             insertCloneColumns.append(columnInsertSegment);
         }
 
@@ -149,12 +161,18 @@ public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder 
         for (EntityTableExpressionBuilder table : super.tables) {
             insertExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
         }
+        if (this.columnConfigurers != null) {
+            insertExpressionBuilder.getColumnConfigurer().putAll(this.columnConfigurers);
+        }
         return insertExpressionBuilder;
     }
 
     @Override
     public Map<String, ColumnConfigurerContext> getColumnConfigurer() {
-        throw new UnsupportedOperationException();
+        if (columnConfigurers == null) {
+            columnConfigurers = new HashMap<>();
+        }
+        return columnConfigurers;
     }
 }
 

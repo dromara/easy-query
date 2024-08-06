@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -1721,5 +1722,58 @@ public class UpdateTest extends BaseTest {
          listenerContextManager.clear();
 
 
+    }
+    @Test
+    public void testColumnConfigure1() {
+        try {
+            Topic topic = new Topic();
+            long rows = easyEntityQuery.insertable(topic)
+                    .asTable("xxxxx")
+                    .setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS)
+                    .columnConfigure((t, o) -> o.column(t.stars(), "ifnull({0},0)+{1}", (context, sqlParameter) -> {
+                        context.expression(t.stars())
+                                .value(sqlParameter);
+                    })).executeRows();
+
+            Assert.assertEquals(1, rows);
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("INSERT INTO `xxxxx` (`id`,`stars`,`title`,`create_time`) VALUES (?,ifnull(`stars`,0)+?,?,?)", sql);
+        }
+    }
+    @Test
+    public void testColumnConfigure2() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+            HashMap<String,Object> map = new HashMap<>();
+            map.put("id","1");
+            map.put("stars","2");
+
+            long rows = easyQueryClient.mapUpdatable(map)
+                    .asTable("xxxxx")
+                    .columnConfigure(o -> o.column("stars", "ifnull({0},0)+{1}", (context, sqlParameter) -> {
+                        context.expression("stars")
+                                .value(sqlParameter);
+                    }))
+                    .whereColumns("id")
+                    .executeRows();
+
+            Assert.assertEquals(1, rows);
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `xxxxx` SET `stars` = ifnull(`stars`,0)+? WHERE `id` = ?", sql);
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `xxxxx` SET `stars` = ifnull(`stars`,0)+? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }
