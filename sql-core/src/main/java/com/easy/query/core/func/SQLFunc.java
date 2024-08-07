@@ -1,5 +1,6 @@
 package com.easy.query.core.func;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -57,7 +58,7 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
 
     SQLFunction equalsWith(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
-    default SQLFunction orderByNullsMode(String property, boolean asc, OrderByModeEnum orderByModeEnum) {
+    default SQLFunction orderByNullsMode(String property, boolean asc,@NotNull OrderByModeEnum orderByModeEnum) {
         return orderByNullsMode(o -> o.column(property), asc, orderByModeEnum);
     }
 
@@ -65,7 +66,7 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
         return orderByNullsMode(o -> o.sqlFunc(sqlFunction), asc, orderByModeEnum);
     }
 
-    SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc, OrderByModeEnum orderByModeEnum);
+    SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc,@NotNull OrderByModeEnum orderByModeEnum);
 
     /**
      * 请使用nullOrDefault函数

@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.api.proxy.util.EasyPropertyLambdaUtil;
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.builder.Selector;
@@ -24,18 +25,30 @@ import com.easy.query.core.util.EasyObjectUtil;
  */
 public interface SQLSelectExpression extends TablePropColumn{
 
+    /**
+     * 使用正序 order by column asc
+     */
     default void asc() {
          asc(true);
     }
 
+    /**
+     * 使用正序 order by column asc ,{@param condition} 为false那么order by将不会生效也可以用if来进行包裹
+     * @param condition 是否生效asc
+     */
     default void asc(boolean condition) {
         asc(condition,null);
     }
-    default void asc(OrderByModeEnum nullsModeEnum) {
+    default void asc(@Nullable OrderByModeEnum nullsModeEnum) {
          asc(true,nullsModeEnum);
     }
 
-    default void asc(boolean condition, OrderByModeEnum nullsModeEnum) {
+    /**
+     * 采用正序排序生成 order by column asc并且可以设置nulls模式比如null排在最前还是最后
+     * @param condition
+     * @param nullsModeEnum
+     */
+    default void asc(boolean condition,@Nullable OrderByModeEnum nullsModeEnum) {
         if (condition) {
            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                s.setAsc(true);
@@ -76,6 +89,11 @@ public interface SQLSelectExpression extends TablePropColumn{
         desc(true,nullsModeEnum);
     }
 
+    /**
+     * 采用正序排序生成 order by column desc并且可以设置nulls模式比如null排在最前还是最后
+     * @param condition
+     * @param nullsModeEnum
+     */
     default void desc(boolean condition, OrderByModeEnum nullsModeEnum) {
         if (condition) {
             getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {

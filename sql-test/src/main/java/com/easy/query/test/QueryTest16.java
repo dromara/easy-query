@@ -7,10 +7,12 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
+import com.easy.query.test.dto.UserBookEncryptVO;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.Company;
 import com.easy.query.test.entity.blogtest.CompanyVO;
@@ -40,6 +42,21 @@ public class QueryTest16 extends BaseTest {
 
     @Test
     public void test1() {
+//        List<Draft2<String, Long>> list = easyEntityQuery.queryable(SysUser.class)
+//                .where(user -> user.name().like("123"))
+//                .select(user -> Select.DRAFT.of(
+//                        user.id(),
+//                        user.roles().where(r->r.name().like("123")).count()
+//                )).limit(10,20).toList();
+//        List<UserBookEncryptVO> list1 = easyEntityQuery.queryable(SysUser.class)
+//                .where(user -> user.name().like("123"))
+//                .orderBy(user -> {
+//                    user.age().asc();
+//                })
+//                .selectAutoInclude(UserBookEncryptVO.class, user -> Select.of(
+//                        user.roles().where(r->r.name().like("123")).count().as("vo的属性")
+//                )).toList();
+
 //        List<Map> list = easyQueryClient.queryable(Map.class)
 //                .asTable("t_user").asAlias("xb")
 //                .leftJoin(Map.class, (m, m2) -> m.eq(m2, "id", "id1"))

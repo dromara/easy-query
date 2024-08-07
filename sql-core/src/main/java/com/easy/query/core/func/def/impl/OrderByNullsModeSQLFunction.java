@@ -1,5 +1,6 @@
 package com.easy.query.core.func.def.impl;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
@@ -19,7 +20,7 @@ public class OrderByNullsModeSQLFunction extends AbstractExpressionSQLFunction {
     private final boolean asc;
     private final OrderByModeEnum orderByModeEnum;
 
-    public OrderByNullsModeSQLFunction(List<ColumnExpression> columnExpressions, boolean asc, OrderByModeEnum orderByModeEnum) {
+    public OrderByNullsModeSQLFunction(List<ColumnExpression> columnExpressions, boolean asc,@NotNull OrderByModeEnum orderByModeEnum) {
         this.columnExpressions = columnExpressions;
         this.asc = asc;
         Objects.requireNonNull(orderByModeEnum,"orderByModeEnum is null");

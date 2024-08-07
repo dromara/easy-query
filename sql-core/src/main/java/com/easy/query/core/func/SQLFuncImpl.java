@@ -1,5 +1,6 @@
 package com.easy.query.core.func;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
@@ -310,7 +311,7 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc, OrderByModeEnum orderByModeEnum) {
+    public SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc,@NotNull OrderByModeEnum orderByModeEnum) {
         return new OrderByNullsModeSQLFunction(getColumnExpressions(sqlExpression), asc, orderByModeEnum);
     }
 
