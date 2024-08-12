@@ -3,6 +3,11 @@ package com.easy.query.test.listener;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteBeforeArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.util.EasySQLUtil;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 /**
  * create time 2023/11/11 23:13
@@ -10,6 +15,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
  *
  * @author xuejiaming
  */
+@Slf4j
 public class MyJdbcListener implements JdbcExecutorListener {
     private final ListenerContextManager listenerContextManager;
 
@@ -29,6 +35,7 @@ public class MyJdbcListener implements JdbcExecutorListener {
 
     @Override
     public void onExecuteAfter(JdbcExecuteAfterArg afterArg) {
+
         ListenerContext listenContext = listenerContextManager.getListenContext();
         if(listenContext!=null){
             listenContext.record(afterArg);

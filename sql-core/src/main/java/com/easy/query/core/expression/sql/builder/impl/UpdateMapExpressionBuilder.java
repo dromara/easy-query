@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
+import com.easy.query.core.common.MapValue;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
@@ -179,7 +180,10 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
                 continue;
             }
             if (whereColumns.contains(column)) {
-                continue;
+                Object val = map.get(column);
+                if(!(val instanceof MapValue)){
+                    continue;
+                }
             }
             UpdateMapColumnSegmentImpl updateMapColumnSegment = new UpdateMapColumnSegmentImpl(entityTable, column, runtimeContext);
             if (hasConfigure) {
@@ -232,13 +236,18 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
             throw new EasyQueryException("map update whereColumns is empty");
         }
         for (String whereColumn : whereColumns) {
-            Object predicateValue = map.get(whereColumn);
+            Object val = map.get(whereColumn);
+            Object predicateValue = val;
+            if (val instanceof MapValue) {
+                MapValue mapValue = (MapValue) val;
+                predicateValue = mapValue.getPredicateValue();
+            }
             if (predicateValue == null) {
                 MapColumnNullAssertPredicate columnPredicate = new MapColumnNullAssertPredicate(tableExpressionBuilder.getEntityTable(), whereColumn, SQLPredicateCompareEnum.IS_NULL, runtimeContext);
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPredicate);
                 where.addPredicateSegment(andPredicateSegment);
             } else {
-                MapColumnValuePredicate columnValuePredicate = new MapColumnValuePredicate(tableExpressionBuilder.getEntityTable(), whereColumn, predicateValue, SQLPredicateCompareEnum.EQ, runtimeContext);
+                MapColumnValuePredicate columnValuePredicate = new MapColumnValuePredicate(tableExpressionBuilder.getEntityTable(), whereColumn,SQLPredicateCompareEnum.EQ, runtimeContext);
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnValuePredicate);
                 where.addPredicateSegment(andPredicateSegment);
             }

@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
+import com.easy.query.core.common.MapValue;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -14,10 +15,12 @@ import java.util.Map;
  */
 public class MapSQLParameter implements BeanSQLParameter {
     private final String mapKey;
+    private final boolean predicate;
     private Map<String, Object> bean;
 
-    public MapSQLParameter(String mapKey) {
+    public MapSQLParameter(String mapKey,boolean predicate) {
         this.mapKey = mapKey;
+        this.predicate = predicate;
     }
 
     @Override
@@ -30,7 +33,14 @@ public class MapSQLParameter implements BeanSQLParameter {
         if (bean == null) {
             throw new EasyQueryException("cant get sql parameter value,Map." + mapKey + ",bean is null");
         }
-        return bean.get(mapKey);
+        Object val = bean.get(mapKey);
+        if(val instanceof MapValue){
+            if(predicate){
+                return ((MapValue)val).getPredicateValue();
+            }
+            return ((MapValue)val).getCurrentValue();
+        }
+        return val;
     }
 
     @Override

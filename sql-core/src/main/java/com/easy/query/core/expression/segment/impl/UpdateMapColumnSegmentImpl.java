@@ -29,7 +29,7 @@ public class UpdateMapColumnSegmentImpl implements InsertUpdateSetColumnSQLSegme
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        MapSQLParameter mapSQLParameter = new MapSQLParameter(columnName);
+        MapSQLParameter mapSQLParameter = new MapSQLParameter(columnName,false);
         EasySQLUtil.addParameter(toSQLContext, mapSQLParameter);
         return "?";
     }

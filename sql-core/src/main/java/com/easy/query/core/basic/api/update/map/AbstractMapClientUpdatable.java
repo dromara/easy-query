@@ -10,6 +10,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.builder.impl.ConfigurerImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnConfigurerImpl;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;

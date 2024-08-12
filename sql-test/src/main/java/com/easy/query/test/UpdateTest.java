@@ -7,11 +7,13 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.MapValue;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQueryTableNotInSQLContextException;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -1776,4 +1778,33 @@ public class UpdateTest extends BaseTest {
         Assert.assertEquals("2(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+    @Test
+    public void testColumnConfigure3() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+            LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+            map.put("id",new MapValue("123","1"));
+            map.put("stars","2");
+
+            long rows = easyQueryClient.mapUpdatable(map)
+                    .asTable("xxxxx")
+                    .whereColumns("id")
+                    .executeRows();
+
+            Assert.assertEquals(1, rows);
+        } catch (Exception ex) {
+            Throwable cause = ex.getCause();
+            Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+            EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+            String sql = cause1.getSQL();
+            Assert.assertEquals("UPDATE `xxxxx` SET `id` = ?,`stars` = ? WHERE `id` = ?", sql);
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `xxxxx` SET `id` = ?,`stars` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),2(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
 }
