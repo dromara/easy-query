@@ -29,6 +29,8 @@ public class Topic implements ProxyEntityAvailable<Topic , TopicProxy> {
     private Integer stars;
     private String title;
     private LocalDateTime createTime;
+//    @Column(value = "C_USER_NAME")
+//    private String cUserName;
 
     @Column(autoSelect = false)
     @InsertIgnore

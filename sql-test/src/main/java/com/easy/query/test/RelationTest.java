@@ -5,6 +5,7 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLUtil;
@@ -26,9 +27,13 @@ import com.easy.query.test.dto.autodto.SchoolStudentDTOxxx;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.Area;
 import com.easy.query.test.entity.base.City;
+import com.easy.query.test.entity.base.MyProvinceVO;
 import com.easy.query.test.entity.base.Province;
+import com.easy.query.test.entity.base.ProvinceVO;
 import com.easy.query.test.entity.base.proxy.CityProxy;
+import com.easy.query.test.entity.base.proxy.MyProvinceVOProxy;
 import com.easy.query.test.entity.base.proxy.ProvinceProxy;
+import com.easy.query.test.entity.base.proxy.ProvinceVOProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.entity.school.SchoolClassTeacher;
@@ -47,6 +52,7 @@ import com.easy.query.test.entity.school.dto.proxy.SchoolClassVOProxy;
 import com.easy.query.test.entity.school.dto.proxy.SchoolStudentVOProxy;
 import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.listener.ListenerContext;
+import lombok.var;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -181,11 +187,11 @@ public class RelationTest extends BaseTest {
             relationInit(ids);
             {
                 System.out.println("4");
-                    ListenerContext listenerContext = new ListenerContext(true);
-                    listenerContextManager.startListen(listenerContext);
-                    List<SchoolStudentDTOAO111> list = easyEntityQuery.queryable(SchoolStudent.class)
-                            .selectAutoInclude(SchoolStudentDTOAO111.class)
-                            .toList();
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+                List<SchoolStudentDTOAO111> list = easyEntityQuery.queryable(SchoolStudent.class)
+                        .selectAutoInclude(SchoolStudentDTOAO111.class)
+                        .toList();
 
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
                 Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
@@ -244,7 +250,7 @@ public class RelationTest extends BaseTest {
                         i++;
                     }
                 }
-                Assert.assertTrue(i>0);
+                Assert.assertTrue(i > 0);
 
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
                 Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
@@ -2583,22 +2589,47 @@ public class RelationTest extends BaseTest {
         Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
+    @Test
+    public void provinceVoTest() {
+        EasyPageResult<MyProvinceVO> pageResult = easyEntityQuery.queryable(Province.class)
+                .leftJoin(Topic.class, (p, t2) -> p.code().eq(t2.id()))
+                .groupBy((p, a) -> GroupKeys.TABLE1.of(
+                        p.code()
+                )).select(group -> {
+                    var r = new MyProvinceVOProxy();
+
+                    r.myCode().set(group.key1());
+
+                    var caseWhen = group.expression().caseWhen(() -> group.groupTable().t1.name().eq("123"))
+                            .then(1).elseEnd(0).sum().asAnyType(Long.class);
+
+                    r.count().set(caseWhen);
+                    return r;
+                }).fillMany(() -> {
+                    return easyEntityQuery.queryable(City.class);
+                }, "provinceCode", "myCode", (p, c) -> {
+                    p.setCities(new ArrayList<>(c));
+                }).toPageResult(1, 2);
+        System.out.println(pageResult);
+    }
+
     @Test
     public void provinceTest2() {
-        List<Province> list =  easyQuery.queryable(Province.class)
-                .fillMany(()->{
+        List<Province> list = easyQuery.queryable(Province.class)
+                .fillMany(() -> {
                     return easyQuery.queryable(City.class).where(c -> c.eq(City::getCode, "3306"));
-                },"provinceCode", "code", (x, y) -> {
+                }, "provinceCode", "code", (x, y) -> {
                     x.setCities(new ArrayList<>(y));
-                },false).toList();
+                }, false).toList();
 
 
         List<City> list1 = easyQuery.queryable(City.class)
-                .fillOne(()->{
+                .fillOne(() -> {
                     return easyQuery.queryable(Province.class);
-                },"code","provinceCode", (x, y) -> {
+                }, "code", "provinceCode", (x, y) -> {
                     x.setProvince(y);
-                },false)
+                }, false)
                 .toList();
 
         Assert.assertEquals(2, list.size());
@@ -2614,22 +2645,23 @@ public class RelationTest extends BaseTest {
             }
         }
     }
+
     @Test
     public void provinceTest3() {
-        List<Province> list =  easyQuery.queryable(Province.class)
-                .fillMany(()->{
+        List<Province> list = easyQuery.queryable(Province.class)
+                .fillMany(() -> {
                     return easyQuery.queryable(City.class).where(c -> c.eq(City::getCode, "3306"));
                 }, CityProxy.TABLE.provinceCode().getValue(), ProvinceProxy.TABLE.code().getValue(), (x, y) -> {
                     x.setCities(new ArrayList<>(y));
-                },false).toList();
+                }, false).toList();
 
 
         List<City> list1 = easyQuery.queryable(City.class)
-                .fillOne(()->{
+                .fillOne(() -> {
                     return easyQuery.queryable(Province.class);
-                },"code","provinceCode", (x, y) -> {
+                }, "code", "provinceCode", (x, y) -> {
                     x.setProvince(y);
-                },false)
+                }, false)
                 .toList();
 
         Assert.assertEquals(2, list.size());
@@ -2645,33 +2677,34 @@ public class RelationTest extends BaseTest {
             }
         }
     }
+
     @Test
     public void provinceTest4() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
 
-        List<Province> list =  easyQuery.queryable(Province.class)
-                .fillMany(()->{
+        List<Province> list = easyQuery.queryable(Province.class)
+                .fillMany(() -> {
                     return easyQuery.queryable(City.class).where(c -> c.eq(City::getCode, "3306")).limit(2);
                 }, CityProxy.TABLE.provinceCode().getValue(), ProvinceProxy.TABLE.code().getValue(), (x, y) -> {
                     x.setCities(new ArrayList<>(y));
-                },false).toList();
+                }, false).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-        Assert.assertEquals(2,listenerContext.getJdbcExecuteAfterArgs().size());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
         Assert.assertEquals("SELECT `code`,`name` FROM `t_province`", listenerContext.getJdbcExecuteAfterArgs().get(0).getBeforeArg().getSql());
 //        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(listenerContext.getJdbcExecuteAfterArgs().get(0).getBeforeArg().getSqlParameters().get(0)));
-         Assert.assertEquals("SELECT t1.`code`,t1.`province_code`,t1.`name` FROM ( (SELECT t.`code`,t.`province_code`,t.`name` FROM `t_city` t WHERE t.`code` = ? LIMIT 2)  UNION ALL  (SELECT t.`code`,t.`province_code`,t.`name` FROM `t_city` t WHERE t.`code` = ? AND t.`province_code` = ? LIMIT 2) ) t1", listenerContext.getJdbcExecuteAfterArgs().get(1).getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t1.`code`,t1.`province_code`,t1.`name` FROM ( (SELECT t.`code`,t.`province_code`,t.`name` FROM `t_city` t WHERE t.`code` = ? LIMIT 2)  UNION ALL  (SELECT t.`code`,t.`province_code`,t.`name` FROM `t_city` t WHERE t.`code` = ? AND t.`province_code` = ? LIMIT 2) ) t1", listenerContext.getJdbcExecuteAfterArgs().get(1).getBeforeArg().getSql());
         Assert.assertEquals("3306(String),3306(String),33(String)", EasySQLUtil.sqlParameterToString(listenerContext.getJdbcExecuteAfterArgs().get(1).getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 //
         List<City> list1 = easyQuery.queryable(City.class)
-                .fillOne(()->{
+                .fillOne(() -> {
                     return easyQuery.queryable(Province.class);
-                },"code","provinceCode", (x, y) -> {
+                }, "code", "provinceCode", (x, y) -> {
                     x.setProvince(y);
-                },false)
+                }, false)
                 .toList();
 
         Assert.assertEquals(2, list.size());

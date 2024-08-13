@@ -13,7 +13,6 @@ import com.easy.query.core.proxy.ProxyEntity;
 public interface EntityHavingable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 
 
-
     default EntityQueryable<T1Proxy, T1> having(SQLExpression1<T1Proxy> aggregateFilterSQLExpression) {
         return having(true, aggregateFilterSQLExpression);
     }

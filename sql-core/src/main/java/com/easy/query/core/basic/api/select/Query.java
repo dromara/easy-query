@@ -388,13 +388,14 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      *                 },false).toList();
      *      }
      * </pre></blockquote>
+     *
      * @param fillSetterExpression
      * @param targetProperty
      * @param selfProperty
      * @param produce
      * @param consumeNull
-     * @return
      * @param <TREntity>
+     * @return
      */
     @Override
     default <TREntity> Query<T> fillMany(SQLFuncExpression<Query<TREntity>> fillSetterExpression, String targetProperty, String selfProperty, BiConsumer<T, Collection<TREntity>> produce, boolean consumeNull) {
@@ -417,13 +418,14 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      *                 .toList();
      *      }
      * </pre></blockquote>
+     *
      * @param fillSetterExpression
      * @param targetProperty
      * @param selfProperty
      * @param produce
      * @param consumeNull
-     * @return
      * @param <TREntity>
+     * @return
      */
     @Override
     default <TREntity> Query<T> fillOne(SQLFuncExpression<Query<TREntity>> fillSetterExpression, String targetProperty, String selfProperty, BiConsumer<T, TREntity> produce, boolean consumeNull) {

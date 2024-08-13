@@ -110,13 +110,14 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public long countDistinct(SQLFuncExpression1<T1Proxy, SQLColumn<?,?>> selectExpression) {
+    public long countDistinct(SQLFuncExpression1<T1Proxy, SQLColumn<?, ?>> selectExpression) {
         return getClientQueryable().countDistinct(selector -> {
             SQLColumn<?, ?> sqlColumn = selectExpression.apply(get1Proxy());
-            Objects.requireNonNull(sqlColumn,"countDistinct cant get column");
+            Objects.requireNonNull(sqlColumn, "countDistinct cant get column");
             sqlColumn.accept(selector.getSelector());
         });
     }
+
     @Override
     public boolean any() {
         return getClientQueryable().any();
@@ -179,7 +180,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata) {
-        return clientQueryable.toList(resultClass,resultEntityMetadata);
+        return clientQueryable.toList(resultClass, resultEntityMetadata);
     }
 
     @Override
@@ -189,7 +190,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public void toChunk(int size, Predicate<List<T1>> chunk) {
-        clientQueryable.toChunk(size,chunk);
+        clientQueryable.toChunk(size, chunk);
     }
 
     @Override
@@ -315,10 +316,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> extraSelectExpression, boolean replace) {
-        return clientQueryable.selectAutoInclude(resultClass,columnAsSelector->{
-            if(extraSelectExpression!=null){
+        return clientQueryable.selectAutoInclude(resultClass, columnAsSelector -> {
+            if (extraSelectExpression != null) {
                 SQLSelectAsExpression sqlSelectAsExpression = extraSelectExpression.apply(get1Proxy());
-                if(sqlSelectAsExpression!=null){
+                if (sqlSelectAsExpression != null) {
                     sqlSelectAsExpression.accept(columnAsSelector.getAsSelector());
                 }
             }
@@ -659,7 +660,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> on) {
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
-       return leftJoin(t2Proxy,on);
+        return leftJoin(t2Proxy, on);
     }
 
     @Override
@@ -686,7 +687,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> on) {
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
-        return rightJoin(t2Proxy,on);
+        return rightJoin(t2Proxy, on);
     }
 
     @Override
@@ -714,7 +715,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> on) {
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
-        return innerJoin(t2Proxy,on);
+        return innerJoin(t2Proxy, on);
     }
 
     @Override
@@ -965,6 +966,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         clientQueryable.tableLogicDelete(tableLogicDel);
         return this;
     }
+
     @Override
     public EntityQueryable<T1Proxy, T1> configure(SQLExpression1<ContextConfigurer> configurer) {
         clientQueryable.configure(configurer);

@@ -24,9 +24,10 @@ public class MyLogicDelStrategy extends AbstractLogicDeleteStrategy {
      */
     private final Set<Class<?>> allowTypes=new HashSet<>(Arrays.asList(LocalDateTime.class));
 
+
     @Override
     protected SQLExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, String propertyName) {
-        return o -> o.isNull(propertyName);
+        return o ->o.isNull(propertyName);
     }
 
     @Override

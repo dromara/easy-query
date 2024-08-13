@@ -23,6 +23,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.common.TopicUpdateInterceptor;
 import com.easy.query.test.conversion.CertStatusColumnValueSQLConverter;
 import com.easy.query.test.conversion.EnumConverter;
@@ -170,6 +171,7 @@ public abstract class BaseTest {
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
 //                .replaceService(Dialect.class, DefaultDialect.class)
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .replaceService(QueryConfiguration.class, MyQueryConfiguration.class)
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();

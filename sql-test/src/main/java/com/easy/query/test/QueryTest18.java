@@ -7,6 +7,7 @@ import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.exception.EasyQueryResultSizeLimitException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
@@ -15,14 +16,17 @@ import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.partition.Partition1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
+import com.easy.query.test.entity.TestBeanProperty;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
@@ -846,5 +850,47 @@ public class QueryTest18 extends BaseTest {
 //        EasyQueryClient build = easyQueryBuilderConfiguration.build();
 //        return build;
 //    }
+
+    @Test
+    public void test(){
+
+
+        List<Draft3<String, String, BigDecimal>> list2 = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
+                .select((b1, t2) -> Select.DRAFT.of(
+                        b1.id(),
+                        t2.title(),
+                        b1.score()
+                )).distinct().toList();
+
+
+        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
+                .select((b1, t2) -> b1.FETCHER.id().content().order().fetchProxy())
+                .distinct().toList();
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    b.star().eq(1);
+                })
+                .select(b -> b.FETCHER.content().order().fetchProxy())
+                .distinct()
+                .toList();
+
+//        List<TestBeanProperty> list = easyQuery.queryable(TestBeanProperty.class).toList();
+//        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+//                .where(t -> {
+//                    t.cUserName().eq("123");
+//                }).toList();
+//        String sql = easyEntityQuery.deletable(BlogEntity.class)
+//                .useLogicDelete(true)
+//                .where(b -> {
+//                    b.star().eq(1);
+//                }).toSQL();
+
+        QueryConfiguration queryConfiguration = easyQuery.getRuntimeContext().getQueryConfiguration();
+        Assert.assertTrue(queryConfiguration instanceof MyQueryConfiguration);
+        System.out.println(queryConfiguration);
+    }
 
 }

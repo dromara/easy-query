@@ -24,7 +24,7 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * .leftJoin(City.class, (p, c) -> p.id().eq(c.provinceId()))
      * }
      * </pre></blockquote>
-     *
+     * <p>
      * 多条件比如Province表的id和City表的provinceId外加City表的状态
      * 生成的sql from province p left join city c on p.id=c.province_id and c.status=1
      * <blockquote><pre>
@@ -37,7 +37,7 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * })
      * }
      * </pre></></blockquote>
-     *
+     * <p>
      * 多个join下参数会变成多个
      * 生成的sql from province p left join city c on p.id=c.province_id left join area a on p.id=a.province_id
      * <blockquote><pre>
@@ -47,14 +47,16 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * .leftJoin(Area.class, (p, c, a) -> p.id().eq(a.provinceId()))
      * }
      * </pre></blockquote>
-     * @param joinClass join的对象字节
+     *
+     * @param joinClass    join的对象字节
      * @param onExpression join的条件,入参个数取决于join的表数目,一次join入参两个后续依次递增
+     * @param <T2Proxy>    join对象的代理
+     * @param <T2>         join对象
      * @return 返回可查询的对象
-     * @param <T2Proxy> join对象的代理
-     * @param <T2> join对象
      */
 
-    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2,T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> onExpression);
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> onExpression);
+
     <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy t2Proxy, SQLExpression2<T1Proxy, T2Proxy> onExpression);
 
     /**
@@ -68,11 +70,12 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * .leftJoin(cityQuery, (p, c) -> p.id().eq(c.provinceId()))
      * }
      * </pre></blockquote>
+     *
      * @param joinQueryable join的对象表达式
-     * @param onExpression join的条件,入参个数取决于join的表数目,一次join入参两个后续依次递增
+     * @param onExpression  join的条件,入参个数取决于join的表数目,一次join入参两个后续依次递增
+     * @param <T2Proxy>     join对象的代理
+     * @param <T2>          join对象
      * @return 返回可查询的对象
-     * @param <T2Proxy> join对象的代理
-     * @param <T2> join对象
      */
     <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLExpression2<T1Proxy, T2Proxy> onExpression);
 
@@ -86,7 +89,7 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * .rightJoin(City.class, (p, c) -> p.id().eq(c.provinceId()))
      * }
      * </pre></blockquote>
-     *
+     * <p>
      * 多条件比如Province表的id和City表的provinceId外加City表的状态
      * 生成的sql from province p right join city c on p.id=c.province_id and c.status=1
      * <blockquote><pre>
@@ -99,7 +102,7 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * })
      * }
      * </pre></></blockquote>
-     *
+     * <p>
      * 多个join下参数会变成多个
      * 生成的sql from province p right join city c on p.id=c.province_id right join area a on p.id=a.province_id
      * <blockquote><pre>
@@ -109,13 +112,15 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * .rightJoin(Area.class, (p, c, a) -> p.id().eq(a.provinceId()))
      * }
      * </pre></blockquote>
-     * @param joinClass join的对象字节
+     *
+     * @param joinClass    join的对象字节
      * @param onExpression join的条件,入参个数取决于join的表数目,一次join入参两个后续依次递增
+     * @param <T2Proxy>    join对象的代理
+     * @param <T2>         join对象
      * @return 返回可查询的对象
-     * @param <T2Proxy> join对象的代理
-     * @param <T2> join对象
      */
-    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2,T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> onExpression);
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> onExpression);
+
     <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(T2Proxy t2Proxy, SQLExpression2<T1Proxy, T2Proxy> onExpression);
 
     /**
@@ -129,11 +134,12 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * .rightJoin(cityQuery, (p, c) -> p.id().eq(c.provinceId()))
      * }
      * </pre></blockquote>
+     *
      * @param joinQueryable join的对象表达式
-     * @param onExpression join的条件,入参个数取决于join的表数目,一次join入参两个后续依次递增
+     * @param onExpression  join的条件,入参个数取决于join的表数目,一次join入参两个后续依次递增
+     * @param <T2Proxy>     join对象的代理
+     * @param <T2>          join对象
      * @return 返回可查询的对象
-     * @param <T2Proxy> join对象的代理
-     * @param <T2> join对象
      */
     <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLExpression2<T1Proxy, T2Proxy> onExpression);
 
@@ -147,7 +153,7 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * .innerJoin(City.class, (p, c) -> p.id().eq(c.provinceId()))
      * }
      * </pre></blockquote>
-     *
+     * <p>
      * 多条件比如Province表的id和City表的provinceId外加City表的状态
      * 生成的sql from province p inner join city c on p.id=c.province_id and c.status=1
      * <blockquote><pre>
@@ -160,7 +166,7 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * })
      * }
      * </pre></></blockquote>
-     *
+     * <p>
      * 多个join下参数会变成多个
      * 生成的sql from province p inner join city c on p.id=c.province_id inner join area a on p.id=a.province_id
      * <blockquote><pre>
@@ -170,13 +176,15 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * .innerJoin(Area.class, (p, c, a) -> p.id().eq(a.provinceId()))
      * }
      * </pre></blockquote>
-     * @param joinClass join的对象字节
+     *
+     * @param joinClass    join的对象字节
      * @param onExpression join的条件,入参个数取决于join的表数目,一次join入参两个后续依次递增
+     * @param <T2Proxy>    join对象的代理
+     * @param <T2>         join对象
      * @return 返回可查询的对象
-     * @param <T2Proxy> join对象的代理
-     * @param <T2> join对象
      */
-    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2,T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> onExpression);
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> onExpression);
+
     <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(T2Proxy t2Proxy, SQLExpression2<T1Proxy, T2Proxy> onExpression);
 
     /**
@@ -190,14 +198,14 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * .innerJoin(cityQuery, (p, c) -> p.id().eq(c.provinceId()))
      * }
      * </pre></blockquote>
+     *
      * @param joinQueryable join的对象表达式
-     * @param onExpression join的条件,入参个数取决于join的表数目,一次join入参两个后续依次递增
+     * @param onExpression  join的条件,入参个数取决于join的表数目,一次join入参两个后续依次递增
+     * @param <T2Proxy>     join对象的代理
+     * @param <T2>          join对象
      * @return 返回可查询的对象
-     * @param <T2Proxy> join对象的代理
-     * @param <T2> join对象
      */
     <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLExpression2<T1Proxy, T2Proxy> onExpression);
-
 
 
 }

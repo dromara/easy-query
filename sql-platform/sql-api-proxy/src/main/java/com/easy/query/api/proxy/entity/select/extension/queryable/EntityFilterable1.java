@@ -37,6 +37,7 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * })
      *    }
      * </pre></blockquote>
+     *
      * @param whereExpression where表达式
      * @return 当前链式表达式
      */
@@ -54,7 +55,8 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * where(false,o->o.id().eq(o.name())) //id = name 因为condition:false将不会生成条件 [id = name]
      *    }
      * </pre></blockquote>
-     * @param condition 是否要添加后续的表达式,true:表示要添加,false表示不添加
+     *
+     * @param condition       是否要添加后续的表达式,true:表示要添加,false表示不添加
      * @param whereExpression where表达式
      * @return 当前链式表达式
      */
@@ -64,9 +66,10 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
     /**
      * 根据主键查询,对象T1不可以是多主键或者无主键模式仅单主键模式才能支持
      * where(id)
+     *
      * @param id 主键
      * @return 链式表达式
-     * @throws EasyQueryNoPrimaryKeyException 当前对象无主键报错
+     * @throws EasyQueryNoPrimaryKeyException    当前对象无主键报错
      * @throws EasyQueryMultiPrimaryKeyException 当前对象存在多个主键报错
      */
     default EntityQueryable<T1Proxy, T1> whereById(Object id) {
@@ -76,10 +79,11 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
     /**
      * 根据主键查询,对象T1不可以是多主键或者无主键模式仅单主键模式才能支持
      * where(boolean，id)
+     *
      * @param condition 是否要添加主键查询到当前表达式 true:要添加,false:要添加
-     * @param id where表达式
+     * @param id        where表达式
      * @return 当前链式表达式
-     * @throws EasyQueryNoPrimaryKeyException 当前对象无主键报错
+     * @throws EasyQueryNoPrimaryKeyException    当前对象无主键报错
      * @throws EasyQueryMultiPrimaryKeyException 当前对象存在多个主键报错
      */
     EntityQueryable<T1Proxy, T1> whereById(boolean condition, Object id);
@@ -87,10 +91,11 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
     /**
      * 根据主键集合进行查询,对象T1不可以是多主键或者无主键模式仅单主键模式才能支持
      * where(Arrays.asList("1","2","3"))
-     * @param ids 主键集合
+     *
+     * @param ids         主键集合
      * @param <TProperty> 主键类型
      * @return 当前链式表达式
-     * @throws EasyQueryNoPrimaryKeyException 当前对象无主键报错
+     * @throws EasyQueryNoPrimaryKeyException    当前对象无主键报错
      * @throws EasyQueryMultiPrimaryKeyException 当前对象存在多个主键报错
      */
     default <TProperty> EntityQueryable<T1Proxy, T1> whereByIds(Collection<TProperty> ids) {
@@ -101,11 +106,12 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * 根据主键集合进行查询,对象T1不可以是多主键或者无主键模式仅单主键模式才能支持
      * 当当前表达式为多表查询时查询主表主键
      * where(boolean,Arrays.asList("1","2","3"))
+     *
      * @param condition   是否添加该条件到表达式 true:添加,false:不添加
      * @param ids         主键集合
      * @param <TProperty> 主键类型
      * @return 当前链式表达式
-     * @throws EasyQueryNoPrimaryKeyException 当前对象无主键报错
+     * @throws EasyQueryNoPrimaryKeyException    当前对象无主键报错
      * @throws EasyQueryMultiPrimaryKeyException 当前对象存在多个主键报错
      */
     <TProperty> EntityQueryable<T1Proxy, T1> whereByIds(boolean condition, Collection<TProperty> ids);
@@ -113,6 +119,7 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
     /**
      * 使用对象进行查询 配合{@link com.easy.query.core.annotation.EasyWhereCondition} 设置条件对应的表和条件值
      * whereObject(request)
+     *
      * @param object 查询对象
      * @return 当前链式表达式
      * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配
@@ -124,8 +131,9 @@ public interface EntityFilterable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
     /**
      * 使用对象进行查询 配合{@link com.easy.query.core.annotation.EasyWhereCondition} 设置条件对应的表和条件值
      * whereObject(boolean,request)
+     *
      * @param condition 是否要使用当前的对象查询方法 true:使用,false:不使用
-     * @param object 查询对象
+     * @param object    查询对象
      * @return 当前链式表达式
      * @throws EasyQueryWhereInvalidOperationException 当object的where属性和查询对象不匹配或者查询对象属性不匹配,无法获取
      */

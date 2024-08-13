@@ -133,13 +133,15 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *
      *                 }
      * </pre></blockquote>
+     *
      * @param resultClass 返回的结构化dto
-     * @return
      * @param <TR>
+     * @return
      */
-   default  <TR> Query<TR> selectAutoInclude(Class<TR> resultClass){
-       return selectAutoInclude(resultClass,x->null,false);
-   }
+    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass) {
+        return selectAutoInclude(resultClass, x -> null, false);
+    }
+
     /**
      * 自动查询结构化DTO
      * <blockquote><pre>
@@ -153,13 +155,14 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *
      *                 }
      * </pre></blockquote>
-     * @param resultClass 返回的结构化dto
+     *
+     * @param resultClass           返回的结构化dto
      * @param extraSelectExpression 额外select表达式增强,默认会执行映射allFields所以不再需要执行主表得allFields
-     * @return
      * @param <TR>
+     * @return
      */
-    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> extraSelectExpression){
-        return selectAutoInclude(resultClass,extraSelectExpression,false);
+    default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> extraSelectExpression) {
+        return selectAutoInclude(resultClass, extraSelectExpression, false);
     }
 
     /**
@@ -175,13 +178,14 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *
      *                 }
      * </pre></blockquote>
-     * @param resultClass 返回的结构化dto
+     *
+     * @param resultClass           返回的结构化dto
      * @param extraSelectExpression 额外select表达式增强,默认会执行映射allFields所以不再需要执行主表得allFields
-     * @param replace false:表示当前的selectAutoInclude里面的东西不去替换前面的include,如果false表示以表达式前面的include为准,true:表示以selectAutoInclude里面的为准
-     * @return
+     * @param replace               false:表示当前的selectAutoInclude里面的东西不去替换前面的include,如果false表示以表达式前面的include为准,true:表示以selectAutoInclude里面的为准
      * @param <TR>
+     * @return
      */
-    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> extraSelectExpression,boolean replace);
+    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> extraSelectExpression, boolean replace);
 
     default EntityQueryable<T1Proxy, T1> select(ColumnSegment columnSegment, boolean clearAll) {
         return select(Collections.singletonList(columnSegment), clearAll);

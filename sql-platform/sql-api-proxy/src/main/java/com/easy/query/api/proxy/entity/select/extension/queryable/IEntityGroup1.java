@@ -24,11 +24,12 @@ public interface IEntityGroup1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * .groupBy(t ->GroupKeys.TABLE1.of( t.id(),t.title())) // GROUP BY id,title
      *    }
      * </pre></blockquote>
+     *
      * @param selectExpression groupBy的选择列表达式
-     * @return
      * @param <TRProxy>
      * @param <TR>
+     * @return
      */
 
-    <TRProxy extends ProxyEntity<TRProxy, TR> & SQLGroupByExpression , TR> EntityQueryable<TRProxy, TR> groupBy(SQLFuncExpression1<T1Proxy, SQLFuncExpression1<T1Proxy,TRProxy>> selectExpression);
+    <TRProxy extends ProxyEntity<TRProxy, TR> & SQLGroupByExpression, TR> EntityQueryable<TRProxy, TR> groupBy(SQLFuncExpression1<T1Proxy, SQLFuncExpression1<T1Proxy, TRProxy>> selectExpression);
 }
