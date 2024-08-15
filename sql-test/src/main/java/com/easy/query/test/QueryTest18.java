@@ -854,7 +854,6 @@ public class QueryTest18 extends BaseTest {
     @Test
     public void test(){
 
-
         List<Draft3<String, String, BigDecimal>> list2 = easyEntityQuery.queryable(BlogEntity.class)
                 .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
                 .select((b1, t2) -> Select.DRAFT.of(
@@ -891,6 +890,16 @@ public class QueryTest18 extends BaseTest {
         QueryConfiguration queryConfiguration = easyQuery.getRuntimeContext().getQueryConfiguration();
         Assert.assertTrue(queryConfiguration instanceof MyQueryConfiguration);
         System.out.println(queryConfiguration);
+    }
+
+    @Test
+    public void test1xa(){
+
+        BigDecimal bigDecimal = easyEntityQuery.queryable(Topic.class)
+                .sumBigDecimalOrDefault(t -> t.stars().nullOrDefault(0), BigDecimal.ZERO);
+        Integer bigDecimal1 = easyEntityQuery.queryable(Topic.class)
+                .sumOrDefault(t -> t.stars().nullOrDefault(0), 0);
+        System.out.println(bigDecimal);
     }
 
 }

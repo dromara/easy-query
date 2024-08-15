@@ -22,7 +22,7 @@ public class EasyQueryProperties {
 
     private Boolean enable = false;
     private Boolean deleteThrow = true;
-    private DatabaseEnum database = DatabaseEnum.MYSQL;
+    private DatabaseEnum database = DatabaseEnum.DEFAULT;
     private SQLParameterPrintEnum sqlParameterPrint = SQLParameterPrintEnum.DEFAULT;
     private NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
     private MapKeyConversionEnum mapKeyConversion = MapKeyConversionEnum.DEFAULT;

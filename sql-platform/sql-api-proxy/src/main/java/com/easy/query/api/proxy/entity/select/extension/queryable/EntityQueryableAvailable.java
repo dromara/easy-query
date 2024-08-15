@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
@@ -11,4 +12,7 @@ import com.easy.query.core.proxy.ProxyEntity;
  */
 public interface EntityQueryableAvailable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     EntityQueryable<T1Proxy, T1> getQueryable();
+    default SQLFunc getSQLFunc(){
+        return getQueryable().getRuntimeContext().fx();
+    }
 }
