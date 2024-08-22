@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @author xuejiaming
  */
 public class DefaultDataSourceUnit implements DataSourceUnit {
-    private static Log log = LogFactory.getLog(DefaultDataSourceUnit.class);
+    private static final Log log = LogFactory.getLog(DefaultDataSourceUnit.class);
     protected final String dataSourceName;
     protected final DataSource dataSource;
     protected final Semaphore semaphore;

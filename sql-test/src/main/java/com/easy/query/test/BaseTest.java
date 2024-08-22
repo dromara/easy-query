@@ -25,6 +25,7 @@ import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.common.TopicUpdateInterceptor;
+import com.easy.query.test.conversion.Blog2StarToStringColumnValueSQLConverter;
 import com.easy.query.test.conversion.CertStatusColumnValueSQLConverter;
 import com.easy.query.test.conversion.EnumConverter;
 import com.easy.query.test.conversion.EnumValueConverter;
@@ -207,6 +208,7 @@ public abstract class BaseTest {
         configuration.applyColumnValueSQLConverter(new FullNameColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new UserAgeColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new StudentSizeColumnValueSQLConverter());
+        configuration.applyColumnValueSQLConverter(new Blog2StarToStringColumnValueSQLConverter());
         configuration.applyGeneratedKeySQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
         configuration.applyNavigateExtraFilterStrategy(new com.easy.query.test.entity.navf.RoleJoin.RoleJoinType());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();

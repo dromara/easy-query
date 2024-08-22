@@ -15,6 +15,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
@@ -24,6 +25,7 @@ import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.common.MyQueryConfiguration;
+import com.easy.query.test.entity.Blog2Entity;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.TestBeanProperty;
@@ -391,8 +393,6 @@ public class QueryTest18 extends BaseTest {
 
     @Test
     public void testMaxEnum() {
-
-
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -400,7 +400,7 @@ public class QueryTest18 extends BaseTest {
                 .maxOrNull(x -> x.topicType());
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT MAX(`topic_type`) FROM `t_topic_type`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT MAX(t.`topic_type`) FROM `t_topic_type` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("123(String),1234(String),123xx(String),false(Boolean),(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
         System.out.println(topicTypeEnum);
@@ -901,5 +901,26 @@ public class QueryTest18 extends BaseTest {
                 .sumOrDefault(t -> t.stars().nullOrDefault(0), 0);
         System.out.println(bigDecimal);
     }
+//    @Test
+//    public void test2xa(){
+//
+//        BigDecimal bigDecimal = easyEntityQuery.queryable(Topic.class).asTableLink(tableName->tableName+" FINAL")
+//                .sumBigDecimalOrDefault(t -> t.stars().nullOrDefault(0), BigDecimal.ZERO);
+//    }
 
+
+    @Test
+    public void testStarStr(){
+        List<Blog2Entity> list = easyEntityQuery.queryable(Blog2Entity.class)
+                .where(b -> {
+                    b.star().eq(1);
+                    b.starStr().eq("1");
+                })
+                .orderBy(b -> {
+                    b.star().asc();
+                    b.starStr().asc();
+                })
+                .toList();
+        System.out.println(list);
+    }
 }

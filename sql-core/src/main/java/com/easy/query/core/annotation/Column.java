@@ -40,9 +40,11 @@ public @interface Column {
     /**
      * 自增或者由数据库函数生成
      * 是否是数据库生成列,默认不在insert语句中如果配置了{@param generatedSQLColumnGenerator} ,并且调用{@link com.easy.query.core.basic.api.insert.Insertable#executeRows(boolean)}传入true参数会自动回填返回值
+     *
      * @return
      */
     boolean generatedKey() default false;
+
     /**
      * 指定实体对象映射到数据库的名称
      */
@@ -99,6 +101,7 @@ public @interface Column {
 
     /**
      * 复杂类型
+     *
      * @return
      */
     Class<? extends ComplexPropType> complexPropType() default DefaultComplexPropType.class;
@@ -107,15 +110,18 @@ public @interface Column {
      * 当且仅当查询指定该属性才会查询出来
      * columnAll相同对象无法查询出来，除非手动指定column列
      * 仅返回相同对象时无法获取必须指定如果为false
+     *
      * @return
      */
     boolean autoSelect() default true;
+
     Class<? extends JdbcTypeHandler> typeHandler() default UnKnownTypeHandler.class;
 
     /**
      * 需要满足如下条件才会生效
      * {@link #primaryKey} 为true,
      * {@link #generatedKey()} 为false
+     *
      * @return
      */
     Class<? extends PrimaryKeyGenerator> primaryKeyGenerator() default UnsupportPrimaryKeyGenerator.class;

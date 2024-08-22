@@ -1673,7 +1673,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             }, 1);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT SUM(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT SUM(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1685,7 +1685,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             });
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT SUM(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT SUM(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1697,7 +1697,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             }, BigDecimal.ZERO);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT SUM(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT SUM(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1710,7 +1710,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             });
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT SUM(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT SUM(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1723,7 +1723,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             });
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT MAX(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT MAX(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1736,7 +1736,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             }, 1);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT MAX(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT MAX(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1749,7 +1749,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             });
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT MIN(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT MIN(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1762,7 +1762,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             }, 1);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT MIN(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT MIN(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1775,7 +1775,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             });
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT AVG(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT AVG(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1788,7 +1788,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             });
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT AVG(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT AVG(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1801,7 +1801,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             });
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT AVG(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT AVG(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1814,7 +1814,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             }, 1d);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT AVG(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT AVG(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1827,7 +1827,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             }, BigDecimal.ZERO);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT AVG(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT AVG(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
@@ -1840,7 +1840,7 @@ public class EntityQueryAggregateTest1 extends BaseEntityQueryAggregateTest1 {
             }, 1f);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT AVG(`stars`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT AVG(t.`stars`) FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
