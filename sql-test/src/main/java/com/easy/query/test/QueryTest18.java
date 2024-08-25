@@ -45,7 +45,9 @@ import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -911,6 +913,10 @@ public class QueryTest18 extends BaseTest {
 
     @Test
     public void testStarStr(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
         List<Blog2Entity> list = easyEntityQuery.queryable(Blog2Entity.class)
                 .where(b -> {
                     b.star().eq(1);
@@ -921,6 +927,63 @@ public class QueryTest18 extends BaseTest {
                     b.starStr().asc();
                 })
                 .toList();
-        System.out.println(list);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`star`,CAST(`star` AS CHAR) AS `star_str` FROM `t_blog` WHERE `deleted` = ? AND `star` = ? AND CAST(`star` AS CHAR) = ? ORDER BY `star` ASC,CAST(`star` AS CHAR) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testUpdate(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        easyEntityQuery.updatable(Topic.class)
+                .setColumns(t -> {
+                    t.stars().set(
+                            t.expression().caseWhen(()->{
+                                t.stars().subtract(5).lt(BigDecimal.valueOf(0));
+                            }).then(0).elseEnd(t.stars().subtract(5))
+                    );
+                }).where(t -> {
+                    t.id().eq("123xxxa");
+                }).executeRows();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `t_topic` SET `stars` = (CASE WHEN (`stars` - ?) < ? THEN ? ELSE (`stars` - ?) END) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("5(Integer),0(BigDecimal),0(Integer),5(Integer),123xxxa(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+//        DataSource defaultDataSource = easyEntityQuery.getRuntimeContext().getDataSourceManager().getDefaultDataSource();
+//        Connection connection1 = defaultDataSource.getConnection();
+//        easyEntityQuery.getEasyQueryClient().jdbc(connection->{
+//
+//        })
+    }
+
+    @Test
+    public void easyQuery(){
+        String s = easyEntityQuery.queryable(BlogEntity.class)
+                .selectColumn(b -> b.createTime().format("yyyy年MM约-dd HH小时mm分钟ss秒"))
+                .firstOrNull();
+        System.out.println(s);
+
+        String s1 = easyQuery.queryable(BlogEntity.class)
+                .select(String.class, b -> {
+                    b.sqlFunc(b.fx().dateTimeFormat(BlogEntity::getCreateTime, "yyyy年MM约-dd HH小时mm分钟ss秒"));
+                }).firstOrNull();
+        System.out.println(s1);
+    }
+
+    @Test
+    public void easyQueryPrint1(){
+        String s = easyEntityQuery.queryable(BlogEntity.class)
+                .configure(c->{
+//                    c.setGroupSize();
+                    c.setPrintSQL(false);
+                })
+                .selectColumn(b -> b.createTime().format("yyyy年MM约-dd HH小时mm分钟ss秒"))
+                .firstOrNull();
+        System.out.println(s);
+
     }
 }

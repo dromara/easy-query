@@ -64,6 +64,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum() {
         return sum(false);
     }
+
     /**
      * 计算求和 SUM(age)
      *
@@ -83,11 +84,12 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum(boolean distinct) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.sum(x->{
-                PropTypeColumn.columnFuncSelector(x,this);
+            return fx.sum(x -> {
+                PropTypeColumn.columnFuncSelector(x, this);
             }).distinct(distinct);
         }, getPropertyType());
     }
+
     /**
      * 计算去重求和 SUM(DISTINCT age)
      *
@@ -95,10 +97,10 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @param <T>      任意数字类型
      * @return 计算去重求和 SUM(DISTINCT age)
      */
-    default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum(boolean distinct,Class<T> resultClass) {
+    default <T extends Number> ColumnFunctionComparableNumberChainExpression<T> sum(boolean distinct, Class<T> resultClass) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.sum(x->{
-                PropTypeColumn.columnFuncSelector(x,this);
+            return fx.sum(x -> {
+                PropTypeColumn.columnFuncSelector(x, this);
             }).distinct(distinct);
         }, getPropertyType()).asAnyType(resultClass);
     }
@@ -115,8 +117,8 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 //            } else {
 //                return fx.sum(this.getValue()).distinct(distinct);
 //            }
-            return fx.sum(x->{
-                PropTypeColumn.columnFuncSelector(x,this);
+            return fx.sum(x -> {
+                PropTypeColumn.columnFuncSelector(x, this);
             }).distinct(distinct);
         }, BigDecimal.class);
     }
@@ -139,14 +141,14 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 //                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Abs);
 //            }
             return fx.math(o -> {
-                PropTypeColumn.columnFuncSelector(o,this);
+                PropTypeColumn.columnFuncSelector(o, this);
             }, MathMethodEnum.Abs);
         }, getPropertyType());
     }
 
     /**
-     *
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -165,6 +167,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -183,6 +186,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -201,6 +205,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -219,6 +224,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -237,6 +243,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -255,6 +262,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -273,6 +281,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -291,6 +300,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -309,6 +319,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -327,6 +338,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -346,6 +358,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -365,6 +378,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -383,6 +397,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -401,6 +416,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -419,6 +435,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -437,6 +454,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -455,6 +473,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -473,6 +492,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -491,6 +511,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 请使用{@link SQLMathExpression}
+     *
      * @return
      */
     @Deprecated
@@ -509,72 +530,80 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 加法
+     *
      * @param other
-     * @return
      * @param <TOtherProperty>
+     * @return
      */
     default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> add(PropTypeColumn<TOtherProperty> other) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.numberCalc(o->{
-                PropTypeColumn.columnFuncSelector(o,this);
-                PropTypeColumn.columnFuncSelector(o,other);
+            return fx.numberCalc(o -> {
+                PropTypeColumn.columnFuncSelector(o, this);
+                PropTypeColumn.columnFuncSelector(o, other);
             }, NumberCalcEnum.NUMBER_ADD);
         }, getPropertyType());
     }
+
     default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> add(TOtherProperty constant) {
         return add(Expression.of(getEntitySQLContext()).constant().valueOf(constant));
     }
 
     /**
      * 减法
+     *
      * @param other
-     * @return
      * @param <TOtherProperty>
+     * @return
      */
     default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> subtract(PropTypeColumn<TOtherProperty> other) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.numberCalc(o->{
-                PropTypeColumn.columnFuncSelector(o,this);
-                PropTypeColumn.columnFuncSelector(o,other);
+            return fx.numberCalc(o -> {
+                PropTypeColumn.columnFuncSelector(o, this);
+                PropTypeColumn.columnFuncSelector(o, other);
             }, NumberCalcEnum.NUMBER_SUBTRACT);
         }, getPropertyType());
     }
+
     default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> subtract(TOtherProperty constant) {
         return subtract(Expression.of(getEntitySQLContext()).constant().valueOf(constant));
     }
 
     /**
      * 乘法
+     *
      * @param other
-     * @return
      * @param <TOtherProperty>
+     * @return
      */
     default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> multiply(PropTypeColumn<TOtherProperty> other) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.numberCalc(o->{
-                PropTypeColumn.columnFuncSelector(o,this);
-                PropTypeColumn.columnFuncSelector(o,other);
+            return fx.numberCalc(o -> {
+                PropTypeColumn.columnFuncSelector(o, this);
+                PropTypeColumn.columnFuncSelector(o, other);
             }, NumberCalcEnum.NUMBER_MULTIPLY);
         }, getPropertyType());
     }
+
     default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> multiply(TOtherProperty constant) {
         return multiply(Expression.of(getEntitySQLContext()).constant().valueOf(constant));
     }
 
     /**
      * 除法
+     *
      * @param other
-     * @return
      * @param <TOtherProperty>
+     * @return
      */
     default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> devide(PropTypeColumn<TOtherProperty> other) {
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.numberCalc(o->{
-                PropTypeColumn.columnFuncSelector(o,this);
-                PropTypeColumn.columnFuncSelector(o,other);
+            return fx.numberCalc(o -> {
+                PropTypeColumn.columnFuncSelector(o, this);
+                PropTypeColumn.columnFuncSelector(o, other);
             }, NumberCalcEnum.NUMBER_DEVIDE);
         }, getPropertyType());
     }
+
     default <TOtherProperty extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> devide(TOtherProperty constant) {
         return devide(Expression.of(getEntitySQLContext()).constant().valueOf(constant));
     }

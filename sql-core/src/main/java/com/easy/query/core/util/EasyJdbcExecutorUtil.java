@@ -7,6 +7,7 @@ import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteBeforeArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.extension.print.JdbcSQLPrinter;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -151,7 +152,7 @@ public class EasyJdbcExecutorUtil {
      * @param <T>
      * @return
      */
-    public static <T> List<SQLParameter> extractParameters(T entity, List<SQLParameter> sqlParameters, boolean printSql,SQLParameterPrintFormat sqlParameterPrintFormat, EasyConnection easyConnection, boolean shardingPrint, boolean replicaPrint) {
+    public static <T> List<SQLParameter> extractParameters(T entity, List<SQLParameter> sqlParameters, boolean printSql, SQLParameterPrintFormat sqlParameterPrintFormat, EasyConnection easyConnection, boolean shardingPrint, boolean replicaPrint) {
         if (EasyCollectionUtil.isNotEmpty(sqlParameters)) {
 
             List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
@@ -170,7 +171,7 @@ public class EasyJdbcExecutorUtil {
             }
 
             if (printSql) {
-                logParameter(true,sqlParameterPrintFormat, params, easyConnection, shardingPrint, replicaPrint);
+                logParameter(true, sqlParameterPrintFormat, params, easyConnection, shardingPrint, replicaPrint);
             }
             return params;
         }
@@ -181,19 +182,31 @@ public class EasyJdbcExecutorUtil {
         return query(executorContext, easyConnection, sql, sqlParameters, false, false);
     }
 
+    public static boolean isPrintSQL(ExecutorContext executorContext) {
+        Boolean printSQL = executorContext.getExpressionContext().getPrintSQL();
+        if (printSQL != null) {
+            return printSQL;
+        }
+        JdbcSQLPrinter jdbcSQLPrinter = executorContext.getRuntimeContext().getJdbcSQLPrinter();
+        if (jdbcSQLPrinter != null && jdbcSQLPrinter.printSQL() != null) {
+            return jdbcSQLPrinter.printSQL();
+        }
+        return executorContext.getEasyQueryOption().isPrintSql();
+    }
+
     public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters, boolean shardingPrint, boolean replicaPrint) throws SQLException {
 
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcExecutorListener jdbcExecutorListener = runtimeContext.getJdbcExecutorListener();
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
         SQLParameterPrintFormat sqlParameterPrintFormat = runtimeContext.getSQLParameterPrintFormat();
-        boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
+        boolean printSql = isPrintSQL(executorContext);
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
-        boolean listen = jdbcExecutorListener.enable()&&executorContext.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.JDBC_LISTEN);
+        boolean listen = jdbcExecutorListener.enable() && executorContext.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.JDBC_LISTEN);
         SQLConsumer<Statement> configurer = executorContext.getConfigurer(shardingPrint);
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<SQLParameter> parameters = extractParameters(null, sqlParameters, printSql,sqlParameterPrintFormat, easyConnection, shardingPrint, replicaPrint);
+        List<SQLParameter> parameters = extractParameters(null, sqlParameters, printSql, sqlParameterPrintFormat, easyConnection, shardingPrint, replicaPrint);
 
         JdbcExecuteBeforeArg jdbcListenBeforeArg = null;
         StreamResultSet sr = null;
@@ -243,8 +256,9 @@ public class EasyJdbcExecutorUtil {
 
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcExecutorListener jdbcExecutorListener = runtimeContext.getJdbcExecutorListener();
-        boolean listen = jdbcExecutorListener.enable()&&executorContext.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.JDBC_LISTEN);
-        boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
+        boolean listen = jdbcExecutorListener.enable() && executorContext.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.JDBC_LISTEN);
+
+        boolean printSql = isPrintSQL(executorContext);
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
 
         JdbcTypeHandlerManager easyJdbcTypeHandler = runtimeContext.getJdbcTypeHandlerManager();
@@ -265,7 +279,7 @@ public class EasyJdbcExecutorUtil {
             int batchSize = 0;
             for (T entity : entities) {
                 batchSize++;
-                List<SQLParameter> parameters = extractParameters(entity, sqlParameters, printSql,sqlParameterPrintFormat, easyConnection, shardingPrint, replicaPrint);
+                List<SQLParameter> parameters = extractParameters(entity, sqlParameters, printSql, sqlParameterPrintFormat, easyConnection, shardingPrint, replicaPrint);
                 if (listen) {
                     jdbcListenBeforeArg.getSqlParameters().add(parameters);
                 }
@@ -337,11 +351,11 @@ public class EasyJdbcExecutorUtil {
     }
 
     public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<T> entities, List<SQLParameter> sqlParameters, boolean shardingPrint, boolean replicaPrint) throws SQLException {
-        boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
+        boolean printSql = isPrintSQL(executorContext);
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcExecutorListener jdbcExecutorListener = runtimeContext.getJdbcExecutorListener();
-        boolean listen = jdbcExecutorListener.enable()&&executorContext.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.JDBC_LISTEN);
+        boolean listen = jdbcExecutorListener.enable() && executorContext.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.JDBC_LISTEN);
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
         SQLParameterPrintFormat sqlParameterPrintFormat = runtimeContext.getSQLParameterPrintFormat();
         PreparedStatement ps = null;
@@ -357,7 +371,7 @@ public class EasyJdbcExecutorUtil {
             int batchSize = 0;
             for (T entity : entities) {
                 batchSize++;
-                List<SQLParameter> parameters = extractParameters(entity, sqlParameters, printSql,sqlParameterPrintFormat, easyConnection, shardingPrint, replicaPrint);
+                List<SQLParameter> parameters = extractParameters(entity, sqlParameters, printSql, sqlParameterPrintFormat, easyConnection, shardingPrint, replicaPrint);
                 if (listen) {
                     jdbcListenBeforeArg.getSqlParameters().add(parameters);
                 }
@@ -404,16 +418,16 @@ public class EasyJdbcExecutorUtil {
     }
 
     public static <T> int executeRows(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters, boolean shardingPrint, boolean replicaPrint) throws SQLException {
-        boolean printSql = executorContext.getEasyQueryOption().isPrintSql();
+        boolean printSql = isPrintSQL(executorContext);
         logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
         QueryRuntimeContext runtimeContext = executorContext.getRuntimeContext();
         JdbcTypeHandlerManager easyJdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
         SQLParameterPrintFormat sqlParameterPrintFormat = runtimeContext.getSQLParameterPrintFormat();
 
-        List<SQLParameter> parameters = extractParameters(null, sqlParameters, printSql,sqlParameterPrintFormat, easyConnection, shardingPrint, replicaPrint);
+        List<SQLParameter> parameters = extractParameters(null, sqlParameters, printSql, sqlParameterPrintFormat, easyConnection, shardingPrint, replicaPrint);
 
         JdbcExecutorListener jdbcExecutorListener = runtimeContext.getJdbcExecutorListener();
-        boolean listen = jdbcExecutorListener.enable()&&executorContext.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.JDBC_LISTEN);
+        boolean listen = jdbcExecutorListener.enable() && executorContext.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.JDBC_LISTEN);
         JdbcExecuteBeforeArg jdbcListenBeforeArg = null;
         PreparedStatement ps = null;
         Exception exception = null;
@@ -491,8 +505,8 @@ public class EasyJdbcExecutorUtil {
     }
 
     public static Object toValue(SQLParameter sqlParameter, Object value) {
-        if(value instanceof SQLRawParameter){
-            return ((SQLRawParameter)value).getVal();
+        if (value instanceof SQLRawParameter) {
+            return ((SQLRawParameter) value).getVal();
         }
         if (sqlParameter.getTableOrNull() != null) {
             EntityMetadata entityMetadata = sqlParameter.getTableOrNull().getEntityMetadata();
@@ -555,7 +569,7 @@ public class EasyJdbcExecutorUtil {
                 }
                 return EasyCollectionUtil.sum(ints);
             }
-        }else {
+        } else {
             if (consumer != null) {
                 consumer.accept(new InsertBackFillParams(1, ps));
             }

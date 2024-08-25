@@ -280,4 +280,14 @@ public class EmptyExpressionContext implements ExpressionContext{
     public long getResultSizeLimit() {
         return 0;
     }
+
+    @Override
+    public Boolean getPrintSQL() {
+        return null;
+    }
+
+    @Override
+    public void setPrintSQL(Boolean printSQL) {
+
+    }
 }

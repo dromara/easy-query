@@ -12,6 +12,8 @@ import com.easy.query.core.basic.extension.formater.DefaultSQLParameterPrintForm
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.EmptyJdbcExecutorListener;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.extension.print.DefaultJdbcSQLPrinter;
+import com.easy.query.core.basic.extension.print.JdbcSQLPrinter;
 import com.easy.query.core.basic.extension.track.DefaultTrackManager;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
@@ -178,6 +180,7 @@ public class EasyQueryBuilderConfiguration {
                 //sql参数打印格式化
                 .replaceService(SQLParameterPrintFormat.class, DefaultSQLParameterPrintFormat.class)
                 .replaceService(SQLFunc.class, SQLFuncImpl.class)
+                .replaceService(JdbcSQLPrinter.class, DefaultJdbcSQLPrinter.class)
                 .replaceService(Column2MapKeyConversion.class, DefaultColumn2MapKeyConversion.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);

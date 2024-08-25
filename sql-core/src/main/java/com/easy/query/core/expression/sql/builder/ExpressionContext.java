@@ -107,5 +107,8 @@ public interface ExpressionContext {
     void setResultSizeLimit(long resultSizeLimit);
     long getResultSizeLimit();
 
+    Boolean getPrintSQL();
+    void setPrintSQL(Boolean printSQL);
+
 
 }

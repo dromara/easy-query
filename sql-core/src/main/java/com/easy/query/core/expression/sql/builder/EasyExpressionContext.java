@@ -65,6 +65,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private RelationExtraMetadata relationExtraMetadata;
     private Integer groupSize;
     private long resultSizeLimit;
+    private Boolean printSQL;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -422,5 +423,15 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public long getResultSizeLimit() {
         return resultSizeLimit;
+    }
+
+    @Override
+    public Boolean getPrintSQL() {
+        return printSQL;
+    }
+
+    @Override
+    public void setPrintSQL(Boolean printSQL) {
+        this.printSQL = printSQL;
     }
 }

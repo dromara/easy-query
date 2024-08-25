@@ -106,6 +106,7 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
         handlers.put(LocalDate.class, localDateHandler);
         handlers.put(LocalTime.class, localTimeTypeHandler);
         handlers.put(UUID.class, uuidTypeHandler);
+        handlers.put(Object.class, DEFAULT_HANDLER);
     }
 
     @Override

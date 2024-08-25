@@ -7,6 +7,7 @@ import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.extension.print.JdbcSQLPrinter;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -76,6 +77,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final SQLParameterPrintFormat sqlParameterPrintFormat;
     private final SQLFunc sqlFunc;
     private final Column2MapKeyConversion column2MapKeyConversion;
+    private final JdbcSQLPrinter jdbcSQLPrinter;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -109,7 +111,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           AssertExceptionFactory assertExceptionFactory,
                                           SQLParameterPrintFormat sqlParameterPrintFormat,
                                           SQLFunc sqlFunc,
-                                          Column2MapKeyConversion column2MapKeyConversion) {
+                                          Column2MapKeyConversion column2MapKeyConversion,
+                                          JdbcSQLPrinter jdbcSQLPrinter) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -143,6 +146,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.sqlParameterPrintFormat = sqlParameterPrintFormat;
         this.sqlFunc = sqlFunc;
         this.column2MapKeyConversion = column2MapKeyConversion;
+        this.jdbcSQLPrinter = jdbcSQLPrinter;
     }
 
     @Override
@@ -309,5 +313,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public Column2MapKeyConversion getColumn2MapKeyConversion() {
         return column2MapKeyConversion;
+    }
+
+    @Override
+    public JdbcSQLPrinter getJdbcSQLPrinter() {
+        return jdbcSQLPrinter;
     }
 }

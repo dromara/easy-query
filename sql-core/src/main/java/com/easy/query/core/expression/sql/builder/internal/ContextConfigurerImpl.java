@@ -40,4 +40,14 @@ public class ContextConfigurerImpl implements ContextConfigurer {
     public long getResultSizeLimit() {
         return expressionContext.getResultSizeLimit();
     }
+
+    @Override
+    public Boolean getPrintSQL() {
+        return expressionContext.getPrintSQL();
+    }
+
+    @Override
+    public void setPrintSQL(Boolean printSQL) {
+        expressionContext.setPrintSQL(printSQL);
+    }
 }

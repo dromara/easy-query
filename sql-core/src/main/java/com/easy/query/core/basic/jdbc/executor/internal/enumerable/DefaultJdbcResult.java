@@ -4,6 +4,7 @@ import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyJdbcExecutorUtil;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -32,7 +33,7 @@ public class DefaultJdbcResult<TR> implements JdbcResult<TR> {
         try(JdbcStreamResult<TR> jdbcStreamResultSet =jdbcStreamResult){
             StreamIterable<TR> streamResult = jdbcStreamResultSet.getStreamIterable();
             List<TR> list = EasyCollectionUtil.newArrayList(streamResult);
-            if(jdbcStreamResult.getExecutorContext().getEasyQueryOption().isPrintSql()){
+            if(EasyJdbcExecutorUtil.isPrintSQL(jdbcStreamResult.getExecutorContext())){
                 log.info("<== Total: " + list.size());
             }
             return list;
