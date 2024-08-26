@@ -30,7 +30,15 @@ public interface ContextConfigurer {
     long getResultSizeLimit();
 
 
-
+    /**
+     *
+     * @return null表示不设置
+     */
     Boolean getPrintSQL();
+
+    /**
+     * 是否打印sql优先级最高
+     * @param printSQL null表示不设置
+     */
     void setPrintSQL(Boolean printSQL);
 }

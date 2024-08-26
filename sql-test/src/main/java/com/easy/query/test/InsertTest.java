@@ -307,7 +307,7 @@ public class InsertTest extends BaseTest {
             blog.setUpdateTime(begin.plusDays(1));
             blog.setTitle("title" + indexStr);
             blog.setContent("content" + indexStr);
-            blog.setUrl("http://blog.easy-query.com/" + indexStr);
+//            blog.setUrl("http://blog.easy-query.com/" + indexStr);
             blog.setStar(500);
             blog.setScore(new BigDecimal("1.2"));
             blog.setStatus(1);
@@ -365,7 +365,7 @@ public class InsertTest extends BaseTest {
                 .whereByIds(Arrays.asList("500", "300", "400")).executeRows();
         List<List<BlogEntity>> partition = EasyCollectionUtil.partition(r, 200);
         long l2 = easyQuery.insertable(r).batch().executeRows();
-        Assert.assertEquals(-6, l2);
+        Assert.assertEquals(-3, l2);
         easyQuery.deletable(BlogEntity.class)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)

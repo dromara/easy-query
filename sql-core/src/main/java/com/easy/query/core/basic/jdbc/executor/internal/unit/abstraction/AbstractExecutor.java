@@ -61,11 +61,13 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
         List<SQLExecutorGroup<CommandExecuteUnit>> executorGroups = dataSourceSQLExecutorUnit.getSQLExecutorGroups();
 
         long timeoutMillis = streamMergeContext.getEasyQueryOption().getShardingExecuteTimeoutMillis();
-        if(EasyCollectionUtil.isSingle(executorGroups)){
-            SQLExecutorGroup<CommandExecuteUnit> first = EasyCollectionUtil.first(executorGroups);
-            if(EasyCollectionUtil.isSingle(first.getGroups())){
-                return executeSingle0(first,timeoutMillis);
+        if(!streamMergeContext.isSharding()|| EasyCollectionUtil.isSingle(executorGroups)){
+            ArrayList<TResult> tResults = new ArrayList<>();
+            for (SQLExecutorGroup<CommandExecuteUnit> executorGroup : executorGroups) {
+                List<TResult> r = executeSingle0(executorGroup, timeoutMillis);
+                tResults.addAll(r);
             }
+            return tResults;
         }
         return executeMulti0(dataSourceSQLExecutorUnit,timeoutMillis);
     }
@@ -74,7 +76,6 @@ public abstract class AbstractExecutor<TResult> implements Executor<TResult> {
         List<CommandExecuteUnit> groups = executorGroup.getGroups();
         Collection<TResult> tResults = groupExecute(groups, timeoutMillis);
         return new ArrayList<>(tResults);
-
     }
     private List<TResult> executeMulti0(DataSourceSQLExecutorUnit dataSourceSQLExecutorUnit,long timeoutMillis) throws SQLException {
 

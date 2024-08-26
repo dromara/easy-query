@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api4j.select.Queryable;
@@ -985,5 +986,27 @@ public class QueryTest18 extends BaseTest {
                 .firstOrNull();
         System.out.println(s);
 
+
+        List<String> list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(b -> {
+                    return b.id();
+                }).toList();
+//
+//        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+//                .select(b ->{
+//                    return b.FETCHER.content().isTop();
+//                    return  new BlogEntityProxy()
+//                            .id().set(b.id());
+//                }).toList();
+
+
+    }
+
+    @Test
+    public void esss(){
+
+        easyEntityQuery.queryable(BlogEntity.class)
+                .select(b -> new BlogEntityProxy().selectExpression(b.id(),b.score()))
+                .toList();
     }
 }

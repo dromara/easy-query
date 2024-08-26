@@ -51,6 +51,15 @@ public class ShardingExecutor {
             DataSourceSQLExecutorUnit dataSourceSQLExecutorUnit = getSingleSQLExecutorGroups(streamMergeContext, EasyCollectionUtil.first(executionUnits));
             return executor.execute(dataSourceSQLExecutorUnit);
         }
+//        else if (!streamMergeContext.isSharding()) {
+//            ArrayList<TResult> tResults = new ArrayList<>();
+//            for (ExecutionUnit executionUnit : executionUnits) {
+//                DataSourceSQLExecutorUnit dataSourceSQLExecutorUnit = getSingleSQLExecutorGroups(streamMergeContext, executionUnit);
+//                List<TResult> execute = executor.execute(dataSourceSQLExecutorUnit);
+//                tResults.addAll(execute);
+//            }
+//            return tResults;
+//        }
         //将数据以每个数据源进行聚合
         List<DataSourceSQLExecutorUnit> dataSourceSQLExecutorUnits = EasyUtil.groupBy(executionUnits.stream(), ExecutionUnit::getDataSourceName)
                 .map(o -> getSQLExecutorGroups(streamMergeContext, o)).collect(Collectors.toList());
@@ -65,7 +74,7 @@ public class ShardingExecutor {
         EasyQueryOption easyQueryOption = streamMergeContext.getEasyQueryOption();
         long timeoutMillis = easyQueryOption.getShardingExecuteTimeoutMillis();
 
-        try(FuturesInvoker<List<TResult>> invoker = new FuturesInvoker<>(futures)){
+        try (FuturesInvoker<List<TResult>> invoker = new FuturesInvoker<>(futures)) {
             List<List<TResult>> lists = invoker.get(timeoutMillis);
             return lists.stream()
                     .flatMap(List::stream)
@@ -106,7 +115,7 @@ public class ShardingExecutor {
 //                : ConnectionModeEnum.CONNECTION_STRICTLY;
 
         //如果是串行执行就是说每个组只有1个,如果是不是并行每个组有最大执行个数个
-        int parallelCount = isSerialExecute ? 1 : Math.min(groupUnitSize,maxShardingQueryLimit);
+        int parallelCount = isSerialExecute ? 1 : Math.min(groupUnitSize, maxShardingQueryLimit);
 
         List<List<ExecutionUnit>> sqlUnitPartitions = EasyCollectionUtil.partition(sqlGroupExecutionUnits, parallelCount);
         //由于分组后除了最后一个元素其余元素都满足parallelCount为最大,第一个元素的分组数将是实际的创建连接数
@@ -121,7 +130,7 @@ public class ShardingExecutor {
             });
         });
         List<SQLExecutorGroup<CommandExecuteUnit>> sqlExecutorGroups = EasyCollectionUtil.select(sqlExecutorUnitPartitions, (o, i) -> new SQLExecutorGroup<CommandExecuteUnit>(connectionMode, o));
-        return new DataSourceSQLExecutorUnit(dataSourceName,connectionMode, sqlExecutorGroups);
+        return new DataSourceSQLExecutorUnit(dataSourceName, connectionMode, sqlExecutorGroups);
 
     }
 
@@ -141,7 +150,7 @@ public class ShardingExecutor {
         CommandExecuteUnit commandExecuteUnit = new CommandExecuteUnit(executionUnit, easyConnection);
         SQLExecutorGroup<CommandExecuteUnit> sqlExecutorGroup = new SQLExecutorGroup<>(connectionMode, Collections.singletonList(commandExecuteUnit));
 
-        return new DataSourceSQLExecutorUnit(dataSourceName,connectionMode, Collections.singletonList(sqlExecutorGroup));
+        return new DataSourceSQLExecutorUnit(dataSourceName, connectionMode, Collections.singletonList(sqlExecutorGroup));
 
     }
 }

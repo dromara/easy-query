@@ -2,6 +2,7 @@ package com.easy.query.test.entity.proxy;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
@@ -322,6 +323,21 @@ public class BlogEntityProxy extends AbstractProxyEntity<BlogEntityProxy, BlogEn
         protected BlogEntityProxyFetcher createFetcher(BlogEntityProxy cp, AbstractFetcher<BlogEntityProxy, BlogEntity, BlogEntityProxyFetcher> prev, SQLSelectAsExpression sqlSelectExpression) {
             return new BlogEntityProxyFetcher(cp, this, sqlSelectExpression);
         }
+
+//        @Override
+//        public TableAvailable getTableOrNull() {
+//            return null;
+//        }
+//
+//        @Override
+//        public Class<BlogEntity> getEntityClass() {
+//            return null;
+//        }
+//
+//        @Override
+//        public BlogEntityProxy create(TableAvailable table, EntitySQLContext entitySQLContext) {
+//            return null;
+//        }
     }
 
 }
