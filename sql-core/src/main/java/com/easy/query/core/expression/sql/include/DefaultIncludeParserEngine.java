@@ -118,7 +118,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
 
         int queryRelationGroupSize = includeNavigateParams.getQueryRelationGroupSize();
-        if (RelationTypeEnum.ManyToMany == navigateMetadata.getRelationType()) {
+        if (RelationTypeEnum.ManyToMany == navigateMetadata.getRelationType() && navigateMetadata.getMappingClass() != null) {
             confirmMappingRows(queryRelationGroupSize, includeParseContext, relationIds);
             EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
             ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperty());
@@ -315,12 +315,12 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
                 if (sqlEntityExpressionBuilder.getProjects().isEmpty()) {
                     Class<?> aliasClassType = includeParseContext.getIncludeNavigateParams().getFlatClassType();
-                    if(aliasClassType!=null){
-                        return includeQueryable.select(aliasClassType,t -> {
+                    if (aliasClassType != null) {
+                        return includeQueryable.select(aliasClassType, t -> {
                             t.columnAll();
                             EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                         });
-                    }else {
+                    } else {
                         return includeQueryable.select(t -> {
                             t.columnAll();
                             EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());

@@ -321,18 +321,18 @@ public class EntityMetadata {
             }
 
             if (RelationTypeEnum.ManyToMany == relationType) {
-                if (Objects.equals(Object.class, navigate.mappingClass())) {
-                    throw new IllegalArgumentException("relation type many to many map class not default");
+                //有中间表多对多
+                if (!Objects.equals(Object.class, navigate.mappingClass())) {
+                    if (EasyStringUtil.isBlank(navigate.selfMappingProperty())) {
+                        throw new IllegalArgumentException("relation type many to many self mapping property is empty");
+                    }
+                    if (EasyStringUtil.isBlank(navigate.targetMappingProperty())) {
+                        throw new IllegalArgumentException("relation type many to many target mapping property is empty");
+                    }
+                    navigateOption.setMappingClass(navigate.mappingClass());
+                    navigateOption.setSelfMappingProperty(navigate.selfMappingProperty());
+                    navigateOption.setTargetMappingProperty(navigate.targetMappingProperty());
                 }
-                if (EasyStringUtil.isBlank(navigate.selfMappingProperty())) {
-                    throw new IllegalArgumentException("relation type many to many self mapping property is empty");
-                }
-                if (EasyStringUtil.isBlank(navigate.targetMappingProperty())) {
-                    throw new IllegalArgumentException("relation type many to many target mapping property is empty");
-                }
-                navigateOption.setMappingClass(navigate.mappingClass());
-                navigateOption.setSelfMappingProperty(navigate.selfMappingProperty());
-                navigateOption.setTargetMappingProperty(navigate.targetMappingProperty());
             }
         }
         NavigateMetadata navigateMetadata = new NavigateMetadata(navigateOption, beanGetter, beanSetter);

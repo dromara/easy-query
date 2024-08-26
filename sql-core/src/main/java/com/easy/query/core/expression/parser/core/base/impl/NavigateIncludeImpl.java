@@ -30,22 +30,23 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         this.includeNavigateParams = includeNavigateParams;
         this.expressionContext = expressionContext;
     }
-    private NavigateMetadata withBefore(String property, Integer groupSize){
 
-        if(groupSize!=null&&groupSize<1){
+    private NavigateMetadata withBefore(String property, Integer groupSize) {
+
+        if (groupSize != null && groupSize < 1) {
             throw new IllegalArgumentException("include group size < 1");
         }
         NavigateMetadata navigateMetadata = entityTable.getEntityMetadata().getNavigateNotNull(property);
         includeNavigateParams.setNavigateMetadata(navigateMetadata);
         includeNavigateParams.setTable(this.entityTable);
-        if(groupSize==null){
+        if (groupSize == null) {
             includeNavigateParams.setRelationGroupSize(runtimeContext.getQueryConfiguration().getEasyQueryOption().getRelationGroupSize());
-        }else{
+        } else {
             includeNavigateParams.setRelationGroupSize(groupSize);
         }
         RelationTypeEnum relationType = navigateMetadata.getRelationType();
         //添加多对多中间表
-        if(RelationTypeEnum.ManyToMany==relationType){
+        if (RelationTypeEnum.ManyToMany == relationType && navigateMetadata.getMappingClass() != null) {
             ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
             ClientQueryable<?> mappingQueryable = mappingQuery.where(t -> {
                         t.in(navigateMetadata.getSelfMappingProperty(), includeNavigateParams.getRelationIds());
@@ -63,16 +64,16 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
     }
 
     @Override
-    public <TREntity> ClientQueryable<TREntity> with(String property,Integer groupSize) {
+    public <TREntity> ClientQueryable<TREntity> with(String property, Integer groupSize) {
         NavigateMetadata navigateMetadata = withBefore(property, groupSize);
         Class<?> navigatePropertyType = navigateMetadata.getNavigatePropertyType();
         boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         ClientQueryable<TREntity> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
 
         //支持tracking传递
-        if(tracking){
+        if (tracking) {
             queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_TRACKING);
-        }else{
+        } else {
             queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_TRACKING);
         }
         return queryable;

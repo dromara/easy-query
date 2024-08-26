@@ -103,6 +103,28 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         }
         return resultMap;
     }
+    protected <TNavigateEntity> Map<Object, Collection<TNavigateEntity>> getTargetDirectToManyMap(List<RelationExtraEntity> includes, List<Map<String, Object>> mappingRows) {
+
+        Map<Object, Collection<TNavigateEntity>> resultMap = new HashMap<>();
+
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(includeParserResult.getMappingClass());
+        ColumnMetadata selfRelationColumn = entityMetadata.getColumnNotNull(includeParserResult.getSelfMappingProperty());
+        String selfColumnName = selfRelationColumn.getName();
+        ColumnMetadata targetRelationColumn = entityMetadata.getColumnNotNull(includeParserResult.getTargetMappingProperty());
+        String targetColumnName = targetRelationColumn.getName();
+
+        Map<Object, Collection<TNavigateEntity>> targetToManyMap = getTargetToManyMap(includes);
+        for (Map<String, Object> mappingRow : mappingRows) {
+            Object selfRelationId = mappingRow.get(selfColumnName);
+            Object targetRelationId = mappingRow.get(targetColumnName);
+            Collection<TNavigateEntity> targetEntities = resultMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
+            Collection<TNavigateEntity> targets = targetToManyMap.get(targetRelationId);
+            if(EasyCollectionUtil.isNotEmpty(targets)){
+                targetEntities.addAll(targets);
+            }
+        }
+        return resultMap;
+    }
 //    protected Map<Object, Collection<Object>> getSelfToManyMap() {
 //        Map<Object, Collection<Object>> resultMap = new HashMap<>();
 //        ColumnMetadata selfRelationColumn = includeParserResult.getEntityMetadata().getColumnNotNull(includeParserResult.getSelfProperty());

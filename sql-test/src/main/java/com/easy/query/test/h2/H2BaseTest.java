@@ -7,6 +7,7 @@ import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -23,6 +24,8 @@ import com.easy.query.test.h2.sharding.AllTYPEShardingInitializer;
 import com.easy.query.test.h2.sharding.AllTypeRoute;
 import com.easy.query.test.h2.sharding.H2OrderRoute;
 import com.easy.query.test.h2.sharding.H2OrderShardingInitializer;
+import com.easy.query.test.listener.ListenerContextManager;
+import com.easy.query.test.listener.MyJdbcListener;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -43,6 +46,7 @@ public class H2BaseTest {
     public static EasyEntityQuery easyEntityQuery;
     public static EasyProxyQuery easyProxyQuery;
     public static EasyQuery easyQueryOrder;
+    public static ListenerContextManager listenerContextManager;
 
     static {
         LogFactory.useStdOutLogging();
@@ -97,6 +101,8 @@ public class H2BaseTest {
     }
 
     public static void initEasyQuery() {
+        listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
         EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(defDataSource)
                 .optionConfigure(op -> {
@@ -110,6 +116,7 @@ public class H2BaseTest {
                     op.setMaxShardingRouteCount(512);
                     op.setDefaultDataSourceMergePoolSize(20);
                 })
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .useDatabaseConfigure(new H2DatabaseConfiguration())
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);

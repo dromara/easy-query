@@ -331,7 +331,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             }
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
             ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
-            if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
+            if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
                 ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
                 clientQueryable.where(x -> {
                     x.and(() -> {
@@ -373,7 +373,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             }
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
             ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
-            if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
+            if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
                 ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
                 clientQueryable.where(x -> {
                     x.and(() -> {

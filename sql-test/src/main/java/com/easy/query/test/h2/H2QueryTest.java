@@ -861,4 +861,7 @@ public class H2QueryTest extends H2BaseTest {
             Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id WHERE t.nickname = ?",sql);
         }
     }
+
+
+
 }

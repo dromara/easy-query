@@ -146,3 +146,18 @@ CREATE TABLE IF NOT EXISTS `t_all_type_sharding_1` (
     `value` VARCHAR (2048),
     `uid` UUID
     );
+
+
+CREATE TABLE IF NOT EXISTS `t_tb_order` (
+    `id` VARCHAR (100) PRIMARY KEY,
+    `uid` VARCHAR (100),
+    `uname` VARCHAR (128),
+    `price` DECIMAL (20, 2)
+    );
+
+CREATE TABLE IF NOT EXISTS `t_tb_account` (
+    `id` VARCHAR (100) PRIMARY KEY,
+    `uid` VARCHAR (100),
+    `uname` VARCHAR (128),
+    `account` VARCHAR (128)
+    );
