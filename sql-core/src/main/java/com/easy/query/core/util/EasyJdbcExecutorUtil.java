@@ -214,7 +214,7 @@ public class EasyJdbcExecutorUtil {
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
-                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters));
+                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters),executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
@@ -273,7 +273,7 @@ public class EasyJdbcExecutorUtil {
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
-                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, new ArrayList<>(entities.size()));
+                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, new ArrayList<>(entities.size()),executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
             int batchSize = 0;
@@ -365,7 +365,7 @@ public class EasyJdbcExecutorUtil {
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
-                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, new ArrayList<>(entities.size()));
+                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, new ArrayList<>(entities.size()),executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
             int batchSize = 0;
@@ -435,7 +435,7 @@ public class EasyJdbcExecutorUtil {
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
-                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters));
+                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters),executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);

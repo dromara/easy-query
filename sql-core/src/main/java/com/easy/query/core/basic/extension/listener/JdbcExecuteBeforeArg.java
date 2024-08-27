@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.extension.listener;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,10 @@ public class JdbcExecuteBeforeArg {
      */
     private final String sql;
     /**
-     * batch下改参数集合可能会大于2,非batch下长度小于等于1
+     * batch下该参数集合可能会大于1,非batch下长度小于等于1
      */
     private final List<List<SQLParameter>> sqlParameters;
+    private final ExecuteMethodEnum executeMethod;
     /**
      * 开始时间毫秒
      */
@@ -33,11 +35,12 @@ public class JdbcExecuteBeforeArg {
      */
     private Map<String,Object> state;
 
-    public JdbcExecuteBeforeArg(String traceId, String sql, List<List<SQLParameter>> sqlParameters){
+    public JdbcExecuteBeforeArg(String traceId, String sql, List<List<SQLParameter>> sqlParameters, ExecuteMethodEnum executeMethod){
 
         this.traceId = traceId;
         this.sql = sql;
         this.sqlParameters = sqlParameters;
+        this.executeMethod = executeMethod;
         this.start = System.currentTimeMillis();
     }
 
@@ -63,5 +66,9 @@ public class JdbcExecuteBeforeArg {
 
     public void setState(Map<String, Object> state) {
         this.state = state;
+    }
+
+    public ExecuteMethodEnum getExecuteMethod() {
+        return executeMethod;
     }
 }
