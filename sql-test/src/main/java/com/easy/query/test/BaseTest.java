@@ -101,6 +101,8 @@ public abstract class BaseTest {
 //        EasyBeanUtil.FAST_BEAN_FUNCTION = ReflectBean::new;
         LogFactory.useStdOutLogging();
         init();
+
+
     }
 
 

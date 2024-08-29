@@ -98,6 +98,11 @@
             <version>2.0.65</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.bestvike</groupId>
+            <artifactId>linq</artifactId>
+            <version>6.0.0</version>
+        </dependency>
         <!-- mysql驱动 -->
         <dependency>
             <groupId>mysql</groupId>

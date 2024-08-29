@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteBeforeArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.util.EasySQLUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +36,7 @@ public class MyJdbcListener implements JdbcExecutorListener {
 
     @Override
     public void onExecuteAfter(JdbcExecuteAfterArg afterArg) {
+//        ExecuteMethodEnum executeMethod = afterArg.getBeforeArg().getExecuteMethod();
 
         ListenerContext listenContext = listenerContextManager.getListenContext();
         if(listenContext!=null){

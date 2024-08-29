@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.bestvike.linq.Linq;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
@@ -33,6 +34,7 @@ import com.easy.query.test.entity.TestBeanProperty;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
@@ -1004,9 +1006,15 @@ public class QueryTest18 extends BaseTest {
 
     @Test
     public void esss(){
-
-        easyEntityQuery.queryable(BlogEntity.class)
-                .select(b -> new BlogEntityProxy().selectExpression(b.id(),b.score()))
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .includes(s -> s.blogs())
                 .toList();
+        EntityQueryable<SysUserProxy, SysUser> sysUserProxySysUserEntityQueryable = easyEntityQuery.queryable(SysUser.class).cloneQueryable();
+        for (SysUser sysUser : list) {
+
+            sysUser.setBlogs(
+                    Linq.of(sysUser.getBlogs()).orderBy(o->o.getScore()).toList()
+            );
+        }
     }
 }
