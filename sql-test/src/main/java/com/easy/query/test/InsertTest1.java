@@ -3,9 +3,12 @@ package com.easy.query.test;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAutoNative;
+import com.easy.query.test.entity.TopicFile;
+import com.easy.query.test.entity.proxy.TopicFileProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,6 +16,7 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -137,6 +141,18 @@ public class InsertTest1 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("INSERT INTO `xxx` (`id`,`stars`) VALUES (?,ifnull(`stars`,0)+?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testFETCHER(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<TopicFile> list = easyEntityQuery.queryable(TopicFile.class)
+                .select(t -> t.FETCHER.id().stars())
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`stars` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
         listenerContextManager.clear();
     }
 }

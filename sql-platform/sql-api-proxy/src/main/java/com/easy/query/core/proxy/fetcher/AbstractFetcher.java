@@ -7,6 +7,7 @@ import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
@@ -20,7 +21,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy, TEntity>, TEntity, TChain extends AbstractFetcher<TProxy, TEntity, TChain>> implements EntityFetcher<TProxy, TEntity, TChain> {
+public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy, TEntity>, TEntity, TChain extends AbstractFetcher<TProxy, TEntity, TChain>> implements EntityFetcher<TProxy, TEntity, TChain>, ProxyEntity<TChain,TEntity> {
 
 
     private final TProxy tProxy;
@@ -154,5 +155,21 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
         TProxy proxy = tProxy.create(null, tProxy.getEntitySQLContext());
         proxy.selectExpression(this);
         return proxy;
+    }
+
+    @Override
+    public TableAvailable getTableOrNull() {
+        return null;
+    }
+
+    @Override
+    public Class<TEntity> getEntityClass() {
+        return tProxy.getEntityClass();
+    }
+
+    @Override
+    public TChain create(TableAvailable table, EntitySQLContext entitySQLContext) {
+//        return tProxy.create(table, entitySQLContext);
+        throw new UnsupportedOperationException("FETCHER只允许作为链式的最后一级,如果还需要后续链式请将FETCHER转成Proxy,具体的方法为[FETCHER.id().name().fetchProxy()]");
     }
 }
