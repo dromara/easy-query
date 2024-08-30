@@ -169,7 +169,7 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
 
     @Override
     public TChain create(TableAvailable table, EntitySQLContext entitySQLContext) {
-//        return tProxy.create(table, entitySQLContext);
-        throw new UnsupportedOperationException("FETCHER只允许作为链式的最后一级,如果还需要后续链式请将FETCHER转成Proxy,具体的方法为[FETCHER.id().name().fetchProxy()]");
+        //FETCHER只允许作为链式的最后一级,如果还需要后续链式请将FETCHER转成Proxy,具体的方法为[FETCHER.id().name().fetchProxy()]
+        throw new UnsupportedOperationException("FETCHER is only allowed as the last level in a chain. If further chaining is needed, please convert FETCHER to a Proxy. The specific method is [FETCHER.id().name().fetchProxy()].");
     }
 }
