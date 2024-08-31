@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.entity.select.extension.queryable7.override;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable7;
+import com.easy.query.api.proxy.entity.select.EntityQueryable8;
 import com.easy.query.api.proxy.entity.select.extension.queryable7.EntityQueryable7Available;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
@@ -42,6 +43,10 @@ public interface OverrideEntityQueryable7<T1Proxy extends ProxyEntity<T1Proxy, T
     @Override
     EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> whereById(boolean condition, Object id);
 
+    @Override
+    default <TProperty> EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
+    }
     @Override
     <TProperty> EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> whereByIds(boolean condition, Collection<TProperty> ids);
 

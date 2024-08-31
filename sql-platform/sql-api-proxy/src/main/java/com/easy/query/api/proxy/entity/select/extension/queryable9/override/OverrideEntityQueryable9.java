@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable9.override;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.api.proxy.entity.select.EntityQueryable10;
 import com.easy.query.api.proxy.entity.select.EntityQueryable9;
 import com.easy.query.api.proxy.entity.select.extension.queryable9.EntityQueryable9Available;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -44,6 +45,10 @@ public interface OverrideEntityQueryable9<T1Proxy extends ProxyEntity<T1Proxy, T
     @Override
     EntityQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> whereById(boolean condition, Object id);
 
+    @Override
+    default <TProperty> EntityQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> whereByIds(Collection<TProperty> ids) {
+        return whereByIds(true, ids);
+    }
     @Override
     <TProperty> EntityQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> whereByIds(boolean condition, Collection<TProperty> ids);
 

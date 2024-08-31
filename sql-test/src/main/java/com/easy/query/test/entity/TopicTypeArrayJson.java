@@ -1,7 +1,7 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.conversion.JsonConverter;
@@ -22,7 +22,7 @@ import java.util.List;
 @Data
 @Table("t_topic_type_array")
 @ToString
-@EntityProxy
+@EntityFileProxy
 public class TopicTypeArrayJson implements ProxyEntityAvailable<TopicTypeArrayJson , TopicTypeArrayJsonProxy> {
 
     @Column(primaryKey = true)

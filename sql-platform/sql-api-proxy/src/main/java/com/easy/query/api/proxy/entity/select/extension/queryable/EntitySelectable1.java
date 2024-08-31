@@ -63,9 +63,11 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *              .selectIgnores(o.title());//相当于从t.*中移除title列
      *         )
      *          //如果您的映射列名都一样那么可以通过selectExpression来处理大部分列
-     *         .select(o->new TopicProxy().selectExpression(o.FETCHER.id().name().phone().departName()).adapter(r->{
-     *             //这边处理别名
-     *         }))
+     *         .select(o->new TopicProxy().selectExpression(o.FETCHER.id().name().phone().departName()))
+     *          //返回自身仅查询两列
+     *          .select(t -> t.FETCHER.id().stars())
+     *          //返回自身仅查询两列并且支持后续继续where或者join之类的操作
+     *          .select(t -> t.FETCHER.id().stars().fetchProxy()).where(......)
      *                 }
      * </pre></blockquote>
      *
@@ -75,14 +77,13 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @return 返回新的结果操作表达式可以继续筛选处理
      */
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression);
-//    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectAny(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression){
-//        return select(selectExpression);
-//    }
+
 
     /**
      * 快速读取单列用于返回基本类型或者subQuery等查询
      * <blockquote><pre>
      *     {@code
+     *
      *          //如果您是枚举需要单独查询请转成integer或者具体数据库对应的值
      *          //直接返回单个列如果是Enum类型的不支持
      *         .selectColumn(o -> o.enumProp().toNumber(Integer.class))
