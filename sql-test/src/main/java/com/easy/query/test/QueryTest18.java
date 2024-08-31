@@ -22,6 +22,7 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.partition.Partition1;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -32,6 +33,7 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.TestBeanProperty;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicFile;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.SysUserProxy;
@@ -787,7 +789,7 @@ public class QueryTest18 extends BaseTest {
                         p.entityTable().stars().gt(1);
                         p.partitionColumn1().gt(1);
                     }).toList();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -796,6 +798,7 @@ public class QueryTest18 extends BaseTest {
         Assert.assertEquals("1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testPartitionBy1_1() {
 
@@ -808,14 +811,14 @@ public class QueryTest18 extends BaseTest {
             List<Partition1<Topic, Integer>> list1 = easyEntityQuery.queryable(Topic.class)
                     .select(t -> Select.PARTITION.of(
                             t,
-                            t.expression().rowNumberOver().partitionBy(t.id(),t.title()).orderBy(t.id())
+                            t.expression().rowNumberOver().partitionBy(t.id(), t.title()).orderBy(t.id())
                                     .orderByDescending(t.createTime()).asAnyType(Integer.class)
                     ))
                     .where(p -> {
                         p.entityTable().stars().gt(1);
                         p.partitionColumn1().gt(1);
                     }).toList();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -857,7 +860,7 @@ public class QueryTest18 extends BaseTest {
 //    }
 
     @Test
-    public void test(){
+    public void test() {
 
         List<Draft3<String, String, BigDecimal>> list2 = easyEntityQuery.queryable(BlogEntity.class)
                 .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
@@ -898,7 +901,7 @@ public class QueryTest18 extends BaseTest {
     }
 
     @Test
-    public void test1xa(){
+    public void test1xa() {
 
         BigDecimal bigDecimal = easyEntityQuery.queryable(Topic.class)
                 .sumBigDecimalOrDefault(t -> t.stars().nullOrDefault(0), BigDecimal.ZERO);
@@ -915,7 +918,7 @@ public class QueryTest18 extends BaseTest {
 
 
     @Test
-    public void testStarStr(){
+    public void testStarStr() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -938,13 +941,13 @@ public class QueryTest18 extends BaseTest {
     }
 
     @Test
-    public void testUpdate(){
+    public void testUpdate() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         easyEntityQuery.updatable(Topic.class)
                 .setColumns(t -> {
                     t.stars().set(
-                            t.expression().caseWhen(()->{
+                            t.expression().caseWhen(() -> {
                                 t.stars().subtract(5).lt(BigDecimal.valueOf(0));
                             }).then(0).elseEnd(t.stars().subtract(5))
                     );
@@ -964,7 +967,7 @@ public class QueryTest18 extends BaseTest {
     }
 
     @Test
-    public void easyQuery(){
+    public void easyQuery() {
         String s = easyEntityQuery.queryable(BlogEntity.class)
                 .selectColumn(b -> b.createTime().format("yyyy年MM约-dd HH小时mm分钟ss秒"))
                 .firstOrNull();
@@ -978,9 +981,9 @@ public class QueryTest18 extends BaseTest {
     }
 
     @Test
-    public void easyQueryPrint1(){
+    public void easyQueryPrint1() {
         String s = easyEntityQuery.queryable(BlogEntity.class)
-                .configure(c->{
+                .configure(c -> {
 //                    c.setGroupSize();
                     c.setPrintSQL(false);
                 })
@@ -1005,7 +1008,7 @@ public class QueryTest18 extends BaseTest {
     }
 
     @Test
-    public void esss(){
+    public void esss() {
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .includes(s -> s.blogs())
                 .toList();
@@ -1013,8 +1016,49 @@ public class QueryTest18 extends BaseTest {
         for (SysUser sysUser : list) {
 
             sysUser.setBlogs(
-                    Linq.of(sysUser.getBlogs()).orderBy(o->o.getScore()).toList()
+                    Linq.of(sysUser.getBlogs()).orderBy(o -> o.getScore()).toList()
             );
         }
     }
+
+    @Test
+    public void testFETCHER() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<TopicFile> list = easyEntityQuery.queryable(TopicFile.class)
+                .where(t -> {
+                    t.id().eq("123");
+                })
+                .select(t -> t.FETCHER.id().stars())
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`stars` FROM `t_topic` t WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+//    @Test
+//    public void testGroup() {
+//
+//        List<Draft2<String, Long>> list1 = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(b -> b.createTime().le(LocalDateTime.now()))
+//                .groupBy(b -> GroupKeys.TABLE1.of(
+//                        b.createTime().nullOrDefault(LocalDateTime.now()).format("yyyy-MM-dd")
+//                )).select(group -> Select.DRAFT.of(
+//                        group.key1(),
+//                        group.count()
+//                )).toList();
+//
+//
+//        List<Draft2<String, Long>> list2 = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(b -> b.createTime().le(LocalDateTime.now()))
+//                .groupBy(b -> GroupKeys.TABLE1.of(
+//                        b.createTime().nullOrDefault(LocalDateTime.now()).format("yyyy-MM-dd")
+//                )).select(group -> Select.DRAFT.of(
+//                        group.groupTable().createTime().nullOrDefault(LocalDateTime.now()).format("yyyy-MM-dd"),
+//                        group.count()
+//                )).toList();
+//    }
+
 }

@@ -143,16 +143,4 @@ public class InsertTest1 extends BaseTest {
         Assert.assertEquals("1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
-    @Test
-    public void testFETCHER(){
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-        List<TopicFile> list = easyEntityQuery.queryable(TopicFile.class)
-                .select(t -> t.FETCHER.id().stars())
-                .toList();
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`stars` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        listenerContextManager.clear();
-    }
 }

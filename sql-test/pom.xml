@@ -200,12 +200,6 @@
             <version>${spring.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.easy-query</groupId>
-            <artifactId>sql-api-lambda</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
     </dependencies>
 
     <build>
