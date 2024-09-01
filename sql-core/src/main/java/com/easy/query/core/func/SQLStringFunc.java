@@ -176,7 +176,7 @@ public interface SQLStringFunc {
     default SQLFunction subString(String property, int begin, int length) {
         return subString(s -> {
             s.column(property);
-            s.format(begin + 1);
+            s.format(begin);
             s.format(length);
         });
     }
@@ -190,7 +190,7 @@ public interface SQLStringFunc {
     default SQLFunction subString(SQLFunction sqlFunction, int begin, int length) {
         return subString(s -> {
             s.sqlFunc(sqlFunction);
-            s.format(begin + 1);
+            s.format(begin);
             s.format(length);
         });
     }

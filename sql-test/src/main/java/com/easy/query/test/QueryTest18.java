@@ -1061,4 +1061,20 @@ public class QueryTest18 extends BaseTest {
 //                )).toList();
 //    }
 
+    @Test
+    public void testSubString(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    b.id().subString(b.star(), b.title().length().subtract(5)).eq("123");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND SUBSTR(`id`,`star`+1,(CHAR_LENGTH(`title`) - ?)) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),5(Integer),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
 }
