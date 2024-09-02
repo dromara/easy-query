@@ -9,6 +9,7 @@ import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.NavigateFlat;
 import com.easy.query.core.annotation.NavigateJoin;
+import com.easy.query.core.annotation.NavigateSetter;
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.annotation.ShardingDataSourceKey;
 import com.easy.query.core.annotation.ShardingExtraDataSourceKey;
@@ -41,6 +42,7 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.basic.extension.navigate.DefaultNavigateExtraFilterStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
+import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
@@ -190,7 +192,7 @@ public class EntityMetadata {
 
         Table table = EasyClassUtil.getAnnotation(entityClass, Table.class);
         if (table != null) {
-            this.tableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass,table.value(),true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
+            this.tableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass, table.value(), true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
 
             this.schema = table.schema();
             if (EasyStringUtil.isBlank(this.schema)) {
@@ -264,7 +266,7 @@ public class EntityMetadata {
             if (!tableEntity) {
                 NavigateFlat navigateFlat = field.getAnnotation(NavigateFlat.class);
                 if (navigateFlat != null) {
-                    createNavigateFlatMappingMetadata(navigateFlat, staticFields, field, fastBean, fastBeanProperty, property);
+                    createNavigateFlatMappingMetadata(navigateFlat, staticFields, field, fastBean, fastBeanProperty, property,configuration);
                     continue;
                 }
                 NavigateJoin navigateJoin = field.getAnnotation(NavigateJoin.class);
@@ -303,8 +305,6 @@ public class EntityMetadata {
             throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");
         }
 
-        Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
-        PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
         NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty);
 
         if (tableEntity) {
@@ -335,8 +335,10 @@ public class EntityMetadata {
                 }
             }
         }
-        NavigateMetadata navigateMetadata = new NavigateMetadata(navigateOption, beanGetter, beanSetter);
+        Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
+        PropertySetterCaller<Object> beanSetter =getBeanSetter(field,fastBean,fastBeanProperty,configuration);
 
+        NavigateMetadata navigateMetadata = new NavigateMetadata(navigateOption, beanGetter, beanSetter);
         property2NavigateMap.put(property, navigateMetadata);
     }
 
@@ -371,7 +373,7 @@ public class EntityMetadata {
         return def;
     }
 
-    private void createNavigateFlatMappingMetadata(NavigateFlat navigateFlat, Map<String, Field> staticFields, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property) {
+    private void createNavigateFlatMappingMetadata(NavigateFlat navigateFlat, Map<String, Field> staticFields, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
         String[] mappingPath = getFlatMappingPath(navigateFlat, staticFields);
         if (mappingPath.length <= 1) {
             throw new EasyQueryInvalidOperationException("navigate flat, mappingPath at least two path");
@@ -392,10 +394,28 @@ public class EntityMetadata {
         }
 
 //        Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
-        PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
+        PropertySetterCaller<Object> beanSetter =getBeanSetter(field,fastBean,fastBeanProperty,configuration);
+
         NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, relationMappingType, mappingPath, navigateType, EasyClassUtil.isBasicTypeOrEnum(navigateType), beanSetter, property);
 
         property2NavigateFlatMap.put(property, navigateFlatMetadata);
+    }
+    protected PropertySetterCaller<Object> getBeanSetter(Field field, FastBean fastBean,FastBeanProperty fastBeanProperty, QueryConfiguration configuration){
+        PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
+        NavigateSetter navigateSetter = field.getAnnotation(NavigateSetter.class);
+        if (navigateSetter != null) {
+            Class<? extends NavigateValueSetter<?>> setter = navigateSetter.value();
+            NavigateValueSetter<?> navigateValueSetter = configuration.getNavigateValueSetter(setter);
+            if (navigateValueSetter == null) {
+                throw new EasyQueryInvalidOperationException("not found navigate value setter:[" + EasyClassUtil.getSimpleName(setter) + "]");
+            }
+            return (obj,val)->{
+                Object ov = navigateValueSetter.beforeSet(EasyObjectUtil.typeCastNullable(val));
+                beanSetter.call(obj,ov);
+            };
+        }else{
+            return beanSetter;
+        }
     }
 
     private void createNavigateJoinMappingMetadata(NavigateJoin navigateJoin, Map<String, Field> staticFields, String property) {
@@ -454,7 +474,7 @@ public class EntityMetadata {
         Column column = field.getAnnotation(Column.class);
         boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
         boolean autoSelect = column == null ? defaultAutoSelect : column.autoSelect();
-        String columnName = hasColumnName ? nameConversion.annotationCovert(entityClass,column.value(),false) : nameConversion.convert(property);
+        String columnName = hasColumnName ? nameConversion.annotationCovert(entityClass, column.value(), false) : nameConversion.convert(property);
         ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName);
 //            if (column != null) {
 //                columnMetadata.setNullable(column.nullable());

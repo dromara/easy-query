@@ -1,5 +1,6 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -106,4 +107,5 @@ public class NavigateOption {
     public boolean isBasicType() {
         return basicType;
     }
+
 }

@@ -15,7 +15,6 @@ import com.easy.query.core.util.EasyObjectUtil;
 public class ColumnOrderSelectorImpl<T1> implements ColumnOrderSelector<T1> {
     protected final TableAvailable table;
     private final OrderSelector orderSelector;
-    protected boolean asc;
 
     public ColumnOrderSelectorImpl(TableAvailable table, OrderSelector orderSelector) {
         this.table = table;
@@ -44,6 +43,7 @@ public class ColumnOrderSelectorImpl<T1> implements ColumnOrderSelector<T1> {
         return this;
     }
 
+    @Override
     public void setAsc(boolean asc) {
         orderSelector.setAsc(asc);
     }

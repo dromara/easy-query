@@ -15,6 +15,7 @@ import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
  */
 public interface ColumnOrderSelector<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<ColumnOrderSelector<T1>>, SQLFxAvailable {
     OrderSelector getOrderSelector();
+    void setAsc(boolean asc);
     default QueryRuntimeContext getRuntimeContext(){
         return getOrderSelector().getRuntimeContext();
     }

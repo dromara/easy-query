@@ -8,5 +8,5 @@ package com.easy.query.core.expression.include;
  */
 public interface IncludeProcessor {
 
-    <TEntityInclude> void process();
+    void process();
 }

@@ -35,6 +35,7 @@ import com.easy.query.test.conversion.JsonConverter;
 import com.easy.query.test.conversion.MySQLAesEncryptColumnValueSQLConverter;
 import com.easy.query.test.conversion.StudentSizeColumnValueSQLConverter;
 import com.easy.query.test.conversion.UserAgeColumnValueSQLConverter;
+import com.easy.query.test.dto.autodto.MyNavigateValueSetter;
 import com.easy.query.test.dto.autotest.RoleJoin;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
@@ -212,6 +213,7 @@ public abstract class BaseTest {
         configuration.applyColumnValueSQLConverter(new StudentSizeColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new Blog2StarToStringColumnValueSQLConverter());
         configuration.applyGeneratedKeySQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
+        configuration.applyNavigateValueSetter(new MyNavigateValueSetter());
         configuration.applyNavigateExtraFilterStrategy(new com.easy.query.test.entity.navf.RoleJoin.RoleJoinType());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRoute(new TopicShardingTableRoute());

@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.include;
 
+import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;

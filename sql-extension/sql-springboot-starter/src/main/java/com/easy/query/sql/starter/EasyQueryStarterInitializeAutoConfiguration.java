@@ -9,6 +9,7 @@ import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
+import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.sql.starter.config.JdbcTypeHandlerReplaceConfigurer;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
@@ -108,6 +109,9 @@ public class EasyQueryStarterInitializeAutoConfiguration {
         }
         for (Map.Entry<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyEntry : easyQueryInitializeOption.getNavigateExtraFilterStrategyMap().entrySet()) {
             configuration.applyNavigateExtraFilterStrategy(navigateExtraFilterStrategyEntry.getValue());
+        }
+        for (Map.Entry<String, NavigateValueSetter> navigateValueSetterEntry : easyQueryInitializeOption.getNavigateValueSetterMap().entrySet()) {
+            configuration.applyNavigateValueSetter(navigateValueSetterEntry.getValue());
         }
         for (Map.Entry<String, PrimaryKeyGenerator> primaryKeyGeneratorEntry : easyQueryInitializeOption.getPrimaryKeyGeneratorMap().entrySet()) {
             configuration.applyPrimaryKeyGenerator(primaryKeyGeneratorEntry.getValue());

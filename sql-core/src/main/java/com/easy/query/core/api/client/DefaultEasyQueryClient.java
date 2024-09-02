@@ -99,7 +99,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
     @Override
     public MapQueryable mapQueryable(String sql) {
-        ClientQueryable<Map> queryable = easySQLApiFactory.createQueryable(sql,Map.class, runtimeContext);
+        ClientQueryable<Map> queryable = easySQLApiFactory.createQueryable(sql, Map.class, runtimeContext);
         return new DefaultMapQueryable(EasyObjectUtil.typeCastNullable(queryable));
     }
 
@@ -244,7 +244,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         IncludeRelationIdContext includeRelationIdContext = new IncludeRelationIdContext();
         Integer queryRelationGroupSize = loadIncludeConfiguration.getGroupSize();
         List<Map<String, Object>> mappingRows = null;
-        if (RelationTypeEnum.ManyToMany == relationType) {
+        if (RelationTypeEnum.ManyToMany == relationType && navigateMetadata.getMappingClass() != null) {
 
             ClientQueryable<?> mappingQueryable = queryable(navigateMetadata.getMappingClass())
                     .where(o -> {
@@ -265,7 +265,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             relationIds.addAll(targetIds);
         }
 
-        SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression = createIncludeQueryableExpression(includeRelationIdContext, navigateMetadata,loadIncludeConfiguration);
+        SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression = createIncludeQueryableExpression(includeRelationIdContext, navigateMetadata, loadIncludeConfiguration);
 
 
         List<?> entityResult = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeQueryableExpression, includeRelationIdContext, relationIds, q -> q.toList());
@@ -284,18 +284,18 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
                 navigateMetadata.getTargetMappingProperty(),
                 includeResult,
                 mappingRows,
-                navigateMetadata.getSetter(),null,null);
+                navigateMetadata.getSetter(), null, null);
     }
 
-    private SQLFuncExpression<ClientQueryable<?>> createIncludeQueryableExpression(IncludeRelationIdContext includeRelationIdContext, NavigateMetadata navigateMetadata,LoadIncludeConfiguration loadIncludeConfiguration) {
+    private SQLFuncExpression<ClientQueryable<?>> createIncludeQueryableExpression(IncludeRelationIdContext includeRelationIdContext, NavigateMetadata navigateMetadata, LoadIncludeConfiguration loadIncludeConfiguration) {
 
         Class<?> navigatePropertyType = navigateMetadata.getNavigatePropertyType();
         ClientQueryable<?> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
         Boolean tracking = loadIncludeConfiguration.getTracking();
-        if(tracking!=null){
-            if(tracking){
+        if (tracking != null) {
+            if (tracking) {
                 queryable.asTracking();
-            }else{
+            } else {
                 queryable.asNoTracking();
             }
         }
@@ -326,10 +326,10 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         LoadIncludeConfiguration loadIncludeConfiguration = new LoadIncludeConfiguration();
         EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
         loadIncludeConfiguration.setGroupSize(easyQueryOption.getRelationGroupSize());
-        if(configure!=null){
+        if (configure != null) {
             configure.apply(loadIncludeConfiguration);
         }
-        IncludeParserResult includeParserResult = getIncludeParserResult(entities, navigateMetadata,loadIncludeConfiguration);
+        IncludeParserResult includeParserResult = getIncludeParserResult(entities, navigateMetadata, loadIncludeConfiguration);
         IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
         IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(includeParserResult, runtimeContext);
         includeProcess.process();

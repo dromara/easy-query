@@ -8,6 +8,7 @@ import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
+import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -36,6 +37,7 @@ public final class EasyQueryInitializeOption {
     private final Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap;
     private final Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap;
     private final Map<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap;
+    private final Map<String, NavigateValueSetter> navigateValueSetterMap;
     private final Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap;
 
     public Map<String, Interceptor> getInterceptorMap() {
@@ -86,6 +88,9 @@ public final class EasyQueryInitializeOption {
         return navigateExtraFilterStrategyMap;
     }
 
+    public Map<String, NavigateValueSetter> getNavigateValueSetterMap() {
+        return navigateValueSetterMap;
+    }
     public Map<String, PrimaryKeyGenerator> getPrimaryKeyGeneratorMap() {
         return primaryKeyGeneratorMap;
     }
@@ -97,6 +102,7 @@ public final class EasyQueryInitializeOption {
                                      Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap,
                                      Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap,
                                      Map<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap,
+                                     Map<String, NavigateValueSetter> navigateValueSetterMap,
                                      Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap) {
 
         this.interceptorMap = interceptorMap;
@@ -111,6 +117,7 @@ public final class EasyQueryInitializeOption {
         this.columnValueSQLConverterMap = columnValueSQLConverterMap;
         this.generatedKeySQLColumnGeneratorMap = generatedKeySQLColumnGeneratorMap;
         this.navigateExtraFilterStrategyMap = navigateExtraFilterStrategyMap;
+        this.navigateValueSetterMap = navigateValueSetterMap;
         this.primaryKeyGeneratorMap = primaryKeyGeneratorMap;
     }
 }

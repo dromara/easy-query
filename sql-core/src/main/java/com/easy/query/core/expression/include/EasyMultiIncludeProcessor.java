@@ -16,7 +16,7 @@ public class EasyMultiIncludeProcessor implements IncludeProcessor{
         this.includeProcessors = includeProcessors;
     }
     @Override
-    public <TEntityInclude> void process() {
+    public void process() {
         for (IncludeProcessor includeProcessor : includeProcessors) {
             includeProcessor.process();
         }

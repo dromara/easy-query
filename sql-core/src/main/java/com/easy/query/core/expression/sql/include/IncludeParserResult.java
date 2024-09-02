@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.include;
 
+import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -52,4 +53,5 @@ public interface IncludeParserResult {
     List<RelationExtraEntity> getRelationExtraEntities();
     List<NavigateFlatMetadata> getNavigateFlatMetadataList();
     EntityMetadata getFlatQueryEntityMetadata();
+
 }

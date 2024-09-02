@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  *
  * @author xuejiaming
  */
-public class EasyFlatIncludeProcessor extends EasyIncludeProcess{
+public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
     private final NavigateFlatMetadata navigateFlatMetadata;
     private Property<Object, Collection<?>> navigateFlatGetter;
 
@@ -33,11 +33,12 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess{
         super(includeParserResult, runtimeContext);
         this.navigateFlatMetadata = navigateFlatMetadata;
         //生成多个targetNaviaget在process的时候for调用
-        initNavigateFlatGetter(includeParserResult,includeParserResult.getFlatQueryEntityMetadata(),navigateFlatMetadata,runtimeContext);
+        initNavigateFlatGetter(includeParserResult, includeParserResult.getFlatQueryEntityMetadata(), navigateFlatMetadata, runtimeContext);
 
     }
-    public void initNavigateFlatGetter(IncludeParserResult includeParserResult,EntityMetadata flatQueryEntityMetadata, NavigateFlatMetadata navigateFlatMetadata, QueryRuntimeContext runtimeContext){
-        if(navigateFlatMetadata==null){
+
+    public void initNavigateFlatGetter(IncludeParserResult includeParserResult, EntityMetadata flatQueryEntityMetadata, NavigateFlatMetadata navigateFlatMetadata, QueryRuntimeContext runtimeContext) {
+        if (navigateFlatMetadata == null) {
             return;
         }
         boolean basicType = navigateFlatMetadata.isBasicType();
@@ -48,10 +49,10 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess{
         NavigateMetadata currentNavigateMetadata = flatQueryEntityMetadata.getNavigateNotNull(firstNavValue);
         EntityMetadata currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
 //        replyExpressions.add(currentNavigateMetadata.getGetter());
-        while(mappingPathIterator.hasNext()){
+        while (mappingPathIterator.hasNext()) {
             String currentNavValue = mappingPathIterator.next();
-            if(!mappingPathIterator.hasNext()){
-                if(basicType){
+            if (!mappingPathIterator.hasNext()) {
+                if (basicType) {
                     ColumnMetadata columnMetadata = currentEntityMetadata.getColumnNotNull(currentNavValue);
                     replyExpressions.add(columnMetadata.getGetterCaller());
                     break;
@@ -92,20 +93,19 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess{
 
     @Override
     protected <T> void setEntityValue(T entity, Object value) {
-        if(navigateFlatMetadata!=null){
-            Collection<?> values =null;
-            if(value instanceof Collection){
-                values = ((Collection<?>) value).stream().map(o->navigateFlatGetter.apply(o)).flatMap(o->o.stream()).distinct().collect(Collectors.toList());
-            }else{
+        if (navigateFlatMetadata != null) {
+            Collection<?> values = null;
+            if (value instanceof Collection) {
+                values = ((Collection<?>) value).stream().map(o -> navigateFlatGetter.apply(o)).flatMap(o -> o.stream()).distinct().collect(Collectors.toList());
+            } else {
                 values = navigateFlatGetter.apply(value);
-
             }
-            if(navigateFlatMetadata.getRelationMappingType()== RelationMappingTypeEnum.ToOne){
+            if (navigateFlatMetadata.getRelationMappingType() == RelationMappingTypeEnum.ToOne) {
                 navigateFlatMetadata.getBeanSetter().call(entity, EasyCollectionUtil.firstOrNull(values));
-            }else{
-                navigateFlatMetadata.getBeanSetter().call(entity,values);
+            } else {
+                navigateFlatMetadata.getBeanSetter().call(entity, values);
             }
-        }else{
+        } else {
             super.setEntityValue(entity, value);
         }
     }
