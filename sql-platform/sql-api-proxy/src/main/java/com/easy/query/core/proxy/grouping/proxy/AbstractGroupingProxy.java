@@ -71,6 +71,22 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
             });
         }, Long.class);
     }
+    public <TProperty> ColumnFunctionComparableNumberChainExpression<Long> count(PropTypeColumn<TProperty> column,boolean distinct) {
+        if (column instanceof ColumnNumberFunctionAvailable) {
+            ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
+            return funcColumn.count(distinct);
+        }
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(column.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
+            if(distinct){
+                return fx.count(x -> {
+                    PropTypeColumn.columnFuncSelector(x, column);
+                }).distinct(true);
+            }
+            return fx.count(x -> {
+                PropTypeColumn.columnFuncSelector(x, column);
+            });
+        }, Long.class);
+    }
 
     /**
      * 请使用{@link #expression()}或者{@link Expression#intCount()}
@@ -94,6 +110,22 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
             return funcColumn.intCount();
         }
         return new ColumnFunctionComparableNumberChainExpressionImpl<>(column.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
+            return fx.count(x -> {
+                PropTypeColumn.columnFuncSelector(x, column);
+            });
+        }, Integer.class);
+    }
+    public <TProperty> ColumnFunctionComparableNumberChainExpression<Integer> intCount(PropTypeColumn<TProperty> column,boolean distinct) {
+        if (column instanceof ColumnNumberFunctionAvailable) {
+            ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
+            return funcColumn.intCount(distinct);
+        }
+        return new ColumnFunctionComparableNumberChainExpressionImpl<>(column.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
+            if(distinct){
+                return fx.count(x -> {
+                    PropTypeColumn.columnFuncSelector(x, column);
+                }).distinct(true);
+            }
             return fx.count(x -> {
                 PropTypeColumn.columnFuncSelector(x, column);
             });
