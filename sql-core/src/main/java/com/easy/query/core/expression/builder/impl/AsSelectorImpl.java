@@ -144,6 +144,9 @@ public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSe
                 String aliasPropertyName = resultEntityMetadata.getPropertyNameOrNull(columnName);
                 if (aliasPropertyName != null) {
                     ColumnMetadata resultColumnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
+                    if(!resultColumnMetadata.isAutoSelect()){
+                        continue;
+                    }
                     String aliasColumnName = resultColumnMetadata.getName();
                     String alias = Objects.equals(columnName, aliasColumnName) ? null : aliasColumnName;
                     ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(tableBuilder.getEntityTable(), columnMetadata.getPropertyName(), expressionContext, alias);

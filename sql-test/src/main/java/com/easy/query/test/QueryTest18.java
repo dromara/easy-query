@@ -43,10 +43,14 @@ import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.keytest.MyTestPrimaryKey;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.proxy.MyVOProxy;
+import com.easy.query.test.selectato.TopicAutoFalse;
 import com.easy.query.test.vo.BlogEntityVO1;
 import com.easy.query.test.vo.BlogEntityVO2;
 import com.easy.query.test.vo.TestUserAAA;
 import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
+import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1077,4 +1081,46 @@ public class QueryTest18 extends BaseTest {
         listenerContextManager.clear();
     }
 
+    @Test
+    public void test1111(){
+//        TopicTypeEnum topicTypeEnum = easyEntityQuery.queryable(TopicTypeTest1.class).select(t -> t.topicType()).firstOrNull();
+
+
+        List<MyVO> list = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
+                .where((b1, t2) -> b1.star().eq(1))
+                .groupBy((b1, t2) -> GroupKeys.TABLE2.of(b1.title(), b1.content()))
+                .select(group -> {
+                    MyVOProxy r = new MyVOProxy();
+                    r.title().set(group.key1());
+                    r.content().set(group.key2());
+                    r.c().set(group.groupTable().t2.id().count());
+                    return r;
+                }).toList();
+//
+//        List<VO> list = easyEntityQuery.queryable(BlogEntity.class)
+//                .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
+//                .where((b1, t2) -> b1.star().eq(1))
+//                .groupBy((b1, t2) -> GroupKeys.TABLE2.of(b1.title(), b1.content()))
+//                .select(VO.class, group -> Select.of(
+//                        group.key1().as(VO::getTitle),
+//                        group.key2().as(VO::getContent),
+//                        group.groupTable().t2.id().count().as(VO::getC)
+//                )).toList();
+
+    }
+    @Test
+    public void autoFalse(){
+        List<TopicAutoFalse> list = easyQuery.queryable(Topic.class)
+                .select(TopicAutoFalse.class, t -> t.columnAll())
+                .toList();
+    }
+
+
+    @Data
+    public static class  VO{
+        private String title;
+        private String content;
+        private Long c;
+    }
 }
