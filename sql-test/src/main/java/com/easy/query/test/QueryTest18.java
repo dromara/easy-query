@@ -1123,4 +1123,10 @@ public class QueryTest18 extends BaseTest {
         private String content;
         private Long c;
     }
+
+    @Test
+    public void testEnum(){
+        TopicTypeEnum topicTypeEnum = easyEntityQuery.queryable(TopicTypeTest1.class).select(t -> t.topicType()).firstOrNull();
+        System.out.println(topicTypeEnum);
+    }
 }
