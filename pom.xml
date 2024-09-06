@@ -45,7 +45,6 @@
         <module>sql-ksp-processor</module>
         <!--        以下是不需要deploy到远程仓库的-->
         <module>sql-test</module>
-        <module>samples</module>
     </modules>
 
     <properties>
