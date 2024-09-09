@@ -63,6 +63,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -1128,5 +1129,32 @@ public class QueryTest18 extends BaseTest {
     public void testEnum(){
         TopicTypeEnum topicTypeEnum = easyEntityQuery.queryable(TopicTypeTest1.class).select(t -> t.topicType()).firstOrNull();
         System.out.println(topicTypeEnum);
+    }
+
+    @Test
+    public void testClient(){
+        try {
+            List<Map> list = easyQueryClient.queryable(Map.class)
+                    .asTable("t_test")
+                    .where(m -> m.eq("name", "123"))
+                    .groupBy(m ->
+                            m.column("age")
+                                    .sqlNativeSegment("IFNULL({0},{1})", c -> c.columnName("city").value("杭州"))
+                    ).select(Map.class, m -> m.groupKeysAs(0, "ageKey").groupKeysAs(1, "addressKey").columnCount("id"))
+                    .toList();
+        }catch (Exception ignored){
+
+        }
+        try {
+
+            easyQueryClient.updatable(Map.class)
+                    .asTable("t_delete")
+                    .set("age",1)
+                    .where(m->m.eq("id","4567"))
+                    .executeRows();
+        }catch (Exception ignored){
+
+        }
+
     }
 }
