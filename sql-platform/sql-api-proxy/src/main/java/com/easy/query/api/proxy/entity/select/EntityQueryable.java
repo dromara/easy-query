@@ -5,8 +5,8 @@ import com.easy.query.api.proxy.entity.select.extension.FlatListResultAble;
 import com.easy.query.api.proxy.entity.select.extension.queryable.ClientEntityQueryableAvailable;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityAggregatable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityCountable1;
-//import com.easy.query.api.proxy.entity.select.extension.queryable.EntityFillable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityFilterable1;
+import com.easy.query.api.proxy.entity.select.extension.queryable.EntityPageAble1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityGroup1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityHavingable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityIncludeable1;
@@ -25,11 +25,13 @@ import com.easy.query.core.basic.api.internal.TableLogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.ClientQueryableAvailable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 
 /**
  * create time 2023/12/4 09:59
@@ -38,7 +40,7 @@ import com.easy.query.core.proxy.SQLColumn;
  * @author xuejiaming
  */
 public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientQueryableAvailable<T1>,
-        FlatListResultAble<T1Proxy,T1>,
+        FlatListResultAble<T1Proxy, T1>,
         Interceptable<EntityQueryable<T1Proxy, T1>>,
         LogicDeletable<EntityQueryable<T1Proxy, T1>>,
         TableReNameable<EntityQueryable<T1Proxy, T1>>,
@@ -46,22 +48,22 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
         QueryStrategy<EntityQueryable<T1Proxy, T1>>,
         ContextConfigure<EntityQueryable<T1Proxy, T1>>,
         ClientEntityQueryableAvailable<T1>,
-        EntityFilterable1<T1Proxy,T1>,
-        EntityCountable1<T1Proxy,T1>,
-        EntityHavingable1<T1Proxy,T1>,
-        EntityIncludeable1<T1Proxy,T1>,
-        EntityIncludesable1<T1Proxy,T1>,
-        EntityAggregatable1<T1Proxy,T1>,
-        EntityOrderable1<T1Proxy,T1>,
-        EntitySelectable1<T1Proxy,T1>,
-        IEntityUnion1<T1Proxy,T1>,
-        IEntityGroup1<T1Proxy,T1>,
-        EntityJoinable1<T1Proxy,T1>,
+        EntityFilterable1<T1Proxy, T1>,
+        EntityCountable1<T1Proxy, T1>,
+        EntityHavingable1<T1Proxy, T1>,
+        EntityIncludeable1<T1Proxy, T1>,
+        EntityIncludesable1<T1Proxy, T1>,
+        EntityAggregatable1<T1Proxy, T1>,
+        EntityOrderable1<T1Proxy, T1>,
+        EntitySelectable1<T1Proxy, T1>,
+        IEntityUnion1<T1Proxy, T1>,
+        IEntityGroup1<T1Proxy, T1>,
+        EntityJoinable1<T1Proxy, T1>,
 //        EntityFillable1<T1Proxy,T1>,
 //        EntityMultiable1<T1Proxy,T1>,
-        IEntityTree1<T1Proxy,T1>,
-        EntityAvailable<T1Proxy,T1> {
-
+        IEntityTree1<T1Proxy, T1>,
+        EntityAvailable<T1Proxy, T1>,
+        EntityPageAble1<T1Proxy, T1> {
 
 
     ClientQueryable<T1> getClientQueryable();
@@ -72,7 +74,7 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
     @Override
     EntityQueryable<T1Proxy, T1> cloneQueryable();
 
-    long countDistinct(SQLFuncExpression1<T1Proxy, SQLColumn<?,?>> selectExpression);
+    long countDistinct(SQLFuncExpression1<T1Proxy, SQLColumn<?, ?>> selectExpression);
 
     /**
      * 设置column所有join表都会生效
@@ -106,6 +108,31 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
 
     @Override
     EntityQueryable<T1Proxy, T1> limit(boolean condition, long offset, long rows);
+
+    /**
+     * 先limit再select
+     * @param offset
+     * @param rows
+     * @param selectExpression
+     * @return
+     * @param <TRProxy>
+     * @param <TR>
+     */
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> limitSelect(long offset, long rows, SQLFuncExpression1<T1Proxy, TRProxy> selectExpression) {
+        return limitSelect(true, offset, rows, selectExpression);
+    }
+
+    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> limitSelect(boolean condition, long offset, long rows, SQLFuncExpression1<T1Proxy, TRProxy> selectExpression) {
+        return this.limit(condition, offset, rows).select(t -> t).select(selectExpression);
+    }
+
+    default <TR> Query<TR> limitSelect(long offset, long rows, Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression) {
+        return limitSelect(true, offset, rows, resultClass, selectExpression);
+    }
+
+    default <TR> Query<TR> limitSelect(boolean condition, long offset, long rows, Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression) {
+        return this.limit(condition, offset, rows).select(t -> t).select(resultClass, selectExpression);
+    }
 //    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<SQLKtNavigateIncludeImpl<T1>, ProxyQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
 //        return include(true, navigateIncludeSQLExpression);
 //    }
@@ -135,5 +162,6 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
     EntityQueryable<T1Proxy, T1> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
     EntityQueryable<T1Proxy, T1> useConnectionMode(ConnectionModeEnum connectionMode);
+
     EntityQueryable<T1Proxy, T1> filterConfigure(ValueFilter valueFilter);
 }

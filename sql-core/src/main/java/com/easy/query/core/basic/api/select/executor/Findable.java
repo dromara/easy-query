@@ -19,6 +19,7 @@ public interface Findable<T> extends QueryAvailable<T> {
     /**
      * 当未查询到结果返回null
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
+     * @param id 主键key
      * @return 可为空的结果
      * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键 所以VO查询必定报错
      * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键 所以VO查询必定报错

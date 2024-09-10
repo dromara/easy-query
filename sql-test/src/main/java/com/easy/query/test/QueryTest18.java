@@ -1,7 +1,6 @@
 package com.easy.query.test;
 
 import com.bestvike.linq.Linq;
-import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api4j.select.Queryable;
@@ -17,9 +16,9 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.core.draft.proxy.Draft3Proxy;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
 import com.easy.query.core.proxy.partition.Partition1;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -28,10 +27,11 @@ import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.common.MyQueryConfiguration;
+import com.easy.query.test.common.MySelectPager;
+import com.easy.query.test.common.MyToSelectPager;
 import com.easy.query.test.entity.Blog2Entity;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
-import com.easy.query.test.entity.TestBeanProperty;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicFile;
 import com.easy.query.test.entity.TopicTypeTest1;
@@ -50,13 +50,10 @@ import com.easy.query.test.vo.BlogEntityVO2;
 import com.easy.query.test.vo.TestUserAAA;
 import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
 import lombok.Data;
-import lombok.experimental.FieldNameConstants;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -1156,5 +1153,104 @@ public class QueryTest18 extends BaseTest {
 
         }
 
+    }
+
+    @Test
+    public void testSubCountPage(){
+
+        EntityQueryable<SysUserProxy, SysUser> q = easyEntityQuery.queryable(SysUser.class)
+                .where(s -> s.phone().likeMatchLeft("133"));
+//        long count = q.cloneQueryable().count();
+//
+//        List<Draft3<String, String, Long>> list = q.cloneQueryable()
+//                .limit(2, 10)
+//                .select(s -> s)
+//                .select(s -> Select.DRAFT.of(s.id(), s.phone(), s.blogs().count()))
+//                .toList();
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            long count = q.cloneQueryable().count();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT COUNT(*) FROM `easy-query-test`.`t_sys_user` WHERE `phone` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("3wApxVPL9GhKXR9/YKKGBg==%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Draft3<String, String, Long>> list = q.cloneQueryable()
+                    .limitSelect(2, 10,s -> Select.DRAFT.of(s.id(), s.phone(), s.blogs().count()))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t1.`id` AS `value1`,t1.`phone` AS `value2`,(SELECT COUNT(*) FROM `t_blog` t3 WHERE t3.`deleted` = ? AND t3.`title` = t1.`id`) AS `value3` FROM (SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE t.`phone` LIKE ? LIMIT 10 OFFSET 2) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),3wApxVPL9GhKXR9/YKKGBg==%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+    @Test
+    public void testSubCountLimitSelect1(){
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Draft3<String, String, Long>> list = easyEntityQuery.queryable(SysUser.class)
+                    .where(s -> s.phone().ne("123"))
+                    .orderBy(s -> s.createTime().desc())
+                    .limitSelect(20, 10, s -> Select.DRAFT.of(s.id(), s.phone(), s.blogs().count()))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t1.`id` AS `value1`,t1.`phone` AS `value2`,(SELECT COUNT(*) FROM `t_blog` t3 WHERE t3.`deleted` = ? AND t3.`title` = t1.`id`) AS `value3` FROM (SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE t.`phone` <> ? ORDER BY t.`create_time` DESC LIMIT 10 OFFSET 20) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),L/vVSy7H9DYkzz3srmSVCQ==(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+    @Test
+    public void testSubCountPage1(){
+
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext(true);
+            listenerContextManager.startListen(listenerContext);
+
+            EasyPageResult<Draft3<String, String, Long>> pageResult = easyEntityQuery.queryable(SysUser.class)
+                    .where(s -> s.phone().ne("123"))
+                    .orderBy(s -> s.createTime().desc())
+                    .toPageSelectResult(q->{
+                        return q.select(s->Select.DRAFT.of(s.id(), s.phone(), s.blogs().count()));
+                    },2,10);
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(2,listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT COUNT(*) FROM `easy-query-test`.`t_sys_user` WHERE `phone` <> ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("L/vVSy7H9DYkzz3srmSVCQ==(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+            }
+            {
+
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("SELECT t2.`id` AS `value1`,t2.`phone` AS `value2`,(SELECT COUNT(*) FROM `t_blog` t4 WHERE t4.`deleted` = ? AND t4.`title` = t2.`id`) AS `value3` FROM (SELECT t1.`id`,t1.`create_time`,t1.`username`,t1.`phone`,t1.`id_card`,t1.`address` FROM (SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE t.`phone` <> ? ORDER BY t.`create_time` DESC LIMIT 10 OFFSET 10) t1) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("false(Boolean),L/vVSy7H9DYkzz3srmSVCQ==(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+            }
+            listenerContextManager.clear();
+        }
     }
 }
