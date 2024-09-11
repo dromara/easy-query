@@ -48,7 +48,7 @@ public interface EntityPageAble1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
         if (realTake <= 0) {
             return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, EasyCollectionUtil.emptyList());
         }
-        List<TR> list = selectExpression.apply(entityQueryable.cloneQueryable().limitSelect(offset, realTake,t -> t)).toList();
+        List<TR> list = selectExpression.apply(entityQueryable.cloneQueryable().limit(offset, realTake).select(t -> t)).toList();
         return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, list);
     }
 }
