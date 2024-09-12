@@ -39,7 +39,7 @@ public class BasicStreamIterator<T> extends AbstractMapToStreamIterator<T> {
         }
         ResultColumnMetadata[] resultPropTypes = context.getExpressionContext().getResultPropTypes();
         //有设置返回结果且只设置了一个
-        if (resultPropTypes != null && resultPropTypes.length == 1) {
+        if (Object.class.equals(resultMetadata.getResultClass())&&resultPropTypes != null && resultPropTypes.length == 1) {
             this.resultColumnMetadata = resultPropTypes[0];
             this.dataReader = this.resultColumnMetadata.getJdbcProperty();
             this.handler = this.resultColumnMetadata.getJdbcTypeHandler();

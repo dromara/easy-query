@@ -1255,4 +1255,14 @@ public class QueryTest18 extends BaseTest {
             listenerContextManager.clear();
         }
     }
+
+    @Test
+    public void testCount(){
+        long count = easyEntityQuery.queryable(BlogEntity.class).select(t->Select.DRAFT.of(t.id())).distinct().count();
+        Assert.assertEquals(100,count);
+        int counti = easyEntityQuery.queryable(BlogEntity.class).select(t->Select.DRAFT.of(t.id())).distinct().intCount();
+        Assert.assertEquals(100,counti);
+        boolean e = easyEntityQuery.queryable(BlogEntity.class).select(t->Select.DRAFT.of(t.id())).distinct().any();
+        Assert.assertTrue(e);
+    }
 }
