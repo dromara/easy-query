@@ -10,8 +10,14 @@ import org.noear.solon.core.AppContext;
 import org.noear.solon.core.BeanWrap;
 import org.noear.solon.core.Plugin;
 import org.noear.solon.core.VarHolder;
+import org.noear.solon.core.event.AppBeanLoadEndEvent;
+import org.noear.solon.core.exception.InjectionException;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2023/7/19 21:50
@@ -20,6 +26,7 @@ import javax.sql.DataSource;
  * @author xuejiaming
  */
 public class XPluginImpl implements Plugin {
+    private final Map<Object, List<VarHolder>> checkMap = new HashMap<>();
     @Override
     public void start(AppContext context) {
         String logClass = context.cfg().getProperty(CommonConstant.TAG + ".log-class");
@@ -36,6 +43,17 @@ public class XPluginImpl implements Plugin {
             injectorAddDo(varH, anno.value());
         });
         context.beanInterceptorAdd(EasyQueryTrack.class,new QueryTrackInterceptor());
+        context.onEvent(AppBeanLoadEndEvent.class,event -> {
+           if(!checkMap.isEmpty()){
+               for(Object key : checkMap.keySet()){
+                   List<VarHolder> list = checkMap.get(key);
+                   for(VarHolder holder : list){
+                       System.out.println("@Db inject failed:"+holder.getFullName());
+                   }
+               }
+               throw new InjectionException("@Db inject failed");
+           }
+        });
     }
 
 
@@ -77,7 +95,17 @@ public class XPluginImpl implements Plugin {
 //        }
 //    }
     private void injectorAddDo(VarHolder varH, String annoValue) {
-        if (Utils.isEmpty(annoValue)) {
+        Object nameOrType = Utils.isEmpty(annoValue) ? DataSource.class : annoValue;
+        //记录需要注入的字段，注入完成后删除，剩下的就是注入失败的
+        List<VarHolder> list = checkMap.computeIfAbsent(nameOrType, k -> new ArrayList<>());
+        list.add(varH);
+        varH.context().getWrapAsync(nameOrType, (dsBw) -> {
+            if (dsBw.raw() instanceof DataSource) {
+                inject0(varH, dsBw);
+                checkMap.remove(nameOrType);
+            }
+        });
+        /*if (Utils.isEmpty(annoValue)) {
             varH.context().getWrapAsync(DataSource.class, (dsBw) -> {
                 inject0(varH, dsBw);
             });
@@ -87,7 +115,7 @@ public class XPluginImpl implements Plugin {
                     inject0(varH, dsBw);
                 }
             });
-        }
+        }*/
     }
 
 //    private void create0(Class<?> clz, BeanWrap dsBw) {
