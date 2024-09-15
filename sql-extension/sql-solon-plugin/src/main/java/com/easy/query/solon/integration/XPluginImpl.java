@@ -33,6 +33,7 @@ public class XPluginImpl implements Plugin {
 //            builderAddDo(clz, wrap, anno.value());
 //        });
         context.beanInjectorAdd(com.easy.query.solon.annotation.Db.class, (varH, anno) -> {
+            varH.required(true);
             injectorAddDo(varH, anno.value());
         });
         context.beanInterceptorAdd(EasyQueryTrack.class,new QueryTrackInterceptor());
