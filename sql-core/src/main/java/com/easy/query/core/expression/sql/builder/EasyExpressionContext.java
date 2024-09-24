@@ -66,6 +66,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private Integer groupSize;
     private long resultSizeLimit;
     private Boolean printSQL;
+    private Boolean printNavSQL;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -433,5 +434,15 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public void setPrintSQL(Boolean printSQL) {
         this.printSQL = printSQL;
+    }
+
+    @Override
+    public Boolean getPrintNavSQL() {
+        return printNavSQL;
+    }
+
+    @Override
+    public void setPrintNavSQL(Boolean printSQL) {
+        this.printNavSQL = printSQL;
     }
 }

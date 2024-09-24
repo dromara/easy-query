@@ -290,4 +290,14 @@ public class EmptyExpressionContext implements ExpressionContext{
     public void setPrintSQL(Boolean printSQL) {
 
     }
+
+    @Override
+    public Boolean getPrintNavSQL() {
+        return null;
+    }
+
+    @Override
+    public void setPrintNavSQL(Boolean printSQL) {
+
+    }
 }

@@ -109,6 +109,8 @@ public interface ExpressionContext {
 
     Boolean getPrintSQL();
     void setPrintSQL(Boolean printSQL);
+    Boolean getPrintNavSQL();
+    void setPrintNavSQL(Boolean printSQL);
 
 
 }

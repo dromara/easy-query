@@ -50,4 +50,14 @@ public class ContextConfigurerImpl implements ContextConfigurer {
     public void setPrintSQL(Boolean printSQL) {
         expressionContext.setPrintSQL(printSQL);
     }
+
+    @Override
+    public void setPrintNavSQL(Boolean printSQL) {
+        expressionContext.setPrintNavSQL(printSQL);
+    }
+
+    @Override
+    public Boolean getPrintNavSQL() {
+        return expressionContext.getPrintNavSQL();
+    }
 }

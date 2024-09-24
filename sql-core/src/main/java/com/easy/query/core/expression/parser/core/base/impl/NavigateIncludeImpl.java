@@ -48,7 +48,12 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         //添加多对多中间表
         if (RelationTypeEnum.ManyToMany == relationType && navigateMetadata.getMappingClass() != null) {
             ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
-            ClientQueryable<?> mappingQueryable = mappingQuery.where(t -> {
+            Boolean printSQL = expressionContext.getPrintNavSQL();
+            ClientQueryable<?> mappingQueryable = mappingQuery
+                    .configure(s->{
+                        s.setPrintSQL(printSQL);
+                        s.setPrintNavSQL(printSQL);
+                    }).where(t -> {
                         t.in(navigateMetadata.getSelfMappingProperty(), includeNavigateParams.getRelationIds());
                         navigateMetadata.predicateFilterApply(t);
                     })
@@ -70,13 +75,17 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         ClientQueryable<TREntity> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
 
+        Boolean printNavSQL = expressionContext.getPrintNavSQL();
         //支持tracking传递
         if (tracking) {
             queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_TRACKING);
         } else {
             queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_TRACKING);
         }
-        return queryable;
+        return queryable.configure(s->{
+            s.setPrintSQL(printNavSQL);
+            s.setPrintNavSQL(printNavSQL);
+        });
 //        return queryable.where(o->{
 //            if(includeNavigateParams.isLimit()){
 //                o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),includeNavigateParams.getRelationId());

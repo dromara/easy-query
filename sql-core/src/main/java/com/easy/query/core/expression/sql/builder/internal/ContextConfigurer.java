@@ -41,4 +41,6 @@ public interface ContextConfigurer {
      * @param printSQL null表示不设置
      */
     void setPrintSQL(Boolean printSQL);
+    void setPrintNavSQL(Boolean printSQL);
+    Boolean getPrintNavSQL();
 }
