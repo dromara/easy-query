@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.impl;
+package com.easy.query.core.proxy.extension.functions.executor.impl;
 
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
@@ -10,7 +10,8 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.ColumnFunctionComparableChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
+import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 
 import java.util.function.Function;
 
@@ -20,17 +21,17 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements ColumnFunctionComparableChainExpression<TProperty> {
+public class ColumnFunctionCompareComparableBooleanChainExpressionImpl<TProperty> implements ColumnFunctionCompareComparableBooleanChainExpression<TProperty> {
     private final EntitySQLContext entitySQLContext;
     private final TableAvailable table;
     private final String property;
     private final Function<SQLFunc, SQLFunction> func;
     private Class<?> propType;
 
-    public SQLColumnFunctionComparableExpressionImpl(EntitySQLContext entitySQLContext,TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
+    public ColumnFunctionCompareComparableBooleanChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
         this(entitySQLContext,table,property,func,Object.class);
     }
-    public SQLColumnFunctionComparableExpressionImpl(EntitySQLContext entitySQLContext,TableAvailable table, String property, Function<SQLFunc, SQLFunction> func,Class<?> propType) {
+    public ColumnFunctionCompareComparableBooleanChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         this.entitySQLContext = entitySQLContext;
 
         this.table = table;
@@ -68,7 +69,16 @@ public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements Col
     public void accept(OrderSelector s) {
         SQLFunctionExpressionUtil.accept(s,getTable(),func);
     }
-
+//
+//    @Override
+//    public void asc(boolean condition) {
+//        if(condition){
+//            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+//                SQLFunctionExpressionUtil.accept(s,getTable(),func,true);
+//            }));
+//        }
+//
+//    }
 
     @Override
     public void asc(boolean condition, OrderByModeEnum nullsModeEnum) {
@@ -105,7 +115,6 @@ public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements Col
             }));
         }
     }
-
     @Override
     public Function<SQLFunc, SQLFunction> func() {
         return this.func;
@@ -125,6 +134,7 @@ public class SQLColumnFunctionComparableExpressionImpl<TProperty> implements Col
     public <TR> void _setPropertyType(Class<TR> clazz) {
         this.propType=clazz;
     }
+
 }
 //        if(condition){
 //            return new SQLPredicateImpl(f->{

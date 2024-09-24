@@ -13,24 +13,25 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  *
  * @author xuejiaming
  */
-public interface DSLFunctionPredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void ge(T column) {
-         ge(true, column);
+public interface DSLFunctionComparePredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void ge(T column) {
+        ge(true, column);
     }
 
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void   ge(boolean condition, T column) {
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void ge(boolean condition, T column) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                f.ge(this.getTable(), this.getValue(),column.getTable(),column.func().apply(fx));
+                f.ge(this.getTable(), this.getValue(), column.getTable(), column.func().apply(fx));
             }));
         }
     }
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void   gt(T column) {
-         gt(true, column);
+
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void gt(T column) {
+        gt(true, column);
     }
 
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  gt(boolean condition, T column) {
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void gt(boolean condition, T column) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -40,11 +41,11 @@ public interface DSLFunctionPredicate<TProperty> extends TablePropColumn, Entity
     }
 
 
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  eq(T column) {
-         eq(true, column);
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void eq(T column) {
+        eq(true, column);
     }
 
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  eq(boolean condition, T column) {
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void eq(boolean condition, T column) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -54,25 +55,24 @@ public interface DSLFunctionPredicate<TProperty> extends TablePropColumn, Entity
     }
 
 
-
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  ne(T column) {
-         ne(true, column);
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void ne(T column) {
+        ne(true, column);
     }
 
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  ne(boolean condition, T column) {
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void ne(boolean condition, T column) {
         if (condition) {
-           getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-               SQLFunc fx = f.getRuntimeContext().fx();
-               f.ne(this.getTable(), this.getValue(), column.getTable(), column.func().apply(fx));
-           }));
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+                SQLFunc fx = f.getRuntimeContext().fx();
+                f.ne(this.getTable(), this.getValue(), column.getTable(), column.func().apply(fx));
+            }));
         }
     }
 
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  le(T column) {
-         le(true, column);
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void le(T column) {
+        le(true, column);
     }
 
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  le(boolean condition, T column) {
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void le(boolean condition, T column) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -81,11 +81,11 @@ public interface DSLFunctionPredicate<TProperty> extends TablePropColumn, Entity
         }
     }
 
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  lt(T column) {
-         lt(true, column);
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void lt(T column) {
+        lt(true, column);
     }
 
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  lt(boolean condition, T column) {
+    default <T extends SQLTableOwner & DSLSQLFunctionAvailable> void lt(boolean condition, T column) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();

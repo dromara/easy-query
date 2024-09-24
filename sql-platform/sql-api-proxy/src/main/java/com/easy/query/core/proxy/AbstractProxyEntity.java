@@ -10,10 +10,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.core.Expression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
 import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
@@ -25,7 +22,6 @@ import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.util.EasyObjectUtil;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;

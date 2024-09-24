@@ -1227,7 +1227,8 @@ public class QueryTest3 extends BaseTest {
                     );
 
             String sql = queryable.cloneQueryable().toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `order` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `status` IN (?,?)" , sql);
+            System.out.println(sql);
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `order` = ? AND (`publish_time` >= ? AND `publish_time` <= ?) AND `status` IN (?,?)" , sql);
             List<BlogEntity> list = queryable.cloneQueryable().toList();
             Assert.assertEquals(0, list.size());
         }
@@ -1251,7 +1252,8 @@ public class QueryTest3 extends BaseTest {
                     );
 
             String sql = queryable.cloneQueryable().toSQL();
-            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND `publish_time` >= ? AND `publish_time` <= ? AND `status` IN (?,?)" , sql);
+            System.out.println(sql);
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE ? AND (`publish_time` >= ? AND `publish_time` <= ?) AND `status` IN (?,?)" , sql);
             List<BlogEntity> list = queryable.cloneQueryable().toList();
             Assert.assertEquals(0, list.size());
         }

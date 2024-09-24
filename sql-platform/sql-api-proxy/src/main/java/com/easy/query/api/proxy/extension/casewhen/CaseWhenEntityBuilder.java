@@ -2,18 +2,13 @@ package com.easy.query.api.proxy.extension.casewhen;
 
 import com.easy.query.api.proxy.util.EasyParamExpressionUtil;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
-import com.easy.query.core.expression.segment.scec.expression.SQLSegmentParamExpressionImpl;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.extension.casewhen.CaseWhenBuilderExpression;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableAnyChainExpressionImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableAnyChainExpressionImpl;
 
 import java.util.Objects;
 
@@ -42,9 +37,9 @@ public class CaseWhenEntityBuilder {
 //        },then);
 //        return this;
 //    }
-    public <TV,TProperty> ColumnFunctionComparableAnyChainExpression<TProperty> elseEnd(TV elseValue){
+    public <TV,TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> elseEnd(TV elseValue){
         ParamExpression paramExpression = EasyParamExpressionUtil.getParamExpression(entitySQLContext, elseValue);
         SQLFunction sqlFunction = caseWhenBuilder.elseEnd(paramExpression);
-        return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext,null,null,f->sqlFunction);
+        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(entitySQLContext,null,null, f->sqlFunction);
     }
 }

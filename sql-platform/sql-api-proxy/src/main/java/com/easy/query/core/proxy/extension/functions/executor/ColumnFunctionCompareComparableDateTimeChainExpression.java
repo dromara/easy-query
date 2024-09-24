@@ -9,11 +9,11 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public interface ColumnFunctionComparableDateTimeChainExpression<T> extends ColumnFunctionComparableObjectChainExpression<T>,
+public interface ColumnFunctionCompareComparableDateTimeChainExpression<T> extends ColumnFunctionCompareComparableObjectChainExpression<T>,
         ColumnDateTimeFunctionAvailable<T> {
     @Override
-    default <TR> ColumnFunctionComparableDateTimeChainExpression<TR> asAnyType(Class<TR> clazz) {
-        ColumnFunctionComparableObjectChainExpression.super.asAnyType(clazz);
+    default <TR> ColumnFunctionCompareComparableDateTimeChainExpression<TR> asAnyType(Class<TR> clazz) {
+        ColumnFunctionCompareComparableObjectChainExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
 }

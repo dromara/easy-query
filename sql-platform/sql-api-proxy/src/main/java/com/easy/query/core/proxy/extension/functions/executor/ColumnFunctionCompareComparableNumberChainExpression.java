@@ -9,11 +9,11 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public interface ColumnFunctionComparableNumberChainExpression<T> extends ColumnFunctionComparableObjectChainExpression<T>,
+public interface ColumnFunctionCompareComparableNumberChainExpression<T> extends ColumnFunctionCompareComparableObjectChainExpression<T>,
         ColumnNumberFunctionAvailable<T> {
     @Override
-    default <TR> ColumnFunctionComparableNumberChainExpression<TR> asAnyType(Class<TR> clazz) {
-        ColumnFunctionComparableObjectChainExpression.super.asAnyType(clazz);
+    default <TR> ColumnFunctionCompareComparableNumberChainExpression<TR> asAnyType(Class<TR> clazz) {
+        ColumnFunctionCompareComparableObjectChainExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
 }

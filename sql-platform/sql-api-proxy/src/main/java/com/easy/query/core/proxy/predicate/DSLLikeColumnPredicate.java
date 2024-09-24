@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
  *
  * @author xuejiaming
  */
-public interface DSLLikeOtherPredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
+public interface DSLLikeColumnPredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
     default <TProxy> void likeMatchLeft(SQLColumn<TProxy,String> column) {
         likeMatchLeft(true, column);
     }

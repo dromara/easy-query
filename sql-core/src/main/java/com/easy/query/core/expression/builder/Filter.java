@@ -152,45 +152,45 @@ public interface Filter extends SQLNative<Filter> {
     <T2> Filter notExists(Query<T2> subQuery);
     <T2> Filter none(Query<T2> subQuery);
 
-    /**
-     * 自定义范围
-     * 一般用于范围比如时间,小的时间在前大的时间在后
-     *
-     * @param property
-     * @param conditionLeft
-     * @param valLeft
-     * @param conditionRight
-     * @param valRight
-     * @param sqlRange
-     * @return
-     */
-    Filter range(TableAvailable table, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange);
+//    /**
+//     * 自定义范围
+//     * 一般用于范围比如时间,小的时间在前大的时间在后
+//     *
+//     * @param property
+//     * @param conditionLeft
+//     * @param valLeft
+//     * @param conditionRight
+//     * @param valRight
+//     * @param sqlRange
+//     * @return
+//     */
+//    Filter range(TableAvailable table, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange);
 
 
     Filter columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val);
 
     default Filter gt(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2) {
-        return compareSelf(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.GT);
+        return valueColumnFilter(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.GT);
     }
 
     default Filter ge(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2) {
-        return compareSelf(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.GE);
+        return valueColumnFilter(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.GE);
     }
 
     default Filter eq(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2) {
-        return compareSelf(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.EQ);
+        return valueColumnFilter(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.EQ);
     }
 
     default Filter ne(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2) {
-        return compareSelf(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.NE);
+        return valueColumnFilter(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.NE);
     }
 
     default Filter le(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2) {
-        return compareSelf(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.LE);
+        return valueColumnFilter(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.LE);
     }
 
     default Filter lt(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2) {
-        return compareSelf(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.LT);
+        return valueColumnFilter(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.LT);
     }
 
     /**
@@ -201,7 +201,7 @@ public interface Filter extends SQLNative<Filter> {
      * @param sqlPredicateCompare eg.SQLPredicateCompareEnum.EQ
      * @return
      */
-    Filter compareSelf(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2, SQLPredicateCompare sqlPredicateCompare);
+    Filter valueColumnFilter(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2, SQLPredicateCompare sqlPredicateCompare);
 
     Filter like(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2,boolean like, SQLLikeEnum sqlLike);
     Filter like(TableAvailable leftTable, String property1, TableAvailable rightTable, SQLFunction sqlFunction,boolean like, SQLLikeEnum sqlLike);
@@ -711,4 +711,5 @@ public interface Filter extends SQLNative<Filter> {
 //    Filter _or(SQLExpression1<Filter> sqlWherePredicateSQLExpression,boolean nextOr);
 
     Filter create();
+    void valueCompare(TableAvailable table, String property, Object val, SQLPredicateCompare condition);
 }

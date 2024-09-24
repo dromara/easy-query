@@ -4,7 +4,7 @@ import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.impl.SQLAggregatePredicateImpl;
-import com.easy.query.core.proxy.predicate.DSLLikeOtherPredicate;
+import com.easy.query.core.proxy.predicate.DSLLikeColumnPredicate;
 
 /**
  * create time 2023/12/14 22:52
@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.predicate.DSLLikeOtherPredicate;
  *
  * @author xuejiaming
  */
-public interface DSLLikeOtherAggregatePredicate<TProperty> extends DSLLikeOtherPredicate<TProperty>,DSLSQLFunctionAvailable {
+public interface DSLLikeColumnAggregatePredicate<TProperty> extends DSLLikeColumnPredicate<TProperty>,DSLSQLFunctionAvailable {
     @Override
     default <TProxy> void likeMatchLeft(boolean condition, SQLColumn<TProxy, String> column) {
         if (condition) {

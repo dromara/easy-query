@@ -5,6 +5,7 @@ import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
@@ -19,7 +20,7 @@ import com.easy.query.core.util.EasyClassUtil;
  *
  * @author xuejiaming
  */
-public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
+public interface DSLRangeColumnFunctionPredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
 
     /**
      * 区间 (left..right] = {x | left < x <= right}
@@ -29,7 +30,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @param valRight
      * @return
      */
-    default void rangeOpenClosed(TProperty valLeft, TProperty valRight) {
+    default void rangeOpenClosed(PropTypeColumn<TProperty> valLeft, PropTypeColumn<TProperty> valRight) {
         rangeOpenClosed(true, valLeft, true, valRight);
     }
 
@@ -43,9 +44,10 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @param valRight
      * @return
      */
-    default void rangeOpenClosed(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        range(getEntitySQLContext(), this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN_CLOSED);
+    default void rangeOpenClosed(boolean conditionLeft, PropTypeColumn<TProperty> valLeft, boolean conditionRight, PropTypeColumn<TProperty> valRight) {
+        range(getEntitySQLContext(),this.getTable(),this.getValue(),conditionLeft,valLeft,conditionRight,valRight, SQLRangeEnum.OPEN_CLOSED);
     }
+
 
     /**
      * 区间 (left..right) = {x | left < x < right}
@@ -55,7 +57,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @param valRight
      * @return
      */
-    default void rangeOpen(TProperty valLeft, TProperty valRight) {
+    default void rangeOpen(PropTypeColumn<TProperty> valLeft, PropTypeColumn<TProperty> valRight) {
         rangeOpen(true, valLeft, true, valRight);
     }
 
@@ -69,8 +71,8 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @param valRight
      * @return
      */
-    default void rangeOpen(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        range(getEntitySQLContext(), this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.OPEN);
+    default void rangeOpen(boolean conditionLeft, PropTypeColumn<TProperty> valLeft, boolean conditionRight, PropTypeColumn<TProperty> valRight) {
+        range(getEntitySQLContext(),this.getTable(),this.getValue(),conditionLeft,valLeft,conditionRight,valRight, SQLRangeEnum.OPEN);
     }
 
     /**
@@ -81,7 +83,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @param valRight
      * @return
      */
-    default void rangeClosedOpen(TProperty valLeft, TProperty valRight) {
+    default void rangeClosedOpen(PropTypeColumn<TProperty> valLeft, PropTypeColumn<TProperty> valRight) {
         rangeClosedOpen(true, valLeft, true, valRight);
     }
 
@@ -95,8 +97,8 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @param valRight
      * @return
      */
-    default void rangeClosedOpen(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        range(getEntitySQLContext(), this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED_OPEN);
+    default void rangeClosedOpen(boolean conditionLeft, PropTypeColumn<TProperty> valLeft, boolean conditionRight, PropTypeColumn<TProperty> valRight) {
+        range(getEntitySQLContext(),this.getTable(),this.getValue(),conditionLeft,valLeft,conditionRight,valRight, SQLRangeEnum.CLOSED_OPEN);
     }
 
     /**
@@ -107,7 +109,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @param valRight
      * @return
      */
-    default void rangeClosed(TProperty valLeft, TProperty valRight) {
+    default void rangeClosed(PropTypeColumn<TProperty> valLeft, PropTypeColumn<TProperty> valRight) {
         rangeClosed(true, valLeft, true, valRight);
     }
 
@@ -121,33 +123,48 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @param valRight
      * @return
      */
-    default void rangeClosed(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        range(getEntitySQLContext(), this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED);
+    default void rangeClosed(boolean conditionLeft, PropTypeColumn<TProperty> valLeft, boolean conditionRight, PropTypeColumn<TProperty> valRight) {
+        range(getEntitySQLContext(),this.getTable(),this.getValue(),conditionLeft,valLeft,conditionRight,valRight, SQLRangeEnum.CLOSED);
     }
 
-    static <TProp> void range(EntitySQLContext entitySQLContext, TableAvailable table, String property, boolean conditionLeft, TProp valLeft, boolean conditionRight, TProp valRight, SQLRangeEnum sqlRange) {
+
+
+
+    static <TProp> void range(EntitySQLContext entitySQLContext, TableAvailable table, String property, boolean conditionLeft, PropTypeColumn<TProp> valLeft, boolean conditionRight, PropTypeColumn<TProp> valRight, SQLRangeEnum sqlRange) {
         if (conditionLeft && conditionRight) {
             entitySQLContext.accept(new SQLPredicateImpl(filter -> {
                 filter.and(innerFilter -> {
                     boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-                    innerFilter.valueCompare(table, property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
+                    rangeCompare(innerFilter, table, property, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE, valLeft);
                     boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                    innerFilter.valueCompare(table, property, valRight, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
+                    rangeCompare(innerFilter, table, property, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE, valRight);
                 });
             }));
         } else {
-            if (conditionLeft) {
+            if(conditionLeft){
                 entitySQLContext.accept(new SQLPredicateImpl(filter -> {
                     boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-                    filter.valueCompare(table, property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
+                    rangeCompare(filter, table, property, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE, valLeft);
                 }));
             }
-            if (conditionRight) {
+            if(conditionRight){
                 entitySQLContext.accept(new SQLPredicateImpl(filter -> {
                     boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                    filter.valueCompare(table, property, valLeft, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
+                    rangeCompare(filter, table, property, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE, valRight);
                 }));
             }
+        }
+    }
+
+    static <TProp> void rangeCompare(Filter filter, TableAvailable table, String property,SQLPredicateCompareEnum sqlPredicateCompare,PropTypeColumn<TProp> val){
+        if (val instanceof SQLColumn) {
+            filter.valueColumnFilter(table, property, val.getTable(), val.getValue(), sqlPredicateCompare);
+        } else if (val instanceof DSLSQLFunctionAvailable) {
+            DSLSQLFunctionAvailable valLeftFunc = (DSLSQLFunctionAvailable) val;
+            SQLFunc fx = filter.getRuntimeContext().fx();
+            filter.valueFuncFilter(table, property, valLeftFunc.getTable(), valLeftFunc.func().apply(fx),sqlPredicateCompare);
+        }else{
+            throw new UnsupportedOperationException(EasyClassUtil.getInstanceSimpleName(val));
         }
     }
 }

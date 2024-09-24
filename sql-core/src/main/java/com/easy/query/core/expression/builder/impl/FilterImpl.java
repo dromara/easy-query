@@ -80,7 +80,7 @@ public class FilterImpl implements Filter {
         this.nextPredicateSegment = new OrPredicateSegment();
     }
 
-    protected void next() {
+    public void next() {
         if (reverse) {
             nextOr();
         } else {
@@ -112,7 +112,7 @@ public class FilterImpl implements Filter {
         return reverse ? sqlPredicateCompare.toReverse() : sqlPredicateCompare;
     }
 
-    protected void appendThisPredicate(TableAvailable table, String property, Object val, SQLPredicateCompare condition) {
+    public void appendThisPredicate(TableAvailable table, String property, Object val, SQLPredicateCompare condition) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         nextPredicateSegment.setPredicate(new ColumnValuePredicate(table, columnMetadata, val, getReallyPredicateCompare(condition), expressionContext));
 //        Predicate columnPredicate = EasySQLExpressionUtil.getSQLOwnerPredicateSegmentColumnMetadata(expressionContext, table, columnMetadata, getReallyPredicateCompare(condition), val);
@@ -252,7 +252,6 @@ public class FilterImpl implements Filter {
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
 
 
-
 //        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
 //                .toSQLSegment(sqlNativeExpressionContext, table, null,null);
 //
@@ -372,7 +371,6 @@ public class FilterImpl implements Filter {
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
 
 
-
 //        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
 //                .toSQLSegment(sqlNativeExpressionContext, table, null,()->sqlNativeExpressionContext.collection(collections));
 //
@@ -392,8 +390,6 @@ public class FilterImpl implements Filter {
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
 
         SQLPredicateCompare predicateCompare = getReallyPredicateCompare(sqlPredicateCompare);
-
-
 
 
 //        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
@@ -420,8 +416,8 @@ public class FilterImpl implements Filter {
 
         SQLPredicateCompare predicateCompare = getReallyPredicateCompare(sqlPredicateCompare);
 
-        Predicate sqlNativePredicateLeft = EasySQLExpressionUtil.getSQLFunctionPredicate(expressionContext,tableLeft, sqlFunctionLeft, sqlNativeExpressionContextLeft);
-        Predicate sqlNativePredicateRight = EasySQLExpressionUtil.getSQLFunctionPredicate(expressionContext,tableRight, sqlFunctionRight, sqlNativeExpressionContextRight);
+        Predicate sqlNativePredicateLeft = EasySQLExpressionUtil.getSQLFunctionPredicate(expressionContext, tableLeft, sqlFunctionLeft, sqlNativeExpressionContextLeft);
+        Predicate sqlNativePredicateRight = EasySQLExpressionUtil.getSQLFunctionPredicate(expressionContext, tableRight, sqlFunctionRight, sqlNativeExpressionContextRight);
 
         nextPredicateSegment.setPredicate(new SQLNativesPredicateImpl(runtimeContext, sqlNativePredicateLeft, predicateCompare, sqlNativePredicateRight));
 
@@ -504,21 +500,34 @@ public class FilterImpl implements Filter {
         return this;
     }
 
-    @Override
-    public Filter range(TableAvailable table, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
-
-        if (conditionLeft && conditionAppend(table, property, valLeft)) {
-            boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-            appendThisPredicate(table, property, valLeft, getReallyPredicateCompare(openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE));
-            next();
-        }
-        if (conditionRight && conditionAppend(table, property, valRight)) {
-            boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-            appendThisPredicate(table, property, valRight, getReallyPredicateCompare(openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE));
-            next();
-        }
-        return this;
-    }
+//    @Override
+//    public Filter range(TableAvailable table, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
+//
+//        boolean acceptLeft = conditionLeft && conditionAppend(table, property, valLeft);
+//        boolean acceptRight = conditionRight && conditionAppend(table, property, valRight);
+//        if (acceptLeft && acceptRight) {
+//            and(f -> {
+//                boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
+//                f.appendThisPredicate(table, property, valLeft, getReallyPredicateCompare(openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE));
+//                f.next();
+//                boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
+//                f.appendThisPredicate(table, property, valRight, getReallyPredicateCompare(openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE));
+//                f.next();
+//            });
+//        } else {
+//            if (acceptLeft) {
+//                boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
+//                appendThisPredicate(table, property, valLeft, getReallyPredicateCompare(openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE));
+//                next();
+//            }
+//            if (acceptRight) {
+//                boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
+//                appendThisPredicate(table, property, valRight, getReallyPredicateCompare(openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE));
+//                next();
+//            }
+//        }
+//        return this;
+//    }
 
     @Override
     public Filter columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
@@ -530,7 +539,7 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public Filter compareSelf(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2, SQLPredicateCompare sqlPredicateCompare) {
+    public Filter valueColumnFilter(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2, SQLPredicateCompare sqlPredicateCompare) {
         nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, property1, rightTable, property2, getReallyPredicateCompare(sqlPredicateCompare), expressionContext));
         next();
         return this;
@@ -582,13 +591,11 @@ public class FilterImpl implements Filter {
     private Filter getLikePredicateFilter(TableAvailable leftTable, SQLNativeExpressionContextImpl sqlNativeExpressionContext, SQLFunction likeSQLFunction) {
 
 
-
 //        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(likeSQLFunction)
 //                .toSQLSegment(sqlNativeExpressionContext, leftTable, null,null);
 //
 //        SQLNativePredicate2Impl sqlNativePredicate2 = new SQLNativePredicate2Impl(expressionContext, sqlSegment, s -> s, sqlNativeExpressionContext);
 //        nextPredicateSegment.setPredicate(sqlNativePredicate2);
-
 
 
         String sqlSegment = likeSQLFunction.sqlSegment(leftTable);
@@ -729,5 +736,11 @@ public class FilterImpl implements Filter {
     @Override
     public Filter create() {
         return new FilterImpl(runtimeContext, expressionContext, this.nextPredicateSegment, reverse, this.conditionAcceptAssert);
+    }
+
+    @Override
+    public void valueCompare(TableAvailable table, String property, Object val, SQLPredicateCompare condition) {
+        appendThisPredicate(table,property,val,condition);
+        next();
     }
 }

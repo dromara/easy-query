@@ -7,12 +7,13 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLAssertAggregatePredicate;
-import com.easy.query.core.proxy.predicate.aggregate.DSLFunctionAggregatePredicate;
+import com.easy.query.core.proxy.predicate.aggregate.DSLFunctionAggregateComparePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLLikeAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLLikeFunctionAggregatePredicate;
-import com.easy.query.core.proxy.predicate.aggregate.DSLLikeOtherAggregatePredicate;
-import com.easy.query.core.proxy.predicate.aggregate.DSLOtherAggregatePredicate;
+import com.easy.query.core.proxy.predicate.aggregate.DSLLikeColumnAggregatePredicate;
+import com.easy.query.core.proxy.predicate.aggregate.DSLColumnCompareAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLRangeAggregatePredicate;
+import com.easy.query.core.proxy.predicate.aggregate.DSLRangeColumnFunctionAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSubQueryAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLValueAggregatePredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLValuesAggregatePredicate;
@@ -27,13 +28,14 @@ import com.easy.query.core.util.EasyObjectUtil;
 public interface ColumnFuncComparableExpression<T> extends ColumnComparableExpression<T>, SQLOrderByExpression, PropTypeColumn<T>,
         DSLValueAggregatePredicate<T>,
         DSLLikeAggregatePredicate<T>,
-        DSLFunctionAggregatePredicate<T>,
+        DSLFunctionAggregateComparePredicate<T>,
         DSLLikeFunctionAggregatePredicate<T>,
-        DSLOtherAggregatePredicate<T>,
-        DSLLikeOtherAggregatePredicate<T>,
+        DSLColumnCompareAggregatePredicate<T>,
+        DSLLikeColumnAggregatePredicate<T>,
         DSLSubQueryAggregatePredicate<T>,
         DSLValuesAggregatePredicate<T>,
         DSLRangeAggregatePredicate<T>,
+        DSLRangeColumnFunctionAggregatePredicate<T>,
         DSLAssertAggregatePredicate<T> {
     @Override
     default SQLSelectAsExpression as(TablePropColumn propColumn) {

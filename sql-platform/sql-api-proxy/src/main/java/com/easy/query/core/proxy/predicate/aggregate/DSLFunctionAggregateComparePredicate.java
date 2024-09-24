@@ -4,7 +4,7 @@ import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.impl.SQLAggregatePredicateImpl;
-import com.easy.query.core.proxy.predicate.DSLFunctionPredicate;
+import com.easy.query.core.proxy.predicate.DSLFunctionComparePredicate;
 
 /**
  * create time 2023/12/14 22:53
@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.predicate.DSLFunctionPredicate;
  *
  * @author xuejiaming
  */
-public interface DSLFunctionAggregatePredicate<TProperty> extends DSLFunctionPredicate<TProperty>,  DSLSQLFunctionAvailable {
+public interface DSLFunctionAggregateComparePredicate<TProperty> extends DSLFunctionComparePredicate<TProperty>,  DSLSQLFunctionAvailable {
     @Override
     default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void ge(boolean condition, T1 column) {
         if (condition) {

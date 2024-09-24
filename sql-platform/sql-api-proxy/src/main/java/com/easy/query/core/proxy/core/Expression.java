@@ -20,14 +20,14 @@ import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableDateTimeChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableAnyChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableDateTimeChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableNumberChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableStringChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableDateTimeChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableAnyChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableDateTimeChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
@@ -62,12 +62,12 @@ public class Expression {
         return new Expression(entitySQLContextAvailable.getEntitySQLContext());
     }
 
-    public ColumnFunctionComparableAnyChainExpression<Object> sqlSegment(String sqlSegment) {
+    public ColumnFunctionCompareComparableAnyChainExpression<Object> sqlSegment(String sqlSegment) {
         return sqlSegment(sqlSegment, x -> {
         }, Object.class);
     }
 
-    public ColumnFunctionComparableAnyChainExpression<Object> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume) {
+    public ColumnFunctionCompareComparableAnyChainExpression<Object> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume) {
         return sqlSegment(sqlSegment, contextConsume, Object.class);
     }
 
@@ -90,8 +90,8 @@ public class Expression {
      * @param <TR>
      * @return 返回元素sql片段
      */
-    public <TR> ColumnFunctionComparableAnyChainExpression<TR> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume, Class<TR> resultClass) {
-        return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext, null, null, f -> {
+    public <TR> ColumnFunctionCompareComparableAnyChainExpression<TR> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume, Class<TR> resultClass) {
+        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(entitySQLContext, null, null, f -> {
             return f.anySQLFunction(sqlSegment, c -> contextConsume.apply(new ProxyColumnFuncSelectorImpl(c)));
         }, resultClass);
     }
@@ -210,20 +210,20 @@ public class Expression {
      * @param <TSubQuery>
      * @return
      */
-    public <TSubQuery> ColumnFunctionComparableAnyChainExpression<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
+    public <TSubQuery> ColumnFunctionCompareComparableAnyChainExpression<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
         Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
-        return new ColumnFunctionComparableAnyChainExpressionImpl<>(entitySQLContext, null, null, f -> {
+        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(entitySQLContext, null, null, f -> {
             return f.anySQLFunction("{0}", c -> c.subQuery(subQueryQuery));
         }, subQueryQuery.queryClass());
     }
 
 
-    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> now() {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(entitySQLContext, null, null, SQLFunc::now, LocalDateTime.class);
+    public ColumnFunctionCompareComparableDateTimeChainExpression<LocalDateTime> now() {
+        return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(entitySQLContext, null, null, SQLFunc::now, LocalDateTime.class);
     }
 
-    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> utcNow() {
-        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(entitySQLContext, null, null, SQLFunc::utcNow, LocalDateTime.class);
+    public ColumnFunctionCompareComparableDateTimeChainExpression<LocalDateTime> utcNow() {
+        return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(entitySQLContext, null, null, SQLFunc::utcNow, LocalDateTime.class);
     }
 
     /**
@@ -231,8 +231,8 @@ public class Expression {
      *
      * @return 返回类型为Long
      */
-    public ColumnFunctionComparableNumberChainExpression<Long> count() {
-        return new ColumnFunctionComparableNumberChainExpressionImpl<>(entitySQLContext, null, null, f -> {
+    public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(entitySQLContext, null, null, f -> {
             return f.count(c -> {
             });
         }, Long.class);
@@ -243,8 +243,8 @@ public class Expression {
      *
      * @return 返回类型为Integer
      */
-    public ColumnFunctionComparableNumberChainExpression<Integer> intCount() {
-        return new ColumnFunctionComparableNumberChainExpressionImpl<>(entitySQLContext, null, null, f -> {
+    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount() {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(entitySQLContext, null, null, f -> {
             return f.count(c -> {
             });
         }, Integer.class);
@@ -307,8 +307,8 @@ public class Expression {
         return new CaseWhenEntityBuilder(entitySQLContext).caseWhen(sqlActionExpression);
     }
 
-    public ColumnFunctionComparableStringChainExpression<String> concat(SQLExpression1<ConcatExpressionSelector> stringExpressions) {
-        return new ColumnFunctionComparableStringChainExpressionImpl<>(entitySQLContext, null, null, fx -> {
+    public ColumnFunctionCompareComparableStringChainExpression<String> concat(SQLExpression1<ConcatExpressionSelector> stringExpressions) {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(entitySQLContext, null, null, fx -> {
             return fx.concat(o -> {
                 stringExpressions.apply(new ConcatExpressionSelectorImpl(entitySQLContext.getRuntimeContext().fx(), o));
             });
@@ -332,7 +332,7 @@ public class Expression {
      * @param expressions 表达式
      * @return
      */
-    public ColumnFunctionComparableStringChainExpression<String> concat(PropTypeColumn<?>... expressions) {
+    public ColumnFunctionCompareComparableStringChainExpression<String> concat(PropTypeColumn<?>... expressions) {
         return concat(x -> {
             for (PropTypeColumn<?> expression : expressions) {
                 x.expression(EasyObjectUtil.typeCastNullable(expression));

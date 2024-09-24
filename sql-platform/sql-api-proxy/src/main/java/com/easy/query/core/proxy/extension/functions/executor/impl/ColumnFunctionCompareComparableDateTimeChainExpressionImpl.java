@@ -10,7 +10,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableStringChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableDateTimeChainExpression;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 
 import java.util.function.Function;
@@ -21,17 +21,17 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class ColumnFunctionComparableStringChainExpressionImpl<TProperty> implements ColumnFunctionComparableStringChainExpression<TProperty> {
+public class ColumnFunctionCompareComparableDateTimeChainExpressionImpl<TProperty> implements ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> {
     private final EntitySQLContext entitySQLContext;
     private final TableAvailable table;
     private final String property;
     private final Function<SQLFunc, SQLFunction> func;
     private Class<?> propType;
 
-    public ColumnFunctionComparableStringChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
-        this(entitySQLContext,table,property,func,String.class);
+    public ColumnFunctionCompareComparableDateTimeChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
+        this(entitySQLContext,table,property,func,Object.class);
     }
-    public ColumnFunctionComparableStringChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+    public ColumnFunctionCompareComparableDateTimeChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         this.entitySQLContext = entitySQLContext;
 
         this.table = table;
@@ -39,6 +39,7 @@ public class ColumnFunctionComparableStringChainExpressionImpl<TProperty> implem
         this.func = func;
         this.propType=propType;
     }
+
     @Override
     public String getValue() {
         return property;
@@ -88,7 +89,7 @@ public class ColumnFunctionComparableStringChainExpressionImpl<TProperty> implem
                 SQLFunction sqlFunction = func.apply(fx);
                 if (nullsModeEnum != null) {
                     SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(sqlFunction, true, nullsModeEnum);
-                    s.func(this.getTable(), orderByNullsModeFunction,true);
+                    s.func(this.getTable(), orderByNullsModeFunction,false);
                 } else {
                     s.func(this.getTable(), sqlFunction,true);
                 }
@@ -113,7 +114,6 @@ public class ColumnFunctionComparableStringChainExpressionImpl<TProperty> implem
             }));
         }
     }
-
     @Override
     public Function<SQLFunc, SQLFunction> func() {
         return this.func;

@@ -298,8 +298,9 @@ class KtTest : BaseKtTest() {
                 it.sqlFuncAs(it.fx().dateTimeFormat(BlogKtEntity::createTime), BlogKtEntity::id)
             }
             .toSQL()
+        println(sql)
         Assert.assertEquals(
-            "SELECT t.`content`,t.`title`,t.`title` AS `content`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s.%f') AS `id` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`create_time` >= ? AND t.`create_time` <= ? AND t.`create_time` <= ? AND t.`create_time` > ? AND t.`create_time` < ? AND t.`create_time` < ? AND t.`create_time` > ? AND t.`create_time` <= ? AND t.`create_time` <= ? AND t.`create_time` >= ? AND t.`create_time` < ? AND t.`create_time` < ? AND t.`create_time` >= ? ORDER BY t.`score` ASC,t.`star` DESC",
+            "SELECT t.`content`,t.`title`,t.`title` AS `content`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s.%f') AS `id` FROM `t_blog` t WHERE t.`deleted` = ? AND (t.`create_time` >= ? AND t.`create_time` <= ?) AND t.`create_time` <= ? AND (t.`create_time` > ? AND t.`create_time` < ?) AND t.`create_time` < ? AND (t.`create_time` > ? AND t.`create_time` <= ?) AND t.`create_time` <= ? AND (t.`create_time` >= ? AND t.`create_time` < ?) AND t.`create_time` < ? AND t.`create_time` >= ? ORDER BY t.`score` ASC,t.`star` DESC",
             sql
         )
     }

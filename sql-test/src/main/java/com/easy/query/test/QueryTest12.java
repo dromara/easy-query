@@ -14,7 +14,7 @@ import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -694,7 +694,7 @@ public class QueryTest12 extends BaseTest {
                 })
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> b.id().eq("123"))
+                    ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> b.id().eq("123"))
                             .then(1)
                             .elseEnd("2").asAnyType(BigDecimal.class);
 
@@ -721,7 +721,7 @@ public class QueryTest12 extends BaseTest {
                 })
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
+                    ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
                         b.id().eq("123");
                     }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
                     blogEntityProxy.score().set(caseWhen);
@@ -751,7 +751,7 @@ public class QueryTest12 extends BaseTest {
                 })
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
+                    ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
                         b.id().eq("123");
                     }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
                     blogEntityProxy.score().set(caseWhen);
@@ -779,7 +779,7 @@ public class QueryTest12 extends BaseTest {
                 })
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
+                    ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
                         b.id().eq("123");
                     }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
                     blogEntityProxy.score().set(caseWhen);
@@ -807,7 +807,7 @@ public class QueryTest12 extends BaseTest {
                 })
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    ColumnFunctionComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
+                    ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
                         b.id().eq("123");
                     }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
                     blogEntityProxy.score().set(caseWhen);

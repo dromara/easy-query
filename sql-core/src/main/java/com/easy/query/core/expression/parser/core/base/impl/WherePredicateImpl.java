@@ -50,7 +50,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     public <T2> WherePredicate<T1> compareSelf(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2, SQLPredicateCompare sqlPredicateCompare) {
         if (condition) {
             TableAvailable rightTable = sub.getTable();
-            getFilter().compareSelf(table, property1, rightTable, property2, sqlPredicateCompare);
+            getFilter().valueColumnFilter(table, property1, rightTable, property2, sqlPredicateCompare);
         }
         return castChain();
     }

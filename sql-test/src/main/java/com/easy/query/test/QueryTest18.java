@@ -18,8 +18,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
-import com.easy.query.core.proxy.core.draft.proxy.Draft3Proxy;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
 import com.easy.query.core.proxy.partition.Partition1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -27,8 +26,6 @@ import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.common.MyQueryConfiguration;
-import com.easy.query.test.common.MySelectPager;
-import com.easy.query.test.common.MyToSelectPager;
 import com.easy.query.test.entity.Blog2Entity;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
@@ -50,6 +47,7 @@ import com.easy.query.test.vo.BlogEntityVO2;
 import com.easy.query.test.vo.TestUserAAA;
 import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
 import lombok.Data;
+import lombok.var;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -193,7 +191,7 @@ public class QueryTest18 extends BaseTest {
                 .select(o -> {
                     TopicProxy r = new TopicProxy();
                     r.title().set(o.stars().nullOrDefault(0).toStr());
-                    ColumnFunctionComparableAnyChainExpression<String> nullProperty = o.expression().sqlSegment("IFNULL({0},'')", c -> {
+                    ColumnFunctionCompareComparableAnyChainExpression<String> nullProperty = o.expression().sqlSegment("IFNULL({0},'')", c -> {
                         c.expression(o.id());
                     }, String.class);
                     r.alias().set(nullProperty);
@@ -1264,5 +1262,127 @@ public class QueryTest18 extends BaseTest {
         Assert.assertEquals(100,counti);
         boolean e = easyEntityQuery.queryable(BlogEntity.class).select(t->Select.DRAFT.of(t.id())).distinct().any();
         Assert.assertTrue(e);
+    }
+
+    @Test
+    public void andTest(){
+        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    b.star().le(1);
+                    b.title().like("123");
+                }).toList();
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    b.and(() -> {
+                        b.star().le(1);
+                        b.title().like("123");
+                    });
+                }).toList();
+
+
+    }
+    @Test
+    public void Sum(){
+
+        List<Draft2<String, Number>> monthWithScore = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(BlogEntity.class, (b, b2) -> b.createTime().lt(b2.createTime()))
+                .groupBy((b1, b2) -> GroupKeys.TABLE2.of(b1.createTime().format("yyyyMMdd")))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.groupTable().t2.score().sum()
+                )).toList();
+    }
+    @Test
+    public void Sum1(){
+        var monthQuery = easyEntityQuery.queryable(BlogEntity.class)
+                .groupBy(b -> GroupKeys.TABLE1.of(b.createTime().format("yyyyMM").toNumber(Integer.class)))
+                .select(group -> Select.DRAFT.of(group.key1(), group.groupTable().score().sumBigDecimal()));
+        List<Draft2<Integer, Number>> list = monthQuery.cloneQueryable()
+                .leftJoin(monthQuery.cloneQueryable(), (b, b2) -> b.value1().lt(b2.value1()))
+                .groupBy((b1, b2) -> GroupKeys.TABLE2.of(b1.value1()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.groupTable().t2.value2().sum()
+                )).toList();
+
+    }
+
+    @Test
+     public void rangeTest1(){
+        LocalDateTime time1 = LocalDateTime.of(2021, 1, 1, 1,1);
+        LocalDateTime time2 = LocalDateTime.of(2022, 1, 1, 1,1);
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                    .where(b -> {
+//                    b.id().eq(b.id().nullOrDefault("1"));
+                        b.createTime().rangeClosed(time1,time2);
+                    }).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`create_time` >= ? AND `create_time` <= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),2021-01-01T01:01(LocalDateTime),2022-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                    .where(b -> {
+//                    b.id().eq(b.id().nullOrDefault("1"));
+                        b.createTime().rangeClosed(b.updateTime(), b.updateTime());
+                    }).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`create_time` >= `update_time` AND `create_time` <= `update_time`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<BlogEntity> list2 = easyEntityQuery.queryable(BlogEntity.class)
+                    .where(b -> {
+//                    b.id().eq(b.id().nullOrDefault("1"));
+                        b.createTime().rangeClosed(b.updateTime(), b.updateTime().nullOrDefault(time1));
+                    }).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`create_time` >= `update_time` AND  `create_time` <= IFNULL(`update_time`,?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),2021-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<BlogEntity> list3 = easyEntityQuery.queryable(BlogEntity.class)
+                    .where(b -> {
+//                    b.id().eq(b.id().nullOrDefault("1"));
+                        b.expression().constant().valueOf(time1).rangeClosed(b.createTime(),b.updateTime());
+                        b.expression().constant().valueOf(time1).rangeClosed(b.createTime(),b.updateTime().nullOrDefault(time2));
+                    }).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (? >= `create_time` AND ? <= `update_time`) AND (? >= `create_time` AND ? <= IFNULL(`update_time`,?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),2021-01-01T01:01(LocalDateTime),2021-01-01T01:01(LocalDateTime),2021-01-01T01:01(LocalDateTime),2021-01-01T01:01(LocalDateTime),2022-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
     }
 }

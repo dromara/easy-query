@@ -2,7 +2,6 @@ package com.easy.query.test.entity.proxy;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
-import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
@@ -14,7 +13,7 @@ import com.easy.query.core.proxy.columns.types.SQLLocalDateTimeTypeColumn;
 import com.easy.query.core.proxy.columns.types.SQLBigDecimalTypeColumn;
 import com.easy.query.core.proxy.columns.types.SQLBooleanTypeColumn;
 import com.easy.query.core.proxy.columns.SQLNavigateColumn;
-import com.easy.query.core.proxy.columns.SQLQueryable;
+import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 
 /**
@@ -27,6 +26,8 @@ import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 public class BlogEntityProxy extends AbstractProxyEntity<BlogEntityProxy, BlogEntity> {
 
     private static final Class<BlogEntity> entityClass = BlogEntity.class;
+
+    public static final BlogEntityProxy TABLE = createTable().createEmpty();
 
     public static BlogEntityProxy createTable() {
         return new BlogEntityProxy();
@@ -118,8 +119,8 @@ public class BlogEntityProxy extends AbstractProxyEntity<BlogEntityProxy, BlogEn
     /**
      * {@link BlogEntity#getUsers}
      */
-    public SQLQueryable<com.easy.query.test.entity.proxy.SysUserProxy, com.easy.query.test.entity.SysUser> users() {
-        return getNavigates("users", new com.easy.query.test.entity.proxy.SysUserProxy());
+    public SQLManyQueryable<BlogEntityProxy, com.easy.query.test.entity.proxy.SysUserProxy, com.easy.query.test.entity.SysUser> users() {
+        return getNavigateMany("users", new com.easy.query.test.entity.proxy.SysUserProxy());
     }
 
     /**
@@ -323,21 +324,6 @@ public class BlogEntityProxy extends AbstractProxyEntity<BlogEntityProxy, BlogEn
         protected BlogEntityProxyFetcher createFetcher(BlogEntityProxy cp, AbstractFetcher<BlogEntityProxy, BlogEntity, BlogEntityProxyFetcher> prev, SQLSelectAsExpression sqlSelectExpression) {
             return new BlogEntityProxyFetcher(cp, this, sqlSelectExpression);
         }
-
-//        @Override
-//        public TableAvailable getTableOrNull() {
-//            return null;
-//        }
-//
-//        @Override
-//        public Class<BlogEntity> getEntityClass() {
-//            return null;
-//        }
-//
-//        @Override
-//        public BlogEntityProxy create(TableAvailable table, EntitySQLContext entitySQLContext) {
-//            return null;
-//        }
     }
 
 }

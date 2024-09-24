@@ -7,9 +7,9 @@ import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.columns.SQLPredicateQueryable;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableAnyChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableBooleanChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableNumberChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 
 import java.math.BigDecimal;
 
@@ -55,12 +55,12 @@ public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     }
 
     @Override
-    public ColumnFunctionComparableBooleanChainExpression<Boolean> anyValue() {
+    public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> anyValue() {
         return sqlQueryable.anyValue();
     }
 
     @Override
-    public ColumnFunctionComparableBooleanChainExpression<Boolean> noneValue() {
+    public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> noneValue() {
         return sqlQueryable.noneValue();
     }
 
@@ -70,49 +70,49 @@ public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     }
 
     @Override
-    public ColumnFunctionComparableNumberChainExpression<Long> count(SQLExpression1<T1Proxy> whereExpression) {
+    public ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLExpression1<T1Proxy> whereExpression) {
         sqlQueryable.getQueryable().where(whereExpression);
         return sqlQueryable.count();
     }
 
     @Override
-    public ColumnFunctionComparableNumberChainExpression<Long> count() {
+    public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
         return sqlQueryable.count();
     }
 
     @Override
-    public ColumnFunctionComparableNumberChainExpression<Integer> intCount(SQLExpression1<T1Proxy> whereExpression) {
+    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLExpression1<T1Proxy> whereExpression) {
         sqlQueryable.getQueryable().where(whereExpression);
         return sqlQueryable.intCount();
     }
 
     @Override
-    public ColumnFunctionComparableNumberChainExpression<Integer> intCount() {
+    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount() {
         return sqlQueryable.intCount();
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
+    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
         return sqlQueryable.sum(columnSelector);
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
+    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
         return sqlQueryable.sumBigDecimal(columnSelector);
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
+    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
         return sqlQueryable.avg(columnSelector);
     }
 
     @Override
-    public <TMember> ColumnFunctionComparableAnyChainExpression<TMember> max(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
+    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> max(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
         return sqlQueryable.max(columnSelector);
     }
 
     @Override
-    public <TMember> ColumnFunctionComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
+    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
         return sqlQueryable.max(columnSelector);
     }
 }

@@ -1,11 +1,13 @@
 package com.easy.query.test.doc;
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -16,6 +18,8 @@ import com.easy.query.test.doc.entity.SysUser;
 import com.easy.query.test.doc.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.blogtest.Company;
+import com.easy.query.test.entity.blogtest.proxy.CompanyProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
@@ -109,7 +113,7 @@ public class DocTest extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ?" , easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND (`create_time` >= ? AND `create_time` <= ?)" , easyQuerySQLStatementException.getSQL());
 
         }
         {
@@ -138,7 +142,7 @@ public class DocTest extends BaseTest {
             EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
             Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND `create_time` >= ? AND `create_time` <= ?" , easyQuerySQLStatementException.getSQL());
+            Assert.assertEquals("SELECT `id`,`name`,`account`,`depart_name`,`phone`,`create_time` FROM `t_sys_user` WHERE `name` LIKE ? AND `phone` LIKE ? AND (`create_time` >= ? AND `create_time` <= ?)" , easyQuerySQLStatementException.getSQL());
 
         }
         {
@@ -825,4 +829,44 @@ public class DocTest extends BaseTest {
 //                }})
 //                .toList();
     }
+//
+//    @Test
+//    public void testSubQuery1(){
+////        EasyPageResult<Draft2<String, Integer>> pageResult = easyEntityQuery.queryable(Company.class)
+////                .where(com -> com.name().like("xx公司"))
+////                .select(com -> Select.DRAFT.of(
+////                        com.id(),
+////                        com.users().where(u -> u.name().likeMatchLeft("李")).sum(u -> u.age())
+////                )).toPageResult(2, 10);
+////        EasyPageResult<Draft2<String, Integer>> pageResult = easyEntityQuery.queryable(Company.class)
+////                .where(com -> com.name().like("xx公司"))
+////                .toPageSelectResult(q -> {
+////                    return q.select(com->Select.DRAFT.of(
+////                            com.id(),
+////                            com.users().where(u -> u.name().likeMatchLeft("李")).sum(u -> u.age())
+////                    ));
+////                },2, 10);
+//
+////
+////        EntityQueryable<CompanyProxy, Company> queryable = easyEntityQuery.queryable(Company.class)
+////                .where(com -> com.name().like("xx公司"));
+////        long total = queryable.cloneQueryable().count();
+////        List<Draft2<String, Integer>> data = queryable.cloneQueryable().limitSelect(10, 10, com -> Select.DRAFT.of(
+////                com.id(),
+////                com.users().where(u -> u.name().likeMatchLeft("李")).sum(u -> u.age())
+////        )).toList();
+//
+//
+//        EntityQueryable<CompanyProxy, Company> queryable = easyEntityQuery.queryable(Company.class)
+//                .where(com -> com.name().like("xx公司"));
+//        long total = queryable.cloneQueryable().count();
+//        List<Draft2<String, Integer>> data = queryable.cloneQueryable().limit(10, 10)
+//                .select(com -> com)
+//                .select(com -> Select.DRAFT.of(
+//                        com.id(),
+//                        com.users().where(u -> u.name().likeMatchLeft("李")).sum(u -> u.age())
+//                )).toList();
+//
+//
+//    }
 }

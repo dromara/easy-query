@@ -8,9 +8,9 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public interface ColumnFunctionComparableChainExpression<T> extends ColumnFuncComparableExpression<T> {
+public interface ColumnFunctionCompareComparableChainExpression<T> extends ColumnFuncComparableExpression<T> {
     @Override
-    default <TR> ColumnFunctionComparableChainExpression<TR> asAnyType(Class<TR> clazz) {
+    default <TR> ColumnFunctionCompareComparableChainExpression<TR> asAnyType(Class<TR> clazz) {
         ColumnFuncComparableExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }

@@ -1157,7 +1157,7 @@ public class QueryTest16 extends BaseTest {
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t WHERE EXISTS (SELECT 1 FROM `t_role` myRole WHERE EXISTS (SELECT 1 FROM `t_user_role` t2 WHERE t2.`role_id` = myRole.`id` AND t2.`user_id` = t.`id` LIMIT 1) AND myRole.`name` LIKE ? AND myRole.`create_time` >= ? AND myRole.`create_time` <= ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t WHERE EXISTS (SELECT 1 FROM `t_role` myRole WHERE EXISTS (SELECT 1 FROM `t_user_role` t2 WHERE t2.`role_id` = myRole.`id` AND t2.`user_id` = t.`id` LIMIT 1) AND myRole.`name` LIKE ? AND (myRole.`create_time` >= ? AND myRole.`create_time` <= ?) LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%查询的角色名%(String),2020-01-01T01:02(LocalDateTime),2026-01-01T01:02(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -1185,7 +1185,7 @@ public class QueryTest16 extends BaseTest {
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE t1.`name` LIKE ? AND EXISTS (SELECT 1 FROM `t_role` myRole WHERE EXISTS (SELECT 1 FROM `t_user_role` t3 WHERE t3.`role_id` = myRole.`id` AND t3.`user_id` = t.`id` LIMIT 1) AND myRole.`name` LIKE ? AND myRole.`create_time` >= ? AND myRole.`create_time` <= ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_company` t1 ON t1.`id` = t.`company_id` WHERE t1.`name` LIKE ? AND EXISTS (SELECT 1 FROM `t_role` myRole WHERE EXISTS (SELECT 1 FROM `t_user_role` t3 WHERE t3.`role_id` = myRole.`id` AND t3.`user_id` = t.`id` LIMIT 1) AND myRole.`name` LIKE ? AND (myRole.`create_time` >= ? AND myRole.`create_time` <= ?) LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%123%(String),%查询的角色名%(String),2020-01-01T01:02(LocalDateTime),2026-01-01T01:02(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }

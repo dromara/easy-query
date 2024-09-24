@@ -2,8 +2,10 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityFileProxy;
+import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.annotation.UpdateIgnore;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
@@ -73,5 +75,11 @@ public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogE
 
     @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = "title")
     private List<SysUser> users;
+//
+//
+//    @Column(autoSelect = false)
+//    @InsertIgnore
+//    @UpdateIgnore
+//    private String columnNotInTable;
 
 }

@@ -15,14 +15,14 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public interface ColumnFunctionComparableStringChainExpression<T> extends ColumnFunctionComparableObjectChainExpression<T>,
+public interface ColumnFunctionCompareComparableStringChainExpression<T> extends ColumnFunctionCompareComparableObjectChainExpression<T>,
         ColumnStringFunctionAvailable<T>,
         DSLStringAssertPredicate<T>,
         DSLSQLFunctionAvailable {
 
     @Override
-    default <TR> ColumnFunctionComparableStringChainExpression<TR> asAnyType(Class<TR> clazz) {
-        ColumnFunctionComparableObjectChainExpression.super.asAnyType(clazz);
+    default <TR> ColumnFunctionCompareComparableStringChainExpression<TR> asAnyType(Class<TR> clazz) {
+        ColumnFunctionCompareComparableObjectChainExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
 

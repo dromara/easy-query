@@ -1,13 +1,9 @@
 package com.easy.query.core.proxy.predicate;
 
-import com.easy.query.core.func.SQLFunc;
-import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
  * create time 2023/12/2 14:18
@@ -15,7 +11,7 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  *
  * @author xuejiaming
  */
-public interface DSLOtherPredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
+public interface DSLColumnComparePredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
     default <TProxy,TProp> void ge(SQLColumn<TProxy,TProp> column) {
          ge(true, column);
     }

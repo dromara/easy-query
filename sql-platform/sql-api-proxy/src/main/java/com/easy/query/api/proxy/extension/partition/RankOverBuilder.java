@@ -3,8 +3,8 @@ package com.easy.query.api.proxy.extension.partition;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparablePartitionByChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparablePartitionByChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparablePartitionByChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparablePartitionByChainExpressionImpl;
 import com.easy.query.core.util.EasyArrayUtil;
 
 /**
@@ -19,11 +19,11 @@ public class RankOverBuilder {
         this.entitySQLContext = entitySQLContext;
     }
 
-    public ColumnFunctionComparablePartitionByChainExpression<Long> partitionBy(PropTypeColumn<?>... columns){
+    public ColumnFunctionCompareComparablePartitionByChainExpression<Long> partitionBy(PropTypeColumn<?>... columns){
         if(EasyArrayUtil.isEmpty(columns)){
             throw new EasyQueryInvalidOperationException("rank over partition by empty");
         }
-        return new ColumnFunctionComparablePartitionByChainExpressionImpl<>(entitySQLContext, columns[0].getTable(), null, f->{
+        return new ColumnFunctionCompareComparablePartitionByChainExpressionImpl<>(entitySQLContext, columns[0].getTable(), null, f->{
             return f.rankNumberOver(x->{
                 for (PropTypeColumn<?> column : columns) {
                     PropTypeColumn.columnFuncSelector(x,column);

@@ -3,8 +3,8 @@ package com.easy.query.core.proxy.extension.functions.cast;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComparableBooleanChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionComparableBooleanChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableBooleanChainExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
@@ -15,8 +15,8 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  */
 public interface ColumnFunctionCastBooleanAvailable<TProperty> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
 
-    default <T extends Boolean> ColumnFunctionComparableBooleanChainExpression<T> toBoolean(Class<T> clazz){
-        return new ColumnFunctionComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default <T extends Boolean> ColumnFunctionCompareComparableBooleanChainExpression<T> toBoolean(Class<T> clazz){
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.cast(sqlFunction, clazz);
@@ -25,7 +25,7 @@ public interface ColumnFunctionCastBooleanAvailable<TProperty> extends SQLSelect
             }
         }, clazz);
     }
-    default ColumnFunctionComparableBooleanChainExpression<Boolean> toBoolean(){
+    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> toBoolean(){
         return toBoolean(Boolean.class);
     }
 }
