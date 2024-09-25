@@ -132,14 +132,14 @@ public interface DSLRangeColumnFunctionPredicate<TProperty> extends TablePropCol
 
     static <TProp> void range(EntitySQLContext entitySQLContext, TableAvailable table, String property, boolean conditionLeft, PropTypeColumn<TProp> valLeft, boolean conditionRight, PropTypeColumn<TProp> valRight, SQLRangeEnum sqlRange) {
         if (conditionLeft && conditionRight) {
-            entitySQLContext.accept(new SQLPredicateImpl(filter -> {
-                filter.and(innerFilter -> {
+            entitySQLContext._whereAnd(()->{
+                entitySQLContext.accept(new SQLPredicateImpl(filter -> {
                     boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-                    rangeCompare(innerFilter, table, property, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE, valLeft);
+                    rangeCompare(filter, table, property, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE, valLeft);
                     boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                    rangeCompare(innerFilter, table, property, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE, valRight);
-                });
-            }));
+                    rangeCompare(filter, table, property, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE, valRight);
+                }));
+            });
         } else {
             if(conditionLeft){
                 entitySQLContext.accept(new SQLPredicateImpl(filter -> {
