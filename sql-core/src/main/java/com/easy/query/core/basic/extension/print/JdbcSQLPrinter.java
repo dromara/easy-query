@@ -7,5 +7,15 @@ package com.easy.query.core.basic.extension.print;
  * @author xuejiaming
  */
 public interface JdbcSQLPrinter {
+    /**
+     * 打印sql
+     * @return
+     */
     Boolean printSQL();
+
+    /**
+     * 打印关联子查询sql
+     * @return
+     */
+    Boolean printNavSQL();
 }

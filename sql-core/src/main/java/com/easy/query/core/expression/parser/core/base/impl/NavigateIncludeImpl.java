@@ -10,6 +10,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasyOptionUtil;
 
 /**
  * create time 2023/6/18 10:48
@@ -48,7 +49,7 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         //添加多对多中间表
         if (RelationTypeEnum.ManyToMany == relationType && navigateMetadata.getMappingClass() != null) {
             ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
-            Boolean printSQL = expressionContext.getPrintNavSQL();
+            Boolean printSQL = EasyOptionUtil.isPrintNavSQL(expressionContext);
             ClientQueryable<?> mappingQueryable = mappingQuery
                     .configure(s->{
                         s.setPrintSQL(printSQL);
@@ -75,7 +76,7 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         ClientQueryable<TREntity> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(EasyObjectUtil.typeCastNullable(navigatePropertyType), runtimeContext);
 
-        Boolean printNavSQL = expressionContext.getPrintNavSQL();
+        Boolean printNavSQL = EasyOptionUtil.isPrintNavSQL(expressionContext);
         //支持tracking传递
         if (tracking) {
             queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.USE_TRACKING);

@@ -95,6 +95,10 @@ public class EasyQueryOption {
      */
     private final boolean printSql;
     /**
+     * 是否需要打印关联子查询sql，以log.info打印
+     */
+    private final boolean printNavSql;
+    /**
      * 如果使用按时间分表的路由需要开启定时任务
      */
     private final boolean startTimeJob;
@@ -130,7 +134,7 @@ public class EasyQueryOption {
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql, boolean startTimeJob, boolean defaultTrack,
-                           int relationGroupSize, boolean keepNativeStyle, long reverseOffsetThreshold, boolean warningColumnMiss, int shardingFetchSize, boolean mapToBeanStrict, String defaultSchema, long resultSizeLimit) {
+                           int relationGroupSize, boolean keepNativeStyle, long reverseOffsetThreshold, boolean warningColumnMiss, int shardingFetchSize, boolean mapToBeanStrict, String defaultSchema, long resultSizeLimit,boolean printNavSql) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -189,6 +193,7 @@ public class EasyQueryOption {
         this.insertBatchThreshold = insertBatchThreshold;
         this.updateBatchThreshold = updateBatchThreshold;
         this.printSql = printSql;
+        this.printNavSql = printNavSql;
         this.startTimeJob = startTimeJob;
         this.defaultTrack = defaultTrack;
         this.relationGroupSize = relationGroupSize;
@@ -283,6 +288,10 @@ public class EasyQueryOption {
 
     public boolean isPrintSql() {
         return printSql;
+    }
+
+    public boolean isPrintNavSql() {
+        return printNavSql;
     }
 
     public boolean isStartTimeJob() {

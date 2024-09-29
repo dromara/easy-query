@@ -183,15 +183,7 @@ public class EasyJdbcExecutorUtil {
     }
 
     public static boolean isPrintSQL(ExecutorContext executorContext) {
-        Boolean printSQL = executorContext.getExpressionContext().getPrintSQL();
-        if (printSQL != null) {
-            return printSQL;
-        }
-        JdbcSQLPrinter jdbcSQLPrinter = executorContext.getRuntimeContext().getJdbcSQLPrinter();
-        if (jdbcSQLPrinter != null && jdbcSQLPrinter.printSQL() != null) {
-            return jdbcSQLPrinter.printSQL();
-        }
-        return executorContext.getEasyQueryOption().isPrintSql();
+        return EasyOptionUtil.isPrintSQL(executorContext.getExpressionContext());
     }
 
     public static StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters, boolean shardingPrint, boolean replicaPrint) throws SQLException {

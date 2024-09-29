@@ -11,4 +11,9 @@ public class DefaultJdbcSQLPrinter implements JdbcSQLPrinter{
     public Boolean printSQL() {
         return null;
     }
+
+    @Override
+    public Boolean printNavSQL() {
+        return null;
+    }
 }

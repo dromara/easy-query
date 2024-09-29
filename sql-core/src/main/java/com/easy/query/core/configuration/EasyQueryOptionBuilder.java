@@ -45,6 +45,10 @@ public class EasyQueryOptionBuilder {
      */
     private boolean printSql;
     /**
+     * 是否打印关联子查询sql
+     */
+    private boolean printNavSql;
+    /**
      * 按时间分表启动定时器
      */
     private boolean startTimeJob;
@@ -104,6 +108,7 @@ public class EasyQueryOptionBuilder {
         this.insertBatchThreshold = 1024;
         this.updateBatchThreshold = 1024;
         this.printSql = true;
+        this.printNavSql = true;
         this.startTimeJob = false;
         this.defaultTrack = false;
         this.relationGroupSize = 512;
@@ -212,6 +217,10 @@ public class EasyQueryOptionBuilder {
         this.printSql = printSql;
     }
 
+    public void setPrintNavSql(boolean printNavSql) {
+        this.printNavSql = printNavSql;
+    }
+
     public void setStartTimeJob(boolean startTimeJob) {
         this.startTimeJob = startTimeJob;
     }
@@ -283,6 +292,7 @@ public class EasyQueryOptionBuilder {
                 this.shardingFetchSize,
                 this.mapToBeanStrict,
                 this.defaultSchema,
-                this.resultSizeLimit);
+                this.resultSizeLimit,
+                this.printNavSql);
     }
 }

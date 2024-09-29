@@ -98,6 +98,10 @@ public class SolonEasyQueryProperties {
      */
     private final static boolean printSql = true;
     /**
+     * 是否打印关联子查询sql
+     */
+    private final static boolean printNavSql = true;
+    /**
      * 分片按时间分表的时候需要开启
      */
     private final static boolean startTimeJob = false;
@@ -307,6 +311,9 @@ public class SolonEasyQueryProperties {
 
     public boolean isPrintSql() {
         return this.props.getBool("print-sql",printSql);
+    }
+    public boolean isPrintNavSql() {
+        return this.props.getBool("print-nav-sql",printNavSql);
     }
 
 

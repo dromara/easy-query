@@ -279,6 +279,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setInsertBatchThreshold(easyQueryProperties.getInsertBatchThreshold());
                     builder.setUpdateBatchThreshold(easyQueryProperties.getUpdateBatchThreshold());
                     builder.setPrintSql(easyQueryProperties.isPrintSql());
+                    builder.setPrintNavSql(easyQueryProperties.isPrintNavSql());
                     builder.setStartTimeJob(easyQueryProperties.isStartTimeJob());
                     builder.setDefaultTrack(easyQueryProperties.isDefaultTrack());
                     builder.setRelationGroupSize(easyQueryProperties.getRelationGroupSize());

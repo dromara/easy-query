@@ -145,6 +145,7 @@ public class DbManager {
                     builder.setInsertBatchThreshold(solonEasyQueryProperties.getInsertBatchThreshold());
                     builder.setUpdateBatchThreshold(solonEasyQueryProperties.getUpdateBatchThreshold());
                     builder.setPrintSql(solonEasyQueryProperties.isPrintSql());
+                    builder.setPrintNavSql(solonEasyQueryProperties.isPrintNavSql());
                     builder.setStartTimeJob(solonEasyQueryProperties.isStartTimeJob());
                     builder.setDefaultTrack(solonEasyQueryProperties.isDefaultTrack());
                     builder.setRelationGroupSize(solonEasyQueryProperties.getRelationGroupSize());

@@ -110,6 +110,7 @@ import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyJdbcExecutorUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasyOptionUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -1396,7 +1397,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (condition) {
             IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
             Integer groupSize = entityQueryExpressionBuilder.getExpressionContext().getGroupSize();
-            Boolean printNavSQL = entityQueryExpressionBuilder.getExpressionContext().getPrintNavSQL();
+            Boolean printNavSQL = EasyOptionUtil.isPrintNavSQL(entityQueryExpressionBuilder.getExpressionContext());
             EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
             int relationGroupSize = groupSize != null ? groupSize : easyQueryOption.getRelationGroupSize();
             includeNavigateParams.setRelationGroupSize(relationGroupSize);

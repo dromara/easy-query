@@ -100,6 +100,10 @@ public class EasyQueryProperties {
      */
     private boolean printSql = true;
     /**
+     * 是否打印关联子查询sql
+     */
+    private boolean printNavSql = true;
+    /**
      * 分片按时间分表的时候需要开启
      */
     private boolean startTimeJob = false;
@@ -327,6 +331,14 @@ public class EasyQueryProperties {
 
     public void setPrintSql(boolean printSql) {
         this.printSql = printSql;
+    }
+
+    public boolean isPrintNavSql() {
+        return printNavSql;
+    }
+
+    public void setPrintNavSql(boolean printNavSql) {
+        this.printNavSql = printNavSql;
     }
 
     public boolean isStartTimeJob() {
