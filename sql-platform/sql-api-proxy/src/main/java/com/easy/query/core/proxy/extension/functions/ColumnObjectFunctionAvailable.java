@@ -82,7 +82,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
     default TChain nullOrDefault(PropTypeColumn<TProperty> propTypeColumn) {
         return nullOrDefault(x->{
-            PropTypeColumn.columnFuncSelector(x.getColumnConcatSelector(),propTypeColumn);
+            PropTypeColumn.columnFuncSelector(x.getColumnFuncSelector(),propTypeColumn);
         });
     }
 
@@ -101,7 +101,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
     default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> equalsWith(PropTypeColumn<TProperty> propTypeColumn){
         return equalsWith(x->{
-            PropTypeColumn.columnFuncSelector(x.getColumnConcatSelector(),propTypeColumn);
+            PropTypeColumn.columnFuncSelector(x.getColumnFuncSelector(),propTypeColumn);
         });
     }
     default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> equalsWith(SQLExpression1<ProxyColumnFuncSelector> selector){

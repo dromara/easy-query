@@ -50,7 +50,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     default ColumnFunctionCompareComparableAnyChainExpression<TProperty> concat(TablePropColumn... propColumns) {
         return concat(o -> {
             for (TablePropColumn propColumn : propColumns) {
-                o.getColumnConcatSelector().column(propColumn.getTable(), propColumn.getValue());
+                o.getColumnFuncSelector().column(propColumn.getTable(), propColumn.getValue());
             }
         });
     }

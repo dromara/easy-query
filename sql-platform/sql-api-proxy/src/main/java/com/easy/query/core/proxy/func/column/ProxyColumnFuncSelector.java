@@ -17,9 +17,9 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface ProxyColumnFuncSelector {
-    ColumnFuncSelector getColumnConcatSelector();
+    ColumnFuncSelector getColumnFuncSelector();
    default ProxyColumnFuncSelector keepStyle(){
-       getColumnConcatSelector().keepStyle();
+       getColumnFuncSelector().keepStyle();
        return this;
    }
    default <TProxy,T> ProxyColumnFuncSelector expression(SQLColumn<TProxy, T> sqlColumn){
@@ -29,42 +29,42 @@ public interface ProxyColumnFuncSelector {
        return subQuery(subQuery);
    }
    default ProxyColumnFuncSelector expression(DSLSQLFunctionAvailable dslsqlFunctionAvailable){
-       getColumnConcatSelector().sqlFuncExpression(dslsqlFunctionAvailable.getTable(), dslsqlFunctionAvailable.func());
+       getColumnFuncSelector().sqlFuncExpression(dslsqlFunctionAvailable.getTable(), dslsqlFunctionAvailable.func());
        return this;
    }
    default ProxyColumnFuncSelector expression(SQLFunction sqlFunction){
        return sqlFunc(sqlFunction);
    }
    default <T> ProxyColumnFuncSelector collection(Collection<T> collections){
-       getColumnConcatSelector().collection(collections);
+       getColumnFuncSelector().collection(collections);
        return this;
    }
    default <TProxy,T> ProxyColumnFuncSelector column(SQLColumn<TProxy, T> sqlColumn){
-       getColumnConcatSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
+       getColumnFuncSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
        return this;
    }
    default ProxyColumnFuncSelector columns(SQLColumn<?, ?>... sqlColumns){
        if(EasyArrayUtil.isNotEmpty(sqlColumns)){
            for (SQLColumn<?, ?> sqlColumn : sqlColumns) {
-               getColumnConcatSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
+               getColumnFuncSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
            }
        }
        return this;
    }
     default ProxyColumnFuncSelector value(Object val){
-        getColumnConcatSelector().value(val);
+        getColumnFuncSelector().value(val);
         return this;
     }
     default ProxyColumnFuncSelector format(Object valFormat){
-        getColumnConcatSelector().format(valFormat);
+        getColumnFuncSelector().format(valFormat);
         return this;
     }
     default ProxyColumnFuncSelector sqlFunc(SQLFunction sqlFunction){
-        getColumnConcatSelector().sqlFunc(sqlFunction);
+        getColumnFuncSelector().sqlFunc(sqlFunction);
         return this;
     }
     default ProxyColumnFuncSelector subQuery(Query<?> subQuery){
-        getColumnConcatSelector().subQuery(subQuery);
+        getColumnFuncSelector().subQuery(subQuery);
         return this;
     }
 

@@ -1,8 +1,10 @@
 package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.PartitionResult;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.core.ResultColumnInfo;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -12,7 +14,9 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
@@ -22,8 +26,12 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasyUtil;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -32,17 +40,13 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements AsSelector {
+public class AutoAsSelectorImpl  extends AbstractAsSelector<AsSelector> implements AsSelector {
 
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
-    private final Class<?> resultClass;
-    protected final EntityMetadata resultEntityMetadata;
 
-    public AutoAsSelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlBuilderSegment, Class<?> resultClass) {
-        super(entityQueryExpressionBuilder, sqlBuilderSegment);
+    public AutoAsSelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlBuilderSegment, EntityMetadata resultEntityMetadata) {
+        super(entityQueryExpressionBuilder, sqlBuilderSegment,resultEntityMetadata);
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
-        this.resultClass = resultClass;
-        this.resultEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(resultClass);
     }
 
     @Override
@@ -117,6 +121,8 @@ public class AutoAsSelectorImpl  extends AbstractSelector<AsSelector> implements
             return columnAll0(tableExpressionBuilder);
         }
     }
+
+
     private AsSelector columnAll0(EntityTableExpressionBuilder tableExpressionBuilder) {
         if (tableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) tableExpressionBuilder);

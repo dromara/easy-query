@@ -109,7 +109,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
 
     @Override
     public <TR> ColumnAsSelector<TEntity, TR> getAutoColumnAsSelector(SQLBuilderSegment sqlSegment0Builder, Class<TR> resultClass) {
-        return new ColumnAutoAsSelectorImpl<>(table, new AutoAsSelectorImpl(entityQueryExpressionBuilder, sqlSegment0Builder, resultClass));
+        return new ColumnAutoAsSelectorImpl<>(table, new AutoAsSelectorImpl(entityQueryExpressionBuilder, sqlSegment0Builder, entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass)));
 
     }
 

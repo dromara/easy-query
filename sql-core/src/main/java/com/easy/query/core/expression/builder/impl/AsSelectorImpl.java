@@ -1,8 +1,10 @@
 package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.PartitionResult;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.core.ResultColumnInfo;
@@ -16,6 +18,7 @@ import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainE
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
+import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SubQueryColumnSegment;
@@ -30,9 +33,13 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.SQLFunctionTranslateImpl;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.core.util.EasyUtil;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -41,17 +48,10 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class AsSelectorImpl extends AbstractSelector<AsSelector> implements AsSelector {
-    private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
-    protected final Class<?> resultClass;
-    protected final EntityMetadata resultEntityMetadata;
+public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements AsSelector {
 
     public AsSelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlBuilderSegment, EntityMetadata resultEntityMetadata) {
-        super(entityQueryExpressionBuilder, sqlBuilderSegment);
-        this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
-
-        this.resultEntityMetadata = resultEntityMetadata;
-        this.resultClass = resultEntityMetadata.getEntityClass();
+        super(entityQueryExpressionBuilder, sqlBuilderSegment,resultEntityMetadata);
     }
 
     @Override

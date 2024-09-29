@@ -307,7 +307,7 @@ public abstract class AbstractSelector<TChain> {
         return entityQueryExpressionBuilder;
     }
 
-    private EntityQueryExpressionBuilder getAnonymousTableQueryExpressionBuilder(AnonymousEntityTableExpressionBuilder table) {
+    protected EntityQueryExpressionBuilder getAnonymousTableQueryExpressionBuilder(AnonymousEntityTableExpressionBuilder table) {
         EntityQueryExpressionBuilder entityQueryExpressionBuilder = table.getEntityQueryExpressionBuilder();
         return getEntityQueryExpressionBuilder(entityQueryExpressionBuilder);
     }

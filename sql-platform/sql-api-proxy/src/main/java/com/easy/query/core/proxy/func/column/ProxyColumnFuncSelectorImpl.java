@@ -18,7 +18,7 @@ public class ProxyColumnFuncSelectorImpl implements ProxyColumnFuncSelector {
     }
 
     @Override
-    public ColumnFuncSelector getColumnConcatSelector() {
+    public ColumnFuncSelector getColumnFuncSelector() {
         return columnConcatSelector;
     }
 }
