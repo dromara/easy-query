@@ -4,6 +4,7 @@ import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -38,11 +39,17 @@ public interface DSLRangeAggregatePredicate<TProperty> extends DSLRangePredicate
 
     @Override
     default void rangeClosed(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
+
         rangeFilter(getEntitySQLContext(),this,conditionLeft,_toFunctionSerializeValue(valLeft),conditionRight,_toFunctionSerializeValue(valRight),SQLRangeEnum.CLOSED);
     }
 
 
     static <TProp> void rangeFilter(EntitySQLContext entitySQLContext, DSLSQLFunctionAvailable dslSQLFunction, boolean conditionLeft, TProp valLeft, boolean conditionRight, TProp valRight, SQLRangeEnum sqlRange) {
+        ValueFilter valueFilter = entitySQLContext.getEntityExpressionBuilder().getExpressionContext().getValueFilter();
+        rangeFilter0(entitySQLContext,dslSQLFunction,conditionLeft && valueFilter.accept(dslSQLFunction.getTable(), null, valLeft),valLeft,conditionRight && valueFilter.accept(dslSQLFunction.getTable(), null, valRight),valRight,sqlRange);
+    }
+
+    static <TProp> void rangeFilter0(EntitySQLContext entitySQLContext, DSLSQLFunctionAvailable dslSQLFunction, boolean conditionLeft, TProp valLeft, boolean conditionRight, TProp valRight, SQLRangeEnum sqlRange) {
         if (conditionLeft && conditionRight) {
             entitySQLContext._whereAnd(()->{
                 entitySQLContext.accept(new SQLAggregatePredicateImpl(filter -> {

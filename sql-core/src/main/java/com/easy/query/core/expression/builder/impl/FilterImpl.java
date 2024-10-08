@@ -740,7 +740,7 @@ public class FilterImpl implements Filter {
 
     @Override
     public void valueCompare(TableAvailable table, String property, Object val, SQLPredicateCompare condition) {
-        appendThisPredicate(table,property,val,condition);
+        appendThisPredicate(table, property, val, condition);
         next();
     }
 }

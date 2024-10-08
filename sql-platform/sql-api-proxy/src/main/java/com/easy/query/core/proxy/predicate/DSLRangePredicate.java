@@ -3,6 +3,7 @@ package com.easy.query.core.proxy.predicate;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.SQLColumn;
@@ -122,12 +123,13 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @return
      */
     default void rangeClosed(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        range(getEntitySQLContext(), this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED);
+        ValueFilter valueFilter = getEntitySQLContext().getEntityExpressionBuilder().getExpressionContext().getValueFilter();
+        range(getEntitySQLContext(), this.getTable(), this.getValue(), conditionLeft && valueFilter.accept(this.getTable(), this.getValue(), valLeft), valLeft, conditionRight && valueFilter.accept(this.getTable(), this.getValue(), valRight), valRight, SQLRangeEnum.CLOSED);
     }
 
     static <TProp> void range(EntitySQLContext entitySQLContext, TableAvailable table, String property, boolean conditionLeft, TProp valLeft, boolean conditionRight, TProp valRight, SQLRangeEnum sqlRange) {
         if (conditionLeft && conditionRight) {
-            entitySQLContext._whereAnd(()->{
+            entitySQLContext._whereAnd(() -> {
                 entitySQLContext.accept(new SQLPredicateImpl(filter -> {
                     boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
                     filter.valueCompare(table, property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
