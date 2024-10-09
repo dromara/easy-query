@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.predicate.aggregate;
 
+import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.AggregateFilter;
@@ -42,12 +43,19 @@ public interface DSLRangeColumnFunctionAggregatePredicate<TProperty> extends DSL
 
     @Override
     default void rangeClosed(boolean conditionLeft, PropTypeColumn<TProperty> valLeft, boolean conditionRight, PropTypeColumn<TProperty> valRight) {
-        ValueFilter valueFilter = getEntitySQLContext().getEntityExpressionBuilder().getExpressionContext().getValueFilter();
-        rangeFilter(getEntitySQLContext(), this, conditionLeft && valueFilter.accept(this.getTable(), null, valLeft), valLeft, conditionRight && valueFilter.accept(this.getTable(), null, valRight), valRight, SQLRangeEnum.CLOSED);
+        rangeFilter(getEntitySQLContext(), this, conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED);
     }
 
 
     static <TProp> void rangeFilter(EntitySQLContext entitySQLContext, DSLSQLFunctionAvailable dslSQLFunction, boolean conditionLeft, PropTypeColumn<TProp> valLeft, boolean conditionRight, PropTypeColumn<TProp> valRight, SQLRangeEnum sqlRange) {
+        ValueFilter valueFilter = entitySQLContext.getEntityExpressionBuilder().getExpressionContext().getValueFilter();
+        boolean acceptLeft = valueFilter.accept(dslSQLFunction.getTable(), null, valLeft);
+        boolean acceptRight = valueFilter.accept(dslSQLFunction.getTable(), null, valRight);
+        rangeFilter0(entitySQLContext, dslSQLFunction, conditionLeft && acceptLeft, valLeft, conditionRight && acceptRight, valRight, sqlRange);
+    }
+
+
+    static <TProp> void rangeFilter0(EntitySQLContext entitySQLContext, DSLSQLFunctionAvailable dslSQLFunction, boolean conditionLeft, PropTypeColumn<TProp> valLeft, boolean conditionRight, PropTypeColumn<TProp> valRight, SQLRangeEnum sqlRange) {
         if (conditionLeft && conditionRight) {
             entitySQLContext._whereAnd(() -> {
                 entitySQLContext.accept(new SQLAggregatePredicateImpl(filter -> {

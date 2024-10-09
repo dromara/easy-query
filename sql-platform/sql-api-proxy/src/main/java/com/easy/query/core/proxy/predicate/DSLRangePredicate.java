@@ -123,11 +123,17 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
      * @return
      */
     default void rangeClosed(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        ValueFilter valueFilter = getEntitySQLContext().getEntityExpressionBuilder().getExpressionContext().getValueFilter();
-        range(getEntitySQLContext(), this.getTable(), this.getValue(), conditionLeft && valueFilter.accept(this.getTable(), this.getValue(), valLeft), valLeft, conditionRight && valueFilter.accept(this.getTable(), this.getValue(), valRight), valRight, SQLRangeEnum.CLOSED);
+        range(getEntitySQLContext(), this.getTable(), this.getValue(), conditionLeft, valLeft, conditionRight, valRight, SQLRangeEnum.CLOSED);
     }
 
     static <TProp> void range(EntitySQLContext entitySQLContext, TableAvailable table, String property, boolean conditionLeft, TProp valLeft, boolean conditionRight, TProp valRight, SQLRangeEnum sqlRange) {
+        ValueFilter valueFilter = entitySQLContext.getEntityExpressionBuilder().getExpressionContext().getValueFilter();
+        boolean acceptLeft = valueFilter.accept(table, property, valLeft);
+        boolean acceptRight = valueFilter.accept(table, property, valRight);
+        range0(entitySQLContext, table, property, conditionLeft && acceptLeft, valLeft, conditionRight && acceptRight, valRight, sqlRange);
+    }
+
+    static <TProp> void range0(EntitySQLContext entitySQLContext, TableAvailable table, String property, boolean conditionLeft, TProp valLeft, boolean conditionRight, TProp valRight, SQLRangeEnum sqlRange) {
         if (conditionLeft && conditionRight) {
             entitySQLContext._whereAnd(() -> {
                 entitySQLContext.accept(new SQLPredicateImpl(filter -> {

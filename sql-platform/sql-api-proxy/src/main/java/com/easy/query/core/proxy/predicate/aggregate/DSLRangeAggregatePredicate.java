@@ -24,34 +24,35 @@ public interface DSLRangeAggregatePredicate<TProperty> extends DSLRangePredicate
 
     @Override
     default void rangeOpenClosed(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        rangeFilter(getEntitySQLContext(),this,conditionLeft,_toFunctionSerializeValue(valLeft),conditionRight,_toFunctionSerializeValue(valRight),SQLRangeEnum.OPEN_CLOSED);
+        rangeFilter(getEntitySQLContext(), this, conditionLeft, _toFunctionSerializeValue(valLeft), conditionRight, _toFunctionSerializeValue(valRight), SQLRangeEnum.OPEN_CLOSED);
     }
 
     @Override
     default void rangeOpen(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        rangeFilter(getEntitySQLContext(),this,conditionLeft,_toFunctionSerializeValue(valLeft),conditionRight,_toFunctionSerializeValue(valRight),SQLRangeEnum.OPEN);
+        rangeFilter(getEntitySQLContext(), this, conditionLeft, _toFunctionSerializeValue(valLeft), conditionRight, _toFunctionSerializeValue(valRight), SQLRangeEnum.OPEN);
     }
 
     @Override
     default void rangeClosedOpen(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-        rangeFilter(getEntitySQLContext(),this,conditionLeft,_toFunctionSerializeValue(valLeft),conditionRight,_toFunctionSerializeValue(valRight),SQLRangeEnum.CLOSED_OPEN);
+        rangeFilter(getEntitySQLContext(), this, conditionLeft, _toFunctionSerializeValue(valLeft), conditionRight, _toFunctionSerializeValue(valRight), SQLRangeEnum.CLOSED_OPEN);
     }
 
     @Override
     default void rangeClosed(boolean conditionLeft, TProperty valLeft, boolean conditionRight, TProperty valRight) {
-
-        rangeFilter(getEntitySQLContext(),this,conditionLeft,_toFunctionSerializeValue(valLeft),conditionRight,_toFunctionSerializeValue(valRight),SQLRangeEnum.CLOSED);
+        rangeFilter(getEntitySQLContext(), this, conditionLeft, _toFunctionSerializeValue(valLeft), conditionRight, _toFunctionSerializeValue(valRight), SQLRangeEnum.CLOSED);
     }
 
 
     static <TProp> void rangeFilter(EntitySQLContext entitySQLContext, DSLSQLFunctionAvailable dslSQLFunction, boolean conditionLeft, TProp valLeft, boolean conditionRight, TProp valRight, SQLRangeEnum sqlRange) {
         ValueFilter valueFilter = entitySQLContext.getEntityExpressionBuilder().getExpressionContext().getValueFilter();
-        rangeFilter0(entitySQLContext,dslSQLFunction,conditionLeft && valueFilter.accept(dslSQLFunction.getTable(), null, valLeft),valLeft,conditionRight && valueFilter.accept(dslSQLFunction.getTable(), null, valRight),valRight,sqlRange);
+        boolean acceptLeft = valueFilter.accept(dslSQLFunction.getTable(), null, valLeft);
+        boolean acceptRight = valueFilter.accept(dslSQLFunction.getTable(), null, valRight);
+        rangeFilter0(entitySQLContext, dslSQLFunction, conditionLeft && acceptLeft, valLeft, conditionRight && acceptRight, valRight, sqlRange);
     }
 
     static <TProp> void rangeFilter0(EntitySQLContext entitySQLContext, DSLSQLFunctionAvailable dslSQLFunction, boolean conditionLeft, TProp valLeft, boolean conditionRight, TProp valRight, SQLRangeEnum sqlRange) {
         if (conditionLeft && conditionRight) {
-            entitySQLContext._whereAnd(()->{
+            entitySQLContext._whereAnd(() -> {
                 entitySQLContext.accept(new SQLAggregatePredicateImpl(filter -> {
                     boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
                     rangeCompareFilter(filter, dslSQLFunction, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE, valLeft);

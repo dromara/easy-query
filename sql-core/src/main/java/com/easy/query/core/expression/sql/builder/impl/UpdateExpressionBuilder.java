@@ -52,7 +52,6 @@ import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import java.util.Collection;
 import java.util.HashMap;
