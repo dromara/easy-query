@@ -35,28 +35,34 @@ public class ColumnFunctionCompareComparablePartitionByChainExpressionImpl<TProp
     }
 
     @Override
-    public <TProperty1> ColumnFunctionCompareComparablePartitionByChainExpression<TProperty> orderBy(PropTypeColumn<TProperty1> propTypeColumn) {
-        return new ColumnFunctionCompareComparablePartitionByChainExpressionImpl<>(entitySQLContext,table,property, f->{
-            PartitionBySQLFunction sqlFunction = func.apply(f);
-            SQLFunction orderFunction = f.anySQLFunction("{0} ASC", c -> {
-                PropTypeColumn.columnFuncSelector(c, propTypeColumn);
-            });
-            sqlFunction.addOrder(orderFunction);
-            return sqlFunction;
-        },propType);
+    public <TProperty1> ColumnFunctionCompareComparablePartitionByChainExpression<TProperty> orderBy(boolean condition,PropTypeColumn<TProperty1> propTypeColumn) {
+        if(condition){
+            return new ColumnFunctionCompareComparablePartitionByChainExpressionImpl<>(entitySQLContext,table,property, f->{
+                PartitionBySQLFunction sqlFunction = func.apply(f);
+                SQLFunction orderFunction = f.anySQLFunction("{0} ASC", c -> {
+                    PropTypeColumn.columnFuncSelector(c, propTypeColumn);
+                });
+                sqlFunction.addOrder(orderFunction);
+                return sqlFunction;
+            },propType);
+        }
+        return this;
     }
 
     @Override
-    public <TProperty1> ColumnFunctionCompareComparablePartitionByChainExpression<TProperty> orderByDescending(PropTypeColumn<TProperty1> propTypeColumn) {
+    public <TProperty1> ColumnFunctionCompareComparablePartitionByChainExpression<TProperty> orderByDescending(boolean condition,PropTypeColumn<TProperty1> propTypeColumn) {
 
-        return new ColumnFunctionCompareComparablePartitionByChainExpressionImpl<>(entitySQLContext,table,property, f->{
-            PartitionBySQLFunction sqlFunction = func.apply(f);
-            SQLFunction orderFunction = f.anySQLFunction("{0} DESC", c -> {
-                PropTypeColumn.columnFuncSelector(c, propTypeColumn);
-            });
-            sqlFunction.addOrder(orderFunction);
-            return sqlFunction;
-        },propType);
+        if(condition){
+            return new ColumnFunctionCompareComparablePartitionByChainExpressionImpl<>(entitySQLContext,table,property, f->{
+                PartitionBySQLFunction sqlFunction = func.apply(f);
+                SQLFunction orderFunction = f.anySQLFunction("{0} DESC", c -> {
+                    PropTypeColumn.columnFuncSelector(c, propTypeColumn);
+                });
+                sqlFunction.addOrder(orderFunction);
+                return sqlFunction;
+            },propType);
+        }
+        return this;
     }
 }
 //        if(condition){
