@@ -341,26 +341,14 @@ public class Expression {
     }
 
 
-    /**
-     * 名次不会相同
-     * @return
-     */
     public RowNumberOverBuilder rowNumberOver(){
         return new RowNumberOverBuilder(entitySQLContext);
     }
 
-    /**
-     * 相同排名占用一位名次
-     * @return
-     */
     public RankOverBuilder rankOver(){
         return new RankOverBuilder(entitySQLContext);
     }
 
-    /**
-     * 相同排名占用一位名次
-     * @return
-     */
     public DenseRankOverBuilder denseRankOver(){
         return new DenseRankOverBuilder(entitySQLContext);
     }
