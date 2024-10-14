@@ -358,7 +358,7 @@ public class Expression {
     }
 
     /**
-     * 相同排名不占用名次
+     * 相同排名占用一位名次
      * @return
      */
     public DenseRankOverBuilder denseRankOver(){
