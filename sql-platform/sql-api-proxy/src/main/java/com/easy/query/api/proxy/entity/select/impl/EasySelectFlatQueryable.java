@@ -86,7 +86,7 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
             return collectionValues;
         };
         ClientQueryable<?> select = queryable.select(o -> {
-            o.column(firstNavigateMetadata.getSelfPropertyOrPrimary());
+            o.column(firstNavigateMetadata.getSelfPropertiesOrPrimary());
 //            //todo include
 //            EasySQLExpressionUtil.appendTargetExtraTargetProperty(firstNavigateMetadata, sqlEntityExpressionBuilder, o.getAsSelector(), o.getTable());
 

@@ -336,8 +336,8 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 clientQueryable.where(x -> {
                     x.and(() -> {
                         ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
-                            m.eq(x, navigateMetadata.getTargetMappingProperty(), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext));
-                            m.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperty(), navigateMetadata.getSelfPropertyOrPrimary());
+                            m.eq(x, navigateMetadata.getTargetMappingProperties(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+                            m.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperties(), navigateMetadata.getSelfPropertiesOrPrimary());
                             navigateMetadata.predicateFilterApply(m);
                         }).limit(1);
                         x.exists(subMappingQueryable);
@@ -346,7 +346,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             } else {
                 clientQueryable.where(t -> {
                     t.and(() -> {
-                        t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary());
+                        t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), navigateMetadata.getSelfPropertiesOrPrimary());
                         navigateMetadata.predicateFilterApply(t);
                     });
                 });
@@ -378,8 +378,8 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 clientQueryable.where(x -> {
                     x.and(() -> {
                         ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
-                            m.eq(x, navigateMetadata.getTargetMappingProperty(), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext));
-                            m.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperty(), navigateMetadata.getSelfPropertyOrPrimary());
+                            m.eq(x, navigateMetadata.getTargetMappingProperties(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+                            m.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperties(), navigateMetadata.getSelfPropertiesOrPrimary());
                             navigateMetadata.predicateFilterApply(m);
                         }).limit(1);
                         x.exists(subMappingQueryable);
@@ -388,7 +388,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             } else {
                 clientQueryable.where(t -> {
                     t.and(() -> {
-                        t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), navigateMetadata.getSelfPropertyOrPrimary());
+                        t.eq(new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), navigateMetadata.getSelfPropertiesOrPrimary());
                         navigateMetadata.predicateFilterApply(t);
                     });
                 });

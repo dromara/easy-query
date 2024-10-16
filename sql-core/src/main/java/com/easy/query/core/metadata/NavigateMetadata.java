@@ -1,13 +1,13 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.core.util.EasyArrayUtil;
 
 /**
  * create time 2023/6/17 19:13
@@ -36,16 +36,16 @@ public class NavigateMetadata {
      */
     private final RelationTypeEnum relationType;
     private final boolean basicType;
-    private final String selfProperty;
+    private final String[] selfProperties;
     /**
      * 导航属性关联字段
      */
-    private final String targetProperty;
+    private final String[] targetProperties;
     private final Property<Object, ?> getter;
     private final PropertySetterCaller<Object> setter;
     private final Class<?> mappingClass;
-    private final String selfMappingProperty;
-    private final String targetMappingProperty;
+    private final String[] selfMappingProperties;
+    private final String[] targetMappingProperties;
     private final SQLExpression1<WherePredicate<?>> predicateFilterExpression;
 
     public NavigateMetadata(NavigateOption navigateOption,
@@ -56,13 +56,13 @@ public class NavigateMetadata {
         this.navigateOriginalPropertyType = navigateOption.getNavigateOriginalPropertyType();
         this.navigatePropertyType = navigateOption.getNavigatePropertyType();
         this.relationType = navigateOption.getRelationType();
-        this.selfProperty = navigateOption.getSelfProperty();
-        this.targetProperty = navigateOption.getTargetProperty();
+        this.selfProperties = navigateOption.getSelfProperties();
+        this.targetProperties = navigateOption.getTargetProperties();
         this.mappingClass = navigateOption.getMappingClass();
-        this.selfMappingProperty = navigateOption.getSelfMappingProperty();
-        this.targetMappingProperty = navigateOption.getTargetMappingProperty();
+        this.selfMappingProperties = navigateOption.getSelfMappingProperties();
+        this.targetMappingProperties = navigateOption.getTargetMappingProperties();
         this.predicateFilterExpression = navigateOption.getPredicateFilterExpression();
-        this.basicType=navigateOption.isBasicType();
+        this.basicType = navigateOption.isBasicType();
         this.getter = getter;
         this.setter = setter;
     }
@@ -87,28 +87,28 @@ public class NavigateMetadata {
         return relationType;
     }
 
-    public String getSelfProperty() {
-        return selfProperty;
+    public String[] getSelfProperties() {
+        return selfProperties;
     }
 
-    public String getSelfPropertyOrPrimary(){
+    public String[] getSelfPropertiesOrPrimary() {
 
-        if(EasyStringUtil.isNotBlank(selfProperty)){
-            return selfProperty;
+        if (EasyArrayUtil.isNotEmpty(selfProperties)) {
+            return selfProperties;
         }
-        return entityMetadata.getSingleKeyProperty();
+        return new String[]{entityMetadata.getSingleKeyProperty()};
     }
 
-    public String getTargetProperty() {
-        return targetProperty;
+    public String[] getTargetProperties() {
+        return targetProperties;
     }
 
-    public String getTargetPropertyOrPrimary(QueryRuntimeContext runtimeContext){
-        if(EasyStringUtil.isNotBlank(targetProperty)){
-            return targetProperty;
+    public String[] getTargetPropertiesOrPrimary(QueryRuntimeContext runtimeContext) {
+        if (EasyArrayUtil.isNotEmpty(targetProperties)) {
+            return targetProperties;
         }
         EntityMetadata targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigatePropertyType);
-        return targetEntityMetadata.getSingleKeyProperty();
+        return new String[]{targetEntityMetadata.getSingleKeyProperty()};
     }
 
     public Class<?> getMappingClass() {
@@ -116,13 +116,13 @@ public class NavigateMetadata {
     }
 
 
-    public String getSelfMappingProperty() {
-        return selfMappingProperty;
+    public String[] getSelfMappingProperties() {
+        return selfMappingProperties;
     }
 
 
-    public String getTargetMappingProperty() {
-        return targetMappingProperty;
+    public String[] getTargetMappingProperties() {
+        return targetMappingProperties;
     }
 
 
@@ -135,20 +135,27 @@ public class NavigateMetadata {
     }
 
 
-    public ColumnMetadata getSelfRelationColumn() {
-        String selfPropertyName = getSelfPropertyOrPrimary();
-        return entityMetadata.getColumnNotNull(selfPropertyName);
+    public ColumnMetadata[] getSelfRelationColumn() {
+        String[] selfPropertyNames = getSelfPropertiesOrPrimary();
+        ColumnMetadata[] columnMetadatas = new ColumnMetadata[selfPropertyNames.length];
+        for (int i = 0; i < selfPropertyNames.length; i++) {
+
+            ColumnMetadata column = entityMetadata.getColumnNotNull(selfPropertyNames[i]);
+            columnMetadatas[i]=column;
+        }
+        return columnMetadatas;
     }
 
     public SQLExpression1<WherePredicate<?>> getPredicateFilterExpression() {
         return predicateFilterExpression;
     }
+
     public boolean hasPredicateFilterExpression() {
-        return predicateFilterExpression!=null;
+        return predicateFilterExpression != null;
     }
 
-    public void predicateFilterApply(WherePredicate<?> wherePredicate){
-        if(predicateFilterExpression!=null){
+    public void predicateFilterApply(WherePredicate<?> wherePredicate) {
+        if (predicateFilterExpression != null) {
             predicateFilterExpression.apply(wherePredicate);
         }
     }

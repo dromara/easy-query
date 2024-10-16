@@ -13,15 +13,15 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class RelationExtraEntityImpl implements RelationExtraEntity{
+public class RelationExtraEntityImpl implements RelationExtraEntity {
     private final Object entity;
     private final Map<String, Object> extraColumns;
     private final Map<String, RelationExtraColumn> relationExtraColumnMap;
 
-    public RelationExtraEntityImpl(Object entity, Map<String,Object> extraColumns, Map<String, RelationExtraColumn> relationExtraColumnMap){
+    public RelationExtraEntityImpl(Object entity, Map<String, Object> extraColumns, Map<String, RelationExtraColumn> relationExtraColumnMap) {
         this.relationExtraColumnMap = relationExtraColumnMap;
-        Objects.requireNonNull(entity,"entity is null");
-        Objects.requireNonNull(extraColumns,"extraColumns is null");
+        Objects.requireNonNull(entity, "entity is null");
+        Objects.requireNonNull(extraColumns, "extraColumns is null");
 
         this.entity = entity;
         this.extraColumns = extraColumns;
@@ -31,14 +31,24 @@ public class RelationExtraEntityImpl implements RelationExtraEntity{
         return entity;
     }
 
-    public Object getRelationExtraColumn(String propertyName){
-        RelationExtraColumn relationExtraColumn = relationExtraColumnMap.get(propertyName);
-        if(relationExtraColumn==null){
-            throw new EasyQueryInvalidOperationException(EasyClassUtil.getInstanceSimpleName(entity) +" cant get relation column:"+propertyName);
+    @Override
+    public Object[] getRelationExtraColumns(String[] propertyNames) {
+        Object[] values = new Object[propertyNames.length];
+        for (int i = 0; i < propertyNames.length; i++) {
+            values[i] = getRelationExtraColumn(propertyNames[i]);
         }
-        if(relationExtraColumn.isAppendRelationExtra()){
+        return values;
+    }
+
+    private Object getRelationExtraColumn(String propertyName) {
+
+        RelationExtraColumn relationExtraColumn = relationExtraColumnMap.get(propertyName);
+        if (relationExtraColumn == null) {
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getInstanceSimpleName(entity) + " cant get relation column:" + propertyName);
+        }
+        if (relationExtraColumn.isAppendRelationExtra()) {
             return extraColumns.get(propertyName);
-        }else{
+        } else {
             return relationExtraColumn.getColumnMetadata().getGetterCaller().apply(entity);
         }
     }

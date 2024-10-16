@@ -2,7 +2,6 @@ package com.easy.query.core.expression.sql.include;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -87,8 +86,8 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         includeParseContext.setIncludeQueryableExpression(queryableExpression);
         includeParseContext.setIncludeMappingQueryable(includeNavigateParams.getMappingQueryable());
 
-        includeParseContext.setSelfProperty(navigateMetadata.getSelfPropertyOrPrimary());
-        includeParseContext.setTargetProperty(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext));
+        includeParseContext.setSelfProperties(navigateMetadata.getSelfPropertiesOrPrimary());
+        includeParseContext.setTargetProperties(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
         boolean aliasEntity = !Objects.equals(entityMetadata.getEntityClass(), navigateMetadata.getEntityMetadata().getEntityClass());
 //        if (aliasEntity) {
 //            String selfPropertyOrPrimary = navigateMetadata.getSelfPropertyOrPrimary();
@@ -107,7 +106,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
             throw new EasyQueryInvalidOperationException("not found relation navigate property");
         }
 
-        List<Object> relationIds = relationExtraEntities.stream().map(o -> o.getRelationExtraColumn(navigateMetadata.getSelfPropertyOrPrimary()))
+        List<Object> relationIds = relationExtraEntities.stream().map(o -> o.getRelationExtraColumns(navigateMetadata.getSelfPropertiesOrPrimary()))
                 .filter(o -> o != null).distinct().collect(Collectors.toList());
 //        ColumnMetadata selfRelationColumn = entityMetadata.getColumnNotNull(includeParseContext.getSelfProperty());
 //        Property<Object, ?> relationPropertyGetter = selfRelationColumn.getGetterCaller();
@@ -121,7 +120,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         if (RelationTypeEnum.ManyToMany == navigateMetadata.getRelationType() && navigateMetadata.getMappingClass() != null) {
             confirmMappingRows(queryRelationGroupSize, includeParseContext, relationIds);
             EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
-            ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperty());
+            ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperties());
             String targetColumnName = mappingTargetColumnMetadata.getName();
             List<Object> targetIds = includeParseContext.getMappingRows().stream()
                     .map(o -> o.get(targetColumnName)).filter(Objects::nonNull)
@@ -164,11 +163,11 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 includeParseContext.getNavigatePropertyName(),
                 includeParseContext.getNavigateOriginalPropertyType(),
                 includeParseContext.getNavigatePropertyType(),
-                includeParseContext.getSelfProperty(),
-                includeParseContext.getTargetProperty(),
+                includeParseContext.getSelfProperties(),
+                includeParseContext.getTargetProperties(),
                 includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getMappingClass(),
-                includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getSelfMappingProperty(),
-                includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getTargetMappingProperty(),
+                includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getSelfMappingProperties(),
+                includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getTargetMappingProperties(),
                 includeResult,
                 includeParseContext.getMappingRows(),
                 includeParseContext.getNavigatePropertySetter(),

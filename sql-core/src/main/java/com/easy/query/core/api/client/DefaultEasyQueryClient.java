@@ -237,7 +237,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
     private <T> IncludeParserResult getIncludeParserResult(List<T> entities, NavigateMetadata navigateMetadata, LoadIncludeConfiguration loadIncludeConfiguration) {
         RelationTypeEnum relationType = navigateMetadata.getRelationType();
-        ColumnMetadata columnMetadata = navigateMetadata.getEntityMetadata().getColumnNotNull(navigateMetadata.getSelfPropertyOrPrimary());
+        ColumnMetadata columnMetadata = navigateMetadata.getEntityMetadata().getColumnNotNull(navigateMetadata.getSelfPropertiesOrPrimary());
         Property<Object, ?> getter = columnMetadata.getGetterCaller();
         List<Object> relationIds = entities.stream().map(o -> getter.apply(o))
                 .filter(o -> o != null).distinct().collect(Collectors.toList());
@@ -248,14 +248,14 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
             ClientQueryable<?> mappingQueryable = queryable(navigateMetadata.getMappingClass())
                     .where(o -> {
-                        o.in(navigateMetadata.getSelfMappingProperty(), includeRelationIdContext.getRelationIds());
+                        o.in(navigateMetadata.getSelfMappingProperties(), includeRelationIdContext.getRelationIds());
                         navigateMetadata.predicateFilterApply(o);
                     })
-                    .select(o -> o.column(navigateMetadata.getSelfMappingProperty()).column(navigateMetadata.getTargetMappingProperty()));
+                    .select(o -> o.column(navigateMetadata.getSelfMappingProperties()).column(navigateMetadata.getTargetMappingProperties()));
 
             mappingRows = EasyIncludeUtil.queryableGroupExecute(queryRelationGroupSize, mappingQueryable, includeRelationIdContext, relationIds, Query::toMaps);
             EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
-            ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperty());
+            ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperties());
             String targetColumnName = mappingTargetColumnMetadata.getName();
             List<Object> targetIds = mappingRows.stream()
                     .map(o -> o.get(targetColumnName)).filter(Objects::nonNull)
@@ -277,11 +277,11 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
                 navigateMetadata.getPropertyName(),
                 navigateMetadata.getNavigateOriginalPropertyType(),
                 navigateMetadata.getNavigatePropertyType(),
-                navigateMetadata.getSelfPropertyOrPrimary(),
-                navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),
+                navigateMetadata.getSelfPropertiesOrPrimary(),
+                navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext),
                 navigateMetadata.getMappingClass(),
-                navigateMetadata.getSelfMappingProperty(),
-                navigateMetadata.getTargetMappingProperty(),
+                navigateMetadata.getSelfMappingProperties(),
+                navigateMetadata.getTargetMappingProperties(),
                 includeResult,
                 mappingRows,
                 navigateMetadata.getSetter(), null, null);
@@ -303,7 +303,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             List<Object> relationIds = includeRelationIdContext.getRelationIds();
             return queryable.cloneQueryable().where(o -> {
                 o.and(() -> {
-                    o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationIds);
+                    o.in(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds);
                     if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
                         navigateMetadata.predicateFilterApply(o);
                     }

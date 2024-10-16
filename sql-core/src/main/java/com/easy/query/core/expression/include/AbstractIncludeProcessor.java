@@ -1,6 +1,5 @@
 package com.easy.query.core.expression.include;
 
-import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
@@ -65,7 +64,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         Class<?> collectionType = EasyClassUtil.getCollectionImplType(includeParserResult.getNavigateOriginalPropertyType());
         Map<Object, Collection<TNavigateEntity>> resultMap = new HashMap<>();
         for (RelationExtraEntity target : includes) {
-            Object targetRelationId = target.getRelationExtraColumn(targetColumnMetadataPropertyName);
+            Object targetRelationId = target.getRelationExtraColumns(targetColumnMetadataPropertyName);
             Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(targetRelationId, k -> (Collection<TNavigateEntity>) EasyClassUtil.newInstance(collectionType));
             objects.add((TNavigateEntity)target.getEntity());
         }

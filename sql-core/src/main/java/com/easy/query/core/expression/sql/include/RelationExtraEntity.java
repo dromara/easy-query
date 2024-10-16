@@ -9,5 +9,5 @@ package com.easy.query.core.expression.sql.include;
 public interface RelationExtraEntity {
     Object getEntity();
 
-    Object getRelationExtraColumn(String propertyName);
+    Object[] getRelationExtraColumns(String[] propertyNames);
 }

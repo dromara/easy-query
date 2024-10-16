@@ -5,6 +5,8 @@ import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.core.FilterContext;
+import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.TablePropColumn;

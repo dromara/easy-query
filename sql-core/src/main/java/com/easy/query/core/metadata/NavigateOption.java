@@ -1,6 +1,5 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -18,12 +17,12 @@ public class NavigateOption {
     private final Class<?> navigateOriginalPropertyType;
     private final Class<?> navigatePropertyType;
     private final RelationTypeEnum relationType;
-    private final String selfProperty;
-    private final String targetProperty;
+    private final String[] selfProperties;
+    private final String[] targetProperties;
     private final boolean basicType;
     private Class<?> mappingClass;
-    private String selfMappingProperty;
-    private String targetMappingProperty;
+    private String[] selfMappingProperties;
+    private String[] targetMappingProperties;
     private SQLExpression1<WherePredicate<?>> predicateFilterExpression;
 
     public NavigateOption(EntityMetadata entityMetadata,
@@ -31,16 +30,16 @@ public class NavigateOption {
                           Class<?> navigateOriginalPropertyType,
                           Class<?> navigatePropertyType,
                           RelationTypeEnum relationType,
-                          String selfProperty,
-                          String targetProperty){
+                          String[] selfProperties,
+                          String[] targetProperties){
 
         this.entityMetadata = entityMetadata;
         this.propertyName = propertyName;
         this.navigateOriginalPropertyType = navigateOriginalPropertyType;
         this.navigatePropertyType = navigatePropertyType;
         this.relationType = relationType;
-        this.selfProperty = selfProperty;
-        this.targetProperty = targetProperty;
+        this.selfProperties = selfProperties;
+        this.targetProperties = targetProperties;
         this.basicType = EasyClassUtil.isBasicType(navigatePropertyType);
     }
 
@@ -64,12 +63,12 @@ public class NavigateOption {
         return relationType;
     }
 
-    public String getSelfProperty() {
-        return selfProperty;
+    public String[] getSelfProperties() {
+        return selfProperties;
     }
 
-    public String getTargetProperty() {
-        return targetProperty;
+    public String[] getTargetProperties() {
+        return targetProperties;
     }
 
     public Class<?> getMappingClass() {
@@ -80,20 +79,20 @@ public class NavigateOption {
         this.mappingClass = mappingClass;
     }
 
-    public String getSelfMappingProperty() {
-        return selfMappingProperty;
+    public String[] getSelfMappingProperties() {
+        return selfMappingProperties;
     }
 
-    public void setSelfMappingProperty(String selfMappingProperty) {
-        this.selfMappingProperty = selfMappingProperty;
+    public void setSelfMappingProperties(String[] selfMappingProperties) {
+        this.selfMappingProperties = selfMappingProperties;
     }
 
-    public String getTargetMappingProperty() {
-        return targetMappingProperty;
+    public String[] getTargetMappingProperties() {
+        return targetMappingProperties;
     }
 
-    public void setTargetMappingProperty(String targetMappingProperty) {
-        this.targetMappingProperty = targetMappingProperty;
+    public void setTargetMappingProperties(String[] targetMappingProperties) {
+        this.targetMappingProperties = targetMappingProperties;
     }
 
     public SQLExpression1<WherePredicate<?>> getPredicateFilterExpression() {

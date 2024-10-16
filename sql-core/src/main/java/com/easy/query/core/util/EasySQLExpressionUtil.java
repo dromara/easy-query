@@ -657,7 +657,7 @@ public class EasySQLExpressionUtil {
             SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
             for (Map.Entry<NavigateMetadata, IncludeNavigateExpression> navigateKV : includes.entrySet()) {
                 NavigateMetadata navigateMetadata = navigateKV.getKey();
-                String selfPropertyOrPrimary = navigateMetadata.getSelfPropertyOrPrimary();
+                String selfPropertyOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
 
                 boolean hasSelfPropertyOrPrimary = false;
                 if (EasySQLSegmentUtil.isNotEmpty(projects)) {
@@ -692,7 +692,7 @@ public class EasySQLExpressionUtil {
         ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
         QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         RelationExtraMetadata relationExtraMetadata = expressionContext.getRelationExtraMetadata();
-        String targetPropertyOrPrimary = selfNavigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
+        String targetPropertyOrPrimary = selfNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
         SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
         boolean hasTargetPropertyOrPrimary = false;
         if (EasySQLSegmentUtil.isNotEmpty(projects)) {

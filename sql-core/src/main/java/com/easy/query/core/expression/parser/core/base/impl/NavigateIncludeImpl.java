@@ -55,10 +55,10 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
                         s.setPrintSQL(printSQL);
                         s.setPrintNavSQL(printSQL);
                     }).where(t -> {
-                        t.in(navigateMetadata.getSelfMappingProperty(), includeNavigateParams.getRelationIds());
+                        t.in(navigateMetadata.getSelfMappingProperties(), includeNavigateParams.getRelationIds());
                         navigateMetadata.predicateFilterApply(t);
                     })
-                    .select(o -> o.column(navigateMetadata.getSelfMappingProperty()).column(navigateMetadata.getTargetMappingProperty()));
+                    .select(o -> o.column(navigateMetadata.getSelfMappingProperties()).column(navigateMetadata.getTargetMappingProperties()));
             includeNavigateParams.setMappingQueryable(mappingQueryable);
         }
         return navigateMetadata;

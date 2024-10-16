@@ -45,7 +45,6 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
-import com.easy.query.core.exception.EasyQuerySQLException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.ValueFilter;
@@ -87,12 +86,10 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.fill.FillParams;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
-import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -1434,7 +1431,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     s.setPrintNavSQL(printNavSQL);
                 }).where(o -> {
                     o.and(() -> {
-                        o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationIds);
+                        o.in(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds);
                         if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
                             navigateMetadata.predicateFilterApply(o);
                         }
@@ -1458,7 +1455,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ClientQueryable<TProperty> firstQueryable = clientQueryable.cloneQueryable();
         firstQueryable.where(o -> {
             o.and(() -> {
-                o.eq(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationId);
+                o.eq(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationId);
                 if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
                     navigateMetadata.predicateFilterApply(o);
                 }

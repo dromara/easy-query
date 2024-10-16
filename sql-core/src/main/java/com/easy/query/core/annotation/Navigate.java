@@ -24,7 +24,7 @@ public @interface Navigate {
      * 当前对象的哪个属性关联目标对象,空表示使用当前对象的主键
      * @return
      */
-    String selfProperty() default "";
+    String[] selfProperty() default {};
     /**
      * 关联关系
      */
@@ -32,7 +32,7 @@ public @interface Navigate {
     /**
      * 当前对象的{@param selfProperty}属性关联目标的哪个属性,空表示使用目标对象的主键
      */
-    String targetProperty() default "";
+    String[] targetProperty() default {};
 
     /**
      * 多对多填写
@@ -46,14 +46,14 @@ public @interface Navigate {
      * 当前对象的{@param selfProperty}属性对应中间表的哪个属性,多对多不能为空
      * @return
      */
-    String selfMappingProperty() default "";
+    String[] selfMappingProperty() default {};
 
     /**
      * 多对多填写
      * 目标对象的{@param targetProperty}属性对应中间表的哪个属性,多对多不能为空
      * @return
      */
-    String targetMappingProperty() default "";
+    String[] targetMappingProperty() default {};
 
     /**
      * 属性是否是代理对象

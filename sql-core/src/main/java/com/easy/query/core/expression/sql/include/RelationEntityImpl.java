@@ -10,13 +10,13 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class RelationEntityImpl implements RelationExtraEntity{
+public class RelationEntityImpl implements RelationExtraEntity {
     private final Object entity;
     private final EntityMetadata entityMetadata;
 
-    public RelationEntityImpl(Object entity, EntityMetadata entityMetadata){
-        Objects.requireNonNull(entity,"entity is null");
-        Objects.requireNonNull(entityMetadata,"entityMetadata is null");
+    public RelationEntityImpl(Object entity, EntityMetadata entityMetadata) {
+        Objects.requireNonNull(entity, "entity is null");
+        Objects.requireNonNull(entityMetadata, "entityMetadata is null");
 
         this.entity = entity;
         this.entityMetadata = entityMetadata;
@@ -26,7 +26,11 @@ public class RelationEntityImpl implements RelationExtraEntity{
         return entity;
     }
 
-    public Object getRelationExtraColumn(String propertyName){
-        return entityMetadata.getColumnNotNull(propertyName).getGetterCaller().apply(entity);
+    public Object[] getRelationExtraColumns(String[] propertyNames) {
+        Object[] values = new Object[propertyNames.length];
+        for (int i = 0; i < propertyNames.length; i++) {
+            values[i] = entityMetadata.getColumnNotNull(propertyNames[i]).getGetterCaller().apply(entity);
+        }
+        return values;
     }
 }

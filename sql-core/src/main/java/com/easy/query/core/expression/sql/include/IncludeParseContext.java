@@ -16,8 +16,8 @@ import java.util.Map;
  */
 public class IncludeParseContext {
     private final IncludeNavigateParams includeNavigateParams;
-    private String selfProperty;
-    private String targetProperty;
+    private String[] selfProperties;
+    private String[] targetProperties;
     private String navigatePropertyName;
     private Class<?> navigateOriginalPropertyType;
     private Class<?> navigatePropertyType;
@@ -33,12 +33,12 @@ public class IncludeParseContext {
         this.includeNavigateParams = includeNavigateParams;
     }
 
-    public String getSelfProperty() {
-        return selfProperty;
+    public String[] getSelfProperties() {
+        return selfProperties;
     }
 
-    public void setSelfProperty(String selfProperty) {
-        this.selfProperty = selfProperty;
+    public void setSelfProperties(String[] selfProperties) {
+        this.selfProperties = selfProperties;
     }
 
     public String getNavigatePropertyName() {
@@ -93,12 +93,12 @@ public class IncludeParseContext {
         this.navigatePropertyType = navigatePropertyType;
     }
 
-    public String getTargetProperty() {
-        return targetProperty;
+    public String[] getTargetProperties() {
+        return targetProperties;
     }
 
-    public void setTargetProperty(String targetProperty) {
-        this.targetProperty = targetProperty;
+    public void setTargetProperties(String[] targetProperties) {
+        this.targetProperties = targetProperties;
     }
 
     public PropertySetterCaller<Object> getNavigatePropertySetter() {

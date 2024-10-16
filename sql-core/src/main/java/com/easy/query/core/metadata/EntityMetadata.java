@@ -75,9 +75,11 @@ import com.easy.query.core.sharding.initializer.ShardingEntityBuilder;
 import com.easy.query.core.sharding.initializer.ShardingInitOption;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.router.table.TableUnit;
+import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.core.util.EasyUtil;
@@ -294,10 +296,12 @@ public class EntityMetadata {
         }
     }
 
+
     private void createNavigateMetadata(boolean tableEntity, Navigate navigate, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
 
-        String selfProperty = tableEntity ? navigate.selfProperty() : null;
-        String targetProperty = tableEntity ? navigate.targetProperty() : null;
+        String[] selfProperties = tableEntity ? navigate.selfProperty() : EasyArrayUtil.EMPTY;
+        String[] targetProperties = tableEntity ? navigate.targetProperty() : EasyArrayUtil.EMPTY;
+        EasyNavigateUtil.checkProperties(selfProperties,targetProperties);
         RelationTypeEnum relationType = navigate.value();
         boolean toMany = relationType.equals(RelationTypeEnum.OneToMany) || relationType.equals(RelationTypeEnum.ManyToMany);
         Class<?> navigateType = getNavigateType(toMany, field, fastBeanProperty);
@@ -305,7 +309,7 @@ public class EntityMetadata {
             throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");
         }
 
-        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperty, targetProperty);
+        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties);
 
         if (tableEntity) {
             Class<? extends NavigateExtraFilterStrategy> extraFilterStrategyClass = navigate.extraFilter();
@@ -323,15 +327,15 @@ public class EntityMetadata {
             if (RelationTypeEnum.ManyToMany == relationType) {
                 //有中间表多对多
                 if (!Objects.equals(Object.class, navigate.mappingClass())) {
-                    if (EasyStringUtil.isBlank(navigate.selfMappingProperty())) {
+                    if (EasyArrayUtil.isEmpty(navigate.selfMappingProperty())) {
                         throw new IllegalArgumentException("relation type many to many self mapping property is empty");
                     }
-                    if (EasyStringUtil.isBlank(navigate.targetMappingProperty())) {
+                    if (EasyArrayUtil.isEmpty(navigate.targetMappingProperty())) {
                         throw new IllegalArgumentException("relation type many to many target mapping property is empty");
                     }
                     navigateOption.setMappingClass(navigate.mappingClass());
-                    navigateOption.setSelfMappingProperty(navigate.selfMappingProperty());
-                    navigateOption.setTargetMappingProperty(navigate.targetMappingProperty());
+                    navigateOption.setSelfMappingProperties(navigate.selfMappingProperty());
+                    navigateOption.setTargetMappingProperties(navigate.targetMappingProperty());
                 }
             }
         }
