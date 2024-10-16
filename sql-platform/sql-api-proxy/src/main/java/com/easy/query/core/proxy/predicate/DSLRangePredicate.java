@@ -134,28 +134,29 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
     }
 
     static <TProp> void range0(EntitySQLContext entitySQLContext, TableAvailable table, String property, boolean conditionLeft, TProp valLeft, boolean conditionRight, TProp valRight, SQLRangeEnum sqlRange) {
-        if (conditionLeft && conditionRight) {
-            entitySQLContext._whereAnd(() -> {
-                entitySQLContext.accept(new SQLPredicateImpl(filter -> {
-                    boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-                    filter.valueCompare(table, property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
-                    boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                    filter.valueCompare(table, property, valRight, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
-                }));
-            });
-        } else {
-            if (conditionLeft) {
-                entitySQLContext.accept(new SQLPredicateImpl(filter -> {
-                    boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-                    filter.valueCompare(table, property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
-                }));
-            }
-            if (conditionRight) {
-                entitySQLContext.accept(new SQLPredicateImpl(filter -> {
-                    boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                    filter.valueCompare(table, property, valLeft, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
-                }));
-            }
-        }
+        entitySQLContext.accept(new SQLPredicateImpl(filter -> {
+            filter.range(table,property,conditionLeft,valLeft,conditionRight,valRight,sqlRange);
+        }));
+//        if (conditionLeft && conditionRight) {
+//            entitySQLContext.accept(new SQLPredicateImpl(filter -> {
+//                boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
+//                filter.valueCompare(table, property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
+//                boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
+//                filter.valueCompare(table, property, valRight, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
+//            }));
+//        } else {
+//            if (conditionLeft) {
+//                entitySQLContext.accept(new SQLPredicateImpl(filter -> {
+//                    boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
+//                    filter.valueCompare(table, property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
+//                }));
+//            }
+//            if (conditionRight) {
+//                entitySQLContext.accept(new SQLPredicateImpl(filter -> {
+//                    boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
+//                    filter.valueCompare(table, property, valLeft, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
+//                }));
+//            }
+//        }
     }
 }

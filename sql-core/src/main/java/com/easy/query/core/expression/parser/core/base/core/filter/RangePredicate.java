@@ -203,26 +203,7 @@ public interface RangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, Fil
      */
     default TChain range(boolean condition, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
         if (condition) {
-            if (conditionLeft && conditionRight) {
-                getFilter().and(innerFilter -> {
-                    boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-                    innerFilter.valueCompare(this.getTable(), property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
-                    boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                    innerFilter.valueCompare(this.getTable(), property, valRight, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
-                });
-            } else {
-
-                if (conditionLeft) {
-                    boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-                    getFilter().valueCompare(this.getTable(), property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
-
-                }
-                if (conditionRight) {
-                    boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                    getFilter().valueCompare(this.getTable(), property, valLeft, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
-
-                }
-            }
+            getFilter().range(this.getTable(),property,conditionLeft,valLeft,conditionRight,valRight,sqlRange);
         }
         return castChain();
     }

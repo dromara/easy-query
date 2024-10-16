@@ -21,6 +21,8 @@ import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQueryUnexpectedException;
+import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyAesUtil;
@@ -1284,5 +1286,24 @@ public class GenericTest extends BaseTest {
     @Test
     public void test1(){
         Queryable<MyUserDTO> queryable = easyQuery.queryable(MyUserDTO.class);
+    }
+
+    @Test
+    public void testPrintSQL1(){
+        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyQuery.getRuntimeContext());
+        easyExpressionContext.setPrintSQL(false);
+        easyExpressionContext.setPrintNavSQL(false);
+        ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();
+        Assert.assertEquals(false,expressionContext.getPrintSQL());
+        Assert.assertEquals(false,expressionContext.getPrintNavSQL());
+    }
+    @Test
+    public void testPrintSQL2(){
+        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyQuery.getRuntimeContext());
+        easyExpressionContext.setPrintSQL(null);
+        easyExpressionContext.setPrintNavSQL(true);
+        ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();
+        Assert.assertNull(expressionContext.getPrintSQL());
+        Assert.assertEquals(true,expressionContext.getPrintNavSQL());
     }
 }

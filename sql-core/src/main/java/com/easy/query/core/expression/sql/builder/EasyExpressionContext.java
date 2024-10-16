@@ -339,6 +339,8 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.sharding = this.sharding;
         easyExpressionContext.hasSubQuery = this.hasSubQuery;
         easyExpressionContext.relationExtraMetadata = this.relationExtraMetadata;
+        easyExpressionContext.printSQL = this.printSQL;
+        easyExpressionContext.printNavSQL = this.printNavSQL;
         if (hasIncludes()) {
             easyExpressionContext.getIncludes().putAll(this.includes);
         }

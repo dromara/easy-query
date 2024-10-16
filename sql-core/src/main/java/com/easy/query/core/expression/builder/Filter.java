@@ -712,4 +712,6 @@ public interface Filter extends SQLNative<Filter> {
 
     Filter create();
     void valueCompare(TableAvailable table, String property, Object val, SQLPredicateCompare condition);
+
+    Filter range(TableAvailable table, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange);
 }
