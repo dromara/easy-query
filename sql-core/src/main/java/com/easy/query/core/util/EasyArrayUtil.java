@@ -1,6 +1,8 @@
 package com.easy.query.core.util;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -10,6 +12,7 @@ import java.util.function.Predicate;
  * @author xuejiaming
  */
 public class EasyArrayUtil {
+    public static String[] EMPTY = new String[0];
 //    public static boolean isArray(Object value){
 //        return value!=null&&value.getClass().isArray();
 //    }
@@ -43,7 +46,7 @@ public class EasyArrayUtil {
      *
      * @param first  第一个数组
      * @param second 第二个数组
-     * @param <T> 数组类型
+     * @param <T>    数组类型
      * @return 新的数组
      */
     public static <T> T[] concat(T[] first, T[] second) {

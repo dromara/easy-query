@@ -2,6 +2,10 @@ package com.easy.query.core.expression.parser.core.base.core.filter;
 
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * create time 2023/9/25 16:35
@@ -10,6 +14,8 @@ import com.easy.query.core.expression.parser.core.available.ChainCast;
  * @author xuejiaming
  */
 public interface ValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, FilterAvailable, ChainCast<TChain> {
+
+    TChain multiEq(boolean condition, String[] properties, List<Object> vals);
 
     /**
      * 大于 column > val

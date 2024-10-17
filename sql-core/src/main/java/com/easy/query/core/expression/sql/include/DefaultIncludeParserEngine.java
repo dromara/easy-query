@@ -2,7 +2,6 @@ package com.easy.query.core.expression.sql.include;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -16,6 +15,7 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.include.multi.RelationValueColumnMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
@@ -65,7 +65,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         int i = 0;
         for (TEntity entity : entities) {
             Map<String, Object> extraColumns = relationExtraMetadata.getRelationExtraColumnList().get(i);
-            RelationExtraEntity relationExtraEntity = new RelationExtraEntityImpl(entity, extraColumns, extraColumnMetadata);
+            RelationExtraEntity relationExtraEntity = new RelationExtraEntityImpl(entity, extraColumns, extraColumnMetadata,expressionContext.getRuntimeContext().getRelationValueFactory());
             relationExtraEntities.add(relationExtraEntity);
             i++;
         }
@@ -87,8 +87,8 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         includeParseContext.setIncludeQueryableExpression(queryableExpression);
         includeParseContext.setIncludeMappingQueryable(includeNavigateParams.getMappingQueryable());
 
-        includeParseContext.setSelfProperty(navigateMetadata.getSelfPropertyOrPrimary());
-        includeParseContext.setTargetProperty(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext));
+        includeParseContext.setSelfProperties(navigateMetadata.getSelfPropertiesOrPrimary());
+        includeParseContext.setTargetProperties(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
         boolean aliasEntity = !Objects.equals(entityMetadata.getEntityClass(), navigateMetadata.getEntityMetadata().getEntityClass());
 //        if (aliasEntity) {
 //            String selfPropertyOrPrimary = navigateMetadata.getSelfPropertyOrPrimary();
@@ -107,8 +107,8 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
             throw new EasyQueryInvalidOperationException("not found relation navigate property");
         }
 
-        List<Object> relationIds = relationExtraEntities.stream().map(o -> o.getRelationExtraColumn(navigateMetadata.getSelfPropertyOrPrimary()))
-                .filter(o -> o != null).distinct().collect(Collectors.toList());
+        List<List<Object>> relationIds = relationExtraEntities.stream().map(o -> o.getRelationExtraColumns(navigateMetadata.getSelfPropertiesOrPrimary()))
+                .filter(o ->!o.isNull()).distinct().map(o->o.getValues()).collect(Collectors.toList());
 //        ColumnMetadata selfRelationColumn = entityMetadata.getColumnNotNull(includeParseContext.getSelfProperty());
 //        Property<Object, ?> relationPropertyGetter = selfRelationColumn.getGetterCaller();
 //        List<Object> relationIds = result.stream().map(relationPropertyGetter::apply)
@@ -121,11 +121,17 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         if (RelationTypeEnum.ManyToMany == navigateMetadata.getRelationType() && navigateMetadata.getMappingClass() != null) {
             confirmMappingRows(queryRelationGroupSize, includeParseContext, relationIds);
             EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
-            ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperty());
-            String targetColumnName = mappingTargetColumnMetadata.getName();
-            List<Object> targetIds = includeParseContext.getMappingRows().stream()
-                    .map(o -> o.get(targetColumnName)).filter(Objects::nonNull)
+
+            RelationValueColumnMetadata relationValueColumnMetadata = runtimeContext.getRelationValueFactory().create(mappingEntityMetadata, navigateMetadata.getTargetMappingProperties());
+
+
+//            ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperties());
+//            String targetColumnName = mappingTargetColumnMetadata.getName();
+
+            List<List<Object>> targetIds = includeParseContext.getMappingRows().stream()
+                    .map(relationValueColumnMetadata::getRelationValue).filter(o->!o.isNull())
                     .distinct()
+                    .map(o->o.getValues())
                     .collect(Collectors.toList());
             relationIds.clear();
             relationIds.addAll(targetIds);
@@ -164,11 +170,11 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 includeParseContext.getNavigatePropertyName(),
                 includeParseContext.getNavigateOriginalPropertyType(),
                 includeParseContext.getNavigatePropertyType(),
-                includeParseContext.getSelfProperty(),
-                includeParseContext.getTargetProperty(),
+                includeParseContext.getSelfProperties(),
+                includeParseContext.getTargetProperties(),
                 includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getMappingClass(),
-                includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getSelfMappingProperty(),
-                includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getTargetMappingProperty(),
+                includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getSelfMappingProperties(),
+                includeParseContext.getIncludeNavigateParams().getNavigateMetadata().getTargetMappingProperties(),
                 includeResult,
                 includeParseContext.getMappingRows(),
                 includeParseContext.getNavigatePropertySetter(),
@@ -197,7 +203,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 //
 //    }
 
-    private <T> void confirmMappingRows(int queryRelationGroupSize, IncludeParseContext includeParseContext, List<T> relationIds) {
+    private void confirmMappingRows(int queryRelationGroupSize, IncludeParseContext includeParseContext, List<List<Object>> relationIds) {
 
         IncludeNavigateParams includeNavigateParams = includeParseContext.getIncludeNavigateParams();
 

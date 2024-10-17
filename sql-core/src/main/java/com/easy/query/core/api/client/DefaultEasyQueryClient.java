@@ -26,11 +26,12 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.include.IncludeProcessor;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.parser.core.base.MultiCollectionImpl;
 import com.easy.query.core.expression.sql.include.DefaultIncludeParserResult;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
+import com.easy.query.core.expression.sql.include.MultiRelationValue;
 import com.easy.query.core.expression.sql.include.RelationEntityImpl;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -41,10 +42,10 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyIncludeUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -237,10 +238,11 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
     private <T> IncludeParserResult getIncludeParserResult(List<T> entities, NavigateMetadata navigateMetadata, LoadIncludeConfiguration loadIncludeConfiguration) {
         RelationTypeEnum relationType = navigateMetadata.getRelationType();
-        ColumnMetadata columnMetadata = navigateMetadata.getEntityMetadata().getColumnNotNull(navigateMetadata.getSelfPropertyOrPrimary());
-        Property<Object, ?> getter = columnMetadata.getGetterCaller();
-        List<Object> relationIds = entities.stream().map(o -> getter.apply(o))
-                .filter(o -> o != null).distinct().collect(Collectors.toList());
+        List<ColumnMetadata> columnMetadataList = Arrays.stream(navigateMetadata.getSelfPropertiesOrPrimary()).map(self -> navigateMetadata.getEntityMetadata().getColumnNotNull(self)).collect(Collectors.toList());
+        List<List<Object>> relationIds = entities.stream().map(o -> {
+            List<Object> values = EasyCollectionUtil.select(columnMetadataList, (columnMetadata, i) -> columnMetadata.getGetterCaller().apply(o));
+            return new MultiRelationValue(values);
+        }).filter(o -> !o.isNull()).distinct().map(MultiRelationValue::getValues).collect(Collectors.toList());
         IncludeRelationIdContext includeRelationIdContext = new IncludeRelationIdContext();
         Integer queryRelationGroupSize = loadIncludeConfiguration.getGroupSize();
         List<Map<String, Object>> mappingRows = null;
@@ -248,18 +250,30 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
             ClientQueryable<?> mappingQueryable = queryable(navigateMetadata.getMappingClass())
                     .where(o -> {
-                        o.in(navigateMetadata.getSelfMappingProperty(), includeRelationIdContext.getRelationIds());
+                        o.relationIn(navigateMetadata.getSelfMappingProperties(), () -> includeRelationIdContext.getRelationIds());
                         navigateMetadata.predicateFilterApply(o);
                     })
-                    .select(o -> o.column(navigateMetadata.getSelfMappingProperty()).column(navigateMetadata.getTargetMappingProperty()));
+                    .select(o -> {
+                        for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
+                            o.column(selfMappingProperty);
+                        }
+                        for (String targetMappingProperty : navigateMetadata.getTargetMappingProperties()) {
+                            o.column(targetMappingProperty);
+                        }
+//                        o.column(navigateMetadata.getSelfMappingProperties()).column(navigateMetadata.getTargetMappingProperties())
+                    });
 
             mappingRows = EasyIncludeUtil.queryableGroupExecute(queryRelationGroupSize, mappingQueryable, includeRelationIdContext, relationIds, Query::toMaps);
             EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
-            ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperty());
-            String targetColumnName = mappingTargetColumnMetadata.getName();
-            List<Object> targetIds = mappingRows.stream()
-                    .map(o -> o.get(targetColumnName)).filter(Objects::nonNull)
+            List<ColumnMetadata> columnMetadataTargetList = Arrays.stream(navigateMetadata.getTargetMappingProperties()).map(target -> mappingEntityMetadata.getColumnNotNull(target)).collect(Collectors.toList());
+
+            List<List<Object>> targetIds = mappingRows.stream()
+                    .map(o -> {
+                        List<Object> values = EasyCollectionUtil.select(columnMetadataTargetList, (targetColumnMetadata, i) -> o.get(targetColumnMetadata.getName()));
+                        return new MultiRelationValue(values);
+                    }).filter(o -> !o.isNull())
                     .distinct()
+                    .map(MultiRelationValue::getValues)
                     .collect(Collectors.toList());
             relationIds.clear();
             relationIds.addAll(targetIds);
@@ -270,18 +284,18 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
         List<?> entityResult = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeQueryableExpression, includeRelationIdContext, relationIds, q -> q.toList());
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
-        List<RelationExtraEntity> includeResult = entityResult.stream().map(o -> new RelationEntityImpl(o, entityMetadata)).collect(Collectors.toList());
-        List<RelationExtraEntity> relationExtraEntities = entities.stream().map(o -> new RelationEntityImpl(o, navigateMetadata.getEntityMetadata())).collect(Collectors.toList());
+        List<RelationExtraEntity> includeResult = entityResult.stream().map(o -> new RelationEntityImpl(o, entityMetadata, runtimeContext.getRelationValueFactory())).collect(Collectors.toList());
+        List<RelationExtraEntity> relationExtraEntities = entities.stream().map(o -> new RelationEntityImpl(o, navigateMetadata.getEntityMetadata(), runtimeContext.getRelationValueFactory())).collect(Collectors.toList());
 
         return new DefaultIncludeParserResult(entityMetadata, relationExtraEntities, navigateMetadata.getRelationType(),
                 navigateMetadata.getPropertyName(),
                 navigateMetadata.getNavigateOriginalPropertyType(),
                 navigateMetadata.getNavigatePropertyType(),
-                navigateMetadata.getSelfPropertyOrPrimary(),
-                navigateMetadata.getTargetPropertyOrPrimary(runtimeContext),
+                navigateMetadata.getSelfPropertiesOrPrimary(),
+                navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext),
                 navigateMetadata.getMappingClass(),
-                navigateMetadata.getSelfMappingProperty(),
-                navigateMetadata.getTargetMappingProperty(),
+                navigateMetadata.getSelfMappingProperties(),
+                navigateMetadata.getTargetMappingProperties(),
                 includeResult,
                 mappingRows,
                 navigateMetadata.getSetter(), null, null);
@@ -300,10 +314,10 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             }
         }
         SQLFuncExpression<ClientQueryable<?>> queryableExpression = () -> {
-            List<Object> relationIds = includeRelationIdContext.getRelationIds();
+            List<List<Object>> relationIds = includeRelationIdContext.getRelationIds();
             return queryable.cloneQueryable().where(o -> {
                 o.and(() -> {
-                    o.in(navigateMetadata.getTargetPropertyOrPrimary(runtimeContext), relationIds);
+                    o.relationIn(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), () -> relationIds);
                     if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
                         navigateMetadata.predicateFilterApply(o);
                     }

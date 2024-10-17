@@ -18,6 +18,7 @@ import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverte
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.RelationColumnResult;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
@@ -657,64 +658,82 @@ public class EasySQLExpressionUtil {
             SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
             for (Map.Entry<NavigateMetadata, IncludeNavigateExpression> navigateKV : includes.entrySet()) {
                 NavigateMetadata navigateMetadata = navigateKV.getKey();
-                String selfPropertyOrPrimary = navigateMetadata.getSelfPropertyOrPrimary();
-
-                boolean hasSelfPropertyOrPrimary = false;
-                if (EasySQLSegmentUtil.isNotEmpty(projects)) {
-                    for (SQLSegment sqlSegment : projects.getSQLSegments()) {
-                        if (sqlSegment instanceof ColumnSegment) {
-                            ColumnSegment columnSegment = (ColumnSegment) sqlSegment;
-                            if (columnSegment.getTable() == table && Objects.equals(columnSegment.getPropertyName(), selfPropertyOrPrimary)) {
-                                hasSelfPropertyOrPrimary = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                String alias = "__relation__" + selfPropertyOrPrimary;
-                ColumnMetadata columnMetadata = navigateMetadata.getEntityMetadata().getColumnNotNull(selfPropertyOrPrimary);
-                RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(selfPropertyOrPrimary, alias, columnMetadata, !hasSelfPropertyOrPrimary));
-                if (relationExtraColumn == null) {
-                    if (!hasSelfPropertyOrPrimary) {
-                        sqlNative.sqlNativeSegment("{0}", c -> {
-                            c.expression(table, selfPropertyOrPrimary);
-                            c.setAlias(alias);
-                        });
-                    }
-                }
-
+                String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
+                appSelfRelationColumn(projects, sqlNative, table, navigateMetadata, relationExtraMetadata, selfPropertiesOrPrimary);
 
             }
         }
     }
 
-    public static void appendTargetExtraTargetProperty(NavigateMetadata selfNavigateMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLNative<?> sqlNative, TableAvailable table) {
-        ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
-        QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
-        RelationExtraMetadata relationExtraMetadata = expressionContext.getRelationExtraMetadata();
-        String targetPropertyOrPrimary = selfNavigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
-        SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
-        boolean hasTargetPropertyOrPrimary = false;
+    private static void appSelfRelationColumn(SQLBuilderSegment projects, SQLNative<?> sqlNative, TableAvailable table, NavigateMetadata navigateMetadata, RelationExtraMetadata relationExtraMetadata, String[] selfPropertiesOrPrimary) {
+        List<RelationColumnResult> relationColumnResults = EasyCollectionUtil.select(selfPropertiesOrPrimary, (selfPropertyOrPrimary, index) -> new RelationColumnResult(selfPropertyOrPrimary));
+
         if (EasySQLSegmentUtil.isNotEmpty(projects)) {
             for (SQLSegment sqlSegment : projects.getSQLSegments()) {
                 if (sqlSegment instanceof ColumnSegment) {
                     ColumnSegment columnSegment = (ColumnSegment) sqlSegment;
-                    if (columnSegment.getTable() == table && Objects.equals(columnSegment.getPropertyName(), targetPropertyOrPrimary)) {
-                        hasTargetPropertyOrPrimary = true;
-                        break;
+                    if (columnSegment.getTable() == table) {
+                        RelationColumnResult columnResult = EasyCollectionUtil.firstOrDefault(relationColumnResults, relationColumnResult -> Objects.equals(relationColumnResult.getProperty(), columnSegment.getPropertyName()), null);
+                        if (columnResult != null) {
+                            columnResult.setExists(true);
+                        }
                     }
                 }
             }
         }
-        String alias = "__relation__" + targetPropertyOrPrimary;
-        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(targetPropertyOrPrimary);
-        RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(targetPropertyOrPrimary, alias, columnMetadata, !hasTargetPropertyOrPrimary));
-        if (relationExtraColumn == null) {
-            if (!hasTargetPropertyOrPrimary) {
-                sqlNative.sqlNativeSegment("{0}", c -> {
-                    c.expression(table, targetPropertyOrPrimary);
-                    c.setAlias(alias);
-                });
+        for (RelationColumnResult relationColumnResult : relationColumnResults) {
+            String alias = "__relation__" + relationColumnResult.getProperty();
+            ColumnMetadata columnMetadata = navigateMetadata.getEntityMetadata().getColumnNotNull(relationColumnResult.getProperty());
+            RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(relationColumnResult.getProperty(), alias, columnMetadata, !relationColumnResult.isExists()));
+            if (relationExtraColumn == null) {
+                if (!relationColumnResult.isExists()) {
+                    sqlNative.sqlNativeSegment("{0}", c -> {
+                        c.expression(table, relationColumnResult.getProperty());
+                        c.setAlias(alias);
+                    });
+                }
+            }
+        }
+    }
+
+
+    public static void appendTargetExtraTargetProperty(NavigateMetadata selfNavigateMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLNative<?> sqlNative, TableAvailable table) {
+        ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
+        QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
+        RelationExtraMetadata relationExtraMetadata = expressionContext.getRelationExtraMetadata();
+        String[] targetPropertiesOrPrimary = selfNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+        SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
+        appTargetRelationColumn(projects, sqlNative, table, selfNavigateMetadata, relationExtraMetadata, targetPropertiesOrPrimary);
+    }
+
+    private static void appTargetRelationColumn(SQLBuilderSegment projects, SQLNative<?> sqlNative, TableAvailable table, NavigateMetadata navigateMetadata, RelationExtraMetadata relationExtraMetadata, String[] targetPropertiesOrPrimary) {
+        List<RelationColumnResult> relationColumnResults = EasyCollectionUtil.select(targetPropertiesOrPrimary, (targetPropertyOrPrimary, index) -> new RelationColumnResult(targetPropertyOrPrimary));
+        if (EasySQLSegmentUtil.isNotEmpty(projects)) {
+            for (SQLSegment sqlSegment : projects.getSQLSegments()) {
+                if (sqlSegment instanceof ColumnSegment) {
+                    ColumnSegment columnSegment = (ColumnSegment) sqlSegment;
+                    if (columnSegment.getTable() == table) {
+                        RelationColumnResult columnResult = EasyCollectionUtil.firstOrDefault(relationColumnResults, relationColumnResult -> Objects.equals(relationColumnResult.getProperty(), columnSegment.getPropertyName()), null);
+                        if (columnResult != null) {
+                            columnResult.setExists(true);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        for (RelationColumnResult relationColumnResult : relationColumnResults) {
+            String alias = "__relation__" + relationColumnResult.getProperty();
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(relationColumnResult.getProperty());
+            RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(relationColumnResult.getProperty(), alias, columnMetadata, !relationColumnResult.isExists()));
+            if (relationExtraColumn == null) {
+                if (!relationColumnResult.isExists()) {
+                    sqlNative.sqlNativeSegment("{0}", c -> {
+                        c.expression(table, relationColumnResult.getProperty());
+                        c.setAlias(alias);
+                    });
+                }
             }
         }
     }

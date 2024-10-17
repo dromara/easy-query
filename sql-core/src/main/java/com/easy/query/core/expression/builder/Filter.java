@@ -9,10 +9,13 @@ import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.MultiCollection;
 import com.easy.query.core.func.SQLFunction;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/6/22 14:39
@@ -129,6 +132,7 @@ public interface Filter extends SQLNative<Filter> {
      * 集合为空返回False
      */
     Filter in(TableAvailable table, String property, Collection<?> collection);
+    Filter relationIn(TableAvailable table, String[] properties, Supplier<List<List<Object>>> relationIdCreator);
 
     <TProperty> Filter in(TableAvailable table, String property, TProperty[] collection);
 

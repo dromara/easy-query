@@ -12,6 +12,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.MultiCollection;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
@@ -21,6 +22,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnExistsSu
 import com.easy.query.core.expression.segment.condition.predicate.ColumnInSubQueryPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnNoneSubQueryPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnNullAssertPredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnRelationCollectionPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnTrueOrFalsePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
@@ -40,7 +42,9 @@ import com.easy.query.core.util.EasySQLUtil;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/6/22 14:50
@@ -273,6 +277,13 @@ public class FilterImpl implements Filter {
             nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, property, collection, getReallyPredicateCompare(SQLPredicateCompareEnum.IN), expressionContext));
             next();
         }
+        return this;
+    }
+
+    @Override
+    public Filter relationIn(TableAvailable table, String[] properties, Supplier<List<List<Object>>> relationIdCreator) {
+        nextPredicateSegment.setPredicate(new ColumnRelationCollectionPredicate(table, properties, relationIdCreator, getReallyPredicateCompare(SQLPredicateCompareEnum.IN), expressionContext));
+        next();
         return this;
     }
 

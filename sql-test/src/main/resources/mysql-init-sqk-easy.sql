@@ -216,3 +216,37 @@ create table t_user_extra
     last_name varchar(32)  null comment '名',
     birthday datetime  null comment '生日'
 )comment '用户额外信息表';
+
+
+create table my_user
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    name varchar(32)  null comment '姓名',
+    age int  null comment '年龄'
+)comment '我的用户';
+
+create table my_company_info
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    name varchar(32)  null comment '企业名称'
+)comment '我的企业';
+
+
+create table my_com_user
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    com_id varchar(32)  null comment '企业id',
+    user_id varchar(32)  null comment '用户id',
+    gw varchar(32)  null comment '岗位'
+)comment '我在企业的信息';
+
+
+
+create table my_sign_up
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    com_id varchar(32)  null comment '企业id',
+    user_id varchar(32)  null comment '用户id',
+    content varchar(32)  null comment '报名内容',
+    time datetime  null comment '报名时间'
+)comment '我在报名';

@@ -1,6 +1,5 @@
 package com.easy.query.core.expression.sql.include;
 
-import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -22,13 +21,13 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     private final String navigatePropertyName;
     private final Class<?> navigateOriginalPropertyType;
     private final Class<?> navigatePropertyType;
-    private final String selfProperty;
-    private final String targetProperty;
+    private final String[] selfProperties;
+    private final String[] targetProperties;
     private final List<RelationExtraEntity> includeResult;
 
     private Class<?> mappingClass;
-    private String selfMappingProperty;
-    private String targetMappingProperty;
+    private String[] selfMappingProperties;
+    private String[] targetMappingProperties;
     private List<Map<String, Object>> mappingRows;
     private final PropertySetterCaller<Object> setter;
     private final List<NavigateFlatMetadata> navigateFlatMetadataList;
@@ -40,11 +39,11 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
                                       String navigatePropertyName,
                                       Class<?> navigateOriginalPropertyType,
                                       Class<?> navigatePropertyType,
-                                      String selfProperty,
-                                      String targetProperty,
+                                      String[] selfProperties,
+                                      String[] targetProperties,
                                       Class<?> mappingClass,
-                                      String selfMappingProperty,
-                                      String targetMappingProperty,
+                                      String[] selfMappingProperties,
+                                      String[] targetMappingProperties,
                                       List<RelationExtraEntity> includeResult,
                                       List<Map<String, Object>> mappingRows,
                                       PropertySetterCaller<Object> setter,
@@ -57,11 +56,11 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
         this.navigatePropertyName = navigatePropertyName;
         this.navigateOriginalPropertyType = navigateOriginalPropertyType;
         this.navigatePropertyType = navigatePropertyType;
-        this.selfProperty = selfProperty;
-        this.targetProperty = targetProperty;
+        this.selfProperties = selfProperties;
+        this.targetProperties = targetProperties;
         this.mappingClass = mappingClass;
-        this.selfMappingProperty = selfMappingProperty;
-        this.targetMappingProperty = targetMappingProperty;
+        this.selfMappingProperties = selfMappingProperties;
+        this.targetMappingProperties = targetMappingProperties;
         this.includeResult = includeResult;
         this.mappingRows = mappingRows;
         this.setter = setter;
@@ -94,13 +93,13 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     }
 
     @Override
-    public String getSelfProperty() {
-        return selfProperty;
+    public String[] getSelfProperties() {
+        return selfProperties;
     }
 
     @Override
-    public String getTargetProperty() {
-        return targetProperty;
+    public String[] getTargetProperties() {
+        return targetProperties;
     }
 
     @Override
@@ -109,13 +108,13 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     }
 
     @Override
-    public String getSelfMappingProperty() {
-        return selfMappingProperty;
+    public String[] getSelfMappingProperties() {
+        return selfMappingProperties;
     }
 
     @Override
-    public String getTargetMappingProperty() {
-        return targetMappingProperty;
+    public String[] getTargetMappingProperties() {
+        return targetMappingProperties;
     }
 
     @Override

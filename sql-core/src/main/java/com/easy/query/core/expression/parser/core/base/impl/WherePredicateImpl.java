@@ -2,6 +2,7 @@ package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
@@ -10,9 +11,17 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.MultiCollection;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
+import com.easy.query.core.util.EasyArrayUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author xuejiaming
@@ -38,6 +47,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     public WherePredicate<T1> castChain() {
         return this;
     }
+
     @Override
     public WherePredicate<T1> columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
         if (condition) {
@@ -51,6 +61,33 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
         if (condition) {
             TableAvailable rightTable = sub.getTable();
             getFilter().valueColumnFilter(table, property1, rightTable, property2, sqlPredicateCompare);
+        }
+        return castChain();
+    }
+
+    @Override
+    public <T2> WherePredicate<T1> multiEq(boolean condition, EntitySQLTableOwner<T2> sub, String[] properties1, String[] properties2) {
+        if (condition) {
+            if (EasyArrayUtil.isEmpty(properties1)) {
+                throw new EasyQueryInvalidOperationException("properties1 is empty");
+            }
+            if (EasyArrayUtil.isEmpty(properties2)) {
+                throw new EasyQueryInvalidOperationException("properties2 is empty");
+            }
+            if (properties1.length != properties2.length) {
+                throw new EasyQueryInvalidOperationException("properties1.length != properties2.length");
+            }
+            if (properties1.length == 1) {
+                eq(sub, properties1[0], properties2[0]);
+            } else {
+                and(() -> {
+                    for (int i = 0; i < properties1.length; i++) {
+                        eq(sub, properties1[i], properties2[i]);
+                    }
+                });
+            }
+
+
         }
         return castChain();
     }
@@ -125,7 +162,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
             getFilter().and(f -> {
                 Filter filter = filterContext.getFilter();
                 filterContext.setFilter(f);
-                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, filterContext),new WherePredicateImpl<>(t2WherePredicate.getTable(), filterContext));
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, filterContext), new WherePredicateImpl<>(t2WherePredicate.getTable(), filterContext));
                 filterContext.setFilter(filter);
             });
         }
@@ -172,7 +209,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
             getFilter().or(f -> {
                 Filter filter = filterContext.getFilter();
                 filterContext.setFilter(f);
-                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, filterContext),new WherePredicateImpl<>(t2WherePredicate.getTable(), filterContext));
+                sqlWherePredicateSQLExpression.apply(new WherePredicateImpl<>(table, filterContext), new WherePredicateImpl<>(t2WherePredicate.getTable(), filterContext));
                 filterContext.setFilter(filter);
             });
         }
@@ -181,7 +218,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
 
     @Override
     public <T2> WherePredicate<T2> withOther(WherePredicate<T2> wherePredicate) {
-        return new WherePredicateImpl<>(wherePredicate.getTable(),filterContext);
+        return new WherePredicateImpl<>(wherePredicate.getTable(), filterContext);
     }
 
     @Override
@@ -192,5 +229,28 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public TableAvailable getTable() {
         return table;
+    }
+
+
+    @Override
+    public WherePredicate<T1> multiEq(boolean condition, String[] properties, List<Object> vals) {
+        if (condition) {
+            if (EasyArrayUtil.isEmpty(properties)) {
+                throw new EasyQueryInvalidOperationException("properties is empty");
+            }
+            if (EasyCollectionUtil.isEmpty(vals)) {
+                throw new EasyQueryInvalidOperationException("vals is empty");
+            }
+            if (properties.length != vals.size()) {
+                throw new EasyQueryInvalidOperationException("properties.length != vals.size()");
+            }
+            if (properties.length == 1) {
+                eq(properties[0], vals.get(0));
+            } else {
+
+                throw new UnsupportedOperationException("还没实现");
+            }
+        }
+        return this;
     }
 }

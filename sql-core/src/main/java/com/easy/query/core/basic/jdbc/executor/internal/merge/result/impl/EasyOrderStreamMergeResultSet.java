@@ -31,7 +31,7 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet 
     private final StreamMergeContext streamMergeContext;
     private final StreamResultSet streamResultSet;
     private List<Comparable<?>> orderValues;
-    private boolean closed=false;
+    private boolean closed = false;
 
     public EasyOrderStreamMergeResultSet(StreamMergeContext streamMergeContext, StreamResultSet streamResultSet) throws SQLException {
 
@@ -57,8 +57,8 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet 
         ArrayList<Comparable<?>> orders = new ArrayList<>(streamMergeContext.getOrders().size());
         for (PropertyOrder order : streamMergeContext.getOrders()) {
             // local date time等之类的
-            Object value = this.streamResultSet.getObject(order.columnIndex()+1);
-            if (value==null||value instanceof Comparable<?>) {
+            Object value = this.streamResultSet.getObject(order.columnIndex() + 1);
+            if (value == null || value instanceof Comparable<?>) {
                 orders.add((Comparable<?>) value);
             } else {
                 throw new UnsupportedOperationException(" order by value:" + order.propertyName() + "must implements Comparable<?>");
@@ -91,13 +91,14 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet 
 
     @Override
     public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
-        return streamResultSet.getObject(columnIndex,type);
+        return streamResultSet.getObject(columnIndex, type);
     }
 
     @Override
     public boolean wasNull() throws SQLException {
         return streamResultSet.wasNull();
     }
+
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
         return streamResultSet.getMetaData();
@@ -209,7 +210,7 @@ public class EasyOrderStreamMergeResultSet implements OrderStreamMergeResultSet 
         int i = 0;
         boolean reverseMerge = streamMergeContext.isReverseMerge();
         for (PropertyOrder order : streamMergeContext.getOrders()) {
-            int compared = shardingComparer.compare(orderValues.get(i), o.compareValues().get(i), order.asc()==!reverseMerge);
+            int compared = shardingComparer.compare(orderValues.get(i), o.compareValues().get(i), order.asc() == !reverseMerge);
             if (compared != 0) {
                 return compared;
             }

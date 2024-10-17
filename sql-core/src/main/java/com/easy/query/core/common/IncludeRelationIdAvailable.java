@@ -9,5 +9,5 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface IncludeRelationIdAvailable {
-    List<Object> getRelationIds();
+    List<List<Object>> getRelationIds();
 }

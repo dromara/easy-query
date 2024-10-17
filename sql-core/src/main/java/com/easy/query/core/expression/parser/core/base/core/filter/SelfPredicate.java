@@ -40,6 +40,7 @@ public interface SelfPredicate<T1,TChain> extends ChainCast<TChain> {
     default <T2> WherePredicate<T1> eq(boolean condition, EntitySQLTableOwner<T2> sub, String property1, String property2) {
         return compareSelf(condition, sub, property1, property2, SQLPredicateCompareEnum.EQ);
     }
+    <T2> WherePredicate<T1> multiEq(boolean condition, EntitySQLTableOwner<T2> sub, String[] properties1, String[] properties2);
 
     default <T2> WherePredicate<T1> ne(EntitySQLTableOwner<T2> sub, String property1, String property2) {
         return ne(true, sub, property1, property2);

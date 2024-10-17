@@ -5,6 +5,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.MultiCollectionImpl;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.IncludeNavigateParams;
@@ -51,14 +52,21 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
             ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
             Boolean printSQL = EasyOptionUtil.isPrintNavSQL(expressionContext);
             ClientQueryable<?> mappingQueryable = mappingQuery
-                    .configure(s->{
+                    .configure(s -> {
                         s.setPrintSQL(printSQL);
                         s.setPrintNavSQL(printSQL);
                     }).where(t -> {
-                        t.in(navigateMetadata.getSelfMappingProperty(), includeNavigateParams.getRelationIds());
+                        t.relationIn( navigateMetadata.getSelfMappingProperties(), () -> includeNavigateParams.getRelationIds());
                         navigateMetadata.predicateFilterApply(t);
                     })
-                    .select(o -> o.column(navigateMetadata.getSelfMappingProperty()).column(navigateMetadata.getTargetMappingProperty()));
+                    .select(o -> {
+                        for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
+                            o.column(selfMappingProperty);
+                        }
+                        for (String targetMappingProperty : navigateMetadata.getTargetMappingProperties()) {
+                            o.column(targetMappingProperty);
+                        }
+                    });
             includeNavigateParams.setMappingQueryable(mappingQueryable);
         }
         return navigateMetadata;
@@ -83,7 +91,7 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         } else {
             queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_TRACKING);
         }
-        return queryable.configure(s->{
+        return queryable.configure(s -> {
             s.setPrintSQL(printNavSQL);
             s.setPrintNavSQL(printNavSQL);
         });

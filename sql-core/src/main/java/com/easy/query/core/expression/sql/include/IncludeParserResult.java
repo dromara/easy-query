@@ -37,14 +37,14 @@ public interface IncludeParserResult {
      */
     Class<?> getNavigatePropertyType();
 
-    String getSelfProperty();
+    String[] getSelfProperties();
 
-    String getTargetProperty();
+    String[] getTargetProperties();
     Class<?> getMappingClass();
 
-    String getSelfMappingProperty();
+    String[] getSelfMappingProperties();
 
-    String getTargetMappingProperty();
+    String[] getTargetMappingProperties();
 
     List<RelationExtraEntity> getIncludeResult();
     List<Map<String, Object>> getMappingRows();

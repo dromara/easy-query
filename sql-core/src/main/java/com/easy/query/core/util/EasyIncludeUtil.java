@@ -7,6 +7,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * create time 2024/4/25 08:38
@@ -16,14 +17,14 @@ import java.util.List;
  */
 public class EasyIncludeUtil {
 
-    public static <TR, TProperty> List<TR> queryableGroupExecute(int queryRelationGroupSize, ClientQueryable<?> includeQueryable, IncludeRelationIdAvailable includeRelationIdAvailable, List<TProperty> relationIds, SQLFuncExpression1<ClientQueryable<?>, List<TR>> produce) {
+    public static <TR> List<TR> queryableGroupExecute(int queryRelationGroupSize, ClientQueryable<?> includeQueryable, IncludeRelationIdAvailable includeRelationIdAvailable, List<List<Object>> relationIds, SQLFuncExpression1<ClientQueryable<?>, List<TR>> produce) {
 //        if(includeQueryable.getSQLEntityExpressionBuilder().hasLimit()){
 //            includeNavigateParams.setLimit(true);
 //        }
         return queryableExpressionGroupExecute(queryRelationGroupSize, () -> includeQueryable, includeRelationIdAvailable, relationIds, produce);
     }
 
-    public static <TR, TProperty> List<TR> queryableExpressionGroupExecute(int queryRelationGroupSize, SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression, IncludeRelationIdAvailable includeRelationIdAvailable, List<TProperty> relationIds, SQLFuncExpression1<ClientQueryable<?>, List<TR>> produce) {
+    public static <TR> List<TR> queryableExpressionGroupExecute(int queryRelationGroupSize, SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression, IncludeRelationIdAvailable includeRelationIdAvailable, List<List<Object>> relationIds, SQLFuncExpression1<ClientQueryable<?>, List<TR>> produce) {
 //        int queryRelationGroupSize = includeNavigateParams.getQueryRelationGroupSize(easyQueryOption.getRelationGroupSize());
 
         if (relationIds.size() <= queryRelationGroupSize) {
@@ -32,7 +33,7 @@ public class EasyIncludeUtil {
         } else {
             ArrayList<TR> result = new ArrayList<>(relationIds.size());
             int i = 0;
-            for (TProperty relationId : relationIds) {
+            for (List<Object> relationId : relationIds) {
                 i++;
                 includeRelationIdAvailable.getRelationIds().add(relationId);
                 if ((i % queryRelationGroupSize) == 0) {

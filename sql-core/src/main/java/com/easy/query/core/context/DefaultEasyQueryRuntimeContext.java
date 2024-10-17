@@ -26,6 +26,8 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
+import com.easy.query.core.expression.sql.include.multi.DefaultRelationValueFactory;
+import com.easy.query.core.expression.sql.include.multi.RelationValueFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.job.EasyTimeJobManager;
@@ -78,6 +80,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final SQLFunc sqlFunc;
     private final Column2MapKeyConversion column2MapKeyConversion;
     private final JdbcSQLPrinter jdbcSQLPrinter;
+    private final RelationValueFactory relationValueFactory;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -112,7 +115,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           SQLParameterPrintFormat sqlParameterPrintFormat,
                                           SQLFunc sqlFunc,
                                           Column2MapKeyConversion column2MapKeyConversion,
-                                          JdbcSQLPrinter jdbcSQLPrinter) {
+                                          JdbcSQLPrinter jdbcSQLPrinter,
+                                          RelationValueFactory relationValueFactory) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -147,6 +151,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.sqlFunc = sqlFunc;
         this.column2MapKeyConversion = column2MapKeyConversion;
         this.jdbcSQLPrinter = jdbcSQLPrinter;
+        this.relationValueFactory = relationValueFactory;
     }
 
     @Override
@@ -318,5 +323,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public JdbcSQLPrinter getJdbcSQLPrinter() {
         return jdbcSQLPrinter;
+    }
+
+    @Override
+    public RelationValueFactory getRelationValueFactory() {
+        return relationValueFactory;
     }
 }
