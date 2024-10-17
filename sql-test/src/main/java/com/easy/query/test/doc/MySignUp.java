@@ -27,6 +27,7 @@ public class MySignUp implements ProxyEntityAvailable<MySignUp, MySignUpProxy> {
     private String comId;
     private String userId;
     private LocalDateTime time;
+    private String content;
     @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = {"comId", "userId"}, targetProperty = {"comId", "userId"})
     private MyComUser comUser;
 }

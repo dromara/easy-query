@@ -14,7 +14,7 @@ import lombok.Data;
  * @author xuejiaming
  */
 @Data
-@Table("my_company")
+@Table("my_company_info")
 @EntityProxy
 public class MyCompany implements ProxyEntityAvailable<MyCompany , MyCompanyProxy> {
     @Column(primaryKey = true)

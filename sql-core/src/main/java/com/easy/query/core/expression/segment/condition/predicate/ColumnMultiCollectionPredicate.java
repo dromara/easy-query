@@ -63,7 +63,7 @@ public class ColumnMultiCollectionPredicate implements ValuesPredicate, Sharding
             int i=0;
             for (List<Object> collection : collections) {
                 if(i!=0){
-                    sql.append(" ").append(SQLKeywordEnum.AND.toSQL()).append(" ");
+                    sql.append(" ").append(SQLKeywordEnum.OR.toSQL()).append(" ");
                 }
                 appendProperty(columnMetadataList,sql,toSQLContext,collection);
                 i++;
