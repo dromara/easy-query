@@ -63,6 +63,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
+import com.easy.query.core.expression.parser.core.base.MultiCollectionImpl;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -1408,15 +1409,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             }
 
             SQLFuncExpression<ClientQueryable<?>> queryableExpression = () -> {
-                List<Object> relationIds = includeNavigateParams.getRelationIds();
+                List<List<Object>> relationIds = includeNavigateParams.getRelationIds();
                 if (hasLimit) {
                     if (EasyCollectionUtil.isNotEmpty(relationIds) && EasyCollectionUtil.isNotSingle(relationIds)) {
-                        Iterator<Object> iterator = relationIds.iterator();
-                        Object firstRelationId = iterator.next();
+                        Iterator<List<Object>> iterator = relationIds.iterator();
+                        List<Object> firstRelationId = iterator.next();
                         ClientQueryable<TProperty> firstQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, firstRelationId);
                         ArrayList<ClientQueryable<TProperty>> otherQueryable = new ArrayList<>();
                         while (iterator.hasNext()) {
-                            Object nextRelationId = iterator.next();
+                            List<Object> nextRelationId = iterator.next();
                             ClientQueryable<TProperty> nextQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, nextRelationId);
                             otherQueryable.add(nextQueryable);
                         }
@@ -1431,7 +1432,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     s.setPrintNavSQL(printNavSQL);
                 }).where(o -> {
                     o.and(() -> {
-                        o.in(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds);
+                        o.relationIn( navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), ()->relationIds);
                         if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
                             navigateMetadata.predicateFilterApply(o);
                         }
@@ -1450,12 +1451,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return this;
     }
 
-    private <TProperty> ClientQueryable<TProperty> getRelationLimitQueryable(ClientQueryable<TProperty> clientQueryable, NavigateMetadata navigateMetadata, Object relationId) {
+    private <TProperty> ClientQueryable<TProperty> getRelationLimitQueryable(ClientQueryable<TProperty> clientQueryable, NavigateMetadata navigateMetadata, List<Object> relationId) {
 
         ClientQueryable<TProperty> firstQueryable = clientQueryable.cloneQueryable();
         firstQueryable.where(o -> {
             o.and(() -> {
-                o.eq(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationId);
+                o.multiEq(true, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationId);
                 if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
                     navigateMetadata.predicateFilterApply(o);
                 }

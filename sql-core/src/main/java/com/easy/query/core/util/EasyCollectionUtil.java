@@ -110,6 +110,20 @@ public class EasyCollectionUtil {
         }
         return result;
     }
+    public static <TSource, TElement> List<TElement> select(TSource[] sources, Selector<TSource, TElement> selector) {
+        int size = sources.length;
+        if(size==0){
+            return emptyList();
+        }
+        List<TElement> result = new ArrayList<>(size);
+        int i = 0;
+        for (TSource source : sources) {
+            TElement element = selector.apply(source, i);
+            result.add(element);
+            i++;
+        }
+        return result;
+    }
 
     public static <TSource> boolean any(Collection<TSource> sources, Predicate<TSource> predicate) {
         if (isEmpty(sources)) {

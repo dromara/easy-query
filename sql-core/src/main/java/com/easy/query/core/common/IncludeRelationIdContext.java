@@ -1,6 +1,9 @@
 package com.easy.query.core.common;
 
+import com.easy.query.core.util.EasyCollectionUtil;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -10,12 +13,12 @@ import java.util.List;
  * @author xuejiaming
  */
 public class IncludeRelationIdContext implements IncludeRelationIdAvailable{
-     private final List<Object> relationIds;
+     private final List<List<Object>> relationIds;
      public IncludeRelationIdContext(){
          relationIds=new ArrayList<>();
      }
 
-    public List<Object> getRelationIds() {
+    public List<List<Object>> getRelationIds() {
         return relationIds;
     }
 }

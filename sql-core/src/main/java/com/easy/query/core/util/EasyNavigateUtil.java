@@ -16,8 +16,10 @@ public class EasyNavigateUtil {
         if (targetProperties == null) {
             throw new IllegalArgumentException("targetProperties is null");
         }
-        if (selfProperties.length != targetProperties.length) {
-            throw new EasyQueryInvalidOperationException("selfProperties.length != targetProperties.length");
+        if (selfProperties.length > 1 || targetProperties.length > 1) {
+            if (selfProperties.length != targetProperties.length) {
+                throw new EasyQueryInvalidOperationException("selfProperties.length != targetProperties.length");
+            }
         }
     }
 }

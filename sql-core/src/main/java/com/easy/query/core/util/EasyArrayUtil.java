@@ -1,6 +1,8 @@
 package com.easy.query.core.util;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**

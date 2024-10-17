@@ -6,6 +6,7 @@ import com.easy.query.core.common.IncludeRelationIdAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,7 +17,7 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class IncludeNavigateParams implements IncludeRelationIdAvailable {
-    private final List<Object> relationIds;
+    private final List<List<Object>> relationIds;
     private NavigateMetadata navigateMetadata;
     private ClientQueryable<?> mappingQueryable;
     private TableAvailable table;
@@ -28,10 +29,10 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
     private EntityMetadata flatQueryEntityMetadata;
     private Class<?> flatClassType;
     public IncludeNavigateParams(){
-        relationIds =new ArrayList<>();
+        relationIds=new ArrayList<>();
     }
 
-    public @NotNull List<Object> getRelationIds() {
+    public @NotNull List<List<Object>> getRelationIds() {
         return relationIds;
     }
 
