@@ -13,6 +13,7 @@ import com.easy.query.test.doc.dto.MyComUserDTO1;
 import com.easy.query.test.doc.dto.MyComUserDTO2;
 import com.easy.query.test.doc.dto.MyComUserDTO3;
 import com.easy.query.test.doc.dto.MyComUserDTO4;
+import com.easy.query.test.doc.dto.MyComUserDTO5;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp14;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.school.SchoolClass;
@@ -243,6 +244,32 @@ public class QueryTestRelationTest extends BaseTest{
                 }
 
                 System.out.println("66");
+            }
+            {
+                System.out.println("7");
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+                List<MyComUserDTO5> list = easyEntityQuery.queryable(MyComUser1.class)
+                        .selectAutoInclude(MyComUserDTO5.class)
+                        .toList();
+
+
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+
+                {
+
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                    Assert.assertEquals("SELECT t.`gw`,t.`com_id` AS `__relation__comId`,t.`user_id` AS `__relation__userId` FROM `my_com_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                    Assert.assertEquals("SELECT t.`id`,t.`time`,t.`content`,t.`com_id` AS `__relation__comId`,t.`user_id` AS `__relation__userId` FROM `my_sign_up` t WHERE ((t.`com_id` =? AND t.`user_id` =?) OR (t.`com_id` =? AND t.`user_id` =?) OR (t.`com_id` =? AND t.`user_id` =?) OR (t.`com_id` =? AND t.`user_id` =?)) ORDER BY t.`com_id` ASC,CASE WHEN t.`time` IS NULL THEN 0 ELSE 1 END ASC,t.`time` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("c1(String),u1(String),c2(String),u1(String),c1(String),u2(String),c1(String),u3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+
+                System.out.println("77");
             }
 
 

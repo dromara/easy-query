@@ -50,4 +50,11 @@ public class EasyNavigateUtil {
             }
         },true);
     }
+
+    public static  List<NavigateOrderProp> getNavigateOrderProps(List<NavigateOrderProp> navigateOrderProps1, List<NavigateOrderProp> navigateOrderProps2){
+        if(EasyCollectionUtil.isNotEmpty(navigateOrderProps1)){
+            return navigateOrderProps1;
+        }
+        return navigateOrderProps2;
+    }
 }

@@ -934,7 +934,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     .include(t -> {
                         t.getIncludeNavigateParams().setReplace(replace);
 //                        ClientQueryable<Object> with = t.with(navigatePropName);
-                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()), resultNavigateMetadata.getOrderProps(), runtimeContext);
+                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()), EasyNavigateUtil.getNavigateOrderProps(resultNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), runtimeContext);
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
                         selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, replace, deep + 1);

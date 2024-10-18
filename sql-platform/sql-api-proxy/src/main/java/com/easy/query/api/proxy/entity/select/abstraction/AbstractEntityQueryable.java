@@ -248,7 +248,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression) {
         TRProxy resultProxy = selectExpression.apply(get1Proxy());
-        if(resultProxy instanceof EntityFetcher){
+        if (resultProxy instanceof EntityFetcher) {
             EntityFetcher resultProxy1 = (EntityFetcher) resultProxy;
             return Select.selectProxy(EasyObjectUtil.typeCastNullable(resultProxy1.fetchProxy()), getClientQueryable());
         }
@@ -393,10 +393,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
         Objects.requireNonNull(navigateColumn.getNavValue(), "include [navValue] is null");
         getClientQueryable().<TProperty>include(navigateInclude -> {
-            ClientQueryable<TProperty> objectClientQueryable = navigateInclude.with(navigateColumn.getNavValue(), groupSize);
-            List<NavigateOrderProp> orderProps = navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOrderProps();
 
-            ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(objectClientQueryable,orderProps,runtimeContext);
+            ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
+                    navigateInclude.with(navigateColumn.getNavValue(), groupSize),
+                    navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOrderProps(),
+                    runtimeContext);
             TPropertyProxy tPropertyProxy = EntityQueryProxyManager.create(clientQueryable.queryClass());
             EasyEntityQueryable<TPropertyProxy, TProperty> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, clientQueryable);
             includeAdapterExpression.apply(entityQueryable);

@@ -63,6 +63,14 @@ public @interface Navigate {
 
     /**
      * toMany数据支持排序
+     * <blockquote><pre>
+     *     {@code
+     *          @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"comId", "userId"}, targetProperty = {"comId", "userId"}, orderByProps = {
+     *               @OrderByProperty(property = "comId"),
+     *               @OrderByProperty(property = "time", asc = false, mode = OrderByPropertyModeEnum.NULLS_FIRST),
+     *          })
+     *      }
+     * </pre></blockquote>
      * @return
      */
     OrderByProperty[] orderByProps() default {};
