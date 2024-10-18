@@ -37,7 +37,7 @@ public final class EasyQueryInitializeOption {
     private final Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap;
     private final Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap;
     private final Map<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap;
-    private final Map<String, NavigateValueSetter<?>> navigateValueSetterMap;
+    private final Map<String, NavigateValueSetter> navigateValueSetterMap;
     private final Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap;
 
     public Map<String, Interceptor> getInterceptorMap() {
@@ -88,7 +88,7 @@ public final class EasyQueryInitializeOption {
         return navigateExtraFilterStrategyMap;
     }
 
-    public Map<String, NavigateValueSetter<?>> getNavigateValueSetterMap() {
+    public Map<String, NavigateValueSetter> getNavigateValueSetterMap() {
         return navigateValueSetterMap;
     }
     public Map<String, PrimaryKeyGenerator> getPrimaryKeyGeneratorMap() {
@@ -102,7 +102,7 @@ public final class EasyQueryInitializeOption {
                                      Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap,
                                      Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap,
                                      Map<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap,
-                                     Map<String, NavigateValueSetter<?>> navigateValueSetterMap,
+                                     Map<String, NavigateValueSetter> navigateValueSetterMap,
                                      Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap) {
 
         this.interceptorMap = interceptorMap;

@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
  *
  * @author xuejiaming
  */
-public class MyNavigateValueSetter implements NavigateValueSetter<List<SchoolClassAOProp14.SchoolStudentAO>> {
+public class MyNavigateValueSetter implements NavigateValueSetter {
 
     @Override
-    public List<SchoolClassAOProp14.SchoolStudentAO> beforeSet(List<SchoolClassAOProp14.SchoolStudentAO> schoolStudentAOS) {
-        return schoolStudentAOS.stream().sorted((a,b)->b.getId().hashCode()-a.getId().hashCode()).collect(Collectors.toList());
+    public Object beforeSet(Class<?> entityClass,String property,Object schoolStudentAOS) {
+        return ((List<SchoolClassAOProp14.SchoolStudentAO>)schoolStudentAOS).stream().sorted((a,b)->b.getId().hashCode()-a.getId().hashCode()).collect(Collectors.toList());
     }
 }

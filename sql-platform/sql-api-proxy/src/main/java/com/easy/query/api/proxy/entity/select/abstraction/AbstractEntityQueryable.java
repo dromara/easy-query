@@ -30,6 +30,7 @@ import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.NavigateOrderProp;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -41,6 +42,7 @@ import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.fetcher.EntityFetcher;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
@@ -391,7 +393,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
         Objects.requireNonNull(navigateColumn.getNavValue(), "include [navValue] is null");
         getClientQueryable().<TProperty>include(navigateInclude -> {
-            ClientQueryable<TProperty> clientQueryable = navigateInclude.with(navigateColumn.getNavValue(), groupSize);
+            ClientQueryable<TProperty> objectClientQueryable = navigateInclude.with(navigateColumn.getNavValue(), groupSize);
+            List<NavigateOrderProp> orderProps = navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOrderProps();
+
+            ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(objectClientQueryable,orderProps,runtimeContext);
             TPropertyProxy tPropertyProxy = EntityQueryProxyManager.create(clientQueryable.queryClass());
             EasyEntityQueryable<TPropertyProxy, TProperty> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, clientQueryable);
             includeAdapterExpression.apply(entityQueryable);

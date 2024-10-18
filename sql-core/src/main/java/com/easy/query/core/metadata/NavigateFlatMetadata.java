@@ -3,6 +3,8 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 
+import java.util.List;
+
 /**
  * create time 2023/6/17 19:13
  * 文件说明

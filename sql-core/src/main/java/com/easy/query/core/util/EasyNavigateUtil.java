@@ -1,6 +1,16 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.builder.OrderSelector;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.metadata.NavigateOrderProp;
+
+import java.util.List;
 
 /**
  * create time 2024/10/14 11:19
@@ -21,5 +31,23 @@ public class EasyNavigateUtil {
                 throw new EasyQueryInvalidOperationException("selfProperties.length != targetProperties.length");
             }
         }
+    }
+
+    public static <T> ClientQueryable<T> navigateOrderBy(ClientQueryable<T> clientQueryable, List<NavigateOrderProp> navigateOrderProps, QueryRuntimeContext runtimeContext){
+        return clientQueryable.orderBy(EasyCollectionUtil.isNotEmpty(navigateOrderProps),o -> {
+            TableAvailable table = o.getTable();
+            OrderSelector orderSelector = o.getOrderSelector();
+            for (NavigateOrderProp orderProp : navigateOrderProps) {
+                orderSelector.setAsc(orderProp.isAsc());
+                OrderByModeEnum nullsModeEnum = orderProp.getMode();
+                if(nullsModeEnum!=null){
+                    SQLFunc fx = runtimeContext.fx();
+                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(orderProp.getProperty(), orderProp.isAsc(), nullsModeEnum);
+                    orderSelector.func(table, orderByNullsModeFunction,false);
+                }else{
+                    orderSelector.column(table, orderProp.getProperty());
+                }
+            }
+        },true);
     }
 }

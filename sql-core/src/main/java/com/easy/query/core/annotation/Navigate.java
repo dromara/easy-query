@@ -61,6 +61,12 @@ public @interface Navigate {
      */
     boolean propIsProxy() default true;
 
+    /**
+     * toMany数据支持排序
+     * @return
+     */
+    OrderByProperty[] orderByProps() default {};
+
 
     /**
      * 仅entity生效

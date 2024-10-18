@@ -46,6 +46,7 @@ import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.builder.AsSelector;
+import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.builder.impl.AsSelectorImpl;
@@ -92,6 +93,9 @@ import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.fill.FillParams;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
+import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -104,10 +108,12 @@ import com.easy.query.core.metadata.MappingPathTreeNode;
 import com.easy.query.core.metadata.NavigateFlatMetadata;
 import com.easy.query.core.metadata.NavigateJoinMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.metadata.NavigateOrderProp;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyJdbcExecutorUtil;
+import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyOptionUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
@@ -904,6 +910,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     }
 
+
     private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, boolean replace, int deep) {
 
         Collection<NavigateMetadata> resultNavigateMetadatas = resultEntityMetadata.getNavigateMetadatas();
@@ -927,7 +934,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     .include(t -> {
                         t.getIncludeNavigateParams().setReplace(replace);
 //                        ClientQueryable<Object> with = t.with(navigatePropName);
-                        ClientQueryable<Object> with = t.with(resultNavigateMetadata.getPropertyName());
+                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()), resultNavigateMetadata.getOrderProps(), runtimeContext);
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
                         selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, replace, deep + 1);
@@ -1434,7 +1441,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     s.setPrintNavSQL(printNavSQL);
                 }).where(o -> {
                     o.and(() -> {
-                        o.relationIn( navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), ()->relationIds);
+                        o.relationIn(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), () -> relationIds);
                         if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
                             navigateMetadata.predicateFilterApply(o);
                         }

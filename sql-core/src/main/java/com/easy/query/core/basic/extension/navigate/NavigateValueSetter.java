@@ -6,6 +6,6 @@ package com.easy.query.core.basic.extension.navigate;
  *
  * @author xuejiaming
  */
-public interface NavigateValueSetter<TValue> {
-   TValue beforeSet(TValue value);
+public interface NavigateValueSetter {
+   Object beforeSet(Class<?> entityClass,String property,Object value);
 }

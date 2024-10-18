@@ -58,6 +58,7 @@ import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
+import com.easy.query.core.enums.OrderByPropertyModeEnum;
 import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -67,6 +68,7 @@ import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -268,7 +270,7 @@ public class EntityMetadata {
             if (!tableEntity) {
                 NavigateFlat navigateFlat = field.getAnnotation(NavigateFlat.class);
                 if (navigateFlat != null) {
-                    createNavigateFlatMappingMetadata(navigateFlat, staticFields, field, fastBean, fastBeanProperty, property,configuration);
+                    createNavigateFlatMappingMetadata(navigateFlat, staticFields, field, fastBean, fastBeanProperty, property, configuration);
                     continue;
                 }
                 NavigateJoin navigateJoin = field.getAnnotation(NavigateJoin.class);
@@ -297,19 +299,31 @@ public class EntityMetadata {
     }
 
 
+    private OrderByModeEnum getOrderByMode(OrderByPropertyModeEnum orderByPropertyMode) {
+        if (orderByPropertyMode == OrderByPropertyModeEnum.DEFAULT) {
+            return null;
+        }
+        if (orderByPropertyMode == OrderByPropertyModeEnum.NULLS_FIRST) {
+            return OrderByModeEnum.NULLS_FIRST;
+        } else {
+            return OrderByModeEnum.NULLS_LAST;
+        }
+    }
+
     private void createNavigateMetadata(boolean tableEntity, Navigate navigate, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
 
         String[] selfProperties = tableEntity ? navigate.selfProperty() : EasyArrayUtil.EMPTY;
         String[] targetProperties = tableEntity ? navigate.targetProperty() : EasyArrayUtil.EMPTY;
-        EasyNavigateUtil.checkProperties(selfProperties,targetProperties);
+        EasyNavigateUtil.checkProperties(selfProperties, targetProperties);
         RelationTypeEnum relationType = navigate.value();
         boolean toMany = relationType.equals(RelationTypeEnum.OneToMany) || relationType.equals(RelationTypeEnum.ManyToMany);
         Class<?> navigateType = getNavigateType(toMany, field, fastBeanProperty);
         if (navigateType == null) {
             throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");
         }
+        List<NavigateOrderProp> orderProps = toMany ? Arrays.stream(navigate.orderByProps()).map(orderByProperty -> new NavigateOrderProp(orderByProperty.property(), orderByProperty.asc(), getOrderByMode(orderByProperty.mode()))).collect(Collectors.toList()) : EasyCollectionUtil.emptyList();
 
-        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties);
+        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties, orderProps);
 
         if (tableEntity) {
             Class<? extends NavigateExtraFilterStrategy> extraFilterStrategyClass = navigate.extraFilter();
@@ -340,7 +354,7 @@ public class EntityMetadata {
             }
         }
         Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
-        PropertySetterCaller<Object> beanSetter =getBeanSetter(field,fastBean,fastBeanProperty,configuration);
+        PropertySetterCaller<Object> beanSetter = getBeanSetter(field, fastBean, fastBeanProperty, configuration);
 
         NavigateMetadata navigateMetadata = new NavigateMetadata(navigateOption, beanGetter, beanSetter);
         property2NavigateMap.put(property, navigateMetadata);
@@ -396,28 +410,28 @@ public class EntityMetadata {
         if (navigateType == null) {
             throw new EasyQueryInvalidOperationException("not found navigate flat type, property:[" + property + "]");
         }
-
 //        Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
-        PropertySetterCaller<Object> beanSetter =getBeanSetter(field,fastBean,fastBeanProperty,configuration);
+        PropertySetterCaller<Object> beanSetter = getBeanSetter(field, fastBean, fastBeanProperty, configuration);
 
         NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, relationMappingType, mappingPath, navigateType, EasyClassUtil.isBasicTypeOrEnum(navigateType), beanSetter, property);
 
         property2NavigateFlatMap.put(property, navigateFlatMetadata);
     }
-    protected PropertySetterCaller<Object> getBeanSetter(Field field, FastBean fastBean,FastBeanProperty fastBeanProperty, QueryConfiguration configuration){
+
+    protected PropertySetterCaller<Object> getBeanSetter(Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, QueryConfiguration configuration) {
         PropertySetterCaller<Object> beanSetter = fastBean.getBeanSetter(fastBeanProperty);
         NavigateSetter navigateSetter = field.getAnnotation(NavigateSetter.class);
         if (navigateSetter != null) {
-            Class<? extends NavigateValueSetter<?>> setter = navigateSetter.value();
-            NavigateValueSetter<?> navigateValueSetter = configuration.getNavigateValueSetter(setter);
+            Class<? extends NavigateValueSetter> setter = navigateSetter.value();
+            NavigateValueSetter navigateValueSetter = configuration.getNavigateValueSetter(setter);
             if (navigateValueSetter == null) {
                 throw new EasyQueryInvalidOperationException("not found navigate value setter:[" + EasyClassUtil.getSimpleName(setter) + "]");
             }
-            return (obj,val)->{
-                Object ov = navigateValueSetter.beforeSet(EasyObjectUtil.typeCastNullable(val));
-                beanSetter.call(obj,ov);
+            return (obj, val) -> {
+                Object ov = navigateValueSetter.beforeSet(entityClass, field.getName(), EasyObjectUtil.typeCastNullable(val));
+                beanSetter.call(obj, ov);
             };
-        }else{
+        } else {
             return beanSetter;
         }
     }

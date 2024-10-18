@@ -5,6 +5,8 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.util.EasyClassUtil;
 
+import java.util.List;
+
 /**
  * create time 2024/3/1 16:13
  * 文件说明
@@ -20,6 +22,7 @@ public class NavigateOption {
     private final String[] selfProperties;
     private final String[] targetProperties;
     private final boolean basicType;
+    private final List<NavigateOrderProp> orderProps;
     private Class<?> mappingClass;
     private String[] selfMappingProperties;
     private String[] targetMappingProperties;
@@ -31,7 +34,7 @@ public class NavigateOption {
                           Class<?> navigatePropertyType,
                           RelationTypeEnum relationType,
                           String[] selfProperties,
-                          String[] targetProperties){
+                          String[] targetProperties, List<NavigateOrderProp> orderProps){
 
         this.entityMetadata = entityMetadata;
         this.propertyName = propertyName;
@@ -41,6 +44,7 @@ public class NavigateOption {
         this.selfProperties = selfProperties;
         this.targetProperties = targetProperties;
         this.basicType = EasyClassUtil.isBasicType(navigatePropertyType);
+        this.orderProps = orderProps;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -107,4 +111,7 @@ public class NavigateOption {
         return basicType;
     }
 
+    public List<NavigateOrderProp> getOrderProps() {
+        return orderProps;
+    }
 }

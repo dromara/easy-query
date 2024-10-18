@@ -110,7 +110,7 @@ public class EasyQueryStarterInitializeAutoConfiguration {
         for (Map.Entry<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyEntry : easyQueryInitializeOption.getNavigateExtraFilterStrategyMap().entrySet()) {
             configuration.applyNavigateExtraFilterStrategy(navigateExtraFilterStrategyEntry.getValue());
         }
-        for (Map.Entry<String, NavigateValueSetter<?>> navigateValueSetterEntry : easyQueryInitializeOption.getNavigateValueSetterMap().entrySet()) {
+        for (Map.Entry<String, NavigateValueSetter> navigateValueSetterEntry : easyQueryInitializeOption.getNavigateValueSetterMap().entrySet()) {
             configuration.applyNavigateValueSetter(navigateValueSetterEntry.getValue());
         }
         for (Map.Entry<String, PrimaryKeyGenerator> primaryKeyGeneratorEntry : easyQueryInitializeOption.getPrimaryKeyGeneratorMap().entrySet()) {

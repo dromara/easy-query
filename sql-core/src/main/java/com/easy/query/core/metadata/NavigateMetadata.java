@@ -9,6 +9,8 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.util.EasyArrayUtil;
 
+import java.util.List;
+
 /**
  * create time 2023/6/17 19:13
  * 文件说明
@@ -36,6 +38,7 @@ public class NavigateMetadata {
      */
     private final RelationTypeEnum relationType;
     private final boolean basicType;
+    private final List<NavigateOrderProp> orderProps;
     private final String[] selfProperties;
     /**
      * 导航属性关联字段
@@ -63,6 +66,7 @@ public class NavigateMetadata {
         this.targetMappingProperties = navigateOption.getTargetMappingProperties();
         this.predicateFilterExpression = navigateOption.getPredicateFilterExpression();
         this.basicType = navigateOption.isBasicType();
+        this.orderProps = navigateOption.getOrderProps();
         this.getter = getter;
         this.setter = setter;
     }
@@ -141,7 +145,7 @@ public class NavigateMetadata {
         for (int i = 0; i < selfPropertyNames.length; i++) {
 
             ColumnMetadata column = entityMetadata.getColumnNotNull(selfPropertyNames[i]);
-            columnMetadatas[i]=column;
+            columnMetadatas[i] = column;
         }
         return columnMetadatas;
     }
@@ -167,5 +171,9 @@ public class NavigateMetadata {
 
     public boolean isBasicType() {
         return basicType;
+    }
+
+    public List<NavigateOrderProp> getOrderProps() {
+        return orderProps;
     }
 }

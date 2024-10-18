@@ -18,5 +18,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface NavigateSetter {
-    Class<? extends NavigateValueSetter<?>> value();
+    Class<? extends NavigateValueSetter> value();
 }
