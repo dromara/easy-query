@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -474,6 +475,13 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         entityQueryable.asTableLink(linkAs);
         return this;
     }
+
+    @Override
+    public Queryable<T1> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        entityQueryable.asTableSegment(segmentAs);
+        return this;
+    }
+
     @Override
     public Queryable<T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         entityQueryable.useShardingConfigure(maxShardingQueryLimit, connectionMode);

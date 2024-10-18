@@ -19,6 +19,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -213,6 +214,11 @@ public abstract class AbstractOverrideQueryable7<T1, T2, T3,T4,T5,T6,T7> extends
     @Override
     public Queryable7<T1, T2,T3,T4,T5,T6,T7> asTableLink(Function<String, String> linkAs) {
         super.asTableLink(linkAs);
+        return getQueryable7();
+    }
+    @Override
+    public Queryable7<T1, T2,T3,T4,T5,T6,T7> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        super.asTableSegment(segmentAs);
         return getQueryable7();
     }
     @Override

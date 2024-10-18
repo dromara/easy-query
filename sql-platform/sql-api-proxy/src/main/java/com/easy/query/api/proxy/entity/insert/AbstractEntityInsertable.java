@@ -17,6 +17,7 @@ import com.easy.query.core.proxy.SQLSelectExpression;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -120,6 +121,13 @@ public class AbstractEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> 
         clientInsertable.asTableLink(linkAs);
         return this;
     }
+
+    @Override
+    public EntityInsertable<TProxy, T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        clientInsertable.asTableSegment(segmentAs);
+        return this;
+    }
+
     @Override
     public EntityInsertable<TProxy, T> configure(SQLExpression1<ContextConfigurer> configurer) {
         clientInsertable.configure(configurer);

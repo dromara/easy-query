@@ -9,6 +9,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -111,6 +112,12 @@ public class AbstractEntityUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> i
     @Override
     public EntityUpdatable<TProxy, T> asTableLink(Function<String, String> linkAs) {
         clientEntityUpdatable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
+    public EntityUpdatable<TProxy, T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        clientEntityUpdatable.asTableSegment(segmentAs);
         return this;
     }
 

@@ -10,6 +10,7 @@ import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -125,6 +126,12 @@ public class EasyEntityOnlyInsertable<T> implements EntityOnlyInsertable<T> {
     @Override
     public EntityOnlyInsertable<T> asTableLink(Function<String, String> linkAs) {
         clientInsertable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
+    public EntityOnlyInsertable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        clientInsertable.asTableSegment(segmentAs);
         return this;
     }
 

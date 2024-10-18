@@ -58,6 +58,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -125,6 +126,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -1605,6 +1607,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public ClientQueryable<T1> asTableLink(Function<String, String> linkAs) {
         entityQueryExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+
+    @Override
+    public ClientQueryable<T1> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        entityQueryExpressionBuilder.getRecentlyTable().setTableSegmentAs(segmentAs);
         return this;
     }
 

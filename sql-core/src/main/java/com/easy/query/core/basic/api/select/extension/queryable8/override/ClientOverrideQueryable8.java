@@ -16,6 +16,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -235,6 +236,8 @@ public interface ClientOverrideQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> extend
 
     @Override
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> asTableLink(Function<String, String> linkAs);
+    @Override
+    ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> asTableSegment(BiFunction<String, String, String> segmentAs);
 
     @Override
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> filterConfigure(ValueFilter valueFilter);

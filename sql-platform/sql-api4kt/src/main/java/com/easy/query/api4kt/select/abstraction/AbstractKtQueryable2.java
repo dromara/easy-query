@@ -24,6 +24,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -310,5 +311,11 @@ public abstract class AbstractKtQueryable2<T1, T2> extends AbstractOverrideKtQue
         super.asTableLink(linkAs);
         return this;
     }
+    @Override
+    public KtQueryable2<T1, T2> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        super.asTableSegment(segmentAs);
+        return this;
+    }
+
 
 }

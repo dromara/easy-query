@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -188,6 +189,12 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     @Override
     public ClientEntityUpdatable<T> asTableLink(Function<String, String> linkAs) {
         entityUpdateExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+
+    @Override
+    public ClientEntityUpdatable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        entityUpdateExpressionBuilder.getRecentlyTable().setTableSegmentAs(segmentAs);
         return this;
     }
 

@@ -11,6 +11,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -65,6 +66,10 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
 
     @Override
     public ClientInsertable<T> asTableLink(Function<String, String> linkAs) {
+        return this;
+    }
+    @Override
+    public ClientInsertable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
         return this;
     }
 

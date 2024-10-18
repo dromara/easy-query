@@ -11,6 +11,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -54,6 +55,14 @@ public class AnonymousDefaultTableExpressionBuilder extends DefaultTableExpressi
 
     @Override
     public void setSchemaAs(Function<String, String> schemaAs) {
+    }
+
+    @Override
+    public void setTableLinkAs(Function<String, String> linkAs) {
+    }
+
+    @Override
+    public void setTableSegmentAs(BiFunction<String, String, String> segmentAs) {
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.sql.builder.internal;
 
+import java.util.function.Function;
+
 /**
  * create time 2024/7/4 08:40
  * 文上下文配置
@@ -43,4 +45,5 @@ public interface ContextConfigurer {
     void setPrintSQL(Boolean printSQL);
     void setPrintNavSQL(Boolean printSQL);
     Boolean getPrintNavSQL();
+
 }

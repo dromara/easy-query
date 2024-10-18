@@ -12,6 +12,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -189,6 +190,11 @@ public abstract class AbstractOverrideEntityQueryable3<T1Proxy extends ProxyEnti
     @Override
     public EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> asTableLink(Function<String, String> linkAs) {
         super.asTableLink(linkAs);
+        return getQueryable3();
+    }
+    @Override
+    public EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        super.asTableSegment(segmentAs);
         return getQueryable3();
     }
 

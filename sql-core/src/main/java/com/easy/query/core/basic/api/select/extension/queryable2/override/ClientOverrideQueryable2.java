@@ -15,6 +15,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -235,6 +236,8 @@ public interface ClientOverrideQueryable2<T1, T2> extends ClientQueryable<T1> {
 
     @Override
     ClientQueryable2<T1, T2> asTableLink(Function<String, String> linkAs);
+    @Override
+    ClientQueryable2<T1, T2> asTableSegment(BiFunction<String, String, String> segmentAs);
 
 
     @Override

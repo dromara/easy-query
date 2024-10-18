@@ -15,6 +15,7 @@ import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import kotlin.reflect.KProperty1;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -170,6 +171,13 @@ public abstract class AbstractKtEntityInsertable<T> implements KtEntityInsertabl
         clientInsertable.asTableLink(linkAs);
         return this;
     }
+
+    @Override
+    public KtEntityInsertable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        clientInsertable.asTableSegment(segmentAs);
+        return this;
+    }
+
     @Override
     public KtEntityInsertable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
         clientInsertable.configure(configurer);

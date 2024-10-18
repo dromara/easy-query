@@ -11,6 +11,7 @@ import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -35,6 +36,13 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
     public void setSchemaAs(Function<String, String> schemaAs) {
     }
 
+    @Override
+    public void setLinkAs(Function<String, String> linkAs) {
+    }
+
+    @Override
+    public void setTableSegmentAs(BiFunction<String, String, String> segmentAs) {
+    }
 
     @Override
     public String getTableName() {
@@ -76,7 +84,10 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
             PredicateSegment predicateSegment = on.clonePredicateSegment();
             tableSQLExpression.setOn(predicateSegment);
         }
+        tableSQLExpression.setTableNameAs(tableNameAs);
+        tableSQLExpression.setSchemaAs(schemaAs);
         tableSQLExpression.setLinkAs(linkAs);
+        tableSQLExpression.setTableSegmentAs(segmentAs);
         return tableSQLExpression;
     }
 }

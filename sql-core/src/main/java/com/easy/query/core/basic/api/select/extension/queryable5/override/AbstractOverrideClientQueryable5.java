@@ -7,6 +7,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
@@ -17,6 +18,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -229,6 +231,11 @@ public abstract class AbstractOverrideClientQueryable5<T1, T2, T3, T4, T5> exten
     @Override
     public ClientQueryable5<T1, T2, T3, T4, T5> asTableLink(Function<String, String> linkAs) {
         super.asTableLink(linkAs);
+        return getClientQueryable5();
+    }
+    @Override
+    public ClientQueryable5<T1, T2, T3, T4, T5> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        super.asTableSegment(segmentAs);
         return getClientQueryable5();
     }
 

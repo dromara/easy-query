@@ -51,6 +51,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -927,6 +928,12 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public EntityQueryable<T1Proxy, T1> asTableLink(Function<String, String> linkAs) {
         clientQueryable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
+    public EntityQueryable<T1Proxy, T1> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        clientQueryable.asTableSegment(segmentAs);
         return this;
     }
 

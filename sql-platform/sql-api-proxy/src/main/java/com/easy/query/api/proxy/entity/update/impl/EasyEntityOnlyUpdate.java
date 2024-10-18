@@ -10,6 +10,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -112,6 +113,11 @@ public class EasyEntityOnlyUpdate<T> implements EntityOnlyUpdatable<T> {
     @Override
     public EntityOnlyUpdatable<T> asTableLink(Function<String, String> linkAs) {
         clientEntityUpdatable.asTableLink(linkAs);
+        return this;
+    }
+    @Override
+    public EntityOnlyUpdatable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        clientEntityUpdatable.asTableSegment(segmentAs);
         return this;
     }
     @Override

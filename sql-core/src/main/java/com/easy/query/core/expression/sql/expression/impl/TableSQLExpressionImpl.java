@@ -5,6 +5,7 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
@@ -14,6 +15,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 
@@ -33,6 +35,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     protected Function<String, String> tableNameAs;
     protected Function<String, String> schemaAs;
     protected Function<String, String> linkAs;
+    protected BiFunction<String, String, String> segmentAs;
 
     public TableSQLExpressionImpl(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
@@ -69,6 +72,11 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     @Override
     public void setLinkAs(Function<String, String> linkAs) {
         this.linkAs = linkAs;
+    }
+
+    @Override
+    public void setTableSegmentAs(BiFunction<String, String, String> segmentAs) {
+        this.segmentAs=segmentAs;
     }
 
     @Override
@@ -135,12 +143,22 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
         if (!none) {
             sql.append(" ");
         }
-        sql.append(getTableName());
-        String tableAlias = EasySQLExpressionUtil.getTableAlias(toSQLContext, entityTable);
-        if (tableAlias != null) {
-            sql.append(" ").append(tableAlias);
-        }
+        sql.append(getTableSegment(toSQLContext));
         return sql.toString();
+    }
+    private String getTableSegment(ToSQLContext toSQLContext){
+        String tableName = getTableName();
+        String tableAlias = EasySQLExpressionUtil.getTableAlias(toSQLContext, entityTable);
+        if(segmentAs!=null){
+            return segmentAs.apply(tableName,tableAlias);
+        }else{
+            StringBuilder sql=new StringBuilder();
+            sql.append(tableName);
+            if (tableAlias != null) {
+                sql.append(" ").append(tableAlias);
+            }
+            return sql.toString();
+        }
     }
 
 

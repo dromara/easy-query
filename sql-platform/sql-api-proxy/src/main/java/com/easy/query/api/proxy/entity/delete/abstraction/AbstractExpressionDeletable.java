@@ -11,6 +11,7 @@ import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -162,6 +163,12 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
     @Override
     public ExpressionDeletable<TProxy, T> asTableLink(Function<String, String> linkAs) {
         expressionObjectDeletable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
+    public ExpressionDeletable<TProxy, T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        expressionObjectDeletable.asTableSegment(segmentAs);
         return this;
     }
 

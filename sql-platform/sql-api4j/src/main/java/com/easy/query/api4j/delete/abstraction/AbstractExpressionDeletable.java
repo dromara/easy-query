@@ -12,6 +12,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -160,6 +161,13 @@ public abstract class AbstractExpressionDeletable<T> implements ExpressionDeleta
         expressionObjectDeletable.asTableLink(linkAs);
         return this;
     }
+
+    @Override
+    public ExpressionDeletable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        expressionObjectDeletable.asTableSegment(segmentAs);
+        return this;
+    }
+
     @Override
     public ExpressionDeletable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
         expressionObjectDeletable.configure(configurer);

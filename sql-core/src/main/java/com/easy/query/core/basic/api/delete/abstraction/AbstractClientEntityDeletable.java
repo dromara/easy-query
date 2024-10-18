@@ -22,6 +22,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -111,7 +112,14 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
     }
     @Override
     public ClientEntityDeletable<T> asTableLink(Function<String, String> linkAs) {
-        return null;
+        entityDeleteExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+
+    @Override
+    public ClientEntityDeletable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        entityDeleteExpressionBuilder.getRecentlyTable().setTableSegmentAs(segmentAs);
+        return this;
     }
 
     @Override

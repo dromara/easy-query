@@ -13,6 +13,7 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectExpression;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -95,6 +96,10 @@ public class EasyEmptyEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T>
 
     @Override
     public EntityInsertable<TProxy, T> asTableLink(Function<String, String> linkAs) {
+        return this;
+    }
+    @Override
+    public EntityInsertable<TProxy, T> asTableSegment(BiFunction<String, String, String> segmentAs) {
         return this;
     }
 

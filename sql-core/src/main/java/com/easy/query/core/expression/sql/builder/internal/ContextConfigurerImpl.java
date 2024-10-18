@@ -2,6 +2,8 @@ package com.easy.query.core.expression.sql.builder.internal;
 
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
+import java.util.function.Function;
+
 /**
  * create time 2024/7/4 08:40
  * 文上下文配置
@@ -60,4 +62,5 @@ public class ContextConfigurerImpl implements ContextConfigurer {
     public Boolean getPrintNavSQL() {
         return expressionContext.getPrintNavSQL();
     }
+
 }

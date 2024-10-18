@@ -24,6 +24,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -35,6 +36,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -108,6 +110,11 @@ public class DefaultMapQueryable implements MapQueryable {
     @Override
     public MapQueryable asTableLink(Function<String, String> linkAs) {
         queryable.asTableLink(linkAs);
+        return this;
+    }
+    @Override
+    public MapQueryable asTableSegment(BiFunction<String, String, String> segmentAs) {
+        queryable.asTableSegment(segmentAs);
         return this;
     }
 

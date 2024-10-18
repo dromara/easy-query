@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -163,6 +164,12 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     @Override
     public ClientInsertable<T> asTableLink(Function<String, String> linkAs) {
         entityInsertExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+
+    @Override
+    public ClientInsertable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        entityInsertExpressionBuilder.getRecentlyTable().setTableSegmentAs(segmentAs);
         return this;
     }
 

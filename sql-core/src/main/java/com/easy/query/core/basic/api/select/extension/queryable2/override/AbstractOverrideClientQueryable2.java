@@ -17,6 +17,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -210,6 +211,11 @@ public abstract class AbstractOverrideClientQueryable2<T1,T2> extends AbstractCl
     @Override
     public ClientQueryable2<T1, T2> asTableLink(Function<String, String> linkAs) {
         super.asTableLink(linkAs);
+        return getClientQueryable2();
+    }
+    @Override
+    public ClientQueryable2<T1, T2> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        super.asTableSegment(segmentAs);
         return getClientQueryable2();
     }
     @Override

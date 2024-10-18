@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -12,6 +13,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -31,6 +33,7 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
     protected Function<String, String> tableNameAs;
     protected Function<String, String> schemaAs;
     protected Function<String, String> linkAs;
+    protected BiFunction<String, String, String> segmentAs;
 
     public DefaultTableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
         this.entityTable = entityTable;
@@ -66,6 +69,11 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
     @Override
     public void setTableLinkAs(Function<String, String> linkAs) {
         this.linkAs = linkAs;
+    }
+
+    @Override
+    public void setTableSegmentAs(BiFunction<String, String, String> segmentAs) {
+        this.segmentAs = segmentAs;
     }
 
     @Override
@@ -111,6 +119,7 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
         tableExpressionBuilder.setSchemaAs(this.schemaAs);
         tableExpressionBuilder.setTableLinkAs(this.linkAs);
         tableExpressionBuilder.setTableLogicDelete(this.tableLogicDel);
+        tableExpressionBuilder.setTableSegmentAs(this.segmentAs);
         return tableExpressionBuilder;
     }
 
@@ -143,6 +152,7 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
         tableSQLExpression.setTableNameAs(tableNameAs);
         tableSQLExpression.setSchemaAs(schemaAs);
         tableSQLExpression.setLinkAs(linkAs);
+        tableSQLExpression.setTableSegmentAs(segmentAs);
         return tableSQLExpression;
     }
 }

@@ -9,6 +9,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -119,6 +120,11 @@ public class EasyEntityOnlyDeletable<T> implements EntityOnlyDeletable<T> {
     @Override
     public EntityOnlyDeletable<T> asTableLink(Function<String, String> linkAs) {
         clientEntityDeletable.asTableLink(linkAs);
+        return this;
+    }
+    @Override
+    public EntityOnlyDeletable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        clientEntityDeletable.asTableSegment(segmentAs);
         return this;
     }
 

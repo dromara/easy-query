@@ -19,6 +19,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -255,6 +256,8 @@ public interface OverrideKtQueryable2<T1, T2> extends KtQueryable<T1>, KtQueryab
 
     @Override
     KtQueryable2<T1, T2> asTableLink(Function<String, String> linkAs);
+    @Override
+    KtQueryable2<T1, T2> asTableSegment(BiFunction<String, String, String> segmentAs);
 
     @Override
     KtQueryable2<T1, T2> filterConfigure(ValueFilter valueFilter);

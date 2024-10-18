@@ -7,6 +7,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
@@ -16,6 +17,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -235,6 +237,8 @@ public interface ClientOverrideQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
 
     @Override
     ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> asTableLink(Function<String, String> linkAs);
+    @Override
+    ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> asTableSegment(BiFunction<String, String, String> segmentAs);
     @Override
     ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> filterConfigure(ValueFilter valueFilter);
     @Override

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -92,6 +93,12 @@ public abstract class AbstractMapClientUpdatable extends AbstractSQLExecuteRows<
     @Override
     public MapClientUpdatable<Map<String, Object>> asTableLink(Function<String, String> linkAs) {
         mapUpdateExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+
+    @Override
+    public MapClientUpdatable<Map<String, Object>> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        mapUpdateExpressionBuilder.getRecentlyTable().setTableSegmentAs(segmentAs);
         return this;
     }
 

@@ -22,6 +22,7 @@ import com.easy.query.core.expression.lambda.SQLExpression4;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
 import java.math.BigDecimal;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 
@@ -400,4 +401,6 @@ public interface KtQueryable3<T1, T2, T3> extends KtQueryable<T1> {
 
     @Override
     KtQueryable3<T1, T2, T3> asTableLink(Function<String, String> linkAs);
+    @Override
+    KtQueryable3<T1, T2, T3> asTableSegment(BiFunction<String, String, String> segmentAs);
 }

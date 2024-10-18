@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -467,6 +468,12 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     @Override
     public KtQueryable<T1> asTableLink(Function<String, String> linkAs) {
         entityQueryable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
+    public KtQueryable<T1> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        entityQueryable.asTableSegment(segmentAs);
         return this;
     }
 

@@ -34,6 +34,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -185,6 +186,12 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionUpdatable<T> asTableLink(Function<String, String> linkAs) {
         entityUpdateExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
+        return this;
+    }
+
+    @Override
+    public ClientExpressionUpdatable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        entityUpdateExpressionBuilder.getRecentlyTable().setTableSegmentAs(segmentAs);
         return this;
     }
 

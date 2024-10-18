@@ -14,6 +14,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -231,6 +232,9 @@ public interface OverrideEntityQueryable6<T1Proxy extends ProxyEntity<T1Proxy, T
 
     @Override
     EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> asTableLink(Function<String, String> linkAs);
+
+    @Override
+    EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> asTableSegment(BiFunction<String, String, String> segmentAs);
 
     @Override
     EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> filterConfigure(ValueFilter valueFilter);

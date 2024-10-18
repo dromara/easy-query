@@ -30,6 +30,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -171,6 +172,13 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
         entityDeleteExpressionBuilder.getRecentlyTable().setTableLinkAs(linkAs);
         return this;
     }
+
+    @Override
+    public ClientExpressionDeletable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        entityDeleteExpressionBuilder.getRecentlyTable().setTableSegmentAs(segmentAs);
+        return this;
+    }
+
     @Override
     public ClientExpressionDeletable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
         if(configurer!=null){

@@ -15,6 +15,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -169,6 +170,12 @@ public abstract class AbstractEntityInsertable<T> implements EntityInsertable<T>
     @Override
     public EntityInsertable<T> asTableLink(Function<String, String> linkAs) {
         clientInsertable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
+    public EntityInsertable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        clientInsertable.asTableSegment(segmentAs);
         return this;
     }
 

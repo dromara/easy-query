@@ -10,6 +10,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -119,6 +120,12 @@ public abstract class AbstractEntityDeletable<TProxy extends ProxyEntity<TProxy,
     @Override
     public EntityDeletable<TProxy,T> asTableLink(Function<String, String> linkAs) {
         entityObjectDeletable.asTableLink(linkAs);
+        return this;
+    }
+
+    @Override
+    public EntityDeletable<TProxy, T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        entityObjectDeletable.asTableSegment(segmentAs);
         return this;
     }
 

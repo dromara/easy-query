@@ -8,6 +8,7 @@ import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -117,6 +118,13 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
         clientEntityUpdatable.asTableLink(linkAs);
         return this;
     }
+
+    @Override
+    public EntityUpdatable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        clientEntityUpdatable.asTableSegment(segmentAs);
+        return this;
+    }
+
     @Override
     public EntityUpdatable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
         clientEntityUpdatable.configure(configurer);
