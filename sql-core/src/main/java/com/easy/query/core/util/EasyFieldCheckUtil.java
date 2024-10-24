@@ -9,14 +9,16 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.exception.EasyQueryInvalidFieldCheckException;
 
+import java.util.function.Function;
+
 /**
  * 参考了mybatis-flex的的检查代码
  * <a href="https://gitee.com/mybatis-flex/mybatis-flex">mybatis-flex</a>
- *
  */
 public class EasyFieldCheckUtil {
 
     private static final char[] UN_SAFE_CHARS = "'`\"<>&+=#-;".toCharArray();
+    public static Function<String, String> checkFieldFunction = EasyFieldCheckUtil::toCheckField0;
 
     private static boolean isUnSafeChar(char ch) {
         for (char c : UN_SAFE_CHARS) {
@@ -28,6 +30,11 @@ public class EasyFieldCheckUtil {
     }
 
     public static String toCheckField(String column) {
+        return checkFieldFunction.apply(column);
+    }
+
+
+    public static String toCheckField0(String column) {
 
         if (EasyStringUtil.isBlank(column)) {
             throw new EasyQueryInvalidFieldCheckException("column name must not be empty");
