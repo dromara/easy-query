@@ -12,6 +12,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
+import com.easy.query.core.common.MapColumnNameChecker;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.datasource.DataSourceManager;
@@ -82,4 +83,5 @@ public interface QueryRuntimeContext {
     Column2MapKeyConversion getColumn2MapKeyConversion();
     JdbcSQLPrinter getJdbcSQLPrinter();
     RelationValueFactory getRelationValueFactory();
+    MapColumnNameChecker getMapColumnNameChecker();
 }

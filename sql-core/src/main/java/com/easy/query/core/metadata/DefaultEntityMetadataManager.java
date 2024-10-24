@@ -1,5 +1,6 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.common.MapColumnNameChecker;
 import com.easy.query.core.common.cache.Cache;
 import com.easy.query.core.common.cache.DefaultMemoryCache;
 import com.easy.query.core.inject.ServiceProvider;
@@ -15,10 +16,12 @@ import java.util.Map;
 public class DefaultEntityMetadataManager implements EntityMetadataManager {
     private final Cache<Class<?>,EntityMetadata> entityMetadataCache=new DefaultMemoryCache<>();
     private final ServiceProvider serviceProvider;
+    private final MapColumnNameChecker mapColumnNameChecker;
 
-    public DefaultEntityMetadataManager(ServiceProvider serviceProvider){
+    public DefaultEntityMetadataManager(ServiceProvider serviceProvider, MapColumnNameChecker mapColumnNameChecker){
 
         this.serviceProvider = serviceProvider;
+        this.mapColumnNameChecker = mapColumnNameChecker;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class DefaultEntityMetadataManager implements EntityMetadataManager {
 //        }
         if(Map.class.isAssignableFrom(entityClass)){
             return entityMetadataCache.computeIfAbsent(entityClass,key->{
-                return new MapEntityMetadata(Map.class);
+                return new MapEntityMetadata(Map.class,mapColumnNameChecker);
             });
         }
 

@@ -14,6 +14,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
+import com.easy.query.core.common.MapColumnNameChecker;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.datasource.DataSourceManager;
@@ -81,6 +82,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final Column2MapKeyConversion column2MapKeyConversion;
     private final JdbcSQLPrinter jdbcSQLPrinter;
     private final RelationValueFactory relationValueFactory;
+    private final MapColumnNameChecker mapColumnNameChecker;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -116,7 +118,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           SQLFunc sqlFunc,
                                           Column2MapKeyConversion column2MapKeyConversion,
                                           JdbcSQLPrinter jdbcSQLPrinter,
-                                          RelationValueFactory relationValueFactory) {
+                                          RelationValueFactory relationValueFactory,
+                                          MapColumnNameChecker mapColumnNameChecker) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -152,6 +155,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.column2MapKeyConversion = column2MapKeyConversion;
         this.jdbcSQLPrinter = jdbcSQLPrinter;
         this.relationValueFactory = relationValueFactory;
+        this.mapColumnNameChecker = mapColumnNameChecker;
     }
 
     @Override
@@ -328,5 +332,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public RelationValueFactory getRelationValueFactory() {
         return relationValueFactory;
+    }
+
+    @Override
+    public MapColumnNameChecker getMapColumnNameChecker() {
+        return mapColumnNameChecker;
     }
 }
