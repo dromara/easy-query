@@ -323,7 +323,7 @@ public class EntityMetadata {
         }
         List<NavigateOrderProp> orderProps = toMany ? Arrays.stream(navigate.orderByProps()).map(orderByProperty -> new NavigateOrderProp(orderByProperty.property(), orderByProperty.asc(), getOrderByMode(orderByProperty.mode()))).collect(Collectors.toList()) : EasyCollectionUtil.emptyList();
 
-        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties, orderProps);
+        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties, orderProps, navigate.offset(), navigate.limit());
 
         if (tableEntity) {
             Class<? extends NavigateExtraFilterStrategy> extraFilterStrategyClass = navigate.extraFilter();

@@ -1,6 +1,7 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.common.OffsetLimitEntry;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.OrderSelector;
@@ -8,6 +9,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.NavigateOrderProp;
 
 import java.util.List;
@@ -33,8 +35,8 @@ public class EasyNavigateUtil {
         }
     }
 
-    public static <T> ClientQueryable<T> navigateOrderBy(ClientQueryable<T> clientQueryable, List<NavigateOrderProp> navigateOrderProps, QueryRuntimeContext runtimeContext){
-        return clientQueryable.orderBy(EasyCollectionUtil.isNotEmpty(navigateOrderProps),o -> {
+    public static <T> ClientQueryable<T> navigateOrderBy(ClientQueryable<T> clientQueryable,OffsetLimitEntry offsetLimit, List<NavigateOrderProp> navigateOrderProps, QueryRuntimeContext runtimeContext){
+        return clientQueryable.limit(offsetLimit.offset,offsetLimit.limit).orderBy(EasyCollectionUtil.isNotEmpty(navigateOrderProps),o -> {
             TableAvailable table = o.getTable();
             OrderSelector orderSelector = o.getOrderSelector();
             for (NavigateOrderProp orderProp : navigateOrderProps) {
@@ -51,10 +53,19 @@ public class EasyNavigateUtil {
         },true);
     }
 
-    public static  List<NavigateOrderProp> getNavigateOrderProps(List<NavigateOrderProp> navigateOrderProps1, List<NavigateOrderProp> navigateOrderProps2){
-        if(EasyCollectionUtil.isNotEmpty(navigateOrderProps1)){
-            return navigateOrderProps1;
+    public static  List<NavigateOrderProp> getNavigateOrderProps(List<NavigateOrderProp> resultNavigateOrderProps, List<NavigateOrderProp> entityNavigateOrderProps){
+        if(EasyCollectionUtil.isNotEmpty(resultNavigateOrderProps)){
+            return resultNavigateOrderProps;
         }
-        return navigateOrderProps2;
+        return entityNavigateOrderProps;
+    }
+    public static OffsetLimitEntry getNavigateLimit(NavigateMetadata resultNavigateMetadata, NavigateMetadata entityNavigateMetadata){
+        if(resultNavigateMetadata.getLimit()>0){
+            return new OffsetLimitEntry(resultNavigateMetadata.getOffset(),resultNavigateMetadata.getLimit());
+        }
+        if(entityNavigateMetadata.getLimit()>0){
+            return new OffsetLimitEntry(entityNavigateMetadata.getOffset(),entityNavigateMetadata.getLimit());
+        }
+        return OffsetLimitEntry.EMPTY;
     }
 }

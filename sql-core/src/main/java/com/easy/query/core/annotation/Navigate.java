@@ -75,6 +75,18 @@ public @interface Navigate {
      */
     OrderByProperty[] orderByProps() default {};
 
+    /**
+     * 偏移量
+     * @return
+     */
+    long offset() default 0;
+
+    /**
+     * 拉取数量
+     * @return
+     */
+    long limit() default 0;
+
 
     /**
      * 仅entity生效

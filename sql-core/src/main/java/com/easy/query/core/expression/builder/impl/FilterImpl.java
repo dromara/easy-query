@@ -20,6 +20,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnExistsSubQueryPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnInSubQueryPredicate;
+import com.easy.query.core.expression.segment.condition.predicate.ColumnMultiCollectionPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnNoneSubQueryPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnNullAssertPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnRelationCollectionPredicate;
@@ -283,6 +284,13 @@ public class FilterImpl implements Filter {
     @Override
     public Filter relationIn(TableAvailable table, String[] properties, Supplier<List<List<Object>>> relationIdCreator) {
         nextPredicateSegment.setPredicate(new ColumnRelationCollectionPredicate(table, properties, relationIdCreator, getReallyPredicateCompare(SQLPredicateCompareEnum.IN), expressionContext));
+        next();
+        return this;
+    }
+
+    @Override
+    public Filter relationEq(TableAvailable table, String[] properties, List<List<Object>> relationId) {
+        nextPredicateSegment.setPredicate(new ColumnMultiCollectionPredicate(table,properties,relationId,getReallyPredicateCompare(SQLPredicateCompareEnum.IN),expressionContext));
         next();
         return this;
     }

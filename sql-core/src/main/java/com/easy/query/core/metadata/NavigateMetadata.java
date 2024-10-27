@@ -50,6 +50,8 @@ public class NavigateMetadata {
     private final String[] selfMappingProperties;
     private final String[] targetMappingProperties;
     private final SQLExpression1<WherePredicate<?>> predicateFilterExpression;
+    private final long offset;
+    private final long limit;
 
     public NavigateMetadata(NavigateOption navigateOption,
                             Property<Object, ?> getter,
@@ -67,6 +69,8 @@ public class NavigateMetadata {
         this.predicateFilterExpression = navigateOption.getPredicateFilterExpression();
         this.basicType = navigateOption.isBasicType();
         this.orderProps = navigateOption.getOrderProps();
+        this.offset = navigateOption.getOffset();
+        this.limit = navigateOption.getLimit();
         this.getter = getter;
         this.setter = setter;
     }
@@ -175,5 +179,13 @@ public class NavigateMetadata {
 
     public List<NavigateOrderProp> getOrderProps() {
         return orderProps;
+    }
+
+    public long getOffset() {
+        return offset;
+    }
+
+    public long getLimit() {
+        return limit;
     }
 }

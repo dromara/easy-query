@@ -16,6 +16,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.OffsetLimitEntry;
 import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -396,6 +397,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
             ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
                     navigateInclude.with(navigateColumn.getNavValue(), groupSize),
+                    new OffsetLimitEntry(navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOffset(),navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getLimit()),
                     navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOrderProps(),
                     runtimeContext);
             TPropertyProxy tPropertyProxy = EntityQueryProxyManager.create(clientQueryable.queryClass());

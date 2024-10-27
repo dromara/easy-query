@@ -21,6 +21,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -247,8 +248,8 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
             if (properties.length == 1) {
                 eq(properties[0], vals.get(0));
             } else {
-
-                throw new UnsupportedOperationException("还没实现");
+                getFilter().relationEq(getTable(),properties, Collections.singletonList(vals));
+//                throw new UnsupportedOperationException("还没实现");
             }
         }
         return this;

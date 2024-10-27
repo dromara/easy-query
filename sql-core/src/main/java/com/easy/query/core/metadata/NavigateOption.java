@@ -23,6 +23,8 @@ public class NavigateOption {
     private final String[] targetProperties;
     private final boolean basicType;
     private final List<NavigateOrderProp> orderProps;
+    private final long offset;
+    private final long limit;
     private Class<?> mappingClass;
     private String[] selfMappingProperties;
     private String[] targetMappingProperties;
@@ -34,7 +36,7 @@ public class NavigateOption {
                           Class<?> navigatePropertyType,
                           RelationTypeEnum relationType,
                           String[] selfProperties,
-                          String[] targetProperties, List<NavigateOrderProp> orderProps){
+                          String[] targetProperties, List<NavigateOrderProp> orderProps,long offset,long limit){
 
         this.entityMetadata = entityMetadata;
         this.propertyName = propertyName;
@@ -45,6 +47,8 @@ public class NavigateOption {
         this.targetProperties = targetProperties;
         this.basicType = EasyClassUtil.isBasicType(navigatePropertyType);
         this.orderProps = orderProps;
+        this.offset = offset;
+        this.limit = limit;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -113,5 +117,13 @@ public class NavigateOption {
 
     public List<NavigateOrderProp> getOrderProps() {
         return orderProps;
+    }
+
+    public long getOffset() {
+        return offset;
+    }
+
+    public long getLimit() {
+        return limit;
     }
 }
