@@ -22,6 +22,7 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
@@ -107,6 +108,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         this.elementUtils = processingEnv.getElementUtils();
         this.typeUtils = processingEnv.getTypeUtils();
     }
+
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> supportedAnnotationTypes = new HashSet<>();
@@ -375,7 +377,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
                 ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
                 String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
-                Boolean anyType=proxyProperty==null?null:proxyProperty.generateAnyType();
+                Boolean anyType = proxyProperty == null ? null : proxyProperty.generateAnyType();
 
                 TypeMirror type = fieldElement.asType();
                 boolean isGeneric = type.getKind() == TypeKind.TYPEVAR;
@@ -386,15 +388,15 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean isValueObject = valueObject != null;
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : entityName;
                 String fieldComment = getFiledComment(docComment, fieldName, propertyName);
-                PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType,anyType);
+                PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType, anyType);
                 aptFileCompiler.addImports(propertyColumn.getImport());
                 if (includeProperty) {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
                     String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType(), navigate.propIsProxy());
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
-                    }else{
-                        fieldComment+="\n//apt提示无法获取导航属性代理:"+propertyColumn.getPropertyType();
+                    } else {
+                        fieldComment += "\n//apt提示无法获取导航属性代理:" + propertyColumn.getPropertyType();
                     }
                     if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
                         includeManyProperty = true;
@@ -445,7 +447,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean includeManyProperty = false;
                 ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
                 String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
-                Boolean anyType=proxyProperty==null?null:proxyProperty.generateAnyType();
+                Boolean anyType = proxyProperty == null ? null : proxyProperty.generateAnyType();
 //                if(Objects.equals("aaa",propertyName)){
 //                    System.out.println("111");
 //                }
@@ -458,7 +460,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 boolean isValueObject = valueObject != null;
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : aptFileCompiler.getEntityClassName();
                 String fieldComment = getFiledComment(docComment, fieldName, propertyName);
-                PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType,anyType);
+                PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType, anyType);
                 aptFileCompiler.addImports(propertyColumn.getImport());
 
                 if (!includeProperty) {
@@ -468,8 +470,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType(), navigate.propIsProxy());
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
-                    }else{
-                        fieldComment+="\n//apt提示无法获取导航属性代理:"+propertyColumn.getPropertyType();
+                    } else {
+                        fieldComment += "\n//apt提示无法获取导航属性代理:" + propertyColumn.getPropertyType();
                     }
                     if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
                         includeManyProperty = true;
@@ -494,7 +496,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         }
     }
 
-    private String getNavigatePropertyProxyFullName(String fullClassName,boolean propIsProxy) {
+    private String getNavigatePropertyProxyFullName(String fullClassName, boolean propIsProxy) {
 //        if(propertyColumn.getPropertyType().equals("com.easy.query.test.entity.school.MySchoolClass1")){
         TypeElement typeElement = elementUtils.getTypeElement(fullClassName);
         if (typeElement != null) {
@@ -513,14 +515,14 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + annotationFile.value();
             }
         }
-        if(propIsProxy){
+        if (propIsProxy) {
             return getDefaultClassProxyName(fullClassName);
         }
 //        }
         return null;
     }
 
-    private String getDefaultClassProxyName(String fullClassName){
+    private String getDefaultClassProxyName(String fullClassName) {
         return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "Proxy";
     }
 
@@ -549,9 +551,13 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         String typeString = defTypeString(isDeclared, includeProperty, type);
         if (typeString.contains("<") && typeString.contains(">")) {
             String trim = type.toString().trim();
-            if(type.getAnnotationMirrors().size()>0){
-                if(trim.lastIndexOf(") ::")>-1){
-                    return type.toString().trim().substring(type.toString().trim().lastIndexOf(") ::")+4).replaceAll(">\\)",">");
+            if (type.getAnnotationMirrors().size() > 0) {
+                if (trim.lastIndexOf(") ::") > -1) {
+                    return type.toString().trim().substring(type.toString().trim().lastIndexOf(") ::") + 4).replaceAll(">\\)", ">");
+                } else {
+                    for (AnnotationMirror annotationMirror : type.getAnnotationMirrors()) {
+                        trim = trim.replace(annotationMirror.toString(), "").trim();
+                    }
                 }
             }
             return trim;
@@ -596,8 +602,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         }
     }
 
-    public static PropertyColumn getPropertyColumn(String fieldGenericType,Boolean anyType) {
-        return TYPE_COLUMN_MAPPING.getOrDefault(fieldGenericType, new PropertyColumn("SQLAnyTypeColumn", fieldGenericType,anyType));
+    public static PropertyColumn getPropertyColumn(String fieldGenericType, Boolean anyType) {
+        return TYPE_COLUMN_MAPPING.getOrDefault(fieldGenericType, new PropertyColumn("SQLAnyTypeColumn", fieldGenericType, anyType));
     }
 
 }
