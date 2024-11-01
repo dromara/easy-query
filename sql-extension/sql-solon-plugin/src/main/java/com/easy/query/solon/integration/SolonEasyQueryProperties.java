@@ -5,6 +5,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.solon.integration.option.DatabaseEnum;
 import com.easy.query.solon.integration.option.MapKeyConversionEnum;
 import com.easy.query.solon.integration.option.NameConversionEnum;
+import com.easy.query.solon.integration.option.PropertyModeEnum;
 import com.easy.query.solon.integration.option.SQLParameterPrintEnum;
 import org.noear.solon.Utils;
 import org.noear.solon.core.Props;
@@ -27,6 +28,7 @@ public class SolonEasyQueryProperties {
     private final static SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
     private final static SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
     private final static ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
+    private final static PropertyModeEnum propertyMode = PropertyModeEnum.FIRST_LOWER;
     /**
      * 仅分片时有效默认同时5个线程5
      */
@@ -241,6 +243,15 @@ public class SolonEasyQueryProperties {
                 case "system_auto":return ConnectionModeEnum.SYSTEM_AUTO;
                 case "memory_strictly":return ConnectionModeEnum.MEMORY_STRICTLY;
                 case "connection_strictly":return ConnectionModeEnum.CONNECTION_STRICTLY;
+            }
+            return null;
+        });
+    }
+    public PropertyModeEnum getPropertyMode() {
+        return getOrDef("property-mode",propertyMode,v->{
+            switch (v){
+                case "first_lower":return PropertyModeEnum.FIRST_LOWER;
+                case "same_as_entity":return PropertyModeEnum.SAME_AS_ENTITY;
             }
             return null;
         });

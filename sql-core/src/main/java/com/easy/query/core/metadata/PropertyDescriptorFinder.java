@@ -16,8 +16,9 @@ import java.util.function.Predicate;
  */
 public class PropertyDescriptorFinder {
     private final boolean mapFind;
-    private PropertyDescriptor[] propertyDescriptors;
+    private final PropertyDescriptor[] propertyDescriptors;
     private Map<String, PropertyDescriptor> propertyDescriptorMap;
+
 
     public PropertyDescriptorFinder(PropertyDescriptor[] propertyDescriptors) {
         this.mapFind = propertyDescriptors.length > 5;
@@ -26,25 +27,29 @@ public class PropertyDescriptorFinder {
             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
                 this.propertyDescriptorMap.put(propertyDescriptor.getName(), propertyDescriptor);
             }
+        }
+        this.propertyDescriptors = propertyDescriptors;
+    }
+
+    public PropertyDescriptor[] getPropertyDescriptors() {
+        return propertyDescriptors;
+    }
+
+    public PropertyDescriptor find(String propertyName) {
+        if (mapFind) {
+            return this.propertyDescriptorMap.get(propertyName);
         } else {
-            this.propertyDescriptors = propertyDescriptors;
+            return firstOrNull(this.propertyDescriptors, o -> Objects.equals(o.getName(), propertyName));
         }
     }
 
-    public PropertyDescriptor find(String propertyName){
-        if(mapFind){
-            return this.propertyDescriptorMap.get(propertyName);
-        }else{
-            return firstOrNull(this.propertyDescriptors, o -> Objects.equals(o.getName(),propertyName));
-        }
-    }
-    public PropertyDescriptor findIgnoreCase(String propertyName){
-        if(propertyName==null){
+    public PropertyDescriptor findIgnoreCase(String propertyName) {
+        if (propertyName == null) {
             throw new EasyQueryInvalidOperationException("propertyName is null");
         }
-        if(mapFind){
+        if (mapFind) {
             return firstOrNull(this.propertyDescriptorMap, o -> propertyName.equalsIgnoreCase(o.getName()));
-        }else{
+        } else {
             return firstOrNull(this.propertyDescriptors, o -> propertyName.equalsIgnoreCase(o.getName()));
         }
     }
@@ -57,6 +62,7 @@ public class PropertyDescriptorFinder {
         }
         return null;
     }
+
     private PropertyDescriptor firstOrNull(Map<String, PropertyDescriptor> propertyDescriptorMap, Predicate<PropertyDescriptor> predicate) {
         for (PropertyDescriptor p : propertyDescriptorMap.values()) {
             if (predicate.test(p)) {

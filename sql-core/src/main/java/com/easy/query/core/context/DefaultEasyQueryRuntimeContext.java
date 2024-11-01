@@ -17,6 +17,7 @@ import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.common.MapColumnNameChecker;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
+import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.exception.AssertExceptionFactory;
@@ -27,7 +28,6 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
-import com.easy.query.core.expression.sql.include.multi.DefaultRelationValueFactory;
 import com.easy.query.core.expression.sql.include.multi.RelationValueFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceProvider;
@@ -83,6 +83,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final JdbcSQLPrinter jdbcSQLPrinter;
     private final RelationValueFactory relationValueFactory;
     private final MapColumnNameChecker mapColumnNameChecker;
+    private final PropertyDescriptorMatcher propertyDescriptorMatcher;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -119,7 +120,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           Column2MapKeyConversion column2MapKeyConversion,
                                           JdbcSQLPrinter jdbcSQLPrinter,
                                           RelationValueFactory relationValueFactory,
-                                          MapColumnNameChecker mapColumnNameChecker) {
+                                          MapColumnNameChecker mapColumnNameChecker, PropertyDescriptorMatcher propertyDescriptorMatcher) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -156,6 +157,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.jdbcSQLPrinter = jdbcSQLPrinter;
         this.relationValueFactory = relationValueFactory;
         this.mapColumnNameChecker = mapColumnNameChecker;
+        this.propertyDescriptorMatcher = propertyDescriptorMatcher;
     }
 
     @Override
@@ -337,5 +339,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public MapColumnNameChecker getMapColumnNameChecker() {
         return mapColumnNameChecker;
+    }
+
+    @Override
+    public PropertyDescriptorMatcher getPropertyDescriptorMatcher() {
+        return propertyDescriptorMatcher;
     }
 }

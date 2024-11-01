@@ -18,6 +18,9 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
 import com.easy.query.core.common.EasyQueryTrackInvoker;
 import com.easy.query.core.common.EmptyInvokeTryFinally;
+import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
+import com.easy.query.core.configuration.bean.def.DefaultPropertyDescriptorMatcher;
+import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
 import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.configuration.column2mapkey.DefaultColumn2MapKeyConversion;
 import com.easy.query.core.configuration.column2mapkey.LowerColumn2MapKeyConversion;
@@ -49,6 +52,7 @@ import com.easy.query.solon.integration.conn.SolonDataSourceUnitFactory;
 import com.easy.query.solon.integration.option.DatabaseEnum;
 import com.easy.query.solon.integration.option.MapKeyConversionEnum;
 import com.easy.query.solon.integration.option.NameConversionEnum;
+import com.easy.query.solon.integration.option.PropertyModeEnum;
 import com.easy.query.solon.integration.option.SQLParameterPrintEnum;
 import com.easy.query.sqllite.config.SQLLiteDatabaseConfiguration;
 import org.noear.solon.Utils;
@@ -164,6 +168,7 @@ public class DbManager {
         }
         useNameConversion(solonEasyQueryProperties, easyQueryBuilderConfiguration);
         useMapKeyConversion(solonEasyQueryProperties, easyQueryBuilderConfiguration);
+        usePropertyMode(solonEasyQueryProperties, easyQueryBuilderConfiguration);
         SQLParameterPrintEnum sqlParameterPrint = solonEasyQueryProperties.getSQLParameterPrint();
         switch (sqlParameterPrint) {
             case MYBATIS:
@@ -207,6 +212,17 @@ public class DbManager {
                 break;
             case UPPER_UNDERLINED:
                 easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UpperUnderlinedNameConversion());
+                break;
+        }
+    }
+    private static void usePropertyMode(SolonEasyQueryProperties solonEasyQueryProperties, EasyQueryBuilderConfiguration easyQueryBuilderConfiguration) {
+        PropertyModeEnum propertyMode = solonEasyQueryProperties.getPropertyMode();
+        switch (propertyMode) {
+            case FIRST_LOWER:
+                easyQueryBuilderConfiguration.replaceService(PropertyDescriptorMatcher.class, new DefaultPropertyDescriptorMatcher());
+                break;
+            case SAME_AS_ENTITY:
+                easyQueryBuilderConfiguration.replaceService(PropertyDescriptorMatcher.class, new EntityPropertyDescriptorMatcher());
                 break;
         }
     }

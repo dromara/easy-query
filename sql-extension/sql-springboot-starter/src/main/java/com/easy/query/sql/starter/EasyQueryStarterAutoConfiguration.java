@@ -28,6 +28,9 @@ import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.DefaultStarterConfigurer;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.bootstrapper.StarterConfigurer;
+import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
+import com.easy.query.core.configuration.bean.def.DefaultPropertyDescriptorMatcher;
+import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
 import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.configuration.column2mapkey.DefaultColumn2MapKeyConversion;
 import com.easy.query.core.configuration.column2mapkey.LowerColumn2MapKeyConversion;
@@ -255,6 +258,14 @@ public class EasyQueryStarterAutoConfiguration {
                             break;
                         case DEFAULT:
                             s.addService(Column2MapKeyConversion.class, DefaultColumn2MapKeyConversion.class);
+                            break;
+                    }
+                    switch (easyQueryProperties.getPropertyMode()){
+                        case FIRST_LOWER:
+                            s.addService(PropertyDescriptorMatcher.class, DefaultPropertyDescriptorMatcher.class);
+                            break;
+                        case SAME_AS_ENTITY:
+                            s.addService(PropertyDescriptorMatcher.class, EntityPropertyDescriptorMatcher.class);
                             break;
                     }
                 })

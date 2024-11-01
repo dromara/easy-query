@@ -52,9 +52,17 @@ import com.easy.query.test.testvo.MyUserDTO;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -1285,6 +1293,17 @@ public class GenericTest extends BaseTest {
     }
     @Test
     public void test1(){
+
+        BeanInfo beanInfo = null;
+        try {
+            beanInfo = Introspector.getBeanInfo(MyUserDTO.class, Object.class);
+        } catch (IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
+        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        Map<String, Field> staticFields = new HashMap<>();
+        Collection<Field> allFields = EasyClassUtil.getAllFields(MyUserDTO.class, staticFields);
+
         Queryable<MyUserDTO> queryable = easyQuery.queryable(MyUserDTO.class);
     }
 

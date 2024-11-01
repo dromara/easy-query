@@ -27,9 +27,10 @@ public final class ColumnOption {
     private final boolean tableEntity;
     private final EntityMetadata entityMetadata;
     private final String name;
+    private final String propertyName;
 
 
-    private PropertyDescriptor property;
+    private PropertyDescriptor propertyDescriptor;
 
     private boolean primary = false;
     private boolean generatedKey = false;
@@ -62,13 +63,18 @@ public final class ColumnOption {
 //    private boolean concurrentUpdateInTrack = false;
 
 
-    public ColumnOption(boolean tableEntity,EntityMetadata entityMetadata, String name) {
+    public ColumnOption(boolean tableEntity, EntityMetadata entityMetadata, String name, String propertyName) {
         this.tableEntity = tableEntity;
         this.entityMetadata = entityMetadata;
         this.name = name;
+        this.propertyName = propertyName;
         this.valueConverter = DefaultValueConverter.INSTANCE;
         this.valueObject = false;
         this.valueObjectColumnOptions = new ArrayList<>();
+    }
+
+    public String getPropertyName() {
+        return propertyName;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -127,12 +133,12 @@ public final class ColumnOption {
         this.updateSetInTrackDiff = updateSetInTrackDiff;
     }
 
-    public PropertyDescriptor getProperty() {
-        return property;
+    public PropertyDescriptor getPropertyDescriptor() {
+        return propertyDescriptor;
     }
 
-    public void setProperty(PropertyDescriptor property) {
-        this.property = property;
+    public void setPropertyDescriptor(PropertyDescriptor propertyDescriptor) {
+        this.propertyDescriptor = propertyDescriptor;
     }
 
     public boolean isEncryption() {

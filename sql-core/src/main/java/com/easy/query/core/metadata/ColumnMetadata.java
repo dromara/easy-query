@@ -135,10 +135,9 @@ public class ColumnMetadata {
     public ColumnMetadata(ColumnOption columnOption) {
         this.entityMetadata = columnOption.getEntityMetadata();
         this.name = columnOption.getName();
-        this.property = columnOption.getProperty();
-        PropertyDescriptor propertyDescriptor = columnOption.getProperty();
-        if (propertyDescriptor != null) {
-            this.propertyType = propertyDescriptor.getPropertyType();
+        this.property = columnOption.getPropertyDescriptor();
+        if (property != null) {
+            this.propertyType = property.getPropertyType();
             this.primitive = propertyType.isPrimitive();
         } else {
             this.propertyType = Object.class;

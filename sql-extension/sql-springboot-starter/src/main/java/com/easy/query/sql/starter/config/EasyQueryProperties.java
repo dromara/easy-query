@@ -6,6 +6,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.sql.starter.option.DatabaseEnum;
 import com.easy.query.sql.starter.option.MapKeyConversionEnum;
 import com.easy.query.sql.starter.option.NameConversionEnum;
+import com.easy.query.sql.starter.option.PropertyModeEnum;
 import com.easy.query.sql.starter.option.SQLParameterPrintEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -29,6 +30,7 @@ public class EasyQueryProperties {
     private SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
     private SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
     private ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
+    private PropertyModeEnum propertyMode = PropertyModeEnum.FIRST_LOWER;
     /**
      * 仅分片时有效默认同时5个线程5
      */
@@ -435,6 +437,14 @@ public class EasyQueryProperties {
 
     public void setMapKeyConversion(MapKeyConversionEnum mapKeyConversion) {
         this.mapKeyConversion = mapKeyConversion;
+    }
+
+    public PropertyModeEnum getPropertyMode() {
+        return propertyMode;
+    }
+
+    public void setPropertyMode(PropertyModeEnum propertyMode) {
+        this.propertyMode = propertyMode;
     }
 
     public EasyQueryProperties() {

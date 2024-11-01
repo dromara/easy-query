@@ -35,6 +35,8 @@ import com.easy.query.core.common.MapColumnNameChecker;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.configuration.bean.def.DefaultPropertyDescriptorMatcher;
+import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
 import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.configuration.column2mapkey.DefaultColumn2MapKeyConversion;
 import com.easy.query.core.configuration.dialect.DefaultSQLKeyword;
@@ -188,6 +190,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(JdbcSQLPrinter.class, DefaultJdbcSQLPrinter.class)
                 .replaceService(Column2MapKeyConversion.class, DefaultColumn2MapKeyConversion.class)
                 .replaceService(RelationValueFactory.class, DefaultRelationValueFactory.class)
+                .replaceService(PropertyDescriptorMatcher.class, DefaultPropertyDescriptorMatcher.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }
