@@ -63,6 +63,7 @@ import org.noear.solon.core.event.EventBus;
 import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -170,11 +171,9 @@ public class DbManager {
         useMapKeyConversion(solonEasyQueryProperties, easyQueryBuilderConfiguration);
         usePropertyMode(solonEasyQueryProperties, easyQueryBuilderConfiguration);
         SQLParameterPrintEnum sqlParameterPrint = solonEasyQueryProperties.getSQLParameterPrint();
-        switch (sqlParameterPrint) {
-            case MYBATIS:
-                easyQueryBuilderConfiguration
-                        .replaceService(SQLParameterPrintFormat.class, MyBatisSQLParameterPrintFormat.class);
-                break;
+        if (sqlParameterPrint == SQLParameterPrintEnum.MYBATIS) {
+            easyQueryBuilderConfiguration
+                    .replaceService(SQLParameterPrintFormat.class, MyBatisSQLParameterPrintFormat.class);
         }
         easyQueryBuilderConfiguration
                 .replaceService(DataSourceUnitFactory.class, SolonDataSourceUnitFactory.class)
