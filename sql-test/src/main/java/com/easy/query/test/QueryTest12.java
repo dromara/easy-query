@@ -721,10 +721,11 @@ public class QueryTest12 extends BaseTest {
                 })
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
-                        b.id().eq("123");
-                    }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
-                    blogEntityProxy.score().set(caseWhen);
+                    blogEntityProxy.score().set(
+                            b.expression().caseWhen(() -> {
+                                b.id().eq("123");
+                            }).then(1).elseEnd("2").asAnyType(BigDecimal.class)
+                    );
 
                     return blogEntityProxy;
                 }).toList();

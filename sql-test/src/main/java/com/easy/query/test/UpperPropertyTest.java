@@ -16,6 +16,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.common.LowerUnderlinedNameConversion;
 import com.easy.query.test.common.MyQueryConfiguration;
+import com.easy.query.test.entity.MyALLTYPE;
 import com.easy.query.test.entity.UpperTopic;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
@@ -25,6 +26,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -159,6 +161,53 @@ public class UpperPropertyTest {
             }finally {
 
                 easyEntityQuery.deletable(MyTopicTestDTO.class).whereById("xxxxxxaaappll").executeRows();
+            }
+        }
+
+    }
+    @Test
+    public void test2(){
+        EntityMetadata entityMetadata = easyEntityQuery.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(MyALLTYPE.class);
+        Map<String, ColumnMetadata> property2ColumnMap = entityMetadata.getProperty2ColumnMap();
+        Assert.assertTrue(property2ColumnMap.containsKey(MyALLTYPE.Fields.id));
+        Assert.assertTrue(property2ColumnMap.containsKey(MyALLTYPE.Fields.isEnableBasic));
+        Assert.assertTrue(property2ColumnMap.containsKey(MyALLTYPE.Fields.isEnable));
+        Assert.assertTrue(property2ColumnMap.containsKey(MyALLTYPE.Fields.isNumberDecimal));
+        Assert.assertTrue(property2ColumnMap.containsKey(MyALLTYPE.Fields.isNumberInteger));
+        Assert.assertTrue(property2ColumnMap.containsKey(MyALLTYPE.Fields.isTimeLocalDateTime));
+        Assert.assertTrue(property2ColumnMap.containsKey(MyALLTYPE.Fields.isValue));
+        Assert.assertTrue(property2ColumnMap.containsKey(MyALLTYPE.Fields.isNumberIntegerBasic));
+
+
+        {
+
+            easyEntityQuery.deletable(MyALLTYPE.class).whereById("xxxxxxaaappll").executeRows();
+            try {
+
+                MyALLTYPE alltype = new MyALLTYPE();
+                alltype.setId("xxxxxxaaappll");
+                alltype.setIsNumberDecimal(new BigDecimal("123.32"));
+                alltype.setIsNumberInteger(999);
+                alltype.setIsEnable(true);
+                alltype.setIsNumberIntegerBasic(-999);
+                alltype.setEnableBasic(true);
+                alltype.setIsTimeLocalDateTime(LocalDateTime.of(2024,1,1,1,1));
+                alltype.setIsValue("123");
+                easyEntityQuery.insertable(alltype).executeRows();
+                MyALLTYPE upperTopic1 = easyEntityQuery.queryable(MyALLTYPE.class).where(u -> {
+                    u.id().eq(alltype.getId());
+                }).singleNotNull();
+                Assert.assertEquals(alltype.getId(),upperTopic1.getId());
+                Assert.assertEquals(alltype.getIsEnable(),upperTopic1.getIsEnable());
+                Assert.assertEquals(alltype.isEnableBasic(),upperTopic1.isEnableBasic());
+                Assert.assertEquals(alltype.getIsNumberDecimal(),upperTopic1.getIsNumberDecimal());
+                Assert.assertEquals(alltype.getIsNumberIntegerBasic(),upperTopic1.getIsNumberIntegerBasic());
+                Assert.assertEquals(alltype.getIsValue(),upperTopic1.getIsValue());
+//        Assert.assertEquals(upperTopic.getCreateTime(),upperTopic1.getCreateTime());
+                easyEntityQuery.deletable(alltype).executeRows();
+            }finally {
+
+                easyEntityQuery.deletable(UpperTopic.class).whereById("xxxxxxaaappll").executeRows();
             }
         }
 

@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -138,6 +139,13 @@ public class EasyClassUtil {
         } else {
             return false;
         }
+    }
+
+    public static boolean isBooleanBasic(Class<?> clazz) {
+        if (clazz.isPrimitive()) {
+            return Objects.equals(clazz, boolean.class);
+        }
+        return false;
     }
 
     public static boolean isBasicTypeOrEnum(Class<?> clazz) {

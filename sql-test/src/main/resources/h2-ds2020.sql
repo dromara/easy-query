@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS `t_def_table_left2` (
     `def_id` VARCHAR (100),
     `def1_id` VARCHAR (100),
     `user_name` VARCHAR (100),
+    `user_name` VARCHAR (100),
     `nickname` VARCHAR (128),
     `enable` BOOLEAN,
     `score` DECIMAL (20, 2),

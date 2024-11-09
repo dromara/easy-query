@@ -250,3 +250,16 @@ create table my_sign_up
     content varchar(32)  null comment '报名内容',
     time datetime  null comment '报名时间'
 )comment '我在报名';
+
+
+
+CREATE TABLE IF NOT EXISTS `my_all_type` (
+                                             `id` VARCHAR (100) PRIMARY KEY,
+    `is_number_decimal` DECIMAL (20, 2),
+    `is_number_integer` INT,
+    `is_enable` tinyint(1),
+    `is_number_integer_basic` INT,
+    `is_enable_basic` tinyint(1),
+    `is_time_local_date_time` DATETIME,
+    `is_value` VARCHAR (2048)
+    );
