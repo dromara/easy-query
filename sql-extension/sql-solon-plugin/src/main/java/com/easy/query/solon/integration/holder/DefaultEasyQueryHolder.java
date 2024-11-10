@@ -1,4 +1,4 @@
-package com.easy.query.solon.integration;
+package com.easy.query.solon.integration.holder;
 
 import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
@@ -7,6 +7,8 @@ import com.easy.query.api4kt.client.EasyKtQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 import org.noear.solon.core.VarHolder;
 
 /**
@@ -40,24 +42,33 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
     }
 
     @Override
-    public EasyEntityQuery getEntityQuery() {
-        return entityQuery;
+    public <T> T getClient(Class<T> clazz) {
+        if (EasyEntityQuery.class.isAssignableFrom(clazz)) {
+            return EasyObjectUtil.typeCastNullable(this.entityQuery);
+        }
+
+        if (EasyQuery.class.isAssignableFrom(clazz)) {
+            return EasyObjectUtil.typeCastNullable(this.easyQuery);
+        }
+//        if(EntityQuery.class.isAssignableFrom(varH.getType())){
+//            varH.setValue(this.entityQuery);
+//            return;
+//        }
+
+        if (EasyQueryClient.class.isAssignableFrom(clazz)) {
+            return EasyObjectUtil.typeCastNullable(this.easyQueryClient);
+        }
+
+        if (EasyProxyQuery.class.isAssignableFrom(clazz)) {
+            return EasyObjectUtil.typeCastNullable(this.easyProxyQuery);
+        }
+
+        if (EasyKtQuery.class.isAssignableFrom(clazz)) {
+            return EasyObjectUtil.typeCastNullable(this.easyKtQuery);
+        }
+        throw new UnsupportedOperationException(EasyClassUtil.getSimpleName(clazz));
     }
 
-    @Override
-    public EasyQuery getEasyQuery() {
-        return easyQuery;
-    }
-
-    @Override
-    public EasyProxyQuery getEasyProxyQuery() {
-        return easyProxyQuery;
-    }
-
-    @Override
-    public EasyKtQuery getEasyKtQuery() {
-        return easyKtQuery;
-    }
 
 //    @Override
 //    public EntityQuery getEntityQuery() {

@@ -4,6 +4,7 @@ import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.solon.integration.holder.EasyQueryHolder;
 import com.easy.query.solon.integration.logging.Slf4jImpl;
 import org.noear.solon.Utils;
 import org.noear.solon.core.AppContext;

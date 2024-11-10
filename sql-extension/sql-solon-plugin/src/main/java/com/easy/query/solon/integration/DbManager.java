@@ -1,11 +1,5 @@
 package com.easy.query.solon.integration;
 
-import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
-import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4kt.client.DefaultEasyKtQuery;
-import com.easy.query.api4kt.client.EasyKtQuery;
 import com.easy.query.clickhouse.config.ClickHouseDatabaseConfiguration;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintFormat;
@@ -49,6 +43,9 @@ import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.solon.integration.conn.SolonConnectionManager;
 import com.easy.query.solon.integration.conn.SolonDataSourceUnitFactory;
+import com.easy.query.solon.integration.holder.DefaultHolderFactory;
+import com.easy.query.solon.integration.holder.EasyQueryHolder;
+import com.easy.query.solon.integration.holder.HolderFactory;
 import com.easy.query.solon.integration.option.DatabaseEnum;
 import com.easy.query.solon.integration.option.MapKeyConversionEnum;
 import com.easy.query.solon.integration.option.NameConversionEnum;
@@ -63,8 +60,8 @@ import org.noear.solon.core.event.EventBus;
 import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/7/19 21:53
@@ -78,6 +75,13 @@ public class DbManager {
     private static DbManager _global = new DbManager();
     public static String DEFAULT_BEAN_NAME = "db1";
     public InvokeTryFinally allInvokeTryFinally = null;
+
+
+    public static Supplier<HolderFactory> injectHolderFactory =()-> DefaultHolderFactory.DEFAULT;
+
+    public static void replace(Supplier<HolderFactory> injectHolderFactory){
+        DbManager.injectHolderFactory = injectHolderFactory;
+    }
 
     public static DbManager global() {
         return _global;
@@ -110,6 +114,7 @@ public class DbManager {
     public static EasyQueryHolder getByName(String name) {
         return dbMap.get(name);
     }
+
     public static EasyQueryHolder removeByName(String name) {
         return dbMap.remove(name);
     }
@@ -186,13 +191,9 @@ public class DbManager {
         EasyQueryClient easyQueryClient = easyQueryBuilderConfiguration.build();
         //扩展
         EventBus.publish(easyQueryClient.getRuntimeContext());
-        EasyEntityQuery entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
-        DefaultEasyQuery easyQuery = new DefaultEasyQuery(easyQueryClient);
-        DefaultEasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
-        EasyKtQuery easyKtQuery = new DefaultEasyKtQuery(easyQueryClient);
-
-        return new DefaultEasyQueryHolder(easyQueryClient, entityQuery, easyQuery, easyProxyQuery, easyKtQuery);
+        return injectHolderFactory.get().getHolder(easyQueryClient);
     }
+
 
     private static void useNameConversion(SolonEasyQueryProperties solonEasyQueryProperties, EasyQueryBuilderConfiguration easyQueryBuilderConfiguration) {
         NameConversionEnum nameConversion = solonEasyQueryProperties.getNameConversion();
@@ -214,6 +215,7 @@ public class DbManager {
                 break;
         }
     }
+
     private static void usePropertyMode(SolonEasyQueryProperties solonEasyQueryProperties, EasyQueryBuilderConfiguration easyQueryBuilderConfiguration) {
         PropertyModeEnum propertyMode = solonEasyQueryProperties.getPropertyMode();
         switch (propertyMode) {
@@ -225,6 +227,7 @@ public class DbManager {
                 break;
         }
     }
+
     private static void useMapKeyConversion(SolonEasyQueryProperties solonEasyQueryProperties, EasyQueryBuilderConfiguration easyQueryBuilderConfiguration) {
         MapKeyConversionEnum mapKeyConversionEnum = solonEasyQueryProperties.getMapKeyConversionEnum();
         switch (mapKeyConversionEnum) {
