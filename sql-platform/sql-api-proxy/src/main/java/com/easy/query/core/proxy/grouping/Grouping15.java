@@ -8,7 +8,7 @@ import com.easy.query.core.proxy.core.draft.AbstractDraft;
  *
  * @author xuejiaming
  */
-public class Grouping11<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, TKey9, TKey10, TKey11>
+public class Grouping15<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, TKey9, TKey10, TKey11, TKey12, TKey13, TKey14, TKey15>
         extends AbstractDraft {
     private TKey1 key1;
     private TKey2 key2;
@@ -21,6 +21,10 @@ public class Grouping11<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, 
     private TKey9 key9;
     private TKey10 key10;
     private TKey11 key11;
+    private TKey12 key12;
+    private TKey13 key13;
+    private TKey14 key14;
+    private TKey15 key15;
 
     public TKey1 getKey1() {
         return key1;
@@ -110,9 +114,41 @@ public class Grouping11<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, 
         this.key11 = key11;
     }
 
+    public TKey12 getKey12() {
+        return key12;
+    }
+
+    public void setKey12(TKey12 key12) {
+        this.key12 = key12;
+    }
+
+    public TKey13 getKey13() {
+        return key13;
+    }
+
+    public void setKey13(TKey13 key13) {
+        this.key13 = key13;
+    }
+
+    public TKey14 getKey14() {
+        return key14;
+    }
+
+    public void setKey14(TKey14 key14) {
+        this.key14 = key14;
+    }
+
+    public TKey15 getKey15() {
+        return key15;
+    }
+
+    public void setKey15(TKey15 key15) {
+        this.key15 = key15;
+    }
+
     @Override
     public int capacity() {
-        return 11;
+        return 15;
     }
 
     @Override
@@ -150,6 +186,18 @@ public class Grouping11<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, 
                 break;
             case 10:
                 this.setKey11((TKey11) value);
+                break;
+            case 11:
+                this.setKey12((TKey12) value);
+                break;
+            case 12:
+                this.setKey13((TKey13) value);
+                break;
+            case 13:
+                this.setKey14((TKey14) value);
+                break;
+            case 14:
+                this.setKey15((TKey15) value);
                 break;
         }
     }

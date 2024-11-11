@@ -8,7 +8,7 @@ import com.easy.query.core.proxy.core.draft.AbstractDraft;
  *
  * @author xuejiaming
  */
-public class Grouping11<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, TKey9, TKey10, TKey11>
+public class Grouping12<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, TKey9, TKey10, TKey11, TKey12>
         extends AbstractDraft {
     private TKey1 key1;
     private TKey2 key2;
@@ -21,6 +21,7 @@ public class Grouping11<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, 
     private TKey9 key9;
     private TKey10 key10;
     private TKey11 key11;
+    private TKey12 key12;
 
     public TKey1 getKey1() {
         return key1;
@@ -110,9 +111,17 @@ public class Grouping11<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, 
         this.key11 = key11;
     }
 
+    public TKey12 getKey12() {
+        return key12;
+    }
+
+    public void setKey12(TKey12 key12) {
+        this.key12 = key12;
+    }
+
     @Override
     public int capacity() {
-        return 11;
+        return 12;
     }
 
     @Override
@@ -150,6 +159,9 @@ public class Grouping11<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, 
                 break;
             case 10:
                 this.setKey11((TKey11) value);
+                break;
+            case 11:
+                this.setKey12((TKey12) value);
                 break;
         }
     }
