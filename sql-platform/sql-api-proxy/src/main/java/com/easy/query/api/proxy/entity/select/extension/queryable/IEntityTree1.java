@@ -21,4 +21,12 @@ public interface IEntityTree1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     }
 
     EntityQueryable<T1Proxy, T1> asTreeCTE(SQLExpression1<TreeCTEConfigurer> treeExpression);
+
+    default EntityQueryable<T1Proxy, T1> asTreeCTECustom(SQLFuncExpression1<T1Proxy,SQLColumn<T1Proxy, ?>> codePropertyExpression, SQLFuncExpression1<T1Proxy,SQLColumn<T1Proxy, ?>> parentCodePropertyExpression) {
+        return asTreeCTECustom(codePropertyExpression, parentCodePropertyExpression, o -> {
+        });
+    }
+
+    EntityQueryable<T1Proxy, T1> asTreeCTECustom(SQLFuncExpression1<T1Proxy,SQLColumn<T1Proxy, ?>> codePropertyExpression, SQLFuncExpression1<T1Proxy,SQLColumn<T1Proxy, ?>> parentCodePropertyExpression, SQLExpression1<TreeCTEConfigurer> treeExpression);
+
 }

@@ -467,6 +467,12 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
+    public EntityQueryable<T1Proxy, T1> asTreeCTECustom(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, ?>> codePropertyExpression, SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, ?>> parentCodePropertyExpression, SQLExpression1<TreeCTEConfigurer> treeExpression) {
+        ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTECustom(codePropertyExpression.apply(get1Proxy()).getValue(), parentCodePropertyExpression.apply(get1Proxy()).getValue(), treeExpression);
+        return new EasyEntityQueryable<>(get1Proxy(), clientQueryable);
+    }
+
+    @Override
     public EntityQueryable<T1Proxy, T1> select(String columns) {
         clientQueryable.select(columns);
         return this;

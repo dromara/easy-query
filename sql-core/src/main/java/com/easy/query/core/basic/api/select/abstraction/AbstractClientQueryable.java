@@ -1542,13 +1542,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public ClientQueryable<T1> asTreeCTE(SQLExpression1<TreeCTEConfigurer> treeExpression) {
         //将当前表达式的expression builder放入新表达式的声明里面新表达式还是当前的T类型
 
-        TreeCTEOption treeCTEOption = new TreeCTEOption();
-        TreeCTEConfigurerImpl treeCTEConfigurer = new TreeCTEConfigurerImpl(treeCTEOption);
-        treeExpression.apply(treeCTEConfigurer);
-        String cteTableName = treeCTEOption.getCTETableName();
-        String deepColumnName = treeCTEOption.getDeepColumnName();
-        int limitDeep = treeCTEOption.getLimitDeep();
-        boolean up = treeCTEOption.isUp();
         Class<T1> thisQueryClass = queryClass();
         EntityMetadata cteEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(thisQueryClass);
         if (EasyStringUtil.isBlank(cteEntityMetadata.getTableName())) {
@@ -1559,21 +1552,30 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (treeNavigateMetadata == null) {
             throw new EasyQueryInvalidOperationException(treeNavigateMetadataTuple2.t2);
         }
+        return asTreeCTECustom(treeNavigateMetadata.getSelfPropertiesOrPrimary(),treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext),treeExpression);
+    }
+
+    private ClientQueryable<T1> asTreeCTECustom(String[] codeProperties, String[] parentCodeProperties, SQLExpression1<TreeCTEConfigurer> treeExpression) {
+
+        //将当前表达式的expression builder放入新表达式的声明里面新表达式还是当前的T类型
+
+        TreeCTEOption treeCTEOption = new TreeCTEOption();
+        TreeCTEConfigurerImpl treeCTEConfigurer = new TreeCTEConfigurerImpl(treeCTEOption);
+        treeExpression.apply(treeCTEConfigurer);
+        String cteTableName = treeCTEOption.getCTETableName();
+        String deepColumnName = treeCTEOption.getDeepColumnName();
+        int limitDeep = treeCTEOption.getLimitDeep();
+        boolean up = treeCTEOption.isUp();
+        Class<T1> thisQueryClass = queryClass();
 
         ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(thisQueryClass, runtimeContext);
         ClientQueryable<T1> cteQueryable = queryable.asTable(cteTableName)
                 .innerJoin(thisQueryClass, (t, t1) -> {
                     if (up) {
-                        t1.multiEq(true, t, treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+                        t1.multiEq(true, t, codeProperties, parentCodeProperties);
                     } else {
-                        t1.multiEq(true, t, treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), treeNavigateMetadata.getSelfPropertiesOrPrimary());
+                        t1.multiEq(true, t, parentCodeProperties, codeProperties);
                     }
-
-//                    if (up) {
-//                        t1.eq(t, codeProperty, parentCodeProperty);
-//                    } else {
-//                        t1.eq(t, parentCodeProperty, codeProperty);
-//                    }
                 })
                 .select(thisQueryClass, (t, t1) -> {
                     t.sqlNativeSegment("{0} + 1", c -> c.columnName(deepColumnName).setAlias(deepColumnName));
@@ -1596,6 +1598,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             }));
         }
         return myQueryable;
+    }
+    @Override
+    public ClientQueryable<T1> asTreeCTECustom(String codeProperty, String parentCodeProperty, SQLExpression1<TreeCTEConfigurer> treeExpression) {
+        String[] codeProperties={codeProperty};
+        String[] parentCodeProperties={parentCodeProperty};
+        return asTreeCTECustom(codeProperties,parentCodeProperties,treeExpression);
     }
 
     @Override

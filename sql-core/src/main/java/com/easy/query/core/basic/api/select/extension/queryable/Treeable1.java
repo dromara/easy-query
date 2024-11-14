@@ -16,4 +16,8 @@ public interface Treeable1<T1> {
         return asTreeCTE(o->{});
     }
     ClientQueryable<T1> asTreeCTE(SQLExpression1<TreeCTEConfigurer> treeExpression);
+    default ClientQueryable<T1> asTreeCTECustom(String codeProperty,String parentCodeProperty){
+        return asTreeCTECustom(codeProperty,parentCodeProperty,o->{});
+    }
+    ClientQueryable<T1> asTreeCTECustom(String codeProperty,String parentCodeProperty,SQLExpression1<TreeCTEConfigurer> treeExpression);
 }
