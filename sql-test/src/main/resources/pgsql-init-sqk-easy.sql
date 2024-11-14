@@ -146,3 +146,15 @@ create table t_sys_user_version_del
 
 
 
+
+create table category
+(
+    id varchar(32) not null,
+    parent_id varchar(32)  null,
+    name varchar(32)  null,
+    primary key(id)
+);
+COMMENT ON TABLE category IS '类目树';
+COMMENT ON COLUMN category.id IS '主键ID';
+COMMENT ON COLUMN category.parent_id IS '父id';
+COMMENT ON COLUMN category.name IS '类目名称';

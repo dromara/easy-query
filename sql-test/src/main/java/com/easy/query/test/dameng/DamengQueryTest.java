@@ -112,7 +112,7 @@ public class DamengQueryTest extends DamengBaseTest{
         List<DamengMyTopic> list = easyQuery.getEasyQueryClient()
                 .queryable(DamengMyTopic.class)
                 .where(o -> o.eq("id", "1"))
-                .asTreeCTE("id", "title")
+                .asTreeCTE()
                 .toList();
         Assert.assertNotNull(list);
     }

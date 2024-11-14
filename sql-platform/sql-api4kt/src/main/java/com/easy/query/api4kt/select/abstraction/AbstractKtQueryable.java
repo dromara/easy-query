@@ -173,6 +173,11 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     }
 
     @Override
+    public List<T1> toTreeList() {
+        return entityQueryable.toTreeList();
+    }
+
+    @Override
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
         return entityQueryable.toStreamResult(resultClass,configurer);
     }

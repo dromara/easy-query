@@ -12,8 +12,8 @@ import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
  */
 public interface Treeable1<T1> {
 
-    default ClientQueryable<T1> asTreeCTE(String codeProperty,String parentCodeProperty){
-        return asTreeCTE(codeProperty,parentCodeProperty,o->{});
+    default ClientQueryable<T1> asTreeCTE(){
+        return asTreeCTE(o->{});
     }
-    ClientQueryable<T1> asTreeCTE(String codeProperty,String parentCodeProperty,SQLExpression1<TreeCTEConfigurer> treeExpression);
+    ClientQueryable<T1> asTreeCTE(SQLExpression1<TreeCTEConfigurer> treeExpression);
 }

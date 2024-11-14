@@ -46,5 +46,4 @@ public @interface Table {
      * @return
      */
     Class<? extends ShardingInitializer> shardingInitializer() default UnShardingInitializer.class;
-
 }

@@ -15,13 +15,15 @@ import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
  *
  * @author xuejiaming
  */
-public interface SQLTreeable1<T1> extends ClientQueryableAvailable<T1>, QueryableAvailable<T1>{
+public interface SQLTreeable1<T1> extends ClientQueryableAvailable<T1>, QueryableAvailable<T1> {
 
-    default Queryable<T1> asTreeCTE(Property<T1,?> codeProperty, Property<T1,?> parentCodeProperty){
-        return asTreeCTE(codeProperty,parentCodeProperty,o->{});
+    default Queryable<T1> asTreeCTE() {
+        return asTreeCTE(o -> {
+        });
     }
-   default Queryable<T1> asTreeCTE(Property<T1,?> codeProperty,Property<T1,?> parentCodeProperty,SQLExpression1<TreeCTEConfigurer> treeExpression){
-       ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(EasyLambdaUtil.getPropertyName(codeProperty), EasyLambdaUtil.getPropertyName(parentCodeProperty), treeExpression);
-       return new EasyQueryable<>(clientQueryable);
-   }
+
+    default Queryable<T1> asTreeCTE(SQLExpression1<TreeCTEConfigurer> treeExpression) {
+        ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(treeExpression);
+        return new EasyQueryable<>(clientQueryable);
+    }
 }

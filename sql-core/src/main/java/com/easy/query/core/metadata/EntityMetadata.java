@@ -3,6 +3,7 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.ColumnIgnore;
 import com.easy.query.core.annotation.EasyAssertMessage;
+import com.easy.query.core.annotation.EasyTree;
 import com.easy.query.core.annotation.Encryption;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.LogicDelete;
@@ -11,6 +12,7 @@ import com.easy.query.core.annotation.NavigateFlat;
 import com.easy.query.core.annotation.NavigateJoin;
 import com.easy.query.core.annotation.NavigateSetter;
 import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.annotation.ShardingDataSourceKey;
 import com.easy.query.core.annotation.ShardingExtraDataSourceKey;
 import com.easy.query.core.annotation.ShardingExtraTableKey;
@@ -123,6 +125,7 @@ public class EntityMetadata {
     private static final Log log = LogFactory.getLog(EntityMetadata.class);
     private final Class<?> entityClass;
     private String tableName;
+    private String treeName;
     private String schema;
     private ErrorMessage errorMessage;
 
@@ -212,6 +215,12 @@ public class EntityMetadata {
                 }
             }
 
+            EasyTree easyTree = EasyClassUtil.getAnnotation(entityClass, EasyTree.class);
+            if (easyTree != null) {
+                if (EasyStringUtil.isNotBlank(easyTree.value())) {
+                    this.treeName = easyTree.value();
+                }
+            }
         }
         EasyAssertMessage easyAssertMessage = EasyClassUtil.getAnnotation(entityClass, EasyAssertMessage.class);
         if (easyAssertMessage != null) {
@@ -235,7 +244,7 @@ public class EntityMetadata {
                 continue;
             }
             PropertyDescriptorResult matchResult = easyMatcher.match(entityClass, field);
-            if(matchResult==null){
+            if (matchResult == null) {
                 continue;
             }
             String property = matchResult.getPropertyName();
@@ -255,7 +264,7 @@ public class EntityMetadata {
                 ValueObject valueObject = field.getAnnotation(ValueObject.class);
                 if (valueObject != null) {
                     hasValueObject = true;
-                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity,property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true);
+                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true);
                     FastBean valueObjectFastBean = EasyBeanUtil.getFastBean(propertyDescriptor.getPropertyType());
                     columnOption.setValueObject(true);
                     columnOption.setBeanConstructorCreator(valueObjectFastBean.getBeanConstructorCreator());
@@ -276,7 +285,7 @@ public class EntityMetadata {
                 }
             }
 
-            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity,property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true);
+            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true);
             acceptColumnOption(null, columnOption, columnAllIndex);
         }
         if (EasyCollectionUtil.isEmpty(property2ColumnMap.keySet())) {
@@ -483,13 +492,13 @@ public class EntityMetadata {
         }
     }
 
-    private ColumnOption createColumnOption(Field field, PropertyDescriptor propertyDescriptor, boolean tableEntity,String property, FastBeanProperty fastBeanProperty, QueryConfiguration configuration, FastBean fastBean, JdbcTypeHandlerManager jdbcTypeHandlerManager, boolean defaultAutoSelect) {
+    private ColumnOption createColumnOption(Field field, PropertyDescriptor propertyDescriptor, boolean tableEntity, String property, FastBeanProperty fastBeanProperty, QueryConfiguration configuration, FastBean fastBean, JdbcTypeHandlerManager jdbcTypeHandlerManager, boolean defaultAutoSelect) {
         NameConversion nameConversion = configuration.getNameConversion();
         Column column = field.getAnnotation(Column.class);
         boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
         boolean autoSelect = column == null ? defaultAutoSelect : column.autoSelect();
         String columnName = hasColumnName ? nameConversion.annotationCovert(entityClass, column.value(), false) : nameConversion.convert(property);
-        ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName,property);
+        ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName, property);
 //            if (column != null) {
 //                columnMetadata.setNullable(column.nullable());
 //            }
@@ -716,7 +725,7 @@ public class EntityMetadata {
             } else {
                 ValueObject valueObject = field.getAnnotation(ValueObject.class);
                 if (valueObject != null) {
-                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true,property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, parentColumnOption.isAutoSelect());
+                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, parentColumnOption.isAutoSelect());
                     FastBean valueObjectFastBean = EasyBeanUtil.getFastBean(propertyDescriptor.getPropertyType());
                     columnOption.setValueObject(true);
                     columnOption.setBeanConstructorCreator(valueObjectFastBean.getBeanConstructorCreator());
@@ -726,7 +735,7 @@ public class EntityMetadata {
                 }
             }
 
-            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true,property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, parentColumnOption.isAutoSelect());
+            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, parentColumnOption.isAutoSelect());
             parentColumnOption.getValueObjectColumnOptions().add(columnOption);
         }
     }
@@ -839,8 +848,12 @@ public class EntityMetadata {
         return entityClass;
     }
 
-    public String getTableName() {
+    public @Nullable String getTableName() {
         return tableName;
+    }
+
+    public @Nullable String getTreeName() {
+        return treeName;
     }
 
     public String getSchemaOrNull() {

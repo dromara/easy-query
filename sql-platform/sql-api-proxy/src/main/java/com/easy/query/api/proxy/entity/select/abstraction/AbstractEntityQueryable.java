@@ -187,6 +187,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     public <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata) {
         return clientQueryable.toList(resultClass, resultEntityMetadata);
     }
+    @Override
+    public List<T1> toTreeList() {
+        return clientQueryable.toTreeList();
+    }
 
     @Override
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
@@ -457,8 +461,8 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //    }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> asTreeCTE(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, ?>> codePropertyExpression, SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, ?>> parentCodePropertyExpression, SQLExpression1<TreeCTEConfigurer> treeExpression) {
-        ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(codePropertyExpression.apply(get1Proxy()).getValue(), parentCodePropertyExpression.apply(get1Proxy()).getValue(), treeExpression);
+    public EntityQueryable<T1Proxy, T1> asTreeCTE(SQLExpression1<TreeCTEConfigurer> treeExpression) {
+        ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(treeExpression);
         return new EasyEntityQueryable<>(get1Proxy(), clientQueryable);
     }
 

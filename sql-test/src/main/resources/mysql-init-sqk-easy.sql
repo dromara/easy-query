@@ -263,3 +263,11 @@ CREATE TABLE IF NOT EXISTS `my_all_type` (
     `is_time_local_date_time` DATETIME,
     `is_value` VARCHAR (2048)
     );
+
+
+create table category
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    parent_id varchar(32)  null comment '父id',
+    name varchar(32)  null comment '类目名称'
+)comment '类目树';

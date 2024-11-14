@@ -32,6 +32,8 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.IncludeCirculateChecker;
 import com.easy.query.core.common.IncludePath;
+import com.easy.query.core.common.tuple.MergeTuple2;
+import com.easy.query.core.common.tuple.Tuple2;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -93,6 +95,8 @@ import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.fill.FillParams;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
+import com.easy.query.core.expression.sql.include.multi.RelationValueColumnMetadata;
+import com.easy.query.core.expression.sql.include.multi.RelationValueFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
@@ -119,6 +123,8 @@ import com.easy.query.core.util.EasyOptionUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.core.util.EasyTreeUtil;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -553,6 +559,20 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
+    public List<T1> toTreeList() {
+        List<T1> list = this.toList(this.queryClass());
+
+        MergeTuple2<NavigateMetadata, String> treeNavigateMetadataTuple2 = getTreeNavigateMetadata(entityMetadata);
+        NavigateMetadata treeNavigateMetadata = treeNavigateMetadataTuple2.t1;
+        //没有单个子项
+        if (treeNavigateMetadata == null) {
+            return list;
+        }
+        return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, runtimeContext);
+    }
+
+
+    @Override
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
         setExecuteMethod(ExecuteMethodEnum.StreamResult, true);
         return toInternalStreamResult(resultClass, configurer);
@@ -934,7 +954,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     .include(t -> {
                         t.getIncludeNavigateParams().setReplace(replace);
 //                        ClientQueryable<Object> with = t.with(navigatePropName);
-                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()),EasyNavigateUtil.getNavigateLimit(resultNavigateMetadata,t.getIncludeNavigateParams().getNavigateMetadata()), EasyNavigateUtil.getNavigateOrderProps(resultNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), runtimeContext);
+                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()), EasyNavigateUtil.getNavigateLimit(resultNavigateMetadata, t.getIncludeNavigateParams().getNavigateMetadata()), EasyNavigateUtil.getNavigateOrderProps(resultNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), runtimeContext);
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
                         selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, replace, deep + 1);
@@ -1495,8 +1515,31 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //        });
     }
 
+    private MergeTuple2<NavigateMetadata, String> getTreeNavigateMetadata(EntityMetadata cteEntityMetadata) {
+        Collection<NavigateMetadata> navigateMetadatas = cteEntityMetadata.getNavigateMetadatas();
+        if (EasyCollectionUtil.isNotEmpty(navigateMetadatas)) {
+
+            if (EasyStringUtil.isNotBlank(cteEntityMetadata.getTreeName())) {
+                NavigateMetadata navigateMetadata = navigateMetadatas.stream().filter(o -> Objects.equals(o.getPropertyName(), cteEntityMetadata.getTreeName())).findFirst().orElse(null);
+                if (navigateMetadata == null) {
+                    return new MergeTuple2<>(null, "not found tree name:[" + cteEntityMetadata.getTreeName() + "] in class:[" + EasyClassUtil.getSimpleName(cteEntityMetadata.getEntityClass()) + "].");
+                }
+                return new MergeTuple2<>(navigateMetadata, null);
+            } else {
+                List<NavigateMetadata> selfNavigateMetadata = navigateMetadatas.stream().filter(o -> o.getRelationType() == RelationTypeEnum.OneToMany && Objects.equals(o.getNavigatePropertyType(), cteEntityMetadata.getEntityClass())).collect(Collectors.toList());
+                if (EasyCollectionUtil.isNotEmpty(selfNavigateMetadata)) {
+                    if (EasyCollectionUtil.isSingle(selfNavigateMetadata)) {
+                        return new MergeTuple2<>(selfNavigateMetadata.get(0), null);
+                    }
+                    return new MergeTuple2<>(null, "Multiple parent-child relationships detected, unable to accurately construct the tree.");
+                }
+            }
+        }
+        return new MergeTuple2<>(null, "Parent-child association not found for building the tree structure. Please set up the parent-child relationship for the objects first. eg.[Navigate oneToMany children]");
+    }
+
     @Override
-    public ClientQueryable<T1> asTreeCTE(String codeProperty, String parentCodeProperty, SQLExpression1<TreeCTEConfigurer> treeExpression) {
+    public ClientQueryable<T1> asTreeCTE(SQLExpression1<TreeCTEConfigurer> treeExpression) {
         //将当前表达式的expression builder放入新表达式的声明里面新表达式还是当前的T类型
 
         TreeCTEOption treeCTEOption = new TreeCTEOption();
@@ -1506,22 +1549,41 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         String deepColumnName = treeCTEOption.getDeepColumnName();
         int limitDeep = treeCTEOption.getLimitDeep();
         boolean up = treeCTEOption.isUp();
+        Class<T1> thisQueryClass = queryClass();
+        EntityMetadata cteEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(thisQueryClass);
+        if (EasyStringUtil.isBlank(cteEntityMetadata.getTableName())) {
+            throw new EasyQueryInvalidOperationException("Method [asTreeCTE] supports only database objects.");
+        }
+        MergeTuple2<NavigateMetadata, String> treeNavigateMetadataTuple2 = getTreeNavigateMetadata(cteEntityMetadata);
+        NavigateMetadata treeNavigateMetadata = treeNavigateMetadataTuple2.t1;
+        if (treeNavigateMetadata == null) {
+            throw new EasyQueryInvalidOperationException(treeNavigateMetadataTuple2.t2);
+        }
 
-        ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(queryClass(), runtimeContext);
+        ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(thisQueryClass, runtimeContext);
         ClientQueryable<T1> cteQueryable = queryable.asTable(cteTableName)
-                .innerJoin(queryClass(), (t, t1) -> {
+                .innerJoin(thisQueryClass, (t, t1) -> {
                     if (up) {
-                        t.eq(t1, parentCodeProperty, codeProperty);
+                        t1.multiEq(true, t, treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
                     } else {
-                        t.eq(t1, codeProperty, parentCodeProperty);
+                        t1.multiEq(true, t, treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), treeNavigateMetadata.getSelfPropertiesOrPrimary());
                     }
+
+//                    if (up) {
+//                        t1.eq(t, codeProperty, parentCodeProperty);
+//                    } else {
+//                        t1.eq(t, parentCodeProperty, codeProperty);
+//                    }
                 })
-                .select(t -> t.sqlNativeSegment("{0} + 1", c -> c.columnName(deepColumnName).setAlias(deepColumnName)).columnAll());
+                .select(thisQueryClass, (t, t1) -> {
+                    t.sqlNativeSegment("{0} + 1", c -> c.columnName(deepColumnName).setAlias(deepColumnName));
+                    t1.columnAll();
+                });
 
         this.select(o -> o.sqlNativeSegment("0", c -> c.setAlias(deepColumnName)).columnAll());
 
         ClientQueryable<T1> t1ClientQueryable = internalUnion(Collections.singletonList(cteQueryable), treeCTEOption.sqlUnion());
-        ClientQueryable<T1> myQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(queryClass(), runtimeContext);
+        ClientQueryable<T1> myQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(thisQueryClass, runtimeContext);
         myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().extract(this.entityQueryExpressionBuilder.getExpressionContext());
         AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) t1ClientQueryable.getSQLEntityExpressionBuilder().getTable(0);
         EntityQueryExpressionBuilder unionAllEntityQueryExpressionBuilder = table.getEntityQueryExpressionBuilder();

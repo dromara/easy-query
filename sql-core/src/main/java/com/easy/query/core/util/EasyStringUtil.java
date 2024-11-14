@@ -338,7 +338,7 @@ public class EasyStringUtil {
 //    }
 
     public static boolean isEmpty(String str) {
-        return str == null || str.length() == 0;
+        return str == null || str.isEmpty();
     }
 
 //    public static String trim(String str) {

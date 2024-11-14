@@ -398,4 +398,9 @@ public class DefaultMapQueryable implements MapQueryable {
             }
         }
     }
+
+    @Override
+    public List<Map<String, Object>> toTreeList() {
+        return toList();
+    }
 }

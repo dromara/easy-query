@@ -170,6 +170,10 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata) {
         return entityQueryable.toList(resultClass,resultEntityMetadata);
     }
+    @Override
+    public List<T1> toTreeList() {
+        return entityQueryable.toTreeList();
+    }
 
     @Override
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {

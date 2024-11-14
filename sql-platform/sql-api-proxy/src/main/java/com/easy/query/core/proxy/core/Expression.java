@@ -307,6 +307,9 @@ public class Expression {
         return new CaseWhenEntityBuilder(entitySQLContext).caseWhen(sqlActionExpression);
     }
 
+    public <TV,TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> ifElse(SQLActionExpression sqlActionExpression,TV thenValue,TV elseValue){
+        return caseWhen(sqlActionExpression).then(thenValue).elseEnd(elseValue);
+    }
     public ColumnFunctionCompareComparableStringChainExpression<String> concat(SQLExpression1<ConcatExpressionSelector> stringExpressions) {
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(entitySQLContext, null, null, fx -> {
             return fx.concat(o -> {

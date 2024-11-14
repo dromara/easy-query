@@ -8,5 +8,5 @@ import com.easy.query.core.basic.api.select.QueryAvailable;
  *
  * @author xuejiaming
  */
-public interface MethodResultQuery<T> extends QueryAvailable<T>,FirstResultAble<T>,SingleResultAble<T>,ListResultAble<T>,PageAble<T>,StreamResultAble<T> {
+public interface MethodResultQuery<T> extends QueryAvailable<T>,FirstResultAble<T>,SingleResultAble<T>,ListResultAble<T>,TreeListResultAble<T>,PageAble<T>,StreamResultAble<T> {
 }

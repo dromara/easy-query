@@ -14,13 +14,14 @@ import kotlin.reflect.KProperty1;
  *
  * @author xuejiaming
  */
-public interface SQLKtTreeable1<T1>  extends ClientKtQueryableAvailable<T1>, KtQueryableAvailable<T1>{
+public interface SQLKtTreeable1<T1> extends ClientKtQueryableAvailable<T1>, KtQueryableAvailable<T1> {
 
-    default KtQueryable<T1> asTreeCTE(KProperty1<? super T1,?> codeProperty, KProperty1<? super T1,?> parentCodeProperty){
-        return asTreeCTE(codeProperty,parentCodeProperty,o->{});
+    default KtQueryable<T1> asTreeCTE() {
+        return asTreeCTE(o -> {});
     }
-   default KtQueryable<T1> asTreeCTE(KProperty1<? super T1,?> codeProperty, KProperty1<? super T1,?> parentCodeProperty, SQLExpression1<TreeCTEConfigurer> treeExpression){
-       ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(EasyKtLambdaUtil.getPropertyName(codeProperty), EasyKtLambdaUtil.getPropertyName(parentCodeProperty), treeExpression);
-       return new EasyKtQueryable<>(clientQueryable);
-   }
+
+    default KtQueryable<T1> asTreeCTE(SQLExpression1<TreeCTEConfigurer> treeExpression) {
+        ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(treeExpression);
+        return new EasyKtQueryable<>(clientQueryable);
+    }
 }
