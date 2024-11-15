@@ -23,6 +23,7 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.Collection;
@@ -40,6 +41,7 @@ public interface SQLClientApiFactory {
     JdbcExecutor createJdbcExecutor(QueryRuntimeContext runtimeContext);
 
     <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext);
+    <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, ExpressionContext expressionContext);
 
     default <T> ClientQueryable<T> createQueryable(String sql, Class<T> clazz, QueryRuntimeContext runtimeContext) {
         return createQueryable(sql, Collections.emptyList(), clazz, runtimeContext);

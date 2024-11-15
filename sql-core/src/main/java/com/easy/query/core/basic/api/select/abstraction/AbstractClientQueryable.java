@@ -1586,7 +1586,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         ClientQueryable<T1> t1ClientQueryable = internalUnion(Collections.singletonList(cteQueryable), treeCTEOption.sqlUnion());
         ClientQueryable<T1> myQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(thisQueryClass, runtimeContext);
-        myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().extract(this.entityQueryExpressionBuilder.getExpressionContext());
+        ExpressionContext expressionContext = myQueryable.getSQLEntityExpressionBuilder().getExpressionContext();
+        expressionContext.extract(this.entityQueryExpressionBuilder.getExpressionContext());
+        expressionContext.getIncludes().putAll(this.entityQueryExpressionBuilder.getExpressionContext().getIncludes());
+        expressionContext.getColumnIncludeMaps().putAll(this.entityQueryExpressionBuilder.getExpressionContext().getColumnIncludeMaps());
+        expressionContext.getFills().addAll(this.entityQueryExpressionBuilder.getExpressionContext().getFills());
         AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) t1ClientQueryable.getSQLEntityExpressionBuilder().getTable(0);
         EntityQueryExpressionBuilder unionAllEntityQueryExpressionBuilder = table.getEntityQueryExpressionBuilder();
         EntityQueryExpressionBuilder anonymousCTEQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousCTEQueryExpressionBuilder(cteTableName, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass());

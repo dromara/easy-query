@@ -18,6 +18,19 @@ import java.util.List;
  */
 public class QueryTest19 extends PgSQLBaseTest {
 
+    @Test
+    public  void tree11(){
+
+        List<MyCategory> treeList = entityQuery.queryable(MyCategory.class)
+                .where(m -> {
+                    m.id().eq("1");
+                })
+                .asTreeCTE()
+                .orderBy(m -> m.id().desc())
+                .toTreeList();
+        System.out.println(11);
+    }
+
 
     @Test
     public void testToTreeList() {

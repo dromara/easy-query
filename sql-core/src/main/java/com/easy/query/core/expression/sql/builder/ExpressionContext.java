@@ -63,6 +63,7 @@ public interface ExpressionContext {
     void useSharding();
     boolean isSharding();
     void extract(ExpressionContext otherExpressionContext);
+    void extendFrom(ExpressionContext otherExpressionContext);
 
     boolean hasSubQuery();
     TableContext getTableContext();

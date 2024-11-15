@@ -85,7 +85,13 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext) {
         ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
-        EntityQueryExpressionBuilder entityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(queryExpressionContext, clazz);
+        return createQueryable(clazz,runtimeContext,queryExpressionContext);
+    }
+
+    @Override
+    public <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, ExpressionContext expressionContext) {
+
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(expressionContext, clazz);
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.FROM, runtimeContext);
         entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);

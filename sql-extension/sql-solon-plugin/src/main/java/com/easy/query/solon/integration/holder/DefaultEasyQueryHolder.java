@@ -11,6 +11,8 @@ import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import org.noear.solon.core.VarHolder;
 
+import java.util.Objects;
+
 /**
  * create time 2023/7/24 22:20
  * 文件说明
@@ -43,11 +45,11 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
 
     @Override
     public <T> T getClient(Class<T> clazz) {
-        if (EasyEntityQuery.class.isAssignableFrom(clazz)) {
+        if (Objects.equals(EasyEntityQuery.class,clazz)) {
             return EasyObjectUtil.typeCastNullable(this.entityQuery);
         }
 
-        if (EasyQuery.class.isAssignableFrom(clazz)) {
+        if (Objects.equals(EasyQuery.class,clazz)) {
             return EasyObjectUtil.typeCastNullable(this.easyQuery);
         }
 //        if(EntityQuery.class.isAssignableFrom(varH.getType())){
@@ -55,15 +57,15 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
 //            return;
 //        }
 
-        if (EasyQueryClient.class.isAssignableFrom(clazz)) {
+        if (Objects.equals(EasyQueryClient.class,clazz)) {
             return EasyObjectUtil.typeCastNullable(this.easyQueryClient);
         }
 
-        if (EasyProxyQuery.class.isAssignableFrom(clazz)) {
+        if (Objects.equals(EasyProxyQuery.class,clazz)) {
             return EasyObjectUtil.typeCastNullable(this.easyProxyQuery);
         }
 
-        if (EasyKtQuery.class.isAssignableFrom(clazz)) {
+        if (Objects.equals(EasyKtQuery.class,clazz)) {
             return EasyObjectUtil.typeCastNullable(this.easyKtQuery);
         }
         throw new UnsupportedOperationException(EasyClassUtil.getSimpleName(clazz));
@@ -78,12 +80,12 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
     @Override
     public void injectTo(VarHolder varH) {
 
-        if (EasyEntityQuery.class.isAssignableFrom(varH.getType())) {
+        if (Objects.equals(EasyEntityQuery.class,varH.getType())) {
             varH.setValue(this.entityQuery);
             return;
         }
 
-        if (EasyQuery.class.isAssignableFrom(varH.getType())) {
+        if (Objects.equals(EasyQuery.class,varH.getType())) {
             varH.setValue(this.easyQuery);
             return;
         }
@@ -92,24 +94,24 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
 //            return;
 //        }
 
-        if (EasyQueryClient.class.isAssignableFrom(varH.getType())) {
+        if (Objects.equals(EasyQueryClient.class,varH.getType())) {
             varH.setValue(this.easyQueryClient);
             return;
         }
 
-        if (EasyProxyQuery.class.isAssignableFrom(varH.getType())) {
+        if (Objects.equals(EasyProxyQuery.class,varH.getType())) {
             varH.setValue(this.easyProxyQuery);
             return;
         }
 
-        if (EasyKtQuery.class.isAssignableFrom(varH.getType())) {
+        if (Objects.equals(EasyKtQuery.class,varH.getType())) {
             varH.setValue(this.easyKtQuery);
             return;
         }
-        if(QueryConfiguration.class.isAssignableFrom(varH.getType())){
+        if(Objects.equals(QueryConfiguration.class,varH.getType())){
             varH.setValue(this.easyQueryClient.getRuntimeContext().getQueryConfiguration());
         }
-        if(QueryRuntimeContext.class.isAssignableFrom(varH.getType())){
+        if(Objects.equals(QueryRuntimeContext.class,varH.getType())){
             varH.setValue(this.easyQueryClient.getRuntimeContext());
         }
 

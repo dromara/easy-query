@@ -154,6 +154,11 @@ public class EmptyExpressionContext implements ExpressionContext{
     }
 
     @Override
+    public void extendFrom(ExpressionContext otherExpressionContext) {
+
+    }
+
+    @Override
     public boolean hasSubQuery() {
         return false;
     }
