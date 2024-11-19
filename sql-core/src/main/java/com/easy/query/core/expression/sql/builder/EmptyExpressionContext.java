@@ -10,6 +10,7 @@ import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
@@ -36,6 +37,11 @@ public class EmptyExpressionContext implements ExpressionContext{
     public EmptyExpressionContext(QueryRuntimeContext runtimeContext){
 
         this.runtimeContext = runtimeContext;
+    }
+
+    @Override
+    public ExpressionContextInterceptor getExpressionContextInterceptor() {
+        return null;
     }
 
     @Override

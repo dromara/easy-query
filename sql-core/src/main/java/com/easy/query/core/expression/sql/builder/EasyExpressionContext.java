@@ -94,6 +94,11 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
+    public ExpressionContextInterceptor getExpressionContextInterceptor() {
+        return expressionContextInterceptor;
+    }
+
+    @Override
     public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }

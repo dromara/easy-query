@@ -2012,7 +2012,7 @@ public class RelationTest extends BaseTest {
                 }
             }
             {
-                List<SchoolStudent> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                List<SchoolStudent> list1 = easyEntityQuery.queryable(SchoolStudent.class).noInterceptor()
                         .include(t -> t.schoolClass())
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {

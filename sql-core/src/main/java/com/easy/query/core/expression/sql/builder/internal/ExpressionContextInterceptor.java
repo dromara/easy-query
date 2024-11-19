@@ -13,43 +13,46 @@ public class ExpressionContextInterceptor {
     protected Set<String> useInterceptors;
     protected Set<String> noInterceptors;
 
-    private void clearInterceptors(){
+    private void clearInterceptors() {
 
-        if(useInterceptors!=null){
+        if (useInterceptors != null) {
             useInterceptors.clear();
         }
-        if(noInterceptors!=null){
+        if (noInterceptors != null) {
             noInterceptors.clear();
         }
     }
 
-    public void useInterceptor(String name){
-        if(noInterceptors!=null){
+    public void useInterceptor(String name) {
+        if (noInterceptors != null) {
             noInterceptors.remove(name);
         }
-        if(useInterceptors==null){
-            useInterceptors=new HashSet<>();
+        if (useInterceptors == null) {
+            useInterceptors = new HashSet<>();
         }
         useInterceptors.add(name);
     }
-    public void noInterceptor(String name){
-        if(useInterceptors!=null){
+
+    public void noInterceptor(String name) {
+        if (useInterceptors != null) {
             useInterceptors.remove(name);
         }
-        if(noInterceptors==null){
-            noInterceptors=new HashSet<>();
+        if (noInterceptors == null) {
+            noInterceptors = new HashSet<>();
         }
         noInterceptors.add(name);
     }
-    public void useInterceptor(){
+
+    public void useInterceptor() {
         clearInterceptors();
     }
 
-    public void noInterceptor(){
+    public void noInterceptor() {
         clearInterceptors();
     }
-    public boolean useContains(String name){
-        if(useInterceptors==null){
+
+    public boolean useContains(String name) {
+        if (useInterceptors == null) {
             return false;
         }
         return useInterceptors.contains(name);
@@ -57,23 +60,26 @@ public class ExpressionContextInterceptor {
 
     /**
      * 不代表不包含,表示不使用的拦截器里面是否包含
+     *
      * @param name
      * @return
      */
-    public boolean noContains(String name){
-        if(noInterceptors==null){
+    public boolean noContains(String name) {
+        if (noInterceptors == null) {
             return false;
         }
         return noInterceptors.contains(name);
     }
 
-    public void copyTo(ExpressionContextInterceptor expressionContextInterceptor){
-        if(useInterceptors!=null){
+    public void copyTo(ExpressionContextInterceptor expressionContextInterceptor) {
+        if (useInterceptors != null) {
+            expressionContextInterceptor.clearInterceptors();
             for (String useInterceptor : useInterceptors) {
-                expressionContextInterceptor.useContains(useInterceptor);
+                expressionContextInterceptor.useInterceptor(useInterceptor);
             }
         }
-        if(noInterceptors!=null){
+        if (noInterceptors != null) {
+            expressionContextInterceptor.clearInterceptors();
             for (String noInterceptor : noInterceptors) {
                 expressionContextInterceptor.noInterceptor(noInterceptor);
             }

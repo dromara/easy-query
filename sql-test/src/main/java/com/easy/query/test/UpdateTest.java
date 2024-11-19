@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.api4j.update.impl.EasyEntityUpdatable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -1530,7 +1531,6 @@ public class UpdateTest extends BaseTest {
         } finally {
             trackManager.release();
         }
-
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("UPDATE `aaaxxx` SET `title` = ? WHERE `id` = ? AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());

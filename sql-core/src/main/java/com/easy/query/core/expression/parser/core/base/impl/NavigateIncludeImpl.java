@@ -91,6 +91,13 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         } else {
             queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_TRACKING);
         }
+        //支持interceptor传递
+        if(!expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR)){
+            queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
+        }
+        expressionContext.getExpressionContextInterceptor().copyTo(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getExpressionContextInterceptor());
+
+
         return queryable.configure(s -> {
             s.setPrintSQL(printNavSQL);
             s.setPrintNavSQL(printNavSQL);
