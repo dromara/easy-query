@@ -53,7 +53,7 @@ public interface ExpressionContext {
     void executeMethod(ExecuteMethodEnum executeMethod,boolean ifUnknown);
     ExecuteMethodEnum getExecuteMethod();
 
-    void setMaxShardingQueryLimit(int maxShardingQueryLimit);
+    void setMaxShardingQueryLimit(Integer maxShardingQueryLimit);
     Integer getMaxShardingQueryLimitOrNull();
     void setConnectionMode(ConnectionModeEnum connectionMode);
     ConnectionModeEnum getConnectionModeOrNull();

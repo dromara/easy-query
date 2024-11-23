@@ -171,8 +171,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         return entityQueryable.toList(resultClass,resultEntityMetadata);
     }
     @Override
-    public List<T1> toTreeList() {
-        return entityQueryable.toTreeList();
+    public List<T1> toTreeList(boolean ignore) {
+        return entityQueryable.toTreeList(ignore);
     }
 
     @Override

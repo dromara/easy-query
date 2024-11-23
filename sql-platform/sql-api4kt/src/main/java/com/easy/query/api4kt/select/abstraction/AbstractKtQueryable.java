@@ -173,8 +173,8 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     }
 
     @Override
-    public List<T1> toTreeList() {
-        return entityQueryable.toTreeList();
+    public List<T1> toTreeList(boolean ignore) {
+        return entityQueryable.toTreeList(ignore);
     }
 
     @Override

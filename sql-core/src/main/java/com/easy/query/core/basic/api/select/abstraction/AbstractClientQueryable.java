@@ -559,13 +559,16 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public List<T1> toTreeList() {
+    public List<T1> toTreeList(boolean ignore) {
         List<T1> list = this.toList(this.queryClass());
 
         MergeTuple2<NavigateMetadata, String> treeNavigateMetadataTuple2 = getTreeNavigateMetadata(entityMetadata);
         NavigateMetadata treeNavigateMetadata = treeNavigateMetadataTuple2.t1;
         //没有单个子项
         if (treeNavigateMetadata == null) {
+            if (!ignore) {
+                throw new EasyQueryInvalidOperationException("Unable to find a Navigate property where children is a reference to itself:[" + EasyClassUtil.getSimpleName(this.queryClass()) + "].");
+            }
             return list;
         }
         return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, runtimeContext);
@@ -1552,7 +1555,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (treeNavigateMetadata == null) {
             throw new EasyQueryInvalidOperationException(treeNavigateMetadataTuple2.t2);
         }
-        return asTreeCTECustom(treeNavigateMetadata.getSelfPropertiesOrPrimary(),treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext),treeExpression);
+        return asTreeCTECustom(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), treeExpression);
     }
 
     private ClientQueryable<T1> asTreeCTECustom(String[] codeProperties, String[] parentCodeProperties, SQLExpression1<TreeCTEConfigurer> treeExpression) {
@@ -1588,9 +1591,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ClientQueryable<T1> myQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(thisQueryClass, runtimeContext);
         ExpressionContext expressionContext = myQueryable.getSQLEntityExpressionBuilder().getExpressionContext();
         expressionContext.extract(this.entityQueryExpressionBuilder.getExpressionContext());
-        expressionContext.getIncludes().putAll(this.entityQueryExpressionBuilder.getExpressionContext().getIncludes());
-        expressionContext.getColumnIncludeMaps().putAll(this.entityQueryExpressionBuilder.getExpressionContext().getColumnIncludeMaps());
-        expressionContext.getFills().addAll(this.entityQueryExpressionBuilder.getExpressionContext().getFills());
+        this.entityQueryExpressionBuilder.getExpressionContext().extendFrom(expressionContext);
         AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) t1ClientQueryable.getSQLEntityExpressionBuilder().getTable(0);
         EntityQueryExpressionBuilder unionAllEntityQueryExpressionBuilder = table.getEntityQueryExpressionBuilder();
         EntityQueryExpressionBuilder anonymousCTEQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousCTEQueryExpressionBuilder(cteTableName, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass());
@@ -1603,11 +1604,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }
         return myQueryable;
     }
+
     @Override
     public ClientQueryable<T1> asTreeCTECustom(String codeProperty, String parentCodeProperty, SQLExpression1<TreeCTEConfigurer> treeExpression) {
-        String[] codeProperties={codeProperty};
-        String[] parentCodeProperties={parentCodeProperty};
-        return asTreeCTECustom(codeProperties,parentCodeProperties,treeExpression);
+        String[] codeProperties = {codeProperty};
+        String[] parentCodeProperties = {parentCodeProperty};
+        return asTreeCTECustom(codeProperties, parentCodeProperties, treeExpression);
     }
 
     @Override

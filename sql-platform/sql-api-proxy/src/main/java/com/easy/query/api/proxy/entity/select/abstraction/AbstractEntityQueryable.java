@@ -188,8 +188,8 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return clientQueryable.toList(resultClass, resultEntityMetadata);
     }
     @Override
-    public List<T1> toTreeList() {
-        return clientQueryable.toTreeList();
+    public List<T1> toTreeList(boolean ignore) {
+        return clientQueryable.toTreeList(ignore);
     }
 
     @Override

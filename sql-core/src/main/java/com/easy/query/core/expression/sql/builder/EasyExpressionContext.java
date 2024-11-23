@@ -214,7 +214,7 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public void setMaxShardingQueryLimit(int maxShardingQueryLimit) {
+    public void setMaxShardingQueryLimit(Integer maxShardingQueryLimit) {
         this.maxShardingQueryLimit = maxShardingQueryLimit;
     }
 
@@ -260,34 +260,34 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public void extendFrom(ExpressionContext otherExpressionContext) {
         this.easyBehavior.copyTo(otherExpressionContext.getBehavior());
-//        expressionContextInterceptor.copyTo(easyExpressionContext.expressionContextInterceptor);
-//        easyExpressionContext.deleteThrowException = this.deleteThrowException;
-//        easyExpressionContext.version = this.version;
-//        easyExpressionContext.executeMethod = this.executeMethod;
-//        easyExpressionContext.sqlStrategy = this.sqlStrategy;
-//        easyExpressionContext.maxShardingQueryLimit = this.maxShardingQueryLimit;
-//        easyExpressionContext.connectionMode = this.connectionMode;
-//        easyExpressionContext.sharding = this.sharding;
-//        easyExpressionContext.hasSubQuery = this.hasSubQuery;
-//        easyExpressionContext.relationExtraMetadata = this.relationExtraMetadata;
-//        easyExpressionContext.printSQL = this.printSQL;
-//        easyExpressionContext.printNavSQL = this.printNavSQL;
-//        if (hasIncludes()) {
-//            easyExpressionContext.getIncludes().putAll(this.includes);
-//        }
-//        if (hasFills()) {
-//            easyExpressionContext.getFills().addAll(this.fills);
-//        }
-//        if (hasColumnIncludeMaps()) {
-//            easyExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
-//        }
-//        if(hasDeclareExpressions()){
-//            easyExpressionContext.getDeclareExpressions().addAll(this.declareExpressions);
-//        }
-//        if (this.propTypes != null) {
-//            easyExpressionContext.propTypes = new ResultColumnMetadata[this.propTypes.length];
-//            System.arraycopy(this.propTypes, 0, easyExpressionContext.propTypes, 0, this.propTypes.length);
-//        }
+        expressionContextInterceptor.copyTo(otherExpressionContext.getExpressionContextInterceptor());
+        otherExpressionContext.deleteThrow(this.deleteThrowException);
+        otherExpressionContext.setVersion(this.version);
+        otherExpressionContext.executeMethod(this.executeMethod);
+        otherExpressionContext.useSQLStrategy(this.sqlStrategy);
+        otherExpressionContext.setMaxShardingQueryLimit(this.maxShardingQueryLimit);
+        otherExpressionContext.setConnectionMode(this.connectionMode);
+        if(hasRelationExtraMetadata()){
+            this.relationExtraMetadata.copyTo(otherExpressionContext.getRelationExtraMetadata());
+        }
+        otherExpressionContext.setPrintSQL(this.printSQL);
+        otherExpressionContext.setPrintNavSQL(this.printNavSQL);
+        if (hasIncludes()) {
+            otherExpressionContext.getIncludes().putAll(this.includes);
+        }
+        if (hasFills()) {
+            otherExpressionContext.getFills().addAll(this.fills);
+        }
+        if (hasColumnIncludeMaps()) {
+            otherExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
+        }
+        if(hasDeclareExpressions()){
+            otherExpressionContext.getDeclareExpressions().addAll(this.declareExpressions);
+        }
+        if (this.propTypes != null) {
+            otherExpressionContext.setResultPropTypes(new ResultColumnMetadata[this.propTypes.length]);
+            System.arraycopy(this.propTypes, 0, otherExpressionContext.getResultPropTypes(), 0, this.propTypes.length);
+        }
     }
 
     @Override
@@ -387,6 +387,9 @@ public class EasyExpressionContext implements ExpressionContext {
         }
         if (hasColumnIncludeMaps()) {
             easyExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
+        }
+        if(hasDeclareExpressions()){
+            easyExpressionContext.getDeclareExpressions().addAll(this.declareExpressions);
         }
         if (this.propTypes != null) {
             easyExpressionContext.propTypes = new ResultColumnMetadata[this.propTypes.length];

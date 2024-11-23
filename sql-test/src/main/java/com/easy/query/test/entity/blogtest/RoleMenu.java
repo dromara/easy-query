@@ -21,5 +21,4 @@ public class RoleMenu implements ProxyEntityAvailable<RoleMenu , RoleMenuProxy> 
     private String id;
     private String roleId;
     private String menuId;
-
 }

@@ -125,7 +125,7 @@ public class EmptyExpressionContext implements ExpressionContext{
     }
 
     @Override
-    public void setMaxShardingQueryLimit(int maxShardingQueryLimit) {
+    public void setMaxShardingQueryLimit(Integer maxShardingQueryLimit) {
 
     }
 

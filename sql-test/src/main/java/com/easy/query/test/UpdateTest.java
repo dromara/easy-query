@@ -3,6 +3,7 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api4j.update.ExpressionUpdatable;
 import com.easy.query.api4j.update.impl.EasyEntityUpdatable;
+import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
@@ -14,8 +15,12 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQueryTableNotInSQLContextException;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.core.Expression;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -30,6 +35,7 @@ import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.vo.BlogEntityVO1;
 import com.easy.query.test.vo.BlogEntityVO2;
+import com.easy.query.test.vo.SysMenuDto;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,6 +43,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -1623,7 +1630,9 @@ public class UpdateTest extends BaseTest {
         try {
             easyEntityQuery.updatable(Topic.class)
                     .setColumns(t -> {
-                        t.title().set(t.title().subString(1, 10).concat(t.id()));
+                        t.title().set(
+                                t.title().subString(1, 10).concat(t.id())
+                        );
                     }).asTable("a123123")
                     .whereById("123zzzxxx")
                     .executeRows();
@@ -1805,6 +1814,47 @@ public class UpdateTest extends BaseTest {
         Assert.assertEquals("UPDATE `xxxxx` SET `id` = ?,`stars` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),2(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+    @Test
+    public void aaaa(){
+//        List<Draft1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(b -> {
+//                    b.star().eq(1);
+//                }).select(b -> Select.DRAFT.of(
+//                        b.expression().concat(b.title())
+//                )).toList();
+//        List<Draft1<String>> list2 = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(b -> {
+//                    b.star().eq(1);
+//                }).select(b -> Select.DRAFT.of(
+//                        b.id().concat(b.title())
+//                )).toList();
+//        BlogEntity blogEntity = new BlogEntity();
+//        EntityMetadataManager entityMetadataManager = easyEntityQuery.getRuntimeContext().getEntityMetadataManager();
+//        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(blogEntity.getClass());
+//        Collection<String> keyProperties = entityMetadata.getKeyProperties();
+//        LinkedHashMap<String, Object> keyMap = new LinkedHashMap<>();
+//        for (String keyProperty : keyProperties) {
+//            Property<Object, ?> getterCaller = entityMetadata.getColumnNotNull(keyProperty).getGetterCaller();
+//            Object key = getterCaller.apply(blogEntity);
+//            keyMap.put(keyProperty,key);
+//        }
+//        easyEntityQuery.getEasyQueryClient().queryable(BlogEntity.class)
+//                .whereById("123").toList();
+
+        List<SysMenuDto> list2 = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(BlogEntity.class,(a,b)->a.id().eq(b.id()))
+                .leftJoin(BlogEntity.class,(a,b,c)->a.id().eq(b.id()))
+                .leftJoin(BlogEntity.class,(a,b,c,d)->a.id().eq(b.id()))
+                .where(b -> {
+                    b.star().eq(1);
+                }).select(SysMenuDto.class,(a, b, c, d) -> Select.of(
+                        a.FETCHER.allFields(),
+                        a.expression().concat(s->{
+                            s.value("1").expression(d.title()).value("1");
+                        }).as(SysMenuDto::getSourceName)
+                )).toList();
     }
 
 }

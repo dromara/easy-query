@@ -9,6 +9,7 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
@@ -16,7 +17,11 @@ import com.easy.query.test.dto.UserBookEncryptVO;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.Company;
 import com.easy.query.test.entity.blogtest.CompanyVO;
+import com.easy.query.test.entity.blogtest.SysRole;
 import com.easy.query.test.entity.blogtest.SysUser;
+import com.easy.query.test.entity.blogtest.SysUserAddress;
+import com.easy.query.test.entity.blogtest.UserRole;
+import com.easy.query.test.entity.blogtest.dto.SysUserDTO;
 import com.easy.query.test.entity.blogtest.proxy.CompanyProxy;
 import com.easy.query.test.entity.blogtest.proxy.CompanyVOProxy;
 import com.easy.query.test.entity.navf.UVO;
@@ -31,6 +36,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * create time 2024/4/29 23:02
@@ -380,50 +386,6 @@ public class QueryTest16 extends BaseTest {
 //                .where(s -> s.id().eq("1"))
 //                .toList(x -> x.roles().flatElement()).stream().map(o -> o.getId()).collect(Collectors.toList());
 //
-//        List<String> list = easyEntityQuery.queryable(SysRole.class)
-//                .where(s -> {
-//                    s.users().flatElement().id().eq("1");
-//                })
-//                .select(s -> s.name())
-//                .toList();
-////
-////        List<SysUserDTO> users = easyEntityQuery.queryable(SysUser.class)
-////                .where(s -> s.name().like("小明"))
-////                .select(SysUserDTO.class, s -> Select.of(
-////                        s.FETCHER.allFields(),
-////                        s.address().addr().as(SysUserDTO.Fields.myAddress)
-////                )).toList();
-////        List<StructSysUserDTO> users = easyEntityQuery.queryable(SysUser.class)
-////                .leftJoin(Topic.class,(s, t2) -> s.id().eq(t2.id()))
-////                .where(s -> s.name().like("小明"))
-////                .selectAutoInclude(StructSysUserDTO.class,(s, t2)->Select.of(
-////                        //////s.FETCHER.allFields(),请注意不需要添加这一行因为selectAutoInclude会自动执行allFields
-////                        t2.stars().nullOrDefault(1).as(StructSysUserDTO.Fields.topicStars)
-////                )).toList();
-////        List<SysUserFlatDTO> users = easyEntityQuery.queryable(SysUser.class)
-////                .where(s -> s.name().like("小明"))
-////                .selectAutoInclude(SysUserFlatDTO.class).toList();
-////
-////
-////        List<String> menuIds = easyEntityQuery.queryable(SysUser.class)
-////                .where(s -> s.name().like("小明"))
-////                .toList(s -> s.roles().flatElement().menus().flatElement().id());
-////
-////        List<SysMenu> menuIdNames = easyEntityQuery.queryable(SysUser.class)
-////                .where(s -> s.name().like("小明"))
-////                .toList(s -> s.roles().flatElement().menus().flatElement(x->x.FETCHER.id().name()));
-//
-//        List<Draft3<String, LocalDateTime, String>> userInfo = easyEntityQuery.queryable(SysUser.class)
-//                .leftJoin(SysUserAddress.class, (user, addr) -> user.id().eq(addr.userId()))
-//                .where((user, addr) -> {
-//                    user.name().like("小明");
-//                    addr.city().eq("杭州");
-//                })
-//                .select((s1, s2) -> Select.DRAFT.of(
-//                        s1.id(),
-//                        s1.createTime(),
-//                        s2.area()
-//                )).toList();
 //
 //        List<SysUser> userIn = easyEntityQuery.queryable(SysUser.class)
 //                .where(user -> {

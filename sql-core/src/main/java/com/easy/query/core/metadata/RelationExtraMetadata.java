@@ -13,10 +13,10 @@ import java.util.Map;
  */
 public class RelationExtraMetadata {
     private final Map<String, RelationExtraColumn> relationExtraColumnMap;
-    private final List<Map<String,Object>> relationExtraColumnList;
+    private final List<Map<String, Object>> relationExtraColumnList;
     private int currentIndex;
 
-    public RelationExtraMetadata(){
+    public RelationExtraMetadata() {
 
         this.relationExtraColumnMap = new HashMap<>();
         this.relationExtraColumnList = new ArrayList<>();
@@ -31,11 +31,23 @@ public class RelationExtraMetadata {
         return relationExtraColumnList;
     }
 
-    public void createRow(){
+    public void createRow() {
         this.relationExtraColumnList.add(new HashMap<>());
         this.currentIndex++;
     }
-    public Map<String,Object> currentRow(){
+    public void clearRow(){
+        this.currentIndex=-1;
+        this.relationExtraColumnList.clear();
+    }
+
+    public Map<String, Object> currentRow() {
         return this.relationExtraColumnList.get(this.currentIndex);
+    }
+
+    public void copyTo(RelationExtraMetadata otherRelationExtraMetadata) {
+        otherRelationExtraMetadata.getRelationExtraColumnMap().putAll(relationExtraColumnMap);
+        otherRelationExtraMetadata.clearRow();
+        otherRelationExtraMetadata.getRelationExtraColumnList().addAll(this.relationExtraColumnList);
+        otherRelationExtraMetadata.currentIndex = this.currentIndex;
     }
 }
