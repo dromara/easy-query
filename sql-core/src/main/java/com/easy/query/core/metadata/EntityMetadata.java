@@ -316,6 +316,17 @@ public class EntityMetadata {
         }
     }
 
+    private @Nullable NavigateExtraFilterStrategy getNavigateExtraFilterStrategy(QueryConfiguration configuration,Navigate navigate){
+        Class<? extends NavigateExtraFilterStrategy> extraFilterStrategyClass = navigate.extraFilter();
+        if (!Objects.equals(DefaultNavigateExtraFilterStrategy.class, extraFilterStrategyClass)) {
+            NavigateExtraFilterStrategy navigateExtraFilterStrategy = configuration.getNavigateExtraFilterStrategy(extraFilterStrategyClass);
+            if (navigateExtraFilterStrategy == null) {
+                throw new EasyQueryInvalidOperationException("not found navigate extra filter strategy:[" + EasyClassUtil.getSimpleName(extraFilterStrategyClass) + "]");
+            }
+            return navigateExtraFilterStrategy;
+        }
+        return null;
+    }
     private void createNavigateMetadata(boolean tableEntity, Navigate navigate, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
 
         String[] selfProperties = tableEntity ? navigate.selfProperty() : EasyArrayUtil.EMPTY;
@@ -332,12 +343,8 @@ public class EntityMetadata {
         NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties, orderProps, navigate.offset(), navigate.limit());
 
         if (tableEntity) {
-            Class<? extends NavigateExtraFilterStrategy> extraFilterStrategyClass = navigate.extraFilter();
-            if (!Objects.equals(DefaultNavigateExtraFilterStrategy.class, extraFilterStrategyClass)) {
-                NavigateExtraFilterStrategy navigateExtraFilterStrategy = configuration.getNavigateExtraFilterStrategy(extraFilterStrategyClass);
-                if (navigateExtraFilterStrategy == null) {
-                    throw new EasyQueryInvalidOperationException("not found navigate extra filter strategy:[" + EasyClassUtil.getSimpleName(extraFilterStrategyClass) + "]");
-                }
+            NavigateExtraFilterStrategy navigateExtraFilterStrategy = getNavigateExtraFilterStrategy(configuration, navigate);
+            if (navigateExtraFilterStrategy!=null) {
                 SQLExpression1<WherePredicate<?>> predicateFilterExpression = navigateExtraFilterStrategy.getPredicateFilterExpression(new NavigateBuilder(navigateOption));
                 if (predicateFilterExpression != null) {
                     navigateOption.setPredicateFilterExpression(predicateFilterExpression);
@@ -356,6 +363,12 @@ public class EntityMetadata {
                     navigateOption.setMappingClass(navigate.mappingClass());
                     navigateOption.setSelfMappingProperties(navigate.selfMappingProperty());
                     navigateOption.setTargetMappingProperties(navigate.targetMappingProperty());
+                    if (navigateExtraFilterStrategy!=null) {
+                        SQLExpression1<WherePredicate<?>> predicateFilterExpression = navigateExtraFilterStrategy.getPredicateManyToManyFilterExpression(new NavigateBuilder(navigateOption));
+                        if (predicateFilterExpression != null) {
+                            navigateOption.setPredicateManyToManyFilterExpression(predicateFilterExpression);
+                        }
+                    }
                 }
             }
         }

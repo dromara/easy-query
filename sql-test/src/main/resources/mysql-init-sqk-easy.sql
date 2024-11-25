@@ -271,3 +271,24 @@ create table category
     parent_id varchar(32)  null comment '父id',
     name varchar(32)  null comment '类目名称'
 )comment '类目树';
+
+
+create table t_user
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    name varchar(32)  null comment '类目名称'
+)comment '类目树';
+
+
+INSERT into t_user values('1','name1')
+
+
+create table relation_route
+(
+    first_id varchar(32) not null comment '主键ID'primary key,
+    second_id varchar(32)  null comment '类目名称',
+    type int null comment '类型'
+)comment '类目树';
+
+
+INSERT into relation_route values('1','2',1)

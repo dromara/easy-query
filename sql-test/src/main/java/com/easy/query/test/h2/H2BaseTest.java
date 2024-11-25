@@ -20,6 +20,7 @@ import com.easy.query.test.h2.domain.DefTableLeft1;
 import com.easy.query.test.h2.domain.DefTableLeft2;
 import com.easy.query.test.h2.domain.DefTableLeft3;
 import com.easy.query.test.h2.domain.H2Order;
+import com.easy.query.test.h2.domain.TbOrder;
 import com.easy.query.test.h2.sharding.AllTYPEShardingInitializer;
 import com.easy.query.test.h2.sharding.AllTypeRoute;
 import com.easy.query.test.h2.sharding.H2OrderRoute;
@@ -125,6 +126,7 @@ public class H2BaseTest {
         QueryRuntimeContext runtimeContext1 = easyQuery.getRuntimeContext();
         QueryConfiguration queryConfiguration1 = runtimeContext1.getQueryConfiguration();
         queryConfiguration1.applyShardingInitializer(new AllTYPEShardingInitializer());
+        queryConfiguration1.applyNavigateExtraFilterStrategy(new TbOrder.NameXMTbAccountExtraFilter());
 
         TableRouteManager tableRouteManager1 = runtimeContext1.getTableRouteManager();
         tableRouteManager1.addRoute(new AllTypeRoute());

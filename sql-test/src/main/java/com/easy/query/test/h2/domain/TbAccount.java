@@ -7,6 +7,7 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.h2.domain.proxy.TbAccountProxy;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 @Table("t_tb_account")
 @EntityProxy
 @Data
+@FieldNameConstants
 public class TbAccount implements ProxyEntityAvailable<TbAccount , TbAccountProxy> {
     private String id;
     private String uid;

@@ -24,16 +24,29 @@ public class BookNavigateExtraFilterStrategy implements NavigateExtraFilterStrat
         Class<?> navigatePropertyType = builder.getNavigateOption().getNavigatePropertyType();
         //导航属性名称
         String propertyName = builder.getNavigateOption().getPropertyName();
-        if(Objects.equals(RelationUser.class,entityMetadata.getEntityClass())){
+        if(Objects.equals(RelationUser.class,entityMetadata.getEntityClass())||Objects.equals(MyRelationUser.class,entityMetadata.getEntityClass())){
             if(Objects.equals("historyBooks",propertyName)){
                 LocalDateTime histroy = LocalDateTime.of(2022, 1, 1, 0, 0);
                 return o->o.le("createTime",histroy);
             }
             if(Objects.equals("teachers",propertyName)){
-                return o->o.eq("type",1);
+                return o->o.eq("name","12345");
             }
             return o->o.eq("bookType",1);
         }
         return o->o.eq("bookType",2);
+    }
+
+    @Override
+    public SQLExpression1<WherePredicate<?>> getPredicateManyToManyFilterExpression(NavigateBuilder builder) {
+        Class<?> mappingClass = builder.getNavigateOption().getMappingClass();
+        //导航属性名称
+        String propertyName = builder.getNavigateOption().getPropertyName();
+        if(Objects.equals(RelationRoute.class,mappingClass)){
+            if(Objects.equals("teachers",propertyName)){
+                return o->o.eq("type",1);
+            }
+        }
+        return null;
     }
 }

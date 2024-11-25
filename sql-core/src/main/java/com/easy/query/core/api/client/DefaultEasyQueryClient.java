@@ -251,7 +251,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             ClientQueryable<?> mappingQueryable = queryable(navigateMetadata.getMappingClass())
                     .where(o -> {
                         o.relationIn(navigateMetadata.getSelfMappingProperties(), () -> includeRelationIdContext.getRelationIds());
-                        navigateMetadata.predicateFilterApply(o);
+                        navigateMetadata.predicateManyToManyFilterApply(o);
                     })
                     .select(o -> {
                         for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {

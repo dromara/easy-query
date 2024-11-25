@@ -1465,9 +1465,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 }).where(o -> {
                     o.and(() -> {
                         o.relationIn(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), () -> relationIds);
-                        if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
-                            navigateMetadata.predicateFilterApply(o);
-                        }
+//                        if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
+//                            navigateMetadata.predicateFilterApply(o);
+//                        }
+                        navigateMetadata.predicateFilterApply(o);
 //                        navigateMetadata.predicateFilterApply(o);
                     });
                 });
@@ -1489,9 +1490,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         firstQueryable.where(o -> {
             o.and(() -> {
                 o.multiEq(true, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationId);
-                if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
-                    navigateMetadata.predicateFilterApply(o);
-                }
+//                if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
+//                    navigateMetadata.predicateFilterApply(o);
+//                }
+                navigateMetadata.predicateFilterApply(o);
 //               navigateMetadata.predicateFilterApply(o);
             });
         });

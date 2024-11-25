@@ -76,6 +76,11 @@ public class RoleJoin implements ProxyEntityAvailable<RoleJoin , RoleJoinProxy> 
             }
             throw new RuntimeException("未配置多对多的关联关系");
         }
+
+        @Override
+        public SQLExpression1<WherePredicate<?>> getPredicateManyToManyFilterExpression(NavigateBuilder builder) {
+            return null;
+        }
     }
 
 }

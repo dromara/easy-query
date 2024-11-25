@@ -25,4 +25,6 @@ public interface NavigateExtraFilterStrategy {
    //EntitySQLTableOwner<?> selfTableOrNull
    @Nullable
    SQLExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder);
+   @Nullable
+   SQLExpression1<WherePredicate<?>> getPredicateManyToManyFilterExpression(NavigateBuilder builder);
 }

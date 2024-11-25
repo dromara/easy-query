@@ -29,6 +29,7 @@ public class NavigateOption {
     private String[] selfMappingProperties;
     private String[] targetMappingProperties;
     private SQLExpression1<WherePredicate<?>> predicateFilterExpression;
+    private SQLExpression1<WherePredicate<?>> predicateManyToManyFilterExpression;
 
     public NavigateOption(EntityMetadata entityMetadata,
                           String propertyName,
@@ -109,6 +110,14 @@ public class NavigateOption {
 
     public void setPredicateFilterExpression(SQLExpression1<WherePredicate<?>> predicateFilterExpression) {
         this.predicateFilterExpression = predicateFilterExpression;
+    }
+
+    public SQLExpression1<WherePredicate<?>> getPredicateManyToManyFilterExpression() {
+        return predicateManyToManyFilterExpression;
+    }
+
+    public void setPredicateManyToManyFilterExpression(SQLExpression1<WherePredicate<?>> predicateManyToManyFilterExpression) {
+        this.predicateManyToManyFilterExpression = predicateManyToManyFilterExpression;
     }
 
     public boolean isBasicType() {

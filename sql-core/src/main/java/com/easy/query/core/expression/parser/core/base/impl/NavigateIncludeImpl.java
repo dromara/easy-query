@@ -56,8 +56,8 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
                         s.setPrintSQL(printSQL);
                         s.setPrintNavSQL(printSQL);
                     }).where(t -> {
-                        t.relationIn( navigateMetadata.getSelfMappingProperties(), () -> includeNavigateParams.getRelationIds());
-                        navigateMetadata.predicateFilterApply(t);
+                        t.relationIn(navigateMetadata.getSelfMappingProperties(), () -> includeNavigateParams.getRelationIds());
+                        navigateMetadata.predicateManyToManyFilterApply(t);
                     })
                     .select(o -> {
                         for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
@@ -92,7 +92,7 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
             queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_TRACKING);
         }
         //支持interceptor传递
-        if(!expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR)){
+        if (!expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_INTERCEPTOR)) {
             queryable.getSQLEntityExpressionBuilder().getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
         }
         expressionContext.getExpressionContextInterceptor().copyTo(queryable.getSQLEntityExpressionBuilder().getExpressionContext().getExpressionContextInterceptor());

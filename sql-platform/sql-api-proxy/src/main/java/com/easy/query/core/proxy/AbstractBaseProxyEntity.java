@@ -338,7 +338,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                         ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
                             m.multiEq(true, x, navigateMetadata.getTargetMappingProperties(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
                             m.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperties(), navigateMetadata.getSelfPropertiesOrPrimary());
-                            navigateMetadata.predicateFilterApply(m);
+                            navigateMetadata.predicateManyToManyFilterApply(m);
                         }).limit(1);
                         x.exists(subMappingQueryable);
                     });
@@ -380,7 +380,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                         ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
                             m.multiEq(true,x, navigateMetadata.getTargetMappingProperties(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
                             m.multiEq(true,new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperties(), navigateMetadata.getSelfPropertiesOrPrimary());
-                            navigateMetadata.predicateFilterApply(m);
+                            navigateMetadata.predicateManyToManyFilterApply(m);
                         }).limit(1);
                         x.exists(subMappingQueryable);
                     });

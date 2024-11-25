@@ -50,6 +50,7 @@ public class NavigateMetadata {
     private final String[] selfMappingProperties;
     private final String[] targetMappingProperties;
     private final SQLExpression1<WherePredicate<?>> predicateFilterExpression;
+    private final SQLExpression1<WherePredicate<?>> predicateManyToManyFilterExpression;
     private final long offset;
     private final long limit;
 
@@ -67,6 +68,7 @@ public class NavigateMetadata {
         this.selfMappingProperties = navigateOption.getSelfMappingProperties();
         this.targetMappingProperties = navigateOption.getTargetMappingProperties();
         this.predicateFilterExpression = navigateOption.getPredicateFilterExpression();
+        this.predicateManyToManyFilterExpression = navigateOption.getPredicateManyToManyFilterExpression();
         this.basicType = navigateOption.isBasicType();
         this.orderProps = navigateOption.getOrderProps();
         this.offset = navigateOption.getOffset();
@@ -167,11 +169,20 @@ public class NavigateMetadata {
             predicateFilterExpression.apply(wherePredicate);
         }
     }
-//    public void predicateFilterApply2(WherePredicate<?> wherePredicate, EntitySQLTableOwner<?> selfTableOrNull){
-//        if(predicateFilterExpression!=null){
-//            predicateFilterExpression.apply(wherePredicate);
-//        }
-//    }
+
+    public SQLExpression1<WherePredicate<?>> getPredicateManyToManyFilterExpression() {
+        return predicateManyToManyFilterExpression;
+    }
+
+    public boolean hasPredicateManyToManyFilterExpression() {
+        return predicateManyToManyFilterExpression != null;
+    }
+
+    public void predicateManyToManyFilterApply(WherePredicate<?> wherePredicate) {
+        if (predicateManyToManyFilterExpression != null) {
+            predicateManyToManyFilterExpression.apply(wherePredicate);
+        }
+    }
 
     public boolean isBasicType() {
         return basicType;

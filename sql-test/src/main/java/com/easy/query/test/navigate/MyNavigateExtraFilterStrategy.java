@@ -17,4 +17,9 @@ public class MyNavigateExtraFilterStrategy implements NavigateExtraFilterStrateg
     public @Nullable SQLExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder) {
         return null;
     }
+
+    @Override
+    public SQLExpression1<WherePredicate<?>> getPredicateManyToManyFilterExpression(NavigateBuilder builder) {
+        return null;
+    }
 }
