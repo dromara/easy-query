@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.h2.domain.TbAccount;
 import com.easy.query.test.h2.domain.TbOrder;
+import com.easy.query.test.h2.domain.TbOrderDTO;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -188,6 +189,29 @@ easyEntityQuery.insertable(tbAccounts).executeRows();
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.id,t.uid,t.uname,t.price FROM t_tb_order t WHERE EXISTS (SELECT 1 FROM t_tb_account t1 WHERE (t1.uid = t.uid AND t1.uname = ?) AND t1.uname LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("小明(String),%小明%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext(true);
+            listenerContextManager.startListen(listenerContext);
+            List<TbOrderDTO> list1 = easyEntityQuery.queryable(TbOrder.class)
+                    .where(t -> {
+                        t.myAccounts().any(s -> s.uname().like("小明"));
+                    }).selectAutoInclude(TbOrderDTO.class).toList();
+            Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(),2);
+            {
+
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT t.id,t.uid,t.uname,t.price FROM t_tb_order t WHERE EXISTS (SELECT 1 FROM t_tb_account t1 WHERE (t1.uid = t.uid AND t1.uname = ?) AND t1.uname LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("小明(String),%小明%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("SELECT t.id,t.uid,t.uname,t.account FROM t_tb_account t WHERE (t.uid IN (?) AND t.uname = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("小明(String),小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
             listenerContextManager.clear();
         }
 
