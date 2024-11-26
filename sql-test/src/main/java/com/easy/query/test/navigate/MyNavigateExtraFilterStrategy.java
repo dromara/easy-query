@@ -19,7 +19,7 @@ public class MyNavigateExtraFilterStrategy implements NavigateExtraFilterStrateg
     }
 
     @Override
-    public SQLExpression1<WherePredicate<?>> getPredicateManyToManyFilterExpression(NavigateBuilder builder) {
+    public SQLExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression(NavigateBuilder builder) {
         return null;
     }
 }

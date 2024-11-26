@@ -20,7 +20,7 @@ public class JoinType implements NavigateExtraFilterStrategy {
     }
 
     @Override
-    public SQLExpression1<WherePredicate<?>> getPredicateManyToManyFilterExpression(NavigateBuilder builder) {
+    public SQLExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression(NavigateBuilder builder) {
 
         if(Objects.equals(builder.getNavigateOption().getEntityMetadata().getEntityClass(),TestUserEntity.class)&&Objects.equals("roles",builder.getNavigateOption().getPropertyName())){
             return (p)->p.eq("type",1);

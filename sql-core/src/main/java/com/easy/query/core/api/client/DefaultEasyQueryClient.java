@@ -28,7 +28,6 @@ import com.easy.query.core.expression.include.IncludeProcessor;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
-import com.easy.query.core.expression.parser.core.base.MultiCollectionImpl;
 import com.easy.query.core.expression.sql.include.DefaultIncludeParserResult;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.expression.sql.include.MultiRelationValue;
@@ -251,7 +250,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             ClientQueryable<?> mappingQueryable = queryable(navigateMetadata.getMappingClass())
                     .where(o -> {
                         o.relationIn(navigateMetadata.getSelfMappingProperties(), () -> includeRelationIdContext.getRelationIds());
-                        navigateMetadata.predicateManyToManyFilterApply(o);
+                        navigateMetadata.predicateMappingClassFilterApply(o);
                     })
                     .select(o -> {
                         for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {

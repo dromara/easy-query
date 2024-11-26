@@ -2,7 +2,6 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -50,7 +49,7 @@ public class NavigateMetadata {
     private final String[] selfMappingProperties;
     private final String[] targetMappingProperties;
     private final SQLExpression1<WherePredicate<?>> predicateFilterExpression;
-    private final SQLExpression1<WherePredicate<?>> predicateManyToManyFilterExpression;
+    private final SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
     private final long offset;
     private final long limit;
 
@@ -68,7 +67,7 @@ public class NavigateMetadata {
         this.selfMappingProperties = navigateOption.getSelfMappingProperties();
         this.targetMappingProperties = navigateOption.getTargetMappingProperties();
         this.predicateFilterExpression = navigateOption.getPredicateFilterExpression();
-        this.predicateManyToManyFilterExpression = navigateOption.getPredicateManyToManyFilterExpression();
+        this.predicateMappingClassFilterExpression = navigateOption.getPredicateMappingClassFilterExpression();
         this.basicType = navigateOption.isBasicType();
         this.orderProps = navigateOption.getOrderProps();
         this.offset = navigateOption.getOffset();
@@ -170,17 +169,17 @@ public class NavigateMetadata {
         }
     }
 
-    public SQLExpression1<WherePredicate<?>> getPredicateManyToManyFilterExpression() {
-        return predicateManyToManyFilterExpression;
+    public SQLExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression() {
+        return predicateMappingClassFilterExpression;
     }
 
-    public boolean hasPredicateManyToManyFilterExpression() {
-        return predicateManyToManyFilterExpression != null;
+    public boolean hasPredicateMappingClassFilterExpression() {
+        return predicateMappingClassFilterExpression != null;
     }
 
-    public void predicateManyToManyFilterApply(WherePredicate<?> wherePredicate) {
-        if (predicateManyToManyFilterExpression != null) {
-            predicateManyToManyFilterExpression.apply(wherePredicate);
+    public void predicateMappingClassFilterApply(WherePredicate<?> wherePredicate) {
+        if (predicateMappingClassFilterExpression != null) {
+            predicateMappingClassFilterExpression.apply(wherePredicate);
         }
     }
 

@@ -21,10 +21,12 @@ public interface NavigateExtraFilterStrategy {
    SQLExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder);
 
    /**
-    * 多对多的extra filter由原先的{@link #getPredicateFilterExpression(NavigateBuilder)}迁移到了{@link #getPredicateManyToManyFilterExpression(NavigateBuilder)}
+    * 多对多的中间表额外过滤由原先的{@link #getPredicateFilterExpression(NavigateBuilder)}迁移到了{@link #getPredicateMappingClassFilterExpression(NavigateBuilder)}
+    *
+    * 当前方法仅针对多对多的中间表额外过滤
     * @param builder navigate相关信息
     * @return 返回null则表示不进行过滤
     */
    @Nullable
-   SQLExpression1<WherePredicate<?>> getPredicateManyToManyFilterExpression(NavigateBuilder builder);
+   SQLExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression(NavigateBuilder builder);
 }

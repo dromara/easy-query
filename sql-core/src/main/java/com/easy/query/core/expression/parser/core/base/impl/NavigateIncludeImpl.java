@@ -5,7 +5,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.MultiCollectionImpl;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.IncludeNavigateParams;
@@ -57,7 +56,7 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
                         s.setPrintNavSQL(printSQL);
                     }).where(t -> {
                         t.relationIn(navigateMetadata.getSelfMappingProperties(), () -> includeNavigateParams.getRelationIds());
-                        navigateMetadata.predicateManyToManyFilterApply(t);
+                        navigateMetadata.predicateMappingClassFilterApply(t);
                     })
                     .select(o -> {
                         for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {

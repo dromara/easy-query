@@ -38,7 +38,7 @@ public class BookNavigateExtraFilterStrategy implements NavigateExtraFilterStrat
     }
 
     @Override
-    public SQLExpression1<WherePredicate<?>> getPredicateManyToManyFilterExpression(NavigateBuilder builder) {
+    public SQLExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression(NavigateBuilder builder) {
         Class<?> mappingClass = builder.getNavigateOption().getMappingClass();
         //导航属性名称
         String propertyName = builder.getNavigateOption().getPropertyName();
