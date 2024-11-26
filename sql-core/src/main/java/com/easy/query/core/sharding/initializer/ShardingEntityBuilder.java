@@ -49,6 +49,7 @@ public class ShardingEntityBuilder<T> {
      * 实际表asc下的排序
      * 默认提供{@link TableNameStringComparator} 忽略数据源仅以字符串形式比较表名
      * 默认提供{@link DataSourceThenTableNameStringComparator} 先比较数据源如果一样在比较表名仅以字符串形式比较
+     *
      * @param defaultTableNameComparator 默认没有匹配orderby的时候也会将表进行当前排序器进行排序后再分批处理
      * @return
      */
@@ -78,4 +79,7 @@ public class ShardingEntityBuilder<T> {
         return this;
     }
 
+    public ShardingInitOptionBuilder getShardingInitOptionBuilder() {
+        return shardingInitOptionBuilder;
+    }
 }

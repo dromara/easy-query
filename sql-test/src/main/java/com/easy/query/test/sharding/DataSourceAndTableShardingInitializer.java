@@ -22,7 +22,6 @@ public class DataSourceAndTableShardingInitializer implements EntityShardingInit
     @Override
     public void configure(ShardingEntityBuilder<TopicShardingDataSourceTime> builder) {
         EntityMetadata entityMetadata = builder.getEntityMetadata();
-
         String tableName = entityMetadata.getTableName();
         LinkedHashMap<String, Collection<String>> initTables = new LinkedHashMap<String, Collection<String>>();
         {
