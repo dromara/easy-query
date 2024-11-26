@@ -19,7 +19,10 @@ public class SolonDataSourceUnit extends DefaultDataSourceUnit {
     }
 
     @Override
-    protected Connection getConnection() throws SQLException {
+    protected Connection getConnection(boolean concurrency) throws SQLException {
+        if(concurrency){
+            return dataSource.getConnection();
+        }
         return TranUtils.getConnection(dataSource);
     }
 }

@@ -50,7 +50,7 @@ public class DefaultDataSourceUnit implements DataSourceUnit {
     @Override
     public List<Connection> getConnections(int count, long timeout, TimeUnit unit) throws SQLException {
         if (count <= 1) {
-            Connection connection = getConnection();
+            Connection connection = getConnection(false);
             return Collections.singletonList(connection);
         }
 
@@ -62,10 +62,16 @@ public class DefaultDataSourceUnit implements DataSourceUnit {
 
     @Override
     public Connection getConnection(long timeout, TimeUnit unit) throws SQLException {
-        return getConnection();
+        return getConnection(false);
     }
 
-    protected Connection getConnection() throws SQLException {
+    /**
+     * 获取链接
+     * @param concurrency 是否是并发获取true表示是并发获取false表示是单线程获取
+     * @return
+     * @throws SQLException
+     */
+    protected Connection getConnection(boolean concurrency) throws SQLException {
         return dataSource.getConnection();
     }
 
@@ -79,7 +85,7 @@ public class DefaultDataSourceUnit implements DataSourceUnit {
         try {
             ArrayList<Connection> result = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
-                Connection connection = getConnection();
+                Connection connection = getConnection(true);
                 result.add(connection);
             }
             return result;

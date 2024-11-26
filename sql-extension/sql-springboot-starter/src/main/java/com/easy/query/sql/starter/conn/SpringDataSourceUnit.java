@@ -19,7 +19,10 @@ public class SpringDataSourceUnit extends DefaultDataSourceUnit {
     }
 
     @Override
-    protected Connection getConnection() throws SQLException {
+    protected Connection getConnection(boolean concurrency) throws SQLException {
+        if(concurrency){
+            return dataSource.getConnection();
+        }
         return DataSourceUtils.getConnection(dataSource);
     }
 }
