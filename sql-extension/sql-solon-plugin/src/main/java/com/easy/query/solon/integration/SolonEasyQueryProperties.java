@@ -1,6 +1,7 @@
 package com.easy.query.solon.integration;
 
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.solon.integration.option.DatabaseEnum;
 import com.easy.query.solon.integration.option.MapKeyConversionEnum;
@@ -29,6 +30,7 @@ public class SolonEasyQueryProperties {
     private final static SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
     private final static ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
     private final static PropertyModeEnum propertyMode = PropertyModeEnum.FIRST_LOWER;
+    private final static ShardingQueryInTransactionEnum shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
     /**
      * 仅分片时有效默认同时5个线程5
      */
@@ -254,6 +256,15 @@ public class SolonEasyQueryProperties {
                 case "same_as_entity":return PropertyModeEnum.SAME_AS_ENTITY;
             }
             return null;
+        });
+    }
+    public ShardingQueryInTransactionEnum getShardingQueryInTransaction() {
+        return getOrDef("sharding-query-in-transaction",shardingQueryInTransaction,v->{
+            switch (v){
+                case "serializable":return ShardingQueryInTransactionEnum.SERIALIZABLE;
+                case "concurrency":return ShardingQueryInTransactionEnum.CONCURRENCY;
+            }
+            return ShardingQueryInTransactionEnum.SERIALIZABLE;
         });
     }
 

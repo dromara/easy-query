@@ -1,13 +1,16 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.EntityPropertyGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.EntityPropertyOrder;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOrder;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MergeBehaviorEnum;
+import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
@@ -64,7 +67,7 @@ public class EasyShardingUtil {
             if (selectColumn instanceof ColumnSegmentImpl) {
                 ColumnSegmentImpl selectColumnSegment = (ColumnSegmentImpl) selectColumn;
                 String selectPropertyName = selectColumnSegment.getPropertyName();
-                if (Objects.equals(selectColumnSegment.getTable(),columnTable) && Objects.equals(selectPropertyName, propertyName)) {
+                if (Objects.equals(selectColumnSegment.getTable(), columnTable) && Objects.equals(selectPropertyName, propertyName)) {
                     return new EntityPropertyOrder(columnTable, propertyName, selectIndex, asc);
                 }
             }
@@ -90,7 +93,7 @@ public class EasyShardingUtil {
             if (!aggregateColumn) {
                 ColumnSegmentImpl selectColumnSegment = (ColumnSegmentImpl) selectColumn;
                 String selectPropertyName = selectColumnSegment.getPropertyName();
-                if (Objects.equals(selectColumnSegment.getTable(),columnTable) && Objects.equals(selectPropertyName, propertyName)) {
+                if (Objects.equals(selectColumnSegment.getTable(), columnTable) && Objects.equals(selectPropertyName, propertyName)) {
                     return new EntityPropertyGroup(columnTable, propertyName, selectIndex);
                 }
             }
@@ -119,7 +122,7 @@ public class EasyShardingUtil {
             }
             GroupByColumnSegment groupColumnSegment = (GroupByColumnSegment) groupSQLSegment;
             OrderBySegment orderColumnSegment = (OrderBySegment) orderSQLSegment;
-            if (!Objects.equals(groupColumnSegment.getTable(),orderColumnSegment.getTable())) {
+            if (!Objects.equals(groupColumnSegment.getTable(), orderColumnSegment.getTable())) {
                 return false;
             }
             if (!Objects.equals(groupColumnSegment.getPropertyName(), orderColumnSegment.getPropertyName())) {
@@ -154,11 +157,18 @@ public class EasyShardingUtil {
         }
     }
 
-    public static int getMaxShardingQueryLimit(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SequenceParseResult sequenceParseResult) {
+    public static int getMaxShardingQueryLimit(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SequenceParseResult sequenceParseResult, EasyQueryOption easyQueryOption) {
         ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
         Integer maxShardingQueryLimitOrNull = expressionContext.getMaxShardingQueryLimitOrNull();
         if (maxShardingQueryLimitOrNull != null) {
             return maxShardingQueryLimitOrNull;
+        } else {
+            if (easyQueryOption.getShardingQueryInTransaction() == ShardingQueryInTransactionEnum.SERIALIZABLE) {
+                ConnectionManager connectionManager = expressionContext.getRuntimeContext().getConnectionManager();
+                if(connectionManager.currentThreadInTransaction()){
+                    return 1;
+                }
+            }
         }
         if (sequenceParseResult != null) {
             if (sequenceParseResult.getConnectionsLimit() > 0) {
@@ -327,7 +337,7 @@ public class EasyShardingUtil {
                     mergeBehavior = EasyBitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.COUNT.getCode());
                     if (queryPrepareParseResult.isSeqQuery()) {
                         ShardingQueryCountManager shardingQueryCountManager = executorContext.getRuntimeContext().getShardingQueryCountManager();
-                        if (shardingQueryCountManager.isBegin()){
+                        if (shardingQueryCountManager.isBegin()) {
                             mergeBehavior = EasyBitwiseUtil.addBit(mergeBehavior, MergeBehaviorEnum.SEQUENCE_COUNT.getCode());
                         }
                     }

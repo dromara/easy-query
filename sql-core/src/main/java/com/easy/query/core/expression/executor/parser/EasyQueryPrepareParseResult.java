@@ -51,7 +51,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
         this.originalOffset = easyQuerySQLExpression.getOffset();
         this.originalRows = easyQuerySQLExpression.getRows();
         this.sequenceParseResult = initSequenceOrderPrepareParseResult(executorContext);
-        this.maxShardingQueryLimit = EasyShardingUtil.getMaxShardingQueryLimit(entityQueryExpressionBuilder, sequenceParseResult);
+        this.maxShardingQueryLimit = EasyShardingUtil.getMaxShardingQueryLimit(entityQueryExpressionBuilder, sequenceParseResult,executorContext.getEasyQueryOption());
         this.connectionMode = EasyShardingUtil.getConnectionMode(entityQueryExpressionBuilder, sequenceParseResult);
     }
 

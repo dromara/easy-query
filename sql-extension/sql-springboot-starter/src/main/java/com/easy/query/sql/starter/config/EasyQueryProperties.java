@@ -2,6 +2,7 @@ package com.easy.query.sql.starter.config;
 
 
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.sql.starter.option.DatabaseEnum;
 import com.easy.query.sql.starter.option.MapKeyConversionEnum;
@@ -31,6 +32,7 @@ public class EasyQueryProperties {
     private SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
     private ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
     private PropertyModeEnum propertyMode = PropertyModeEnum.FIRST_LOWER;
+    private ShardingQueryInTransactionEnum shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
     /**
      * 仅分片时有效默认同时5个线程5
      */
@@ -445,6 +447,14 @@ public class EasyQueryProperties {
 
     public void setPropertyMode(PropertyModeEnum propertyMode) {
         this.propertyMode = propertyMode;
+    }
+
+    public ShardingQueryInTransactionEnum getShardingQueryInTransaction() {
+        return shardingQueryInTransaction;
+    }
+
+    public void setShardingQueryInTransaction(ShardingQueryInTransactionEnum shardingQueryInTransaction) {
+        this.shardingQueryInTransaction = shardingQueryInTransaction;
     }
 
     public EasyQueryProperties() {

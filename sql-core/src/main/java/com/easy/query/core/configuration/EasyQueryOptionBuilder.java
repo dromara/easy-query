@@ -1,6 +1,7 @@
 package com.easy.query.core.configuration;
 
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
 /**
@@ -87,6 +88,7 @@ public class EasyQueryOptionBuilder {
      * 小于等于0就是不限制
      */
     private long resultSizeLimit;
+    private ShardingQueryInTransactionEnum shardingQueryInTransaction;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -119,6 +121,7 @@ public class EasyQueryOptionBuilder {
         this.mapToBeanStrict = true;
         this.defaultSchema = null;
         this.resultSizeLimit = -1L;
+        this.shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -261,6 +264,10 @@ public class EasyQueryOptionBuilder {
         this.resultSizeLimit = resultSizeLimit;
     }
 
+    public void setShardingQueryInTransaction(ShardingQueryInTransactionEnum shardingQueryInTransaction) {
+        this.shardingQueryInTransaction = shardingQueryInTransaction;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -293,6 +300,7 @@ public class EasyQueryOptionBuilder {
                 this.mapToBeanStrict,
                 this.defaultSchema,
                 this.resultSizeLimit,
-                this.printNavSql);
+                this.printNavSql,
+                this.shardingQueryInTransaction);
     }
 }

@@ -301,6 +301,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setMapToBeanStrict(easyQueryProperties.isMapToBeanStrict());
                     builder.setDefaultSchema(easyQueryProperties.getDefaultSchema());
                     builder.setResultSizeLimit(easyQueryProperties.getResultSizeLimit());
+                    builder.setShardingQueryInTransaction(easyQueryProperties.getShardingQueryInTransaction());
                 })
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)
