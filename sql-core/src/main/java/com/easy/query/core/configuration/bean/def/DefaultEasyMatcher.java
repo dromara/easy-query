@@ -40,7 +40,7 @@ public class DefaultEasyMatcher implements EasyMatcher {
         if (propertyDescriptor == null) {
             propertyDescriptor = propertyDescriptorFinder.findIgnoreCase(property);
             if (propertyDescriptor != null) {
-                String warningMessage = EasyClassUtil.getSimpleName(entityClass) + " filed:" + field.getName() + ",compare name:" + property + ",property name:" + propertyDescriptor.getName();
+                String warningMessage = EasyClassUtil.getSimpleName(entityClass) + " filed:" + field.getName() + ",compare name:" + property + ",property name:" + propertyDescriptor.getName() +" If you want to use a non-standard Java bean, please set [propertyMode] to [same_as_entity].";
                 if (log instanceof NoLoggingImpl) {
                     System.out.println("NoLogging:" + warningMessage);
                 } else {

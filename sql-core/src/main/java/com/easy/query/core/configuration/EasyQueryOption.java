@@ -129,6 +129,9 @@ public class EasyQueryOption {
     private final int shardingFetchSize;
     private final boolean mapToBeanStrict;
     private final String defaultSchema;
+    /**
+     * 限制最大返回数据量
+     */
     private final long resultSizeLimit;
     private final ShardingQueryInTransactionEnum shardingQueryInTransaction;
 
