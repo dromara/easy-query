@@ -18,6 +18,7 @@ import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityTree1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityUnion1;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.internal.ContextConfigure;
+import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
@@ -41,12 +42,8 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
  */
 public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientQueryableAvailable<T1>,
         FlatListResultAble<T1Proxy, T1>,
-        Interceptable<EntityQueryable<T1Proxy, T1>>,
-        LogicDeletable<EntityQueryable<T1Proxy, T1>>,
-        TableReNameable<EntityQueryable<T1Proxy, T1>>,
-        TableLogicDeletable<EntityQueryable<T1Proxy, T1>>,
+        ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>,
         QueryStrategy<EntityQueryable<T1Proxy, T1>>,
-        ContextConfigure<EntityQueryable<T1Proxy, T1>>,
         ClientEntityQueryableAvailable<T1>,
         EntityFilterable1<T1Proxy, T1>,
         EntityCountable1<T1Proxy, T1>,
@@ -144,24 +141,4 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
 //        return this;
 //    }
 
-    /**
-     * 自动将查询结果集合全部添加到当前上下文追踪中,如果当前查询结果十分庞大,并且更新数据只有个别条数,建议不要使用
-     * 追踪查询，可以通过开启追踪后使用普通的查询，然后添加到当前的追踪上下文中{@link EasyQueryClient#addTracking(Object)},开始先数据追踪的差异更新
-     * 如果当前启用了追踪查询并且在当前上下文已经追加了当前trackKey的对象那么当前查询结果的对象不会被返回,返回的是被追踪的当前对象,
-     * 如果对象A:{id:1,name:2}已经被追踪了,新查询的结果是对象A:{id:1,name:3},那么查询到的数据是{id:1,name:3}但是用户获取到的数据是{id:1,name:2}
-     * 所以尽可能在追踪后调用entity update,而不是重复查询对应对象
-     *
-     * @return
-     */
-    EntityQueryable<T1Proxy, T1> asTracking();
-
-    EntityQueryable<T1Proxy, T1> asNoTracking();
-
-    EntityQueryable<T1Proxy, T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
-
-    EntityQueryable<T1Proxy, T1> useMaxShardingQueryLimit(int maxShardingQueryLimit);
-
-    EntityQueryable<T1Proxy, T1> useConnectionMode(ConnectionModeEnum connectionMode);
-
-    EntityQueryable<T1Proxy, T1> filterConfigure(ValueFilter valueFilter);
 }

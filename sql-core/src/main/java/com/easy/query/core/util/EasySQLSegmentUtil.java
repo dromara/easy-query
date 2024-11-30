@@ -16,25 +16,29 @@ public class EasySQLSegmentUtil {
     public static boolean isEmpty(PredicateSegment predicateSegment) {
         return predicateSegment == null || predicateSegment.isEmpty();
     }
+
     public static boolean isNotEmpty(PredicateSegment predicateSegment) {
         return !isEmpty(predicateSegment);
     }
+
     public static boolean isEmpty(SQLBuilderSegment sqlBuilderSegment) {
         return sqlBuilderSegment == null || sqlBuilderSegment.isEmpty();
     }
+
     public static boolean isNotEmpty(SQLBuilderSegment sqlBuilderSegment) {
         return !isEmpty(sqlBuilderSegment);
     }
 
-    public static boolean isAggregateColumn(SQLSegment sqlSegment){
-        if(sqlSegment instanceof MaybeAggregateColumnSegment){
-            return ((MaybeAggregateColumnSegment)sqlSegment).isAggregateColumn();
+    public static boolean isAggregateColumn(SQLSegment sqlSegment) {
+        if (sqlSegment instanceof MaybeAggregateColumnSegment) {
+            return ((MaybeAggregateColumnSegment) sqlSegment).isAggregateColumn();
         }
         return false;
     }
-    public static boolean isColumnMetadataSQLSegment(SQLSegment sqlSegment){
-        if(sqlSegment instanceof ColumnSegment){
-            return ((ColumnSegment)sqlSegment).getColumnMetadata()!=null;
+
+    public static boolean isColumnMetadataSQLSegment(SQLSegment sqlSegment) {
+        if (sqlSegment instanceof ColumnSegment) {
+            return ((ColumnSegment) sqlSegment).getColumnMetadata() != null;
         }
         return false;
     }

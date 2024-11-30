@@ -13,5 +13,6 @@ public interface QueryStrategy<TChain> {
      * @param queryLarge
      * @return
      */
+    @Deprecated
     TChain queryLargeColumn(boolean queryLarge);
 }
