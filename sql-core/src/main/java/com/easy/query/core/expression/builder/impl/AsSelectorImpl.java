@@ -170,6 +170,7 @@ public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements As
 
     @Override
     public AsSelector columnFunc(TableAvailable table, String property, SQLFunction sqlFunction, String propertyAlias, SQLActionExpression sqlActionExpression) {
+        sqlActionExpression.apply();
         if (table == null || property == null) {
             if (EasyStringUtil.isBlank(propertyAlias)) {
                 throw new EasyQueryInvalidOperationException("propertyAlias is bank");
@@ -179,7 +180,6 @@ public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements As
                     .toSQLSegment(expressionContext, table, runtimeContext, resultColumnInfo.getColumnAsName());
             FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, resultColumnInfo.getColumnMetadata(), runtimeContext, sqlSegment, sqlFunction.getAggregationType(), resultColumnInfo.getColumnAsName());
             sqlBuilderSegment.append(funcColumnSegment);
-            sqlActionExpression.apply();
             return this;
         } else {
             ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
@@ -188,7 +188,6 @@ public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements As
                     .toSQLSegment(expressionContext, table, runtimeContext, columnAsName);
             FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, columnMetadata, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), columnAsName);
             sqlBuilderSegment.append(funcColumnSegment);
-            sqlActionExpression.apply();
             return this;
         }
     }
