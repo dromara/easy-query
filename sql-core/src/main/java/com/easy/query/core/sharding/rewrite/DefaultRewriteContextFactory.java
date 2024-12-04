@@ -87,7 +87,7 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                             OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table, firstSequenceProperty, expressionContext, !reverse);
                             easyEntityPredicateSQLExpression.getOrder().append(orderByColumnSegment);
                             if (!easyEntityPredicateSQLExpression.getProjects().containsOnce(entityMetadata.getEntityClass(), firstSequenceProperty)) {
-                                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, firstSequenceProperty, expressionContext, null);
+                                ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(table, firstSequenceProperty, expressionContext, null);
                                 easyEntityPredicateSQLExpression.getProjects().append(columnSegment);
                             }
                         }

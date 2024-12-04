@@ -34,6 +34,7 @@ public class DefaultSQLPropertyConverter implements SQLPropertyConverter {
         this.ignoreAlias = ignoreAlias;
     }
 
+    @Override
     public SQLNativeSegment getColumnSegment() {
         return columnSegment;
     }

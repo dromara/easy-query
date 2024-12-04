@@ -2,7 +2,6 @@ package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.PartitionResult;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -51,7 +50,7 @@ public abstract class AbstractAsSelector<TChain> extends AbstractSelector<TChain
                         String propertyName = EasyUtil.getAnonymousPropertyName(sqlEntityAliasSegment, table.getEntityTable());
                         if (propertyName != null) {
                             if(resultEntityMetadata.getColumnOrNull(propertyName)!=null){
-                                ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), propertyName, expressionContext, sqlEntityAliasSegment.getAlias());
+                                ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(table.getEntityTable(), propertyName, expressionContext, sqlEntityAliasSegment.getAlias());
                                 sqlBuilderSegment.append(columnSegment);
                             }
                         } else {

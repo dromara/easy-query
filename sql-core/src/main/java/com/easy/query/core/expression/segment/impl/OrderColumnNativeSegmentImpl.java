@@ -5,6 +5,7 @@ import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.ReverseOrderBySegment;
+import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -15,13 +16,13 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @Description: 文件说明
  * @Date: 2023/2/13 22:18
  */
-public class OrderColumnSegmentImpl extends ColumnSegmentImpl implements OrderBySegment, ReverseOrderBySegment {
+public class OrderColumnNativeSegmentImpl extends ColumnNativeSegmentImpl implements OrderBySegment, ReverseOrderBySegment {
 
     private final boolean asc;
     private boolean reverse;
 
-    public OrderColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, boolean asc) {
-        super(table, columnMetadata, expressionContext);
+    public OrderColumnNativeSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, SQLNativeSegment sqlNativeSegment, boolean asc) {
+        super(table, columnMetadata, expressionContext,sqlNativeSegment,null);
         this.asc = asc;
         this.reverse = false;
     }
@@ -29,8 +30,8 @@ public class OrderColumnSegmentImpl extends ColumnSegmentImpl implements OrderBy
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
 
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
-        StringBuilder sql = new StringBuilder().append(sqlColumnSegment);
+        String columnSQLSegment = super.toSQL(toSQLContext);
+        StringBuilder sql = new StringBuilder().append(columnSQLSegment);
         if (getOrderByAsc()) {
             sql.append(" ").append(SQLKeywordEnum.ASC.toSQL());
         } else {

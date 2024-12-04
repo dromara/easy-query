@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -7,6 +8,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.entity.Topic;
@@ -85,5 +87,15 @@ public class UpdateTest2  extends BaseTest{
 
         }
 
+    }
+
+    @Test
+    public void update1(){
+        easyEntityQuery.updatable(Topic.class)
+                .where(t -> {
+                    t.id().in(easyEntityQuery.queryable(Topic.class).select(t1 -> new StringProxy(t1.id().max())).select("*"));
+                    t.id().eq("x123321xxs");
+                }).setColumns(t -> t.stars().set(123123))
+                .executeRows();
     }
 }

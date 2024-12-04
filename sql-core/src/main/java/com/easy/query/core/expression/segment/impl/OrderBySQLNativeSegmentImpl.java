@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.OrderBySQLNativeSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -11,7 +12,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  *
  * @author xuejiaming
  */
-public class OrderBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements OrderBySegment {
+public class OrderBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements OrderBySQLNativeSegment {
     protected final boolean asc;
 
     public OrderBySQLNativeSegmentImpl(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression, boolean asc){
@@ -21,7 +22,7 @@ public class OrderBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements
     }
 
     @Override
-    public ColumnSegment cloneSQLColumnSegment() {
+    public OrderBySQLNativeSegment cloneSQLColumnSegment() {
         return new OrderBySQLNativeSegmentImpl(expressionContext, sqlSegment, sqlNativeExpression,asc);
     }
 

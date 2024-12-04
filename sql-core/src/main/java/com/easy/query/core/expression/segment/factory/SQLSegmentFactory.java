@@ -11,7 +11,6 @@ import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
-import com.easy.query.core.expression.segment.SQLLazySegement;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
@@ -35,11 +34,11 @@ public interface SQLSegmentFactory {
     SelectConstSegment createSelectConstSegment(String projects);
     SelectCountDistinctSegment createSelectCountDistinctSegment(Collection<SQLSegment> sqlSegments);
 //    ColumnSegment createColumnSegment(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext, String alias);
-    default ColumnSegment createColumnSegment(TableAvailable table, String propertyName, ExpressionContext expressionContext, String alias){
+    default ColumnSegment createSelectColumnSegment(TableAvailable table, String propertyName, ExpressionContext expressionContext, String alias){
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
-        return createColumnSegment(table,columnMetadata,expressionContext,alias);
+        return createSelectColumnSegment(table,columnMetadata,expressionContext,alias);
     }
-    ColumnSegment createColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, String alias);
+    ColumnSegment createSelectColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, String alias);
     ColumnSegment createAnonymousColumnSegment(TableAvailable table, ExpressionContext expressionContext, String alias);
 //    ColumnAsConstSegment createColumnAsConstSegment(TableAvailable table, QueryRuntimeContext runtimeContext,String columnConst, String alias);
     SQLNativeSegment createSQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression);

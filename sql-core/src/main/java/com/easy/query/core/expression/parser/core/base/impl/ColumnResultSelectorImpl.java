@@ -39,7 +39,7 @@ public class ColumnResultSelectorImpl<T1> implements ColumnResultSelector<T1> {
             sqlBuilderSegment.getSQLSegments().clear();
         }
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, entityExpressionBuilder.getExpressionContext(), null);
+        ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(table, columnMetadata, entityExpressionBuilder.getExpressionContext(), null);
         sqlBuilderSegment.append(columnSegment);
 
     }

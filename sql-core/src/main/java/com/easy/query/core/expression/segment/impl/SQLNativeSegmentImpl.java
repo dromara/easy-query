@@ -35,7 +35,7 @@ public class SQLNativeSegmentImpl extends AbstractSQLNativeSegmentImpl implement
     }
 
     @Override
-    public SQLEntitySegment cloneSQLColumnSegment() {
+    public SQLNativeSegment cloneSQLColumnSegment() {
         return new SQLNativeSegmentImpl(expressionContext, sqlSegment, sqlNativeExpression);
     }
 

@@ -3,6 +3,7 @@ package com.easy.query.core.expression.segment.impl;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
+import com.easy.query.core.expression.segment.GroupBySQLNativeSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -13,7 +14,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  *
  * @author xuejiaming
  */
-public class GroupBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements GroupByColumnSegment {
+public class GroupBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements GroupBySQLNativeSegment {
 
     public GroupBySQLNativeSegmentImpl(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression){
         super(expressionContext,columnConst,sqlNativeExpression);
@@ -21,7 +22,7 @@ public class GroupBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements
     }
 
     @Override
-    public ColumnSegment cloneSQLColumnSegment() {
+    public GroupBySQLNativeSegment cloneSQLColumnSegment() {
         return new GroupBySQLNativeSegmentImpl(expressionContext, sqlSegment, sqlNativeExpression);
     }
 

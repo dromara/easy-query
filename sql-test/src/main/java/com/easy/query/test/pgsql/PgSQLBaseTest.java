@@ -89,6 +89,7 @@ public class PgSQLBaseTest {
         configuration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
         configuration.applyInterceptor(new MyEntityInterceptor());
         configuration.applyInterceptor(new MyTenantInterceptor());
+//        configuration.applyInterceptor(new TopicInterceptor());
         configuration.applyShardingInitializer(new FixShardingInitializer());
 
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();

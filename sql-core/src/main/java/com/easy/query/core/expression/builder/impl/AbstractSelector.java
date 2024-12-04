@@ -273,20 +273,7 @@ public abstract class AbstractSelector<TChain> {
         if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
             return;
         }
-//        SQLSegment columnSegment = EasySQLExpressionUtil.getSQLOwnerSegmentColumnMetadata(expressionContext, table, columnMetadata, alias, true);
-//        sqlBuilderSegment.append(columnSegment);
-//        if(columnMetadata.getColumnValueSQLConverter()!=null){
-//            ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
-//            DefaultSQLPropertyConverter defaultSQLPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext, alias == null);
-//            columnValueSQLConverter.selectColumnConvert(table,columnMetadata,defaultSQLPropertyConverter,expressionContext.getRuntimeContext());
-//            SQLNativeSegment columnSegment = defaultSQLPropertyConverter.getColumnSegment();
-//
-//            sqlBuilderSegment.append(columnSegment);
-//        }else{
-//            ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, expressionContext, alias);
-//            sqlBuilderSegment.append(columnSegment);
-//        }
-        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table, columnMetadata, expressionContext, alias);
+        ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(table, columnMetadata, expressionContext, alias);
         sqlBuilderSegment.append(columnSegment);
     }
 
@@ -325,14 +312,14 @@ public abstract class AbstractSelector<TChain> {
 
                     String propertyName = EasyUtil.getAnonymousPropertyName(sqlEntityAliasSegment, table.getEntityTable());
                     if (propertyName != null) {
-                        ColumnSegment columnSegment = sqlSegmentFactory.createColumnSegment(table.getEntityTable(), propertyName, expressionContext, sqlEntityAliasSegment.getAlias());
+                        ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(table.getEntityTable(), propertyName, expressionContext, sqlEntityAliasSegment.getAlias());
                         sqlBuilderSegment.append(columnSegment);
                     } else {
                         ColumnSegment columnSegment = sqlSegmentFactory.createAnonymousColumnSegment(table.getEntityTable(), expressionContext, sqlEntityAliasSegment.getAlias());
                         sqlBuilderSegment.append(columnSegment);
                     }
                 } else {
-                    throw new EasyQueryException("columnAll not found column:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
+                    throw new EasyQueryException("columnAnonymousAll not found column:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
                 }
             }
         }

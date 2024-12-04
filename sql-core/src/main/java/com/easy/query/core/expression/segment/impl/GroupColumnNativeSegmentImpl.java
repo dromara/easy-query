@@ -3,6 +3,7 @@ package com.easy.query.core.expression.segment.impl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
+import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 
@@ -12,9 +13,9 @@ import com.easy.query.core.metadata.ColumnMetadata;
  *
  * @author xuejiaming
  */
-public class GroupColumnSegmentImpl extends ColumnSegmentImpl implements GroupByColumnSegment {
-    public GroupColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
-        super(table, columnMetadata, expressionContext);
+public class GroupColumnNativeSegmentImpl extends ColumnNativeSegmentImpl implements GroupByColumnSegment {
+    public GroupColumnNativeSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, SQLNativeSegment sqlNativeSegment) {
+        super(table, columnMetadata, expressionContext, sqlNativeSegment ,null);
     }
 
     @Override

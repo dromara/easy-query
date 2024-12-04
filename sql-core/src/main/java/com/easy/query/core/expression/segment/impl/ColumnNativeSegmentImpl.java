@@ -3,6 +3,7 @@ package com.easy.query.core.expression.segment.impl;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -13,7 +14,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @Description: 文件说明
  * @Date: 2023/2/13 15:18
  */
-public class ColumnSegmentImpl implements ColumnSegment {
+public class ColumnNativeSegmentImpl implements ColumnSegment {
 
 
     protected final TableAvailable table;
@@ -21,16 +22,14 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     protected final ColumnMetadata columnMetadata;
     protected final ExpressionContext expressionContext;
+    protected final SQLNativeSegment sqlNativeSegment;
     protected String alias;
 
-    public ColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
-        this(table, columnMetadata, expressionContext, null);
-    }
-
-    public ColumnSegmentImpl(TableAvailable table,ColumnMetadata columnMetadata, ExpressionContext expressionContext, String alias) {
+    public ColumnNativeSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, SQLNativeSegment sqlNativeSegment, String alias) {
         this.table = table;
         this.columnMetadata = columnMetadata;
         this.expressionContext = expressionContext;
+        this.sqlNativeSegment = sqlNativeSegment;
         this.alias = alias;
     }
 
@@ -51,22 +50,17 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     @Override
     public void setAlias(String alias) {
-        this.alias=alias;
+        this.alias = alias;
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        String sqlOwnerColumn = getSQLOwnerColumn(toSQLContext);
+        String sqlOwnerColumn = sqlNativeSegment.toSQL(toSQLContext);
         if (getAlias() == null) {
             return sqlOwnerColumn;
         }
         return sqlOwnerColumn + " AS " + EasySQLExpressionUtil.getQuoteName(expressionContext.getRuntimeContext(), getAlias());
     }
-
-    private String getSQLOwnerColumn(ToSQLContext toSQLContext){
-        return EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), table, columnMetadata.getName(), toSQLContext);
-    }
-
 
     @Override
     public ColumnMetadata getColumnMetadata() {
@@ -75,7 +69,7 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new ColumnSegmentImpl(table, columnMetadata, expressionContext, alias);
+        return new ColumnNativeSegmentImpl(table, columnMetadata, expressionContext, sqlNativeSegment, alias);
     }
 
 }
