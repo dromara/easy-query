@@ -6,6 +6,7 @@ import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
+import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
@@ -34,7 +35,7 @@ public class OnlySelectorImpl implements OnlySelector {
     private final SQLBuilderSegment sqlSegmentBuilder;
     private final SQLSegmentFactory sqlSegmentFactory;
 
-    public OnlySelectorImpl(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLBuilderSegment sqlSegmentBuilder){
+    public OnlySelectorImpl(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLBuilderSegment sqlSegmentBuilder) {
 
         this.runtimeContext = runtimeContext;
         this.expressionContext = expressionContext;
@@ -50,11 +51,11 @@ public class OnlySelectorImpl implements OnlySelector {
     @Override
     public OnlySelector columnKeys(TableAvailable table) {
         Collection<String> keyProperties = table.getEntityMetadata().getKeyProperties();
-        if(EasyCollectionUtil.isEmpty(keyProperties)){
-            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(table.getEntityClass()) +" not found keys");
+        if (EasyCollectionUtil.isEmpty(keyProperties)) {
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(table.getEntityClass()) + " not found keys");
         }
         for (String keyProperty : keyProperties) {
-            column(table,keyProperty);
+            column(table, keyProperty);
         }
         return this;
     }
@@ -63,9 +64,10 @@ public class OnlySelectorImpl implements OnlySelector {
     public OnlySelector column(TableAvailable table, String property) {
 
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        appendColumnSet(table,columnMetadata,false);
+        appendColumnSet(table, columnMetadata, false);
         return this;
     }
+
     protected void appendColumnSet(TableAvailable table, ColumnMetadata columnMetadata, boolean ignoreValueObject) {
 
         if (columnMetadata.isValueObject()) {
@@ -76,14 +78,15 @@ public class OnlySelectorImpl implements OnlySelector {
             }
             return;
         }
-        sqlSegmentBuilder.append(new UpdateColumnSegmentImpl(table, columnMetadata, expressionContext));
+        InsertUpdateSetColumnSQLSegment updateColumnSegment = sqlSegmentFactory.createUpdateColumnSegment(table, columnMetadata, expressionContext, null);
+        sqlSegmentBuilder.append(updateColumnSegment);
     }
 
     @Override
     public OnlySelector columnAll(TableAvailable table) {
         Collection<ColumnMetadata> columns = table.getEntityMetadata().getColumns();
         for (ColumnMetadata columnMetadata : columns) {
-            appendColumnSet(table,columnMetadata,true);
+            appendColumnSet(table, columnMetadata, true);
         }
         return this;
     }
@@ -107,9 +110,9 @@ public class OnlySelectorImpl implements OnlySelector {
         return this;
     }
 
-    public OnlySelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume){
-        Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext=new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
+    public OnlySelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+        Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         contextConsume.apply(sqlNativeExpressionContext);
         SQLNativeSegment columnSegment = sqlSegmentFactory.createSQLNativeSegment(expressionContext, sqlSegment, sqlNativeExpressionContext);
         sqlSegmentBuilder.append(columnSegment);

@@ -9,6 +9,8 @@ import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -28,15 +30,15 @@ import java.util.List;
  * @Date: 2023/2/14 23:34
  */
 public class ColumnMultiCollectionPredicate implements ValuesPredicate, ShardingPredicate {
-    private final List<List<Object>> collections;
+    private final List<Column2Segment> column2Segments;
+    private final List<List<ColumnValue2Segment>> collections;
     private final SQLPredicateCompare compare;
     private final ExpressionContext expressionContext;
     private final TableAvailable table;
-    private final String[] propertyNames;
 
-    public ColumnMultiCollectionPredicate(TableAvailable table, String[] propertyNames, List<List<Object>> collections, SQLPredicateCompare compare, ExpressionContext expressionContext) {
+    public ColumnMultiCollectionPredicate(TableAvailable table, List<Column2Segment> column2Segments, List<List<ColumnValue2Segment>> collections, SQLPredicateCompare compare, ExpressionContext expressionContext) {
         this.table = table;
-        this.propertyNames = propertyNames;
+        this.column2Segments = column2Segments;
         this.collections = collections;
         this.compare = compare;
         this.expressionContext = expressionContext;
@@ -51,21 +53,14 @@ public class ColumnMultiCollectionPredicate implements ValuesPredicate, Sharding
                 throw new UnsupportedOperationException();
             }
         } else {
-            ArrayList<ColumnMetadata> columnMetadataList = new ArrayList<>(propertyNames.length);
-            for (int i = 0; i < propertyNames.length; i++) {
-                String propertyName = propertyNames[i];
-                ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(propertyName);
-//                String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
-                columnMetadataList.add(columnMetadata);
-            }
             StringBuilder sql = new StringBuilder();
             sql.append("(");
-            int i=0;
-            for (List<Object> collection : collections) {
-                if(i!=0){
+            int i = 0;
+            for (List<ColumnValue2Segment> collection : collections) {
+                if (i != 0) {
                     sql.append(" ").append(SQLKeywordEnum.OR.toSQL()).append(" ");
                 }
-                appendProperty(columnMetadataList,sql,toSQLContext,collection);
+                appendProperty(sql, toSQLContext, collection);
                 i++;
             }
             sql.append(")");
@@ -73,34 +68,20 @@ public class ColumnMultiCollectionPredicate implements ValuesPredicate, Sharding
         }
     }
 
-    private void appendProperty(List<ColumnMetadata> columnMetadataList, StringBuilder sql, ToSQLContext toSQLContext, List<Object> vals) {
+    private void appendProperty(StringBuilder sql, ToSQLContext toSQLContext, List<ColumnValue2Segment> vals) {
         sql.append("(");
         int i = 0;
-        for (ColumnMetadata columnMetadata : columnMetadataList) {
-            String propertyName = columnMetadata.getPropertyName();
-            String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext, true, false);
-            Object val = vals.get(i);
-            EasyConstSQLParameter easyConstSQLParameter = new EasyConstSQLParameter(table, propertyName, val);
-            if(i!=0){
+        for (Column2Segment column2Segment : column2Segments) {
+            String sqlColumnSegment = column2Segment.toSQL(toSQLContext);
+            ColumnValue2Segment val = vals.get(i);
+            if (i != 0) {
                 sql.append(" ").append(SQLKeywordEnum.AND.toSQL()).append(" ");
             }
             sql.append(sqlColumnSegment).append(" ").append(SQLPredicateCompareEnum.EQ.getSQL())
-                    .append(getSQLParameterSegment(easyConstSQLParameter, columnMetadata, toSQLContext));
+                    .append(val.toSQL(toSQLContext));
             i++;
         }
         sql.append(")");
-    }
-
-    private String getSQLParameterSegment(SQLParameter sqlParameter, ColumnMetadata columnMetadata, ToSQLContext toSQLContext) {
-        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
-        if (columnValueSQLConverter == null) {
-            EasySQLUtil.addParameter(toSQLContext, sqlParameter);
-            return "?";
-        } else {
-            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext);
-            columnValueSQLConverter.valueConvert(table, columnMetadata, sqlParameter, sqlPropertyConverter, expressionContext.getRuntimeContext(), true);
-            return sqlPropertyConverter.toSQL(toSQLContext);
-        }
     }
 
     @Override
@@ -115,8 +96,7 @@ public class ColumnMultiCollectionPredicate implements ValuesPredicate, Sharding
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-
-        return new ColumnMultiCollectionPredicate(table, propertyNames, collections, compare, expressionContext);
+        return new ColumnMultiCollectionPredicate(table, column2Segments, collections, compare, expressionContext);
     }
 
     @Override

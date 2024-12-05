@@ -10,9 +10,6 @@ import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
  * @author xuejiaming
- * @FileName: DefaultColumnResultSelector.java
- * @Description: 文件说明
- * @Date: 2023/3/8 21:35
  */
 public class ColumnResultSelectorImpl<T1> implements ColumnResultSelector<T1> {
     protected final EntityExpressionBuilder entityExpressionBuilder;

@@ -25,7 +25,7 @@ public class IncludeParseContext {
 
     private ClientQueryable<?> includeQueryable;
     private SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression;
-    private ClientQueryable<?> includeMappingQueryable;
+    private SQLFuncExpression<ClientQueryable<?>> includeMappingQueryableFunction;
 
     private List<Map<String, Object>> mappingRows;
     public IncludeParseContext(IncludeNavigateParams includeNavigateParams){
@@ -57,12 +57,12 @@ public class IncludeParseContext {
         this.includeQueryable = includeQueryable;
     }
 
-    public ClientQueryable<?> getIncludeMappingQueryable() {
-        return includeMappingQueryable;
+    public SQLFuncExpression<ClientQueryable<?>> getIncludeMappingQueryableFunction() {
+        return includeMappingQueryableFunction;
     }
 
-    public void setIncludeMappingQueryable(ClientQueryable<?> includeMappingQueryable) {
-        this.includeMappingQueryable = includeMappingQueryable;
+    public void setIncludeMappingQueryableFunction(SQLFuncExpression<ClientQueryable<?>> includeMappingQueryableFunction) {
+        this.includeMappingQueryableFunction = includeMappingQueryableFunction;
     }
 
     public List<Map<String, Object>> getMappingRows() {

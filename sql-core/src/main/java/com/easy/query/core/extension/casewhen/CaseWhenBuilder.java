@@ -37,7 +37,7 @@ public class CaseWhenBuilder {
         return this;
     }
     public CaseWhenBuilder caseWhenColumn(SQLExpression1<Filter> predicate, TableAvailable table, String property){
-        whens.add(new Tuple2<>(predicate,new ColumnPropertyExpressionImpl(table,property)));
+        whens.add(new Tuple2<>(predicate,new ColumnPropertyExpressionImpl(table,property,expressionContext)));
         return this;
     }
     public CaseWhenBuilder caseWhenColumn(SQLExpression1<Filter> predicate, SQLTableOwner sqlTableOwner, String property){
@@ -47,7 +47,7 @@ public class CaseWhenBuilder {
         return new CaseWhenSQLColumnSegment(expressionContext, EasyObjectUtil.typeCastNullable(whens),new ColumnConstSQLParameterExpressionImpl(elseValue));
     }
     public CloneableSQLSegment elseEndColumn(TableAvailable table, String property){
-        return new CaseWhenSQLColumnSegment(expressionContext, EasyObjectUtil.typeCastNullable(whens),new ColumnPropertyExpressionImpl(table,property));
+        return new CaseWhenSQLColumnSegment(expressionContext, EasyObjectUtil.typeCastNullable(whens),new ColumnPropertyExpressionImpl(table,property,expressionContext));
     }
     public CloneableSQLSegment elseEndColumn(SQLTableOwner sqlTableOwner, String property){
         return elseEndColumn(sqlTableOwner.getTable(),property);

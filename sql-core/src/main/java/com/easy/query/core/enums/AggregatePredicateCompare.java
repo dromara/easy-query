@@ -40,4 +40,9 @@ public enum AggregatePredicateCompare implements SQLPredicateCompare {
         }
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean isLike() {
+        return false;
+    }
 }

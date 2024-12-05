@@ -247,9 +247,9 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         List<Map<String, Object>> mappingRows = null;
         if (RelationTypeEnum.ManyToMany == relationType && navigateMetadata.getMappingClass() != null) {
 
-            ClientQueryable<?> mappingQueryable = queryable(navigateMetadata.getMappingClass())
+            SQLFuncExpression<ClientQueryable<?>> mappingQueryable = ()-> queryable(navigateMetadata.getMappingClass())
                     .where(o -> {
-                        o.relationIn(navigateMetadata.getSelfMappingProperties(), () -> includeRelationIdContext.getRelationIds());
+                        o.relationIn(navigateMetadata.getSelfMappingProperties(), includeRelationIdContext.getRelationIds());
                         navigateMetadata.predicateMappingClassFilterApply(o);
                     })
                     .select(o -> {
@@ -262,7 +262,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 //                        o.column(navigateMetadata.getSelfMappingProperties()).column(navigateMetadata.getTargetMappingProperties())
                     });
 
-            mappingRows = EasyIncludeUtil.queryableGroupExecute(queryRelationGroupSize, mappingQueryable, includeRelationIdContext, relationIds, Query::toMaps);
+            mappingRows = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, mappingQueryable, includeRelationIdContext, relationIds, Query::toMaps);
             EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
             List<ColumnMetadata> columnMetadataTargetList = Arrays.stream(navigateMetadata.getTargetMappingProperties()).map(target -> mappingEntityMetadata.getColumnNotNull(target)).collect(Collectors.toList());
 
@@ -316,7 +316,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             List<List<Object>> relationIds = includeRelationIdContext.getRelationIds();
             return queryable.cloneQueryable().where(o -> {
                 o.and(() -> {
-                    o.relationIn(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), () -> relationIds);
+                    o.relationIn(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds);
                     if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
                         navigateMetadata.predicateFilterApply(o);
                     }

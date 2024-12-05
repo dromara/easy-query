@@ -9,6 +9,8 @@ import com.easy.query.core.expression.parser.core.available.RelationTableAvailab
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
+import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsPropertyPredicate;
@@ -16,10 +18,12 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyColumnSegmentUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -70,7 +74,10 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                                 throw new EasyQueryInvalidOperationException("entity:"+ EasyClassUtil.getSimpleName(table.getEntityClass())+" has version expression not found version");
                             }
                         } else {
-                            AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(table.getEntityTable(), versionMetadata.getPropertyName(), this.getExpressionContext()));
+                            ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnNotNull(versionMetadata.getPropertyName());
+                            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(entityTable, columnMetadata, this.getExpressionContext());
+                            ColumnValue2Segment columnValue2Segment = EasyColumnSegmentUtil.createColumnValue2Segment(entityTable, columnMetadata, this.getExpressionContext(), null);
+                            AndPredicateSegment versionPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(column2Segment,columnValue2Segment));
                             predicateSegment.addPredicateSegment(versionPredicateSegment);
                         }
                     }

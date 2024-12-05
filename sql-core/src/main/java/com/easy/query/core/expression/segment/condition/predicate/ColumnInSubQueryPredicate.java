@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -14,16 +15,14 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  *
  * @author xuejiaming
  */
-public class ColumnInSubQueryPredicate implements SubQueryPredicate{
+public class ColumnInSubQueryPredicate implements SubQueryPredicate {
     private final SQLPredicateCompare compare;
     private final ExpressionContext expressionContext;
-    private final TableAvailable table;
-    private final String propertyName;
     private final Query<?> subQuery;
+    private final Column2Segment column2Segment;
 
-    public ColumnInSubQueryPredicate(TableAvailable table, String propertyName, Query<?> subQuery, SQLPredicateCompare compare, ExpressionContext expressionContext) {
-        this.table = table;
-        this.propertyName = propertyName;
+    public ColumnInSubQueryPredicate(Column2Segment column2Segment, Query<?> subQuery, SQLPredicateCompare compare, ExpressionContext expressionContext) {
+        this.column2Segment = column2Segment;
         this.subQuery = subQuery;
         this.compare = compare;
         this.expressionContext = expressionContext;
@@ -31,12 +30,12 @@ public class ColumnInSubQueryPredicate implements SubQueryPredicate{
 
     @Override
     public TableAvailable getTable() {
-        return table;
+        return column2Segment.getTable();
     }
 
     @Override
     public String getPropertyName() {
-        return propertyName;
+        return column2Segment.getColumnMetadata().getPropertyName();
     }
 
     @Override
@@ -46,8 +45,7 @@ public class ColumnInSubQueryPredicate implements SubQueryPredicate{
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
+        String sqlColumnSegment = column2Segment.toSQL(toSQLContext);
         StringBuilder sql = new StringBuilder();
         sql.append(sqlColumnSegment).append(" ").append(compare.getSQL()).append(" (");
         String subQueryableSQL = subQuery.toSQL(toSQLContext);
@@ -67,6 +65,6 @@ public class ColumnInSubQueryPredicate implements SubQueryPredicate{
 
     @Override
     public SubQueryPredicate cloneSubQueryPredicate() {
-        return new ColumnInSubQueryPredicate(table, propertyName, subQuery.cloneQueryable(), compare, expressionContext);
+        return new ColumnInSubQueryPredicate(column2Segment, subQuery.cloneQueryable(), compare, expressionContext);
     }
 }

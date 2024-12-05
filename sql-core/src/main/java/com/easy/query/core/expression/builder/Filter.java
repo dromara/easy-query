@@ -132,7 +132,7 @@ public interface Filter extends SQLNative<Filter> {
      * 集合为空返回False
      */
     Filter in(TableAvailable table, String property, Collection<?> collection);
-    Filter relationIn(TableAvailable table, String[] properties, Supplier<List<List<Object>>> relationIdCreator);
+    Filter relationIn(TableAvailable table, String[] properties, List<List<Object>> relationIdCreator);
     Filter relationEq(TableAvailable table, String[] properties, List<List<Object>> relationId);
 
     <TProperty> Filter in(TableAvailable table, String property, TProperty[] collection);

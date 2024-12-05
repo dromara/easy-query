@@ -206,7 +206,7 @@ public class EasyJdbcExecutorUtil {
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
-                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters),executorContext.getExecuteMethod());
+                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters), executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
@@ -265,7 +265,7 @@ public class EasyJdbcExecutorUtil {
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
-                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, new ArrayList<>(entities.size()),executorContext.getExecuteMethod());
+                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, new ArrayList<>(entities.size()), executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
             int batchSize = 0;
@@ -357,7 +357,7 @@ public class EasyJdbcExecutorUtil {
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
-                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, new ArrayList<>(entities.size()),executorContext.getExecuteMethod());
+                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, new ArrayList<>(entities.size()), executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
             int batchSize = 0;
@@ -427,7 +427,7 @@ public class EasyJdbcExecutorUtil {
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
-                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters),executorContext.getExecuteMethod());
+                jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters), executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
             ps = createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
@@ -525,6 +525,9 @@ public class EasyJdbcExecutorUtil {
                     String likeValue = value.toString();
                     String encryptValue = EasyStringUtil.endWithRemove(EasyStringUtil.startWithRemove(likeValue, "%"), "%");
                     return EasyStringUtil.startWithDefault(likeValue, "%", EasyStringUtil.EMPTY) + easyEncryptionStrategy.encrypt(entityClass, propertyName, encryptValue) + EasyStringUtil.endWithDefault(likeValue, "%", EasyStringUtil.EMPTY);
+                } else {
+                    EncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();
+                    return easyEncryptionStrategy.encrypt(entityClass, propertyName, value);
                 }
             } else {
                 EncryptionStrategy easyEncryptionStrategy = columnMetadata.getEncryptionStrategy();

@@ -50,7 +50,9 @@ public class SetterImpl implements Setter {
     @Override
     public Setter set(boolean condition, TableAvailable table, String property, Object val) {
         if (condition) {
-            sqlBuilderSegment.append(new UpdateColumnSetSegmentImpl(table, property, val, entityExpressionBuilder.getExpressionContext()));
+            InsertUpdateSetColumnSQLSegment updateSetColumnSegment = sqlSegmentFactory.createUpdateSetColumnSegment(table, property, entityExpressionBuilder.getExpressionContext(), val);
+
+            sqlBuilderSegment.append(updateSetColumnSegment);
         }
         return this;
     }
@@ -58,7 +60,8 @@ public class SetterImpl implements Setter {
     @Override
     public Setter setWithColumn(boolean condition, TableAvailable table, String property1, String property2) {
         if (condition) {
-            sqlBuilderSegment.append(new UpdateColumnSetSelfSegmentImpl(table, property1, table, property2, entityExpressionBuilder.getExpressionContext()));
+            InsertUpdateSetColumnSQLSegment updateSetSelfColumnSegment = sqlSegmentFactory.createUpdateSetSelfColumnSegment(table, property1, table, property2, entityExpressionBuilder.getExpressionContext());
+            sqlBuilderSegment.append(updateSetSelfColumnSegment);
         }
         return this;
     }
@@ -93,7 +96,8 @@ public class SetterImpl implements Setter {
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityExpressionBuilder.getExpressionContext(), runtimeContext);
 //        sqlNativeExpressionContext.expression(table,property);
         contextConsume.apply(sqlNativeExpressionContext);
-        InsertUpdateColumnConfigureSegmentImpl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegmentImpl(new UpdateColumnSegmentImpl(table, property, entityExpressionBuilder.getExpressionContext()), entityExpressionBuilder.getExpressionContext(), sqlSegment, sqlNativeExpressionContext);
+        InsertUpdateSetColumnSQLSegment updateColumnSegment = sqlSegmentFactory.createUpdateColumnSegment(table, property, entityExpressionBuilder.getExpressionContext(), null);
+        InsertUpdateColumnConfigureSegmentImpl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegmentImpl(updateColumnSegment, entityExpressionBuilder.getExpressionContext(), sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(insertUpdateColumnConfigureSegment);
         return this;
     }
@@ -127,8 +131,8 @@ public class SetterImpl implements Setter {
 //            sqlBuilderSegment.append(insertUpdateColumnConfigureSegment);
 //        }
 //        String sqlSegment = sqlFunction.sqlSegment(table);
-        InsertUpdateColumnConfigureSegment2Impl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegment2Impl(new UpdateColumnSegmentImpl(table, property, entityExpressionBuilder.getExpressionContext())
-                , entityExpressionBuilder.getExpressionContext(), sqlSegment, sqlNativeExpressionContext);
+        InsertUpdateSetColumnSQLSegment updateColumnSegment = sqlSegmentFactory.createUpdateColumnSegment(table, property, entityExpressionBuilder.getExpressionContext(), null);
+        InsertUpdateColumnConfigureSegment2Impl insertUpdateColumnConfigureSegment = new InsertUpdateColumnConfigureSegment2Impl(updateColumnSegment, entityExpressionBuilder.getExpressionContext(), sqlSegment, sqlNativeExpressionContext);
         sqlBuilderSegment.append(insertUpdateColumnConfigureSegment);
 
         return this;

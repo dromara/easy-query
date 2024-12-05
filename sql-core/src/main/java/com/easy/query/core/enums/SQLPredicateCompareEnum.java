@@ -55,4 +55,9 @@ public enum SQLPredicateCompareEnum implements SQLPredicateCompare {
         }
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean isLike(){
+        return SQLPredicateCompareEnum.LIKE == this || SQLPredicateCompareEnum.NOT_LIKE == this;
+    }
 }

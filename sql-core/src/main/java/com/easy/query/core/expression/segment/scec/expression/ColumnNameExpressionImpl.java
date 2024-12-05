@@ -14,14 +14,16 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 public final class ColumnNameExpressionImpl implements ColumnPropertyParamExpression {
     private final TableAvailable table;
     private final String columnName;
+    private final ExpressionContext expressionContext;
 
-    public ColumnNameExpressionImpl(TableAvailable table, String columnName) {
+    public ColumnNameExpressionImpl(TableAvailable table, String columnName,ExpressionContext expressionContext) {
         this.table = table;
         this.columnName = columnName;
+        this.expressionContext = expressionContext;
     }
 
     @Override
-    public String toSQL(ExpressionContext expressionContext, ToSQLContext toSQLContext) {
+    public String toSQL(ToSQLContext toSQLContext) {
         return EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), table, columnName, toSQLContext);
     }
 }

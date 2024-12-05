@@ -64,7 +64,7 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
     public void expression(TableAvailable table, String property) {
         Objects.requireNonNull(table, "table cannot be null");
         Objects.requireNonNull(property, "property cannot be null");
-        ColumnPropertyExpressionImpl columnPropertyExpression = new ColumnPropertyExpressionImpl(table, property);
+        ColumnPropertyExpressionImpl columnPropertyExpression = new ColumnPropertyExpressionImpl(table, property,expressionContext);
         this.expressions.add(columnPropertyExpression);
         //进行原生片段支持表属性和所属表
         if(!nativePropertyInfo){
@@ -81,7 +81,7 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
     public void columnName(TableAvailable table, String columnName) {
         Objects.requireNonNull(table, "table cannot be null");
         Objects.requireNonNull(columnName, "columnName cannot be null");
-        ColumnNameExpressionImpl columnNameExpression = new ColumnNameExpressionImpl(table, columnName);
+        ColumnNameExpressionImpl columnNameExpression = new ColumnNameExpressionImpl(table, columnName,expressionContext);
         this.expressions.add(columnNameExpression);
     }
 

@@ -85,7 +85,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         List<RelationExtraEntity> relationExtraEntities = getRelationExtraEntities(expressionContext, result);
         IncludeParseContext includeParseContext = new IncludeParseContext(includeNavigateParams);
         includeParseContext.setIncludeQueryableExpression(queryableExpression);
-        includeParseContext.setIncludeMappingQueryable(includeNavigateParams.getMappingQueryable());
+        includeParseContext.setIncludeMappingQueryableFunction(includeNavigateParams.getMappingQueryableFunction());
 
         includeParseContext.setSelfProperties(navigateMetadata.getSelfPropertiesOrPrimary());
         includeParseContext.setTargetProperties(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
@@ -207,7 +207,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
         IncludeNavigateParams includeNavigateParams = includeParseContext.getIncludeNavigateParams();
 
-        List<Map<String, Object>> mappingRows = EasyIncludeUtil.queryableGroupExecute(queryRelationGroupSize, includeNavigateParams.getMappingQueryable(), includeNavigateParams, relationIds, Query::toMaps);
+        List<Map<String, Object>> mappingRows = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeNavigateParams.getMappingQueryableFunction(), includeNavigateParams, relationIds, Query::toMaps);
         includeParseContext.setMappingRows(mappingRows);
     }
 

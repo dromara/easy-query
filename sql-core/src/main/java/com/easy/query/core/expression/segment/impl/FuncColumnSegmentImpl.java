@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -18,15 +19,13 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 public class FuncColumnSegmentImpl implements FuncColumnSegment {
 
 
-    protected final TableAvailable table;
-    protected final ColumnMetadata columnMetadata;
     protected final ExpressionContext expressionContext;
     protected final ColumnFunction columnFunction;
+    private final Column2Segment column2Segment;
     protected String alias;
 
-    public FuncColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, ColumnFunction columnFunction, String alias) {
-        this.table = table;
-        this.columnMetadata = columnMetadata;
+    public FuncColumnSegmentImpl(Column2Segment column2Segment, ExpressionContext expressionContext, ColumnFunction columnFunction, String alias) {
+        this.column2Segment = column2Segment;
         this.expressionContext = expressionContext;
         this.columnFunction = columnFunction;
         this.alias = alias;
@@ -35,7 +34,7 @@ public class FuncColumnSegmentImpl implements FuncColumnSegment {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
 
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext, true, false);
+        String sqlColumnSegment = column2Segment.toSQL(toSQLContext);
         String funcColumn = columnFunction.getFuncColumn(sqlColumnSegment);
         StringBuilder sql = new StringBuilder().append(funcColumn);
         String alias = getAlias();
@@ -47,22 +46,22 @@ public class FuncColumnSegmentImpl implements FuncColumnSegment {
 
     @Override
     public TableAvailable getTable() {
-        return table;
+        return column2Segment.getTable();
     }
 
     @Override
     public String getPropertyName() {
-        return columnMetadata.getPropertyName();
+        return column2Segment.getColumnMetadata().getPropertyName();
     }
 
     @Override
     public ColumnMetadata getColumnMetadata() {
-        return columnMetadata;
+        return column2Segment.getColumnMetadata();
     }
 
     @Override
     public FuncColumnSegment cloneSQLColumnSegment() {
-        return new FuncColumnSegmentImpl(this.table, this.columnMetadata, this.expressionContext, this.columnFunction, this.alias);
+        return new FuncColumnSegmentImpl(column2Segment,this.expressionContext, this.columnFunction, this.alias);
     }
 
 

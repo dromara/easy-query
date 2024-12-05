@@ -20,6 +20,8 @@ import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnSetterImpl;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
+import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
@@ -30,12 +32,17 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyColumnSegmentUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
@@ -47,6 +54,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     protected final Class<T> clazz;
     protected final EntityMetadata entityMetadata;
     protected final EntityUpdateExpressionBuilder entityUpdateExpressionBuilder;
+    protected final ExpressionContext expressionContext;
     protected final ColumnSetter<T> columnSetter;
     protected final TableAvailable table;
 
@@ -55,6 +63,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
 
         this.clazz = clazz;
         this.entityUpdateExpressionBuilder = entityUpdateExpressionBuilder;
+        this.expressionContext = entityUpdateExpressionBuilder.getExpressionContext();
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
@@ -139,8 +148,12 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
 
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(keyProperty);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, entityUpdateExpressionBuilder.getExpressionContext());
+            ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, entityUpdateExpressionBuilder.getExpressionContext(), id, SQLPredicateCompareEnum.EQ.isLike());
+
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(table, table.getEntityMetadata().getColumnNotNull(keyProperty), id, SQLPredicateCompareEnum.EQ, entityUpdateExpressionBuilder.getExpressionContext()));
+                    .setPredicate(new ColumnValuePredicate(column2Segment, compareValue2Segment, SQLPredicateCompareEnum.EQ));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
@@ -153,8 +166,14 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             PredicateSegment where = entityUpdateExpressionBuilder.getWhere();
+
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(keyProperty);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+//            List<ColumnValue2Segment> columnValue2Segments = ids.stream().map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
+
+            List<ColumnValue2Segment> columnValue2Segments =  EasyCollectionUtil.select(ids,(o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
             andPredicateSegment
-                    .setPredicate(new ColumnCollectionPredicate(table, keyProperty, ids, SQLPredicateCompareEnum.IN, entityUpdateExpressionBuilder.getExpressionContext()));
+                    .setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, SQLPredicateCompareEnum.IN, entityUpdateExpressionBuilder.getExpressionContext()));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;

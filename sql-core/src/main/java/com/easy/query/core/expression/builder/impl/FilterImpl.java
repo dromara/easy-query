@@ -14,6 +14,8 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.MultiCollection;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
+import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -38,6 +40,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyColumnSegmentUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLUtil;
 
@@ -46,6 +49,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * create time 2023/6/22 14:50
@@ -119,13 +123,21 @@ public class FilterImpl implements Filter {
 
     public void appendThisPredicate(TableAvailable table, String property, Object val, SQLPredicateCompare condition) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        nextPredicateSegment.setPredicate(new ColumnValuePredicate(table, columnMetadata, val, getReallyPredicateCompare(condition), expressionContext));
+        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+        SQLPredicateCompare reallyPredicateCompare = getReallyPredicateCompare(condition);
+        ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, val, reallyPredicateCompare.isLike());
+
+        nextPredicateSegment.setPredicate(new ColumnValuePredicate(column2Segment, compareValue2Segment, reallyPredicateCompare));
 //        Predicate columnPredicate = EasySQLExpressionUtil.getSQLOwnerPredicateSegmentColumnMetadata(expressionContext, table, columnMetadata, getReallyPredicateCompare(condition), val);
 //        nextPredicateSegment.setPredicate(columnPredicate);
     }
 
     protected void appendThisFuncPredicate(TableAvailable table, String propertyName, ColumnFunction func, SQLPredicateCompare compare, Object val) {
-        nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(table, func, propertyName, val, compare, expressionContext));
+
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
+        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+        ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, val, compare.isLike());
+        nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(column2Segment, func, compareValue2Segment, compare));
     }
 
     @Override
@@ -231,14 +243,18 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter isNull(TableAvailable table, String property) {
-        nextPredicateSegment.setPredicate(new ColumnNullAssertPredicate(table, property, getReallyPredicateCompare(SQLPredicateCompareEnum.IS_NULL), expressionContext));
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+        nextPredicateSegment.setPredicate(new ColumnNullAssertPredicate(column2Segment, getReallyPredicateCompare(SQLPredicateCompareEnum.IS_NULL)));
         next();
         return this;
     }
 
     @Override
     public Filter isNotNull(TableAvailable table, String property) {
-        nextPredicateSegment.setPredicate(new ColumnNullAssertPredicate(table, property, getReallyPredicateCompare(SQLPredicateCompareEnum.IS_NOT_NULL), expressionContext));
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+        nextPredicateSegment.setPredicate(new ColumnNullAssertPredicate(column2Segment, getReallyPredicateCompare(SQLPredicateCompareEnum.IS_NOT_NULL)));
         next();
         return this;
     }
@@ -275,22 +291,35 @@ public class FilterImpl implements Filter {
     @Override
     public Filter in(TableAvailable table, String property, Collection<?> collection) {
         if (conditionAppend(table, property, collection)) {
-            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, property, collection, getReallyPredicateCompare(SQLPredicateCompareEnum.IN), expressionContext));
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+//            List<ColumnValue2Segment> columnValue2Segments = collection.stream().map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
+            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(collection, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
+
+            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, getReallyPredicateCompare(SQLPredicateCompareEnum.IN), expressionContext));
             next();
         }
         return this;
     }
 
     @Override
-    public Filter relationIn(TableAvailable table, String[] properties, Supplier<List<List<Object>>> relationIdCreator) {
-        nextPredicateSegment.setPredicate(new ColumnRelationCollectionPredicate(table, properties, relationIdCreator, getReallyPredicateCompare(SQLPredicateCompareEnum.IN), expressionContext));
+    public Filter relationIn(TableAvailable table, String[] properties, List<List<Object>> relationIds) {
+        nextPredicateSegment.setPredicate(new ColumnRelationCollectionPredicate(table, properties, relationIds, getReallyPredicateCompare(SQLPredicateCompareEnum.IN), expressionContext));
         next();
         return this;
     }
 
     @Override
     public Filter relationEq(TableAvailable table, String[] properties, List<List<Object>> relationId) {
-        nextPredicateSegment.setPredicate(new ColumnMultiCollectionPredicate(table,properties,relationId,getReallyPredicateCompare(SQLPredicateCompareEnum.IN),expressionContext));
+        List<Column2Segment> column2Segments = Arrays.stream(properties).map(o -> {
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(o);
+            return EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+        }).collect(Collectors.toList());
+
+        List<List<ColumnValue2Segment>> columnValue2Segments = EasyCollectionUtil.select(relationId, (innerCollections, i) -> {
+            return EasyCollectionUtil.select(innerCollections, (o, ii) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, column2Segments.get(ii).getColumnMetadata(), expressionContext, o));
+        });
+        nextPredicateSegment.setPredicate(new ColumnMultiCollectionPredicate(table, column2Segments, columnValue2Segments, getReallyPredicateCompare(SQLPredicateCompareEnum.IN), expressionContext));
         next();
         return this;
     }
@@ -298,7 +327,12 @@ public class FilterImpl implements Filter {
     @Override
     public <TProperty> Filter in(TableAvailable table, String property, TProperty[] collection) {
         if (conditionAppend(table, property, collection)) {
-            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, property, Arrays.asList(collection), getReallyPredicateCompare(SQLPredicateCompareEnum.IN), expressionContext));
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+//            List<ColumnValue2Segment> columnValue2Segments = Arrays.stream(collection).map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
+            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(collection, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
+
+            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, getReallyPredicateCompare(SQLPredicateCompareEnum.IN), expressionContext));
             next();
         }
         return this;
@@ -312,7 +346,9 @@ public class FilterImpl implements Filter {
     private <TProperty> void subQueryFilter0(TableAvailable table, String property, Query<TProperty> subQueryable, SQLPredicateCompare sqlPredicateCompare) {
         Query<TProperty> tPropertyQuery = subQueryable.cloneQueryable();
         extract(tPropertyQuery);
-        nextPredicateSegment.setPredicate(new ColumnInSubQueryPredicate(table, property, tPropertyQuery, getReallyPredicateCompare(sqlPredicateCompare), expressionContext));
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+        nextPredicateSegment.setPredicate(new ColumnInSubQueryPredicate(column2Segment, tPropertyQuery, getReallyPredicateCompare(sqlPredicateCompare), expressionContext));
         next();
     }
 
@@ -472,7 +508,12 @@ public class FilterImpl implements Filter {
     @Override
     public Filter notIn(TableAvailable table, String property, Collection<?> collection) {
         if (conditionAppend(table, property, collection)) {
-            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, property, collection, getReallyPredicateCompare(SQLPredicateCompareEnum.NOT_IN), expressionContext));
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+//            List<ColumnValue2Segment> columnValue2Segments = collection.stream().map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
+            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(collection, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
+
+            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, getReallyPredicateCompare(SQLPredicateCompareEnum.NOT_IN), expressionContext));
             next();
         }
         return this;
@@ -481,7 +522,12 @@ public class FilterImpl implements Filter {
     @Override
     public <TProperty> Filter notIn(TableAvailable table, String property, TProperty[] collection) {
         if (conditionAppend(table, property, collection)) {
-            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(table, property, Arrays.asList(collection), getReallyPredicateCompare(SQLPredicateCompareEnum.NOT_IN), expressionContext));
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+//            List<ColumnValue2Segment> columnValue2Segments = Arrays.stream(collection).map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
+            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(collection, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
+
+            nextPredicateSegment.setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, getReallyPredicateCompare(SQLPredicateCompareEnum.NOT_IN), expressionContext));
             next();
         }
         return this;
@@ -559,7 +605,12 @@ public class FilterImpl implements Filter {
 
     @Override
     public Filter valueColumnFilter(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2, SQLPredicateCompare sqlPredicateCompare) {
-        nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftTable, property1, rightTable, property2, getReallyPredicateCompare(sqlPredicateCompare), expressionContext));
+        ColumnMetadata leftColumnMetadata = leftTable.getEntityMetadata().getColumnNotNull(property1);
+        Column2Segment leftColumn2Segment = EasyColumnSegmentUtil.createColumn2Segment(leftTable, leftColumnMetadata, expressionContext);
+
+        ColumnMetadata rightColumnMetadata = rightTable.getEntityMetadata().getColumnNotNull(property2);
+        Column2Segment rightColumn2Segment = EasyColumnSegmentUtil.createColumn2Segment(rightTable, rightColumnMetadata, expressionContext);
+        nextPredicateSegment.setPredicate(new ColumnWithColumnPredicate(leftColumn2Segment, rightColumn2Segment, getReallyPredicateCompare(sqlPredicateCompare)));
         next();
         return this;
     }

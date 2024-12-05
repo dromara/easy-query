@@ -618,7 +618,7 @@ public class EasySQLExpressionUtil {
         if (paramExpression instanceof ColumnPropertyParamExpression) {
             ColumnPropertyParamExpression columnPropertyExpression = (ColumnPropertyParamExpression) paramExpression;
             return SQLFormatArgument.create(() -> {
-                return columnPropertyExpression.toSQL(expressionContext, toSQLContext);
+                return columnPropertyExpression.toSQL(toSQLContext);
             });
 
         } else if (paramExpression instanceof ColumnParamExpression) {

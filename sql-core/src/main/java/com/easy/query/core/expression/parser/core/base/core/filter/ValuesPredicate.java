@@ -35,8 +35,8 @@ public interface ValuesPredicate<T1, TChain> extends EntitySQLTableOwner<T1>, Fi
         return castChain();
     }
 
-    default TChain relationIn(String[] properties, Supplier<List<List<Object>>> relationIdCreator) {
-        getFilter().relationIn(getTable(), properties, relationIdCreator);
+    default TChain relationIn(String[] properties, List<List<Object>> relationIds) {
+        getFilter().relationIn(getTable(), properties, relationIds);
         return castChain();
     }
 

@@ -75,7 +75,9 @@ import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurerImpl;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
+import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
@@ -116,6 +118,7 @@ import com.easy.query.core.metadata.NavigateOrderProp;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyColumnSegmentUtil;
 import com.easy.query.core.util.EasyJdbcExecutorUtil;
 import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -159,6 +162,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     protected final EntityMetadata entityMetadata;
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final QueryRuntimeContext runtimeContext;
+    protected final ExpressionContext expressionContext;
     protected final SQLSegmentFactory sqlSegmentFactory;
     protected SQLExpressionProvider<T1> sqlExpressionProvider1;
 
@@ -176,6 +180,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         this.t1Class = t1Class;
         this.entityMetadata = entityQueryExpressionBuilder.getTable(0).getEntityMetadata();
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
+        this.expressionContext = entityQueryExpressionBuilder.getExpressionContext();
         this.runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
         this.sqlSegmentFactory = this.runtimeContext.getSQLSegmentFactory();
     }
@@ -1103,8 +1108,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             TableAvailable table = entityQueryExpressionBuilder.getTable(0).getEntityTable();
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(keyProperty);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, entityQueryExpressionBuilder.getExpressionContext());
+            ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, entityQueryExpressionBuilder.getExpressionContext(), id, SQLPredicateCompareEnum.EQ.isLike());
+
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(table, table.getEntityMetadata().getColumnNotNull(keyProperty), id, SQLPredicateCompareEnum.EQ, entityQueryExpressionBuilder.getExpressionContext()));
+                    .setPredicate(new ColumnValuePredicate(column2Segment, compareValue2Segment, SQLPredicateCompareEnum.EQ));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
@@ -1118,8 +1127,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             TableAvailable table = entityQueryExpressionBuilder.getTable(0).getEntityTable();
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(keyProperty);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+//            List<ColumnValue2Segment> columnValue2Segments = ids.stream().map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
+            List<ColumnValue2Segment> columnValue2Segments =  EasyCollectionUtil.select(ids,(o,i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
+
             andPredicateSegment
-                    .setPredicate(new ColumnCollectionPredicate(table, keyProperty, ids, SQLPredicateCompareEnum.IN, entityQueryExpressionBuilder.getExpressionContext()));
+                    .setPredicate(new ColumnCollectionPredicate(column2Segment,columnValue2Segments, SQLPredicateCompareEnum.IN, expressionContext));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
@@ -1464,7 +1478,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     s.setPrintNavSQL(printNavSQL);
                 }).where(o -> {
                     o.and(() -> {
-                        o.relationIn(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), () -> relationIds);
+                        o.relationIn(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds);
 //                        if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
 //                            navigateMetadata.predicateFilterApply(o);
 //                        }

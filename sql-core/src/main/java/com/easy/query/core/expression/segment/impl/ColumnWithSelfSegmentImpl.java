@@ -3,6 +3,7 @@ package com.easy.query.core.expression.segment.impl;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -18,17 +19,13 @@ public class ColumnWithSelfSegmentImpl implements InsertUpdateSetColumnSQLSegmen
     private static final String INCREMENT = " + ?";
     private static final String DECREMENT = " - ?";
     private final boolean increment;
+    private final Column2Segment column2Segment;
     private final Object val;
-    private final ExpressionContext expressionContext;
-    private final TableAvailable entityTable;
-    private final ColumnMetadata columnMetadata;
 
-    public ColumnWithSelfSegmentImpl(boolean increment, TableAvailable entityTable, ColumnMetadata columnMetadata, Object val, ExpressionContext expressionContext) {
+    public ColumnWithSelfSegmentImpl(boolean increment, Column2Segment column2Segment, Object val) {
         this.increment = increment;
-        this.entityTable = entityTable;
-        this.columnMetadata = columnMetadata;
+        this.column2Segment = column2Segment;
         this.val = val;
-        this.expressionContext = expressionContext;
     }
 
     private String getOperator() {
@@ -37,29 +34,29 @@ public class ColumnWithSelfSegmentImpl implements InsertUpdateSetColumnSQLSegmen
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        EasySQLUtil.addParameter(toSQLContext, new EasyConstSQLParameter(entityTable, columnMetadata.getPropertyName(), val));
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), entityTable, columnMetadata.getName(), toSQLContext);
+        EasySQLUtil.addParameter(toSQLContext, new EasyConstSQLParameter(column2Segment.getTable(), column2Segment.getColumnMetadata().getPropertyName(), val));
+        String sqlColumnSegment = column2Segment.toSQL(toSQLContext);
         return sqlColumnSegment + getOperator();
     }
 
     @Override
     public TableAvailable getTable() {
-        return entityTable;
+        return column2Segment.getTable();
     }
 
     @Override
     public String getPropertyName() {
-        return columnMetadata.getPropertyName();
+        return column2Segment.getColumnMetadata().getPropertyName();
     }
 
     @Override
     public String getColumnNameWithOwner(ToSQLContext toSQLContext) {
-        return EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), entityTable, columnMetadata.getName(), toSQLContext);
+        return column2Segment.toSQL(toSQLContext);
 //        return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext, entityTable, propertyName, toSQLContext);
     }
 
     @Override
     public InsertUpdateSetColumnSQLSegment cloneSQLColumnSegment() {
-        return new ColumnWithSelfSegmentImpl(increment, entityTable, columnMetadata, val, expressionContext);
+        return new ColumnWithSelfSegmentImpl(increment, column2Segment, val);
     }
 }

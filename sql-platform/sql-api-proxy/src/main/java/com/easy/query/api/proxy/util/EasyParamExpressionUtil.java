@@ -23,7 +23,7 @@ public class EasyParamExpressionUtil {
     public static ParamExpression getParamExpression(EntitySQLContext entitySQLContext, Object value) {
         if (value instanceof SQLColumn) {
             SQLColumn<?, ?> sqlColumn = (SQLColumn<?, ?>) value;
-            return new ColumnPropertyExpressionImpl(sqlColumn.getTable(), sqlColumn.getValue());
+            return new ColumnPropertyExpressionImpl(sqlColumn.getTable(), sqlColumn.getValue(),entitySQLContext.getEntityExpressionBuilder().getExpressionContext());
         } else if (value instanceof Query) {
             Query<?> query = (Query<?>) value;
             return new SubQueryParamExpressionImpl(query);

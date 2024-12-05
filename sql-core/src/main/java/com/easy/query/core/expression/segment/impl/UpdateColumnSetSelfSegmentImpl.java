@@ -2,6 +2,7 @@ package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -14,45 +15,37 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @author xuejiaming
  */
 public class UpdateColumnSetSelfSegmentImpl implements InsertUpdateSetColumnSQLSegment {
-    private final TableAvailable leftTable;
-    private final String leftPropertyName;
-    private final TableAvailable rightTable;
-    private final String rightPropertyName;
-    private final ExpressionContext expressionContext;
 
-    public UpdateColumnSetSelfSegmentImpl(TableAvailable leftTable, String leftPropertyName, TableAvailable rightTable, String rightPropertyName, ExpressionContext expressionContext) {
-        this.leftTable = leftTable;
-        this.leftPropertyName = leftPropertyName;
-        this.rightTable = rightTable;
-        this.rightPropertyName = rightPropertyName;
-        this.expressionContext = expressionContext;
+    protected final Column2Segment leftColumn2Segment;
+    protected final Column2Segment rightColumn2Segment;
+
+    public UpdateColumnSetSelfSegmentImpl(Column2Segment leftColumn2Segment, Column2Segment rightColumn2Segment) {
+        this.leftColumn2Segment = leftColumn2Segment;
+        this.rightColumn2Segment = rightColumn2Segment;
     }
     @Override
     public String getColumnNameWithOwner(ToSQLContext toSQLContext) {
-        ColumnMetadata columnMetadata = leftTable.getEntityMetadata().getColumnNotNull(leftPropertyName);
-        return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, leftTable, columnMetadata, toSQLContext,true,false);
+        return leftColumn2Segment.toSQL(toSQLContext);
 //        return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,leftTable,leftPropertyName,toSQLContext);
     }
 
     @Override
     public InsertUpdateSetColumnSQLSegment cloneSQLColumnSegment() {
-        return new UpdateColumnSetSelfSegmentImpl(leftTable,leftPropertyName,rightTable,rightPropertyName,expressionContext);
+        return new UpdateColumnSetSelfSegmentImpl(leftColumn2Segment,rightColumn2Segment);
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        ColumnMetadata columnMetadata = rightTable.getEntityMetadata().getColumnNotNull(rightPropertyName);
-        return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, rightTable, columnMetadata, toSQLContext,true,false);
-//        return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,rightTable,rightPropertyName,toSQLContext);
+        return rightColumn2Segment.toSQL(toSQLContext);
     }
 
     @Override
     public String getPropertyName() {
-        return leftPropertyName;
+        return leftColumn2Segment.getColumnMetadata().getPropertyName();
     }
 
     @Override
     public TableAvailable getTable() {
-        return leftTable;
+        return leftColumn2Segment.getTable();
     }
 }

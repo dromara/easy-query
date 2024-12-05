@@ -3,10 +3,10 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.common.IncludeRelationIdAvailable;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,7 +19,7 @@ import java.util.Objects;
 public class IncludeNavigateParams implements IncludeRelationIdAvailable {
     private final List<List<Object>> relationIds;
     private NavigateMetadata navigateMetadata;
-    private ClientQueryable<?> mappingQueryable;
+    private SQLFuncExpression<ClientQueryable<?>> mappingQueryableFunction;
     private TableAvailable table;
     private Integer relationGroupSize;
     private boolean limit;
@@ -44,12 +44,12 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
         this.navigateMetadata = navigateMetadata;
     }
 
-    public ClientQueryable<?> getMappingQueryable() {
-        return mappingQueryable;
+    public SQLFuncExpression<ClientQueryable<?>> getMappingQueryableFunction() {
+        return mappingQueryableFunction;
     }
 
-    public void setMappingQueryable(ClientQueryable<?> mappingQueryable) {
-        this.mappingQueryable = mappingQueryable;
+    public void setMappingQueryableFunction(SQLFuncExpression<ClientQueryable<?>> mappingQueryableFunc) {
+        this.mappingQueryableFunction = mappingQueryableFunc;
     }
 
     public TableAvailable getTable() {

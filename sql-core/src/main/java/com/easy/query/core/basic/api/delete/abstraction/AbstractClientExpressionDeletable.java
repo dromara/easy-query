@@ -16,6 +16,8 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
+import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
@@ -26,12 +28,17 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyColumnSegmentUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
@@ -116,8 +123,11 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
             PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table.getEntityTable());
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+            ColumnMetadata columnMetadata = table.getEntityTable().getEntityMetadata().getColumnNotNull(keyProperty);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table.getEntityTable(), columnMetadata, entityDeleteExpressionBuilder.getExpressionContext());
+            ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(table.getEntityTable(), columnMetadata, entityDeleteExpressionBuilder.getExpressionContext(), id, SQLPredicateCompareEnum.EQ.isLike());
             andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(table.getEntityTable(), table.getEntityMetadata().getColumnNotNull(keyProperty), id, SQLPredicateCompareEnum.EQ, entityDeleteExpressionBuilder.getExpressionContext()));
+                    .setPredicate(new ColumnValuePredicate(column2Segment, compareValue2Segment, SQLPredicateCompareEnum.EQ));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;
@@ -130,8 +140,11 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
             PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table.getEntityTable());
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+            ColumnMetadata columnMetadata = table.getEntityTable().getEntityMetadata().getColumnNotNull(keyProperty);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table.getEntityTable(), columnMetadata, getExpressionContext());
+            List<ColumnValue2Segment> columnValue2Segments =  EasyCollectionUtil.select(ids,(o,i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table.getEntityTable(), columnMetadata, getExpressionContext(), o));
             andPredicateSegment
-                    .setPredicate(new ColumnCollectionPredicate(table.getEntityTable(), keyProperty, ids, SQLPredicateCompareEnum.IN, entityDeleteExpressionBuilder.getExpressionContext()));
+                    .setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, SQLPredicateCompareEnum.IN, entityDeleteExpressionBuilder.getExpressionContext()));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;

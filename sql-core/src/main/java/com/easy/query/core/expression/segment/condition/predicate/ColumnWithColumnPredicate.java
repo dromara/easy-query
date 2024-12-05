@@ -3,6 +3,7 @@ package com.easy.query.core.expression.segment.condition.predicate;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -14,40 +15,29 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @author xuejiaming
  */
 public class ColumnWithColumnPredicate implements Predicate {
-    private final TableAvailable leftTable;
-    private final String leftPropertyName;
-    private final TableAvailable rightTable;
-    private final String rightPropertyName;
+    private final Column2Segment leftColumn2Segment;
+    private final Column2Segment rightColumn2Segment;
     private final SQLPredicateCompare compare;
-    private final ExpressionContext expressionContext;
 
-    public ColumnWithColumnPredicate(TableAvailable leftTable, String leftPropertyName, TableAvailable rightTable, String rightPropertyName, SQLPredicateCompare compare, ExpressionContext expressionContext) {
-        this.leftTable = leftTable;
-        this.leftPropertyName = leftPropertyName;
-        this.rightTable = rightTable;
-        this.rightPropertyName = rightPropertyName;
+    public ColumnWithColumnPredicate(Column2Segment leftColumn2Segment, Column2Segment rightColumn2Segment, SQLPredicateCompare compare) {
+        this.leftColumn2Segment = leftColumn2Segment;
+        this.rightColumn2Segment = rightColumn2Segment;
         this.compare = compare;
-        this.expressionContext = expressionContext;
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-
-        ColumnMetadata leftColumnMetadata = leftTable.getEntityMetadata().getColumnNotNull(leftPropertyName);
-        String sqlColumnSegment1 = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, leftTable, leftColumnMetadata, toSQLContext,true,false);
-        ColumnMetadata rightColumnMetadata = rightTable.getEntityMetadata().getColumnNotNull(rightPropertyName);
-        String sqlColumnSegment2 = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, rightTable, rightColumnMetadata, toSQLContext,true,false);
-        return sqlColumnSegment1 +" "+ compare.getSQL() + " "+sqlColumnSegment2;
+        return leftColumn2Segment.toSQL(toSQLContext) +" "+ compare.getSQL() + " "+rightColumn2Segment.toSQL(toSQLContext);
     }
 
     @Override
     public TableAvailable getTable() {
-        return leftTable;
+        return leftColumn2Segment.getTable();
     }
 
     @Override
     public String getPropertyName() {
-        return leftPropertyName;
+        return leftColumn2Segment.getColumnMetadata().getPropertyName();
     }
 
     @Override

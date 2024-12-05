@@ -172,13 +172,15 @@ public class DefaultTrackContext implements TrackContext {
     }
 
     @Override
-    public void release() {
+    public boolean release() {
         if (beginCount > 0) {
             beginCount--;
         }
         if (beginCount == 0) {
             trackEntityMap.clear();
+            return true;
         }
+        return false;
 
     }
 }

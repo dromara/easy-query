@@ -1,8 +1,5 @@
 package com.easy.query.core.expression.segment.impl;
 
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.GroupBySQLNativeSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
@@ -28,6 +25,6 @@ public class GroupBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements
 
     @Override
     public OrderBySegment createOrderByColumnSegment(boolean asc) {
-        throw new EasyQueryInvalidOperationException("group const column cant convert order column");
+        return expressionContext.getRuntimeContext().getSQLSegmentFactory().createOrderBySQLNativeSegment(expressionContext,sqlSegment ,sqlNativeExpression,asc);
     }
 }

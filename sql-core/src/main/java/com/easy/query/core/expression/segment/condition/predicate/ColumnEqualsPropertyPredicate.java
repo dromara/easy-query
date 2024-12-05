@@ -8,6 +8,8 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -20,40 +22,27 @@ import com.easy.query.core.util.EasySQLUtil;
  * @author xuejiaming
  */
 public class ColumnEqualsPropertyPredicate implements Predicate,ValuePredicate {
-    protected final TableAvailable table;
-    protected final String propertyName;
-    protected final ExpressionContext expressionContext;
 
-    public ColumnEqualsPropertyPredicate(TableAvailable table, String propertyName, ExpressionContext expressionContext){
-        this.table = table;
-        this.propertyName = propertyName;
-        this.expressionContext = expressionContext;
+    private final Column2Segment column2Segment;
+    private final ColumnValue2Segment columnValue2Segment;
+
+    public ColumnEqualsPropertyPredicate(Column2Segment column2Segment, ColumnValue2Segment columnValue2Segment){
+        this.column2Segment = column2Segment;
+        this.columnValue2Segment = columnValue2Segment;
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        PropertySQLParameter sqlParameter = new PropertySQLParameter(table, propertyName);
-        ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(propertyName);
-        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
-        if(columnValueSQLConverter==null){
-            EasySQLUtil.addParameter(toSQLContext, sqlParameter);
-            return sqlColumnSegment + " = ?";
-        }else{
-            DefaultSQLPropertyConverter sqlValueConverter = new DefaultSQLPropertyConverter(table, expressionContext);
-            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlValueConverter,expressionContext.getRuntimeContext(),true);
-            String valSQLParameter = sqlValueConverter.toSQL(toSQLContext);
-            return sqlColumnSegment + " = "+valSQLParameter;
-        }
+        return column2Segment.toSQL(toSQLContext)+ " = "+ columnValue2Segment.toSQL(toSQLContext);
     }
 
     @Override
     public TableAvailable getTable() {
-        return table;
+        return column2Segment.getTable();
     }
 
     public String getPropertyName() {
-        return propertyName;
+        return column2Segment.getColumnMetadata().getPropertyName();
     }
 
     @Override
@@ -69,6 +58,6 @@ public class ColumnEqualsPropertyPredicate implements Predicate,ValuePredicate {
 
     @Override
     public SQLParameter getParameter() {
-        return new PropertySQLParameter(table,propertyName);
+        return columnValue2Segment.getSQLParameter();
     }
 }

@@ -41,7 +41,7 @@ public class CaseWhenBuilderExpression {
         return this;
     }
     public CaseWhenBuilderExpression caseWhenColumn(SQLExpression1<Filter> predicate, TableAvailable table, String property){
-        whens.add(new Tuple2<>(predicate,new ColumnPropertyExpressionImpl(table,property)));
+        whens.add(new Tuple2<>(predicate,new ColumnPropertyExpressionImpl(table,property,expressionContext)));
         return this;
     }
     public CaseWhenBuilderExpression caseWhenColumn(SQLExpression1<Filter> predicate, SQLTableOwner sqlTableOwner, String property){
@@ -54,7 +54,7 @@ public class CaseWhenBuilderExpression {
         return new CaseWhenSQLFunction(runtimeContext,expressionContext,whens,paramExpression);
     }
     public SQLFunction elseEndColumn(TableAvailable table, String property){
-        return new CaseWhenSQLFunction(runtimeContext,expressionContext,whens,new ColumnPropertyExpressionImpl(table,property));
+        return new CaseWhenSQLFunction(runtimeContext,expressionContext,whens,new ColumnPropertyExpressionImpl(table,property,expressionContext));
     }
     public SQLFunction elseEndColumn(SQLTableOwner sqlTableOwner, String property){
         return elseEndColumn(sqlTableOwner.getTable(),property);

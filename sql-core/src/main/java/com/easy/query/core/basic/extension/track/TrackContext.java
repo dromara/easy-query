@@ -48,7 +48,7 @@ public interface TrackContext {
      */
     boolean removeTracking(Object entity);
 
-    void release();
+    boolean release();
 
     boolean hasTracked(Class<?> entityClass);
 }

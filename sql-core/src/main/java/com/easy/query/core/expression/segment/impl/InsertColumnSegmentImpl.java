@@ -5,6 +5,8 @@ import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenera
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -18,40 +20,32 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  */
 public class InsertColumnSegmentImpl extends AbstractInsertUpdateSetColumnSQLSegmentImpl implements InsertUpdateSetColumnSQLSegment {
 
-    public InsertColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext){
-        super(table,columnMetadata,expressionContext);
+    public InsertColumnSegmentImpl(Column2Segment column2Segment, ColumnValue2Segment columnValue2Segment){
+        super(column2Segment,columnValue2Segment);
     }
     @Override
     public String getColumnNameWithOwner(ToSQLContext toSQLContext) {
-        return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
+        return column2Segment.toSQL(toSQLContext);
 //       return EasySQLExpressionUtil.getSQLOwnerColumnByProperty(runtimeContext,table,propertyName,toSQLContext);
     }
 
     @Override
     public InsertUpdateSetColumnSQLSegment cloneSQLColumnSegment() {
-        return new InsertColumnSegmentImpl(table,columnMetadata,expressionContext);
+        return new InsertColumnSegmentImpl(column2Segment,columnValue2Segment);
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        GeneratedKeySQLColumnGenerator generatedSQLColumnGenerator = columnMetadata.getGeneratedSQLColumnGenerator();
-        if(generatedSQLColumnGenerator!=null){
-            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext);
-            generatedSQLColumnGenerator.configure(table,columnMetadata,sqlPropertyConverter,expressionContext.getRuntimeContext());
-            return sqlPropertyConverter.toSQL(toSQLContext);
-        }else{
-            PropertySQLParameter sqlParameter = new PropertySQLParameter(table, propertyName);
-            return toSQLWithParameter(toSQLContext,sqlParameter);
-        }
+        return columnValue2Segment.toSQL(toSQLContext);
     }
 
     @Override
     public String getPropertyName() {
-        return propertyName;
+        return column2Segment.getColumnMetadata().getPropertyName();
     }
 
     @Override
     public TableAvailable getTable() {
-        return table;
+        return column2Segment.getTable();
     }
 }

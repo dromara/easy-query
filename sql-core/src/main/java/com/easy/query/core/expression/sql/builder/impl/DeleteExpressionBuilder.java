@@ -8,6 +8,9 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
+import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnValue2Segment;
+import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
@@ -16,7 +19,7 @@ import com.easy.query.core.expression.segment.builder.UpdateSetSQLBuilderSegment
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsPropertyPredicate;
-import com.easy.query.core.expression.segment.impl.ColumnVersionPropertySegmentImpl;
+import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -26,9 +29,11 @@ import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpressio
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyColumnSegmentUtil;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -98,7 +103,8 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                             sqlColumnSetter.set(propertyName, nextVersion);
                         }
                     }else{
-                        setSQLSegmentBuilder.append(new ColumnVersionPropertySegmentImpl(table.getEntityTable(), versionMetadata.getPropertyName(),easyVersionStrategy,this.getExpressionContext()));
+                        InsertUpdateSetColumnSQLSegment updateColumnSegment = sqlSegmentFactory.createUpdateColumnSegment(table.getEntityTable(), versionMetadata.getPropertyName(), getExpressionContext(), easyVersionStrategy);
+                        setSQLSegmentBuilder.append(updateColumnSegment);
                     }
                 }
                 return setSQLSegmentBuilder;
@@ -121,7 +127,10 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                             throw new EasyQueryException("where 表达式片段不是SQLEntitySegment");
                         }
                         SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
-                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(table.getEntityTable(), sqlEntitySegment.getPropertyName(), this.getExpressionContext()));
+                        ColumnMetadata columnMetadata = table.getEntityTable().getEntityMetadata().getColumnNotNull(sqlEntitySegment.getPropertyName());
+                        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table.getEntityTable(), columnMetadata, this.getExpressionContext());
+                        ColumnValue2Segment columnValue2Segment = EasyColumnSegmentUtil.createColumnValue2Segment(table.getEntityTable(), columnMetadata, this.getExpressionContext(), null);
+                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(column2Segment,columnValue2Segment));
                         wherePredicate.addPredicateSegment(andPredicateSegment);
                     }
                 }
@@ -132,7 +141,10 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                         throw new EasyQueryException("entity:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + "  not found primary key properties");
                     }
                     for (String keyProperty : keyProperties) {
-                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(table.getEntityTable(), keyProperty, this.getExpressionContext()));
+                        ColumnMetadata columnMetadata = table.getEntityTable().getEntityMetadata().getColumnNotNull(keyProperty);
+                        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table.getEntityTable(), columnMetadata, this.getExpressionContext());
+                        ColumnValue2Segment columnValue2Segment = EasyColumnSegmentUtil.createColumnValue2Segment(table.getEntityTable(), columnMetadata, this.getExpressionContext(), null);
+                        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(new ColumnEqualsPropertyPredicate(column2Segment, columnValue2Segment));
                         wherePredicate.addPredicateSegment(andPredicateSegment);
                     }
                 }

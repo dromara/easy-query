@@ -1494,7 +1494,7 @@ public class RelationTest extends BaseTest {
                 System.out.println("------------------");
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `student_size` FROM `school_class` t WHERE (SELECT COUNT(t3.`id`) AS `id` FROM `school_student` t3 WHERE t3.`class_id` = t.`id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t3.`id`) AS `id` FROM `school_student` t3 WHERE t3.`class_id` = t.`id`) AS `student_size` FROM `school_class` t WHERE (SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             }
             {
 

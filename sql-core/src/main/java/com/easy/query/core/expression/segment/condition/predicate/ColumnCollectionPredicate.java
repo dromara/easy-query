@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment.condition.predicate;
 
+import com.easy.query.core.annotation.Column;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
@@ -8,6 +9,8 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -26,15 +29,13 @@ import java.util.Iterator;
  * @Date: 2023/2/14 23:34
  */
 public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredicate {
-    private final Collection<?> collection;
+    private final Collection<ColumnValue2Segment> collection;
     private final SQLPredicateCompare compare;
     private final ExpressionContext expressionContext;
-    private final TableAvailable table;
-    private final String propertyName;
+    private final Column2Segment column2Segment;
 
-    public ColumnCollectionPredicate(TableAvailable table, String propertyName, Collection<?> collection, SQLPredicateCompare compare, ExpressionContext expressionContext) {
-        this.table = table;
-        this.propertyName = propertyName;
+    public ColumnCollectionPredicate(Column2Segment column2Segment, Collection<ColumnValue2Segment> collection, SQLPredicateCompare compare, ExpressionContext expressionContext) {
+        this.column2Segment = column2Segment;
         this.collection = collection;
         this.compare = compare;
         this.expressionContext = expressionContext;
@@ -52,51 +53,36 @@ public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredi
             }
         } else {
 
-            ColumnMetadata columnMetadata = this.table.getEntityMetadata().getColumnNotNull(propertyName);
-            String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
+            String sqlColumnSegment =column2Segment.toSQL(toSQLContext);
             String compareSQL = compare.getSQL();
             StringBuilder sql = new StringBuilder();
             sql.append(sqlColumnSegment).append(" ").append(compareSQL).append(" (");
-            Iterator<?> iterator = collection.iterator();
-            Object firstVal = iterator.next();
-            EasyConstSQLParameter easyConstSQLParameter = new EasyConstSQLParameter(table, propertyName, firstVal);
-            sql.append(getSQLParameterSegment(easyConstSQLParameter,columnMetadata,toSQLContext));
+            Iterator<ColumnValue2Segment> iterator = collection.iterator();
+            ColumnValue2Segment firstColumnValue2Segment = iterator.next();
+            sql.append(firstColumnValue2Segment.toSQL(toSQLContext));
             while (iterator.hasNext()) {
-                Object val = iterator.next();
-                EasyConstSQLParameter constSQLParameter = new EasyConstSQLParameter(table, propertyName, val);
-                sql.append(",").append(getSQLParameterSegment(constSQLParameter,columnMetadata,toSQLContext));
+                ColumnValue2Segment columnValue2Segment = iterator.next();
+                sql.append(",").append(columnValue2Segment.toSQL(toSQLContext));
             }
             sql.append(")");
             return sql.toString();
         }
     }
 
-    private String getSQLParameterSegment(SQLParameter sqlParameter,ColumnMetadata columnMetadata,ToSQLContext toSQLContext){
-        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
-        if(columnValueSQLConverter==null){
-            EasySQLUtil.addParameter(toSQLContext, sqlParameter);
-            return "?";
-        }else{
-            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext);
-            columnValueSQLConverter.valueConvert(table,columnMetadata,sqlParameter,sqlPropertyConverter,expressionContext.getRuntimeContext(),true);
-            return sqlPropertyConverter.toSQL(toSQLContext);
-        }
-    }
-
     @Override
     public TableAvailable getTable() {
-        return table;
+        return column2Segment.getTable();
     }
 
     @Override
     public String getPropertyName() {
-        return propertyName;
+        return column2Segment.getColumnMetadata().getPropertyName();
     }
 
     @Override
     public Predicate cloneSQLColumnSegment() {
 
-       return new ColumnCollectionPredicate(table,propertyName,collection,compare,expressionContext);
+       return new ColumnCollectionPredicate(column2Segment,collection,compare,expressionContext);
     }
 
     @Override
@@ -110,8 +96,8 @@ public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredi
             return Collections.emptyList();
         }
         ArrayList<SQLParameter> sqlParameters = new ArrayList<>(collection.size());
-        for (Object o : collection) {
-            sqlParameters.add(new EasyConstSQLParameter(table, propertyName, o));
+        for (ColumnValue2Segment o : collection) {
+            sqlParameters.add(o.getSQLParameter());
         }
         return sqlParameters;
     }

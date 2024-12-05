@@ -3,6 +3,7 @@ package com.easy.query.core.expression.segment.condition.predicate;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -14,33 +15,27 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @author xuejiaming
  */
 public class ColumnNullAssertPredicate implements Predicate {
-    private final TableAvailable table;
-    private final String propertyName;
+    private final Column2Segment column2Segment;
     private final SQLPredicateCompare compare;
-    private final ExpressionContext expressionContext;
 
-    public ColumnNullAssertPredicate(TableAvailable table, String propertyName, SQLPredicateCompare compare, ExpressionContext expressionContext) {
-        this.table = table;
-        this.propertyName = propertyName;
+    public ColumnNullAssertPredicate(Column2Segment column2Segment, SQLPredicateCompare compare) {
+        this.column2Segment = column2Segment;
         this.compare = compare;
-        this.expressionContext = expressionContext;
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
-        String sqlColumnSegment = EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
-        return sqlColumnSegment +" "+ compare.getSQL();
+        return column2Segment.toSQL(toSQLContext) +" "+ compare.getSQL();
     }
 
     @Override
     public TableAvailable getTable() {
-        return table;
+        return column2Segment.getTable();
     }
 
     @Override
     public String getPropertyName() {
-        return propertyName;
+        return column2Segment.getColumnMetadata().getPropertyName();
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -48,25 +49,28 @@ public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
         RelationTypeEnum relationType = navigateMetadata.getRelationType();
         //添加多对多中间表
         if (RelationTypeEnum.ManyToMany == relationType && navigateMetadata.getMappingClass() != null) {
-            ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
-            Boolean printSQL = EasyOptionUtil.isPrintNavSQL(expressionContext);
-            ClientQueryable<?> mappingQueryable = mappingQuery
-                    .configure(s -> {
-                        s.setPrintSQL(printSQL);
-                        s.setPrintNavSQL(printSQL);
-                    }).where(t -> {
-                        t.relationIn(navigateMetadata.getSelfMappingProperties(), () -> includeNavigateParams.getRelationIds());
-                        navigateMetadata.predicateMappingClassFilterApply(t);
-                    })
-                    .select(o -> {
-                        for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
-                            o.column(selfMappingProperty);
-                        }
-                        for (String targetMappingProperty : navigateMetadata.getTargetMappingProperties()) {
-                            o.column(targetMappingProperty);
-                        }
-                    });
-            includeNavigateParams.setMappingQueryable(mappingQueryable);
+            SQLFuncExpression<ClientQueryable<?>> mappingQueryableFunction=()->{
+
+                ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
+                Boolean printSQL = EasyOptionUtil.isPrintNavSQL(expressionContext);
+                return mappingQuery
+                        .configure(s -> {
+                            s.setPrintSQL(printSQL);
+                            s.setPrintNavSQL(printSQL);
+                        }).where(t -> {
+                            t.relationIn(navigateMetadata.getSelfMappingProperties(), includeNavigateParams.getRelationIds());
+                            navigateMetadata.predicateMappingClassFilterApply(t);
+                        })
+                        .select(o -> {
+                            for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
+                                o.column(selfMappingProperty);
+                            }
+                            for (String targetMappingProperty : navigateMetadata.getTargetMappingProperties()) {
+                                o.column(targetMappingProperty);
+                            }
+                        });
+            };
+            includeNavigateParams.setMappingQueryableFunction(mappingQueryableFunction);
         }
         return navigateMetadata;
     }

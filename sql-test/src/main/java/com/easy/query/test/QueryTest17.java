@@ -225,12 +225,13 @@ public class QueryTest17 extends BaseTest {
 ////                }).toSQL();
 ////        System.out.println(sql);
 //
-////        String sql1 = easyQueryClient.queryable(Topic.class)
-////                .select(Topic.class, t -> t.column("id").column("title"))
-////                .where(t -> t.eq("title", "123"))
-////                .toSQL();
-////
-////        System.out.println(sql1);
+
+    /// /        String sql1 = easyQueryClient.queryable(Topic.class)
+    /// /                .select(Topic.class, t -> t.column("id").column("title"))
+    /// /                .where(t -> t.eq("title", "123"))
+    /// /                .toSQL();
+    /// /
+    /// /        System.out.println(sql1);
 //
 //        ClientQueryable<Topic> select = easyQueryClient.queryable(Topic.class)
 //                .select(Topic.class, t -> t.column("id").column("title"));
@@ -795,28 +796,29 @@ public class QueryTest17 extends BaseTest {
 ////                }).toList();
 //
 //
-////        List<Draft1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
-////                .where(b -> {
-////                    b.content().like("123");
-////                })
-////                .select(b -> Select.DRAFT.of(
-////                        b.title()
-////                ))
-////                .where(s -> {
-////                    s.value1().like("4556");
-////                }).toList();
-////
-////        List<Draft2<String, String>> list1 = easyEntityQuery.queryable(BlogEntity.class)
-////                .where(b -> {
-////                    b.content().like("123");
-////                })
-////                .select(b -> Select.DRAFT.of(
-////                        b.title(),
-////                        b.content()
-////                ))
-////                .where(s -> {
-////                    s.value1().like("4556");
-////                }).toList();
+
+    /// /        List<Draft1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
+    /// /                .where(b -> {
+    /// /                    b.content().like("123");
+    /// /                })
+    /// /                .select(b -> Select.DRAFT.of(
+    /// /                        b.title()
+    /// /                ))
+    /// /                .where(s -> {
+    /// /                    s.value1().like("4556");
+    /// /                }).toList();
+    /// /
+    /// /        List<Draft2<String, String>> list1 = easyEntityQuery.queryable(BlogEntity.class)
+    /// /                .where(b -> {
+    /// /                    b.content().like("123");
+    /// /                })
+    /// /                .select(b -> Select.DRAFT.of(
+    /// /                        b.title(),
+    /// /                        b.content()
+    /// /                ))
+    /// /                .where(s -> {
+    /// /                    s.value1().like("4556");
+    /// /                }).toList();
 //
 //        Draft3<String, Integer, BigDecimal> result = easyEntityQuery.queryable(BlogEntity.class)
 //                .where(b -> {
@@ -835,7 +837,6 @@ public class QueryTest17 extends BaseTest {
 //        Integer groupKey2 = result.getValue2();
 //        BigDecimal scoreSum = result.getValue3();
 //    }
-
     @Test
     public void xxx() {
         List<MyTopic> list = easyEntityQuery.queryable(MyTopic.class)
@@ -1271,14 +1272,19 @@ public class QueryTest17 extends BaseTest {
                     t.id().eq("1");
                 }).streamBy(s -> s.collect(Collectors.toMap(o -> o.getId(), o -> o, (d1, d2) -> d2)));
         System.out.println("1");
-
-        easyQueryClient.queryable(Topic.class)
-                .configure(b -> {
-                    b.getBehavior().removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
-                })
-                .where(t -> {
-                    t.eq(t, "id", "name");
-                }).getSQLEntityExpressionBuilder().getExpressionContext().getBehavior();
+        boolean error = false;
+        try {
+            easyQueryClient.queryable(Topic.class)
+                    .configure(b -> {
+                        b.getBehavior().removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
+                    })
+                    .where(t -> {
+                        t.eq(t, "id", "name");
+                    }).getSQLEntityExpressionBuilder().getExpressionContext().getBehavior();
+        } catch (Exception ex) {
+            error = true;
+        }
+        Assert.assertTrue(error);
     }
 
     @Test
@@ -1378,7 +1384,7 @@ public class QueryTest17 extends BaseTest {
                         ProvinceVOProxy provinceVOProxy = new ProvinceVOProxy();
                         provinceVOProxy.myCode().set(group.key1());
                         provinceVOProxy.myName().set(
-                                group.groupTable().t2.title().join(",",true)
+                                group.groupTable().t2.title().join(",", true)
                         );
                         return provinceVOProxy;
                     }).toList();

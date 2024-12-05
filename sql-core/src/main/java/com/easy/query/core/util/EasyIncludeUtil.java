@@ -17,12 +17,12 @@ import java.util.Objects;
  */
 public class EasyIncludeUtil {
 
-    public static <TR> List<TR> queryableGroupExecute(int queryRelationGroupSize, ClientQueryable<?> includeQueryable, IncludeRelationIdAvailable includeRelationIdAvailable, List<List<Object>> relationIds, SQLFuncExpression1<ClientQueryable<?>, List<TR>> produce) {
-//        if(includeQueryable.getSQLEntityExpressionBuilder().hasLimit()){
-//            includeNavigateParams.setLimit(true);
-//        }
-        return queryableExpressionGroupExecute(queryRelationGroupSize, () -> includeQueryable, includeRelationIdAvailable, relationIds, produce);
-    }
+//    public static <TR> List<TR> queryableGroupExecute(int queryRelationGroupSize, ClientQueryable<?> includeQueryable, IncludeRelationIdAvailable includeRelationIdAvailable, List<List<Object>> relationIds, SQLFuncExpression1<ClientQueryable<?>, List<TR>> produce) {
+////        if(includeQueryable.getSQLEntityExpressionBuilder().hasLimit()){
+////            includeNavigateParams.setLimit(true);
+////        }
+//        return queryableExpressionGroupExecute(queryRelationGroupSize, () -> includeQueryable, includeRelationIdAvailable, relationIds, produce);
+//    }
 
     public static <TR> List<TR> queryableExpressionGroupExecute(int queryRelationGroupSize, SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression, IncludeRelationIdAvailable includeRelationIdAvailable, List<List<Object>> relationIds, SQLFuncExpression1<ClientQueryable<?>, List<TR>> produce) {
 //        int queryRelationGroupSize = includeNavigateParams.getQueryRelationGroupSize(easyQueryOption.getRelationGroupSize());

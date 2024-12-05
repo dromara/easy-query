@@ -2,6 +2,7 @@ package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -9,39 +10,26 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * @author xuejiaming
- * @FileName: ColumnSegment.java
- * @Description: 文件说明
- * @Date: 2023/2/13 15:18
  */
 public class ColumnSegmentImpl implements ColumnSegment {
 
 
-    protected final TableAvailable table;
-
-
-    protected final ColumnMetadata columnMetadata;
-    protected final ExpressionContext expressionContext;
+    protected final Column2Segment column2Segment;
     protected String alias;
 
-    public ColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
-        this(table, columnMetadata, expressionContext, null);
-    }
-
-    public ColumnSegmentImpl(TableAvailable table,ColumnMetadata columnMetadata, ExpressionContext expressionContext, String alias) {
-        this.table = table;
-        this.columnMetadata = columnMetadata;
-        this.expressionContext = expressionContext;
+    public ColumnSegmentImpl(Column2Segment column2Segment,String alias) {
+        this.column2Segment = column2Segment;
         this.alias = alias;
     }
 
     @Override
     public TableAvailable getTable() {
-        return table;
+        return column2Segment.getTable();
     }
 
     @Override
     public String getPropertyName() {
-        return columnMetadata.getPropertyName();
+        return column2Segment.getColumnMetadata().getPropertyName();
     }
 
     @Override
@@ -56,26 +44,22 @@ public class ColumnSegmentImpl implements ColumnSegment {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        String sqlOwnerColumn = getSQLOwnerColumn(toSQLContext);
+        String sqlOwnerColumn = column2Segment.toSQL(toSQLContext);
         if (getAlias() == null) {
             return sqlOwnerColumn;
         }
-        return sqlOwnerColumn + " AS " + EasySQLExpressionUtil.getQuoteName(expressionContext.getRuntimeContext(), getAlias());
-    }
-
-    private String getSQLOwnerColumn(ToSQLContext toSQLContext){
-        return EasySQLExpressionUtil.getSQLOwnerColumn(expressionContext.getRuntimeContext(), table, columnMetadata.getName(), toSQLContext);
+        return sqlOwnerColumn + " AS " + EasySQLExpressionUtil.getQuoteName(column2Segment.getExpressionContext().getRuntimeContext(), getAlias());
     }
 
 
     @Override
     public ColumnMetadata getColumnMetadata() {
-        return columnMetadata;
+        return column2Segment.getColumnMetadata();
     }
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new ColumnSegmentImpl(table, columnMetadata, expressionContext, alias);
+        return new ColumnSegmentImpl(column2Segment, alias);
     }
 
 }

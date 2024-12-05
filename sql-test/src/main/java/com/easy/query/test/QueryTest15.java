@@ -616,7 +616,8 @@ public class QueryTest15 extends BaseTest {
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
 //            Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t2.`id`) AS `id` FROM `school_student` t2 WHERE t2.`class_id` = t.`id`) AS `student_size` FROM `school_class` t WHERE (SELECT COUNT(t4.`id`) AS `id` FROM `school_student` t4 WHERE t4.`class_id` = t.`id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `student_size` FROM `school_class` t WHERE (SELECT COUNT(t4.`id`) AS `id` FROM `school_student` t4 WHERE t4.`class_id` = t.`id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `student_size` FROM `school_class` t WHERE (SELECT COUNT(t4.`id`) AS `id` FROM `school_student` t4 WHERE t4.`class_id` = t.`id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t3.`id`) AS `id` FROM `school_student` t3 WHERE t3.`class_id` = t.`id`) AS `student_size` FROM `school_class` t WHERE (SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("100(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
             listenerContextManager.clear();

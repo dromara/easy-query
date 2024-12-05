@@ -8,24 +8,24 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  * @author xuejiaming
  */
 public final class ConstLikeSQLParameter implements ConstSQLParameter, SQLLikeParameter {
-    private final EasyConstSQLParameter constSQLParameter;
+    private final SQLParameter sqlParameter;
 
-    public ConstLikeSQLParameter(EasyConstSQLParameter constSQLParameter) {
-        this.constSQLParameter = constSQLParameter;
+    public ConstLikeSQLParameter(SQLParameter sqlParameter) {
+        this.sqlParameter = sqlParameter;
     }
 
     @Override
     public TableAvailable getTableOrNull() {
-        return constSQLParameter.getTableOrNull();
+        return sqlParameter.getTableOrNull();
     }
 
     @Override
     public String getPropertyNameOrNull() {
-        return constSQLParameter.getPropertyNameOrNull();
+        return sqlParameter.getPropertyNameOrNull();
     }
 
     @Override
     public Object getValue() {
-        return constSQLParameter.getValue();
+        return sqlParameter.getValue();
     }
 }

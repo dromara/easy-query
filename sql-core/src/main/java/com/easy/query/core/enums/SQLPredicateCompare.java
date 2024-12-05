@@ -8,4 +8,5 @@ package com.easy.query.core.enums;
 public interface SQLPredicateCompare {
     String getSQL();
     SQLPredicateCompare toReverse();
+    boolean isLike();
 }

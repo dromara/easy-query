@@ -10,5 +10,5 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  * @author xuejiaming
  */
 public interface ColumnPropertyParamExpression extends ParamExpression {
-    String toSQL(ExpressionContext expressionContext, ToSQLContext toSQLContext);
+    String toSQL(ToSQLContext toSQLContext);
 }

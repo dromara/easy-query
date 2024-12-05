@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -13,13 +14,13 @@ import com.easy.query.core.metadata.ColumnMetadata;
  * @author xuejiaming
  */
 public class GroupColumnSegmentImpl extends ColumnSegmentImpl implements GroupByColumnSegment {
-    public GroupColumnSegmentImpl(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
-        super(table, columnMetadata, expressionContext);
+    public GroupColumnSegmentImpl(Column2Segment column2Segment) {
+        super(column2Segment,null);
     }
 
     @Override
     public OrderBySegment createOrderByColumnSegment(boolean asc) {
-        return expressionContext.getRuntimeContext().getSQLSegmentFactory().createOrderByColumnSegment(table,getPropertyName(),expressionContext,asc);
+        return column2Segment.getExpressionContext().getRuntimeContext().getSQLSegmentFactory().createOrderByColumnSegment(column2Segment,asc);
     }
 
 }
