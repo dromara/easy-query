@@ -26,11 +26,6 @@ public class MySQLAesEncryptColumnValueSQLConverter implements ColumnValueSQLCon
     }
 
     @Override
-    public boolean isMergeSubQuery() {
-        return false;
-    }
-
-    @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
 //        Dialect dialect = runtimeContext.getQueryConfiguration().getDialect();
         sqlPropertyConverter.sqlNativeSegment("AES_DECRYPT(from_base64({0}),{1})",context->{

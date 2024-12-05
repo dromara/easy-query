@@ -3,6 +3,7 @@ package com.easy.query.db2.expression;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -14,6 +15,7 @@ import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMet
 import com.easy.query.core.expression.sql.expression.impl.QuerySQLExpressionImpl;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyColumnSegmentUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
@@ -119,7 +121,8 @@ public class DB2QuerySQLExpression extends QuerySQLExpressionImpl {
             return null;
         }
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        orderBySQLBuilderSegment.append(new ColumnSegmentImpl(table, columnMetadata, getExpressionMetadata().getExpressionContext()));
+        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, getExpressionMetadata().getExpressionContext());
+        orderBySQLBuilderSegment.append(new ColumnSegmentImpl(column2Segment,null));
         return orderBySQLBuilderSegment;
     }
 

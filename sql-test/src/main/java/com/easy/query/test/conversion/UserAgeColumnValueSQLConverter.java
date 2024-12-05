@@ -23,10 +23,6 @@ public class UserAgeColumnValueSQLConverter implements ColumnValueSQLConverter {
     public boolean isRealColumn() {
         return false;
     }
-    @Override
-    public boolean isMergeSubQuery() {
-        return false;
-    }
 
     @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {

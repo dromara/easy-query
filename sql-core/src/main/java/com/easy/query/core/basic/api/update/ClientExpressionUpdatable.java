@@ -141,14 +141,14 @@ public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpress
 
     default String toSQL() {
         TableContext tableContext = getExpressionContext().getTableContext();
-        return toSQL(DefaultToSQLContext.defaultToSQLContext(tableContext,false));
+        return toSQL(DefaultToSQLContext.defaultToSQLContext(tableContext));
     }
 
     String toSQL(ToSQLContext toSQLContext);
 
     default ToSQLResult toSQLResult() {
         TableContext tableContext = getExpressionContext().getTableContext();
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(tableContext,true);
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(tableContext);
         String sql = toSQL(toSQLContext);
         return new ToSQLResult(sql,toSQLContext);
     }

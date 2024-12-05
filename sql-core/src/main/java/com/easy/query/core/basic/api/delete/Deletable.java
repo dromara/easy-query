@@ -31,7 +31,7 @@ public interface Deletable<T, TChain> extends SQLExecuteExpectRows,
      * @return
      */
     default String toSQL() {
-        return toSQL(DefaultToSQLContext.defaultToSQLContext(getExpressionContext().getTableContext(),false));
+        return toSQL(DefaultToSQLContext.defaultToSQLContext(getExpressionContext().getTableContext()));
     }
 
     String toSQL(ToSQLContext toSQLContext);
@@ -42,7 +42,7 @@ public interface Deletable<T, TChain> extends SQLExecuteExpectRows,
      */
 
     default ToSQLResult toSQLResult() {
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getExpressionContext().getTableContext(),true);
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getExpressionContext().getTableContext());
         String sql = toSQL(toSQLContext);
         return new ToSQLResult(sql,toSQLContext);
     }

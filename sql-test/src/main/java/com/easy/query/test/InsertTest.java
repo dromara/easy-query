@@ -449,7 +449,7 @@ public class InsertTest extends BaseTest {
         LocalDateTime now = LocalDateTime.now();
         user.setCreateTime(now);
         EntityInsertable<SysUserSQLEncryption> insertable = easyQuery.insertable(user);
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(insertable.getEntityInsertExpressionBuilder().getExpressionContext().getTableContext(),false);
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(insertable.getEntityInsertExpressionBuilder().getExpressionContext().getTableContext());
         insertable.asTable("xxxxx").toSQL(user, toSQLContext);
         List<SQLParameter> parameters = toSQLContext.getParameters();
         Assert.assertEquals(parameters.size(), 7);

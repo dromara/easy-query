@@ -81,7 +81,7 @@ public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdat
      */
 
     default ToSQLResult toSQLResult(Object entity) {
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getUpdateExpressionBuilder().getExpressionContext().getTableContext(),true);
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getUpdateExpressionBuilder().getExpressionContext().getTableContext());
         String sql = toSQL(entity, toSQLContext);
         return new ToSQLResult(sql,toSQLContext);
     }

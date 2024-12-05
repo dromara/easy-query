@@ -146,7 +146,7 @@ public class EntityMetadata {
     private final Set<String> shardingTablePropertyNames = new LinkedHashSet<>();
     private ShardingInitConfig shardingInitConfig;
     private boolean hasValueObject;
-    private boolean aliasQuery;
+//    private boolean aliasQuery;
     private boolean hasPrimaryKeyGenerator = false;
 
     /**
@@ -628,9 +628,9 @@ public class EntityMetadata {
                         throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " column value sql converter unknown");
                     }
                     columnOption.setColumnValueSQLConverter(columnValueSQLConverter);
-                    if (columnValueSQLConverter.isMergeSubQuery()) {
-                        this.aliasQuery = true;
-                    }
+//                    if (columnValueSQLConverter.isMergeSubQuery()) {
+//                        this.aliasQuery = true;
+//                    }
                 }
             }
             InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
@@ -1161,9 +1161,9 @@ public class EntityMetadata {
         return hasValueObject;
     }
 
-    public boolean isAliasQuery() {
-        return aliasQuery;
-    }
+//    public boolean isAliasQuery() {
+//        return aliasQuery;
+//    }
 
     public @NotNull ErrorMessage getErrorMessage() {
         return errorMessage;

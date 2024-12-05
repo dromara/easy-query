@@ -23,11 +23,6 @@ public class Blog2StarToStringColumnValueSQLConverter implements ColumnValueSQLC
         return false;
     }
 
-    @Override
-    public boolean isMergeSubQuery() {
-        //期间没有用到别的数据库所以是false
-        return false;
-    }
 
     @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {

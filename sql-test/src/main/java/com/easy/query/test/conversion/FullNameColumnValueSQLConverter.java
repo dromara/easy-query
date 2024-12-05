@@ -22,11 +22,6 @@ public class FullNameColumnValueSQLConverter implements ColumnValueSQLConverter 
     }
 
     @Override
-    public boolean isMergeSubQuery() {
-        return false;
-    }
-
-    @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction concat = fx.concat("firstName", "lastName");

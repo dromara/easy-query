@@ -20,23 +20,23 @@ public class DefaultToSQLContext implements ToSQLContext {
     private final ToTableContext toTableContext;
     private int invokeCount;
 
-    public DefaultToSQLContext(TableContext tableContext,boolean query, String alias) {
-        this(tableContext, 10, null,query, alias);
+    public DefaultToSQLContext(TableContext tableContext, String alias) {
+        this(tableContext, 10, null,alias);
     }
 
-    public DefaultToSQLContext(TableContext tableContext,boolean query) {
-        this(tableContext,query, "t");
+    public DefaultToSQLContext(TableContext tableContext) {
+        this(tableContext, "t");
     }
 
-    public DefaultToSQLContext(TableContext tableContext, SQLRewriteUnit sqlRewriteUnit,boolean query) {
-        this(tableContext, 10, sqlRewriteUnit,query, "t");
+    public DefaultToSQLContext(TableContext tableContext, SQLRewriteUnit sqlRewriteUnit) {
+        this(tableContext, 10, sqlRewriteUnit, "t");
     }
 
-    public DefaultToSQLContext(TableContext tableContext, int initialCapacity, SQLRewriteUnit sqlRewriteUnit,boolean query, String alias) {
+    public DefaultToSQLContext(TableContext tableContext, int initialCapacity, SQLRewriteUnit sqlRewriteUnit, String alias) {
         if (tableContext.isEmpty()) {
             throw new IllegalArgumentException("invalid arguments:tableContext is empty");
         }
-        this.toTableContext = tableContext.getToTableContext(alias,query);
+        this.toTableContext = tableContext.getToTableContext(alias);
         this.parameters = new ArrayList<>(initialCapacity);
         this.sqlRewriteUnit = sqlRewriteUnit;
         this.invokeCount = 0;
@@ -74,10 +74,10 @@ public class DefaultToSQLContext implements ToSQLContext {
         return toTableContext.getAlias(table);
     }
 
-    public static ToSQLContext defaultToSQLContext(TableContext tableContext,boolean query) {
-        return defaultToSQLContext(tableContext, null,query);
+    public static ToSQLContext defaultToSQLContext(TableContext tableContext) {
+        return defaultToSQLContext(tableContext, null);
     }
-    public static ToSQLContext defaultToSQLContext(TableContext tableContext, SQLRewriteUnit sqlRewriteUnit,boolean query) {
-        return new DefaultToSQLContext(tableContext, sqlRewriteUnit,query);
+    public static ToSQLContext defaultToSQLContext(TableContext tableContext, SQLRewriteUnit sqlRewriteUnit) {
+        return new DefaultToSQLContext(tableContext, sqlRewriteUnit);
     }
 }

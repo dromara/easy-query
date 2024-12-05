@@ -24,12 +24,6 @@ public class CertStatusColumnValueSQLConverter  implements ColumnValueSQLConvert
     }
 
     @Override
-    public boolean isMergeSubQuery() {
-        //期间没有用到别的数据库所以是false
-        return false;
-    }
-
-    @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         //计算出两者天数差值 前面是大的时间后面是小的时间

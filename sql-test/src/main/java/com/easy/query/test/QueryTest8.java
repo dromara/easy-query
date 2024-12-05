@@ -892,7 +892,7 @@ public class QueryTest8 extends BaseTest {
                 .distinct();
         EntityQueryExpressionBuilder countEntityQueryExpression = EasySQLExpressionUtil.getCountEntityQueryExpression(distinct.getSQLEntityExpressionBuilder().cloneEntityExpressionBuilder(),true);
         Assert.assertNotNull(countEntityQueryExpression);
-        String s = countEntityQueryExpression.toExpression().toSQL(DefaultToSQLContext.defaultToSQLContext(distinct.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext(),true));
+        String s = countEntityQueryExpression.toExpression().toSQL(DefaultToSQLContext.defaultToSQLContext(distinct.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext()));
         Assert.assertEquals("SELECT COUNT(DISTINCT t1.`publish_time`,t1.`id`,t1.`score`) FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL", s);
         String s1 = distinct.limit(0, 20).toSQL();
         Assert.assertEquals("SELECT DISTINCT t1.`publish_time`,t1.`id`,t1.`score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL ORDER BY t1.`publish_time` DESC LIMIT 20", s1);

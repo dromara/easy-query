@@ -34,8 +34,7 @@ public class SQLRouteUnit {
 
     public SQLRouteUnit(EntitySQLExpression easyEntitySQLExpression,List<Object> entities, boolean fillAutoIncrement,SQLRewriteUnit sqlRewriteUnit){
         TableContext tableContext = easyEntitySQLExpression.getExpressionMetadata().getTableContext();
-        boolean query=easyEntitySQLExpression instanceof EntityQuerySQLExpression;
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(tableContext,sqlRewriteUnit,query);
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(tableContext,sqlRewriteUnit);
         String sql = easyEntitySQLExpression.toSQL(toSQLContext);
         this.entities = entities;
         this.fillAutoIncrement = fillAutoIncrement;

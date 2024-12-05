@@ -55,7 +55,7 @@ public interface Insertable<T, TChain> extends SQLExecuteRows,
      */
 
     default ToSQLResult toSQLResult(T entity) {
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getEntityInsertExpressionBuilder().getExpressionContext().getTableContext(), true);
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getEntityInsertExpressionBuilder().getExpressionContext().getTableContext());
         String sql = toSQL(entity, toSQLContext);
         return new ToSQLResult(sql, toSQLContext);
     }

@@ -17,10 +17,6 @@ public class DefaultColumnValueSQLConverter implements ColumnValueSQLConverter{
         return true;
     }
 
-    @Override
-    public boolean isMergeSubQuery() {
-        return false;
-    }
 
     @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {

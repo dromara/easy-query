@@ -177,7 +177,7 @@ public abstract class AbstractMapClientInsertable implements MapClientInsertable
 
     @Override
     public String toSQL(Map<String,Object> entity) {
-        return toSQL(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext(),false));
+        return toSQL(entity, DefaultToSQLContext.defaultToSQLContext(entityInsertExpressionBuilder.getExpressionContext().getTableContext()));
     }
 
     @Override

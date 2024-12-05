@@ -24,11 +24,6 @@ public class StudentSizeColumnValueSQLConverter implements ColumnValueSQLConvert
     }
 
     @Override
-    public boolean isMergeSubQuery() {
-        return true;
-    }
-
-    @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         ClientQueryable<SchoolStudent> queryable = sqlClientApiFactory.createQueryable(SchoolStudent.class, runtimeContext);
