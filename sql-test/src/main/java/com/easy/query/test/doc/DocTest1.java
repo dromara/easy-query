@@ -197,4 +197,67 @@ public class DocTest1 extends BaseTest {
         Assert.assertEquals("0(BigDecimal),0(Integer),2024-01-01T00:00(LocalDateTime),3(Long),5(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+    @Test
+    public void testBlog4() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Supplier<Exception> f = () -> {
+            try {
+
+              easyEntityQuery.queryable(TestSelf.class)
+                      .where(t -> {
+                          t.uid().eq("1");
+                      })
+                      .select(t -> Select.DRAFT.of(
+                              t.myUser().name(),
+                              t.parent().myUser().name()
+                      )).toList();
+            } catch (Exception ex) {
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`name` AS `value1`,t3.`name` AS `value2` FROM `test_self` t LEFT JOIN `my_user` t1 ON t1.`id` = t.`uid` LEFT JOIN `test_self` t2 ON t2.`id` = t.`pid` LEFT JOIN `my_user` t3 ON t3.`id` = t2.`uid` WHERE t.`uid` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testBlog5() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Supplier<Exception> f = () -> {
+            try {
+
+              easyEntityQuery.queryable(TestSelf.class)
+                      .where(t -> {
+                          t.uid().eq("1");
+                      })
+                      .selectAutoInclude(TopicSelfVO.class).toList();
+            } catch (Exception ex) {
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`name` AS `uname1`,t3.`name` AS `uname2`,t.`id`,t.`name` FROM `test_self` t LEFT JOIN `my_user` t1 ON t1.`id` = t.`uid` LEFT JOIN `test_self` t2 ON t2.`id` = t.`pid` LEFT JOIN `my_user` t3 ON t3.`id` = t2.`uid` WHERE t.`uid` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 }

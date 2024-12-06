@@ -536,6 +536,11 @@ public class QueryTest7 extends BaseTest {
     }
     @Test
     public void testCTE1_1() {
+//        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+//                .asTreeCTE()
+//                .toList();
+
+
         String sql = easyQueryClient
                 .queryable(Topic.class)
                 .where(o -> o.isNotNull("id"))

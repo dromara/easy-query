@@ -203,9 +203,8 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
                 tableExpression.setOn(on);
             }
         }
-
+//
         if(hasRelationTables()){
-            //todo 克隆
             for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> relationTableKV : getRelationTables().entrySet()) {
                 RelationTableKey key = relationTableKV.getKey();
                 EntityTableExpressionBuilder value = relationTableKV.getValue();
@@ -228,6 +227,31 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         easyQuerySQLExpression.setOrder(getOrder().cloneSQLBuilder());
         easyQuerySQLExpression.setOffset(getOffset());
         easyQuerySQLExpression.setRows(getRows());
+
+
+
+
+
+//        if (hasRelationTables()) {
+//            TableContext tableContext = expressionContext.getTableContext();
+//
+//            for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> relationTableKV : getRelationTables().entrySet()) {
+//                RelationTableKey key = relationTableKV.getKey();
+//                EntityTableExpressionBuilder value = relationTableKV.getValue();
+//                TableAvailable entityTable = value.getEntityTable();
+//                //判断where order group having select是否使用了relationTable
+//
+//                if (tableContext) {
+//                    EntityTableSQLExpression tableExpression = (EntityTableSQLExpression) toTableExpressionSQL(value, false);
+//                    easyQuerySQLExpression.getTables().add(tableExpression);
+//                    PredicateSegment on = getTableOnWithQueryFilter(value);
+//                    if (on != null && on.isNotEmpty()) {
+//                        tableExpression.setOn(on);
+//                    }
+//                }
+//            }
+//        }
+
 //        if(hasIncludes()){
 //            List<EntityQueryExpressionBuilder> includeList = getIncludes();
 //            ArrayList<EntityQuerySQLExpression> includeExpressions = new ArrayList<>(includeList.size());

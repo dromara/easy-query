@@ -133,6 +133,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -382,7 +383,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //    @Override
 //    public <TMember> TMember minOrDefault(String property, TMember def) {
 //        setExecuteMethod(ExecuteMethodEnum.MIN);
-////        ColumnFunction maxFunction1 = runtimeContext.getColumnFunctionFactory().createMaxFunction();
+
+    /// /        ColumnFunction maxFunction1 = runtimeContext.getColumnFunctionFactory().createMaxFunction();
 //        TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
 //        ClientQueryable<T1> cloneQueryable = cloneQueryable();
 //        cloneQueryable.getSQLEntityExpressionBuilder().getProjects().clear();
@@ -400,7 +402,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //        }
 //        return EasyObjectUtil.typeCastNullable(value);
 //    }
-
     @Override
     public <TMember extends Number, TResult extends Number> TResult avgOrDefault(String property, TResult def, Class<TResult> resultClass) {
         setExecuteMethod(ExecuteMethodEnum.AVG);
@@ -905,15 +906,19 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (EasyCollectionUtil.isNotEmpty(navigateJoinMetadatas)) {
             AsSelector asSelector = new AsSelectorImpl(sqlEntityExpressionBuilder, sqlEntityExpressionBuilder.getProjects(), resultEntityMetadata);
             for (NavigateJoinMetadata navigateJoinMetadata : navigateJoinMetadatas) {
-                TableAvailable relationTable = null;
-                if (navigateJoinMetadata.getMappingPath().length < 2) {
+                TableAvailable relationTable = sqlEntityExpressionBuilder.getTable(0).getEntityTable();
+                String[] mappingPath = navigateJoinMetadata.getMappingPath();
+                if (mappingPath.length < 2) {
                     throw new EasyQueryInvalidOperationException("navigate join mapping length < 2");
                 }
-                for (int i = 0; i < navigateJoinMetadata.getMappingPath().length - 1; i++) {
-                    String navigateEntityProperty = navigateJoinMetadata.getMappingPath()[i];
-                    relationTable = EasyRelationalUtil.getRelationTable(sqlEntityExpressionBuilder, sqlEntityExpressionBuilder.getTable(0).getEntityTable(), navigateEntityProperty);
+
+                StringBuilder fullName = new StringBuilder();
+                for (int i = 0; i < mappingPath.length - 1; i++) {
+                    String navigateEntityProperty = mappingPath[i];
+                    fullName.append(navigateEntityProperty).append(".");
+                    relationTable = EasyRelationalUtil.getRelationTable(sqlEntityExpressionBuilder, relationTable, navigateEntityProperty, fullName.substring(0, fullName.length() - 1));
                 }
-                String navigateBasicTypeProperty = navigateJoinMetadata.getMappingPath()[navigateJoinMetadata.getMappingPath().length - 1];
+                String navigateBasicTypeProperty = mappingPath[mappingPath.length - 1];
                 asSelector.columnAs(relationTable, navigateBasicTypeProperty, navigateJoinMetadata.getProperty());
             }
         }
@@ -1130,10 +1135,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(keyProperty);
             Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
 //            List<ColumnValue2Segment> columnValue2Segments = ids.stream().map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
-            List<ColumnValue2Segment> columnValue2Segments =  EasyCollectionUtil.select(ids,(o,i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
+            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(ids, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
 
             andPredicateSegment
-                    .setPredicate(new ColumnCollectionPredicate(column2Segment,columnValue2Segments, SQLPredicateCompareEnum.IN, expressionContext));
+                    .setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, SQLPredicateCompareEnum.IN, expressionContext));
             where.addPredicateSegment(andPredicateSegment);
         }
         return this;

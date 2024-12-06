@@ -11,24 +11,25 @@ import java.util.Objects;
 public final class RelationTableKey {
     private final Class<?> sourceClass;
     private final Class<?> targetClass;
+    private final String fullName;
 
-    public RelationTableKey(Class<?> sourceClass, Class<?> targetClass){
+    public RelationTableKey(Class<?> sourceClass, Class<?> targetClass,String fullName){
 
         this.sourceClass = sourceClass;
         this.targetClass = targetClass;
+        this.fullName = fullName;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RelationTableKey that = (RelationTableKey) o;
-        return Objects.equals(sourceClass, that.sourceClass) && Objects.equals(targetClass, that.targetClass);
+        return Objects.equals(sourceClass, that.sourceClass) && Objects.equals(targetClass, that.targetClass) && Objects.equals(fullName, that.fullName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sourceClass, targetClass);
+        return Objects.hash(sourceClass, targetClass, fullName);
     }
 
     public Class<?> getSourceClass() {

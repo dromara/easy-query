@@ -24,14 +24,14 @@ import com.easy.query.core.metadata.NavigateMetadata;
  * @author xuejiaming
  */
 public class EasyRelationalUtil {
-    public static TableAvailable getRelationTable(EntityExpressionBuilder entityExpressionBuilder,TableAvailable leftTable,String property){
+    public static TableAvailable getRelationTable(EntityExpressionBuilder entityExpressionBuilder,TableAvailable leftTable,String property,String fullName){
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
         if(navigateMetadata.getRelationType()!= RelationTypeEnum.OneToOne&&navigateMetadata.getRelationType()!= RelationTypeEnum.ManyToOne){
             throw new EasyQueryInvalidOperationException("navigate relation table should [OneToOne or ManyToOne],now is "+navigateMetadata.getRelationType());
         }
         Class<?> navigateEntityClass = navigateMetadata.getNavigatePropertyType();
-        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new RelationTableKey(leftTable.getEntityClass(), navigateEntityClass), key -> {
+        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new RelationTableKey(leftTable.getEntityClass(), navigateEntityClass,fullName), key -> {
             EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateEntityClass);
 //            TableAvailable leftTable = getTable();
             RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key,leftTable, entityMetadata, false);

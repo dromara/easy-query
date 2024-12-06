@@ -310,9 +310,10 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             if (leftTable == null) {
                 throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table", property));
             }
-            TableAvailable relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, leftTable, property);
+            String fullName = getFullNavValue(property);
+            TableAvailable relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, leftTable, property,fullName);
             TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.getEntitySQLContext());
-            tPropertyProxy.setNavValue(getFullNavValue(property));
+            tPropertyProxy.setNavValue(fullName);
             return tPropertyProxy;
         }
     }

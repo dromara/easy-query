@@ -16,6 +16,9 @@ import java.util.Map;
 public final class TableContext {
     private final Map<TableAvailable, TableAliasSchema> aliasMapping = new LinkedHashMap<>();
 
+    public boolean containsTable(TableAvailable table){
+        return aliasMapping.containsKey(table);
+    }
     public void extract(TableContext otherTableContext) {
         for (Map.Entry<TableAvailable, TableAliasSchema> aliasSchemaEntry : otherTableContext.aliasMapping.entrySet()) {
             addTable(aliasSchemaEntry.getKey());

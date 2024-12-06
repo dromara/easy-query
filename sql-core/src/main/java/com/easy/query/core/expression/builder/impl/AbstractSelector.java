@@ -34,11 +34,13 @@ import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyUtil;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * create time 2023/6/22 21:14
@@ -154,7 +156,7 @@ public abstract class AbstractSelector<TChain> {
                         NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
                         String navigateAutoMappingPropertyName = navigateMetadata.getPropertyName();
                         NavigateMetadata navigateOrNull = targetEntityMetadata.getNavigateOrNull(navigateAutoMappingPropertyName);
-                        if ( navigateOrNull!= null) {
+                        if (navigateOrNull != null) {
                             columnInclude(table, navigateAutoMappingPropertyName, navigateAutoMappingPropertyName, s -> {
                                 TableAvailable entityTable = s.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
                                 if (s.getEntityQueryExpressionBuilder().getProjects().isEmpty()) {
@@ -162,7 +164,7 @@ public abstract class AbstractSelector<TChain> {
                                 }
                                 Class<?> navigatePropertyType = navigateOrNull.getNavigatePropertyType();
                                 EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigatePropertyType);
-                                selectAutoIncludeJoin0(s,s.getEntityQueryExpressionBuilder(),entityMetadata);
+                                selectAutoIncludeJoin0(s, s.getEntityQueryExpressionBuilder(), entityMetadata);
 
                             });
                         }
@@ -172,23 +174,27 @@ public abstract class AbstractSelector<TChain> {
         }
     }
 
-    private void selectAutoIncludeJoin0(AsSelector asSelector,EntityQueryExpressionBuilder sqlEntityExpressionBuilder, EntityMetadata resultEntityMetadata) {
+    private void selectAutoIncludeJoin0(AsSelector asSelector, EntityQueryExpressionBuilder sqlEntityExpressionBuilder, EntityMetadata resultEntityMetadata) {
         Collection<NavigateJoinMetadata> navigateJoinMetadatas = resultEntityMetadata.getNavigateJoinMetadatas();
         if (EasyCollectionUtil.isNotEmpty(navigateJoinMetadatas)) {
             for (NavigateJoinMetadata navigateJoinMetadata : navigateJoinMetadatas) {
-                TableAvailable relationTable=null;
-                if(navigateJoinMetadata.getMappingPath().length<2){
+                TableAvailable relationTable = sqlEntityExpressionBuilder.getTable(0).getEntityTable();
+                String[] mappingPath = navigateJoinMetadata.getMappingPath();
+                if (mappingPath.length < 2) {
                     throw new EasyQueryInvalidOperationException("navigate join mapping length < 2");
                 }
-                for (int i = 0; i < navigateJoinMetadata.getMappingPath().length-1; i++) {
-                    String navigateEntityProperty = navigateJoinMetadata.getMappingPath()[i];
-                    relationTable = EasyRelationalUtil.getRelationTable(sqlEntityExpressionBuilder, sqlEntityExpressionBuilder.getTable(0).getEntityTable(), navigateEntityProperty);
+                StringBuilder fullName = new StringBuilder();
+                for (int i = 0; i < mappingPath.length - 1; i++) {
+                    String navigateEntityProperty = mappingPath[i];
+                    fullName.append(navigateEntityProperty).append(".");
+                    relationTable = EasyRelationalUtil.getRelationTable(sqlEntityExpressionBuilder, relationTable, navigateEntityProperty, fullName.substring(0, fullName.length() - 1));
                 }
-                String navigateBasicTypeProperty = navigateJoinMetadata.getMappingPath()[navigateJoinMetadata.getMappingPath().length - 1];
-                asSelector.columnAs(relationTable,navigateBasicTypeProperty,navigateJoinMetadata.getProperty());
+                String navigateBasicTypeProperty = mappingPath[mappingPath.length - 1];
+                asSelector.columnAs(relationTable, navigateBasicTypeProperty, navigateJoinMetadata.getProperty());
             }
         }
     }
+
     public TChain columnIgnore(TableAvailable table, String property) {
         sqlBuilderSegment.getSQLSegments().removeIf(sqlSegment -> {
             if (sqlSegment instanceof SQLEntitySegment) {
@@ -345,9 +351,9 @@ public abstract class AbstractSelector<TChain> {
         return runtimeContext;
     }
 
-    protected EntityTableExpressionBuilder getTableExpressionBuilderByTable(TableAvailable table){
+    protected EntityTableExpressionBuilder getTableExpressionBuilderByTable(TableAvailable table) {
 
-        EntityTableExpressionBuilder tableBuilder = EasyCollectionUtil.firstOrDefaultOrElseGet(entityQueryExpressionBuilder.getTables(), t -> Objects.equals(table, t.getEntityTable()), ()->{
+        EntityTableExpressionBuilder tableBuilder = EasyCollectionUtil.firstOrDefaultOrElseGet(entityQueryExpressionBuilder.getTables(), t -> Objects.equals(table, t.getEntityTable()), () -> {
             return EasyCollectionUtil.firstOrDefault(entityQueryExpressionBuilder.getRelationTables().values(), t -> Objects.equals(table, t.getEntityTable()), null);
         });
         if (tableBuilder == null) {
