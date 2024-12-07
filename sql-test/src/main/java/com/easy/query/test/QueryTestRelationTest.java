@@ -86,7 +86,7 @@ public class QueryTestRelationTest extends BaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`gw` FROM `my_com_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT `id`,`com_id`,`user_id`,`gw` FROM `my_com_user`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         listenerContextManager.clear();
     }
 
