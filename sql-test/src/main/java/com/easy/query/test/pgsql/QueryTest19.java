@@ -20,19 +20,97 @@ import java.util.List;
  * @author xuejiaming
  */
 public class QueryTest19 extends PgSQLBaseTest {
-
     @Test
-    public  void tree11(){
+    public  void tree9(){
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<String, Number>> list = entityQuery.queryable(MyCategory.class)
+                .where(m -> {
+                    m.id().eq("1");
+                })
+                .asTreeCTE()
+                .leftJoin(BlogEntity.class, (m, b2) -> m.id().eq(b2.id()))
+                .groupBy((m1, b2) -> GroupKeys.TABLE2.of(m1.name()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.groupTable().t2.star().sum()
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH RECURSIVE \"as_tree_cte\" AS ( (SELECT 0 AS \"cte_deep\",t1.\"id\",t1.\"parent_id\",t1.\"name\" FROM \"category\" t1 WHERE t1.\"id\" = ?)  UNION ALL  (SELECT t2.\"cte_deep\" + 1 AS \"cte_deep\",t3.\"id\",t3.\"parent_id\",t3.\"name\" FROM \"as_tree_cte\" t2 INNER JOIN \"category\" t3 ON t3.\"parent_id\" = t2.\"id\") )  SELECT t.\"name\" AS \"value1\",SUM(t6.\"star\") AS \"value2\" FROM \"as_tree_cte\" t LEFT JOIN \"t_blog\" t6 ON t6.\"deleted\" = ? AND t.\"id\" = t6.\"id\" GROUP BY t.\"name\"", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public  void tree10(){
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
 
 
         List<MyCategory> treeList = entityQuery.queryable(MyCategory.class)
                 .where(m -> {
                     m.id().eq("1");
-                })
+                }).useInterceptor("aaa")
                 .asTreeCTE()
                 .orderBy(m -> m.id().desc())
                 .toTreeList();
-        System.out.println(11);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH RECURSIVE \"as_tree_cte\" AS ( (SELECT 0 AS \"cte_deep\",t1.\"id\",t1.\"parent_id\",t1.\"name\" FROM \"category\" t1 WHERE 1=1 AND t1.\"id\" = ?)  UNION ALL  (SELECT t2.\"cte_deep\" + 1 AS \"cte_deep\",t3.\"id\",t3.\"parent_id\",t3.\"name\" FROM \"as_tree_cte\" t2 INNER JOIN \"category\" t3 ON 1=1 AND t3.\"parent_id\" = t2.\"id\" WHERE 1=1) )  SELECT t.\"id\",t.\"parent_id\",t.\"name\" FROM \"as_tree_cte\" t WHERE 1=1 ORDER BY t.\"id\" DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public  void tree10_1(){
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<MyCategory> treeList = entityQuery.queryable(MyCategory.class)
+                .where(m -> {
+                    m.id().eq("1");
+                }).useInterceptor("aaa").noInterceptor()
+                .asTreeCTE()
+                .orderBy(m -> m.id().desc())
+                .toTreeList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH RECURSIVE \"as_tree_cte\" AS ( (SELECT 0 AS \"cte_deep\",t1.\"id\",t1.\"parent_id\",t1.\"name\" FROM \"category\" t1 WHERE t1.\"id\" = ?)  UNION ALL  (SELECT t2.\"cte_deep\" + 1 AS \"cte_deep\",t3.\"id\",t3.\"parent_id\",t3.\"name\" FROM \"as_tree_cte\" t2 INNER JOIN \"category\" t3 ON t3.\"parent_id\" = t2.\"id\") )  SELECT t.\"id\",t.\"parent_id\",t.\"name\" FROM \"as_tree_cte\" t ORDER BY t.\"id\" DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public  void tree11(){
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<MyCategory> treeList = entityQuery.queryable(MyCategory.class)
+                .where(m -> {
+                    m.id().eq("1");
+                }).noInterceptor()
+                .asTreeCTE()
+                .orderBy(m -> m.id().desc())
+                .toTreeList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH RECURSIVE \"as_tree_cte\" AS ( (SELECT 0 AS \"cte_deep\",t1.\"id\",t1.\"parent_id\",t1.\"name\" FROM \"category\" t1 WHERE t1.\"id\" = ?)  UNION ALL  (SELECT t2.\"cte_deep\" + 1 AS \"cte_deep\",t3.\"id\",t3.\"parent_id\",t3.\"name\" FROM \"as_tree_cte\" t2 INNER JOIN \"category\" t3 ON t3.\"parent_id\" = t2.\"id\") )  SELECT t.\"id\",t.\"parent_id\",t.\"name\" FROM \"as_tree_cte\" t ORDER BY t.\"id\" DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
 //        String sql = entityQuery.getEasyQueryClient().queryable(Topic.class)
 //                .leftJoin(Topic.class, (b, t2) -> b.eq(t2, "id", "id"))
 //                .leftJoin(Topic.class, (b1, t2, t3) -> t2.eq(t3, "id", "id"))
@@ -72,17 +150,7 @@ public class QueryTest19 extends PgSQLBaseTest {
 //                                                    group.groupTable().t2.star().sum()
 //                                            )).toList();
 
-                List<Draft2<String, Number>> list = entityQuery.queryable(MyCategory.class)
-                                            .where(m -> {
-                                                m.id().eq("1");
-                                            })
-                                            .asTreeCTE()
-                                            .leftJoin(BlogEntity.class, (m, b2) -> m.id().eq(b2.id()))
-                                            .groupBy((m1, b2) -> GroupKeys.TABLE2.of(m1.name()))
-                                            .select(group -> Select.DRAFT.of(
-                                                    group.key1(),
-                                                    group.groupTable().t2.star().sum()
-                                            )).toList();
+
     }
 
     @Test

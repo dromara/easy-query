@@ -16,6 +16,7 @@ import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.MyCategoryInterceptor;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.listener.ListenerContextManager;
@@ -89,6 +90,7 @@ public class PgSQLBaseTest {
         configuration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
         configuration.applyInterceptor(new MyEntityInterceptor());
         configuration.applyInterceptor(new MyTenantInterceptor());
+        configuration.applyInterceptor(new MyCategoryInterceptor());
 //        configuration.applyInterceptor(new TopicInterceptor());
         configuration.applyShardingInitializer(new FixShardingInitializer());
 

@@ -1593,6 +1593,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         Class<T1> thisQueryClass = queryClass();
 
         ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(thisQueryClass, runtimeContext);
+        ExpressionContext innerJoinExpressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
+        innerJoinExpressionContext.extract(this.entityQueryExpressionBuilder.getExpressionContext());
+        this.entityQueryExpressionBuilder.getExpressionContext().extendFrom(innerJoinExpressionContext);
         ClientQueryable<T1> cteQueryable = queryable.asTable(cteTableName)
                 .innerJoin(thisQueryClass, (t, t1) -> {
                     if (up) {
