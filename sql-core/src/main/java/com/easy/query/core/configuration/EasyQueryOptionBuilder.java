@@ -1,5 +1,6 @@
 package com.easy.query.core.configuration;
 
+import com.easy.query.core.enums.RelationTableAppendEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -90,6 +91,8 @@ public class EasyQueryOptionBuilder {
     private long resultSizeLimit;
     private ShardingQueryInTransactionEnum shardingQueryInTransaction;
 
+    private RelationTableAppendEnum relationTableBehavior;
+
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
         this.insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
@@ -122,6 +125,7 @@ public class EasyQueryOptionBuilder {
         this.defaultSchema = null;
         this.resultSizeLimit = -1L;
         this.shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
+        this.relationTableBehavior = RelationTableAppendEnum.SMART;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -268,6 +272,10 @@ public class EasyQueryOptionBuilder {
         this.shardingQueryInTransaction = shardingQueryInTransaction;
     }
 
+    public void setRelationTableBehavior(RelationTableAppendEnum relationTableBehavior) {
+        this.relationTableBehavior = relationTableBehavior;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -301,6 +309,7 @@ public class EasyQueryOptionBuilder {
                 this.defaultSchema,
                 this.resultSizeLimit,
                 this.printNavSql,
-                this.shardingQueryInTransaction);
+                this.shardingQueryInTransaction,
+                this.relationTableBehavior);
     }
 }

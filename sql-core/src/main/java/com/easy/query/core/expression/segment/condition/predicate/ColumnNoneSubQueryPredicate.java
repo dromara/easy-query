@@ -6,6 +6,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.visitor.TableVisitor;
 
 /**
  * create time 2023/4/27 09:22
@@ -60,5 +61,10 @@ public class ColumnNoneSubQueryPredicate implements SubQueryPredicate {
     @Override
     public SubQueryPredicate cloneSubQueryPredicate() {
         return new ColumnNoneSubQueryPredicate(subQuery.cloneQueryable(),runtimeContext);
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+        subQuery.getSQLEntityExpressionBuilder().accept(visitor);
     }
 }

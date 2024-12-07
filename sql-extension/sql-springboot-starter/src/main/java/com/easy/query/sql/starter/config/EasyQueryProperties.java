@@ -1,6 +1,7 @@
 package com.easy.query.sql.starter.config;
 
 
+import com.easy.query.core.enums.RelationTableAppendEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -33,6 +34,7 @@ public class EasyQueryProperties {
     private ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
     private PropertyModeEnum propertyMode = PropertyModeEnum.FIRST_LOWER;
     private ShardingQueryInTransactionEnum shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
+    private RelationTableAppendEnum relationTableAppend = RelationTableAppendEnum.SMART;
     /**
      * 仅分片时有效默认同时5个线程5
      */
@@ -455,6 +457,14 @@ public class EasyQueryProperties {
 
     public void setShardingQueryInTransaction(ShardingQueryInTransactionEnum shardingQueryInTransaction) {
         this.shardingQueryInTransaction = shardingQueryInTransaction;
+    }
+
+    public RelationTableAppendEnum getRelationTableAppend() {
+        return relationTableAppend;
+    }
+
+    public void setRelationTableAppend(RelationTableAppendEnum relationTableAppend) {
+        this.relationTableAppend = relationTableAppend;
     }
 
     public EasyQueryProperties() {

@@ -4,6 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
+import com.easy.query.core.expression.visitor.TableVisitor;
 
 import java.util.List;
 import java.util.Map;
@@ -48,5 +49,7 @@ public interface EntityExpressionBuilder extends ExpressionBuilder {
     EntitySQLExpression toExpression();
 
     EntityExpressionBuilder cloneEntityExpressionBuilder();
+    default void accept(TableVisitor visitor){
 
+    }
 }

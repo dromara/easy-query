@@ -6,6 +6,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
@@ -66,5 +67,11 @@ public class ColumnInSubQueryPredicate implements SubQueryPredicate {
     @Override
     public SubQueryPredicate cloneSubQueryPredicate() {
         return new ColumnInSubQueryPredicate(column2Segment, subQuery.cloneQueryable(), compare, expressionContext);
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+        SubQueryPredicate.super.accept(visitor);
+        subQuery.getSQLEntityExpressionBuilder().accept(visitor);
     }
 }

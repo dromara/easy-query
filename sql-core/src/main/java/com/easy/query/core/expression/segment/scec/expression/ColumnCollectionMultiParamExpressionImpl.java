@@ -2,6 +2,8 @@ package com.easy.query.core.expression.segment.scec.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLUtil;
 
@@ -33,5 +35,10 @@ public class ColumnCollectionMultiParamExpressionImpl implements ColumnMultiPara
         for (Object value : values) {
             EasySQLUtil.addParameter(toSQLContext,new EasyConstSQLParameter(null,null,value));
         }
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+
     }
 }

@@ -83,25 +83,25 @@ public class QueryTestRelationTest extends BaseTest {
         Assert.assertEquals("(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
-//    @Test
-//    public void relationTest0_2() {
-//
-//
-//        ListenerContext listenerContext = new ListenerContext();
-//        listenerContextManager.startListen(listenerContext);
-//
-//
-//        List<MySignUp> list = easyEntityQuery.queryable(MySignUp.class)
-//                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-//                .where(m -> {
-//                    m.comUser().userId().eq("");
-//                    m.comId().eq("123");
-//                }).toList();
-//        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-//        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-//        Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t WHERE t.`com_id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//        listenerContextManager.clear();
-//    }
+    @Test
+    public void relationTest0_2() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<MySignUp> list = easyEntityQuery.queryable(MySignUp.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(m -> {
+                    m.comUser().userId().eq("");
+                    m.comId().eq("123");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t WHERE t.`com_id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+    }
     @Test
     public void relationTest0_3() {
 

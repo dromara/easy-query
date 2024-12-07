@@ -1,5 +1,6 @@
 package com.easy.query.solon.integration;
 
+import com.easy.query.core.enums.RelationTableAppendEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -31,6 +32,7 @@ public class SolonEasyQueryProperties {
     private final static ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
     private final static PropertyModeEnum propertyMode = PropertyModeEnum.FIRST_LOWER;
     private final static ShardingQueryInTransactionEnum shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
+    private final static RelationTableAppendEnum relationTableAppend = RelationTableAppendEnum.SMART;
     /**
      * 仅分片时有效默认同时5个线程5
      */
@@ -265,6 +267,15 @@ public class SolonEasyQueryProperties {
                 case "concurrency":return ShardingQueryInTransactionEnum.CONCURRENCY;
             }
             return ShardingQueryInTransactionEnum.SERIALIZABLE;
+        });
+    }
+    public RelationTableAppendEnum getRelationTableAppend() {
+        return getOrDef("relation-table-append", relationTableAppend, v->{
+            switch (v){
+                case "default":return RelationTableAppendEnum.SMART;
+                case "smart":return RelationTableAppendEnum.DEFAULT;
+            }
+            return RelationTableAppendEnum.SMART;
         });
     }
 

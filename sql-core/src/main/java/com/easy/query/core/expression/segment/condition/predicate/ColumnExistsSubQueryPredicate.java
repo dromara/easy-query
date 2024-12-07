@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.visitor.TableVisitor;
 
 /**
  * create time 2023/4/27 09:22
@@ -62,5 +63,10 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
     public SubQueryPredicate cloneSubQueryPredicate() {
 
         return new ColumnExistsSubQueryPredicate(subQuery.cloneQueryable(), sqlPredicateCompare, runtimeContext);
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+        subQuery.getSQLEntityExpressionBuilder().accept(visitor);
     }
 }

@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder.internal;
 
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
@@ -24,6 +25,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     protected final ExpressionContext expressionContext;
     protected final QueryRuntimeContext runtimeContext;
     protected final SQLSegmentFactory sqlSegmentFactory;
+    protected final EasyQueryOption easyQueryOption;
     protected final Class<?> queryClass;
     protected final List<EntityTableExpressionBuilder> tables;
     protected Map<RelationTableKey, EntityTableExpressionBuilder> relationTables;
@@ -31,9 +33,11 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     public AbstractEntityExpressionBuilder(ExpressionContext expressionContext, Class<?> queryClass) {
         this.expressionContext = expressionContext;
         this.runtimeContext = expressionContext.getRuntimeContext();
+
         this.queryClass = queryClass;
         this.tables = new ArrayList<>();
         this.sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
+        this.easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
     }
 
     @Override

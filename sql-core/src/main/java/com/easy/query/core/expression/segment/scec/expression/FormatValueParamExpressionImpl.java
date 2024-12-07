@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.segment.scec.expression;
 
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.util.EasyStringUtil;
 
 /**
@@ -21,5 +22,10 @@ public class FormatValueParamExpressionImpl implements FormatValueParamExpressio
             return EasyStringUtil.EMPTY;
         }
         return formatVal.toString();
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+
     }
 }

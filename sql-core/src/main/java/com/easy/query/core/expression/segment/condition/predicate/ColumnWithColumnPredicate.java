@@ -5,6 +5,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
@@ -48,5 +49,11 @@ public class ColumnWithColumnPredicate implements Predicate {
     @Override
     public SQLPredicateCompare getOperator() {
         return compare;
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+        visitor.visit(leftColumn2Segment.getTable());
+        visitor.visit(rightColumn2Segment.getTable());
     }
 }

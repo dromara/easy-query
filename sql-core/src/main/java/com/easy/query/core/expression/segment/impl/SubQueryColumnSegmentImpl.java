@@ -14,6 +14,7 @@ import com.easy.query.core.expression.segment.parse.SubQueryColumnParseResult;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -118,5 +119,11 @@ public class SubQueryColumnSegmentImpl implements SubQueryColumnSegment {
     @Override
     public SubQueryColumnSegment cloneSQLColumnSegment() {
         return new SubQueryColumnSegmentImpl(table, subQuery.cloneQueryable(), alias, runtimeContext);
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+        SubQueryColumnSegment.super.accept(visitor);
+        subQuery.getSQLEntityExpressionBuilder().accept(visitor);
     }
 }

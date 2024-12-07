@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.visitor.TableVisitor;
 
 /**
  * create time 2023/10/13 09:22
@@ -47,5 +48,11 @@ public class SQLNativesPredicateImpl implements Predicate{
     @Override
     public TableAvailable getTable() {
         return null;
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+        visitor.visit(predicateLeft.getTable());
+        visitor.visit(predicateRight.getTable());
     }
 }

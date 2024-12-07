@@ -6,7 +6,9 @@ import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 /**
  * create time 2023/10/18 16:07
@@ -69,5 +71,11 @@ public class SQLFunctionColumnSegmentImpl implements FuncColumnSegment {
     @Override
     public TableAvailable getTable() {
         return table;
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+        FuncColumnSegment.super.accept(visitor);
+        EasySQLSegmentUtil.sqlSegmentTableVisit(sqlSegment, visitor);
     }
 }

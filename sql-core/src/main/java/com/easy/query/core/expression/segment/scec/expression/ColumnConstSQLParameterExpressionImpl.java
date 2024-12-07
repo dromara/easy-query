@@ -2,6 +2,7 @@ package com.easy.query.core.expression.segment.scec.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.util.EasySQLUtil;
 
 /**
@@ -19,5 +20,10 @@ public class ColumnConstSQLParameterExpressionImpl implements ColumnParamExpress
     @Override
     public void addParams(ToSQLContext toSQLContext) {
         EasySQLUtil.addParameter(toSQLContext,new EasyConstSQLParameter(null,null,val));
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+
     }
 }

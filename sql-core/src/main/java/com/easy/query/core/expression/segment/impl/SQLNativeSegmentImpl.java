@@ -3,7 +3,9 @@ package com.easy.query.core.expression.segment.impl;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
 import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 /**
  * create time 2023/6/16 20:55
@@ -40,5 +42,10 @@ public class SQLNativeSegmentImpl extends AbstractSQLNativeSegmentImpl implement
 
     public ColumnMetadata getColumnMetadata(){
         return null;
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+        EasySQLSegmentUtil.paramExpressionTableVisit(sqlNativeExpression.getExpressions(), visitor);
     }
 }

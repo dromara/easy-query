@@ -2,6 +2,7 @@ package com.easy.query.core.expression.segment.scec.expression;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
@@ -18,5 +19,10 @@ public class ColumnPropertyAsAliasParamExpressionImpl implements ColumnPropertyA
     @Override
     public String toSQL(QueryRuntimeContext runtimeContext) {
         return EasySQLExpressionUtil.getQuoteName(runtimeContext, alias);
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+
     }
 }

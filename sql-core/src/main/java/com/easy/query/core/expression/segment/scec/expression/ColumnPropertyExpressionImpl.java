@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyColumnSegmentUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -51,5 +52,10 @@ public final class ColumnPropertyExpressionImpl implements ColumnPropertyParamEx
 //        }
 //        return new ColumnSegmentImpl(table,columnMetadata,runtimeContext).toSQL(toSQLContext);
 //        return EasySQLExpressionUtil.getSQLOwnerColumnMetadata(expressionContext, table, columnMetadata, toSQLContext,true,false);
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+        visitor.visit(table);
     }
 }
