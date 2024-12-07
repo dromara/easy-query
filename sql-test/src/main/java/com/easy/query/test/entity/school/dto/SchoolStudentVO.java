@@ -21,5 +21,4 @@ public class SchoolStudentVO {
     private SchoolClassVO schoolClass;
     @Navigate(RelationTypeEnum.OneToOne)
     private SchoolStudentAddressVO schoolStudentAddress;
-
 }

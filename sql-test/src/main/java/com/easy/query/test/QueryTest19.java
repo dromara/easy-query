@@ -1,7 +1,10 @@
 package com.easy.query.test;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.entity.relation.MyRelationUser;
 import com.easy.query.test.entity.relation.MyRelationUserDTO;
 import com.easy.query.test.entity.relation.MyRelationUserDTO1;
@@ -80,6 +83,66 @@ public class QueryTest19 extends BaseTest{
 
         }
        listenerContextManager.clear();
+    }
+
+    @Test
+    public  void test1(){
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
+                    .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                    .where(u -> {
+                        u.name().eq("小明");
+                        //隐式子查询会自动join地址表
+                        //根据条件是否生效自动添加address表的join，比如eq("")和eq("杭州生成的表不存在address和city的区别")
+                        u.address().city().eq("");
+                    }).toList();
+        }catch (Exception ignored){
+
+        }
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t WHERE t.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public  void test2(){
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
+                    .where(u -> {
+                        u.name().eq("小明");
+                        //隐式子查询会自动join地址表
+                        //根据条件是否生效自动添加address表的join，比如eq("")和eq("杭州生成的表不存在address和city的区别")
+                        u.address().city().eq("");
+                    }).toList();
+        }catch (Exception ignored){
+
+        }
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_user_address` t1 ON t1.`user_id` = t.`id` WHERE t.`name` = ? AND t1.`city` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("小明(String),(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 
 }

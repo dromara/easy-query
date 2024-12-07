@@ -1,6 +1,9 @@
 package com.easy.query.test.pgsql;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.sql.GroupKeys;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyCategory;
@@ -20,6 +23,7 @@ public class QueryTest19 extends PgSQLBaseTest {
 
     @Test
     public  void tree11(){
+
 
         List<MyCategory> treeList = entityQuery.queryable(MyCategory.class)
                 .where(m -> {
@@ -67,6 +71,18 @@ public class QueryTest19 extends PgSQLBaseTest {
 //                                                    group.key1(),
 //                                                    group.groupTable().t2.star().sum()
 //                                            )).toList();
+
+                List<Draft2<String, Number>> list = entityQuery.queryable(MyCategory.class)
+                                            .where(m -> {
+                                                m.id().eq("1");
+                                            })
+                                            .asTreeCTE()
+                                            .leftJoin(BlogEntity.class, (m, b2) -> m.id().eq(b2.id()))
+                                            .groupBy((m1, b2) -> GroupKeys.TABLE2.of(m1.name()))
+                                            .select(group -> Select.DRAFT.of(
+                                                    group.key1(),
+                                                    group.groupTable().t2.star().sum()
+                                            )).toList();
     }
 
     @Test

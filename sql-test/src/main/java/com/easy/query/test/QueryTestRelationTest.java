@@ -9,6 +9,7 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.doc.MyComUser;
 import com.easy.query.test.doc.MyComUser1;
 import com.easy.query.test.doc.MyCompany;
@@ -25,6 +26,7 @@ import com.easy.query.test.doc.proxy.MySignUpProxy;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp14;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.school.SchoolClass;
+import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,6 +42,54 @@ import java.util.List;
  * @author xuejiaming
  */
 public class QueryTestRelationTest extends BaseTest {
+    @Test
+    public void test1(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String companyName="公司";
+        List<MyComUser> list = easyEntityQuery.queryable(MyComUser.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(su -> {
+                    su.myCompany().name().like(companyName);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`gw` FROM `my_com_user` t LEFT JOIN `my_company_info` t1 ON t1.`id` = t.`com_id` WHERE t1.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void test2(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String companyName="";
+        List<MyComUser> list = easyEntityQuery.queryable(MyComUser.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(su -> {
+                    su.myCompany().name().like(companyName);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`gw` FROM `my_com_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+    }
+    @Test
+    public void test3(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String companyName="";
+        List<MyComUser> list = easyEntityQuery.queryable(MyComUser.class)
+                .where(su -> {
+                    if(EasyStringUtil.isNotBlank(companyName)){
+                        su.myCompany().name().like(companyName);
+                    }
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`gw` FROM `my_com_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+    }
+
     @Test
     public void relationTest0() {
 
@@ -682,5 +732,44 @@ public class QueryTestRelationTest extends BaseTest {
         easyEntityQuery.insertable(companies).executeRows();
         easyEntityQuery.insertable(comUsers).executeRows();
         easyEntityQuery.insertable(signUps).executeRows();
+    }
+
+
+    @Test
+    public void relation10(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft1<Object>> list = easyEntityQuery.queryable(SchoolClassAggregate.class)
+                .where(s -> {
+                    s.name().like("123");
+                }).select(s -> Select.DRAFT.of(
+                        s.expression().sqlSegment("{0}", c -> c.expression(s.studentSize()))
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `value1` FROM `school_class` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void relation11(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft1<Long>> list = easyEntityQuery.queryable(SchoolClassAggregate.class)
+                .where(s -> {
+                    s.name().like("123");
+                }).select(s -> Select.DRAFT.of(
+                        s.studentSize()
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `value1` FROM `school_class` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }
