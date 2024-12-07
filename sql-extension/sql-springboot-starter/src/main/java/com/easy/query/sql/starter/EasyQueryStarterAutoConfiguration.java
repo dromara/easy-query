@@ -302,7 +302,7 @@ public class EasyQueryStarterAutoConfiguration {
                     builder.setDefaultSchema(easyQueryProperties.getDefaultSchema());
                     builder.setResultSizeLimit(easyQueryProperties.getResultSizeLimit());
                     builder.setShardingQueryInTransaction(easyQueryProperties.getShardingQueryInTransaction());
-                    builder.setRelationTableBehavior(easyQueryProperties.getRelationTableAppend());
+                    builder.setRelationTableAppend(easyQueryProperties.getRelationTableAppend());
                 })
                 .useDatabaseConfigure(databaseConfiguration)
                 .useStarterConfigure(starterConfigurer)

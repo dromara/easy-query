@@ -91,7 +91,7 @@ public class EasyQueryOptionBuilder {
     private long resultSizeLimit;
     private ShardingQueryInTransactionEnum shardingQueryInTransaction;
 
-    private RelationTableAppendEnum relationTableBehavior;
+    private RelationTableAppendEnum relationTableAppend;
 
     public EasyQueryOptionBuilder() {
         this.deleteThrowError = true;
@@ -125,7 +125,7 @@ public class EasyQueryOptionBuilder {
         this.defaultSchema = null;
         this.resultSizeLimit = -1L;
         this.shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
-        this.relationTableBehavior = RelationTableAppendEnum.SMART;
+        this.relationTableAppend = RelationTableAppendEnum.SMART;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -272,8 +272,8 @@ public class EasyQueryOptionBuilder {
         this.shardingQueryInTransaction = shardingQueryInTransaction;
     }
 
-    public void setRelationTableBehavior(RelationTableAppendEnum relationTableBehavior) {
-        this.relationTableBehavior = relationTableBehavior;
+    public void setRelationTableAppend(RelationTableAppendEnum relationTableAppend) {
+        this.relationTableAppend = relationTableAppend;
     }
 
     public EasyQueryOption build() {
@@ -310,6 +310,6 @@ public class EasyQueryOptionBuilder {
                 this.resultSizeLimit,
                 this.printNavSql,
                 this.shardingQueryInTransaction,
-                this.relationTableBehavior);
+                this.relationTableAppend);
     }
 }
