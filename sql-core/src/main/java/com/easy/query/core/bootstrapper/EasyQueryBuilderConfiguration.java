@@ -52,6 +52,8 @@ import com.easy.query.core.datasource.DefaultDataSourceUnitFactory;
 import com.easy.query.core.datasource.replica.DefaultReplicaDataSourceManager;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.DefaultAssertExceptionFactory;
+import com.easy.query.core.expression.builder.core.AnyValueFilterFactory;
+import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.executor.parser.DefaultEasyPrepareParser;
 import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
 import com.easy.query.core.expression.executor.query.DefaultExecutionContextFactory;
@@ -191,6 +193,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(Column2MapKeyConversion.class, DefaultColumn2MapKeyConversion.class)
                 .replaceService(RelationValueFactory.class, DefaultRelationValueFactory.class)
                 .replaceService(PropertyDescriptorMatcher.class, DefaultPropertyDescriptorMatcher.class)
+                .replaceService(ValueFilterFactory.class, AnyValueFilterFactory.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

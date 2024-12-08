@@ -21,6 +21,7 @@ import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.exception.AssertExceptionFactory;
+import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
@@ -84,6 +85,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final RelationValueFactory relationValueFactory;
     private final MapColumnNameChecker mapColumnNameChecker;
     private final PropertyDescriptorMatcher propertyDescriptorMatcher;
+    private final ValueFilterFactory valueFilterFactory;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -120,7 +122,9 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           Column2MapKeyConversion column2MapKeyConversion,
                                           JdbcSQLPrinter jdbcSQLPrinter,
                                           RelationValueFactory relationValueFactory,
-                                          MapColumnNameChecker mapColumnNameChecker, PropertyDescriptorMatcher propertyDescriptorMatcher) {
+                                          MapColumnNameChecker mapColumnNameChecker,
+                                          PropertyDescriptorMatcher propertyDescriptorMatcher,
+                                          ValueFilterFactory valueFilterFactory) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -158,6 +162,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.relationValueFactory = relationValueFactory;
         this.mapColumnNameChecker = mapColumnNameChecker;
         this.propertyDescriptorMatcher = propertyDescriptorMatcher;
+        this.valueFilterFactory = valueFilterFactory;
     }
 
     @Override
@@ -344,5 +349,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public PropertyDescriptorMatcher getPropertyDescriptorMatcher() {
         return propertyDescriptorMatcher;
+    }
+
+    @Override
+    public ValueFilterFactory getValueFilterFactory() {
+        return valueFilterFactory;
     }
 }

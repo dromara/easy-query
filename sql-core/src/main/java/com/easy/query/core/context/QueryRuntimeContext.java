@@ -19,6 +19,7 @@ import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.exception.AssertExceptionFactory;
+import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
@@ -86,4 +87,5 @@ public interface QueryRuntimeContext {
     RelationValueFactory getRelationValueFactory();
     MapColumnNameChecker getMapColumnNameChecker();
     PropertyDescriptorMatcher getPropertyDescriptorMatcher();
+    ValueFilterFactory getValueFilterFactory();
 }

@@ -85,7 +85,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext) {
         ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
-        return createQueryable(clazz,runtimeContext,queryExpressionContext);
+        return createQueryable(clazz, runtimeContext, queryExpressionContext);
     }
 
     @Override
@@ -99,11 +99,11 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     }
 
     @Override
-    public <T> ClientQueryable<T> createQueryable(String sql,Collection<Object> sqlParams, Class<T> clazz,  QueryRuntimeContext runtimeContext) {
+    public <T> ClientQueryable<T> createQueryable(String sql, Collection<Object> sqlParams, Class<T> clazz, QueryRuntimeContext runtimeContext) {
 
 
         ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
-        EntityQueryExpressionBuilder innerSQLEntityQueryExpressionBuilder = expressionBuilderFactory.createAnonymousQueryExpressionBuilder(sql,sqlParams, queryExpressionContext, clazz);
+        EntityQueryExpressionBuilder innerSQLEntityQueryExpressionBuilder = expressionBuilderFactory.createAnonymousQueryExpressionBuilder(sql, sqlParams, queryExpressionContext, clazz);
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.FROM, innerSQLEntityQueryExpressionBuilder);
 //        //todo
@@ -193,7 +193,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     public <T> ClientQueryable<T> createQueryable(Class<T> clazz, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         ExpressionContext queryExpressionContext = entityQueryExpressionBuilder.getExpressionContext();
         EntityMetadata entityMetadata = queryExpressionContext.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(clazz);
-        return createQueryable(clazz,entityMetadata,entityQueryExpressionBuilder);
+        return createQueryable(clazz, entityMetadata, entityQueryExpressionBuilder);
     }
 
     @Override
@@ -527,12 +527,12 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     }
 
     @Override
-    public <T> MapClientUpdatable<Map<String,Object>> createMapUpdatable(Map<String, Object> entity, QueryRuntimeContext runtimeContext) {
-        return createMapUpdatable(Collections.singletonList(entity),runtimeContext);
+    public <T> MapClientUpdatable<Map<String, Object>> createMapUpdatable(Map<String, Object> entity, QueryRuntimeContext runtimeContext) {
+        return createMapUpdatable(Collections.singletonList(entity), runtimeContext);
     }
 
     @Override
-    public <T> MapClientUpdatable<Map<String,Object>> createMapUpdatable(Collection<Map<String, Object>> entities, QueryRuntimeContext runtimeContext) {
+    public <T> MapClientUpdatable<Map<String, Object>> createMapUpdatable(Collection<Map<String, Object>> entities, QueryRuntimeContext runtimeContext) {
         ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
         MapUpdateExpressionBuilder entityUpdateExpression = expressionBuilderFactory.createMapUpdateExpressionBuilder(sqlExpressionContext);
         return new EasyMapClientUpdatable(entities, entityUpdateExpression);

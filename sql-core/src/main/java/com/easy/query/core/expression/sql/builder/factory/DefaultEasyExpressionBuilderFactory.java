@@ -26,7 +26,7 @@ import com.easy.query.core.expression.sql.builder.impl.UpdateMapExpressionBuilde
  *
  * @author xuejiaming
  */
-public  class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFactory {
+public class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFactory {
     @Override
     public ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext) {
         return new EasyExpressionContext(runtimeContext);
@@ -34,27 +34,27 @@ public  class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFa
 
     @Override
     public EntityTableExpressionBuilder createEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
-        return new DefaultTableExpressionBuilder(tableAvailable,multiTableType,runtimeContext);
+        return new DefaultTableExpressionBuilder(tableAvailable, multiTableType, runtimeContext);
     }
 
     @Override
     public EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        return new AnonymousDefaultTableExpressionBuilder(tableAvailable,multiTableType, entityQueryExpressionBuilder);
+        return new AnonymousDefaultTableExpressionBuilder(tableAvailable, multiTableType, entityQueryExpressionBuilder);
     }
 
     @Override
-    public EntityQueryExpressionBuilder createEntityQueryExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass) {
-        return new QueryExpressionBuilder(sqlExpressionContext,queryClass);
+    public EntityQueryExpressionBuilder createEntityQueryExpressionBuilder(ExpressionContext sqlExpressionContext, Class<?> queryClass) {
+        return new QueryExpressionBuilder(sqlExpressionContext, queryClass);
     }
 
     @Override
-    public EntityInsertExpressionBuilder createEntityInsertExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass) {
-        return new InsertExpressionBuilder(sqlExpressionContext,queryClass);
+    public EntityInsertExpressionBuilder createEntityInsertExpressionBuilder(ExpressionContext sqlExpressionContext, Class<?> queryClass) {
+        return new InsertExpressionBuilder(sqlExpressionContext, queryClass);
     }
 
     @Override
-    public EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression) {
-        return new UpdateExpressionBuilder(sqlExpressionContext,queryClass,expression);
+    public EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext, Class<?> queryClass, boolean expression) {
+        return new UpdateExpressionBuilder(sqlExpressionContext, queryClass, expression);
     }
 
     @Override
@@ -63,8 +63,8 @@ public  class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFa
     }
 
     @Override
-    public EntityDeleteExpressionBuilder createEntityDeleteExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression) {
-        return new DeleteExpressionBuilder(sqlExpressionContext,queryClass,expression);
+    public EntityDeleteExpressionBuilder createEntityDeleteExpressionBuilder(ExpressionContext sqlExpressionContext, Class<?> queryClass, boolean expression) {
+        return new DeleteExpressionBuilder(sqlExpressionContext, queryClass, expression);
     }
 
     @Override

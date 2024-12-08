@@ -9,8 +9,8 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilter;
+import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
@@ -88,7 +88,9 @@ public class EasyExpressionContext implements ExpressionContext {
         this.maxShardingQueryLimit = null;
         this.connectionMode = null;
         this.sharding = false;
-        this.valueFilter = AnyValueFilter.DEFAULT;
+
+        ValueFilterFactory valueFilterFactory = runtimeContext.getValueFilterFactory();
+        this.valueFilter = valueFilterFactory.getExpressionDefaultValueFilter();
         this.groupSize = easyQueryOption.getRelationGroupSize();
         this.resultSizeLimit = easyQueryOption.getResultSizeLimit();
     }
@@ -267,7 +269,8 @@ public class EasyExpressionContext implements ExpressionContext {
         otherExpressionContext.useSQLStrategy(this.sqlStrategy);
         otherExpressionContext.setMaxShardingQueryLimit(this.maxShardingQueryLimit);
         otherExpressionContext.setConnectionMode(this.connectionMode);
-        if(hasRelationExtraMetadata()){
+        otherExpressionContext.filterConfigure(this.valueFilter);
+        if (hasRelationExtraMetadata()) {
             this.relationExtraMetadata.copyTo(otherExpressionContext.getRelationExtraMetadata());
         }
         otherExpressionContext.setPrintSQL(this.printSQL);
@@ -281,7 +284,7 @@ public class EasyExpressionContext implements ExpressionContext {
         if (hasColumnIncludeMaps()) {
             otherExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
         }
-        if(hasDeclareExpressions()){
+        if (hasDeclareExpressions()) {
             otherExpressionContext.getDeclareExpressions().addAll(this.declareExpressions);
         }
         if (this.propTypes != null) {
@@ -375,6 +378,7 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.maxShardingQueryLimit = this.maxShardingQueryLimit;
         easyExpressionContext.connectionMode = this.connectionMode;
         easyExpressionContext.sharding = this.sharding;
+        easyExpressionContext.valueFilter = this.valueFilter;
         easyExpressionContext.hasSubQuery = this.hasSubQuery;
         easyExpressionContext.relationExtraMetadata = this.relationExtraMetadata;
         easyExpressionContext.printSQL = this.printSQL;
@@ -388,7 +392,7 @@ public class EasyExpressionContext implements ExpressionContext {
         if (hasColumnIncludeMaps()) {
             easyExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
         }
-        if(hasDeclareExpressions()){
+        if (hasDeclareExpressions()) {
             easyExpressionContext.getDeclareExpressions().addAll(this.declareExpressions);
         }
         if (this.propTypes != null) {

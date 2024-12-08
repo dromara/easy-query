@@ -13,9 +13,15 @@ import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 public class MyCategoryInterceptor implements PredicateFilterInterceptor {
     @Override
     public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, WherePredicate<Object> wherePredicate) {
-        System.out.println(entityClass);
 
         wherePredicate.sqlNativeSegment("1=1");
+
+//        wherePredicate.sqlNativeSegment("{0} = '1'",c->{
+//            //c.expression(wherePredicate.getTable(),"id");
+//            c.expression("id");
+//        });
+
+
     }
 
     @Override
