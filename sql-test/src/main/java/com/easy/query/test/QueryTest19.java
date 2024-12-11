@@ -1,14 +1,21 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.sql.GroupKeys;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.SysUser;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.relation.MyRelationUser;
 import com.easy.query.test.entity.relation.MyRelationUserDTO;
 import com.easy.query.test.entity.relation.MyRelationUserDTO1;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.vo.MyUnion;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -143,6 +150,32 @@ public class QueryTest19 extends BaseTest{
         Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN `t_user_address` t1 ON t1.`user_id` = t.`id` WHERE t.`name` = ? AND t1.`city` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("小明(String),(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
+    }
+
+    @Test
+      public void testUnion1(){
+          String sql = "SELECT '未开始'AS task_status\n" +
+                  "UNION ALL SELECT '进行中'\n" +
+                  "UNION ALL SELECT '已完成'\n" +
+                  "UNION ALL SELECT '审核中'\n" +
+                  "UNION ALL SELECT '已关闭'\n" +
+                  "UNION ALL SELECT '待修改（无需审核）'\n" +
+                  "UNION ALL SELECT '待修改（需审核）'";
+        List<BlogEntity> list = easyEntityQuery.queryable(sql, MyUnion.class)
+                .leftJoin(Topic.class, (m, t2) -> {
+                    m.taskStatus().eq(t2.stars());
+                    t2.id().eq("10");
+                    
+                }).groupBy((m1, t2) -> GroupKeys.TABLE2.of(m1.taskStatus()))
+                .select(group -> {
+                    BlogEntityProxy r = new BlogEntityProxy();
+                    r.id().set(group.key1());
+                    r.title().set(String.valueOf(group.groupTable().t2.stars().count()));//把表达式字符串化给title
+                    r.title().set(group.groupTable().t2.stars().count().asAnyType(String.class));//语言层面的强转
+                    r.title().set(group.groupTable().t2.stars().count().toStr());//sql层面的cast
+                    return r;
+
+                }).toList();
     }
 
 }

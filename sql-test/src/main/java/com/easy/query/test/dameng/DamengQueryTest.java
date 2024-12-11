@@ -127,6 +127,14 @@ public class DamengQueryTest extends DamengBaseTest{
                 )).toList();
     }
 
+    @Test
+    public void test111(){
+        List<Draft1<String>> list = entityQuery.queryable(DamengMyTopic.class)
+                .select(d -> Select.DRAFT.of(
+                        d.createTime().format("yyyy-MM").concat("-01")
+                )).toList();
+        System.out.println(list);
+    }
 
     @Test
     public void testDraft9() {

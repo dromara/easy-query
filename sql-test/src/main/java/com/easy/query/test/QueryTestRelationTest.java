@@ -153,6 +153,27 @@ public class QueryTestRelationTest extends BaseTest {
         listenerContextManager.clear();
     }
     @Test
+    public void relationTest0_x() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<MySignUp> list = easyEntityQuery.queryable(MySignUp.class)
+                .where(m -> {
+                    m.expression().sql("{0} = {1}",c->{
+                        c.value("123").expression(m.comUser().userId());
+                    });
+                    m.comId().eq("123");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t LEFT JOIN `my_com_user` t1 ON (t1.`com_id` = t.`com_id` AND t1.`user_id` = t.`user_id`) WHERE ? = t1.`user_id` AND t.`com_id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
     public void relationTest0_3() {
 
 
