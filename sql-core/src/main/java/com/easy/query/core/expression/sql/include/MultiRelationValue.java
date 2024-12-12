@@ -39,4 +39,11 @@ public class MultiRelationValue implements RelationValue {
     public int hashCode() {
         return Objects.hashCode(values);
     }
+
+    @Override
+    public String toString() {
+        return "MultiRelationValue{" +
+                "values=" + values +
+                '}';
+    }
 }

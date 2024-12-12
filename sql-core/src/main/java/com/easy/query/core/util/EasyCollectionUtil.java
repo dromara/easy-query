@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.common.Consumer2;
 import com.easy.query.core.exception.EasyQueryResultSizeLimitException;
 import com.easy.query.core.expression.lambda.Selector;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -110,9 +112,10 @@ public class EasyCollectionUtil {
         }
         return result;
     }
+
     public static <TSource, TElement> List<TElement> select(TSource[] sources, Selector<TSource, TElement> selector) {
         int size = sources.length;
-        if(size==0){
+        if (size == 0) {
             return emptyList();
         }
         List<TElement> result = new ArrayList<>(size);
@@ -416,11 +419,18 @@ public class EasyCollectionUtil {
     }
 
     public static <K, V, R> Map<K, R> collectionToMap(Collection<V> list, Function<V, K> keyExtractor, Function<V, R> valueExtractor) {
+        return collectionToMap(list, keyExtractor, valueExtractor, null);
+    }
+
+    public static <K, V, R> Map<K, R> collectionToMap(Collection<V> list, Function<V, K> keyExtractor, Function<V, R> valueExtractor, Consumer2<K, R> oldValueConsumer) {
         Map<K, R> map = new HashMap<>();
         for (V element : list) {
             K key = keyExtractor.apply(element);
             R value = valueExtractor.apply(element);
-            map.put(key, value);
+            R old = map.put(key, value);
+            if (oldValueConsumer != null) {
+                oldValueConsumer.accept(key, old);
+            }
         }
         return map;
     }

@@ -41,4 +41,11 @@ public class SingleRelationValue implements RelationValue {
     public int hashCode() {
         return Objects.hashCode(value);
     }
+
+    @Override
+    public String toString() {
+        return "SingleRelationValue{" +
+                "value=" + value +
+                '}';
+    }
 }

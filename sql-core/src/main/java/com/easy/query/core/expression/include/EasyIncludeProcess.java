@@ -1,9 +1,11 @@
 package com.easy.query.core.expression.include;
 
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.expression.sql.include.RelationValue;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
@@ -27,7 +29,12 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         //获取关联关系列的元信息
         String[] selfRelationColumn = getSelfRelationColumn();
         //因为是一对一所以获取关联数据key为主键的map
-        Map<RelationValue, ?> entityMap = EasyCollectionUtil.collectionToMap(entities, x->x.getRelationExtraColumns(selfRelationColumn), o -> o.getEntity());
+        Map<RelationValue, ?> entityMap = EasyCollectionUtil.collectionToMap(entities, x -> x.getRelationExtraColumns(selfRelationColumn), o -> o.getEntity(), (key, old) -> {
+            if (old != null) {
+                //应该使用ManyToOne而不是OneToOne所以请用户自行确认数据表示的是One-To-One还是Many-To-One
+                throw new EasyQueryInvalidOperationException("The relationship value ‘" + key + "’ appears to have duplicates: [" + EasyClassUtil.getInstanceSimpleName(old) + "]. Please confirm whether the data represents a One-To-One or Many-To-One relationship.");
+            }
+        });
         for (RelationExtraEntity includeEntity : includes) {
             RelationValue subRelationKey = includeEntity.getRelationExtraColumns(targetColumnMetadataPropertyNames);
             Object entity = entityMap.get(subRelationKey);
@@ -36,10 +43,11 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             }
         }
     }
+
     @Override
     protected void ManyToOneProcess(List<RelationExtraEntity> includes) {
         //因为是一对一所以获取关联数据key为主键的map
-        Map<RelationValue, ?> includeMap = EasyCollectionUtil.collectionToMap(includes, x->x.getRelationExtraColumns(targetColumnMetadataPropertyNames), o -> o.getEntity());
+        Map<RelationValue, ?> includeMap = EasyCollectionUtil.collectionToMap(includes, x -> x.getRelationExtraColumns(targetColumnMetadataPropertyNames), o -> o.getEntity());
         String[] selfRelationColumn = getSelfRelationColumn();
         for (RelationExtraEntity entity : entities) {
             RelationValue relationId = entity.getRelationExtraColumns(selfRelationColumn);
@@ -60,30 +68,29 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         for (RelationExtraEntity entity : entities) {
             RelationValue selfRelationId = entity.getRelationExtraColumns(selfRelationColumn);
             Collection<RelationExtraEntity> targetEntities = targetToManyMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
-            setEntityValue(entity.getEntity(),targetEntities);
+            setEntityValue(entity.getEntity(), targetEntities);
         }
     }
-
 
 
     @Override
     protected void ManyToManyProcess(List<RelationExtraEntity> includes, List<Map<String, Object>> mappingRows) {
 
-        if(includeParserResult.getMappingClass()==null){
+        if (includeParserResult.getMappingClass() == null) {
 
             String[] selfRelationColumn = getSelfRelationColumn();
             Map<RelationValue, Collection<RelationExtraEntity>> targetToManyMap = getTargetToManyMap(includes);
             for (RelationExtraEntity entity : entities) {
                 RelationValue selfRelationId = entity.getRelationExtraColumns(selfRelationColumn);
                 Collection<RelationExtraEntity> targetEntities = targetToManyMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
-                setEntityValue(entity.getEntity(),targetEntities);
+                setEntityValue(entity.getEntity(), targetEntities);
             }
-        }else{
-            Map<RelationValue, Collection<RelationExtraEntity>> targetToManyMap = getTargetToManyMap(includes,mappingRows);
+        } else {
+            Map<RelationValue, Collection<RelationExtraEntity>> targetToManyMap = getTargetToManyMap(includes, mappingRows);
             String[] selfRelationColumn = getSelfRelationColumn();
             for (RelationExtraEntity entity : entities) {
-                RelationValue selfRelationId =entity.getRelationExtraColumns(selfRelationColumn);
-                Collection<RelationExtraEntity> targetEntities = targetToManyMap.computeIfAbsent(selfRelationId,k->createManyCollection());
+                RelationValue selfRelationId = entity.getRelationExtraColumns(selfRelationColumn);
+                Collection<RelationExtraEntity> targetEntities = targetToManyMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
                 setEntityValue(entity.getEntity(), targetEntities);
             }
         }

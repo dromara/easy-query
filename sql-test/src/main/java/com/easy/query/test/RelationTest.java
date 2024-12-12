@@ -24,6 +24,7 @@ import com.easy.query.test.dto.autodto.SchoolClassAOProp6;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp8;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp9;
 import com.easy.query.test.dto.autodto.SchoolStudentDTOAO111;
+import com.easy.query.test.dto.autodto.SchoolStudentDTOAO222;
 import com.easy.query.test.dto.autodto.SchoolStudentDTOxxx;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.Area;
@@ -39,6 +40,7 @@ import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.entity.school.SchoolClassTeacher;
 import com.easy.query.test.entity.school.SchoolStudent;
+import com.easy.query.test.entity.school.SchoolStudent2;
 import com.easy.query.test.entity.school.SchoolStudentAddress;
 import com.easy.query.test.entity.school.SchoolStudentExtendsVO;
 import com.easy.query.test.entity.school.SchoolTeacher;
@@ -186,6 +188,20 @@ public class RelationTest extends BaseTest {
         List<String> ids = Arrays.asList("1", "2", "3");
         try {
             relationInit(ids);
+
+            {
+                Exception e=null;
+                try {
+
+                    List<SchoolStudentDTOAO222> list = easyEntityQuery.queryable(SchoolStudent2.class)
+                            .selectAutoInclude(SchoolStudentDTOAO222.class)
+                            .toList();
+                }catch (Exception ex){
+                    e=ex;
+                }
+                Assert.assertNotNull(e);
+                Assert.assertEquals("The relationship value ‘SingleRelationValue{value=class1}’ appears to have duplicates: [SchoolStudentDTOAO222]. Please confirm whether the data represents a One-To-One or Many-To-One relationship.",e.getMessage());
+            }
 
             {
                 System.out.println("91");
