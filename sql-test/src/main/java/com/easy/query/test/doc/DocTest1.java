@@ -4,13 +4,14 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
+import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.partition.Partition1;
 import com.easy.query.core.proxy.partition.Partition2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.BaseTest;
-import com.easy.query.test.doc.entity.SysUser;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,6 +30,11 @@ import java.util.function.Supplier;
 public class DocTest1 extends BaseTest {
     @Test
     public void test1() {
+        List<Draft2<String, Boolean>> list = easyEntityQuery.queryable(SysUser.class)
+                .select(s -> Select.DRAFT.of(
+                        s.id(),
+                        s.blogs().anyValue()
+                )).toList();
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -40,6 +46,8 @@ public class DocTest1 extends BaseTest {
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+
+
     }
 
     @Test

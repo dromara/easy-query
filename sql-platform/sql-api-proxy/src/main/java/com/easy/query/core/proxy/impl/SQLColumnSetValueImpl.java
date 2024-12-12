@@ -4,6 +4,7 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.builder.Setter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 
 /**
@@ -25,13 +26,22 @@ public class SQLColumnSetValueImpl implements SQLColumnSetExpression {
 
     @Override
     public void accept(Setter s) {
-        s.set(table,property,val);
+        if(val instanceof PropTypeColumn){
+            PropTypeColumn.columnFuncSetter(s,table,property,(PropTypeColumn<?>)val);
+        }else{
+            s.set(table,property,val);
+        }
     }
 
     @Override
     public void accept(Selector s) {
         s.sqlNativeSegment("{0}",c->{
-            c.value(val);
+            if(val instanceof  PropTypeColumn){
+                PropTypeColumn.sqlNativeSelectColumn(c,(PropTypeColumn<?>) val);
+            }else{
+                c.value(val);
+            }
+
             c.setPropertyAlias(property);
         });
     }
@@ -39,7 +49,11 @@ public class SQLColumnSetValueImpl implements SQLColumnSetExpression {
     @Override
     public void accept(AsSelector s) {
         s.sqlNativeSegment("{0}",c->{
-            c.value(val);
+            if(val instanceof  PropTypeColumn){
+                PropTypeColumn.sqlNativeSelectColumn(c,(PropTypeColumn<?>) val);
+            }else{
+                c.value(val);
+            }
             c.setPropertyAlias(property);
         });
     }

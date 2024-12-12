@@ -17,6 +17,7 @@ import com.easy.query.core.expression.segment.scec.expression.SQLSegmentParamExp
 import com.easy.query.core.expression.segment.scec.expression.SubQueryParamExpressionImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.ArrayList;
@@ -111,6 +112,12 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
     @Override
     public void sql(SQLSegment sqlSegment) {
         SQLSegmentParamExpressionImpl sqlSegmentParamExpression = new SQLSegmentParamExpressionImpl(sqlSegment);
+        this.expressions.add(sqlSegmentParamExpression);
+    }
+
+    @Override
+    public void sqlFunction(SQLFunction sqlFunction) {
+        SQLSegmentParamExpressionImpl sqlSegmentParamExpression = new SQLSegmentParamExpressionImpl(sqlFunction, expressionContext, defaultTable, runtimeContext, null);
         this.expressions.add(sqlSegmentParamExpression);
     }
 

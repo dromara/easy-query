@@ -34,9 +34,11 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicFile;
+import com.easy.query.test.entity.TopicIdObject;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.SysUserProxy;
+import com.easy.query.test.entity.proxy.TopicIdObjectProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
@@ -79,6 +81,24 @@ import java.util.function.BiFunction;
  * @author xuejiaming
  */
 public class QueryTest18 extends BaseTest {
+
+    @Test
+    public void test1_0() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<TopicIdObject> list = easyEntityQuery.queryable(Topic.class)
+                .where(t -> t.id().isNull())
+                .select(t -> {
+                    TopicIdObjectProxy r = new TopicIdObjectProxy();
+                    r.id().set(t.id().nullOrDefault("1"));
+                    return r;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT IFNULL(t.`id`,?) AS `id` FROM `t_topic` t WHERE t.`id` IS NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 
     @Test
     public void test1() {

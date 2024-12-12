@@ -6,6 +6,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.text.MessageFormat;
@@ -26,6 +27,7 @@ public interface SQLNativeExpressionContext extends SQLNativeExpression {
     <TEntity> void expression(Query<TEntity> subQuery);
     void value(Object val);
     void sql(SQLSegment sqlSegment);
+    void sqlFunction(SQLFunction sqlFunction);
     <T> void collection(Collection<T> values);
 
     void format(Object formatVal);
