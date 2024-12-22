@@ -331,6 +331,13 @@ public class RelationTest extends BaseTest {
             {
                 List<String> list = easyEntityQuery.queryable(SchoolClass.class)
                         .toList(x -> x.schoolTeachers().flatElement().name());
+
+
+                for (String s : list) {
+                    System.out.println(s);
+                }
+                Assert.assertEquals("老师1",list.get(0));
+                Assert.assertEquals("老师2",list.get(1));
             }
             {
                 System.out.println("4");

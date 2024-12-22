@@ -63,7 +63,9 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
             replyExpressions.add(currentNavigateMetadata.getGetter());
         }
         if (this.resultBasicType) {
-            columnMetadata = currentEntityMetadata.getColumnNotNull(tProxy.getValue());
+            String value = tProxy.getValue();
+            columnMetadata = currentEntityMetadata.getColumnNotNull(value);
+            replyExpressions.add(columnMetadata.getGetterCaller());
         } else {
             columnMetadata = null;
         }
@@ -107,9 +109,12 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
      * @return
      */
     private Object getEndValue(Object entity, boolean hasNext) {
-        if (!hasNext && this.resultBasicType) {
-            return columnMetadata.getGetterCaller().apply(entity);
-        }
+//        if (!hasNext) {
+////            if(this.resultBasicType){
+////            }
+////            return columnMetadata.getGetterCaller().apply(entity);
+//            return entity;
+//        }
         return entity;
     }
 
