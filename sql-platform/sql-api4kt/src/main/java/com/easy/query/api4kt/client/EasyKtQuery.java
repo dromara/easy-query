@@ -14,6 +14,7 @@ import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
+import kotlin.Deprecated;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.Map;
  * @Description: 文件说明
  * @Date: 2023/2/5 21:27
  */
+@Deprecated(message = "will remove this client api")
 public interface EasyKtQuery {
     EasyQueryClient getEasyQueryClient();
 
@@ -119,6 +121,7 @@ public interface EasyKtQuery {
     default MapClientInsertable<Map<String, Object>> mapInsertable(Collection<Map<String, Object>> maps) {
         return getEasyQueryClient().mapInsertable(maps);
     }
+
     default MapClientUpdatable<Map<String, Object>> mapUpdatable(Map<String, Object> map) {
         return getEasyQueryClient().mapUpdatable(map);
     }
