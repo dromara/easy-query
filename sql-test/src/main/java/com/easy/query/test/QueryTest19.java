@@ -241,4 +241,7 @@ public class QueryTest19 extends BaseTest {
                 }).toList();
     }
 
+    public void testUnion(){}
+
+
 }

@@ -30,10 +30,6 @@ public class GroupKeys {
         return o -> new Grouping1Proxy<>(key1Proxy, o);
     }
 
-//    public static <TKey1Proxy extends PropTypeColumn<TKey1>, TKey1, TGroupTable> SQLFuncExpression1<T1Proxy, Grouping1Proxy<TKey1Proxy, TKey1, T1Proxy>> of(TKey1Proxy key1Proxy) {
-//        return o -> new Grouping1Proxy<>(key1Proxy, o);
-//    }
-
     public static <TKey1Proxy extends PropTypeColumn<TKey1>, TKey1, TKey2Proxy extends PropTypeColumn<TKey2>, TKey2, TGroupTable> SQLFuncExpression1<TGroupTable, Grouping2Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TGroupTable>> of(TKey1Proxy key1Proxy, TKey2Proxy key2Proxy) {
         return o -> new Grouping2Proxy<>(key1Proxy, key2Proxy, o);
     }
@@ -93,52 +89,62 @@ public class GroupKeys {
 
     /**
      * 如果您的表达式只有一张表请用这个聚合
+     * 请使用GroupKeys.of(....)
      */
     @Deprecated
     public static Group1Keys TABLE1 = new Group1Keys();
 
     /**
      * 如果您的表达式只有二张表请用这个聚合
+     * 请使用GroupKeys.of(....)
      */
     @Deprecated
     public static Group2Keys TABLE2 = new Group2Keys();
 
     /**
      * 如果您的表达式只有三张表请用这个聚合
+     * 请使用GroupKeys.of(....)
      */
     @Deprecated
     public static Group3Keys TABLE3 = new Group3Keys();
     /**
      * 如果您的表达式只有四张表请用这个聚合
+     * 请使用GroupKeys.of(....)
      */
     @Deprecated
     public static Group4Keys TABLE4 = new Group4Keys();
     /**
      * 如果您的表达式只有五张表请用这个聚合
+     * 请使用GroupKeys.of(....)
      */
     public static Group5Keys TABLE5 = new Group5Keys();
     /**
      * 如果您的表达式只有六张表请用这个聚合
+     * 请使用GroupKeys.of(....)
      */
     @Deprecated
     public static Group6Keys TABLE6 = new Group6Keys();
     /**
      * 如果您的表达式只有七张表请用这个聚合
+     * 请使用GroupKeys.of(....)
      */
     @Deprecated
     public static Group7Keys TABLE7 = new Group7Keys();
     /**
      * 如果您的表达式只有八张表请用这个聚合
+     * 请使用GroupKeys.of(....)
      */
     @Deprecated
     public static Group8Keys TABLE8 = new Group8Keys();
     /**
      * 如果您的表达式只有九张表请用这个聚合
+     * 请使用GroupKeys.of(....)
      */
     @Deprecated
     public static Group9Keys TABLE9 = new Group9Keys();
     /**
      * 如果您的表达式只有十张表请用这个聚合
+     * 请使用GroupKeys.of(....)
      */
     @Deprecated
     public static Group10Keys TABLE10 = new Group10Keys();
