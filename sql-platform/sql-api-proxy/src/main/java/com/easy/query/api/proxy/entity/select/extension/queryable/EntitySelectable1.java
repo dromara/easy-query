@@ -68,6 +68,10 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *          .select(t -> t.FETCHER.id().stars())
      *          //返回自身仅查询两列并且支持后续继续where或者join之类的操作
      *          .select(t -> t.FETCHER.id().stars().fetchProxy()).where(......)
+     *          //不需要后续where等操作可以不加.fetchProxy()
+     *          .select(t -> t.FETCHER.id().stars())
+     *          //返回基本类型
+     *          .select(t->t.id())
      *                 }
      * </pre></blockquote>
      *

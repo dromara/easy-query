@@ -2,6 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.LocalDateTimeProxy;
 import com.easy.query.api.proxy.base.StringProxy;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.core.draft.Draft2;
@@ -14,6 +15,7 @@ import com.easy.query.test.entity.MyCategoryVO;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.proxy.MyCategoryProxy;
 import com.easy.query.test.entity.proxy.MyCategoryVOProxy;
 import com.easy.query.test.entity.relation.MyRelationUser;
 import com.easy.query.test.entity.relation.MyRelationUserDTO;
@@ -241,7 +243,17 @@ public class QueryTest19 extends BaseTest {
                 }).toList();
     }
 
-    public void testUnion(){}
+//    @Test
+//    public void testCteUnion(){
+//        EntityQueryable<MyCategoryProxy, MyCategory> sql = easyEntityQuery.queryable(MyCategory.class)
+//                .where(m -> {
+//                    m.id().eq("123");
+//                })
+//                .asTreeCTE();
+//        List<MyCategory> list = sql.cloneQueryable().union(sql.cloneQueryable())
+//                .toList();
+//
+//    }
 
 
 }
