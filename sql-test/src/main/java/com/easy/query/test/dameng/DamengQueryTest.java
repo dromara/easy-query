@@ -120,7 +120,7 @@ public class DamengQueryTest extends DamengBaseTest{
     @Test
     public void testJoin1(){
         List<Draft2<String, String>> list = entityQuery.queryable(DamengMyTopic.class)
-                .groupBy(o -> GroupKeys.TABLE1.of(o.title()))
+                .groupBy(o -> GroupKeys.of(o.title()))
                 .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.groupTable().id().join(",")

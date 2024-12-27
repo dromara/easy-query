@@ -42,7 +42,7 @@ public class QueryTest13 extends BaseTest {
                 .where(b -> {
                     b.star().gt(1);
                 })
-                .groupBy(b -> GroupKeys.TABLE1.of(b.id()))
+                .groupBy(b -> GroupKeys.of(b.id()))
                 .select(group -> {
                     MapTypeProxy r = new MapTypeProxy();
                     r.put(blogId, group.key1());
@@ -73,7 +73,7 @@ public class QueryTest13 extends BaseTest {
                 .where(b -> {
                     b.star().gt(1);
                 })
-                .groupBy(b -> GroupKeys.TABLE1.of(b.id()))
+                .groupBy(b -> GroupKeys.of(b.id()))
                 .select(group -> new MapTypeProxy().put(blogId, group.key1()).put(blogCount, group.intCount()));
 
 //        easyEntityQuery.getRuntimeContext().getEntityMetadataManager().getEntityMetadata()

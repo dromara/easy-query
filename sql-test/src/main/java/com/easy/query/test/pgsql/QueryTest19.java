@@ -43,7 +43,7 @@ public class QueryTest19 extends PgSQLBaseTest {
                 })
                 .asTreeCTE()
                 .leftJoin(BlogEntity.class, (m, b2) -> m.id().eq(b2.id()))
-                .groupBy((m1, b2) -> GroupKeys.TABLE2.of(m1.name()))
+                .groupBy((m1, b2) -> GroupKeys.of(m1.name()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
                         group.groupTable().t2.star().sum()
@@ -153,7 +153,7 @@ public class QueryTest19 extends PgSQLBaseTest {
 //                                            })
 //                                            .asTreeCTE()
 //                                            .leftJoin(BlogEntity.class, (m, b2) -> m.id().eq(b2.id()))
-//                                            .groupBy((m1, b2) -> GroupKeys.TABLE2.of(m1.name()))
+//                                            .groupBy((m1, b2) -> GroupKeys.of(m1.name()))
 //                                            .select(group -> Select.DRAFT.of(
 //                                                    group.key1(),
 //                                                    group.groupTable().t2.star().sum()

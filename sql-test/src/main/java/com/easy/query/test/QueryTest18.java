@@ -582,7 +582,7 @@ public class QueryTest18 extends BaseTest {
 //        List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class)
 //                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
 //                .where((t1, b2) -> t1.id().eq("123"))
-//                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(
+//                .groupBy((t1, b2) -> GroupKeys.of(
 //                        t1.id(), b2.content()
 //                ))
 //                .select(group -> Select.DRAFT.of(
@@ -1073,7 +1073,7 @@ public class QueryTest18 extends BaseTest {
 //
 //        List<Draft2<String, Long>> list1 = easyEntityQuery.queryable(BlogEntity.class)
 //                .where(b -> b.createTime().le(LocalDateTime.now()))
-//                .groupBy(b -> GroupKeys.TABLE1.of(
+//                .groupBy(b -> GroupKeys.of(
 //                        b.createTime().nullOrDefault(LocalDateTime.now()).format("yyyy-MM-dd")
 //                )).select(group -> Select.DRAFT.of(
 //                        group.key1(),
@@ -1083,7 +1083,7 @@ public class QueryTest18 extends BaseTest {
 //
 //        List<Draft2<String, Long>> list2 = easyEntityQuery.queryable(BlogEntity.class)
 //                .where(b -> b.createTime().le(LocalDateTime.now()))
-//                .groupBy(b -> GroupKeys.TABLE1.of(
+//                .groupBy(b -> GroupKeys.of(
 //                        b.createTime().nullOrDefault(LocalDateTime.now()).format("yyyy-MM-dd")
 //                )).select(group -> Select.DRAFT.of(
 //                        group.groupTable().createTime().nullOrDefault(LocalDateTime.now()).format("yyyy-MM-dd"),
@@ -1115,7 +1115,7 @@ public class QueryTest18 extends BaseTest {
         List<MyVO> list = easyEntityQuery.queryable(BlogEntity.class)
                 .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
                 .where((b1, t2) -> b1.star().eq(1))
-                .groupBy((b1, t2) -> GroupKeys.TABLE2.of(b1.title(), b1.content()))
+                .groupBy((b1, t2) -> GroupKeys.of(b1.title(), b1.content()))
                 .select(group -> {
                     MyVOProxy r = new MyVOProxy();
                     r.title().set(group.key1());
@@ -1127,7 +1127,7 @@ public class QueryTest18 extends BaseTest {
 //        List<VO> list = easyEntityQuery.queryable(BlogEntity.class)
 //                .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
 //                .where((b1, t2) -> b1.star().eq(1))
-//                .groupBy((b1, t2) -> GroupKeys.TABLE2.of(b1.title(), b1.content()))
+//                .groupBy((b1, t2) -> GroupKeys.of(b1.title(), b1.content()))
 //                .select(VO.class, group -> Select.of(
 //                        group.key1().as(VO::getTitle),
 //                        group.key2().as(VO::getContent),
@@ -1323,21 +1323,22 @@ public class QueryTest18 extends BaseTest {
 
         List<Draft2<String, Number>> monthWithScore = easyEntityQuery.queryable(BlogEntity.class)
                 .leftJoin(BlogEntity.class, (b, b2) -> b.createTime().lt(b2.createTime()))
-                .groupBy((b1, b2) -> GroupKeys.TABLE2.of(b1.createTime().format("yyyyMMdd")))
+                .groupBy((b1, b2) -> GroupKeys.of(b1.createTime().format("yyyyMMdd")))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
                         group.groupTable().t2.score().sum()
                 )).toList();
+ 
     }
 
     @Test
     public void Sum1() {
         var monthQuery = easyEntityQuery.queryable(BlogEntity.class)
-                .groupBy(b -> GroupKeys.TABLE1.of(b.createTime().format("yyyyMM").toNumber(Integer.class)))
+                .groupBy(b -> GroupKeys.of(b.createTime().format("yyyyMM").toNumber(Integer.class)))
                 .select(group -> Select.DRAFT.of(group.key1(), group.groupTable().score().sumBigDecimal()));
         List<Draft2<Integer, Number>> list = monthQuery.cloneQueryable()
                 .leftJoin(monthQuery.cloneQueryable(), (b, b2) -> b.value1().lt(b2.value1()))
-                .groupBy((b1, b2) -> GroupKeys.TABLE2.of(b1.value1()))
+                .groupBy((b1, b2) -> GroupKeys.of(b1.value1()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
                         group.groupTable().t2.value2().sum()
@@ -1626,7 +1627,7 @@ public class QueryTest18 extends BaseTest {
                     .where(b -> {
                         b.star().eq(123);
                     }).toList();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1637,7 +1638,8 @@ public class QueryTest18 extends BaseTest {
     }
 
     public static class ClickHouseTableFinal implements BiFunction<String, String, String> {
-        public static final ClickHouseTableFinal DEFAULT=new ClickHouseTableFinal();
+        public static final ClickHouseTableFinal DEFAULT = new ClickHouseTableFinal();
+
         @Override
         public String apply(String table, String alias) {
             if (alias == null) {

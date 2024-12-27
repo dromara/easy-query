@@ -241,7 +241,7 @@ public class QueryTest12 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         EntityQueryable<Draft2Proxy<String, String>, Draft2<String, String>> draft2ProxyDraft2EntityQueryable = easyEntityQuery.queryable(BlogEntity.class)
-                .groupBy(o -> GroupKeys.TABLE1.of(o.content().subString(0, 8)))
+                .groupBy(o -> GroupKeys.of(o.content().subString(0, 8)))
                 .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.groupTable().id().join(",")
@@ -645,7 +645,7 @@ public class QueryTest12 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-                .groupBy(b -> GroupKeys.TABLE1.of(b.id()))
+                .groupBy(b -> GroupKeys.of(b.id()))
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                     PropTypeColumn<Integer> integerPropTypeColumn = b.expression().sqlType("case {0} when {1} then 1 else 0 end",
@@ -668,7 +668,7 @@ public class QueryTest12 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-                .groupBy(b -> GroupKeys.TABLE1.of(b.id()))
+                .groupBy(b -> GroupKeys.of(b.id()))
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                     blogEntityProxy.score().set(b.min(b.expression().sqlType("case {0} when {1} then 1 else 0 end",
@@ -897,7 +897,7 @@ public class QueryTest12 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-                .groupBy(b -> GroupKeys.TABLE1.of(b.id()))
+                .groupBy(b -> GroupKeys.of(b.id()))
                 .select(b -> {
                     Expression expression = b.expression();
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();

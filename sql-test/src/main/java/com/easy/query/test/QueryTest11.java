@@ -80,7 +80,7 @@ public class QueryTest11 extends BaseTest {
         easyEntityQuery.queryable(Topic.class)
                 .innerJoin(BlogEntity.class, (t1, t2) -> t1.id().eq(t2.id()))
                 .where((t1, t2) -> t2.title().isNotNull())
-                .groupBy((t1, t2) -> GroupKeys.TABLE2.of(t2.id()))
+                .groupBy((t1, t2) -> GroupKeys.of(t2.id()))
                 .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(g.key1());
                     r.score().set(g.sum(g.groupTable().t2.score()));
@@ -661,7 +661,7 @@ public class QueryTest11 extends BaseTest {
         List<Draft3<Integer, Integer, Integer>> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> o.createTime().gt(Expression.of(o).now().plusMonths(-3)))
                 .groupBy(o -> {
-                    return GroupKeys.TABLE1.of(o.createTime().year(), o.createTime().month());
+                    return GroupKeys.of(o.createTime().year(), o.createTime().month());
                 })
                 .orderBy(o -> {
                     o.key1().asc();
@@ -831,7 +831,7 @@ public class QueryTest11 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<Draft2<String, Long>> list = easyEntityQuery
                 .queryable(Topic.class)
-                .groupBy(t -> GroupKeys.TABLE1.of(t.id()))
+                .groupBy(t -> GroupKeys.of(t.id()))
                 .select(t -> Select.DRAFT.of(
                         t.key1(),
                         t.count()

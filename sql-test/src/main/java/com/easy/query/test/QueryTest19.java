@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.LocalDateTimeProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
@@ -8,9 +9,12 @@ import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.MyCategory;
+import com.easy.query.test.entity.MyCategoryVO;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.proxy.MyCategoryVOProxy;
 import com.easy.query.test.entity.relation.MyRelationUser;
 import com.easy.query.test.entity.relation.MyRelationUserDTO;
 import com.easy.query.test.entity.relation.MyRelationUserDTO1;
@@ -19,6 +23,7 @@ import com.easy.query.test.vo.MyUnion;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -27,10 +32,10 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class QueryTest19 extends BaseTest{
+public class QueryTest19 extends BaseTest {
 
     @org.junit.Test
-    public void testDoc99(){
+    public void testDoc99() {
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
 
@@ -39,10 +44,10 @@ public class QueryTest19 extends BaseTest{
             List<MyRelationUserDTO> users = easyEntityQuery.queryable(MyRelationUser.class)
                     .selectAutoInclude(MyRelationUserDTO.class)
                     .toList();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
-        Assert.assertEquals(2,listenerContext.getJdbcExecuteAfterArgs().size());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
             Assert.assertEquals("SELECT t.`id`,t.`name` FROM `t_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -57,8 +62,9 @@ public class QueryTest19 extends BaseTest{
         }
         listenerContextManager.clear();
     }
+
     @Test
-    public void testDoc100(){
+    public void testDoc100() {
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
 
@@ -67,10 +73,10 @@ public class QueryTest19 extends BaseTest{
             List<MyRelationUserDTO1> users = easyEntityQuery.queryable(MyRelationUser.class)
                     .selectAutoInclude(MyRelationUserDTO1.class)
                     .toList();
-        }catch (Exception ex){
+        } catch (Exception ex) {
         }
 
-        Assert.assertEquals(3,listenerContext.getJdbcExecuteAfterArgs().size());
+        Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
             Assert.assertEquals("SELECT t.`id`,t.`name` FROM `t_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -89,12 +95,11 @@ public class QueryTest19 extends BaseTest{
             Assert.assertEquals("2(String),12345(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
         }
-       listenerContextManager.clear();
+        listenerContextManager.clear();
     }
 
     @Test
-    public  void test1(){
-
+    public void test1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -110,7 +115,7 @@ public class QueryTest19 extends BaseTest{
                         //根据条件是否生效自动添加address表的join，比如eq("")和eq("杭州生成的表不存在address和city的区别")
                         u.address().city().eq("");
                     }).toList();
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
 
@@ -122,9 +127,9 @@ public class QueryTest19 extends BaseTest{
         Assert.assertEquals("小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
-    @Test
-    public  void test2(){
 
+    @Test
+    public void test2() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -139,7 +144,7 @@ public class QueryTest19 extends BaseTest{
                         //根据条件是否生效自动添加address表的join，比如eq("")和eq("杭州生成的表不存在address和city的区别")
                         u.address().city().eq("");
                     }).toList();
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
 
@@ -153,20 +158,20 @@ public class QueryTest19 extends BaseTest{
     }
 
     @Test
-      public void testUnion1(){
-          String sql = "SELECT '未开始'AS task_status\n" +
-                  "UNION ALL SELECT '进行中'\n" +
-                  "UNION ALL SELECT '已完成'\n" +
-                  "UNION ALL SELECT '审核中'\n" +
-                  "UNION ALL SELECT '已关闭'\n" +
-                  "UNION ALL SELECT '待修改（无需审核）'\n" +
-                  "UNION ALL SELECT '待修改（需审核）'";
+    public void testUnion1() {
+        String sql = "SELECT '未开始'AS task_status\n" +
+                "UNION ALL SELECT '进行中'\n" +
+                "UNION ALL SELECT '已完成'\n" +
+                "UNION ALL SELECT '审核中'\n" +
+                "UNION ALL SELECT '已关闭'\n" +
+                "UNION ALL SELECT '待修改（无需审核）'\n" +
+                "UNION ALL SELECT '待修改（需审核）'";
         List<BlogEntity> list = easyEntityQuery.queryable(sql, MyUnion.class)
                 .leftJoin(Topic.class, (m, t2) -> {
                     m.taskStatus().eq(t2.stars());
                     t2.id().eq("10");
-                    
-                }).groupBy((m1, t2) -> GroupKeys.TABLE2.of(m1.taskStatus()))
+
+                }).groupBy((m1, t2) -> GroupKeys.of(m1.taskStatus()))
                 .select(group -> {
                     BlogEntityProxy r = new BlogEntityProxy();
                     r.id().set(group.key1());
@@ -175,6 +180,64 @@ public class QueryTest19 extends BaseTest{
                     r.title().set(group.groupTable().t2.stars().count().toStr());//sql层面的cast
                     return r;
 
+                }).toList();
+    }
+
+    @Test
+    public void testTime() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        LocalDateTime localDateTime = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    t.id().eq("1");
+                }).select(t -> new LocalDateTimeProxy(t.createTime())).singleNotNull();
+        System.out.println(localDateTime);
+        Assert.assertEquals(LocalDateTime.of(2023, 5, 25, 10, 48, 5), localDateTime);
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`create_time` FROM `t_topic` t WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testTime1() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        LocalDateTime localDateTime = easyEntityQuery.queryable(Topic.class)
+                .where(t -> {
+                    t.id().eq("1");
+                }).select(t -> new LocalDateTimeProxy(LocalDateTime.of(2023, 5, 25, 10, 48, 6))).singleNotNull();
+        System.out.println(localDateTime);
+        Assert.assertEquals(LocalDateTime.of(2023, 5, 25, 10, 48, 6), localDateTime);
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT ? FROM `t_topic` t WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2023-05-25T10:48:06(LocalDateTime),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+     public void test122(){
+        List<MyCategoryVO> list = easyEntityQuery.queryable(MyCategory.class)
+                .select( m ->{
+                    MyCategoryVOProxy r = new MyCategoryVOProxy();
+                    r.selectAll(m);
+                    r.count().set(
+                            m.children().count()
+                    );
+                    return r;
                 }).toList();
     }
 

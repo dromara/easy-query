@@ -19,6 +19,7 @@ import com.easy.query.test.listener.MyJdbcListener;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -187,5 +188,34 @@ public class UpdateTest2  extends BaseTest{
 
         }
 
+    }
+    
+    
+    @Test
+    public  void updateTest1(){
+        ArrayList<Topic> topics = new ArrayList<>();
+        {
+
+            Topic topic = new Topic();
+            topic.setId("ax1");
+            topic.setTitle("ax1");
+            topics.add(topic);
+        }
+        {
+
+            Topic topic = new Topic();
+            topic.setId("ax2");
+            topic.setTitle("ax2");
+            topics.add(topic);
+        }
+        {
+
+            Topic topic = new Topic();
+            topic.setId("ax3");
+            topic.setTitle("ax3");
+            topics.add(topic);
+        }
+        easyEntityQuery.updatable(topics)
+                .setColumns(t -> t.FETCHER.title());
     }
 }

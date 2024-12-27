@@ -295,7 +295,7 @@ public class QueryTest17 extends BaseTest {
 //                            }).any();
 //                }).select(m -> Select.DRAFT.of(m.f1(), m.f1()))
 //                .innerJoin(OtherTable.class, (a, b) -> a.value1().eq(b.type()))
-//                .groupBy((a, b) -> GroupKeys.TABLE2.of(a.value1()))
+//                .groupBy((a, b) -> GroupKeys.of(a.value1()))
 //                .select(group -> Select.DRAFT.of(
 //                        group.key1(),
 //                        group.groupTable().t1.value2().sum(),
@@ -478,7 +478,7 @@ public class QueryTest17 extends BaseTest {
                                     }).any();
                         }).select(m -> Select.DRAFT.of(m.f1(), m.f1()))
                         .innerJoin(OtherTable.class, (a, b) -> a.value1().eq(b.type()))
-                        .groupBy((a, b) -> GroupKeys.TABLE2.of(a.value1()))
+                        .groupBy((a, b) -> GroupKeys.of(a.value1()))
                         .select(group -> Select.DRAFT.of(
                                 group.key1(),
                                 group.groupTable().t1.value2().sum(),
@@ -510,7 +510,7 @@ public class QueryTest17 extends BaseTest {
 
                         }).select(m -> Select.DRAFT.of(m.f1(), m.f1()))
                         .innerJoin(OtherTable.class, (a, b) -> a.value1().eq(b.type()))
-                        .groupBy((a, b) -> GroupKeys.TABLE2.of(a.value1()))
+                        .groupBy((a, b) -> GroupKeys.of(a.value1()))
                         .select(group -> Select.DRAFT.of(
                                 group.key1(),
                                 group.groupTable().t1.value2().sum(),
@@ -824,7 +824,7 @@ public class QueryTest17 extends BaseTest {
 //                .where(b -> {
 //                    b.content().like("123");
 //                })
-//                .groupBy(b -> GroupKeys.TABLE1.of(
+//                .groupBy(b -> GroupKeys.of(
 //                        b.content(),
 //                        b.star()
 //                ))
@@ -1104,7 +1104,7 @@ public class QueryTest17 extends BaseTest {
 
 //        easyEntityQuery.queryable(BlogEntity.class)
 //                .where(b -> b.content().like("123"))
-//                .groupBy(b -> GroupKeys.TABLE1.of())
+//                .groupBy(b -> GroupKeys.of())
 
 
         List<Topic> topics = new ArrayList<>();
@@ -1112,7 +1112,7 @@ public class QueryTest17 extends BaseTest {
 
         List<Draft1<String>> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> b.content().like("123"))
-                .groupBy(b -> GroupKeys.TABLE1.of(
+                .groupBy(b -> GroupKeys.of(
                         b.createTime().nullOrDefault(LocalDateTime.now()).format("yyyy-MM-dd")
                 )).select(group -> Select.DRAFT.of(
                         group.key1()
@@ -1348,7 +1348,7 @@ public class QueryTest17 extends BaseTest {
 
             List<ProvinceVO> list1 = easyEntityQuery.queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
-                    .groupBy((t1, b2) -> GroupKeys.TABLE2.of(
+                    .groupBy((t1, b2) -> GroupKeys.of(
                             t1.id()
                     )).select(group -> {
 
@@ -1377,7 +1377,7 @@ public class QueryTest17 extends BaseTest {
 
             List<ProvinceVO> list1 = easyEntityQuery.queryable(Topic.class)
                     .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
-                    .groupBy((t1, b2) -> GroupKeys.TABLE2.of(
+                    .groupBy((t1, b2) -> GroupKeys.of(
                             t1.id()
                     )).select(group -> {
 

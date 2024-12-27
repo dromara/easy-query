@@ -2714,7 +2714,7 @@ public class RelationTest extends BaseTest {
     public void provinceVoTest() {
         EasyPageResult<MyProvinceVO> pageResult = easyEntityQuery.queryable(Province.class)
                 .leftJoin(Topic.class, (p, t2) -> p.code().eq(t2.id()))
-                .groupBy((p, a) -> GroupKeys.TABLE1.of(
+                .groupBy((p, a) -> GroupKeys.of(
                         p.code()
                 )).select(group -> {
                     var r = new MyProvinceVOProxy();

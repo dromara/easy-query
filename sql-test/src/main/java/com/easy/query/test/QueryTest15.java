@@ -267,7 +267,7 @@ public class QueryTest15 extends BaseTest {
                 .where(u -> {
                     u.id().eq("test3");
                     u.fullName().like("悟");
-                }).groupBy(u -> GroupKeys.TABLE1.of(u.age(), u.fullName()))
+                }).groupBy(u -> GroupKeys.of(u.age(), u.fullName()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
                         group.key2(),
@@ -782,7 +782,7 @@ public class QueryTest15 extends BaseTest {
                     t.createTime().format("yyyy-MM").ge(expression.now().plusMonths(-3).format("yyyy-MM"));
                     t.createTime().format("yyyy-MM").le(expression.now().plusMonths(-1).format("yyyy-MM"));
 
-                }).groupBy(t -> GroupKeys.TABLE1.of(t.createTime().format("yyyy-MM")))
+                }).groupBy(t -> GroupKeys.of(t.createTime().format("yyyy-MM")))
                 .select(group -> {
 //                    group.groupTable().stars().sum();
 //                    group.sum(group.groupTable().stars());
@@ -800,7 +800,7 @@ public class QueryTest15 extends BaseTest {
 
 //        List<TopicTypeVO> list1 = easyEntityQuery.queryable(Topic.class)
 //                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
-//                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(t1.id()))
+//                .groupBy((t1, b2) -> GroupKeys.of(t1.id()))
 //                .select(group -> {
 //                    TopicTypeVOProxy r = new TopicTypeVOProxy();
 //                    r.id().set(group.key1());
@@ -814,7 +814,7 @@ public class QueryTest15 extends BaseTest {
 //
 //        List<TopicTypeVO> list2 = easyEntityQuery.queryable(Topic.class)
 //                .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
-//                .groupBy((t1, b2) -> GroupKeys.TABLE2.of(t1.id()))
+//                .groupBy((t1, b2) -> GroupKeys.of(t1.id()))
 //                .select(group ->new TopicTypeVOProxy(){{
 //                    id().set(group.key1());
 //                    createTime().set(group.groupTable().t1.createTime().max());

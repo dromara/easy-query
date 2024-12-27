@@ -257,7 +257,7 @@ public class QueryTest16 extends BaseTest {
 //
 //        List<Draft2<CertStatusEnum, Long>> list = easyEntityQuery.queryable(Certificate.class)
 //                .where(c -> c.status().eq(CertStatusEnum.NORMAL))
-//                .groupBy(c -> GroupKeys.TABLE1.of(c.status()))
+//                .groupBy(c -> GroupKeys.of(c.status()))
 //                .select(group -> Select.DRAFT.of(
 //                        group.key1(),
 //                        group.count()
@@ -589,7 +589,7 @@ public class QueryTest16 extends BaseTest {
 //                            user.name().like("小明");
 //                            user.company().name().like("JAVA企业");
 //                        })
-//                        .groupBy(user -> GroupKeys.TABLE1.of(user.name()))
+//                        .groupBy(user -> GroupKeys.of(user.name()))
 //                        .select(group -> Select.DRAFT.of(
 //                                group.key1(),//user.name
 //                                group.sum(group.groupTable().age())//sum(user.age)

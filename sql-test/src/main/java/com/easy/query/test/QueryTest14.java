@@ -757,7 +757,7 @@ public class QueryTest14 extends BaseTest {
 
                     List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
                             .where(b -> b.id().eq("123"))
-                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .groupBy(b -> GroupKeys.of(b.title()))
                             .select(group -> {
                                 BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                                 blogEntityProxy.title().set(group.key1());
@@ -783,7 +783,7 @@ public class QueryTest14 extends BaseTest {
 
                     List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
                             .where(b -> b.id().eq("123"))
-                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .groupBy(b -> GroupKeys.of(b.title()))
                             .select(group -> {
                                 BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                                 blogEntityProxy.title().set(group.key1());
@@ -809,7 +809,7 @@ public class QueryTest14 extends BaseTest {
 
                 List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
                         .where(b -> b.id().eq("123"))
-                        .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                        .groupBy(b -> GroupKeys.of(b.title()))
                         .select(group -> {
                             BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                             blogEntityProxy.title().set(group.key1());
@@ -835,7 +835,7 @@ public class QueryTest14 extends BaseTest {
                 List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
                         .where(b -> b.id().eq("123"))
                         .orderBy(b -> b.star().asc())
-                        .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                        .groupBy(b -> GroupKeys.of(b.title()))
                         .select(group -> {
                             BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                             blogEntityProxy.title().set(group.key1());
@@ -1070,7 +1070,7 @@ public class QueryTest14 extends BaseTest {
 
                     List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
                             .where(b -> b.id().eq("123"))
-                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .groupBy(b -> GroupKeys.of(b.title()))
                             .select(group -> {
                                 BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                                 blogEntityProxy.title().set(group.key1());
@@ -1096,7 +1096,7 @@ public class QueryTest14 extends BaseTest {
 
                     List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
                             .where(b -> b.id().eq("123"))
-                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .groupBy(b -> GroupKeys.of(b.title()))
                             .select(group -> {
                                 BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                                 blogEntityProxy.title().set(group.key1());
@@ -1122,7 +1122,7 @@ public class QueryTest14 extends BaseTest {
 
                 List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
                         .where(b -> b.id().eq("123"))
-                        .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                        .groupBy(b -> GroupKeys.of(b.title()))
                         .select(group -> {
                             BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                             blogEntityProxy.title().set(group.key1());
@@ -1148,7 +1148,7 @@ public class QueryTest14 extends BaseTest {
                 List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
                         .where(b -> b.id().eq("123"))
                         .orderBy(b -> b.star().asc())
-                        .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                        .groupBy(b -> GroupKeys.of(b.title()))
                         .select(group -> {
                             BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                             blogEntityProxy.title().set(group.key1());
@@ -1385,7 +1385,7 @@ public class QueryTest14 extends BaseTest {
         System.out.println(sql1);
 
         List<Draft2<String, String>> list1 = easyEntityQuery.queryable(Topic.class)
-                .groupBy(t -> GroupKeys.TABLE1.of(t.title()))
+                .groupBy(t -> GroupKeys.of(t.title()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
                         group.groupTable().id().join(",")
@@ -1814,7 +1814,7 @@ public class QueryTest14 extends BaseTest {
 
                     List<BlogEntity> list = defaultEasyEntityQuery.queryable(BlogEntity.class)
                             .where(b -> b.id().eq("123"))
-                            .groupBy(b -> GroupKeys.TABLE1.of(b.title()))
+                            .groupBy(b -> GroupKeys.of(b.title()))
                             .select(group -> {
                                 BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
                                 blogEntityProxy.title().set(group.key1());

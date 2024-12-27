@@ -508,7 +508,7 @@ public class QueryTest9 extends BaseTest {
                     o.title().eq("title" );
                     o.id().eq("1" );
                 })
-                .groupBy(o -> GroupKeys.TABLE1.of(o.title()))
+                .groupBy(o -> GroupKeys.of(o.title()))
                 .select(o -> new TopicProxy().adapter(r -> {
 
                     r.title().set(o.key1());
@@ -605,7 +605,7 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
-                    .groupBy(o -> GroupKeys.TABLE1.of(o.createTime().format("yyyy/MM/dd" )))
+                    .groupBy(o -> GroupKeys.of(o.createTime().format("yyyy/MM/dd" )))
                     .select(o -> new TopicProxy().adapter(r -> {
                         r.stars().set(o.intCount(o.groupTable().id()));
                         r.title().set(o.key1());
@@ -624,7 +624,7 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
-                    .groupBy(o -> GroupKeys.TABLE1.of(o.createTime().format("yyyy/MM/dd" )))
+                    .groupBy(o -> GroupKeys.of(o.createTime().format("yyyy/MM/dd" )))
                     .select(o -> new TopicProxy().adapter(r -> {
 
                         r.stars().set(o.intCount(o.groupTable().id()));
@@ -912,7 +912,7 @@ public class QueryTest9 extends BaseTest {
 
             List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
-                    .groupBy(o -> GroupKeys.TABLE1.of(o.title()))
+                    .groupBy(o -> GroupKeys.of(o.title()))
                     .select(o -> new TopicProxy().adapter(r -> {
 
                         r.selectExpression(o.key1());
@@ -1115,7 +1115,7 @@ public class QueryTest9 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> o.id().eq("123" ))
-                    .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
+                    .groupBy(o -> GroupKeys.of(o.id()))
                     .having(o -> {
                         o.count().ne(1L);
                         o.groupTable().star().sum().ge(10);
@@ -1159,7 +1159,7 @@ public class QueryTest9 extends BaseTest {
                     o.title().nullOrDefault("unknown" ).eq(o.content());
                     o.content().isNotBank();
                 })
-                .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
+                .groupBy(o -> GroupKeys.of(o.id()))
                 .having(o -> {
                     o.count(o.groupTable().id()).ne(1L);
                     o.groupTable().star().sum().ge(10);
@@ -1191,7 +1191,7 @@ public class QueryTest9 extends BaseTest {
                     o.id().eq(sss);
                     o.title().nullOrDefault("unknown" ).in(sss);
                 })
-                .groupBy(o -> GroupKeys.TABLE1.of(o.id()))
+                .groupBy(o -> GroupKeys.of(o.id()))
                 .having(o -> {
                     o.count(o.groupTable().id()).ne(1L);
                     o.groupTable().star().sum().ge(10);
