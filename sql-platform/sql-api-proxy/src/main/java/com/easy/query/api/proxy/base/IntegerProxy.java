@@ -10,14 +10,9 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  * @author xuejiaming
  */
 public class IntegerProxy extends AbstractBasicProxyEntity<IntegerProxy, Integer> {
-    public static IntegerProxy createTable() {
-        return new IntegerProxy();
-    }
 
     private static final Class<Integer> entityClass = Integer.class;
 
-    private IntegerProxy() {
-    }
     public IntegerProxy(Integer val) {
         set(val);
     }

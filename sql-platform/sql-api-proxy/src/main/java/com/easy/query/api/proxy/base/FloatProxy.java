@@ -9,15 +9,9 @@ import com.easy.query.core.proxy.PropTypeColumn;
  * @author xuejiaming
  */
 public class FloatProxy extends AbstractBasicProxyEntity<FloatProxy, Float> {
-    public static FloatProxy createTable() {
-        return new FloatProxy();
-    }
 
     private static final Class<Float> entityClass = Float.class;
 
-
-    private FloatProxy() {
-    }
     public FloatProxy(Float val) {
         set(val);
     }

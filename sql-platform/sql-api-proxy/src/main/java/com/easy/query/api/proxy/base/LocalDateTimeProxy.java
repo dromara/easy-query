@@ -11,13 +11,8 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 public class LocalDateTimeProxy extends AbstractBasicProxyEntity<LocalDateTimeProxy, LocalDateTime> {//implements ColumnDateTimeFunctionAvailable<LocalDateTime>
-    public static LocalDateTimeProxy createTable() {
-        return new LocalDateTimeProxy();
-    }
     private static final Class<LocalDateTime> entityClass = LocalDateTime.class;
 
-    private LocalDateTimeProxy() {
-    }
     public LocalDateTimeProxy(LocalDateTime val) {
         set(val);
     }

@@ -9,13 +9,8 @@ import com.easy.query.core.proxy.PropTypeColumn;
  * @author xuejiaming
  */
 public class LongProxy extends AbstractBasicProxyEntity<LongProxy, Long> {
-    public static LongProxy createTable() {
-        return new LongProxy();
-    }
     private static final Class<Long> entityClass = Long.class;
 
-    private LongProxy() {
-    }
     public LongProxy(Long val) {
         set(val);
     }

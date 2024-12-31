@@ -9,14 +9,8 @@ import com.easy.query.core.proxy.PropTypeColumn;
  * @author xuejiaming
  */
 public class BooleanProxy extends AbstractBasicProxyEntity<BooleanProxy, Boolean> {
-    public static BooleanProxy createTable() {
-        return new BooleanProxy();
-    }
     private static final Class<Boolean> entityClass = Boolean.class;
 
-
-    private BooleanProxy() {
-    }
     public BooleanProxy(Boolean val) {
         set(val);
     }

@@ -11,13 +11,8 @@ import java.time.LocalTime;
  * @author xuejiaming
  */
 public class LocalTimeProxy extends AbstractBasicProxyEntity<LocalTimeProxy, LocalTime> {
-    public static LocalTimeProxy createTable() {
-        return new LocalTimeProxy();
-    }
     private static final Class<LocalTime> entityClass = LocalTime.class;
 
-    private LocalTimeProxy() {
-    }
     public LocalTimeProxy(LocalTime val) {
         set(val);
     }

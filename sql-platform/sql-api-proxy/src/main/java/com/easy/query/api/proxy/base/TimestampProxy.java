@@ -13,13 +13,8 @@ import java.sql.Timestamp;
  * @author xuejiaming
  */
 public class TimestampProxy extends AbstractBasicProxyEntity<TimestampProxy, Timestamp> {
-    public static TimestampProxy createTable() {
-        return new TimestampProxy();
-    }
     private static final Class<Timestamp> entityClass = Timestamp.class;
 
-    private TimestampProxy() {
-    }
     public TimestampProxy(Timestamp val) {
         set(val);
     }

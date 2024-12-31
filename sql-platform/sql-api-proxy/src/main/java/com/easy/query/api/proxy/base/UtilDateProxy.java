@@ -13,15 +13,9 @@ import java.util.Date;
  * @author xuejiaming
  */
 public class UtilDateProxy extends AbstractBasicProxyEntity<UtilDateProxy, Date> {
-    public static UtilDateProxy createTable() {
-        return new UtilDateProxy();
-    }
 
     private static final Class<java.util.Date> entityClass = java.util.Date.class;
 
-
-    private UtilDateProxy() {
-    }
     public UtilDateProxy(Date val) {
         set(val);
     }

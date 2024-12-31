@@ -114,6 +114,44 @@ public class VersionTest extends BaseTest {
                 .toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ?,`version` = ? WHERE `version` = ? AND `id` = ?", s2);
     }
+    @Test
+    public void test3_1() {
+        String s2 = easyQuery.updatable(SysUserVersionLong.class)
+                .set(SysUserVersionLong::getPhone, "123")
+                .withVersion(true,1L)
+                .ignoreVersion(false)
+                .where(o -> o.eq(SysUserVersionLong::getId, "id"))
+                .toSQL();
+        Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ?,`version` = ? WHERE `version` = ? AND `id` = ?", s2);
+    }
+    @Test
+    public void test3_2() {
+        String s2 = easyQuery.updatable(SysUserVersionLong.class)
+                .set(SysUserVersionLong::getPhone, "123")
+                .withVersion(false,1L)
+                .ignoreVersion(true)
+                .where(o -> o.eq(SysUserVersionLong::getId, "id"))
+                .toSQL();
+        Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ? WHERE `id` = ?", s2);
+    }
+    @Test
+    public void test3_3() {
+        Exception ex=null;
+        try {
+
+            String s2 = easyQuery.updatable(SysUserVersionLong.class)
+                    .set(SysUserVersionLong::getPhone, "123")
+                    .withVersion(false,1L)
+                    .ignoreVersion(false)
+                    .where(o -> o.eq(SysUserVersionLong::getId, "id"))
+                    .toSQL();
+        }catch (Exception e){
+            ex=e;
+        }
+        Assert.assertNotNull(ex);
+        Assert.assertTrue(ex instanceof  EasyQueryInvalidOperationException);
+        Assert.assertEquals("entity:SysUserVersionLong has version expression not found version", ex.getMessage());
+    }
 
     @Test
     public void test4() {

@@ -11,14 +11,7 @@ import java.math.BigDecimal;
  * @author xuejiaming
  */
 public class BigDecimalProxy extends AbstractBasicProxyEntity<BigDecimalProxy, BigDecimal> {
-    public static BigDecimalProxy createTable() {
-        return new BigDecimalProxy();
-    }
     private static final Class<BigDecimal> entityClass = BigDecimal.class;
-
-
-    private BigDecimalProxy() {
-    }
 
     public BigDecimalProxy(BigDecimal val) {
         set(val);

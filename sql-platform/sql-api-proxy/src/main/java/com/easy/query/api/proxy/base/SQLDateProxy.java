@@ -12,13 +12,8 @@ import java.sql.Date;
  */
 public class SQLDateProxy extends AbstractBasicProxyEntity<SQLDateProxy, Date> {
 
-    public static SQLDateProxy createTable() {
-        return new SQLDateProxy();
-    }
     private static final Class<java.sql.Date> entityClass = java.sql.Date.class;
 
-    private SQLDateProxy() {
-    }
     public SQLDateProxy(Date val) {
         set(val);
     }

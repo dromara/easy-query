@@ -23,10 +23,6 @@ public class MapTypeProxy extends AbstractProxyEntity<MapTypeProxy, Map<String,O
 
     private static final Class<Map<String,Object>> entityClass = EasyObjectUtil.typeCastNullable(Map.class);
 
-    public static MapTypeProxy createTable() {
-        return new MapTypeProxy();
-    }
-
     public MapTypeProxy() {
     }
 

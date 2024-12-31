@@ -12,13 +12,8 @@ import java.time.LocalDate;
  * @author xuejiaming
  */
 public class LocalDateProxy extends AbstractBasicProxyEntity<LocalDateProxy, LocalDate> {
-    public static LocalDateProxy createTable() {
-        return new LocalDateProxy();
-    }
     private static final Class<LocalDate> entityClass = LocalDate.class;
 
-    private LocalDateProxy() {
-    }
     public LocalDateProxy(LocalDate val) {
         set(val);
     }

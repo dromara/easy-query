@@ -9,14 +9,8 @@ import com.easy.query.core.proxy.PropTypeColumn;
  * @author xuejiaming
  */
 public class ByteArrayProxy extends AbstractBasicProxyEntity<ByteArrayProxy, Byte[]> {
-    public static ByteArrayProxy createTable() {
-        return new ByteArrayProxy();
-    }
     private static final Class<Byte[]> entityClass = Byte[].class;
 
-
-    private ByteArrayProxy() {
-    }
     public ByteArrayProxy(Byte[] val) {
         set(val);
     }

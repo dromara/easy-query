@@ -12,13 +12,7 @@ import java.sql.Time;
  * @author xuejiaming
  */
 public class TimeProxy extends AbstractBasicProxyEntity<TimeProxy, Time> {
-    public static TimeProxy createTable() {
-        return new TimeProxy();
-    }
     private static final Class<Time> entityClass = Time.class;
-
-    private TimeProxy() {
-    }
 
     public TimeProxy(Time val) {
         set(val);

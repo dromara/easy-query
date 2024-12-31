@@ -754,7 +754,7 @@ public class QueryTest3 extends BaseTest {
         List<Map<String, Object>> list = easyProxyQuery
                 .queryable(TopicProxy.createTable())
                 .select(o -> {
-                    MapProxy table = MapProxy.createTable();
+                    MapProxy table = new MapProxy();
                     table.selectExpression(o.id(),o.title());
                     return table;
                 })

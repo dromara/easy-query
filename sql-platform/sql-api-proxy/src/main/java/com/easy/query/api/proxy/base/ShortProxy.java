@@ -10,13 +10,8 @@ import com.easy.query.core.proxy.SQLColumn;
  * @author xuejiaming
  */
 public class ShortProxy extends AbstractBasicProxyEntity<ShortProxy, Short> {
-    public static ShortProxy createTable() {
-        return new ShortProxy();
-    }
     private static final Class<Short> entityClass = Short.class;
 
-    private ShortProxy() {
-    }
     public ShortProxy(Short val) {
         set(val);
     }

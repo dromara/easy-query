@@ -9,14 +9,8 @@ import com.easy.query.core.proxy.PropTypeColumn;
  * @author xuejiaming
  */
 public class DoubleProxy extends AbstractBasicProxyEntity<DoubleProxy, Double> {
-    public static DoubleProxy createTable() {
-        return new DoubleProxy();
-    }
     private static final Class<Double> entityClass = Double.class;
 
-
-    private DoubleProxy() {
-    }
     public DoubleProxy(Double val) {
         set(val);
     }

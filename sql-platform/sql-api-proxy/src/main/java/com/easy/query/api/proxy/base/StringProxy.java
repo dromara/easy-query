@@ -12,13 +12,7 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  */
 public class StringProxy extends AbstractBasicProxyEntity<StringProxy, String> {
 
-    public static StringProxy createTable() {
-        return new StringProxy();
-    }
     private static final Class<String> entityClass = String.class;
-
-    public StringProxy() {
-    }
 
 
     public StringProxy(String val) {
