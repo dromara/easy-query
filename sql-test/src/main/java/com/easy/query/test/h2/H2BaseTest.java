@@ -15,6 +15,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
+import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.h2.domain.DefTable;
 import com.easy.query.test.h2.domain.DefTableLeft1;
 import com.easy.query.test.h2.domain.DefTableLeft2;
@@ -30,8 +31,14 @@ import com.easy.query.test.listener.MyJdbcListener;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * create time 2023/5/22 21:46
@@ -239,6 +246,38 @@ public class H2BaseTest {
             easyQueryOrder.insertable(h2Orders).executeRows();
         }
 
+
+
+        ALLTYPE alltype = new ALLTYPE();
+        alltype.setId("123xxxxxxx1qq");
+
+        alltype.setNumberDecimal(new BigDecimal("12.33"));
+        alltype.setNumberFloat(12.3f);
+        alltype.setNumberDouble(22.1d);
+        alltype.setNumberShort(new Short("12"));
+        alltype.setNumberInteger(33);
+        alltype.setNumberLong(12345678911L);
+        alltype.setNumberByte(new Byte("-1"));
+        alltype.setEnable(true);
+        alltype.setTimeLocalDateTime(LocalDateTime.of(2021, 1, 1, 0, 0));
+        alltype.setTimeLocalDate(LocalDate.of(2121, 1, 2));
+        alltype.setTimeLocalTime(LocalTime.of(21, 1, 9));
+        alltype.setOnlyDate(new Date());
+        long epochMilli = LocalDateTime.now().toLocalDate().atStartOfDay()
+                .toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+        java.sql.Date date = new java.sql.Date(epochMilli);
+        alltype.setSqlDate(date);
+        alltype.setOnlyTime(Time.valueOf("12:09:10"));
+        alltype.setValue("3322");
+        alltype.setUid(UUID.randomUUID());
+        alltype.setNumberFloatBasic(12.3f);
+        alltype.setNumberDoubleBasic(22.1d);
+        alltype.setNumberShortBasic(new Short("12"));
+        alltype.setNumberIntegerBasic(33);
+        alltype.setNumberLongBasic(12345678911L);
+        alltype.setNumberByteBasic(new Byte("-1"));
+        alltype.setEnableBasic(true);
+        long l = easyQuery.insertable(alltype).executeRows();
     }
 
 }

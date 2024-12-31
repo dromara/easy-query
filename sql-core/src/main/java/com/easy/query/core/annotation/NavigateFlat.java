@@ -24,18 +24,29 @@ public @interface NavigateFlat {
      * 无需再指定value值会自动推断如果无法推断在指定即可
      * @return
      */
+    @Deprecated
     RelationMappingTypeEnum value() default RelationMappingTypeEnum.AUTO;
-    //    /**
-//     * 一对多比如SchoolClass映射多个schoolTeachers
-//     * 那么当{@code basicMappingPropPath} 为 [schoolTeachers]且是基本类型那么会将schoolTeachers的主键进行赋值如果需要其他属性
-//     * 则使用[schoolTeachers.name]schoolTeacherNames
-//     * @return
-//     */
+
+    /**
+     * 建议使用 pathAlias
+     * @return
+     */
+    @Deprecated
     String[] mappingPath() default {};
 
     /**
-     * 如果静态对象名称等于字段名称+_PATH,比如userName那么你编写
-     * @return
+     * 使用静态属性MappingPath来制定路径,值为静态属性别名
+     *
+     * <blockquote><pre>
+     * {@code
+     *     //告诉框架获取的路径是用户下的roles下的menus下的id
+     *     private static final MappingPath MENU_IDS_PATH = SysUserProxy.TABLE.roles().flatElement().menus().flatElement().id();
+     *
+     *     @NavigateFlat(pathAlias = "MENU_IDS_PATH")
+     *     private List<String> menuIds;
+     * }
+     * </pre></blockquote>
+     * @return 静态路径名称
      */
     String pathAlias() default "";
 }

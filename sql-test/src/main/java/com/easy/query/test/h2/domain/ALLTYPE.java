@@ -3,6 +3,8 @@ package com.easy.query.test.h2.domain;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.h2.domain.proxy.ALLTYPEProxy;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -23,7 +25,7 @@ import java.util.UUID;
 @Table("t_all_type")
 @EntityProxy
 //@Accessors(chain = true)
-public class ALLTYPE {
+public class ALLTYPE implements ProxyEntityAvailable<ALLTYPE , ALLTYPEProxy> {
     @Column(primaryKey = true)
     private String id;
     private BigDecimal numberDecimal;

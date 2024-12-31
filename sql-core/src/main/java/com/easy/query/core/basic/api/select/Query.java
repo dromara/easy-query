@@ -296,7 +296,8 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * 返回所有的查询结果集
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
      *
-     * @return 获取查询结果集
+     *
+     * @return 获取查询结果集,如果查询不到结果则返回 {@code new ArrayList<>(0)}
      */
     default @NotNull List<T> toList() {
         return toList(queryClass(), queryEntityMetadata());
