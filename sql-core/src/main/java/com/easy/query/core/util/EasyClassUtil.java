@@ -134,7 +134,7 @@ public class EasyClassUtil {
                     || clazz == Double.class || clazz == Float.class || clazz == Character.class || clazz == Short.class
                     || clazz == BigDecimal.class || clazz == BigInteger.class || clazz == Boolean.class
                     || clazz == java.util.Date.class || clazz == java.sql.Date.class
-                    || clazz == java.sql.Timestamp.class || clazz == java.time.LocalDateTime.class
+                    || clazz == java.sql.Timestamp.class || clazz == java.time.LocalDateTime.class|| clazz == java.sql.Time.class
                     || clazz == java.time.LocalDate.class || clazz == java.time.LocalTime.class || clazz == java.util.UUID.class|| clazz == java.lang.Object.class);
         } else {
             return false;

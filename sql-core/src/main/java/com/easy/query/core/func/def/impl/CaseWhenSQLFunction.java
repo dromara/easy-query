@@ -15,6 +15,7 @@ import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.impl.ColumSQLExpressionImpl;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,20 +51,20 @@ public class CaseWhenSQLFunction extends AbstractExpressionSQLFunction {
             SQLExpression1<Filter> filterExpression = when.t();
             ParamExpression paramExpression = when.t1();
             AndPredicateSegment resolve = resolve(runtimeContext, expressionContext, filterExpression);
-            ColumSQLExpressionImpl columSQLExpressionPredicate = new ColumSQLExpressionImpl(new DefaultSQLSegment(toSQLContext -> resolve.toSQL(toSQLContext)));
+            ColumSQLExpressionImpl columSQLExpressionPredicate = new ColumSQLExpressionImpl(new DefaultSQLSegment(toSQLContext -> resolve.toSQL(toSQLContext), visitor -> EasySQLSegmentUtil.tableVisit(resolve, visitor)));
             columnExpressions.add(columSQLExpressionPredicate);
             sql.append("WHEN ");
             sql.append("{").append(i++).append("}");
 //            String caseWhenPredicateSql = resolve.toSQL(toSQLContext);
 
-            ColumSQLExpressionImpl columSQLExpressionValue = new ColumSQLExpressionImpl(new DefaultSQLSegment(toSQLContext -> EasySQLExpressionUtil.parseParamExpression(expressionContext, paramExpression, toSQLContext).toString()));
+            ColumSQLExpressionImpl columSQLExpressionValue = new ColumSQLExpressionImpl(new DefaultSQLSegment(toSQLContext -> EasySQLExpressionUtil.parseParamExpression(expressionContext, paramExpression, toSQLContext).toString(), visitor -> paramExpression.accept(visitor)));
             columnExpressions.add(columSQLExpressionValue);
             sql.append(" THEN ");
             sql.append("{").append(i++).append("}").append(" ");
 //            sql.append("WHEN ").append(caseWhenPredicateSql).append(" THEN ").append(thenValue).append(" ");
         }
 
-        ColumSQLExpressionImpl columSQLExpressionElseValue = new ColumSQLExpressionImpl(new DefaultSQLSegment(toSQLContext -> EasySQLExpressionUtil.parseParamExpression(expressionContext, this.elseValue, toSQLContext).toString()));
+        ColumSQLExpressionImpl columSQLExpressionElseValue = new ColumSQLExpressionImpl(new DefaultSQLSegment(toSQLContext -> EasySQLExpressionUtil.parseParamExpression(expressionContext, this.elseValue, toSQLContext).toString(), visitor -> this.elseValue.accept(visitor)));
         columnExpressions.add(columSQLExpressionElseValue);
         sql.append("ELSE ").append("{").append(i++).append("}").append(" END)");
     }

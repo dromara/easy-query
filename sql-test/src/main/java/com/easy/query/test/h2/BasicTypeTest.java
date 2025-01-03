@@ -1,6 +1,7 @@
 package com.easy.query.test.h2;
 
 import com.easy.query.api.proxy.base.BooleanProxy;
+import com.easy.query.api.proxy.base.ByteProxy;
 import com.easy.query.api.proxy.base.DoubleProxy;
 import com.easy.query.api.proxy.base.FloatProxy;
 import com.easy.query.api.proxy.base.IntegerProxy;
@@ -9,6 +10,7 @@ import com.easy.query.api.proxy.base.LocalDateTimeProxy;
 import com.easy.query.api.proxy.base.LocalTimeProxy;
 import com.easy.query.api.proxy.base.LongProxy;
 import com.easy.query.api.proxy.base.ShortProxy;
+import com.easy.query.api.proxy.base.TimeProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.Topic;
@@ -442,6 +444,90 @@ public void localTimeTest1(){
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.time_local_time FROM t_all_type t WHERE t.id = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123xxxxxxx1qq(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void timeTest1(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Time b = easyEntityQuery.queryable(ALLTYPE.class)
+                .where(a -> a.id().eq("123xxxxxxx1qq"))
+                .select(t -> new TimeProxy(Time.valueOf("12:09:10"))).firstNotNull();
+        Assert.assertTrue(Time.valueOf("12:09:10").equals(b));
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT ? FROM t_all_type t WHERE t.id = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("12:09:10(Time),123xxxxxxx1qq(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void timeTest2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Time b = easyEntityQuery.queryable(ALLTYPE.class)
+                .where(a -> a.id().eq("123xxxxxxx1qq"))
+                .select(t -> new TimeProxy(t.onlyTime())).firstNotNull();
+        Assert.assertTrue(Time.valueOf("12:09:10").equals(b));
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.only_time FROM t_all_type t WHERE t.id = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123xxxxxxx1qq(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void byteTest1(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Byte b = easyEntityQuery.queryable(ALLTYPE.class)
+                .where(a -> a.id().eq("123xxxxxxx1qq"))
+                .select(t -> new ByteProxy(new Byte("-1"))).firstNotNull();
+        Assert.assertTrue(new Byte("-1").equals(b));
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT ? FROM t_all_type t WHERE t.id = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("-1(Byte),123xxxxxxx1qq(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void byteTest2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Byte b = easyEntityQuery.queryable(ALLTYPE.class)
+                .where(a -> a.id().eq("123xxxxxxx1qq"))
+                .select(t -> new ByteProxy(t.numberByte())).firstNotNull();
+        Assert.assertTrue(new Byte("-1").equals(b));
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.number_byte FROM t_all_type t WHERE t.id = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123xxxxxxx1qq(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void byteTest3(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Byte b = easyEntityQuery.queryable(ALLTYPE.class)
+                .where(a -> a.id().eq("123xxxxxxx1qq"))
+                .select(t -> new ByteProxy(t.numberByteBasic())).firstNotNull();
+        Assert.assertTrue(new Byte("-1").equals(b));
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.number_byte_basic FROM t_all_type t WHERE t.id = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123xxxxxxx1qq(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }

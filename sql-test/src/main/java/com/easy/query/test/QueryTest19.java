@@ -21,10 +21,12 @@ import com.easy.query.test.entity.relation.MyRelationUser;
 import com.easy.query.test.entity.relation.MyRelationUserDTO;
 import com.easy.query.test.entity.relation.MyRelationUserDTO1;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.navigateflat.MyUserHome;
 import com.easy.query.test.vo.MyUnion;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -207,6 +209,7 @@ public class QueryTest19 extends BaseTest {
         Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testTime1() {
 
@@ -231,9 +234,9 @@ public class QueryTest19 extends BaseTest {
     }
 
     @Test
-     public void test122(){
+    public void test122() {
         List<MyCategoryVO> list = easyEntityQuery.queryable(MyCategory.class)
-                .select( m ->{
+                .select(m -> {
                     MyCategoryVOProxy r = new MyCategoryVOProxy();
                     r.selectAll(m);
                     r.count().set(
@@ -242,6 +245,32 @@ public class QueryTest19 extends BaseTest {
                     return r;
                 }).toList();
     }
+
+    @Test
+    public void testaaa() {
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class)
+                .select(t -> Select.DRAFT.of(
+                        t.id(),
+                        t.expression().subQuery(() -> {
+                            return easyEntityQuery.queryable(BlogEntity.class)
+                                    .where(b -> {
+                                        b.createTime().lt(LocalDateTime.now());
+                                        b.id().eq(t.id());
+                                    }).groupBy(b -> GroupKeys.of(b.title()))
+                                    .selectColumn(group -> group.groupTable().content().join("->"));
+                        })
+                )).toList();
+    }
+//    @Test
+//    public void testaaa1() {
+//        List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class)
+//                .select(t -> Select.DRAFT.of(
+//                        t.id(),
+//                        t.expression().sqlSegment("GROUP_CONCAT(CASE WHEN {0} =FLOOR({0}) THEN CASE(FLOOR({0}) AS CHAR) ELSE TRIM(TRAILING '0' FROM FORMAT({0},2)) END SEPARATOR {1})",c->{
+//                            c.keepStyle().expression(t.title()).value("->");
+//                        },String.class)
+//                )).toList();
+//    }
 
 //    @Test
 //    public void testCteUnion(){
@@ -254,6 +283,18 @@ public class QueryTest19 extends BaseTest {
 //                .toList();
 //
 //    }
+
+//    public void testBindQuery(){
+//        List<TopicTestBind> list = easyEntityQuery.queryable(TopicTestBind.class).toList();
+//    }
+
+    @Test
+    public void aaa(){
+        List<MyUserHome> list = easyEntityQuery.queryable(MyUserHome.class)
+                .where(m -> {
+                    m.id().toNumber(Integer.class).add(1).eq(BigDecimal.valueOf(123));
+                }).toList();
+    }
 
 
 }

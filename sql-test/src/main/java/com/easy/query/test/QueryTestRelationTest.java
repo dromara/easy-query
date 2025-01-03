@@ -59,6 +59,27 @@ public class QueryTestRelationTest extends BaseTest {
         listenerContextManager.clear();
     }
     @Test
+    public void test1_1(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String companyName="公司";
+        easyEntityQuery.queryable(MyComUser.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(su -> {
+                    su.myCompany().name().like(companyName);
+                })
+                .select(m -> Select.DRAFT.of(
+                        m.expression().caseWhen(()->{
+                            m.myCompany().name().like(companyName);
+                        }).then(1).elseEnd(0).asAnyType(Integer.class)
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (CASE WHEN t1.`name` LIKE ? THEN ? ELSE ? END) AS `value1` FROM `my_com_user` t LEFT JOIN `my_company_info` t1 ON t1.`id` = t.`com_id` WHERE t1.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%公司%(String),1(Integer),0(Integer),%公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
     public void test2(){
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
