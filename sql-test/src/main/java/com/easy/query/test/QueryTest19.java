@@ -3,12 +3,14 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.LocalDateTimeProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.doc.MyUser1;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyCategory;
 import com.easy.query.test.entity.MyCategoryVO;
@@ -294,6 +296,8 @@ public class QueryTest19 extends BaseTest {
                 .where(m -> {
                     m.id().toNumber(Integer.class).add(1).eq(BigDecimal.valueOf(123));
                 }).toList();
+
+//        Queryable<MyUser1> queryable = easyQuery.queryable(MyUser1.class);
     }
 
 

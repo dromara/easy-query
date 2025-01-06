@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.builder.impl;
 
+import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -32,15 +33,12 @@ import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
-import com.easy.query.core.util.EasyUtil;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * create time 2023/6/22 21:14
@@ -310,13 +308,15 @@ public abstract class AbstractSelector<TChain> {
         if (EasySQLSegmentUtil.isNotEmpty(queryExpressionBuilder.getProjects())) {
 
             List<SQLSegment> sqlSegments = queryExpressionBuilder.getProjects().getSQLSegments();
+
+            EntityMappingRule entityMappingRule = runtimeContext.getEntityMappingRule();
             //匿名表内部设定的不查询
             for (SQLSegment sqlSegment : sqlSegments) {
 
                 if (sqlSegment instanceof SQLEntityAliasSegment) {
                     SQLEntityAliasSegment sqlEntityAliasSegment = (SQLEntityAliasSegment) sqlSegment;
 
-                    String propertyName = EasyUtil.getAnonymousPropertyName(sqlEntityAliasSegment, table.getEntityTable());
+                    String propertyName = entityMappingRule.getAnonymousPropertyNameFromSQLSegment(sqlEntityAliasSegment, table.getEntityTable());
                     if (propertyName != null) {
                         ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(table.getEntityTable(), propertyName, expressionContext, sqlEntityAliasSegment.getAlias());
                         sqlBuilderSegment.append(columnSegment);
@@ -324,6 +324,7 @@ public abstract class AbstractSelector<TChain> {
                         ColumnSegment columnSegment = sqlSegmentFactory.createAnonymousColumnSegment(table.getEntityTable(), expressionContext, sqlEntityAliasSegment.getAlias());
                         sqlBuilderSegment.append(columnSegment);
                     }
+
                 } else {
                     throw new EasyQueryException("columnAnonymousAll not found column:" + EasyClassUtil.getInstanceSimpleName(sqlSegment));
                 }

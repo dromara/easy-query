@@ -8,6 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -62,7 +63,7 @@ public class EasyUtil {
         return sqlEntityExpression.getTables().size();
     }
 
-    public static String getAnonymousPropertyName(SQLEntityAliasSegment sqlEntityProject, TableAvailable anonymousTable) {
+    public static String getAnonymousPropertyNameByAlias(SQLEntityAliasSegment sqlEntityProject, TableAvailable anonymousTable) {
         String alias = sqlEntityProject.getAlias();
         if (EasyStringUtil.isBlank(alias)) {
             if (sqlEntityProject.getPropertyName() == null) {
@@ -71,6 +72,17 @@ public class EasyUtil {
             alias = sqlEntityProject.getTable().getEntityMetadata().getColumnNotNull(sqlEntityProject.getPropertyName()).getName();
         }
         return anonymousTable.getEntityMetadata().getPropertyNameOrNull(alias, null);
+    }
+
+    public static String getAnonymousPropertyNameByProperty(SQLEntityAliasSegment sqlEntityProject, TableAvailable anonymousTable) {
+        String propertyName = sqlEntityProject.getPropertyName();
+        if (propertyName != null) {
+            ColumnMetadata columnMetadata = anonymousTable.getEntityMetadata().getProperty2ColumnMap().get(propertyName);
+            if (columnMetadata != null && !columnMetadata.isValueObject()) {
+                propertyName = columnMetadata.getPropertyName();
+            }
+        }
+        return propertyName;
     }
 
 

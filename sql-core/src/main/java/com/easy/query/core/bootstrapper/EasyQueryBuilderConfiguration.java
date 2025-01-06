@@ -8,6 +8,9 @@ import com.easy.query.core.api.dynamic.executor.query.DefaultWhereObjectQueryExe
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.DefaultObjectSortQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
+import com.easy.query.core.basic.entity.ColumnEntityMappingRule;
+import com.easy.query.core.basic.entity.TryColumnAndPropertyEntityMappingRule;
+import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.formater.DefaultSQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.EmptyJdbcExecutorListener;
@@ -194,6 +197,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(RelationValueFactory.class, DefaultRelationValueFactory.class)
                 .replaceService(PropertyDescriptorMatcher.class, DefaultPropertyDescriptorMatcher.class)
                 .replaceService(ValueFilterFactory.class, AnyValueFilterFactory.class)
+                .replaceService(EntityMappingRule.class, ColumnEntityMappingRule.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

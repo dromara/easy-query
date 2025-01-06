@@ -13,7 +13,7 @@ import lombok.Data;
  * @easy-query-dto schema: normal
  */
 @Data
-@SuppressWarnings("EasyQueryFieldMissMatch")
+//@SuppressWarnings("EasyQueryFieldMissMatch")
 @EntityProxy
 public class DocUserVO {
 
@@ -22,6 +22,8 @@ public class DocUserVO {
     private String name;
     private String phone;
     private Integer age;
+
+    @SuppressWarnings("EasyQueryFieldMissMatch")
     private Long cardCount;
 
 }

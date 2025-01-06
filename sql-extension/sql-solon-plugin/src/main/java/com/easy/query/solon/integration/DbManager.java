@@ -2,6 +2,10 @@ package com.easy.query.solon.integration;
 
 import com.easy.query.clickhouse.config.ClickHouseDatabaseConfiguration;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.entity.ColumnEntityMappingRule;
+import com.easy.query.core.basic.entity.EntityMappingRule;
+import com.easy.query.core.basic.entity.PropertyEntityMappingRule;
+import com.easy.query.core.basic.entity.TryColumnAndPropertyEntityMappingRule;
 import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.track.InvokeTryFinally;
@@ -28,6 +32,7 @@ import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConve
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
+import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyStringUtil;
@@ -177,6 +182,7 @@ public class DbManager {
         useNameConversion(solonEasyQueryProperties, easyQueryBuilderConfiguration);
         useMapKeyConversion(solonEasyQueryProperties, easyQueryBuilderConfiguration);
         usePropertyMode(solonEasyQueryProperties, easyQueryBuilderConfiguration);
+        useMappingStrategy(solonEasyQueryProperties, easyQueryBuilderConfiguration);
         SQLParameterPrintEnum sqlParameterPrint = solonEasyQueryProperties.getSQLParameterPrint();
         if (sqlParameterPrint == SQLParameterPrintEnum.MYBATIS) {
             easyQueryBuilderConfiguration
@@ -226,6 +232,20 @@ public class DbManager {
                 break;
             case SAME_AS_ENTITY:
                 easyQueryBuilderConfiguration.replaceService(PropertyDescriptorMatcher.class, new EntityPropertyDescriptorMatcher());
+                break;
+        }
+    }
+    private static void useMappingStrategy(SolonEasyQueryProperties solonEasyQueryProperties, EasyQueryBuilderConfiguration easyQueryBuilderConfiguration) {
+        EntityMappingStrategyEnum mappingStrategy = solonEasyQueryProperties.getMappingStrategy();
+        switch (mappingStrategy) {
+            case COLUMN_ONLY:
+                easyQueryBuilderConfiguration.replaceService(EntityMappingRule.class, ColumnEntityMappingRule.class);
+                break;
+            case PROPERTY_ONLY:
+                easyQueryBuilderConfiguration.replaceService(EntityMappingRule.class, PropertyEntityMappingRule.class);
+                break;
+            case COLUMN_AND_PROPERTY:
+                easyQueryBuilderConfiguration.replaceService(EntityMappingRule.class, TryColumnAndPropertyEntityMappingRule.class);
                 break;
         }
     }

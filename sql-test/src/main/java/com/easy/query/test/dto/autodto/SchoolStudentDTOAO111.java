@@ -20,7 +20,6 @@ import com.easy.query.core.enums.RelationTypeEnum;
 public class SchoolStudentDTOAO111 {
 
 
-    @Column(value = "EasyStringUtil.EMPTY")
     private String id;
     private String classId;
     private String name;
@@ -36,7 +35,6 @@ public class SchoolStudentDTOAO111 {
      */
     @Data
     public static class InternalSchoolClass {
-        @Column(value = "EasyStringUtil.EMPTY")//主键
         private String id;
         private String name;
 

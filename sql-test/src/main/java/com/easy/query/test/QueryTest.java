@@ -1039,6 +1039,7 @@ public class QueryTest extends BaseTest {
             Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class);
             String sql = queryable.toSQL();
+//            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
             Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
             List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class).toList();

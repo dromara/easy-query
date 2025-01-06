@@ -115,5 +115,4 @@ public interface ExpressionContext {
     Boolean getPrintNavSQL();
     void setPrintNavSQL(Boolean printSQL);
 
-
 }

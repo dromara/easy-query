@@ -1,6 +1,7 @@
 package com.easy.query.sql.starter.config;
 
 
+import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.enums.RelationTableAppendEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
@@ -150,6 +151,10 @@ public class EasyQueryProperties {
      * 小于等于0表示不启用
      */
     private long reverseOffsetThreshold = 0;
+    /**
+     * 映射策略
+     */
+    private EntityMappingStrategyEnum mappingStrategy = EntityMappingStrategyEnum.COLUMN_ONLY;
 
     public Boolean getEnable() {
         return enable;
@@ -465,6 +470,14 @@ public class EasyQueryProperties {
 
     public void setRelationTableAppend(RelationTableAppendEnum relationTableAppend) {
         this.relationTableAppend = relationTableAppend;
+    }
+
+    public EntityMappingStrategyEnum getMappingStrategy() {
+        return mappingStrategy;
+    }
+
+    public void setMappingStrategy(EntityMappingStrategyEnum mappingStrategy) {
+        this.mappingStrategy = mappingStrategy;
     }
 
     public EasyQueryProperties() {

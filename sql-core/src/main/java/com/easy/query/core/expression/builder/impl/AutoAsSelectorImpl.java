@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.AsSelector;
@@ -32,12 +33,12 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class AutoAsSelectorImpl  extends AbstractAsSelector<AsSelector> implements AsSelector {
+public class AutoAsSelectorImpl extends AbstractAsSelector<AsSelector> implements AsSelector {
 
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
 
     public AutoAsSelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlBuilderSegment, EntityMetadata resultEntityMetadata) {
-        super(entityQueryExpressionBuilder, sqlBuilderSegment,resultEntityMetadata);
+        super(entityQueryExpressionBuilder, sqlBuilderSegment, resultEntityMetadata);
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
     }
 
@@ -125,6 +126,7 @@ public class AutoAsSelectorImpl  extends AbstractAsSelector<AsSelector> implemen
             EntityMetadata sourceEntityMetadata = tableExpressionBuilder.getEntityMetadata();
 
             Collection<String> sourceProperties = sourceEntityMetadata.getProperties();
+            EntityMappingRule entityMappingRule = runtimeContext.getEntityMappingRule();
             for (String property : sourceProperties) {
 
                 ColumnMetadata sourceColumnMetadata = sourceEntityMetadata.getColumnNotNull(property);
@@ -132,25 +134,24 @@ public class AutoAsSelectorImpl  extends AbstractAsSelector<AsSelector> implemen
 //                    continue;
 //                }
 
-                if(ignoreColumnIfLargeNotQuery(queryLargeColumn,sourceColumnMetadata)){
+                if (ignoreColumnIfLargeNotQuery(queryLargeColumn, sourceColumnMetadata)) {
                     continue;
                 }
-                String sourceColumnName = sourceColumnMetadata.getName();
-                ColumnMetadata targetColumnMetadata = targetEntityMetadata.getColumnMetadataOrNull(sourceColumnName);
+                ColumnMetadata targetColumnMetadata = entityMappingRule.getColumnMetadataBySourcColumnMetadata(sourceEntityMetadata, sourceColumnMetadata, targetEntityMetadata);
                 if (targetColumnMetadata != null) {
 
-                    if(ignoreColumnIfLargeNotQuery(queryLargeColumn,targetColumnMetadata)){
+                    if (ignoreColumnIfLargeNotQuery(queryLargeColumn, targetColumnMetadata)) {
                         continue;
                     }
                     String targetColumnName = targetColumnMetadata.getName();
                     //如果当前属性和查询对象属性一致那么就返回对应的列名，对应的列名如果不一样就返回对应返回结果对象的属性上的列名
-                    String alias = Objects.equals(sourceColumnName, targetColumnName) ? null : targetColumnName;
+                    String alias = Objects.equals(sourceColumnMetadata.getName(), targetColumnName) ? null : targetColumnName;
                     ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(tableExpressionBuilder.getEntityTable(), sourceColumnMetadata, entityQueryExpressionBuilder.getExpressionContext(), alias);
                     sqlBuilderSegment.append(columnSegment);
                 }
 
             }
-            autoColumnInclude(tableExpressionBuilder.getEntityTable(),targetEntityMetadata);
+            autoColumnInclude(tableExpressionBuilder.getEntityTable(), targetEntityMetadata);
         }
         return this;
     }

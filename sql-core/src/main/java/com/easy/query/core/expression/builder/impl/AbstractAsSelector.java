@@ -1,6 +1,8 @@
 package com.easy.query.core.expression.builder.impl;
 
+import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.PartitionResult;
+import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
@@ -11,7 +13,6 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
-import com.easy.query.core.util.EasyUtil;
 
 import java.util.List;
 
@@ -33,24 +34,28 @@ public abstract class AbstractAsSelector<TChain> extends AbstractSelector<TChain
 
     @Override
     protected TChain columnAnonymousAll(AnonymousEntityTableExpressionBuilder table) {
-        if(PartitionResult.class.isAssignableFrom(resultEntityMetadata.getEntityClass())){
+        if (PartitionResult.class.isAssignableFrom(resultEntityMetadata.getEntityClass())) {
             return super.columnAnonymousAll(table);
-        }else{
+        } else {
 
             EntityQueryExpressionBuilder queryExpressionBuilder = getAnonymousTableQueryExpressionBuilder(table);
             if (EasySQLSegmentUtil.isNotEmpty(queryExpressionBuilder.getProjects())) {
 
                 List<SQLSegment> sqlSegments = queryExpressionBuilder.getProjects().getSQLSegments();
+                EntityMappingRule entityMappingRule = runtimeContext.getEntityMappingRule();
                 //匿名表内部设定的不查询
                 for (SQLSegment sqlSegment : sqlSegments) {
 
                     if (sqlSegment instanceof SQLEntityAliasSegment) {
                         SQLEntityAliasSegment sqlEntityAliasSegment = (SQLEntityAliasSegment) sqlSegment;
 
-                        String propertyName = EasyUtil.getAnonymousPropertyName(sqlEntityAliasSegment, table.getEntityTable());
+                        String propertyName = entityMappingRule.getAnonymousPropertyNameFromSQLSegment(sqlEntityAliasSegment, table.getEntityTable());
                         if (propertyName != null) {
-                            if(resultEntityMetadata.getColumnOrNull(propertyName)!=null){
+                            if (resultEntityMetadata.getColumnOrNull(propertyName) != null) {
                                 ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(table.getEntityTable(), propertyName, expressionContext, sqlEntityAliasSegment.getAlias());
+                                sqlBuilderSegment.append(columnSegment);
+                            } else if (resultEntityMetadata.getEntityMetadataType() == EntityMetadataTypeEnum.MAP) {
+                                ColumnSegment columnSegment = sqlSegmentFactory.createAnonymousColumnSegment(table.getEntityTable(), expressionContext, sqlEntityAliasSegment.getAlias());
                                 sqlBuilderSegment.append(columnSegment);
                             }
                         } else {

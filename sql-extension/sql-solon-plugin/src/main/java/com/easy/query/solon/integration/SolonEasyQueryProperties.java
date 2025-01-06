@@ -1,5 +1,6 @@
 package com.easy.query.solon.integration;
 
+import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.enums.RelationTableAppendEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
@@ -33,6 +34,7 @@ public class SolonEasyQueryProperties {
     private final static PropertyModeEnum propertyMode = PropertyModeEnum.FIRST_LOWER;
     private final static ShardingQueryInTransactionEnum shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
     private final static RelationTableAppendEnum relationTableAppend = RelationTableAppendEnum.SMART;
+    private final static EntityMappingStrategyEnum mappingStrategy = EntityMappingStrategyEnum.COLUMN_ONLY;
     /**
      * 仅分片时有效默认同时5个线程5
      */
@@ -256,6 +258,16 @@ public class SolonEasyQueryProperties {
             switch (v){
                 case "first_lower":return PropertyModeEnum.FIRST_LOWER;
                 case "same_as_entity":return PropertyModeEnum.SAME_AS_ENTITY;
+            }
+            return null;
+        });
+    }
+    public EntityMappingStrategyEnum getMappingStrategy() {
+        return getOrDef("mapping-strategy",mappingStrategy,v->{
+            switch (v){
+                case "column_only":return EntityMappingStrategyEnum.COLUMN_ONLY;
+                case "property_only":return EntityMappingStrategyEnum.PROPERTY_ONLY;
+                case "column_and_property":return EntityMappingStrategyEnum.COLUMN_AND_PROPERTY;
             }
             return null;
         });

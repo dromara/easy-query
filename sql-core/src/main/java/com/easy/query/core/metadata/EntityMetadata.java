@@ -146,7 +146,7 @@ public class EntityMetadata {
     private final Set<String> shardingTablePropertyNames = new LinkedHashSet<>();
     private ShardingInitConfig shardingInitConfig;
     private boolean hasValueObject;
-//    private boolean aliasQuery;
+    //    private boolean aliasQuery;
     private boolean hasPrimaryKeyGenerator = false;
 
     /**
@@ -222,6 +222,7 @@ public class EntityMetadata {
                 }
             }
         }
+
         EasyAssertMessage easyAssertMessage = EasyClassUtil.getAnnotation(entityClass, EasyAssertMessage.class);
         if (easyAssertMessage != null) {
             this.errorMessage = new ErrorMessage(easyAssertMessage.value());

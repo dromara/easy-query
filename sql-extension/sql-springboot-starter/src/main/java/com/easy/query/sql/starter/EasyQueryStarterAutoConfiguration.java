@@ -8,6 +8,10 @@ import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.clickhouse.config.ClickHouseDatabaseConfiguration;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.entity.ColumnEntityMappingRule;
+import com.easy.query.core.basic.entity.EntityMappingRule;
+import com.easy.query.core.basic.entity.PropertyEntityMappingRule;
+import com.easy.query.core.basic.entity.TryColumnAndPropertyEntityMappingRule;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
@@ -266,6 +270,17 @@ public class EasyQueryStarterAutoConfiguration {
                             break;
                         case SAME_AS_ENTITY:
                             s.addService(PropertyDescriptorMatcher.class, EntityPropertyDescriptorMatcher.class);
+                            break;
+                    }
+                    switch (easyQueryProperties.getMappingStrategy()){
+                        case COLUMN_ONLY:
+                            s.addService(EntityMappingRule.class, ColumnEntityMappingRule.class);
+                            break;
+                        case PROPERTY_ONLY:
+                            s.addService(EntityMappingRule.class, PropertyEntityMappingRule.class);
+                            break;
+                        case COLUMN_AND_PROPERTY:
+                            s.addService(EntityMappingRule.class, TryColumnAndPropertyEntityMappingRule.class);
                             break;
                     }
                 })
