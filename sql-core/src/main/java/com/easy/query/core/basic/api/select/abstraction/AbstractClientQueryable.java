@@ -879,9 +879,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     protected <TR> void selectAutoInclude0(Class<TR> resultClass, boolean replace) {
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         EntityMetadata resultEntityMetadata = entityMetadataManager.getEntityMetadata(resultClass);
-        if (resultEntityMetadata.getTableName() != null) {
-            log.warn("selectAutoInclude should not use database entity objects as return results :[{" + EasyClassUtil.getSimpleName(resultClass) + "}] ");
-        }
         EntityTableExpressionBuilder table = getSQLEntityExpressionBuilder().getTable(0);
         TableAvailable entityTable = table.getEntityTable();
 
@@ -934,7 +931,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             MappingPathTreeBuilder.insertPath(root, mappingPath, navigateFlatMetadata, path -> {
                 NavigateMetadata navigateOrNull = navigateEntityMetadata.getNavigateOrNull(path);
                 if (navigateOrNull != null) {
-                    throw new EasyQueryInvalidOperationException(String.format("In the selectAutoInclude query, the relational propoerty [%s] of the class [%s] should appear in both @Navigate and @NavigateFlat.", path, EasyClassUtil.getSimpleName(navigateEntityMetadata.getEntityClass())));
+                    throw new EasyQueryInvalidOperationException(String.format("In the selectAutoInclude query, the relational property [%s] of the class [%s] should appear in both @Navigate and @NavigateFlat.", path, EasyClassUtil.getSimpleName(navigateEntityMetadata.getEntityClass())));
                 }
             });
         }
@@ -949,6 +946,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, boolean replace, int deep) {
 
+        if (resultEntityMetadata.getTableName() != null) {
+            log.warn("selectAutoInclude should not use database entity objects as return results :[{" + EasyClassUtil.getSimpleName(resultEntityMetadata.getEntityClass()) + "}] ");
+        }
         Collection<NavigateMetadata> resultNavigateMetadatas = resultEntityMetadata.getNavigateMetadatas();
         if (EasyCollectionUtil.isEmpty(resultNavigateMetadatas)) {
             return;
