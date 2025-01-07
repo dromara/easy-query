@@ -879,6 +879,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     protected <TR> void selectAutoInclude0(Class<TR> resultClass, boolean replace) {
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         EntityMetadata resultEntityMetadata = entityMetadataManager.getEntityMetadata(resultClass);
+        if (resultEntityMetadata.getTableName() != null) {
+            log.warn("selectAutoInclude should not use database entity objects as return results :[{" + EasyClassUtil.getSimpleName(resultClass) + "}] ");
+        }
         EntityTableExpressionBuilder table = getSQLEntityExpressionBuilder().getTable(0);
         TableAvailable entityTable = table.getEntityTable();
 
