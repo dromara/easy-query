@@ -11,6 +11,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -76,7 +77,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
     @Override
     public void setTableSegmentAs(BiFunction<String, String, String> segmentAs) {
-        this.segmentAs=segmentAs;
+        this.segmentAs = segmentAs;
     }
 
     @Override
@@ -96,7 +97,11 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
         String tableName = SQLKeyWord.getQuoteName(doGetTableName());
         String schema = doGetSchema();
         if (EasyStringUtil.isNotBlank(schema)) {
-            return SQLKeyWord.getQuoteName(schema) + "." + tableName;
+            if (schema.contains(".")) {
+                return String.join(".", EasyCollectionUtil.select(schema.split("\\."), (s, i) -> SQLKeyWord.getQuoteName(s))) + "." + tableName;
+            } else {
+                return SQLKeyWord.getQuoteName(schema) + "." + tableName;
+            }
         }
         return tableName;
     }
@@ -146,13 +151,14 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
         sql.append(getTableSegment(toSQLContext));
         return sql.toString();
     }
-    private String getTableSegment(ToSQLContext toSQLContext){
+
+    private String getTableSegment(ToSQLContext toSQLContext) {
         String tableName = getTableName();
         String tableAlias = EasySQLExpressionUtil.getTableAlias(toSQLContext, entityTable);
-        if(segmentAs!=null){
-            return segmentAs.apply(tableName,tableAlias);
-        }else{
-            StringBuilder sql=new StringBuilder();
+        if (segmentAs != null) {
+            return segmentAs.apply(tableName, tableAlias);
+        } else {
+            StringBuilder sql = new StringBuilder();
             sql.append(tableName);
             if (tableAlias != null) {
                 sql.append(" ").append(tableAlias);

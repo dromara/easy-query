@@ -31,7 +31,7 @@ public @interface Table {
     String value() default EasyStringUtil.EMPTY;
 
     /**
-     * 数据库schema
+     * 数据库schema 支持多级比如a.b
      */
     String schema() default "";
 

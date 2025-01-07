@@ -24,6 +24,7 @@ import com.easy.query.test.entity.relation.MyRelationUserDTO;
 import com.easy.query.test.entity.relation.MyRelationUserDTO1;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.navigateflat.MyUserHome;
+import com.easy.query.test.navigateflat.MyUserHome2;
 import com.easy.query.test.vo.MyUnion;
 import org.junit.Assert;
 import org.junit.Test;
@@ -296,6 +297,31 @@ public class QueryTest19 extends BaseTest {
                 .where(m -> {
                     m.id().toNumber(Integer.class).add(1).eq(BigDecimal.valueOf(123));
                 }).toList();
+
+//        Queryable<MyUser1> queryable = easyQuery.queryable(MyUser1.class);
+    }
+
+    @Test
+    public void aaa1(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<MyUserHome2> list = easyQuery.queryable(MyUserHome2.class)
+                    .toList();
+        }catch (Exception e){
+
+        }
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`name`,`age` FROM `a`.`dbo`.`my_user`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("2023-05-25T10:48:06(LocalDateTime),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
 
 //        Queryable<MyUser1> queryable = easyQuery.queryable(MyUser1.class);
     }
