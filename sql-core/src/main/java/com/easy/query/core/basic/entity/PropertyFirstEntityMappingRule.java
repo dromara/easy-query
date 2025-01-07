@@ -12,11 +12,13 @@ import com.easy.query.core.util.EasyUtil;
  *
  * @author xuejiaming
  */
-public class PropertyEntityMappingRule implements EntityMappingRule {
+public class PropertyFirstEntityMappingRule implements EntityMappingRule {
     @Override
     public ColumnMetadata getColumnMetadataBySourcColumnMetadata(EntityMetadata sourceEntityMetadata, ColumnMetadata sourceColumnMetadata, EntityMetadata targetEntityMetadata) {
+
         if (sourceColumnMetadata.getPropertyName() == null) {
-            return null;
+            String sourceColumnName = sourceColumnMetadata.getName();
+            return targetEntityMetadata.getColumnMetadataOrNull(sourceColumnName);
         }
         ColumnMetadata columnMetadata = targetEntityMetadata.getProperty2ColumnMap().get(sourceColumnMetadata.getPropertyName());
         if (columnMetadata != null && !columnMetadata.isValueObject()) {
@@ -27,6 +29,6 @@ public class PropertyEntityMappingRule implements EntityMappingRule {
 
     @Override
     public String getAnonymousPropertyNameFromSQLSegment(SQLEntityAliasSegment sqlEntityAliasSegment, TableAvailable aliasTable) {
-        return EasyUtil.getAnonymousPropertyNameByProperty(sqlEntityAliasSegment, aliasTable);
+        return EasyUtil.getAnonymousPropertyNameByPropertyFirst(sqlEntityAliasSegment, aliasTable);
     }
 }

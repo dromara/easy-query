@@ -5,6 +5,7 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.entity.ColumnEntityMappingRule;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyEntityMappingRule;
+import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.entity.TryColumnAndPropertyEntityMappingRule;
 import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
@@ -246,6 +247,9 @@ public class DbManager {
                 break;
             case COLUMN_AND_PROPERTY:
                 easyQueryBuilderConfiguration.replaceService(EntityMappingRule.class, TryColumnAndPropertyEntityMappingRule.class);
+                break;
+            case PROPERTY_FIRST:
+                easyQueryBuilderConfiguration.replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class);
                 break;
         }
     }

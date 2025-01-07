@@ -9,5 +9,6 @@ package com.easy.query.core.enums;
 public enum EntityMappingStrategyEnum {
     COLUMN_ONLY,
     PROPERTY_ONLY,
-    COLUMN_AND_PROPERTY;
+    COLUMN_AND_PROPERTY,
+    PROPERTY_FIRST;
 }

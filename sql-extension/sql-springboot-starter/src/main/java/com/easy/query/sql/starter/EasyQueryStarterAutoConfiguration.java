@@ -11,6 +11,7 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.entity.ColumnEntityMappingRule;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyEntityMappingRule;
+import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.entity.TryColumnAndPropertyEntityMappingRule;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
@@ -281,6 +282,9 @@ public class EasyQueryStarterAutoConfiguration {
                             break;
                         case COLUMN_AND_PROPERTY:
                             s.addService(EntityMappingRule.class, TryColumnAndPropertyEntityMappingRule.class);
+                            break;
+                        case PROPERTY_FIRST:
+                            s.addService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class);
                             break;
                     }
                 })

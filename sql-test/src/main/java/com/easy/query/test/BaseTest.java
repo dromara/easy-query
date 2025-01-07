@@ -8,6 +8,9 @@ import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.entity.EntityMappingRule;
+import com.easy.query.core.basic.entity.PropertyEntityMappingRule;
+import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -179,6 +182,8 @@ public abstract class BaseTest {
 //                .replaceService(Dialect.class, DefaultDialect.class)
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .replaceService(QueryConfiguration.class, MyQueryConfiguration.class)
+//                .replaceService(EntityMappingRule.class, PropertyEntityMappingRule.class)
+//                .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();

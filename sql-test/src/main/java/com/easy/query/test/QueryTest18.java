@@ -849,7 +849,7 @@ public class QueryTest18 extends BaseTest {
                         p.partitionColumn1().gt(1);
                     }).toList();
         } catch (Exception ex) {
-
+            System.out.println(ex);
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

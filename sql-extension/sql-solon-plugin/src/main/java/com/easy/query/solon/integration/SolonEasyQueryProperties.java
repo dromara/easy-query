@@ -268,6 +268,7 @@ public class SolonEasyQueryProperties {
                 case "column_only":return EntityMappingStrategyEnum.COLUMN_ONLY;
                 case "property_only":return EntityMappingStrategyEnum.PROPERTY_ONLY;
                 case "column_and_property":return EntityMappingStrategyEnum.COLUMN_AND_PROPERTY;
+                case "property_first":return EntityMappingStrategyEnum.PROPERTY_FIRST;
             }
             return null;
         });
