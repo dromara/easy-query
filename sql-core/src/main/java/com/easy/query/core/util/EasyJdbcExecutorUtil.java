@@ -27,6 +27,7 @@ import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLConsumer;
@@ -258,6 +259,9 @@ public class EasyJdbcExecutorUtil {
         Class<?> entityClass = entities.get(0).getClass();
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
         List<String> generatedKeyColumns = fillAutoIncrement ? entityMetadata.getGeneratedKeyColumns() : null;
+        if (fillAutoIncrement && EasyCollectionUtil.isEmpty(generatedKeyColumns)) {
+            throw new EasyQueryInvalidOperationException("Database return key not found. Please ensure the object:[" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + "] has a property configured with the [@Column(generatedKey = true)] for the required back fill.");
+        }
         PreparedStatement ps = null;
         Exception exception = null;
         JdbcExecuteBeforeArg jdbcListenBeforeArg = null;

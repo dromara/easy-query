@@ -416,7 +416,7 @@ public class RelationTest extends BaseTest {
 
                 } catch (Exception ex) {
                     Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
-                    Assert.assertEquals("In the selectAutoInclude query, the relational propoerty [schoolClass] of the class [SchoolStudentDTOxxx] should appear in both @Navigate and @NavigateFlat.", ex.getMessage());
+                    Assert.assertEquals("In the selectAutoInclude query, the relational property [schoolClass] of the class [SchoolStudentDTOxxx] should appear in both @Navigate and @NavigateFlat.", ex.getMessage());
                 }
                 Assert.assertTrue(exception);
                 System.out.println("1");

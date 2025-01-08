@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -128,15 +129,17 @@ public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements As
         } else {
             EntityMetadata entityMetadata = tableBuilder.getEntityMetadata();
             Collection<ColumnMetadata> columns = entityMetadata.getColumns();
+            EntityMappingRule entityMappingRule = runtimeContext.getEntityMappingRule();
             for (ColumnMetadata columnMetadata : columns) {
 //                if (!columnMetadata.isAutoSelect()) {
 //                    continue;
 //                }
 
+                ColumnMetadata resultColumnMetadata = entityMappingRule.getColumnMetadataBySourcColumnMetadata(entityMetadata, columnMetadata, resultEntityMetadata);
                 String columnName = columnMetadata.getName();
-                String aliasPropertyName = resultEntityMetadata.getPropertyNameOrNull(columnName);
-                if (aliasPropertyName != null) {
-                    ColumnMetadata resultColumnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
+//                String aliasPropertyName = resultEntityMetadata.getPropertyNameOrNull(columnName);
+                if (resultColumnMetadata != null) {
+//                    ColumnMetadata resultColumnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
                     if(!resultColumnMetadata.isAutoSelect()){
                         continue;
                     }

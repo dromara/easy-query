@@ -3,6 +3,8 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.entity.EntityMappingRule;
+import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -13,9 +15,11 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.common.MyValueFilterFactory;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.Topic2;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
+import com.easy.query.test.vo.Topic2DTO;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -218,4 +222,48 @@ public class UpdateTest2  extends BaseTest{
 //        easyEntityQuery.updatable(topics)
 //                .setColumns(t -> t.FETCHER.title());
 //    }
+
+
+    @Test
+    public void test11(){
+
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(2);
+                    op.setMaxShardingQueryLimit(1);
+                    op.setUpdateStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
+                })
+                .useDatabaseConfigure(new OracleDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
+                .build();
+        DefaultEasyEntityQuery eq = new DefaultEasyEntityQuery(easyQueryClient);
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                eq.queryable(Topic2.class)
+                        .where(t -> t.title().eq("123"))
+                        .select(Topic2DTO.class,t->t.FETCHER.allFields())
+                        .toList();
+
+            }catch (Exception ex){
+
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.\"id\",t.\"abc\" AS \"title\" FROM \"t_topic\" t WHERE t.\"abc\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+
+        }
+    }
 }

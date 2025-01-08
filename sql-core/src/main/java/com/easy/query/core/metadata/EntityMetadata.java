@@ -161,7 +161,7 @@ public class EntityMetadata {
     private final Map<String, NavigateFlatMetadata> property2NavigateFlatMap = new LinkedHashMap<>();
     private final Map<String, NavigateJoinMetadata> property2NavigateJoinMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
-    private final List<String/*column name*/> generatedKeyColumns = new ArrayList<>(4);
+    private final List<String/*column name*/> generatedKeyColumns = new ArrayList<>(2);
     private final Map<String/*column name*/, ColumnMetadata> column2PropertyMap = new HashMap<>();
 
     private final Set<ActualTable> actualTables = new CopyOnWriteArraySet<>();
