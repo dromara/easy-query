@@ -262,6 +262,8 @@ public class SolonEasyQueryProperties {
             return null;
         });
     }
+
+    /** 获取对象映射规则 */
     public EntityMappingStrategyEnum getMappingStrategy() {
         return getOrDef("mapping-strategy",mappingStrategy,v->{
             switch (v){

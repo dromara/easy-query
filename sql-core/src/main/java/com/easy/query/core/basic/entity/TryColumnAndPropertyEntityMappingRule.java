@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.entity;
 
+import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -8,9 +9,11 @@ import com.easy.query.core.util.EasyUtil;
 
 /**
  * create time 2025/1/6 17:21
- * 文件说明
+ * 对象映射规则 表示先使用实体对应的列名匹配如果无法映射则使用属性名进行匹配
  *
  * @author xuejiaming
+ * @author link2fun add doc
+ * @see EntityMappingStrategyEnum#COLUMN_AND_PROPERTY
  */
 public class TryColumnAndPropertyEntityMappingRule implements EntityMappingRule {
     @Override
