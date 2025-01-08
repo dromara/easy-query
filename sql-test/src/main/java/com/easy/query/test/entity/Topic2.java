@@ -32,4 +32,6 @@ public class Topic2 implements ProxyEntityAvailable<Topic2, Topic2Proxy> {
     private String id;
     @Column("abc")
     private String title;
+    @Column(defaultUse = false)
+    private String title1;
 }

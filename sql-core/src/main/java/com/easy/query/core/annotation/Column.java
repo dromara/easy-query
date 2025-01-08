@@ -111,10 +111,14 @@ public @interface Column {
      * columnAll相同对象无法查询出来，除非手动指定column列
      * 仅返回相同对象时无法获取必须指定如果为false
      *
-     * @return
+     * @return true表示不自动查询,false表示自动查询
      */
     boolean autoSelect() default true;
 
+    /**
+     * 设置当前属性独立使用哪个typeHandler
+     * @return 使用的typeHandler类
+     */
     Class<? extends JdbcTypeHandler> typeHandler() default UnKnownTypeHandler.class;
 
     /**
@@ -126,32 +130,18 @@ public @interface Column {
      */
     Class<? extends PrimaryKeyGenerator> primaryKeyGenerator() default UnsupportPrimaryKeyGenerator.class;
 
-//    /**
-//     * 是否是并发字段,如果是并发字段支持并发控制更新
-//     * @return
-//     */
-//    boolean concurrent() default false;
-//
-//    /**
-//     * 该字段在数据库中是否为null，如果为null那么在update整个对象的时候
-//     * 如果nullable为null就会更新为null
-//     * 如果nullable不为null那么属性为null将不会更新
-//     * 如果属性是PrimaryKey那么一定不为null
-//     */
-//    boolean nullable() default true;
-
-//    /**
-//     * 是否是主键
-//     */
-//    boolean primary() default false;
-//
-//    /**
-//     * 是否是自增键
-//     */
-//    boolean increment() default false;
-//
-//    /**
-//     * 乐观锁
-//     */
-//    boolean version() default false;
+    /**
+     * 当前属性是否默认使用
+     * 等于如下注解的组合如果为false
+     * <blockquote><pre>
+     * {@code
+     *    @Column(autoSelect = false)
+     *    @InsertIgnore
+     *    @UpdateIgnore(updateSetInTrackDiff = false)
+     * }
+     * </pre></blockquote>
+     *
+     * @return true表示存在，false表示不存在
+     */
+    boolean defaultUse() default true;
 }

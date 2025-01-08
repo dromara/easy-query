@@ -512,6 +512,9 @@ public class EntityMetadata {
         Column column = field.getAnnotation(Column.class);
         boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
         boolean autoSelect = column == null ? defaultAutoSelect : column.autoSelect();
+        if (column != null && !column.defaultUse()) {
+            autoSelect = false;
+        }
         String columnName = hasColumnName ? nameConversion.annotationCovert(entityClass, column.value(), false) : nameConversion.convert(property);
         ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName, property);
 //            if (column != null) {
@@ -563,10 +566,12 @@ public class EntityMetadata {
             //如果是默认的那么就通过自动关联的值转换处进行寻找
             processEnumValueConverter(columnOption, propertyDescriptor.getPropertyType(), configuration);
         }
+        boolean defaultUse = true;
 
         if (tableEntity) {
 
             if (column != null) {
+                defaultUse = column.defaultUse();
                 if (column.primaryKey()) {
                     keyPropertiesMap.put(property, columnName);
                 }
@@ -634,16 +639,23 @@ public class EntityMetadata {
 //                    }
                 }
             }
-            InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
-            if (insertIgnore != null) {
+            if (!defaultUse) {
                 columnOption.setInsertIgnore(true);
+                columnOption.setUpdateIgnore(true);
+                columnOption.setUpdateSetInTrackDiff(false);
+            } else {
+                InsertIgnore insertIgnore = field.getAnnotation(InsertIgnore.class);
+                if (insertIgnore != null) {
+                    columnOption.setInsertIgnore(true);
+                }
+
+                UpdateIgnore updateIgnore = field.getAnnotation(UpdateIgnore.class);
+                if (updateIgnore != null) {
+                    columnOption.setUpdateIgnore(true);
+                    columnOption.setUpdateSetInTrackDiff(updateIgnore.updateSetInTrackDiff());
+                }
             }
 
-            UpdateIgnore updateIgnore = field.getAnnotation(UpdateIgnore.class);
-            if (updateIgnore != null) {
-                columnOption.setUpdateIgnore(true);
-                columnOption.setUpdateSetInTrackDiff(updateIgnore.updateSetInTrackDiff());
-            }
             Version version = field.getAnnotation(Version.class);
             if (version != null) {
 
