@@ -4,8 +4,12 @@ import com.easy.query.api.proxy.base.LocalDateTimeProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -32,6 +36,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2024/11/25 20:27
@@ -143,6 +148,18 @@ public class QueryTest19 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         try {
+//            EasyQueryClient easyQueryClient1 = easyEntityQuery.getEasyQueryClient();
+//            easyQueryClient1.insertable(new SysUser())
+//                    .onConflictThen(s->{},"id")
+//                    .executeRows();
+//
+//
+//            easyEntityQuery.insertable(new SysUser())
+
+
+            List<LocalDateTime> list = easyEntityQuery.queryable(Topic.class)
+                    .select(t_topic -> new LocalDateTimeProxy(t_topic.expression().now())).toList();
+
 
             List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
                     .where(u -> {
@@ -324,6 +341,39 @@ public class QueryTest19 extends BaseTest {
 
 
 //        Queryable<MyUser1> queryable = easyQuery.queryable(MyUser1.class);
+    }
+
+
+//    @Test
+//     public void testFETCHer_ORDER(){
+//        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+//                .where(t -> {
+//                    t.id().eq("1");
+//                }).select(t -> t.FETCHER.title().id())
+//                .orderBy(t -> t.title().asc())
+//                .toList();
+//    }
+
+    @Test
+    public  void testNow(){
+        SQLFunc fx = easyQueryClient.getRuntimeContext().fx();
+        SQLFunction now = fx.now();
+
+        LocalDateTime localDateTime = easyQueryClient.queryable(Map.class)
+                .asTable("t_topic")
+                .select(LocalDateTime.class, m -> m.sqlFunc(now))
+                .limit(1)
+                .singleNotNull();
+        System.out.println(localDateTime);
+
+        Long l = easyEntityQuery.queryable(Topic.class)
+                .maxOrDefault(o -> o.id().toNumber(Long.class), 0L);
+        System.out.println(l);
+
+        Long l1 = easyEntityQuery.queryable(Topic.class)
+                .selectColumn(t_topic -> t_topic.id().toNumber(Long.class).max()).singleOrDefault(0L);
+        System.out.println(l1);
+        Assert.assertEquals(l,l1);
     }
 
 

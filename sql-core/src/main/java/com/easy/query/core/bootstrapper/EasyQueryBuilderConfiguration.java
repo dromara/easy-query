@@ -86,6 +86,10 @@ import com.easy.query.core.job.DefaultEasyTimeJobManager;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.migration.DefaultDatabaseMigrationInfoConverter;
+import com.easy.query.core.migration.DefaultMigrationsSQLGenerator;
+import com.easy.query.core.migration.MigrationInfoConverter;
+import com.easy.query.core.migration.MigrationsSQLGenerator;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.comparer.JavaLanguageShardingComparer;
@@ -198,6 +202,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(PropertyDescriptorMatcher.class, DefaultPropertyDescriptorMatcher.class)
                 .replaceService(ValueFilterFactory.class, AnyValueFilterFactory.class)
                 .replaceService(EntityMappingRule.class, ColumnEntityMappingRule.class)
+                .replaceService(MigrationsSQLGenerator.class, DefaultMigrationsSQLGenerator.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

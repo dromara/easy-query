@@ -5,10 +5,14 @@ import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ActualTable;
 import com.easy.query.core.sharding.api.route.time.AbstractMonthTableRoute;
+import com.easy.query.core.sharding.router.table.TableRouteUnit;
 import com.easy.query.test.entity.TopicShardingTime;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * create time 2023/4/23 23:13
@@ -45,4 +49,12 @@ public class TopicShardingTimeTableRoute extends AbstractMonthTableRoute<TopicSh
     protected LocalDateTime convertLocalDateTime(Object shardingValue) {
         return (LocalDateTime)shardingValue;
     }
+
+//    @Override
+//    public Collection<TableRouteUnit> afterFilterTableName(Collection<ActualTable> allActualTables, Collection<ActualTable> beforeActualTables, Collection<TableRouteUnit> filterRouteUnits) {
+//
+//        Collection<TableRouteUnit> tableRouteUnits = super.afterFilterTableName(allActualTables, beforeActualTables, filterRouteUnits);
+//        String before7days = LocalDateTime.now().plusDays(-7).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//        return tableRouteUnits.stream().filter(r->r.getActualTableName().split(tableSeparator())[1].compareTo(before7days)>=0).collect(Collectors.toList());
+//    }
 }

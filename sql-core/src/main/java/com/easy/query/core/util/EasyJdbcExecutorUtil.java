@@ -489,7 +489,11 @@ public class EasyJdbcExecutorUtil {
     public static Object fromValue(ResultColumnMetadata resultColumnMetadata, Object value) {
         Class<?> entityClass = resultColumnMetadata.getEntityClass();
         Object fromValue = fromValue0(entityClass, resultColumnMetadata, value);
-        return resultColumnMetadata.getValueConverter().deserialize(EasyObjectUtil.typeCast(fromValue), resultColumnMetadata.getColumnMetadata());
+        ValueConverter<?, ?> valueConverter = resultColumnMetadata.getValueConverter();
+        if(valueConverter!=null){
+            return valueConverter.deserialize(EasyObjectUtil.typeCast(fromValue), resultColumnMetadata.getColumnMetadata());
+        }
+        return fromValue;
     }
 
     private static Object fromValue0(Class<?> entityClass, ResultColumnMetadata resultColumnMetadata, Object value) {

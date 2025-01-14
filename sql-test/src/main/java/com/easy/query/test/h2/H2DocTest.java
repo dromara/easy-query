@@ -31,6 +31,14 @@ public class H2DocTest extends H2BaseTest {
     @Test
     public void selectProxyTest1() {
 
+        easyEntityQuery.queryable(DocUser.class)
+                .selectAutoInclude(DocUserVO.class);
+
+        easyEntityQuery.queryable(DocUser.class)
+                .includes(user -> user.bankCards(),cq->cq.where(c->c.bankId().eq("招商银行")))
+                .selectAutoInclude(DocUserVO.class);
+
+
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 

@@ -46,4 +46,10 @@ public @interface Table {
      * @return
      */
     Class<? extends ShardingInitializer> shardingInitializer() default UnShardingInitializer.class;
+
+    /**
+     * 旧表名
+     * @return
+     */
+    String oldName() default "";
 }

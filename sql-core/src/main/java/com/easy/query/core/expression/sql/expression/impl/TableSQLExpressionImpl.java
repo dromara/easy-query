@@ -15,6 +15,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.core.util.EasyToSQLUtil;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -94,44 +95,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
     @Override
     public String getTableName() {
-        String tableName = SQLKeyWord.getQuoteName(doGetTableName());
-        String schema = doGetSchema();
-        if (EasyStringUtil.isNotBlank(schema)) {
-            if (schema.contains(".")) {
-                return String.join(".", EasyCollectionUtil.select(schema.split("\\."), (s, i) -> SQLKeyWord.getQuoteName(s))) + "." + tableName;
-            } else {
-                return SQLKeyWord.getQuoteName(schema) + "." + tableName;
-            }
-        }
-        return tableName;
-    }
-
-    protected String doGetSchema() {
-        if (entityTable.hasSchema() || schemaAs != null) {
-            String schema = entityTable.getSchema();
-            if (schemaAs != null) {
-                return schemaAs.apply(schema);
-            }
-            return schema;
-        }
-        return null;
-    }
-
-    protected String doGetTableName() {
-        String tableName = entityTable.getTableName();
-        if (tableNameAs != null) {
-            String applyTableName = tableNameAs.apply(tableName);
-            return checkTableName(applyTableName);
-        }
-        return checkTableName(tableName);
-    }
-
-    private String checkTableName(String tableName) {
-
-        if (tableName == null) {
-            throw new EasyQueryException("table " + EasyClassUtil.getSimpleName(entityTable.getEntityClass()) + " cant found mapping table name");
-        }
-        return tableName;
+        return EasyToSQLUtil.getTableName(SQLKeyWord, entityTable.getEntityMetadata(), entityTable.getTableName(), schemaAs, tableNameAs);
     }
 
     @Override

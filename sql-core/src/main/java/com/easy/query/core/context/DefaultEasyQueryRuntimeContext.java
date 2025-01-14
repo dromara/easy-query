@@ -35,6 +35,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.migration.MigrationsSQLGenerator;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
@@ -88,6 +89,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final PropertyDescriptorMatcher propertyDescriptorMatcher;
     private final ValueFilterFactory valueFilterFactory;
     private final EntityMappingRule entityMappingRule;
+    private final MigrationsSQLGenerator migrationsSQLGenerator;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -127,7 +129,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           MapColumnNameChecker mapColumnNameChecker,
                                           PropertyDescriptorMatcher propertyDescriptorMatcher,
                                           ValueFilterFactory valueFilterFactory,
-                                          EntityMappingRule entityMappingRule) {
+                                          EntityMappingRule entityMappingRule,
+                                          MigrationsSQLGenerator migrationsSQLGenerator) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -167,6 +170,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.propertyDescriptorMatcher = propertyDescriptorMatcher;
         this.valueFilterFactory = valueFilterFactory;
         this.entityMappingRule = entityMappingRule;
+        this.migrationsSQLGenerator = migrationsSQLGenerator;
     }
 
     @Override
@@ -363,5 +367,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public EntityMappingRule getEntityMappingRule() {
         return entityMappingRule;
+    }
+
+    @Override
+    public MigrationsSQLGenerator getMigrationsSQLGenerator() {
+        return migrationsSQLGenerator;
     }
 }

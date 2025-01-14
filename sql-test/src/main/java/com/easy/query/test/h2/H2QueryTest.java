@@ -8,6 +8,7 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.h2.domain.ALLTYPE1;
 import com.easy.query.test.h2.domain.ALLTYPESharding;
@@ -43,6 +44,7 @@ import java.util.UUID;
 public class H2QueryTest extends H2BaseTest {
     @Test
     public void leftJoin1() {
+
         Queryable2<DefTable, DefTableLeft1> where = easyQuery.queryable(DefTable.class)
                 .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
                 .where((t, t1) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1"));

@@ -32,6 +32,7 @@ import com.easy.query.core.expression.sql.include.multi.RelationValueFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.migration.MigrationsSQLGenerator;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
@@ -90,4 +91,5 @@ public interface QueryRuntimeContext {
     PropertyDescriptorMatcher getPropertyDescriptorMatcher();
     ValueFilterFactory getValueFilterFactory();
     EntityMappingRule getEntityMappingRule();
+    MigrationsSQLGenerator getMigrationsSQLGenerator();
 }

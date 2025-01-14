@@ -29,7 +29,7 @@ public class OracleCastSQLFunction extends AbstractExpressionSQLFunction {
         switch (targetClassName) {
             case "boolean":
             case "java.lang.Boolean":
-                return "CAST({0} AS BOOLEAN)";
+                return "CAST({0} AS BIT)";
             case "char":
                 return "SUBSTR(TO_CHAR({0}), 1, 1)";
             case "java.sql.Time":
@@ -43,18 +43,22 @@ public class OracleCastSQLFunction extends AbstractExpressionSQLFunction {
             case "java.time.LocalDateTime":
                 return "TO_TIMESTAMP({0},'YYYY-MM-DD HH24:MI:SS.FF6')";
             case "java.math.BigDecimal":
+                return "CAST({0} AS DECIMAL(18,4))";
             case "double":
             case "float":
             case "java.lang.Float":
             case "java.lang.Double":
+                return "CAST({0} AS FLOAT)";
+            case "int":
+            case "java.lang.Integer":
+                return "CAST({0} AS INT)";
+            case "long":
+            case "java.lang.Long":
+                return "CAST({0} AS BIGINT)";
             case "byte":
             case "short":
-            case "int":
-            case "long":
             case "java.lang.Byte":
             case "java.lang.Short":
-            case "java.lang.Integer":
-            case "java.lang.Long":
                 return "CAST({0} AS NUMBER)";
             case "java.util.UUID":
             case "java.lang.String":

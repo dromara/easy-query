@@ -125,6 +125,7 @@ public class EntityMetadata {
     private static final Log log = LogFactory.getLog(EntityMetadata.class);
     private final Class<?> entityClass;
     private String tableName;
+    private String oldTableName;
     private String treeName;
     private String schema;
     private ErrorMessage errorMessage;
@@ -204,6 +205,7 @@ public class EntityMetadata {
         Table table = EasyClassUtil.getAnnotation(entityClass, Table.class);
         if (table != null) {
             this.tableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass, table.value(), true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
+            this.oldTableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass, table.oldName(), true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
 
             this.schema = table.schema();
             if (EasyStringUtil.isBlank(this.schema)) {
@@ -877,6 +879,10 @@ public class EntityMetadata {
 
     public @Nullable String getTableName() {
         return tableName;
+    }
+
+    public @Nullable String getOldTableName() {
+        return oldTableName;
     }
 
     public @Nullable String getTreeName() {

@@ -1,6 +1,7 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EasyAlias;
 import com.easy.query.core.annotation.EasyAssertMessage;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.InsertIgnore;
@@ -25,6 +26,7 @@ import java.util.List;
 @Table("t_topic")
 @EntityProxy //添加这个注解插件会在当前目录下面生成一个proxy的包,生成代理对象
 @EasyAssertMessage("未找到主题信息")
+@EasyAlias("t_topic")
 public class Topic implements ProxyEntityAvailable<Topic, TopicProxy> {
 
     @Column(primaryKey = true)

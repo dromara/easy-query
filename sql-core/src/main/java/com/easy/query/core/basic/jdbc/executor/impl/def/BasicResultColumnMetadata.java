@@ -37,7 +37,7 @@ public class BasicResultColumnMetadata implements ResultColumnMetadata {
 
     @Override
     public Class<?> getEntityClass() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class BasicResultColumnMetadata implements ResultColumnMetadata {
 
     @Override
     public boolean isEncryption() {
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class BasicResultColumnMetadata implements ResultColumnMetadata {
 
     @Override
     public ValueConverter<?, ?> getValueConverter() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
