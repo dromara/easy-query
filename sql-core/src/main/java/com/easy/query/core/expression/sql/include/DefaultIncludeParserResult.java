@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.include;
 
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateFlatMetadata;
@@ -30,6 +31,7 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     private String[] targetMappingProperties;
     private List<Map<String, Object>> mappingRows;
     private final PropertySetterCaller<Object> setter;
+    private final Property<Object, ?> getter;
     private final List<NavigateFlatMetadata> navigateFlatMetadataList;
     private final EntityMetadata flatQueryEntityMetadata;
 
@@ -47,6 +49,7 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
                                       List<RelationExtraEntity> includeResult,
                                       List<Map<String, Object>> mappingRows,
                                       PropertySetterCaller<Object> setter,
+                                      Property<Object, ?> getter,
                                       List<NavigateFlatMetadata> navigateFlatMetadataList,
                                       EntityMetadata flatQueryEntityMetadata){
 
@@ -64,6 +67,7 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
         this.includeResult = includeResult;
         this.mappingRows = mappingRows;
         this.setter = setter;
+        this.getter = getter;
         this.navigateFlatMetadataList = navigateFlatMetadataList;
         this.flatQueryEntityMetadata = flatQueryEntityMetadata;
     }
@@ -130,6 +134,11 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     @Override
     public PropertySetterCaller<Object> getSetter() {
         return setter;
+    }
+
+    @Override
+    public Property<Object,?> getGetter() {
+        return getter;
     }
 
     /**

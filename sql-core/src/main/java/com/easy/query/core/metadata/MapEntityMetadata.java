@@ -29,7 +29,7 @@ public class MapEntityMetadata extends EntityMetadata {
     @Override
     public ColumnMetadata getColumnNotNull(String propertyName) {
         String checkField = mapColumnNameChecker.checkColumnName(propertyName);
-        ColumnOption columnOption = new ColumnOption(false, this, checkField, checkField);
+        ColumnOption columnOption = new ColumnOption(false, this, checkField, checkField, checkField);
         columnOption.setGetterCaller(obj -> {
             if (obj instanceof Map) {
                 return ((Map) obj).get(checkField);

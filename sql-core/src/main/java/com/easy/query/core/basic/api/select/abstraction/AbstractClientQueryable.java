@@ -33,7 +33,6 @@ import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.IncludeCirculateChecker;
 import com.easy.query.core.common.IncludePath;
 import com.easy.query.core.common.tuple.MergeTuple2;
-import com.easy.query.core.common.tuple.Tuple2;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -48,7 +47,6 @@ import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.builder.AsSelector;
-import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.builder.impl.AsSelectorImpl;
@@ -61,13 +59,11 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.parser.core.base.MultiCollectionImpl;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -97,11 +93,6 @@ import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.fill.FillParams;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
-import com.easy.query.core.expression.sql.include.multi.RelationValueColumnMetadata;
-import com.easy.query.core.expression.sql.include.multi.RelationValueFactory;
-import com.easy.query.core.func.SQLFunc;
-import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -114,7 +105,6 @@ import com.easy.query.core.metadata.MappingPathTreeNode;
 import com.easy.query.core.metadata.NavigateFlatMetadata;
 import com.easy.query.core.metadata.NavigateJoinMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
-import com.easy.query.core.metadata.NavigateOrderProp;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -133,7 +123,6 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1239,7 +1228,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     protected <TR> EasyPageResult<TR> doPageResult(long pageIndex, long pageSize, Class<TR> clazz, long pageTotal) {
         //设置每次获取多少条
-        long take = pageSize <= 0 ? 1 : pageSize;
+        long take = pageSize <= 0 ? 0 : pageSize;
         //设置当前页码最小1
         long index = pageIndex <= 0 ? 1 : pageIndex;
         //需要跳过多少条
@@ -1281,7 +1270,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     protected <TR> EasyPageResult<TR> doShardingPageResult(long pageIndex, long pageSize, Class<TR> clazz, List<Long> totalLines) {
         //设置每次获取多少条
-        long take = pageSize <= 0 ? 1 : pageSize;
+        long take = pageSize <= 0 ? 0 : pageSize;
         //设置当前页码最小1
         long index = pageIndex <= 0 ? 1 : pageIndex;
         //需要跳过多少条

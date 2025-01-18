@@ -205,7 +205,8 @@ public class EntityMetadata {
         Table table = EasyClassUtil.getAnnotation(entityClass, Table.class);
         if (table != null) {
             this.tableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass, table.value(), true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
-            this.oldTableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass, table.oldName(), true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
+            this.oldTableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass, table.
+                    renameFrom(), true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
 
             this.schema = table.schema();
             if (EasyStringUtil.isBlank(this.schema)) {
@@ -267,7 +268,7 @@ public class EntityMetadata {
                 ValueObject valueObject = field.getAnnotation(ValueObject.class);
                 if (valueObject != null) {
                     hasValueObject = true;
-                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true);
+                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true, field.getName());
                     FastBean valueObjectFastBean = EasyBeanUtil.getFastBean(propertyDescriptor.getPropertyType());
                     columnOption.setValueObject(true);
                     columnOption.setBeanConstructorCreator(valueObjectFastBean.getBeanConstructorCreator());
@@ -288,7 +289,7 @@ public class EntityMetadata {
                 }
             }
 
-            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true);
+            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, tableEntity, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, true, field.getName());
             acceptColumnOption(null, columnOption, columnAllIndex);
         }
         if (EasyCollectionUtil.isEmpty(property2ColumnMap.keySet())) {
@@ -509,19 +510,19 @@ public class EntityMetadata {
         }
     }
 
-    private ColumnOption createColumnOption(Field field, PropertyDescriptor propertyDescriptor, boolean tableEntity, String property, FastBeanProperty fastBeanProperty, QueryConfiguration configuration, FastBean fastBean, JdbcTypeHandlerManager jdbcTypeHandlerManager, boolean defaultAutoSelect) {
+    private ColumnOption createColumnOption(Field field, PropertyDescriptor propertyDescriptor, boolean tableEntity, String property, FastBeanProperty fastBeanProperty, QueryConfiguration configuration, FastBean fastBean, JdbcTypeHandlerManager jdbcTypeHandlerManager, boolean defaultAutoSelect, String fieldName) {
         NameConversion nameConversion = configuration.getNameConversion();
         Column column = field.getAnnotation(Column.class);
         boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
         boolean autoSelect = column == null ? defaultAutoSelect : column.autoSelect();
-        if (column != null && !column.defaultUse()) {
+        if (column != null && !column.exist()) {
             autoSelect = false;
         }
         String columnName = hasColumnName ? nameConversion.annotationCovert(entityClass, column.value(), false) : nameConversion.convert(property);
-        ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName, property);
-//            if (column != null) {
-//                columnMetadata.setNullable(column.nullable());
-//            }
+        ColumnOption columnOption = new ColumnOption(tableEntity, this, columnName, property, fieldName);
+//        if (column != null) {
+//            columnOption.setNullable(column.nullable());
+//        }
         columnOption.setPropertyDescriptor(propertyDescriptor);
         columnOption.setAutoSelect(autoSelect);
 
@@ -568,12 +569,12 @@ public class EntityMetadata {
             //如果是默认的那么就通过自动关联的值转换处进行寻找
             processEnumValueConverter(columnOption, propertyDescriptor.getPropertyType(), configuration);
         }
-        boolean defaultUse = true;
+        boolean exist = true;
 
         if (tableEntity) {
 
             if (column != null) {
-                defaultUse = column.defaultUse();
+                exist = column.exist();
                 if (column.primaryKey()) {
                     keyPropertiesMap.put(property, columnName);
                 }
@@ -641,7 +642,7 @@ public class EntityMetadata {
 //                    }
                 }
             }
-            if (!defaultUse) {
+            if (!exist) {
                 columnOption.setInsertIgnore(true);
                 columnOption.setUpdateIgnore(true);
                 columnOption.setUpdateSetInTrackDiff(false);
@@ -754,7 +755,7 @@ public class EntityMetadata {
             } else {
                 ValueObject valueObject = field.getAnnotation(ValueObject.class);
                 if (valueObject != null) {
-                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, parentColumnOption.isAutoSelect());
+                    ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, parentColumnOption.isAutoSelect(), field.getName());
                     FastBean valueObjectFastBean = EasyBeanUtil.getFastBean(propertyDescriptor.getPropertyType());
                     columnOption.setValueObject(true);
                     columnOption.setBeanConstructorCreator(valueObjectFastBean.getBeanConstructorCreator());
@@ -764,7 +765,7 @@ public class EntityMetadata {
                 }
             }
 
-            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, parentColumnOption.isAutoSelect());
+            ColumnOption columnOption = createColumnOption(field, propertyDescriptor, true, property, fastBeanProperty, configuration, fastBean, jdbcTypeHandlerManager, parentColumnOption.isAutoSelect(), field.getName());
             parentColumnOption.getValueObjectColumnOptions().add(columnOption);
         }
     }
@@ -1167,7 +1168,7 @@ public class EntityMetadata {
     public String getSingleKeyProperty() {
         Collection<String> keyProperties = getKeyProperties();
         if (EasyCollectionUtil.isNotSingle(keyProperties)) {
-            throw new EasyQueryInvalidOperationException("entity :" + EasyClassUtil.getSimpleName(entityClass) + " not single key size :" + keyProperties.size());
+            throw new EasyQueryInvalidOperationException("entity :" + EasyClassUtil.getSimpleName(entityClass) + " not single key size :" + keyProperties.size() + ", and confirm whether the @Table annotation is present.");
         }
         return EasyCollectionUtil.first(keyProperties);
     }

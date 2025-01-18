@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.include;
 
 import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateFlatMetadata;
@@ -50,6 +51,7 @@ public interface IncludeParserResult {
     List<Map<String, Object>> getMappingRows();
 
     PropertySetterCaller<Object> getSetter();
+    Property<Object,?> getGetter();
     List<RelationExtraEntity> getRelationExtraEntities();
     List<NavigateFlatMetadata> getNavigateFlatMetadataList();
     EntityMetadata getFlatQueryEntityMetadata();

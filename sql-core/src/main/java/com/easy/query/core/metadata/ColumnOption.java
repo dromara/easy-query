@@ -28,6 +28,7 @@ public final class ColumnOption {
     private final EntityMetadata entityMetadata;
     private final String name;
     private final String propertyName;
+    private final String fieldName;
 
 
     private PropertyDescriptor propertyDescriptor;
@@ -36,7 +37,7 @@ public final class ColumnOption {
     private boolean generatedKey = false;
 
 
-    //    private  boolean nullable=true;
+//        private  boolean nullable=true;
     private boolean version = false;
     private boolean insertIgnore = false;
     private boolean updateIgnore = false;
@@ -63,11 +64,12 @@ public final class ColumnOption {
 //    private boolean concurrentUpdateInTrack = false;
 
 
-    public ColumnOption(boolean tableEntity, EntityMetadata entityMetadata, String name, String propertyName) {
+    public ColumnOption(boolean tableEntity, EntityMetadata entityMetadata, String name, String propertyName,String fieldName) {
         this.tableEntity = tableEntity;
         this.entityMetadata = entityMetadata;
         this.name = name;
         this.propertyName = propertyName;
+        this.fieldName = fieldName;
         this.valueConverter = DefaultValueConverter.INSTANCE;
         this.valueObject = false;
         this.valueObjectColumnOptions = new ArrayList<>();
@@ -273,7 +275,18 @@ public final class ColumnOption {
         this.beanConstructorCreator = beanConstructorCreator;
     }
 
-//    public boolean isConcurrentUpdateInTrack() {
+    public String getFieldName() {
+        return fieldName;
+    }
+    //    public boolean isNullable() {
+//        return nullable;
+//    }
+//
+//    public void setNullable(boolean nullable) {
+//        this.nullable = nullable;
+//    }
+
+    //    public boolean isConcurrentUpdateInTrack() {
 //        return concurrentUpdateInTrack;
 //    }
 //

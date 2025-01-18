@@ -229,9 +229,19 @@ public class EasyClassUtil {
         }
     }
 
+    public static Field getFieldByName(Class<?> clazz, String fieldName){
+        try {
+            return clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static Collection<Field> getAllFields(Class<?> clazz) {
+        return getAllFieldsMap(clazz).values();
+    }
+    public static Map<String, Field> getAllFieldsMap(Class<?> clazz) {
         LinkedHashMap<String, Field> fields = getAllFields0(clazz);
-        return fields.values();
+        return fields;
     }
     private static LinkedHashMap<String, Field> getAllFields0(Class<?> clazz) {
         LinkedHashMap<String, Field> fields = new LinkedHashMap<>();

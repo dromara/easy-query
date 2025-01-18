@@ -4,10 +4,12 @@ import com.easy.query.api.proxy.base.LongProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.doc.MyComUser;
@@ -28,6 +30,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.listener.ListenerContext;
+import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,8 +45,24 @@ import java.util.List;
  * @author xuejiaming
  */
 public class QueryTestRelationTest extends BaseTest {
+    @Data
+    public static class AA{
+        private String name;
+
+        private BB myCompany;
+
+        @Data
+        public static class BB{
+            private String name;
+        }
+    }
     @Test
     public void test1(){
+        List<MySignUp> list1 = easyEntityQuery.queryable(MySignUp.class)
+                .where(m -> {
+                    m.comUser().myCompany().name().like("123");
+                }).toList();
+
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         String companyName="公司";
@@ -52,6 +71,7 @@ public class QueryTestRelationTest extends BaseTest {
                 .where(su -> {
                     su.myCompany().name().like(companyName);
                 }).toList();
+
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`gw` FROM `my_com_user` t LEFT JOIN `my_company_info` t1 ON t1.`id` = t.`com_id` WHERE t1.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());

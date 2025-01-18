@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.include;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
@@ -22,6 +23,7 @@ public class IncludeParseContext {
     private Class<?> navigateOriginalPropertyType;
     private Class<?> navigatePropertyType;
     private PropertySetterCaller<Object> navigatePropertySetter;
+    private Property<Object,?> navigatePropertyGetter;
 
     private ClientQueryable<?> includeQueryable;
     private SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression;
@@ -107,6 +109,14 @@ public class IncludeParseContext {
 
     public void setNavigatePropertySetter(PropertySetterCaller<Object> navigatePropertySetter) {
         this.navigatePropertySetter = navigatePropertySetter;
+    }
+
+    public Property<Object,?> getNavigatePropertyGetter() {
+        return navigatePropertyGetter;
+    }
+
+    public void setNavigatePropertyGetter(Property<Object,?> navigatePropertyGetter) {
+        this.navigatePropertyGetter = navigatePropertyGetter;
     }
 
     public SQLFuncExpression<ClientQueryable<?>> getIncludeQueryableExpression() {

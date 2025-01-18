@@ -46,7 +46,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
 
     @Override
     protected void ManyToOneProcess(List<RelationExtraEntity> includes) {
-        //因为是一对一所以获取关联数据key为主键的map
+        //因为是多对一所以获取关联数据key为主键的map
         Map<RelationValue, ?> includeMap = EasyCollectionUtil.collectionToMap(includes, x -> x.getRelationExtraColumns(targetColumnMetadataPropertyNames), o -> o.getEntity());
         String[] selfRelationColumn = getSelfRelationColumn();
         for (RelationExtraEntity entity : entities) {

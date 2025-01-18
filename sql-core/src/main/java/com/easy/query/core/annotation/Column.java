@@ -131,7 +131,7 @@ public @interface Column {
     Class<? extends PrimaryKeyGenerator> primaryKeyGenerator() default UnsupportPrimaryKeyGenerator.class;
 
     /**
-     * 当前属性是否默认使用
+     * 当前属性是否存在于数据库
      * 等于如下注解的组合如果为false
      * <blockquote><pre>
      * {@code
@@ -143,5 +143,25 @@ public @interface Column {
      *
      * @return true表示存在，false表示不存在
      */
-    boolean defaultUse() default true;
+    boolean exist() default true;
+
+    boolean nullable() default true;
+
+    /**
+     * 数据库类型
+     * @return
+     */
+    String dbType() default "";
+
+    /**
+     * 说明备注
+     * @return
+     */
+    String comment() default "";
+
+    /**
+     * 原始列名
+     * @return
+     */
+    String renameFrom() default "";
 }

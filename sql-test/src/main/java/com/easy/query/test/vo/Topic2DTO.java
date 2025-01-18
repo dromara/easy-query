@@ -31,7 +31,7 @@ public class Topic2DTO {
 
     private String id;
     private String title;
-    @Column(defaultUse = false)
+    @Column(exist = false)
     private String title1;
 
 

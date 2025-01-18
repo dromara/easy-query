@@ -37,9 +37,7 @@ public class Topic implements ProxyEntityAvailable<Topic, TopicProxy> {
 //    @Column(value = "C_USER_NAME")
 //    private String cUserName;
 
-    @Column(autoSelect = false)
-    @InsertIgnore
-    @UpdateIgnore
+    @Column(exist = false)
     private String alias;
 
     @Navigate(value = RelationTypeEnum.OneToMany, targetProperty = "stars")

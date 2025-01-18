@@ -178,6 +178,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 includeResult,
                 includeParseContext.getMappingRows(),
                 includeParseContext.getNavigatePropertySetter(),
+                includeParseContext.getNavigatePropertyGetter(),
                 includeParseContext.getIncludeNavigateParams().getNavigateFlatMetadataList(),
                 includeParseContext.getIncludeNavigateParams().getFlatQueryEntityMetadata()
         );
@@ -280,6 +281,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                     includeParseContext.setNavigatePropertyType(aliasNavigateMetadata.getNavigatePropertyType());
                     includeParseContext.setNavigateOriginalPropertyType(aliasNavigateMetadata.getNavigateOriginalPropertyType());
                     includeParseContext.setNavigatePropertySetter(aliasNavigateMetadata.getSetter());
+                    includeParseContext.setNavigatePropertyGetter(aliasNavigateMetadata.getGetter());
                     SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression = includeParseContext.getIncludeQueryableExpression();
                     if (columnIncludeExpression.getIncludeSelectorExpression() == null) {
 //                        includeParseContext.setIncludeQueryable(includeQueryable.select(aliasNavigateMetadata.getNavigatePropertyType()));
@@ -345,6 +347,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
             includeParseContext.setNavigateOriginalPropertyType(navigateMetadata.getNavigateOriginalPropertyType());
             includeParseContext.setNavigatePropertyType(navigateMetadata.getNavigatePropertyType());
             includeParseContext.setNavigatePropertySetter(navigateMetadata.getSetter());
+            includeParseContext.setNavigatePropertyGetter(navigateMetadata.getGetter());
         }
     }
 

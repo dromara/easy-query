@@ -55,7 +55,7 @@ public class Partition1EntityMetadata extends EntityMetadata {
     protected ColumnMetadata getPartitionByColumn(String propertyName) {
 
         if (isPartitionByColumn(propertyName)) {
-            ColumnOption columnOption = new ColumnOption(false, this, propertyName, propertyName);
+            ColumnOption columnOption = new ColumnOption(false, this, propertyName, propertyName, propertyName);
             columnOption.setGetterCaller(obj -> {
                 return ((Partition1) obj).getPartitionColumn1();
             });

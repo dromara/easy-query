@@ -14,18 +14,13 @@ import java.util.List;
 public class MigrationContext {
 
     private final List<Class<?>> entities;
-    private final QueryRuntimeContext runtimeContext;
 
-    public MigrationContext(List<Class<?>> entities,QueryRuntimeContext runtimeContext) {
+    public MigrationContext(List<Class<?>> entities) {
         this.entities = entities;
-        this.runtimeContext = runtimeContext;
     }
 
     public List<Class<?>> getEntities() {
         return entities;
     }
 
-    public QueryRuntimeContext getRuntimeContext() {
-        return runtimeContext;
-    }
 }

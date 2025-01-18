@@ -34,6 +34,7 @@ public class ColumnMetadata {
      * 数据库列名
      */
     private final String name;
+    private final String fieldName;
 
 
     /**
@@ -144,6 +145,7 @@ public class ColumnMetadata {
             this.primitive = false;
         }
         this.propertyName = columnOption.getFullPropertyName();
+        this.fieldName = columnOption.getFieldName();
         this.primary = columnOption.isPrimary();
         this.generatedKey = columnOption.isGeneratedKey();
         this.version = columnOption.isVersion();
@@ -153,6 +155,7 @@ public class ColumnMetadata {
         this.encryptionStrategy = columnOption.getEncryptionStrategy();
         this.supportQueryLike = columnOption.isSupportQueryLike();
         this.large = columnOption.isLarge();
+//        this.nullable=columnOption.isNullable();
         this.autoSelect = columnOption.isAutoSelect();
         this.valueConverter = columnOption.getValueConverter();
         this.columnValueSQLConverter = columnOption.getColumnValueSQLConverter();
@@ -304,7 +307,14 @@ public class ColumnMetadata {
         return beanConstructorCreator;
     }
 
-//    public boolean isConcurrentUpdateInTrack() {
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    //    public boolean isNullable() {
+//        return nullable;
+//    }
+    //    public boolean isConcurrentUpdateInTrack() {
 //        return concurrentUpdateInTrack;
 //    }
 }

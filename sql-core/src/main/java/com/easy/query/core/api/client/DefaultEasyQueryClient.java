@@ -297,7 +297,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
                 navigateMetadata.getTargetMappingProperties(),
                 includeResult,
                 mappingRows,
-                navigateMetadata.getSetter(), null, null);
+                navigateMetadata.getSetter(),navigateMetadata.getGetter(), null, null);
     }
 
     private SQLFuncExpression<ClientQueryable<?>> createIncludeQueryableExpression(IncludeRelationIdContext includeRelationIdContext, NavigateMetadata navigateMetadata, LoadIncludeConfiguration loadIncludeConfiguration) {

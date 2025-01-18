@@ -15,8 +15,9 @@ import com.easy.query.core.util.EasyToSQLUtil;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * create time 2025/1/11 14:29
@@ -25,83 +26,66 @@ import java.util.List;
  * @author xuejiaming
  */
 public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
-    private static final String newLine = System.lineSeparator();
     private final EntityMetadataManager entityMetadataManager;
-    private final SQLKeyword sqlKeyword;
-    private final DataSource dataSource;
+    private final DatabaseMigrationProvider databaseMigrationProvider;
 
-    public DefaultMigrationsSQLGenerator(EntityMetadataManager entityMetadataManager, QueryConfiguration queryConfiguration,DataSource dataSource) {
+    public DefaultMigrationsSQLGenerator(EntityMetadataManager entityMetadataManager, DatabaseMigrationProvider databaseMigrationProvider) {
         this.entityMetadataManager = entityMetadataManager;
-        this.sqlKeyword = queryConfiguration.getDialect();
-        this.dataSource = dataSource;
-    }
-
-    @Override
-    public MigrationInfoConverter createConverter(MigrationContext migrationContext) {
-        return new DefaultDatabaseMigrationInfoConverter(migrationContext.getRuntimeContext());
+        this.databaseMigrationProvider = databaseMigrationProvider;
     }
 
     @Override
     public List<MigrationCommand> generateMigrationSQL(MigrationContext migrationContext) {
-        MigrationInfoConverter migrationInfoConverter = createConverter(migrationContext);
-        String databaseName = migrationInfoConverter.getDatabaseName(dataSource);
-        StringBuilder databaseSQL = new StringBuilder();
         ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
-        if(!migrationInfoConverter.databaseExists(dataSource,databaseName)){
-            databaseSQL.append("CREATE DATABASE IF NOT EXISTS ").append(sqlKeyword.getQuoteName(databaseName)).append(" default charset utf8mb4 COLLATE utf8mb4_0900_ai_ci;").append(newLine);
-            migrationCommands.add(new DefaultMigrationCommand(null,databaseSQL.toString()));
+        if (!databaseMigrationProvider.databaseExists()) {
+            MigrationCommand databaseCommand = databaseMigrationProvider.createDatabaseCommand();
+            if (databaseCommand != null) {
+                migrationCommands.add(databaseCommand);
+            }
         }
-//        sql.append("CREATE DATABASE IF NOT EXISTS ").append(tableName).append(" default charset utf8mb4 COLLATE utf8mb4_0900_ai_ci;").append(newLine);
         for (Class<?> entity : migrationContext.getEntities()) {
-            StringBuilder sql = new StringBuilder();
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity);
+            EntityMigrationMetadata entityMigrationMetadata = databaseMigrationProvider.createEntityMigrationMetadata(entityMetadata);
             if (EasyStringUtil.isBlank(entityMetadata.getTableName())) {
                 throw new EasyQueryInvalidOperationException(String.format("class type:[%s] not found [@Table] annotation.", EasyClassUtil.getSimpleName(entityMetadata.getEntityClass())));
             }
-            if (sql.length() > 0) {
-                sql.append(newLine);
-            }
-            String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-            String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
-            sql.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append(" ( ");
-            for (ColumnMetadata column : entityMetadata.getColumns()) {
-                sql.append(newLine)
-                        .append(sqlKeyword.getQuoteName(column.getName()))
-                        .append(" ");
-                ColumnTypeResult columnTypeResult = migrationInfoConverter.getColumnTypeResult(entityMetadata, column);
-                sql.append(columnTypeResult.columnType);
-                if (column.isGeneratedKey()) {
-                    sql.append(" AUTO_INCREMENT");
-                }
-                String columnComment = migrationInfoConverter.getColumnComment(entityMetadata, column);
-                if (EasyStringUtil.isNotBlank(columnComment)) {
-                    sql.append(" COMMENT ").append(columnComment);
-                }
-                sql.append(",");
-            }
-            Collection<String> keyProperties = entityMetadata.getKeyProperties();
-            if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
-                sql.append(" ").append(newLine).append(" PRIMARY KEY (");
-                int i=keyProperties.size();
-                for (String keyProperty : keyProperties) {
-                    i--;
-                    ColumnMetadata keyColumn = entityMetadata.getColumnNotNull(keyProperty);
-                    sql.append(sqlKeyword.getQuoteName(keyColumn.getName()));
-                    if(i>0){
-                        sql.append(", ");
-                    }else{
-                        sql.append("),");
+//            if (sql.length() > 0) {
+//                sql.append(newLine);
+//            }
+//            String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+//            String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
+            boolean tableExists = databaseMigrationProvider.tableExists(entityMetadata.getTableName());
+            if (!tableExists) {
+                if (!Objects.equals(entityMetadata.getTableName(), entityMetadata.getOldTableName())) {
+                    boolean oldTableExists = databaseMigrationProvider.tableExists(entityMetadata.getOldTableName());
+                    if (oldTableExists) {
+                        MigrationCommand migrationCommand = databaseMigrationProvider.renameTable(entityMigrationMetadata);
+                        if (migrationCommand != null) {
+                            migrationCommands.add(migrationCommand);
+                        }
+
+                        List<MigrationCommand> columns = databaseMigrationProvider.syncTable(entityMigrationMetadata, true);
+                        if (columns != null) {
+                            migrationCommands.addAll(columns);
+                        }
+                    } else {
+                        MigrationCommand migrationCommand = databaseMigrationProvider.createTable(entityMigrationMetadata);
+                        if (migrationCommand != null) {
+                            migrationCommands.add(migrationCommand);
+                        }
+                    }
+                } else {
+                    MigrationCommand migrationCommand = databaseMigrationProvider.createTable(entityMigrationMetadata);
+                    if (migrationCommand != null) {
+                        migrationCommands.add(migrationCommand);
                     }
                 }
+            } else {
+                List<MigrationCommand> columns = databaseMigrationProvider.syncTable(entityMigrationMetadata, false);
+                if (columns != null) {
+                    migrationCommands.addAll(columns);
+                }
             }
-            sql.append(newLine).append(") Engine=InnoDB");
-            String tableComment = migrationInfoConverter.getTableComment(entityMetadata);
-            if(EasyStringUtil.isNotBlank(tableComment)){
-                sql.append(" COMMENT=").append(tableComment);
-            }
-            sql.append(";").append(newLine);
-            DefaultMigrationCommand defaultMigrationCommand = new DefaultMigrationCommand(entityMetadata, sql.toString());
-            migrationCommands.add(defaultMigrationCommand);
 
 //            for (ColumnMetadata column : entityMetadata.getColumns()) {
 //

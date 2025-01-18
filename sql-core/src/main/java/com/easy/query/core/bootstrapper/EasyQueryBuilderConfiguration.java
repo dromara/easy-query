@@ -9,7 +9,6 @@ import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.DefaultObjectSortQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.basic.entity.ColumnEntityMappingRule;
-import com.easy.query.core.basic.entity.TryColumnAndPropertyEntityMappingRule;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.formater.DefaultSQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
@@ -86,9 +85,9 @@ import com.easy.query.core.job.DefaultEasyTimeJobManager;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.migration.DefaultDatabaseMigrationInfoConverter;
+import com.easy.query.core.migration.DatabaseMigrationProvider;
+import com.easy.query.core.migration.DefaultDatabaseMigrationProvider;
 import com.easy.query.core.migration.DefaultMigrationsSQLGenerator;
-import com.easy.query.core.migration.MigrationInfoConverter;
 import com.easy.query.core.migration.MigrationsSQLGenerator;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
 import com.easy.query.core.sharding.EasyQueryDataSource;
@@ -203,6 +202,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(ValueFilterFactory.class, AnyValueFilterFactory.class)
                 .replaceService(EntityMappingRule.class, ColumnEntityMappingRule.class)
                 .replaceService(MigrationsSQLGenerator.class, DefaultMigrationsSQLGenerator.class)
+                .replaceService(DatabaseMigrationProvider.class, DefaultDatabaseMigrationProvider.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

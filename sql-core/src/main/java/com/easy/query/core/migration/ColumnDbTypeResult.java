@@ -6,14 +6,12 @@ package com.easy.query.core.migration;
  *
  * @author xuejiaming
  */
-public class ColumnTypeResult {
+public class ColumnDbTypeResult {
     public final String columnType;
-    public final String columnTypeNotNull;
     public final Object defValue;
 
-    public ColumnTypeResult(String columnType, String columnTypeNotNull,Object defValue) {
+    public ColumnDbTypeResult(String columnType, Object defValue) {
         this.columnType = columnType;
-        this.columnTypeNotNull = columnTypeNotNull;
         this.defValue = defValue;
     }
 }

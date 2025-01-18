@@ -51,5 +51,7 @@ public @interface Table {
      * 旧表名
      * @return
      */
-    String oldName() default "";
+    String renameFrom() default "";
+
+    String comment() default "";
 }

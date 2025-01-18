@@ -1,5 +1,9 @@
 package com.easy.query.core.migration;
 
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression3;
+import com.easy.query.core.metadata.EntityMetadata;
+
 import java.util.List;
 
 /**
@@ -9,6 +13,5 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface MigrationsSQLGenerator {
-    MigrationInfoConverter createConverter(MigrationContext migrationContext);
     List<MigrationCommand> generateMigrationSQL(MigrationContext migrationContext);
 }
