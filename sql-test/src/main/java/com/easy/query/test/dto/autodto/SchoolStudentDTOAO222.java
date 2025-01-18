@@ -20,7 +20,6 @@ import lombok.Data;
 public class SchoolStudentDTOAO222 {
 
 
-    @Column(value = "EasyStringUtil.EMPTY")
     private String id;
     private String classId;
     private String name;
@@ -34,7 +33,6 @@ public class SchoolStudentDTOAO222 {
      */
     @Data
     public static class InternalSchoolClass {
-        @Column(value = "EasyStringUtil.EMPTY")//主键
         private String id;
         private String name;
 
