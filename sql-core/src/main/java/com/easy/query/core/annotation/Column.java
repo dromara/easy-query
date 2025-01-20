@@ -164,4 +164,6 @@ public @interface Column {
      * @return
      */
     String renameFrom() default "";
+
+    ColumnSQLExpression sqlExpression() default @ColumnSQLExpression(sql = "", realColumn = false, args = {});
 }

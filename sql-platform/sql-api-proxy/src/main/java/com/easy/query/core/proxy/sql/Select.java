@@ -98,7 +98,7 @@ public class Select {
         Objects.requireNonNull(resultProxy, "select null result class");
         if (resultProxy.getEntitySQLContext() instanceof FlatEntitySQLContext) {
             //[flatElement]方法不允许在select函数里面使用,如果你希望是从[flatElement]函数获取的请在[toList]函数内部使用
-            throw new EasyQueryInvalidOperationException("The [flatElement] method is not allowed to be used inside the select function. If you wish to retrieve from the [flatElement] function, please use it within the [toList] function. ");
+            throw new EasyQueryInvalidOperationException("The [flatElement] method is not allowed to be used inside the select function. If you wish to retrieve from the [flatElement] function, please use it within the [toList] function. eg. toList(o->o.users().flatElement()) ");
         }
         QueryRuntimeContext runtimeContext = queryable.getSQLEntityExpressionBuilder().getRuntimeContext();
         SQLSelectAsExpression selectAsExpression = resultProxy.getEntitySQLContext().getSelectAsExpression();

@@ -4,16 +4,23 @@ import com.easy.query.api.proxy.base.LocalDateTimeProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.doc.MyUser1;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyCategory;
@@ -30,6 +37,7 @@ import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.navigateflat.MyUserHome;
 import com.easy.query.test.navigateflat.MyUserHome2;
 import com.easy.query.test.vo.MyUnion;
+import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,6 +45,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * create time 2024/11/25 20:27
@@ -45,6 +54,45 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class QueryTest19 extends BaseTest {
+
+    public static  class  MyNotNullOrEmptyValueFilter implements ValueFilter {
+        public static final ValueFilter DEFAULT=new MyNotNullOrEmptyValueFilter();
+        @Override
+        public boolean accept(@NotNull TableAvailable table, @NotNull String property, Object value) {
+            if(Objects.equals(table.getEntityClass(),Topic.class)&&Objects.equals(Topic.Fields.title,property)){
+                return true;
+            }
+
+            if(value==null){
+                return false;
+            }
+            if(value instanceof String){
+                return EasyStringUtil.isNotBlank((String) value);
+            }
+            return true;
+        }
+
+    }
+    @Test
+    public void testMyFilter(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .filterConfigure(MyNotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_topic -> {
+                    t_topic.title().like("");
+                    t_topic.id().like("");
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `title` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
 
     @org.junit.Test
     public void testDoc99() {
@@ -376,5 +424,40 @@ public class QueryTest19 extends BaseTest {
         Assert.assertEquals(l,l1);
     }
 
+
+    @Test
+    public void testConcat(){
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(b -> {
+                    Expression expression = b.expression();
+                    b.updateTime().asAny().concat(s->s.value(",").expression(b.id()))
+                                    .ge(
+                                            expression.concat(o -> {
+                                                o.expression(b.updateTime().asAnyType(String.class)).value(",").expression(b.id());
+                                            })
+                                    );
+
+
+
+                    expression.concat(o -> {
+                        o.expression(b.updateTime().asAnyType(String.class)).value(",").expression(b.id());
+                    }).ge(
+                            expression.concat(o -> {
+                                o.expression(b.updateTime().asAnyType(String.class)).value(",").expression(b.id());
+                            })
+                    );
+                    val left = expression.concat(o -> {
+                        o.expression(b.updateTime().asAnyType(String.class)).value(",").expression(b.id());
+                    });
+
+                    val right=expression.concat(o -> {
+                        o.expression(b.updateTime().asAny()).value(",").expression(b.id());
+                    });
+
+                    left.ge(right);
+
+
+                }).toList();
+    }
 
 }

@@ -336,7 +336,7 @@ public class QueryTest12 extends BaseTest {
         List<Draft2<String, LocalDateTime>> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .select(o -> Select.DRAFT.of(
                         o.id(),
-                        o.createTime().asAny()
+                        o.createTime().asAnyType(LocalDateTime.class)
                 )).toList();
         for (Draft2<String, LocalDateTime> localDateTimeDraft1 : list1) {
 

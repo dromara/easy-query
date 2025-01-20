@@ -47,7 +47,7 @@ public class MigrationTest extends BaseTest{
                 "`is_top` TINYINT(1) NULL ,\n" +
                 "`top` TINYINT(1) NULL , \n" +
                 " PRIMARY KEY (`id`),\n" +
-                ") Engine=InnoDB;\n",migrationCommand.toSQL());
+                ") Engine=InnoDB;",migrationCommand.toSQL());
     }
     @Test
     public void createTableSQLTest2(){

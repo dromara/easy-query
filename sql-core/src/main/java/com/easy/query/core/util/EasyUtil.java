@@ -1,5 +1,9 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.annotation.ExpressionArg;
+import com.easy.query.core.basic.extension.conversion.ExpArg;
+import com.easy.query.core.basic.extension.conversion.ExpArgTypeEnum;
+import com.easy.query.core.basic.extension.conversion.arg.ArgExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByValue;
 import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByValueImpl;
 import com.easy.query.core.exception.EasyQueryException;
@@ -15,8 +19,10 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -152,5 +158,21 @@ public class EasyUtil {
         return LocalDate.of(year, firstMonthOfQuarter, 1).atStartOfDay();
     }
 
+
+    public static List<ExpArg> getExpArgs(ExpressionArg[] expressionArgs) {
+        List<ExpArg> expArgs = new ArrayList<>();
+        for (ExpressionArg arg : expressionArgs) {
+            if (!Objects.equals(arg.ignoreVal(), arg.prop())) {
+                ExpArg expArg = new ExpArg(ExpArgTypeEnum.PROPERTY, arg.prop(), null);
+                expArgs.add(expArg);
+            } else if (!Objects.equals(arg.ignoreVal(), arg.val())) {
+                ArgExpression argExpression = EasyClassUtil.newInstance(arg.valParser());
+                Object parseVal = argExpression.parse(arg.val());
+                ExpArg expArg = new ExpArg(ExpArgTypeEnum.VALUE, null, parseVal);
+                expArgs.add(expArg);
+            }
+        }
+        return expArgs;
+    }
 }
 

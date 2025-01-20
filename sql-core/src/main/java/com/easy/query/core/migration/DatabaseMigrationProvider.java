@@ -22,25 +22,25 @@ public interface DatabaseMigrationProvider {
 
     MigrationCommand createDatabaseCommand();
 
-    boolean tableExists(String tableName);
+    boolean tableExists(String schema,String tableName);
 
-    MigrationCommand renameTable(EntityMigrationMetadata entityMetadata);
+    MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata);
 
-    MigrationCommand createTable(EntityMigrationMetadata entityMetadata);
+    MigrationCommand createTable(EntityMigrationMetadata entityMigrationMetadata);
 
-    List<MigrationCommand> syncTable(EntityMigrationMetadata entityMetadata, boolean oldTable);
+    List<MigrationCommand> syncTable(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable);
 
-    MigrationCommand dropTable(EntityMigrationMetadata entityMetadata);
+    MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata);
 
     @Nullable
-    ColumnDbTypeResult getColumnDbType(EntityMigrationMetadata entityMetadata, ColumnMetadata columnMetadata);
+    ColumnDbTypeResult getColumnDbType(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
 
-    String getColumnComment(EntityMigrationMetadata entityMetadata, ColumnMetadata columnMetadata);
+    String getColumnComment(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
 
-    boolean isNullable(EntityMigrationMetadata entityMetadata, ColumnMetadata columnMetadata);
-    boolean columnExistInDb(EntityMigrationMetadata entityMetadata, ColumnMetadata columnMetadata);
+    boolean isNullable(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
+    boolean columnExistInDb(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
 
-    String getTableComment(EntityMigrationMetadata entityMetadata);
-    String getColumnRenameFrom(EntityMigrationMetadata entityMetadata,ColumnMetadata columnMetadata);
+    String getTableComment(EntityMigrationMetadata entityMigrationMetadata);
+    String getColumnRenameFrom(EntityMigrationMetadata entityMigrationMetadata,ColumnMetadata columnMetadata);
 
 }

@@ -15,11 +15,11 @@ import com.easy.query.core.util.EasyObjectUtil;
 public interface SQLColumn<TProxy, TProperty> extends ColumnComparableExpression<TProperty>,
         PropTypeColumn<TProperty>, DSLColumnSet<TProxy,TProperty> {
 
-    default SQLAnyColumn<TProxy, TProperty> asAny() {
+    default <TRProxy,TRProperty> SQLAnyColumn<TRProxy, TRProperty> asAny() {
         Class<?> propertyType = getPropertyType();
         SQLAnyColumnImpl<TProxy, TProperty> column = new SQLAnyColumnImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), EasyObjectUtil.typeCastNullable(propertyType));
         column._setProxy(castChain());
-        return column;
+        return EasyObjectUtil.typeCastNullable(column);
     }
 
     @Override

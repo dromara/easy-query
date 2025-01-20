@@ -9,9 +9,9 @@ import java.lang.reflect.Type;
  * @author xuejiaming
  */
 public class DefaultComplexPropType implements ComplexPropType {
-    private final Class<?> propertyType;
+    private final Type propertyType;
 
-    public DefaultComplexPropType(Class<?> propertyType){
+    public DefaultComplexPropType(Type propertyType){
 
         this.propertyType = propertyType;
     }

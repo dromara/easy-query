@@ -26,6 +26,17 @@ public interface ColumnValueSQLConverter {
      */
     void selectColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext);
 
+    /**
+     *
+     * insert update entity
+     * update set
+     * where
+     *
+     * @param table
+     * @param columnMetadata
+     * @param sqlPropertyConverter
+     * @param runtimeContext
+     */
     default void propertyColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext){
         sqlPropertyConverter.sqlNativeSegment("{0}",c->c.expression(new SimpleSQLTableOwner(table),columnMetadata.getPropertyName()));
     }

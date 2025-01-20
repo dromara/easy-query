@@ -58,6 +58,18 @@ public class QueryTestRelationTest extends BaseTest {
     }
     @Test
     public void test1(){
+        List<MySignUp> list4 = easyEntityQuery.queryable(MyComUser.class)
+                .select(o -> o.mySignUps().flatElement())
+                .toList();
+        List<MySignUp> list3 = easyEntityQuery.queryable(MyComUser.class)
+                .toList(o -> o.mySignUps().flatElement());
+
+        List<Draft1<Long>> list2 = easyEntityQuery.queryable(MyComUser.class)
+                .select(m -> Select.DRAFT.of(
+                        m.mySignUps().count()
+                )).toList();
+
+
         List<MySignUp> list1 = easyEntityQuery.queryable(MySignUp.class)
                 .where(m -> {
                     m.comUser().myCompany().name().like("123");

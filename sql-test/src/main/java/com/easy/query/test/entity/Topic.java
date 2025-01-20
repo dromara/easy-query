@@ -12,6 +12,7 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 @EntityProxy //添加这个注解插件会在当前目录下面生成一个proxy的包,生成代理对象
 @EasyAssertMessage("未找到主题信息")
 @EasyAlias("t_topic")
+@FieldNameConstants
 public class Topic implements ProxyEntityAvailable<Topic, TopicProxy> {
 
     @Column(primaryKey = true)

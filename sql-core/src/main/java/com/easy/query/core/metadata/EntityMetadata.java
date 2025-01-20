@@ -2,9 +2,11 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.ColumnIgnore;
+import com.easy.query.core.annotation.ColumnSQLExpression;
 import com.easy.query.core.annotation.EasyAssertMessage;
 import com.easy.query.core.annotation.EasyTree;
 import com.easy.query.core.annotation.Encryption;
+import com.easy.query.core.annotation.ExpressionArg;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Navigate;
@@ -26,8 +28,12 @@ import com.easy.query.core.basic.extension.complex.DefaultComplexPropType;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
+import com.easy.query.core.basic.extension.conversion.EasyColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.EnumValueAutoConverter;
+import com.easy.query.core.basic.extension.conversion.ExpArg;
+import com.easy.query.core.basic.extension.conversion.ExpArgTypeEnum;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.basic.extension.conversion.arg.ArgExpression;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.DefaultGeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
@@ -556,7 +562,7 @@ public class EntityMetadata {
                 columnOption.setComplexPropType(complexPropType);
             } else {
                 ComplexPropType complexPropType = EasyClassUtil.newInstance(complexPropTypeClass);
-                columnOption.setComplexPropType(complexPropType);
+                columnOption.setComplexPropType(new DefaultComplexPropType(complexPropType.complexType()));
             }
             Class<? extends JdbcTypeHandler> typeHandlerClass = column.typeHandler();
             if (!Objects.equals(typeHandlerClass, UnKnownTypeHandler.class)) {
@@ -630,7 +636,13 @@ public class EntityMetadata {
 //                    columnOption.setConcurrentUpdateInTrack(true);
 //                }
                 Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = column.sqlConversion();
-                if (!Objects.equals(DefaultColumnValueSQLConverter.class, columnValueSQLConverterClass)) {
+                boolean hasSQLConversion = !Objects.equals(DefaultColumnValueSQLConverter.class, columnValueSQLConverterClass);
+                ColumnSQLExpression columnSQLExpression = column.sqlExpression();
+                boolean hasSQLExpression = EasyStringUtil.isNotBlank(columnSQLExpression.sql());
+                if (hasSQLConversion && hasSQLExpression) {
+                    throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conflict with sqlConversion and sqlExpression");
+                }
+                if (hasSQLConversion) {
                     //配置列值数据库转换器
                     ColumnValueSQLConverter columnValueSQLConverter = configuration.getColumnValueSQLConverter(columnValueSQLConverterClass);
                     if (columnValueSQLConverter == null) {
@@ -640,6 +652,11 @@ public class EntityMetadata {
 //                    if (columnValueSQLConverter.isMergeSubQuery()) {
 //                        this.aliasQuery = true;
 //                    }
+                }
+                if (hasSQLExpression) {
+                    List<ExpArg> expArgs = EasyUtil.getExpArgs(columnSQLExpression.args());
+                    EasyColumnValueSQLConverter easyColumnValueSQLConverter = new EasyColumnValueSQLConverter(columnSQLExpression.sql(), columnSQLExpression.realColumn(), expArgs);
+                    columnOption.setColumnValueSQLConverter(easyColumnValueSQLConverter);
                 }
             }
             if (!exist) {

@@ -54,10 +54,10 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
 //            }
 //            String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
 //            String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
-            boolean tableExists = databaseMigrationProvider.tableExists(entityMetadata.getTableName());
+            boolean tableExists = databaseMigrationProvider.tableExists(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName());
             if (!tableExists) {
                 if (!Objects.equals(entityMetadata.getTableName(), entityMetadata.getOldTableName())) {
-                    boolean oldTableExists = databaseMigrationProvider.tableExists(entityMetadata.getOldTableName());
+                    boolean oldTableExists = databaseMigrationProvider.tableExists(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName());
                     if (oldTableExists) {
                         MigrationCommand migrationCommand = databaseMigrationProvider.renameTable(entityMigrationMetadata);
                         if (migrationCommand != null) {

@@ -5,6 +5,7 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.mysql.expression.MySQLExpressionFactory;
 import com.easy.query.mysql.func.MySQLFuncImpl;
 
@@ -20,5 +21,6 @@ public class MySQLDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(SQLKeyword.class, MySQLSQLKeyword.class);
         services.addService(ExpressionFactory.class, MySQLExpressionFactory.class);
         services.addService(SQLFunc.class, MySQLFuncImpl.class);
+        services.addService(DatabaseMigrationProvider.class, MySQLDatabaseMigrationProvider.class);
     }
 }
