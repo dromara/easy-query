@@ -184,7 +184,6 @@ public abstract class BaseTest {
 //                .replaceService(Dialect.class, DefaultDialect.class)
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .replaceService(QueryConfiguration.class, MyQueryConfiguration.class)
-                .replaceService(PropertyDescriptorMatcher.class, EntityPropertyDescriptorMatcher.class)
 //                .replaceService(EntityMappingRule.class, PropertyEntityMappingRule.class)
 //                .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
