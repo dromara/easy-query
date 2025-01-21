@@ -58,9 +58,6 @@ public class QueryTestRelationTest extends BaseTest {
     }
     @Test
     public void test1(){
-        List<MySignUp> list4 = easyEntityQuery.queryable(MyComUser.class)
-                .select(o -> o.mySignUps().flatElement())
-                .toList();
         List<MySignUp> list3 = easyEntityQuery.queryable(MyComUser.class)
                 .toList(o -> o.mySignUps().flatElement());
 

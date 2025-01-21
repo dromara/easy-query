@@ -1,4 +1,4 @@
-package com.easy.query.pgsql.config;
+package com.easy.query.gauss.db.config;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * create time 2025/1/19 14:08
@@ -29,35 +30,35 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class PgSQLDataBaseMigrationProvider extends AbstractDatabaseMigrationProvider {
+public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
     private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
 
     static {
-        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("TINYINT(1)", false));
-        columnTypeMap.put(Boolean.class, new ColumnDbTypeResult("TINYINT(1)", null));
-        columnTypeMap.put(float.class, new ColumnDbTypeResult("FLOAT", 0f));
-        columnTypeMap.put(Float.class, new ColumnDbTypeResult("FLOAT", null));
-        columnTypeMap.put(double.class, new ColumnDbTypeResult("DOUBLE", 0d));
-        columnTypeMap.put(Double.class, new ColumnDbTypeResult("DOUBLE", null));
-        columnTypeMap.put(short.class, new ColumnDbTypeResult("SMALLINT(6)", 0));
-        columnTypeMap.put(Short.class, new ColumnDbTypeResult("SMALLINT(6)", null));
-        columnTypeMap.put(int.class, new ColumnDbTypeResult("INT(11)", 0));
-        columnTypeMap.put(Integer.class, new ColumnDbTypeResult("INT(11)", null));
-        columnTypeMap.put(long.class, new ColumnDbTypeResult("BIGINT(20)", 0L));
-        columnTypeMap.put(Long.class, new ColumnDbTypeResult("BIGINT(20)", null));
-        columnTypeMap.put(byte.class, new ColumnDbTypeResult("TINYINT(3)", 0));
-        columnTypeMap.put(Byte.class, new ColumnDbTypeResult("TINYINT(3)", null));
-        columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("DECIMAL(16,2)", null));
-        columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("DATETIME(3)", null));
+        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("BOOL", false));
+        columnTypeMap.put(Boolean.class, new ColumnDbTypeResult("BOOL", null));
+        columnTypeMap.put(float.class, new ColumnDbTypeResult("FLOAT4", 0f));
+        columnTypeMap.put(Float.class, new ColumnDbTypeResult("FLOAT4", null));
+        columnTypeMap.put(double.class, new ColumnDbTypeResult("FLOAT8", 0d));
+        columnTypeMap.put(Double.class, new ColumnDbTypeResult("FLOAT8", null));
+        columnTypeMap.put(short.class, new ColumnDbTypeResult("INT2", 0));
+        columnTypeMap.put(Short.class, new ColumnDbTypeResult("INT2", null));
+        columnTypeMap.put(int.class, new ColumnDbTypeResult("INT4", 0));
+        columnTypeMap.put(Integer.class, new ColumnDbTypeResult("INT4", null));
+        columnTypeMap.put(long.class, new ColumnDbTypeResult("INT8", 0L));
+        columnTypeMap.put(Long.class, new ColumnDbTypeResult("INT8", null));
+        columnTypeMap.put(byte.class, new ColumnDbTypeResult("INT2", 0));
+        columnTypeMap.put(Byte.class, new ColumnDbTypeResult("INT2", null));
+        columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("numeric(16,2)", null));
+        columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("TIMESTAMP", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR(255)", ""));
     }
-    public PgSQLDataBaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
+    public GaussDBDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
         super(dataSource, sqlKeyword);
     }
 
     @Override
     public boolean databaseExists() {
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from pg_namespace where nspname=？", Collections.singletonList(getDatabaseName()));
+        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from pg_namespace where nspname = ?", Collections.singletonList(getDatabaseName()));
         return EasyCollectionUtil.isNotEmpty(maps);
     }
 
@@ -156,12 +157,87 @@ public class PgSQLDataBaseMigrationProvider extends AbstractDatabaseMigrationPro
 
     @Override
     public List<MigrationCommand> syncTable(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
-        return Collections.emptyList();
+
+        //比较差异
+        Set<String> tableColumns = getColumnNames(entityMigrationMetadata, oldTable);
+
+        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
+        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+        for (ColumnMetadata column : entityMetadata.getColumns()) {
+            if (!columnExistInDb(entityMigrationMetadata, column)) {
+                continue;
+            }
+            if (!tableColumns.contains(column.getName())) {
+
+                String columnRenameFrom = getColumnRenameFrom(entityMigrationMetadata, column);
+                if (EasyStringUtil.isNotBlank(columnRenameFrom) && tableColumns.contains(columnRenameFrom)) {
+                    MigrationCommand migrationCommand = renameColumn(entityMigrationMetadata, tableName, columnRenameFrom, column);
+                    migrationCommands.add(migrationCommand);
+                } else {
+                    MigrationCommand migrationCommand = addColumn(entityMigrationMetadata, tableName, column);
+                    migrationCommands.add(migrationCommand);
+                }
+            }
+        }
+        return migrationCommands;
     }
+
+    private MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String tableName, String renameFrom, ColumnMetadata column) {
+        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+        StringBuilder sql = new StringBuilder();
+        sql.append("ALTER TABLE ").append(tableName)
+                .append(" RENAME COLUMN ").append(sqlKeyword.getQuoteName(renameFrom))
+                .append(" TO ")
+                .append(sqlKeyword.getQuoteName(column.getName())).append(";");
+//
+//        ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
+//        sql.append(columnDbTypeResult.columnType);
+//        if (isNullable(entityMigrationMetadata, column)) {
+//            sql.append(" NULL");
+//        } else {
+//            sql.append(" NOT NULL");
+//        }
+
+        String columnComment = getColumnComment(entityMigrationMetadata, column);
+        if (EasyStringUtil.isNotBlank(columnComment)) {
+            sql.append(newLine);
+            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
+            sql.append(";");
+        }
+        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+    }
+
+    private MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, String tableName, ColumnMetadata column) {
+        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+        StringBuilder sql = new StringBuilder();
+        sql.append("ALTER TABLE ").append(tableName)
+                .append(" ADD ").append(sqlKeyword.getQuoteName(column.getName())).append(" ");
+
+        ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
+        sql.append(columnDbTypeResult.columnType);
+        if (isNullable(entityMigrationMetadata, column)) {
+            sql.append(" NULL");
+        } else {
+            sql.append(" NOT NULL");
+        }
+        sql.append(";");
+
+        String columnComment = getColumnComment(entityMigrationMetadata, column);
+        if (EasyStringUtil.isNotBlank(columnComment)) {
+            sql.append(newLine);
+            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
+            sql.append(";");
+        }
+        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+    }
+
 
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
-        return null;
+        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+        return new DefaultMigrationCommand(entityMetadata, "ALTER TABLE " + tableName + ";");
     }
     @Override
     protected ColumnDbTypeResult getColumnDbType0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {

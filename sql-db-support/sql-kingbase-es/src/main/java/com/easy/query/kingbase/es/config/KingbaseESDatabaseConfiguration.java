@@ -5,6 +5,7 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.kingbase.es.expression.KingbaseESExpressionFactory;
 import com.easy.query.kingbase.es.func.KingbaseESSQLFuncImpl;
 
@@ -21,5 +22,6 @@ public class KingbaseESDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(SQLKeyword.class, KingbaseESSQLKeyword.class);
         services.addService(ExpressionFactory.class, KingbaseESExpressionFactory.class);
         services.addService(SQLFunc.class, KingbaseESSQLFuncImpl.class);
+        services.addService(DatabaseMigrationProvider.class, KingbaseESDatabaseMigrationProvider.class);
     }
 }

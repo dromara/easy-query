@@ -5,6 +5,7 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.pgsql.expression.PostgresSQLExpressionFactory;
 import com.easy.query.pgsql.func.PgSQLFuncImpl;
 
@@ -20,5 +21,6 @@ public class PgSQLDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(SQLKeyword.class, PgSQLSQLKeyword.class);
         services.addService(ExpressionFactory.class, PostgresSQLExpressionFactory.class);
         services.addService(SQLFunc.class, PgSQLFuncImpl.class);
+        services.addService(DatabaseMigrationProvider.class, PgSQLDatabaseMigrationProvider.class);
     }
 }
