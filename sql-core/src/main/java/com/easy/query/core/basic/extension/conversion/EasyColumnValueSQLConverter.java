@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleSQLTableOwner;
+import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 
 import java.util.List;
@@ -30,18 +31,22 @@ public class EasyColumnValueSQLConverter implements ColumnValueSQLConverter {
         return realColumn;
     }
 
+    private void accept(TableAvailable table, SQLNativePropertyExpressionContext context) {
+        context.keepStyle();
+        for (ExpArg expArg : expArgs) {
+            if (expArg.argType == ExpArgTypeEnum.PROPERTY) {
+                context.expression(new SimpleSQLTableOwner(table), expArg.prop);
+            } else if (expArg.argType == ExpArgTypeEnum.VALUE) {
+                context.value(expArg.value);
+            }
+        }
+    }
+
     @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
 
         sqlPropertyConverter.sqlNativeSegment(sql, context -> {
-            context.keepStyle();
-            for (ExpArg expArg : expArgs) {
-                if (expArg.argType == ExpArgTypeEnum.PROPERTY) {
-                    context.expression(new SimpleSQLTableOwner(table), expArg.prop);
-                } else if (expArg.argType == ExpArgTypeEnum.VALUE) {
-                    context.value(expArg.value);
-                }
-            }
+            accept(table,context);
             context.setAlias(columnMetadata.getName());
         });
     }
@@ -52,14 +57,7 @@ public class EasyColumnValueSQLConverter implements ColumnValueSQLConverter {
             sqlPropertyConverter.sqlNativeSegment("{0}",c->c.expression(new SimpleSQLTableOwner(table),columnMetadata.getPropertyName()));
         } else {
             sqlPropertyConverter.sqlNativeSegment(sql, context -> {
-                context.keepStyle();
-                for (ExpArg expArg : expArgs) {
-                    if (expArg.argType == ExpArgTypeEnum.PROPERTY) {
-                        context.expression(new SimpleSQLTableOwner(table), expArg.prop);
-                    } else if (expArg.argType == ExpArgTypeEnum.VALUE) {
-                        context.value(expArg.value);
-                    }
-                }
+                accept(table,context);
             });
         }
     }

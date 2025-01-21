@@ -1,8 +1,5 @@
 package com.easy.query.core.annotation;
 
-import com.easy.query.core.basic.extension.conversion.arg.ArgExpression;
-import com.easy.query.core.basic.extension.conversion.arg.StringArgExpression;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -30,5 +27,5 @@ public @interface ExpressionArg {
      * 值解析器
      * @return
      */
-    Class<? extends ArgExpression> valParser() default StringArgExpression.class;
+    Class<?> valType() default String.class;
 }

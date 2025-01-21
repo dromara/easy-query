@@ -40,6 +40,7 @@ import com.easy.query.test.dto.UserExtraDTO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.UserExtra;
+import com.easy.query.test.entity.UserExtra2;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.entity.school.SchoolClassAggregateProp;
@@ -64,9 +65,33 @@ import java.util.concurrent.TimeUnit;
  * @author xuejiaming
  */
 public class QueryTest15 extends BaseTest {
+    @Test
+    public void testSimple(){
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<UserExtra2> list = easyEntityQuery.queryable(UserExtra2.class)
+                    .where(u -> {
+                        u.fullName().like("123");
+                        u.fullName().in(Arrays.asList("1", "2"));
+                        u.age().gt(12);
+                    })
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`first_name`,`last_name`,`birthday`,CONCAT(`first_name`,`last_name`) AS `full_name`,CEILING((timestampdiff(DAY, `birthday`, NOW()) / ?)) AS `age` FROM `t_user_extra` WHERE CONCAT(`first_name`,`last_name`) LIKE ? AND CONCAT(`first_name`,`last_name`) IN (?,?) AND CEILING((timestampdiff(DAY, `birthday`, NOW()) / ?)) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("365(Integer),%123%(String),1(String),2(String),365(Integer),12(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
 
     @Test
     public void test1() {
+
 
 
         {

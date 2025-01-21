@@ -28,7 +28,7 @@ public  class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
     protected final SQLBuilderSegment setColumns;
     protected final PredicateSegment where;
     protected final List<EntityTableSQLExpression> tables=new ArrayList<>(1);
-    private final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
+    protected final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
 
     public UpdateSQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression table) {
         this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;

@@ -9,5 +9,6 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  * @author xuejiaming
  */
 public interface ToTableContext {
+    int getTableSize();
     String getAlias(TableAvailable table);
 }

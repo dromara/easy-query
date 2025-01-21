@@ -201,4 +201,24 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         Assert.assertEquals("2022年01月01日 01时01分01秒(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+    @Test
+    public void update1(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        entityQuery.updatable(MsSQLMyTopic.class)
+                .setColumns(m -> m.title().set("123xx"))
+                .where(m -> {
+                    m.id().isNull();
+                    m.expression().exists(()->{
+                        return entityQuery.queryable(MsSQLMyTopic.class)
+                                .where(m1 -> {m1.id().eq(m.id());});
+                    });
+                }).executeRows();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE t SET t.[Title] = ? FROM [MyTopic] t WHERE t.[Id] IS NULL AND EXISTS (SELECT 1 FROM [MyTopic] t1 WHERE t1.[Id] = t.[Id])", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123xx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 }

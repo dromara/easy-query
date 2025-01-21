@@ -3,7 +3,6 @@ package com.easy.query.core.util;
 import com.easy.query.core.annotation.ExpressionArg;
 import com.easy.query.core.basic.extension.conversion.ExpArg;
 import com.easy.query.core.basic.extension.conversion.ExpArgTypeEnum;
-import com.easy.query.core.basic.extension.conversion.arg.ArgExpression;
 import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByValue;
 import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByValueImpl;
 import com.easy.query.core.exception.EasyQueryException;
@@ -15,14 +14,18 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -158,21 +161,72 @@ public class EasyUtil {
         return LocalDate.of(year, firstMonthOfQuarter, 1).atStartOfDay();
     }
 
-
     public static List<ExpArg> getExpArgs(ExpressionArg[] expressionArgs) {
-        List<ExpArg> expArgs = new ArrayList<>();
+        List<ExpArg> expArgs = new ArrayList<>(expressionArgs.length);
         for (ExpressionArg arg : expressionArgs) {
             if (!Objects.equals(arg.ignoreVal(), arg.prop())) {
                 ExpArg expArg = new ExpArg(ExpArgTypeEnum.PROPERTY, arg.prop(), null);
                 expArgs.add(expArg);
             } else if (!Objects.equals(arg.ignoreVal(), arg.val())) {
-                ArgExpression argExpression = EasyClassUtil.newInstance(arg.valParser());
-                Object parseVal = argExpression.parse(arg.val());
+                Object parseVal = parseVal(arg.val(),arg.valType());
                 ExpArg expArg = new ExpArg(ExpArgTypeEnum.VALUE, null, parseVal);
                 expArgs.add(expArg);
             }
         }
         return expArgs;
+    }
+    private static Object parseVal(String val, Class<?> valType) {
+        if (valType == String.class) {
+            return val;
+        }
+        if (valType == Integer.class||valType == int.class) {
+            return Integer.valueOf(val);
+        }
+        if (valType == Long.class||valType == long.class) {
+            return Long.valueOf(val);
+        }
+        if (valType == BigDecimal.class) {
+            return new BigDecimal(val);
+        }
+        if (valType == Boolean.class) {
+            if("0".equals(val)){
+                return false;
+            }
+            if("1".equals(val)){
+                return true;
+            }
+            return Boolean.valueOf(val);
+        }
+        if (valType == Byte.class) {
+            return Byte.valueOf(val);
+        }
+
+        if (valType == Date.class) {
+            return Date.valueOf(val);
+        }
+        if (valType == Double.class||valType == double.class) {
+            return Double.valueOf(val);
+        }
+        if (valType == Float.class||valType == float.class) {
+            return Float.valueOf(val);
+        }
+        if (valType == LocalDateTime.class) {
+            return LocalDateTime.parse(val);
+        }
+        if (valType == LocalDate.class) {
+            return LocalDate.parse(val);
+        }
+        if (valType == LocalTime.class) {
+            return LocalTime.parse(val);
+        }
+        if (valType == Short.class||valType == short.class) {
+            return Short.valueOf(val);
+        }
+        if (valType == UUID.class) {
+            return UUID.fromString(val);
+        }
+
+        return val;
     }
 }
 

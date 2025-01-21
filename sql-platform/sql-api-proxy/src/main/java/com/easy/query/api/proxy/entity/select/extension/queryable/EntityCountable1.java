@@ -33,12 +33,43 @@ public interface EntityCountable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
      */
     <TNumber extends Number> Query<TNumber> selectCount(Class<TNumber> numberClass);
 
+    /**
+     * 建议使用.selectColumn(x->x.age().sum())
+     * @param columnSelector
+     * @return
+     * @param <TMember>
+     */
+    @Deprecated
     <TMember extends Number> Query<TMember> selectSum(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector);
 
+    /**
+     *
+     * 建议使用.selectColumn(x->x.age().avg())
+     * @param columnSelector
+     * @return
+     * @param <TMember>
+     */
+    @Deprecated
     <TMember extends Number> Query<BigDecimal> selectAvg(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector);
 
+    /**
+     *
+     * 建议使用.selectColumn(x->x.age().max())
+     * @param columnSelector
+     * @return
+     * @param <TMember>
+     */
+    @Deprecated
     <TMember> Query<TMember> selectMax(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector);
 
+    /**
+     *
+     * 建议使用.selectColumn(x->x.age().min())
+     * @param columnSelector
+     * @return
+     * @param <TMember>
+     */
+    @Deprecated
     <TMember> Query<TMember> selectMin(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector);
 
 

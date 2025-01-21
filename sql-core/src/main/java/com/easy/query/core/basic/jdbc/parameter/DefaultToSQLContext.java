@@ -80,4 +80,9 @@ public class DefaultToSQLContext implements ToSQLContext {
     public static ToSQLContext defaultToSQLContext(TableContext tableContext, SQLRewriteUnit sqlRewriteUnit) {
         return new DefaultToSQLContext(tableContext, sqlRewriteUnit);
     }
+
+    @Override
+    public ToTableContext getToTableContext() {
+        return toTableContext;
+    }
 }

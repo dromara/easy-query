@@ -16,18 +16,18 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class SingleRelationValueColumnMetadata implements RelationValueColumnMetadata{
+public class SingleRelationValueColumnMetadata implements RelationValueColumnMetadata {
     private final ColumnMetadata columnMetadata;
     private final RelationValue columnName;
 
     public SingleRelationValueColumnMetadata(EntityMetadata entityMetadata, String property) {
         this.columnMetadata = entityMetadata.getColumnNotNull(property);
-        this.columnName=new SingleRelationValue(columnMetadata.getName());
+        this.columnName = new SingleRelationValue(columnMetadata.getName());
     }
 
     @Override
     public RelationValue getRelationValue(Object entity) {
-        if(entity==null){
+        if (entity == null) {
             throw new EasyQueryInvalidOperationException("current entity can not be null");
         }
         Object value = columnMetadata.getGetterCaller().apply(entity);

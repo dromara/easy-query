@@ -19,7 +19,7 @@ public final class MultiToTableContext implements ToTableContext {
     private final String defaultAlias;
     private final Map<TableAvailable, TableAliasSchema> lazyAliasMapping;
 
-    public MultiToTableContext(HashMap<TableAvailable, String> aliasMapping,  boolean firstHasAlias,String defaultAlias, Map<TableAvailable, TableAliasSchema> lazyAliasMapping) {
+    public MultiToTableContext(HashMap<TableAvailable, String> aliasMapping, boolean firstHasAlias, String defaultAlias, Map<TableAvailable, TableAliasSchema> lazyAliasMapping) {
 
         this.aliasMapping = aliasMapping;
         this.firstHasAlias = firstHasAlias;
@@ -28,17 +28,22 @@ public final class MultiToTableContext implements ToTableContext {
     }
 
     @Override
+    public int getTableSize() {
+        return aliasMapping.size();
+    }
+
+    @Override
     public String getAlias(TableAvailable table) {
         if (!aliasMapping.containsKey(table)) {
             TableAliasSchema lazyTableSchema = lazyAliasMapping.get(table);
-            if(lazyTableSchema!=null){
+            if (lazyTableSchema != null) {
                 return lazyTableSchema.getTableAlias(defaultAlias);
             }
 //            if(table.getAlias()!=null){
 //                return table.getAlias();
 //            }
 //            return "a";
-        throw new EasyQueryTableNotInSQLContextException("not found table:[" + EasyClassUtil.getSimpleName(table.getEntityClass()) + "] in sql context");
+            throw new EasyQueryTableNotInSQLContextException("not found table:[" + EasyClassUtil.getSimpleName(table.getEntityClass()) + "] in sql context");
         }
 //        if (tableCount == 1) {
 //            if (firstHasAlias) {

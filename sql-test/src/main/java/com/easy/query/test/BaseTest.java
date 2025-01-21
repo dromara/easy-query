@@ -17,6 +17,8 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.ShardingDataSource;
+import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
+import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
 import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.configuration.column2mapkey.UpperColumn2MapKeyConversion;
 import com.easy.query.core.configuration.dialect.DefaultSQLKeyword;
@@ -182,6 +184,7 @@ public abstract class BaseTest {
 //                .replaceService(Dialect.class, DefaultDialect.class)
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .replaceService(QueryConfiguration.class, MyQueryConfiguration.class)
+                .replaceService(PropertyDescriptorMatcher.class, EntityPropertyDescriptorMatcher.class)
 //                .replaceService(EntityMappingRule.class, PropertyEntityMappingRule.class)
 //                .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)

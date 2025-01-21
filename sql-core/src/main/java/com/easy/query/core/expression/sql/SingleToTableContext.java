@@ -25,6 +25,12 @@ public class SingleToTableContext implements ToTableContext{
         this.defaultAlias = defaultAlias;
         this.lazyAliasMapping = lazyAliasMapping;
     }
+
+    @Override
+    public int getTableSize() {
+        return 1;
+    }
+
     @Override
     public String getAlias(TableAvailable table) {
         if (!this.table.equals(table)) {

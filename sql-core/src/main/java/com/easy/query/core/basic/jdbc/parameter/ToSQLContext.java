@@ -2,6 +2,7 @@ package com.easy.query.core.basic.jdbc.parameter;
 
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.ToTableContext;
 
 import java.util.List;
 
@@ -28,4 +29,5 @@ public interface ToSQLContext {
     SQLRewriteUnit getSQLRewriteUnit();
 
     String getAlias(TableAvailable table);
+    ToTableContext getToTableContext();
 }
