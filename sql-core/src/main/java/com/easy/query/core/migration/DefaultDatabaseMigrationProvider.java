@@ -1,11 +1,9 @@
 package com.easy.query.core.migration;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
-import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -82,8 +80,8 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-        String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
+        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+        String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
         sql.append("ALTER TABLE ").append(oldTableName).append(" RENAME TO ").append(tableName).append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
@@ -92,7 +90,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
     public MigrationCommand createTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
         sql.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append(" ( ");
         for (ColumnMetadata column : entityMetadata.getColumns()) {
             sql.append(newLine)
@@ -152,7 +150,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
 
         ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
         for (ColumnMetadata column : entityMetadata.getColumns()) {
             if (!columnExistInDb(entityMigrationMetadata, column)) {
                 continue;
@@ -221,7 +219,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
         return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + tableName + ";");
     }
 

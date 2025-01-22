@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -81,6 +82,22 @@ import java.util.function.BiFunction;
  * @author xuejiaming
  */
 public class QueryTest18 extends BaseTest {
+
+//    public void existsQuery(BlogEntityProxy blogFilter) {
+//        blogFilter.expression().exists(()->easyEntityQuery.queryable(Topic.class)
+//                .where(t_topic -> {
+//                    t_topic.title().like("123");
+//                    t_topic.id().eq(blogFilter.id());
+//                }));
+//    }
+//
+//    public void test1xx(){
+//        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(b1 -> {
+//                    existsQuery(b1);
+//                })
+//                .toList();
+//    }
 
     @Test
     public void test1_0() {

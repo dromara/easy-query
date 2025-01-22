@@ -85,8 +85,8 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-        String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
+        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+        String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
         sql.append("ALTER TABLE ").append(oldTableName).append(" RENAME TO ").append(tableName).append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
@@ -98,7 +98,7 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
         StringBuilder sql = new StringBuilder();
         StringBuilder columnCommentSQL = new StringBuilder();
 
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
 
         String tableComment = getTableComment(entityMigrationMetadata);
         if (EasyStringUtil.isNotBlank(tableComment)) {
@@ -163,7 +163,7 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
 
         ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
         for (ColumnMetadata column : entityMetadata.getColumns()) {
             if (!columnExistInDb(entityMigrationMetadata, column)) {
                 continue;
@@ -236,8 +236,8 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-        return new DefaultMigrationCommand(entityMetadata, "ALTER TABLE " + tableName + ";");
+        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + tableName + ";");
     }
     @Override
     protected ColumnDbTypeResult getColumnDbType0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {

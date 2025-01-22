@@ -188,7 +188,7 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
     protected Set<String> getColumnNames(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
 
-        String columnTableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName(), null, null);
+        String columnTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName(), null, null);
         //比较差异
         return EasyDatabaseUtil.getColumns(dataSource, "select * from " + columnTableName + " where 1=2");
     }
