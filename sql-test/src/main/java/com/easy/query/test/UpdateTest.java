@@ -1226,7 +1226,6 @@ public class UpdateTest extends BaseTest {
     @Test
     public void mapUpdateTest1() {
         try {
-
             HashMap<String, Object> stringObjectHashMap = new HashMap<>();
             stringObjectHashMap.put("id", "123");
             stringObjectHashMap.put("name", "123");

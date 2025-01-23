@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * create time 2025/1/19 14:08
@@ -51,6 +52,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("DECIMAL(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("DATETIME", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("NVARCHAR(255)", ""));
+        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("uniqueidentifier", ""));
     }
 
     public MsSQLDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
@@ -86,7 +88,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
+        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null);
         String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
         sql.append("ALTER TABLE ").append(oldTableName).append(" RENAME TO ").append(tableName).append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
@@ -167,18 +169,17 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
         for (ColumnMetadata column : entityMetadata.getColumns()) {
-            if (!columnExistInDb(entityMigrationMetadata, column)) {
-                continue;
-            }
-            if (!tableColumns.contains(column.getName())) {
+            if (columnExistInDb(entityMigrationMetadata, column)) {
+                if (!tableColumns.contains(column.getName())) {
 
-                String columnRenameFrom = getColumnRenameFrom(entityMigrationMetadata, column);
-                if (EasyStringUtil.isNotBlank(columnRenameFrom) && tableColumns.contains(columnRenameFrom)) {
-                    MigrationCommand migrationCommand = renameColumn(entityMigrationMetadata, tableName, columnRenameFrom, column);
-                    migrationCommands.add(migrationCommand);
-                } else {
-                    MigrationCommand migrationCommand = addColumn(entityMigrationMetadata, tableName, column);
-                    migrationCommands.add(migrationCommand);
+                    String columnRenameFrom = getColumnRenameFrom(entityMigrationMetadata, column);
+                    if (EasyStringUtil.isNotBlank(columnRenameFrom) && tableColumns.contains(columnRenameFrom)) {
+                        MigrationCommand migrationCommand = renameColumn(entityMigrationMetadata, tableName, columnRenameFrom, column);
+                        migrationCommands.add(migrationCommand);
+                    } else {
+                        MigrationCommand migrationCommand = addColumn(entityMigrationMetadata, tableName, column);
+                        migrationCommands.add(migrationCommand);
+                    }
                 }
             }
         }

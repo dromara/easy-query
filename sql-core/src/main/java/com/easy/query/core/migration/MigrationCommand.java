@@ -11,5 +11,4 @@ import com.easy.query.core.metadata.EntityMetadata;
 public interface MigrationCommand {
     EntityMetadata getEntityMetadata();
     String toSQL();
-    void execute();
 }

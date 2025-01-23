@@ -117,6 +117,9 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         if (annotation != null) {
             return annotation.nullable();
         }
+        if(columnMetadata.getPropertyType().isPrimitive()){
+            return false;
+        }
         return isNullable0(entityMigrationMetadata, columnMetadata);
     }
 

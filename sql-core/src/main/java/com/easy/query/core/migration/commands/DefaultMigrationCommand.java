@@ -27,9 +27,4 @@ public class DefaultMigrationCommand implements MigrationCommand {
     public String toSQL() {
         return sql;
     }
-
-    @Override
-    public void execute() {
-
-    }
 }

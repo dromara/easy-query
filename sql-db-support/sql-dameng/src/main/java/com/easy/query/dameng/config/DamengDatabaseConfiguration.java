@@ -5,6 +5,7 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.dameng.expression.DamengExpressionFactory;
 import com.easy.query.dameng.func.DamengSQLFuncImpl;
 
@@ -20,5 +21,6 @@ public class DamengDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(SQLKeyword.class, DamengSQLKeyword.class);
         services.addService(ExpressionFactory.class, DamengExpressionFactory.class);
         services.addService(SQLFunc.class, DamengSQLFuncImpl.class);
+        services.addService(DatabaseMigrationProvider.class, DamengDatabaseMigrationProvider.class);
     }
 }
