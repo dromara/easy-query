@@ -5,6 +5,7 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.oracle.expression.OracleExpressionFactory;
 import com.easy.query.oracle.func.OracleSQLFuncImpl;
 
@@ -20,5 +21,6 @@ public class OracleDatabaseConfiguration  implements DatabaseConfiguration {
         services.addService(SQLKeyword.class, OracleSQLKeyword.class);
         services.addService(ExpressionFactory.class, OracleExpressionFactory.class);
         services.addService(SQLFunc.class, OracleSQLFuncImpl.class);
+        services.addService(DatabaseMigrationProvider.class, OracleDatabaseMigrationProvider.class);
     }
 }
