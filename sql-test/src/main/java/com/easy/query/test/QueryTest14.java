@@ -24,7 +24,7 @@ import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
-import com.easy.query.sqllite.config.SQLLiteDatabaseConfiguration;
+import com.easy.query.sqllite.config.SQLiteDatabaseConfiguration;
 import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
@@ -1055,7 +1055,7 @@ public class QueryTest14 extends BaseTest {
                     op.setExecutorMaximumPoolSize(2);
                     op.setMaxShardingQueryLimit(1);
                 })
-                .useDatabaseConfigure(new SQLLiteDatabaseConfiguration())
+                .useDatabaseConfigure(new SQLiteDatabaseConfiguration())
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .build();
         DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);

@@ -1,13 +1,18 @@
-package com.easy.query.core.migration;
+package com.easy.query.sqllite.config;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
+import com.easy.query.core.migration.ColumnDbTypeResult;
+import com.easy.query.core.migration.EntityMigrationMetadata;
+import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.core.util.EasyToSQLUtil;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -18,7 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.UUID;
 
 /**
  * create time 2025/1/14 13:31
@@ -26,53 +31,59 @@ import java.util.Set;
  *
  * @author xuejiaming
  */
-public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
+public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
     private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
+    private static final Log log= LogFactory.getLog(SQLiteDatabaseMigrationProvider.class);
 
     static {
-        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("TINYINT(1)", false));
-        columnTypeMap.put(Boolean.class, new ColumnDbTypeResult("TINYINT(1)", null));
-        columnTypeMap.put(float.class, new ColumnDbTypeResult("FLOAT", 0f));
-        columnTypeMap.put(Float.class, new ColumnDbTypeResult("FLOAT", null));
-        columnTypeMap.put(double.class, new ColumnDbTypeResult("DOUBLE", 0d));
-        columnTypeMap.put(Double.class, new ColumnDbTypeResult("DOUBLE", null));
-        columnTypeMap.put(short.class, new ColumnDbTypeResult("SMALLINT(6)", 0));
-        columnTypeMap.put(Short.class, new ColumnDbTypeResult("SMALLINT(6)", null));
-        columnTypeMap.put(int.class, new ColumnDbTypeResult("INT(11)", 0));
-        columnTypeMap.put(Integer.class, new ColumnDbTypeResult("INT(11)", null));
-        columnTypeMap.put(long.class, new ColumnDbTypeResult("BIGINT(20)", 0L));
-        columnTypeMap.put(Long.class, new ColumnDbTypeResult("BIGINT(20)", null));
-        columnTypeMap.put(byte.class, new ColumnDbTypeResult("TINYINT(3)", 0));
-        columnTypeMap.put(Byte.class, new ColumnDbTypeResult("TINYINT(3)", null));
-        columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("DECIMAL(16,2)", null));
-        columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("DATETIME(3)", null));
-        columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR(255)", ""));
+        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("boolean", false));
+        columnTypeMap.put(Boolean.class, new ColumnDbTypeResult("boolean", null));
+        columnTypeMap.put(float.class, new ColumnDbTypeResult("float", 0f));
+        columnTypeMap.put(Float.class, new ColumnDbTypeResult("float", null));
+        columnTypeMap.put(double.class, new ColumnDbTypeResult("double", 0d));
+        columnTypeMap.put(Double.class, new ColumnDbTypeResult("double", null));
+        columnTypeMap.put(short.class, new ColumnDbTypeResult("smallint", 0));
+        columnTypeMap.put(Short.class, new ColumnDbTypeResult("smallint", null));
+        columnTypeMap.put(int.class, new ColumnDbTypeResult("integer", 0));
+        columnTypeMap.put(Integer.class, new ColumnDbTypeResult("integer", null));
+        columnTypeMap.put(long.class, new ColumnDbTypeResult("integer", 0L));
+        columnTypeMap.put(Long.class, new ColumnDbTypeResult("integer", null));
+        columnTypeMap.put(byte.class, new ColumnDbTypeResult("int2", 0));
+        columnTypeMap.put(Byte.class, new ColumnDbTypeResult("int2", null));
+        columnTypeMap.put(byte[].class, new ColumnDbTypeResult("blob", new byte[0]));
+        columnTypeMap.put(Byte[].class, new ColumnDbTypeResult("blob", null));
+        columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("decimal(16,2)", null));
+        columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("datetime", null));
+        columnTypeMap.put(String.class, new ColumnDbTypeResult("nvarchar(255)", ""));
+        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("character(36)", ""));
     }
 
 
-    public DefaultDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
+    public SQLiteDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
         super(dataSource, sqlKeyword);
     }
 
 
     @Override
     public boolean databaseExists() {
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from information_schema.schemata where schema_name=?", Collections.singletonList(getDatabaseName()));
-        return EasyCollectionUtil.isNotEmpty(maps);
+        log.warn("sqlite not support check database exists.");
+        return true;
+//        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from information_schema.schemata where schema_name=?", Collections.singletonList(getDatabaseName()));
+//        return EasyCollectionUtil.isNotEmpty(maps);
     }
 
     @Override
     public MigrationCommand createDatabaseCommand() {
-        String databaseSQL = "CREATE DATABASE IF NOT EXISTS " + getQuoteSQLName(databaseName) + " default charset utf8mb4 COLLATE utf8mb4_0900_ai_ci;";
-        return new DefaultMigrationCommand(null, databaseSQL);
+        log.warn("sqlite not support create database command.");
+        return null;
+//        String databaseSQL = "CREATE DATABASE IF NOT EXISTS " + getQuoteSQLName(databaseName) + " default charset utf8mb4 COLLATE utf8mb4_0900_ai_ci;";
+//        return new DefaultMigrationCommand(null, databaseSQL);
     }
 
     @Override
     public boolean tableExists(String schema,String tableName) {
         ArrayList<Object> sqlParameters = new ArrayList<>();
-        sqlParameters.add(getDatabaseName());
-        sqlParameters.add(tableName);
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from information_schema.TABLES where table_schema=? and table_name=?", sqlParameters);
+        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, String.format("select 1 from %s.sqlite_master where type='table' and name='%s'",getDatabaseName(),tableName), sqlParameters);
         return EasyCollectionUtil.isNotEmpty(maps);
     }
 
@@ -101,12 +112,12 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
                 sql.append(" NOT NULL ");
             }
             if (column.isGeneratedKey()) {
-                sql.append(" AUTO_INCREMENT");
+                sql.append(" PRIMARY KEY AUTOINCREMENT");
             }
-            String columnComment = getColumnComment(entityMigrationMetadata, column);
-            if (EasyStringUtil.isNotBlank(columnComment)) {
-                sql.append(" COMMENT ").append(columnComment);
-            }
+//            String columnComment = getColumnComment(entityMigrationMetadata, column);
+//            if (EasyStringUtil.isNotBlank(columnComment)) {
+//                sql.append(" COMMENT ").append(columnComment);
+//            }
             sql.append(",");
         }
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
@@ -124,12 +135,12 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
                 }
             }
         }
-        sql.append(newLine).append(") Engine=InnoDB");
-        String tableComment = getTableComment(entityMigrationMetadata);
-        if (EasyStringUtil.isNotBlank(tableComment)) {
-            sql.append(" COMMENT=").append(tableComment);
-        }
-        sql.append(";");
+        sql.append(newLine).append(");");
+//        String tableComment = getTableComment(entityMigrationMetadata);
+//        if (EasyStringUtil.isNotBlank(tableComment)) {
+//            sql.append(" COMMENT=").append(tableComment);
+//        }
+//        sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 
@@ -140,12 +151,12 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
 
     @Override
     protected MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String renameFrom, ColumnMetadata column) {
-
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
+        //ALTER TABLE table_name RENAME COLUMN old_column_name TO new_column_name;
         sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()))
-                .append(" CHANGE ").append(getQuoteSQLName(renameFrom))
-                .append(" ")
+                .append(" RENAME COLUMN ").append(getQuoteSQLName(renameFrom))
+                .append(" TO ")
                 .append(getQuoteSQLName(column.getName())).append(" ");
 
         ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
@@ -156,10 +167,10 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" NOT NULL");
         }
 
-        String columnComment = getColumnComment(entityMigrationMetadata, column);
-        if (EasyStringUtil.isNotBlank(columnComment)) {
-            sql.append(" COMMENT").append(columnComment);
-        }
+//        String columnComment = getColumnComment(entityMigrationMetadata, column);
+//        if (EasyStringUtil.isNotBlank(columnComment)) {
+//            sql.append(" COMMENT").append(columnComment);
+//        }
         sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
@@ -169,7 +180,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
         sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()))
-                .append(" ADD ").append(getQuoteSQLName(column.getName())).append(" ");
+                .append(" ADD COLUMN ").append(getQuoteSQLName(column.getName())).append(" ");
 
         ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
         sql.append(columnDbTypeResult.columnType);
@@ -179,10 +190,10 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" NOT NULL");
         }
 
-        String columnComment = getColumnComment(entityMigrationMetadata, column);
-        if (EasyStringUtil.isNotBlank(columnComment)) {
-            sql.append(" COMMENT").append(columnComment);
-        }
+//        String columnComment = getColumnComment(entityMigrationMetadata, column);
+//        if (EasyStringUtil.isNotBlank(columnComment)) {
+//            sql.append(" COMMENT").append(columnComment);
+//        }
         sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }

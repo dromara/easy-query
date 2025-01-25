@@ -9,7 +9,7 @@ import com.easy.query.core.configuration.dialect.AbstractSQLKeyword;
  *
  * @author xuejiaming
  */
-public final class SQLLiteSQLKeyword extends AbstractSQLKeyword {
+public final class SQLiteSQLKeyword extends AbstractSQLKeyword {
     @Override
     protected String getQuoteStart() {
         return "\"";

@@ -33,7 +33,7 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
-import com.easy.query.sqllite.config.SQLLiteDatabaseConfiguration;
+import com.easy.query.sqllite.config.SQLiteDatabaseConfiguration;
 import com.easy.query.test.common.BusinessException;
 import com.easy.query.test.dto.SchoolClassAggregateDTO;
 import com.easy.query.test.dto.UserExtraDTO;
@@ -1034,7 +1034,7 @@ public class QueryTest15 extends BaseTest {
                     op.setStartTimeJob(true);
                     op.setReverseOffsetThreshold(10);
                 })
-                .useDatabaseConfigure(new SQLLiteDatabaseConfiguration())
+                .useDatabaseConfigure(new SQLiteDatabaseConfiguration())
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);

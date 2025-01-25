@@ -1,6 +1,8 @@
 package com.easy.query.oracle.config;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
@@ -33,6 +35,7 @@ import java.util.UUID;
  */
 public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
     private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
+    private static final Log log= LogFactory.getLog(OracleDatabaseMigrationProvider.class);
 
     static {
         columnTypeMap.put(boolean.class, new ColumnDbTypeResult("number(1)", false));
@@ -66,7 +69,8 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 
     @Override
     public MigrationCommand createDatabaseCommand() {
-        throw new UnsupportedOperationException("dameng not support create database");
+        log.warn("oracle not support create database command.");
+        return null;
 //        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
 //        return new DefaultMigrationCommand(null, databaseSQL);
     }

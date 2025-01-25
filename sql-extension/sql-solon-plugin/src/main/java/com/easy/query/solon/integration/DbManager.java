@@ -57,7 +57,7 @@ import com.easy.query.solon.integration.option.MapKeyConversionEnum;
 import com.easy.query.solon.integration.option.NameConversionEnum;
 import com.easy.query.solon.integration.option.PropertyModeEnum;
 import com.easy.query.solon.integration.option.SQLParameterPrintEnum;
-import com.easy.query.sqllite.config.SQLLiteDatabaseConfiguration;
+import com.easy.query.sqllite.config.SQLiteDatabaseConfiguration;
 import org.noear.solon.Utils;
 import org.noear.solon.core.BeanWrap;
 import org.noear.solon.core.Props;
@@ -295,7 +295,7 @@ public class DbManager {
             case ORACLE:
                 return new OracleDatabaseConfiguration();
             case SQLITE:
-                return new SQLLiteDatabaseConfiguration();
+                return new SQLiteDatabaseConfiguration();
             case CLICKHOUSE:
                 return new ClickHouseDatabaseConfiguration();
             case GAUSS_DB:

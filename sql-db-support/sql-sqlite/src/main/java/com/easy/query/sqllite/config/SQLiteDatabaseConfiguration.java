@@ -5,6 +5,7 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.sqllite.expression.SQLiteExpressionFactory;
 import com.easy.query.sqllite.func.SQLiteFuncImpl;
 
@@ -14,11 +15,12 @@ import com.easy.query.sqllite.func.SQLiteFuncImpl;
  *
  * @author xuejiaming
  */
-public class SQLLiteDatabaseConfiguration implements DatabaseConfiguration {
+public class SQLiteDatabaseConfiguration implements DatabaseConfiguration {
     @Override
     public void configure(ServiceCollection services) {
-        services.addService(SQLKeyword.class, SQLLiteSQLKeyword.class);
+        services.addService(SQLKeyword.class, SQLiteSQLKeyword.class);
         services.addService(ExpressionFactory.class, SQLiteExpressionFactory.class);
         services.addService(SQLFunc.class, SQLiteFuncImpl.class);
+        services.addService(DatabaseMigrationProvider.class, SQLiteDatabaseMigrationProvider.class);
     }
 }
