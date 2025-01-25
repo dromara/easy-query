@@ -27,13 +27,15 @@ public class EasyToSQLUtil {
     }
 
     public static String getQuoteSQLName(SQLKeyword sqlKeyword, String val1, String val2) {
-        if (val1 == null && val2 == null) {
+        boolean v1Blank = EasyStringUtil.isBlank(val1);
+        boolean v2Blank = EasyStringUtil.isBlank(val2);
+        if (v1Blank &&v2Blank) {
             return "";
         }
-        if (val1 == null) {
+        if (v1Blank) {
             return getQuoteSQLName(sqlKeyword, val2);
         }
-        if (val2 == null) {
+        if (v2Blank) {
             return getQuoteSQLName(sqlKeyword, val1);
         }
         return getQuoteSQLName(sqlKeyword, val1 + "." + val2);

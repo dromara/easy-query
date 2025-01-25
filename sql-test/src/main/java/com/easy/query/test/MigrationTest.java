@@ -28,6 +28,9 @@ public class MigrationTest extends BaseTest{
         MigrationContext migrationContext = new MigrationContext(Arrays.asList(Topic.class, BlogEntity.class, MyMigrationBlog.class));
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
         Assert.assertEquals(1,migrationCommands.size());
+        for (MigrationCommand migrationCommand : migrationCommands) {
+            System.out.println(migrationCommand.toSQL());
+        }
         MigrationCommand migrationCommand = migrationCommands.get(0);
         Assert.assertEquals("CREATE TABLE IF NOT EXISTS `my_migration_blog` ( \n" +
                 "`id` VARCHAR(255) NOT NULL ,\n" +
