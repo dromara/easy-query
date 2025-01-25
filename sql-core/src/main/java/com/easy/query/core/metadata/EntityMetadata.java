@@ -909,6 +909,13 @@ public class EntityMetadata {
         return schema;
     }
 
+    public String getSchemaOrDefault(String defSchema) {
+        if (schema == null) {
+            return defSchema;
+        }
+        return schema;
+    }
+
     public String getColumnName(String propertyName) {
         ColumnMetadata columnMetadata = property2ColumnMap.get(propertyName);
         if (columnMetadata == null) {

@@ -52,7 +52,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("number(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("timestamp(6)", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("nvarchar2(255)", ""));
-        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("char(36)", ""));
+        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("char(36)", null));
     }
     public OracleDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
         super(dataSource, sqlKeyword);
@@ -67,7 +67,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     @Override
     public MigrationCommand createDatabaseCommand() {
         throw new UnsupportedOperationException("dameng not support create database");
-//        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + sqlKeyword.getQuoteName(databaseName) + ";";
+//        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
 //        return new DefaultMigrationCommand(null, databaseSQL);
     }
 
@@ -87,13 +87,8 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     @Override
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        StringBuilder sql = new StringBuilder();
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null);
-        String schema = EasyToSQLUtil.getSchema(sqlKeyword, entityMetadata, entityMetadata.getSchemaOrNull(), null,"");
-        String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
-        String format = String.format("execute immediate 'ALTER TABLE %s.%s RENAME TO  %s';", schema,oldTableName, tableName);
-        sql.append(format).append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        String sql = String.format("execute immediate 'ALTER TABLE %s RENAME TO  %s';", getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName()), getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()));
+        return new DefaultMigrationCommand(entityMetadata, sql);
     }
 
     @Override
@@ -103,20 +98,19 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         StringBuilder sql = new StringBuilder();
         StringBuilder columnCommentSQL = new StringBuilder();
 
-        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
 
         String tableComment = getTableComment(entityMigrationMetadata);
         if (EasyStringUtil.isNotBlank(tableComment)) {
-            String format = String.format("execute immediate 'COMMENT ON TABLE %s IS ''%s''';", tableName, tableComment);
+            String format = String.format("execute immediate 'COMMENT ON TABLE %s IS ''%s''';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()), tableComment);
             columnCommentSQL.append(newLine)
                     .append(format)
                     .append(newLine).append(";");
         }
 
-        sql.append("execute immediate 'CREATE TABLE ").append(tableName).append(" ( ");
+        sql.append("execute immediate 'CREATE TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName())).append(" ( ");
         for (ColumnMetadata column : entityMetadata.getColumns()) {
             sql.append(newLine)
-                    .append(sqlKeyword.getQuoteName(column.getName()))
+                    .append(getQuoteSQLName(column.getName()))
                     .append(" ");
             ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
             sql.append(columnDbTypeResult.columnType);
@@ -131,7 +125,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 //            }
             String columnComment = getColumnComment(entityMigrationMetadata, column);
             if (EasyStringUtil.isNotBlank(columnComment)) {
-                String format = String.format("execute immediate 'COMMENT ON COLUMN %s.%s IS ''%s''';", tableName, sqlKeyword.getQuoteName(column.getName()), columnComment);
+                String format = String.format("execute immediate 'COMMENT ON COLUMN %s.%s IS ''%s''';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()), getQuoteSQLName(column.getName()), columnComment);
                 columnCommentSQL.append(newLine)
                         .append(format).append(";");
             }
@@ -140,12 +134,12 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
         if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
             sql.append(newLine)
-                    .append(" CONSTRAINT ").append(sqlKeyword.getQuoteName(getDatabaseName()+"_"+entityMetadata.getTableName()+"_pk1")).append(newLine).append(" PRIMARY KEY (");
+                    .append(" CONSTRAINT ").append(getQuoteSQLName(getDatabaseName()+"_"+entityMetadata.getTableName()+"_pk1")).append(newLine).append(" PRIMARY KEY (");
             int i = keyProperties.size();
             for (String keyProperty : keyProperties) {
                 i--;
                 ColumnMetadata keyColumn = entityMetadata.getColumnNotNull(keyProperty);
-                sql.append(sqlKeyword.getQuoteName(keyColumn.getName()));
+                sql.append(getQuoteSQLName(keyColumn.getName()));
                 if (i > 0) {
                     sql.append(", ");
                 } else {
@@ -160,39 +154,10 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         }
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
-
     @Override
-    public List<MigrationCommand> syncTable(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
-
-        //比较差异
-        Set<String> tableColumns = getColumnNames(entityMigrationMetadata, oldTable);
-
-        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
+    protected MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata,String renameFrom, ColumnMetadata column) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-        for (ColumnMetadata column : entityMetadata.getColumns()) {
-            if (columnExistInDb(entityMigrationMetadata, column)) {
-                if (!tableColumns.contains(column.getName())) {
-                    String columnRenameFrom = getColumnRenameFrom(entityMigrationMetadata, column);
-                    if (EasyStringUtil.isNotBlank(columnRenameFrom) && tableColumns.contains(columnRenameFrom)) {
-                        MigrationCommand migrationCommand = renameColumn(entityMigrationMetadata, tableName, columnRenameFrom, column);
-                        migrationCommands.add(migrationCommand);
-                    } else {
-                        MigrationCommand migrationCommand = addColumn(entityMigrationMetadata, tableName, column);
-                        migrationCommands.add(migrationCommand);
-                    }
-                }
-            }
-        }
-        return migrationCommands;
-    }
-
-    private MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String tableName, String renameFrom, ColumnMetadata column) {
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        StringBuilder sql = new StringBuilder();
-        String schemaTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-        String format = String.format("execute immediate 'ALTER TABLE %s RENAME COLUMN %s TO  %s';", schemaTableName, sqlKeyword.getQuoteName(renameFrom), sqlKeyword.getQuoteName(column.getName()));
-        sql.append(format).append(";");
+        String sql = String.format("execute immediate 'ALTER TABLE %s RENAME COLUMN %s TO  %s';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()), getQuoteSQLName(renameFrom), getQuoteSQLName(column.getName()));
 //
 //        ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
 //        sql.append(columnDbTypeResult.columnType);
@@ -208,15 +173,15 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 //            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
 //            sql.append(";");
 //        }
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(entityMetadata, sql);
     }
 
-    private MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, String tableName, ColumnMetadata column) {
+    @Override
+    protected MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata column) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        String schemaTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-        String format = String.format("execute immediate 'ALTER TABLE %s ADD (", schemaTableName);
-        sql.append(format).append(sqlKeyword.getQuoteName(column.getName()));
+        String format = String.format("execute immediate 'ALTER TABLE %s ADD (", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()));
+        sql.append(format).append(getQuoteSQLName(column.getName()));
 
         ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
         sql.append(columnDbTypeResult.columnType);
@@ -240,8 +205,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + tableName + ";");
+        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()) + ";");
     }
     @Override
     protected ColumnDbTypeResult getColumnDbType0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {

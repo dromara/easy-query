@@ -52,7 +52,7 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("numeric(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("TIMESTAMP", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR(255)", ""));
-        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("UUID", ""));
+        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("UUID", null));
     }
     public KingbaseESDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
         super(dataSource, sqlKeyword);
@@ -66,31 +66,28 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
 
     @Override
     public MigrationCommand createDatabaseCommand() {
-        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + sqlKeyword.getQuoteName(databaseName) + ";";
+        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
         return new DefaultMigrationCommand(null, databaseSQL);
     }
 
     @Override
-    public boolean tableExists(String schema,String tableName) {
+    public boolean tableExists(String schema, String tableName) {
         ArrayList<Object> sqlParameters = new ArrayList<>();
-        if(EasyStringUtil.isBlank(schema)){
+        if (EasyStringUtil.isBlank(schema)) {
             sqlParameters.add("public");
-        }else{
+        } else {
             sqlParameters.add(schema);
         }
         sqlParameters.add(tableName);
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from pg_tables a inner join pg_namespace b on b.nspname = a.schemaname where b.nspname || '.' || a.tablename = ? || '.' || ?", sqlParameters);
+        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from pg_tables a inner join pg_namespace b on b.nspname = a.schemaname where b.nspname =? and a.tablename = ?", sqlParameters);
         return EasyCollectionUtil.isNotEmpty(maps);
     }
 
     @Override
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        StringBuilder sql = new StringBuilder();
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null);
-        String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
-        sql.append("ALTER TABLE ").append(oldTableName).append(" RENAME TO ").append(tableName).append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        String sql = "ALTER TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName()) + " RENAME TO " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";";
+        return new DefaultMigrationCommand(entityMetadata, sql);
     }
 
     @Override
@@ -100,19 +97,18 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
         StringBuilder sql = new StringBuilder();
         StringBuilder columnCommentSQL = new StringBuilder();
 
-        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
 
         String tableComment = getTableComment(entityMigrationMetadata);
         if (EasyStringUtil.isNotBlank(tableComment)) {
             columnCommentSQL.append(newLine)
                     .append("COMMENT ON TABLE ")
-                    .append(tableName).append(" IS ").append(tableComment).append(";");
+                    .append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" IS ").append(tableComment).append(";");
         }
 
-        sql.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append(" ( ");
+        sql.append("CREATE TABLE IF NOT EXISTS ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" ( ");
         for (ColumnMetadata column : entityMetadata.getColumns()) {
             sql.append(newLine)
-                    .append(sqlKeyword.getQuoteName(column.getName()))
+                    .append(getQuoteSQLName(column.getName()))
                     .append(" ");
             ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
             sql.append(columnDbTypeResult.columnType);
@@ -129,7 +125,7 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
             if (EasyStringUtil.isNotBlank(columnComment)) {
                 columnCommentSQL.append(newLine)
                         .append("COMMENT ON COLUMN ")
-                        .append(tableName).append(".").append(sqlKeyword.getQuoteName(column.getName()))
+                        .append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(".").append(getQuoteSQLName(column.getName()))
                         .append(" IS ").append(columnComment).append(";");
             }
             sql.append(",");
@@ -141,7 +137,7 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
             for (String keyProperty : keyProperties) {
                 i--;
                 ColumnMetadata keyColumn = entityMetadata.getColumnNotNull(keyProperty);
-                sql.append(sqlKeyword.getQuoteName(keyColumn.getName()));
+                sql.append(getQuoteSQLName(keyColumn.getName()));
                 if (i > 0) {
                     sql.append(", ");
                 } else {
@@ -150,46 +146,22 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
             }
         }
         sql.append(newLine).append(")");
-        if(columnCommentSQL.length()>0){
+        if (columnCommentSQL.length() > 0) {
             sql.append(newLine).append(columnCommentSQL);
         }
         sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 
+
     @Override
-    public List<MigrationCommand> syncTable(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
-
-        //比较差异
-        Set<String> tableColumns = getColumnNames(entityMigrationMetadata, oldTable);
-
-        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-        for (ColumnMetadata column : entityMetadata.getColumns()) {
-            if (columnExistInDb(entityMigrationMetadata, column)) {
-                if (!tableColumns.contains(column.getName())) {
-                    String columnRenameFrom = getColumnRenameFrom(entityMigrationMetadata, column);
-                    if (EasyStringUtil.isNotBlank(columnRenameFrom) && tableColumns.contains(columnRenameFrom)) {
-                        MigrationCommand migrationCommand = renameColumn(entityMigrationMetadata, tableName, columnRenameFrom, column);
-                        migrationCommands.add(migrationCommand);
-                    } else {
-                        MigrationCommand migrationCommand = addColumn(entityMigrationMetadata, tableName, column);
-                        migrationCommands.add(migrationCommand);
-                    }
-                }
-            }
-        }
-        return migrationCommands;
-    }
-
-    private MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String tableName, String renameFrom, ColumnMetadata column) {
+    protected MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String renameFrom, ColumnMetadata column) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(tableName)
-                .append(" RENAME COLUMN ").append(sqlKeyword.getQuoteName(renameFrom))
+        sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()))
+                .append(" RENAME COLUMN ").append(getQuoteSQLName(renameFrom))
                 .append(" TO ")
-                .append(sqlKeyword.getQuoteName(column.getName())).append(";");
+                .append(getQuoteSQLName(column.getName())).append(";");
 //
 //        ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
 //        sql.append(columnDbTypeResult.columnType);
@@ -202,17 +174,18 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
         String columnComment = getColumnComment(entityMigrationMetadata, column);
         if (EasyStringUtil.isNotBlank(columnComment)) {
             sql.append(newLine);
-            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
+            sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" IS ").append(columnComment);
             sql.append(";");
         }
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 
-    private MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, String tableName, ColumnMetadata column) {
+    @Override
+    protected MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata column) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(tableName)
-                .append(" ADD ").append(sqlKeyword.getQuoteName(column.getName())).append(" ");
+        sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()))
+                .append(" ADD ").append(getQuoteSQLName(column.getName())).append(" ");
 
         ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
         sql.append(columnDbTypeResult.columnType);
@@ -226,7 +199,7 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
         String columnComment = getColumnComment(entityMigrationMetadata, column);
         if (EasyStringUtil.isNotBlank(columnComment)) {
             sql.append(newLine);
-            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
+            sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" IS ").append(columnComment);
             sql.append(";");
         }
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
@@ -236,9 +209,9 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + tableName + ";");
+        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
+
     @Override
     protected ColumnDbTypeResult getColumnDbType0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
         return columnTypeMap.get(columnMetadata.getPropertyType());

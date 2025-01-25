@@ -7,6 +7,7 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.core.migration.DatabaseMigrationProvider;
 
 /**
  * create time 2023/5/10 13:40
@@ -20,5 +21,6 @@ public class ClickHouseDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(SQLKeyword.class, ClickHouseSQLKeyword.class);
         services.addService(ExpressionFactory.class, ClickHouseExpressionFactory.class);
         services.addService(SQLFunc.class, ClickHouseFuncImpl.class);
+        services.addService(DatabaseMigrationProvider.class, ClickHouseDatabaseMigrationProvider.class);
     }
 }

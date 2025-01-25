@@ -1,5 +1,8 @@
 package com.easy.query.test;
 
+import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -13,7 +16,10 @@ import java.util.regex.Pattern;
  */
 public class Test {
     public static void main(String[] args) {
-
+//        EasyQueryClient build1 = EasyQueryBootstrapper.defaultBuilderConfiguration()
+//                .replaceService(Test.class).build();
+//        EasyQueryClient build2 = EasyQueryBootstrapper.defaultBuilderConfiguration()
+//                .replaceService(Test.class).build();
 
 
         String comment = "/**\n" +

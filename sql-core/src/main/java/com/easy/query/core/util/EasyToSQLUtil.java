@@ -14,36 +14,58 @@ import java.util.function.Function;
  */
 public class EasyToSQLUtil {
 
-    public static String getSchemaTableName(SQLKeyword sqlKeyword, EntityMetadata entityMetadata, String entityTableName, Function<String, String> schemaAs, Function<String, String> tableNameAs) {
-        String tableName = sqlKeyword.getQuoteName(doGetTableName(entityMetadata, entityTableName, tableNameAs));
-        String schema = getSchema(sqlKeyword, entityMetadata, entityMetadata.getSchemaOrNull(), schemaAs, null);
-        if (EasyStringUtil.isNotBlank(schema)) {
-            return schema + "." + tableName;
+
+    public static String getQuoteSQLName(SQLKeyword sqlKeyword, String val) {
+        if (val == null) {
+            return "";
         }
-        return tableName;
+        if (val.contains(".")) {
+            return String.join(".", EasyCollectionUtil.select(val.split("\\."), (s, i) -> sqlKeyword.getQuoteName(s)));
+        } else {
+            return sqlKeyword.getQuoteName(val);
+        }
     }
 
-    public static String getTableName(SQLKeyword sqlKeyword,EntityMetadata entityMetadata,String tableName,Function<String,String> tableNameAs){
+    public static String getQuoteSQLName(SQLKeyword sqlKeyword, String val1, String val2) {
+        if (val1 == null && val2 == null) {
+            return "";
+        }
+        if (val1 == null) {
+            return getQuoteSQLName(sqlKeyword, val2);
+        }
+        if (val2 == null) {
+            return getQuoteSQLName(sqlKeyword, val1);
+        }
+        return getQuoteSQLName(sqlKeyword, val1 + "." + val2);
+    }
+
+    public static String getSchemaTableName(SQLKeyword sqlKeyword, EntityMetadata entityMetadata, String entityTableName, Function<String, String> schemaAs, Function<String, String> tableNameAs) {
+        String tableName = doGetTableName(entityMetadata, entityTableName, tableNameAs);
+        String schema = getSchema(sqlKeyword, entityMetadata, entityMetadata.getSchemaOrNull(), schemaAs, null);
+        if (EasyStringUtil.isNotBlank(schema)) {
+            return getQuoteSQLName(sqlKeyword, schema) + "." + getQuoteSQLName(sqlKeyword, tableName);
+        }
+        return getQuoteSQLName(sqlKeyword, tableName);
+    }
+
+    public static String getTableName(SQLKeyword sqlKeyword, EntityMetadata entityMetadata, String tableName, Function<String, String> tableNameAs) {
         return sqlKeyword.getQuoteName(doGetTableName(entityMetadata, tableName, tableNameAs));
     }
-    public static String getSchema(SQLKeyword sqlKeyword,EntityMetadata entityMetadata,String schema,Function<String,String> schemaAs,String def){
-        String entitySchema = doGetSchema(entityMetadata,schema, schemaAs);
+
+    public static String getSchema(SQLKeyword sqlKeyword, EntityMetadata entityMetadata, String schema, Function<String, String> schemaAs, String def) {
+        String entitySchema = doGetSchema(entityMetadata, schema, schemaAs);
         if (EasyStringUtil.isNotBlank(entitySchema)) {
-            if (schema.contains(".")) {
-                return String.join(".", EasyCollectionUtil.select(entitySchema.split("\\."), (s, i) -> sqlKeyword.getQuoteName(s)));
-            } else {
-                return sqlKeyword.getQuoteName(entitySchema);
-            }
+            return getQuoteSQLName(sqlKeyword, entitySchema);
         }
         return def;
     }
 
-    public static String getSchemaWithoutDatabaseName(EntityMetadata entityMetadata,String schema,Function<String,String> schemaAs,String def){
-        String entitySchema = doGetSchema(entityMetadata,schema, schemaAs);
+    public static String getSchemaWithoutDatabaseName(EntityMetadata entityMetadata, String schema, Function<String, String> schemaAs, String def) {
+        String entitySchema = doGetSchema(entityMetadata, schema, schemaAs);
         if (EasyStringUtil.isNotBlank(entitySchema)) {
             if (schema.contains(".")) {
                 String[] split = entitySchema.split("\\.");
-                return split[split.length-1];
+                return split[split.length - 1];
             } else {
                 return entitySchema;
             }
@@ -51,7 +73,7 @@ public class EasyToSQLUtil {
         return def;
     }
 
-    private static String doGetSchema(EntityMetadata entityMetadata,String schema, Function<String, String> schemaAs) {
+    private static String doGetSchema(EntityMetadata entityMetadata, String schema, Function<String, String> schemaAs) {
         if (schema != null || schemaAs != null) {
             if (schemaAs != null) {
                 return schemaAs.apply(schema);

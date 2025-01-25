@@ -1,4 +1,4 @@
-package com.easy.query.gauss.db.config;
+package com.easy.query.clickhouse.config;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -31,42 +31,43 @@ import java.util.UUID;
  *
  * @author xuejiaming
  */
-public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
+public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
     private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
 
     static {
-        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("BOOL", false));
-        columnTypeMap.put(Boolean.class, new ColumnDbTypeResult("BOOL", null));
-        columnTypeMap.put(float.class, new ColumnDbTypeResult("FLOAT4", 0f));
-        columnTypeMap.put(Float.class, new ColumnDbTypeResult("FLOAT4", null));
-        columnTypeMap.put(double.class, new ColumnDbTypeResult("FLOAT8", 0d));
-        columnTypeMap.put(Double.class, new ColumnDbTypeResult("FLOAT8", null));
-        columnTypeMap.put(short.class, new ColumnDbTypeResult("INT2", 0));
-        columnTypeMap.put(Short.class, new ColumnDbTypeResult("INT2", null));
-        columnTypeMap.put(int.class, new ColumnDbTypeResult("INT4", 0));
-        columnTypeMap.put(Integer.class, new ColumnDbTypeResult("INT4", null));
-        columnTypeMap.put(long.class, new ColumnDbTypeResult("INT8", 0L));
-        columnTypeMap.put(Long.class, new ColumnDbTypeResult("INT8", null));
-        columnTypeMap.put(byte.class, new ColumnDbTypeResult("INT2", 0));
-        columnTypeMap.put(Byte.class, new ColumnDbTypeResult("INT2", null));
-        columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("numeric(16,2)", null));
-        columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("TIMESTAMP", null));
-        columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR(255)", ""));
-        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("UUID", null));
+        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("Int8", false));
+        columnTypeMap.put(Boolean.class, new ColumnDbTypeResult("Int8", null));
+        columnTypeMap.put(float.class, new ColumnDbTypeResult("Float32", 0f));
+        columnTypeMap.put(Float.class, new ColumnDbTypeResult("Float32", null));
+        columnTypeMap.put(double.class, new ColumnDbTypeResult("Float64", 0d));
+        columnTypeMap.put(Double.class, new ColumnDbTypeResult("Float64", null));
+        columnTypeMap.put(short.class, new ColumnDbTypeResult("Int16", 0));
+        columnTypeMap.put(Short.class, new ColumnDbTypeResult("Int16", null));
+        columnTypeMap.put(int.class, new ColumnDbTypeResult("Int32", 0));
+        columnTypeMap.put(Integer.class, new ColumnDbTypeResult("Int32", null));
+        columnTypeMap.put(long.class, new ColumnDbTypeResult("Int64", 0L));
+        columnTypeMap.put(Long.class, new ColumnDbTypeResult("Int64", null));
+        columnTypeMap.put(byte.class, new ColumnDbTypeResult("Int8", 0));
+        columnTypeMap.put(Byte.class, new ColumnDbTypeResult("Int8", null));
+        columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("Decimal(38, 19)", null));
+        columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("DateTime('Asia/Shanghai')", null));
+        columnTypeMap.put(String.class, new ColumnDbTypeResult("String", ""));
+        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("String", null));
     }
-    public GaussDBDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
+
+    public ClickHouseDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
         super(dataSource, sqlKeyword);
     }
 
     @Override
     public boolean databaseExists() {
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from pg_namespace where nspname = ?", Collections.singletonList(getDatabaseName()));
+        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from system.databases d where name=?", Collections.singletonList(getDatabaseName()));
         return EasyCollectionUtil.isNotEmpty(maps);
     }
 
     @Override
     public MigrationCommand createDatabaseCommand() {
-        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
+        String databaseSQL = "CREATE DATABASE IF NOT EXISTS " + getQuoteSQLName(databaseName) + " ENGINE=Ordinary;";
         return new DefaultMigrationCommand(null, databaseSQL);
     }
 
@@ -79,15 +80,14 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sqlParameters.add(schema);
         }
         sqlParameters.add(tableName);
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from pg_tables a inner join pg_namespace b on b.nspname = a.schemaname where b.nspname =? and a.tablename = ?", sqlParameters);
+        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "SELECT 1 FROM system.tables t WHERE database =? and name =?", sqlParameters);
         return EasyCollectionUtil.isNotEmpty(maps);
     }
 
     @Override
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String sql = "ALTER TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName()) + " RENAME TO " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";";
-        return new DefaultMigrationCommand(entityMetadata, sql);
+        return new DefaultMigrationCommand(entityMetadata, "RENAME TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName()) + " TO " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
 
     @Override
@@ -153,7 +153,6 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 
-
     @Override
     protected MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String renameFrom, ColumnMetadata column) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
@@ -209,7 +208,7 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
+        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()) + ";");
     }
 
     @Override

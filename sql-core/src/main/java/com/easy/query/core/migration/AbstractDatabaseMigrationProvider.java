@@ -15,6 +15,8 @@ import com.easy.query.core.util.EasyToSQLUtil;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -117,7 +119,7 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         if (annotation != null) {
             return annotation.nullable();
         }
-        if(columnMetadata.getPropertyType().isPrimitive()){
+        if (columnMetadata.getPropertyType().isPrimitive()) {
             return false;
         }
         return isNullable0(entityMigrationMetadata, columnMetadata);
@@ -194,5 +196,40 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         String columnTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName(), null, null);
         //比较差异
         return EasyDatabaseUtil.getColumns(dataSource, "select * from " + columnTableName + " where 1=2");
+    }
+
+    @Override
+    public List<MigrationCommand> syncTable(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
+
+        //比较差异
+        Set<String> tableColumns = getColumnNames(entityMigrationMetadata, oldTable);
+
+        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
+        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+        for (ColumnMetadata column : entityMetadata.getColumns()) {
+            if (columnExistInDb(entityMigrationMetadata, column)) {
+                if (!tableColumns.contains(column.getName())) {
+                    String columnRenameFrom = getColumnRenameFrom(entityMigrationMetadata, column);
+                    if (EasyStringUtil.isNotBlank(columnRenameFrom) && tableColumns.contains(columnRenameFrom)) {
+                        MigrationCommand migrationCommand = renameColumn(entityMigrationMetadata,columnRenameFrom, column);
+                        migrationCommands.add(migrationCommand);
+                    } else {
+                        MigrationCommand migrationCommand = addColumn(entityMigrationMetadata, column);
+                        migrationCommands.add(migrationCommand);
+                    }
+                }
+            }
+        }
+        return migrationCommands;
+    }
+    protected abstract MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String renameFrom, ColumnMetadata column);
+    protected abstract MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata,ColumnMetadata column);
+
+    public String getQuoteSQLName(String val) {
+        return EasyToSQLUtil.getQuoteSQLName(sqlKeyword, val);
+    }
+
+    public String getQuoteSQLName(String val1, String val2) {
+        return EasyToSQLUtil.getQuoteSQLName(sqlKeyword, val1, val2);
     }
 }

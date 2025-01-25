@@ -52,7 +52,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("DECIMAL(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("DATETIME", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("NVARCHAR(255)", ""));
-        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("uniqueidentifier", ""));
+        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("uniqueidentifier", null));
     }
 
     public MsSQLDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
@@ -67,8 +67,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 
     @Override
     public MigrationCommand createDatabaseCommand() {
-        String databaseName = sqlKeyword.getQuoteName(this.databaseName);
-        String databaseSQL = "if not exists(select 1 from sys.databases where name= '" + this.databaseName + "') " + newLine + " create database " + databaseName + ";";
+        String databaseSQL = "if not exists(select 1 from sys.databases where name= '" + this.databaseName + "') " + newLine + " create database " + getQuoteSQLName(this.databaseName) + ";";
         return new DefaultMigrationCommand(null, databaseSQL);
     }
 
@@ -80,18 +79,15 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         } else {
             querySchema = schema;
         }
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, " select 1 from dbo.sysobjects where id = object_id(N'[" + querySchema + "].[" + tableName + "]') and OBJECTPROPERTY(id, N'IsUserTable') = 1", Collections.emptyList());
+        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, " select 1 from dbo.sysobjects where id = object_id(N'"+getQuoteSQLName(querySchema,tableName)+"') and OBJECTPROPERTY(id, N'IsUserTable') = 1", Collections.emptyList());
         return EasyCollectionUtil.isNotEmpty(maps);
     }
 
     @Override
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        StringBuilder sql = new StringBuilder();
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null);
-        String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
-        sql.append("ALTER TABLE ").append(oldTableName).append(" RENAME TO ").append(tableName).append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+
+        return new DefaultMigrationCommand(entityMetadata, "ALTER TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName()) + " RENAME TO " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
 
     @Override
@@ -101,25 +97,25 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         StringBuilder sql = new StringBuilder();
         StringBuilder columnCommentSQL = new StringBuilder();
 
-        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null);
-        String schema = EasyToSQLUtil.getSchema(sqlKeyword, entityMetadata, entityMetadata.getSchemaOrNull(), null, null);
-        String schemaWithoutDatabaseName = EasyToSQLUtil.getSchemaWithoutDatabaseName(entityMetadata, entityMetadata.getSchemaOrNull(), null, "dbo");
+//        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null);
+//        String schema = EasyToSQLUtil.getSchema(sqlKeyword, entityMetadata, entityMetadata.getSchemaOrNull(), null, null);
+//        String schemaWithoutDatabaseName = EasyToSQLUtil.getSchemaWithoutDatabaseName(entityMetadata, entityMetadata.getSchemaOrNull(), null, "dbo");
 
         String tableComment = getTableComment(entityMigrationMetadata);
         if (EasyStringUtil.isNotBlank(tableComment)) {
-            String format = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s'", tableComment, schemaWithoutDatabaseName, entityMetadata.getTableName());
+            String format = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s'", tableComment, entityMetadata.getSchemaOrDefault("dbo"), entityMetadata.getTableName());
             columnCommentSQL.append(newLine)
                     .append(format)
                     .append(newLine).append("go");
         }
 
-        sql.append("USE ").append(schema).append(newLine)
+        sql.append("USE ").append(getQuoteSQLName(this.databaseName)).append(newLine)
                 .append("go")
                 .append(newLine);
-        sql.append("CREATE TABLE ").append(tableName).append(" ( ");
+        sql.append("CREATE TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName())).append(" ( ");
         for (ColumnMetadata column : entityMetadata.getColumns()) {
             sql.append(newLine)
-                    .append(sqlKeyword.getQuoteName(column.getName()))
+                    .append(getQuoteSQLName(column.getName()))
                     .append(" ");
             ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
             sql.append(columnDbTypeResult.columnType);
@@ -139,14 +135,14 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 //            exec sp_addextendedproperty 'MS_Description', '微信唯一识别码', 'SCHEMA', 'dbo', 'TABLE', 'Base_User', 'COLUMN', 'OpenId'
 //            go
             if (EasyStringUtil.isNotBlank(columnComment)) {
-                String format = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s', 'COLUMN', '%s'", columnComment, schemaWithoutDatabaseName, entityMetadata.getTableName(), column.getName());
+                String format = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s', 'COLUMN', '%s'", columnComment, entityMetadata.getSchemaOrDefault("dbo"), entityMetadata.getTableName(), column.getName());
                 columnCommentSQL.append(newLine)
                         .append(format)
                         .append(newLine)
                         .append("go")
                         .append(newLine);
 //                        .append("exec sp_addextendedproperty 'MS_Description', '").append(columnComment).append("', 'SCHEMA', '").append(schemaWithoutDatabaseName).append("', 'TABLE', '").append(entityMetadata.getTableName()).append("', 'COLUMN', '").append().append("'")
-//                        .append(tableName).append(".").append(sqlKeyword.getQuoteName(column.getName()))
+//                        .append(tableName).append(".").append(getQuoteSQLName(column.getName()))
 //                        .append(" IS ").append(columnComment).append(";");
             }
             sql.append(",");
@@ -159,40 +155,15 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 
+
     @Override
-    public List<MigrationCommand> syncTable(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
-
-        //比较差异
-        Set<String> tableColumns = getColumnNames(entityMigrationMetadata, oldTable);
-
-        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-        for (ColumnMetadata column : entityMetadata.getColumns()) {
-            if (columnExistInDb(entityMigrationMetadata, column)) {
-                if (!tableColumns.contains(column.getName())) {
-
-                    String columnRenameFrom = getColumnRenameFrom(entityMigrationMetadata, column);
-                    if (EasyStringUtil.isNotBlank(columnRenameFrom) && tableColumns.contains(columnRenameFrom)) {
-                        MigrationCommand migrationCommand = renameColumn(entityMigrationMetadata, tableName, columnRenameFrom, column);
-                        migrationCommands.add(migrationCommand);
-                    } else {
-                        MigrationCommand migrationCommand = addColumn(entityMigrationMetadata, tableName, column);
-                        migrationCommands.add(migrationCommand);
-                    }
-                }
-            }
-        }
-        return migrationCommands;
-    }
-
-    private MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String tableName, String renameFrom, ColumnMetadata column) {
+    protected MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String renameFrom, ColumnMetadata column) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
 //        exec sp_rename 'Base_User.Domains', Domains2, 'COLUMN'
 //        go
 
-        String format = String.format("exec sp_rename '%s.%s', %s, 'COLUMN'", entityMetadata.getTableName(), renameFrom, column.getName());
+        String format = String.format("exec sp_rename '%s.%s', %s, 'COLUMN'", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()), getQuoteSQLName(renameFrom), getQuoteSQLName(column.getName()));
         sql.append(format).append(newLine)
                 .append("go")
                 .append(newLine);
@@ -214,11 +185,12 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 
-    private MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, String tableName, ColumnMetadata column) {
+    @Override
+    protected MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata column) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(tableName)
-                .append(" ADD ").append(sqlKeyword.getQuoteName(column.getName())).append(" ");
+        sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()))
+                .append(" ADD ").append(getQuoteSQLName(column.getName())).append(" ");
 
         ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
         sql.append(columnDbTypeResult.columnType);
@@ -237,8 +209,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         String columnComment = getColumnComment(entityMigrationMetadata, column);
         if (EasyStringUtil.isNotBlank(columnComment)) {
 
-            String schemaWithoutDatabaseName = EasyToSQLUtil.getSchemaWithoutDatabaseName(entityMetadata, entityMetadata.getSchemaOrNull(), null, "dbo");
-            String format = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s', 'COLUMN', '%s'", columnComment, schemaWithoutDatabaseName, entityMetadata.getTableName(), column.getName());
+            String format = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s', 'COLUMN', '%s'", columnComment, entityMetadata.getSchemaOrDefault("dbo"), entityMetadata.getTableName(), column.getName());
             sql.append(format).append(newLine)
                     .append("go")
                     .append(newLine);
@@ -250,8 +221,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String tableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null, null);
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + tableName + ";");
+        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()) + ";");
     }
 
     @Override
