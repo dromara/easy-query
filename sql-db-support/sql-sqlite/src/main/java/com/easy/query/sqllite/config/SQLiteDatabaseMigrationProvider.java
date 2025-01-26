@@ -131,7 +131,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
                 if (i > 0) {
                     sql.append(", ");
                 } else {
-                    sql.append("),");
+                    sql.append(")");
                 }
             }
         }

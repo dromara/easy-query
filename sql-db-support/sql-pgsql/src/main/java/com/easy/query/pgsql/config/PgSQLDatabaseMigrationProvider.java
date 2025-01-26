@@ -142,7 +142,7 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
                 if (i > 0) {
                     sql.append(", ");
                 } else {
-                    sql.append("),");
+                    sql.append(")");
                 }
             }
         }

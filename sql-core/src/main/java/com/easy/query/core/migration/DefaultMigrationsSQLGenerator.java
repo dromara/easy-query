@@ -15,7 +15,10 @@ import com.easy.query.core.util.EasyToSQLUtil;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -106,5 +109,37 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
 
         }
         return migrationCommands;
+    }
+
+    @Override
+    public List<MigrationCommand> generateCreateTableMigrationSQL(MigrationContext migrationContext) {
+        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(migrationContext.getEntities().size());
+        for (Class<?> entity : migrationContext.getEntities()) {
+            EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity);
+            MigrationCommand migrationCommand = databaseMigrationProvider.createTable(new EntityMigrationMetadata(entityMetadata));
+            if (migrationCommand != null) {
+                migrationCommands.add(migrationCommand);
+            }
+        }
+        return migrationCommands;
+    }
+
+    @Override
+    public List<MigrationCommand> generateDropTableMigrationSQL(MigrationContext migrationContext) {
+        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(migrationContext.getEntities().size());
+        for (Class<?> entity : migrationContext.getEntities()) {
+            EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity);
+            MigrationCommand migrationCommand = databaseMigrationProvider.dropTable(new EntityMigrationMetadata(entityMetadata));
+            if (migrationCommand != null) {
+                migrationCommands.add(migrationCommand);
+            }
+        }
+        return migrationCommands;
+    }
+
+    @Override
+    public boolean tableExists(Class<?> entityType) {
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityType);
+        return databaseMigrationProvider.tableExists(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName());
     }
 }

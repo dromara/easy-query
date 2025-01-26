@@ -1,5 +1,6 @@
 package com.easy.query.core.api.client;
 
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.flat.MapQueryable;
@@ -132,4 +133,6 @@ public interface EasyQueryClient {
          loadInclude(entities,navigateProperty,null);
     }
     <T> void loadInclude(List<T> entities,String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure);
+
+    DatabaseCodeFirst getDatabaseCodeFirst();
 }

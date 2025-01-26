@@ -1,6 +1,7 @@
 package com.easy.query.core.api.client;
 
 import com.easy.query.core.api.SQLClientApiFactory;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.flat.MapQueryable;
@@ -346,5 +347,10 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
         IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(includeParserResult, runtimeContext);
         includeProcess.process();
+    }
+
+    @Override
+    public DatabaseCodeFirst getDatabaseCodeFirst() {
+        return easySQLApiFactory.createDatabaseCodeFirst(runtimeContext);
     }
 }

@@ -141,7 +141,7 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
                 if (i > 0) {
                     sql.append(", ");
                 } else {
-                    sql.append("),");
+                    sql.append(")");
                 }
             }
         }

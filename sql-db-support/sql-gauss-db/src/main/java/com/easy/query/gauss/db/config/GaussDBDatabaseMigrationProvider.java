@@ -141,7 +141,7 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
                 if (i > 0) {
                     sql.append(", ");
                 } else {
-                    sql.append("),");
+                    sql.append(")");
                 }
             }
         }

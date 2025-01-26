@@ -1,6 +1,8 @@
 package com.easy.query.core.api.def;
 
 import com.easy.query.core.api.SQLClientApiFactory;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
+import com.easy.query.core.basic.api.database.DefaultDatabaseCodeFirst;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.delete.impl.EasyClientEntityDeletable;
@@ -568,5 +570,10 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
         ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
         EntityDeleteExpressionBuilder entityDeleteExpressionBuilder = expressionBuilderFactory.createEntityDeleteExpressionBuilder(expressionContext, entityClass, true);
         return new EasyClientExpressionDeletable<>(entityClass, entityDeleteExpressionBuilder);
+    }
+
+    @Override
+    public DatabaseCodeFirst createDatabaseCodeFirst(QueryRuntimeContext runtimeContext) {
+        return new DefaultDatabaseCodeFirst(runtimeContext);
     }
 }

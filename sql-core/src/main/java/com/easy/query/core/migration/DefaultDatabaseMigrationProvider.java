@@ -105,7 +105,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             }
             String columnComment = getColumnComment(entityMigrationMetadata, column);
             if (EasyStringUtil.isNotBlank(columnComment)) {
-                sql.append(" COMMENT ").append(columnComment);
+                sql.append(" COMMENT '").append(columnComment).append("'");
             }
             sql.append(",");
         }
@@ -120,14 +120,14 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
                 if (i > 0) {
                     sql.append(", ");
                 } else {
-                    sql.append("),");
+                    sql.append(")");
                 }
             }
         }
         sql.append(newLine).append(") Engine=InnoDB");
         String tableComment = getTableComment(entityMigrationMetadata);
         if (EasyStringUtil.isNotBlank(tableComment)) {
-            sql.append(" COMMENT=").append(tableComment);
+            sql.append(" COMMENT='").append(tableComment).append("'");
         }
         sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
@@ -158,7 +158,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
 
         String columnComment = getColumnComment(entityMigrationMetadata, column);
         if (EasyStringUtil.isNotBlank(columnComment)) {
-            sql.append(" COMMENT").append(columnComment);
+            sql.append(" COMMENT '").append(columnComment).append("'");
         }
         sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
@@ -181,7 +181,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
 
         String columnComment = getColumnComment(entityMigrationMetadata, column);
         if (EasyStringUtil.isNotBlank(columnComment)) {
-            sql.append(" COMMENT").append(columnComment);
+            sql.append(" COMMENT '").append(columnComment).append("'");
         }
         sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());

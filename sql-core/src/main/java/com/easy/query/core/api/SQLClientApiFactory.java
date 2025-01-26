@@ -1,5 +1,6 @@
 package com.easy.query.core.api;
 
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
@@ -148,4 +149,5 @@ public interface SQLClientApiFactory {
     <T> ClientEntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext);
 
     <T> ClientExpressionDeletable<T> createExpressionDeletable(Class<T> entityClass, QueryRuntimeContext runtimeContext);
+    DatabaseCodeFirst createDatabaseCodeFirst(QueryRuntimeContext runtimeContext);
 }

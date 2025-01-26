@@ -7,6 +7,7 @@ import com.easy.query.api.proxy.entity.insert.EntityInsertable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.update.EntityUpdatable;
 import com.easy.query.api.proxy.entity.update.ExpressionUpdatable;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -114,5 +115,9 @@ public interface EasyEntityQuery extends EasyBaseQuery{
         TProxy tProxy = EntityQueryProxyManager.create(entityClass);
         PropColumn propColumn = navigateProperty.apply(tProxy);
         getEasyQueryClient().loadInclude(entities,propColumn.getValue(),configure);
+    }
+
+    default DatabaseCodeFirst getDatabaseCodeFirst(){
+        return getEasyQueryClient().getDatabaseCodeFirst();
     }
 }
