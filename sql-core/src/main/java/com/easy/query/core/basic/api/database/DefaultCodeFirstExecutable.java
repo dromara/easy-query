@@ -27,7 +27,7 @@ public class DefaultCodeFirstExecutable implements CodeFirstExecutable {
     }
 
     @Override
-    public void execute(Consumer<CodeFirstCommandArg> consumer) {
+    public void executeWithEnvTransaction(Consumer<CodeFirstCommandArg> consumer) {
         StringBuilder sql = new StringBuilder();
         for (MigrationCommand migrationCommand : migrationCommands) {
             sql.append(System.lineSeparator());

@@ -9,6 +9,6 @@ import java.util.function.Consumer;
  * @author xuejiaming
  */
 public interface CodeFirstExecutable {
-    void execute(Consumer<CodeFirstCommandArg> consumer);
+    void executeWithEnvTransaction(Consumer<CodeFirstCommandArg> consumer);
     void executeWithTransaction(Consumer<CodeFirstCommandTxArg> consumer);
 }

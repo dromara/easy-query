@@ -100,6 +100,8 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
+        sql.append("BEGIN")
+                .append(newLine);
         StringBuilder columnCommentSQL = new StringBuilder();
 
 
@@ -108,7 +110,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             String format = String.format("execute immediate 'COMMENT ON TABLE %s IS %s';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()), tableComment);
             columnCommentSQL.append(newLine)
                     .append(format)
-                    .append(newLine).append(";");
+                    .append(newLine);
         }
 
         sql.append("execute immediate 'CREATE TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName())).append(" ( ");
@@ -131,14 +133,14 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             if (EasyStringUtil.isNotBlank(columnComment)) {
                 String format = String.format("execute immediate 'COMMENT ON COLUMN %s.%s IS %s';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()), getQuoteSQLName(column.getName()), columnComment);
                 columnCommentSQL.append(newLine)
-                        .append(format).append(";");
+                        .append(format);
             }
             sql.append(",");
         }
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
         if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
             sql.append(newLine)
-                    .append(" CONSTRAINT ").append(getQuoteSQLName(getDatabaseName()+"_"+entityMetadata.getTableName()+"_pk1")).append(newLine).append(" PRIMARY KEY (");
+                    .append(" CONSTRAINT ").append(getQuoteSQLName(getDatabaseName()+"_"+entityMetadata.getTableName()+"_pk1")).append(" ").append(" PRIMARY KEY (");
             int i = keyProperties.size();
             for (String keyProperty : keyProperties) {
                 i--;
@@ -156,15 +158,15 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         if(columnCommentSQL.length()>0){
             sql.append(newLine).append(columnCommentSQL);
         }
+
+        sql.append(newLine).append("END;");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 
     @Override
     protected MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String renameFrom, ColumnMetadata column) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        StringBuilder sql = new StringBuilder();
-        String format = String.format("execute immediate 'ALTER TABLE %s RENAME COLUMN %s TO  %s';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()), getQuoteSQLName(renameFrom), getQuoteSQLName(column.getName()));
-        sql.append(format).append(";");
+        String sql = String.format("execute immediate 'ALTER TABLE %s RENAME COLUMN %s TO  %s';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()), getQuoteSQLName(renameFrom), getQuoteSQLName(column.getName()));
 //
 //        ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
 //        sql.append(columnDbTypeResult.columnType);
@@ -180,7 +182,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 //            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
 //            sql.append(";");
 //        }
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(entityMetadata, sql);
     }
 
     @Override

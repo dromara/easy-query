@@ -43,9 +43,9 @@ public class MigrationTest extends BaseTest {
                 "`create_by` VARCHAR(255) NULL ,\n" +
                 "`update_by` VARCHAR(255) NULL ,\n" +
                 "`deleted` TINYINT(1) NULL ,\n" +
-                "`title` VARCHAR(255) NULL  COMMENT 标题,\n" +
-                "`content` VARCHAR(255) NULL  COMMENT 内容,\n" +
-                "`url` VARCHAR(255) NULL  COMMENT 博客链接,\n" +
+                "`title` VARCHAR(255) NULL  COMMENT '标题',\n" +
+                "`content` VARCHAR(255) NULL  COMMENT '内容',\n" +
+                "`url` VARCHAR(255) NULL  COMMENT '博客链接',\n" +
                 "`star` INT(11) NULL ,\n" +
                 "`publish_time` DATETIME(3) NULL ,\n" +
                 "`score` DECIMAL(16,2) NULL ,\n" +
@@ -53,7 +53,7 @@ public class MigrationTest extends BaseTest {
                 "`order` DECIMAL(16,2) NULL ,\n" +
                 "`is_top` TINYINT(1) NULL ,\n" +
                 "`top` TINYINT(1) NULL , \n" +
-                " PRIMARY KEY (`id`),\n" +
+                " PRIMARY KEY (`id`)\n" +
                 ") Engine=InnoDB;", migrationCommand.toSQL());
     }
 
@@ -93,7 +93,11 @@ public class MigrationTest extends BaseTest {
         if (databaseCodeFirst.tableExists(MyMigrationBlog0.class)) {
             System.out.println("存在表:MyMigrationBlog0");
             boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
-            databaseCodeFirst.dropTables(Arrays.asList(MyMigrationBlog0.class));
+            CodeFirstExecutable codeFirstExecutable = databaseCodeFirst.dropTables(Arrays.asList(MyMigrationBlog0.class));
+            codeFirstExecutable.executeWithTransaction(arg -> {
+                System.out.println("执行删除");
+                System.out.println(arg.sql);
+            });
         } else {
             System.out.println("不存在表:MyMigrationBlog0");
         }
@@ -102,22 +106,22 @@ public class MigrationTest extends BaseTest {
         codeFirstExecutable.executeWithTransaction(arg -> {
             System.out.println(arg.sql);
             String md5 = MD5Util.getMD5Hash(arg.sql);
-            System.out.println("sql-hash:"+md5);
+            System.out.println("sql-hash:" + md5);
             Assert.assertEquals("ef793f270480e3ebe65328501cc51bd2", md5);
             arg.commit();
         });
         boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
         Assert.assertFalse(any);
         CodeFirstExecutable codeFirstExecutable1 = databaseCodeFirst.dropTables(Arrays.asList(MyMigrationBlog0.class));
-        codeFirstExecutable1.execute(arg->{
+        codeFirstExecutable1.executeWithEnvTransaction(arg -> {
             System.out.println("执行删除");
             System.out.println(arg.sql);
         });
-        Exception ex=null;
+        Exception ex = null;
         try {
             easyEntityQuery.queryable(MyMigrationBlog0.class).any();
         } catch (Exception e) {
-            ex=e;
+            ex = e;
             System.out.println(ex);
         }
         Assert.assertNotNull(ex);

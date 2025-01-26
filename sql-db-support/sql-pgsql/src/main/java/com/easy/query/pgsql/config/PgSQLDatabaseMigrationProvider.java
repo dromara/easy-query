@@ -146,11 +146,10 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
                 }
             }
         }
-        sql.append(newLine).append(")");
+        sql.append(newLine).append(");");
         if (columnCommentSQL.length() > 0) {
             sql.append(newLine).append(columnCommentSQL);
         }
-        sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 
