@@ -101,7 +101,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 //        String schema = EasyToSQLUtil.getSchema(sqlKeyword, entityMetadata, entityMetadata.getSchemaOrNull(), null, null);
 //        String schemaWithoutDatabaseName = EasyToSQLUtil.getSchemaWithoutDatabaseName(entityMetadata, entityMetadata.getSchemaOrNull(), null, "dbo");
 
-        String tableComment = getTableComment(entityMigrationMetadata);
+        String tableComment = getTableComment(entityMigrationMetadata,"");
         if (EasyStringUtil.isNotBlank(tableComment)) {
             String format = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s'", tableComment, entityMetadata.getSchemaOrDefault("dbo"), entityMetadata.getTableName());
             columnCommentSQL.append(newLine)
@@ -131,7 +131,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
             if (column.isPrimary()) {
                 sql.append(" PRIMARY KEY ");
             }
-            String columnComment = getColumnComment(entityMigrationMetadata, column);
+            String columnComment = getColumnComment(entityMigrationMetadata, column,"");
 //            exec sp_addextendedproperty 'MS_Description', '微信唯一识别码', 'SCHEMA', 'dbo', 'TABLE', 'Base_User', 'COLUMN', 'OpenId'
 //            go
             if (EasyStringUtil.isNotBlank(columnComment)) {
@@ -206,7 +206,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 
 //        exec sp_addextendedproperty 'MS_Description', '123', 'SCHEMA', 'dbo', 'TABLE', 'Base_User', 'COLUMN', 'column_35'
 //        go
-        String columnComment = getColumnComment(entityMigrationMetadata, column);
+        String columnComment = getColumnComment(entityMigrationMetadata, column,"");
         if (EasyStringUtil.isNotBlank(columnComment)) {
 
             String format = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s', 'COLUMN', '%s'", columnComment, entityMetadata.getSchemaOrDefault("dbo"), entityMetadata.getTableName(), column.getName());

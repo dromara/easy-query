@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * create time 2025/1/14 13:29
- * 文件说明
+ * 生成数据库迁移提供者
  *
  * @author xuejiaming
  */
@@ -16,13 +16,14 @@ public interface DatabaseMigrationProvider {
     void setMigrationParser(MigrationEntityParser migrationParser);
 
     EntityMigrationMetadata createEntityMigrationMetadata(EntityMetadata entityMetadata);
+
     String getDatabaseName();
 
     boolean databaseExists();
 
     MigrationCommand createDatabaseCommand();
 
-    boolean tableExists(String schema,String tableName);
+    boolean tableExists(String schema, String tableName);
 
     MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata);
 
@@ -35,12 +36,14 @@ public interface DatabaseMigrationProvider {
     @Nullable
     ColumnDbTypeResult getColumnDbType(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
 
-    String getColumnComment(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
+    String getColumnComment(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata, String quote);
 
     boolean isNullable(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
+
     boolean columnExistInDb(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
 
-    String getTableComment(EntityMigrationMetadata entityMigrationMetadata);
-    String getColumnRenameFrom(EntityMigrationMetadata entityMigrationMetadata,ColumnMetadata columnMetadata);
+    String getTableComment(EntityMigrationMetadata entityMigrationMetadata, String quote);
+
+    String getColumnRenameFrom(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
 
 }

@@ -21,7 +21,7 @@ import java.util.Set;
 
 /**
  * create time 2025/1/18 20:09
- * 文件说明
+ * 抽象生成数据库迁移提供者
  *
  * @author xuejiaming
  */
@@ -80,12 +80,18 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         return columnDbType0;
     }
 
-    protected @NotNull ColumnDbTypeResult getColumnDbType0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
+    protected abstract ColumnDbTypeResult getColumnDbType0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
+
+    @Override
+    public String getColumnComment(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata, String quote) {
+        String columnComment = getColumnComment0(entityMigrationMetadata, columnMetadata);
+        if (EasyStringUtil.isNotBlank(columnComment)) {
+            return quote + columnComment + quote;
+        }
         return null;
     }
 
-    @Override
-    public String getColumnComment(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
+    public String getColumnComment0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
         String columnComment = migrationEntityParser.getColumnComment(entityMigrationMetadata, columnMetadata);
         if (EasyStringUtil.isNotBlank(columnComment)) {
             return columnComment;
@@ -98,10 +104,6 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
                 return comment;
             }
         }
-        return getColumnComment0(entityMigrationMetadata, columnMetadata);
-    }
-
-    protected @Nullable String getColumnComment0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
         return null;
     }
 
@@ -122,10 +124,6 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         if (columnMetadata.getPropertyType().isPrimitive()) {
             return false;
         }
-        return isNullable0(entityMigrationMetadata, columnMetadata);
-    }
-
-    protected boolean isNullable0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
         return true;
     }
 
@@ -141,15 +139,19 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         if (annotation != null) {
             return annotation.exist();
         }
-        return columnExistInDb0(entityMigrationMetadata, columnMetadata);
-    }
-
-    protected boolean columnExistInDb0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
         return true;
     }
 
     @Override
-    public @Nullable String getTableComment(EntityMigrationMetadata entityMigrationMetadata) {
+    public @Nullable String getTableComment(EntityMigrationMetadata entityMigrationMetadata, String quote) {
+        String tableComment = getTableComment0(entityMigrationMetadata);
+        if (EasyStringUtil.isNotBlank(tableComment)) {
+            return quote + tableComment + quote;
+        }
+        return tableComment;
+    }
+
+    protected @Nullable String getTableComment0(EntityMigrationMetadata entityMigrationMetadata) {
         String tableComment = migrationEntityParser.getTableComment(entityMigrationMetadata);
         if (EasyStringUtil.isNotBlank(tableComment)) {
             return tableComment;
@@ -162,10 +164,6 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
                 return comment;
             }
         }
-        return getTableComment0(entityMigrationMetadata);
-    }
-
-    protected @Nullable String getTableComment0(EntityMigrationMetadata entityMigrationMetadata) {
         return null;
     }
 
@@ -183,10 +181,6 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
                 return renameFrom;
             }
         }
-        return getColumnRenameFrom0(entityMigrationMetadata, columnMetadata);
-    }
-
-    protected @Nullable String getColumnRenameFrom0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
         return null;
     }
 
@@ -211,7 +205,7 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
                 if (!tableColumns.contains(column.getName())) {
                     String columnRenameFrom = getColumnRenameFrom(entityMigrationMetadata, column);
                     if (EasyStringUtil.isNotBlank(columnRenameFrom) && tableColumns.contains(columnRenameFrom)) {
-                        MigrationCommand migrationCommand = renameColumn(entityMigrationMetadata,columnRenameFrom, column);
+                        MigrationCommand migrationCommand = renameColumn(entityMigrationMetadata, columnRenameFrom, column);
                         migrationCommands.add(migrationCommand);
                     } else {
                         MigrationCommand migrationCommand = addColumn(entityMigrationMetadata, column);
@@ -222,8 +216,10 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         }
         return migrationCommands;
     }
+
     protected abstract MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String renameFrom, ColumnMetadata column);
-    protected abstract MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata,ColumnMetadata column);
+
+    protected abstract MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata column);
 
     public String getQuoteSQLName(String val) {
         return EasyToSQLUtil.getQuoteSQLName(sqlKeyword, val);

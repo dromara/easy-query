@@ -7,7 +7,6 @@ import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.core.util.EasyToSQLUtil;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -18,11 +17,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * create time 2025/1/14 13:31
- * 文件说明
+ * 生成数据库迁移提供者
  *
  * @author xuejiaming
  */
@@ -103,9 +101,9 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             if (column.isGeneratedKey()) {
                 sql.append(" AUTO_INCREMENT");
             }
-            String columnComment = getColumnComment(entityMigrationMetadata, column);
+            String columnComment = getColumnComment(entityMigrationMetadata, column,"'");
             if (EasyStringUtil.isNotBlank(columnComment)) {
-                sql.append(" COMMENT '").append(columnComment).append("'");
+                sql.append(" COMMENT ").append(columnComment);
             }
             sql.append(",");
         }
@@ -125,9 +123,9 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             }
         }
         sql.append(newLine).append(") Engine=InnoDB");
-        String tableComment = getTableComment(entityMigrationMetadata);
+        String tableComment = getTableComment(entityMigrationMetadata,"'");
         if (EasyStringUtil.isNotBlank(tableComment)) {
-            sql.append(" COMMENT='").append(tableComment).append("'");
+            sql.append(" COMMENT=").append(tableComment);
         }
         sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
@@ -156,9 +154,9 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" NOT NULL");
         }
 
-        String columnComment = getColumnComment(entityMigrationMetadata, column);
+        String columnComment = getColumnComment(entityMigrationMetadata, column,"'");
         if (EasyStringUtil.isNotBlank(columnComment)) {
-            sql.append(" COMMENT '").append(columnComment).append("'");
+            sql.append(" COMMENT ").append(columnComment);
         }
         sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
@@ -179,9 +177,9 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" NOT NULL");
         }
 
-        String columnComment = getColumnComment(entityMigrationMetadata, column);
+        String columnComment = getColumnComment(entityMigrationMetadata, column,"'");
         if (EasyStringUtil.isNotBlank(columnComment)) {
-            sql.append(" COMMENT '").append(columnComment).append("'");
+            sql.append(" COMMENT ").append(columnComment);
         }
         sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
