@@ -23,7 +23,7 @@ public class TopicTypeVO {
     private String id;
     private Integer stars;
     private String title;
-    @Column(value = "topic_type",conversion = EnumConverter.class)
-    private TopicTypeEnum topicType1;
+    @Column(value = "topic_type1",conversion = EnumConverter.class)
+    private TopicTypeEnum topicType;
     private LocalDateTime createTime;
 }

@@ -25,8 +25,8 @@ public class BlogEntityVO1 {
     /**
      * 状态
      */
-    @Column(value = "status")
-    private Integer abc;
+    @Column(value = "status1")
+    private Integer status;
     /**
      * 排序
      */

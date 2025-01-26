@@ -15,6 +15,6 @@ import java.time.LocalDateTime;
 public class TopicUnion {
     private String id;
     private Integer stars;
-    @Column("title")
-    private String abc;
+    @Column("abc")
+    private String title;
 }

@@ -1040,7 +1040,8 @@ public class QueryTest extends BaseTest {
                     .select(BlogEntityTest2.class);
             String sql = queryable.toSQL();
 //            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
-            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
+//            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
+            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`url` AS `my_url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
             List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class).toList();
             Assert.assertTrue(blogEntityTest2s.size() >= 100);
@@ -1050,7 +1051,7 @@ public class QueryTest extends BaseTest {
             Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class, o -> o.columnAll());
             String sql = queryable.toSQL();
-            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
+            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`url` AS `my_url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
             List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class, o -> o.columnAll()).toList();
             Assert.assertTrue(blogEntityTest2s.size() >= 100);
@@ -1060,7 +1061,7 @@ public class QueryTest extends BaseTest {
             Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class, o -> o.columnAll().columnAs(BlogEntity::getUrl, BlogEntityTest2::getUrl));
             String sql = queryable.toSQL();
-            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`url` AS `my_url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
+            Assert.assertEquals("SELECT t.`title`,t.`content`,t.`url` AS `my_url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`url` AS `my_url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
             List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class, o -> o.columnAll().columnAs(BlogEntity::getUrl, BlogEntityTest2::getUrl)).toList();
             Assert.assertTrue(blogEntityTest2s.size() >= 100);
@@ -1070,7 +1071,7 @@ public class QueryTest extends BaseTest {
             Queryable<BlogEntityTest2> queryable = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class, o -> o.columnAll().columnIgnore(BlogEntity::getTitle).columnAs(BlogEntity::getUrl, BlogEntityTest2::getUrl));
             String sql = queryable.toSQL();
-            Assert.assertEquals("SELECT t.`content`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`url` AS `my_url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
+            Assert.assertEquals("SELECT t.`content`,t.`url` AS `my_url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t.`url` AS `my_url` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
             List<BlogEntityTest2> blogEntityTest2s = easyQuery.queryable(BlogEntity.class)
                     .select(BlogEntityTest2.class, o -> o.columnAll().columnIgnore(BlogEntity::getTitle).columnAs(BlogEntity::getUrl, BlogEntityTest2::getUrl)).toList();
             Assert.assertTrue(blogEntityTest2s.size() >= 100);
@@ -1624,7 +1625,7 @@ public class QueryTest extends BaseTest {
 
 
         String sql = q1.union(q2, q3).where(o -> o.eq(Topic::getId, "123321")).toSQL();
-
+        System.out.println(sql);
         Assert.assertEquals("SELECT t7.`id`,t7.`stars`,t7.`title`,t7.`create_time` FROM ( (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`create_time` >= ?)  UNION  (SELECT t2.`id`,t2.`stars`,t2.`title`,t2.`create_time` FROM `t_topic` t2 LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t2.`id` = t3.`id` WHERE t3.`content` IS NOT NULL AND t2.`stars` IS NOT NULL) ) t7 WHERE t7.`id` = ?", sql);
     }
 
@@ -1646,9 +1647,10 @@ public class QueryTest extends BaseTest {
 
 
         String sql = q1.union(q2, q3).where(o -> o.eq(TopicUnion::getId, "123321")).toSQL();
-
+        System.out.println(sql);
 //        Assert.assertEquals("SELECT t8.`id`,t8.`stars`,t8.`title` FROM ( (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t8.`id`,t8.`stars`,t8.`title` FROM `t_topic` t8 WHERE t8.`create_time` >= ?)  UNION  (SELECT t8.`id`,t8.`stars`,t8.`title` FROM `t_topic` t8 LEFT JOIN `t_blog` t8 ON t8.`deleted` = ? AND t8.`id` = t8.`id` WHERE t8.`content` IS NOT NULL AND t8.`stars` IS NOT NULL) ) t8 WHERE t8.`id` = ?", sql);
-        Assert.assertEquals("SELECT t8.`id`,t8.`stars`,t8.`title` FROM ( (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t2.`id`,t2.`stars`,t2.`title` FROM `t_topic` t2 WHERE t2.`create_time` >= ?)  UNION  (SELECT t4.`id`,t4.`stars`,t4.`title` FROM `t_topic` t4 LEFT JOIN `t_blog` t5 ON t5.`deleted` = ? AND t4.`id` = t5.`id` WHERE t5.`content` IS NOT NULL AND t4.`stars` IS NOT NULL) ) t8 WHERE t8.`id` = ?", sql);
+//        Assert.assertEquals("SELECT t8.`id`,t8.`stars`,t8.`title` FROM ( (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t2.`id`,t2.`stars`,t2.`title` FROM `t_topic` t2 WHERE t2.`create_time` >= ?)  UNION  (SELECT t4.`id`,t4.`stars`,t4.`title` FROM `t_topic` t4 LEFT JOIN `t_blog` t5 ON t5.`deleted` = ? AND t4.`id` = t5.`id` WHERE t5.`content` IS NOT NULL AND t4.`stars` IS NOT NULL) ) t8 WHERE t8.`id` = ?", sql);
+        Assert.assertEquals("SELECT t8.`id`,t8.`stars`,t8.`abc` AS `abc` FROM ( (SELECT t.`id`,t.`stars`,t.`title` AS `abc` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t2.`id`,t2.`stars`,t2.`title` AS `abc` FROM `t_topic` t2 WHERE t2.`create_time` >= ?)  UNION  (SELECT t4.`id`,t4.`stars`,t4.`title` AS `abc` FROM `t_topic` t4 LEFT JOIN `t_blog` t5 ON t5.`deleted` = ? AND t4.`id` = t5.`id` WHERE t5.`content` IS NOT NULL AND t4.`stars` IS NOT NULL) ) t8 WHERE t8.`id` = ?", sql);
     }
 
     @Test
@@ -1660,15 +1662,17 @@ public class QueryTest extends BaseTest {
                 .where(o -> o.ge(BlogEntity::getCreateTime, LocalDateTime.of(2020, 1, 1, 1, 1)))
                 .select(TopicUnion.class, o -> o.columnAs(BlogEntity::getId, TopicUnion::getId)
                         .columnAs(BlogEntity::getStar, TopicUnion::getStars)
-                        .columnAs(BlogEntity::getContent, TopicUnion::getAbc)
+                        .columnAs(BlogEntity::getContent, TopicUnion::getTitle)
                 );
         List<TopicUnion> list = q1.unionAll(q2).where(o -> o.eq(TopicUnion::getId, "123321")).toList();
         Assert.assertEquals(0, list.size());
 
 
         String sql = q1.union(q2).where(o -> o.eq(TopicUnion::getId, "123321")).toSQL();
-
-        Assert.assertEquals("SELECT t5.`id`,t5.`stars`,t5.`title` FROM ( (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t2.`id` AS `id`,t2.`star` AS `stars`,t2.`content` AS `title` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`create_time` >= ?) ) t5 WHERE t5.`id` = ?", sql);
+        System.out.println(sql);
+//        Assert.assertEquals("SELECT t5.`id`,t5.`stars`,t5.`title` FROM ( (SELECT t.`id`,t.`stars`,t.`title` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t2.`id` AS `id`,t2.`star` AS `stars`,t2.`content` AS `title` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`create_time` >= ?) ) t5 WHERE t5.`id` = ?", sql);
+//        Assert.assertEquals("SELECT t4.`id`,t4.`stars`,t4.`abc` AS `abc` FROM ( (SELECT t.`id`,t.`stars`,t.`title` AS `abc` FROM `t_topic` t WHERE t.`id` = ?)  UNION ALL  (SELECT t2.`id` AS `id`,t2.`star` AS `stars`,t2.`content` AS `abc` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`create_time` >= ?) ) t4 WHERE t4.`id` = ?", sql);
+        Assert.assertEquals("SELECT t5.`id`,t5.`stars`,t5.`abc` AS `abc` FROM ( (SELECT t.`id`,t.`stars`,t.`title` AS `abc` FROM `t_topic` t WHERE t.`id` = ?)  UNION  (SELECT t2.`id` AS `id`,t2.`star` AS `stars`,t2.`content` AS `abc` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`create_time` >= ?) ) t5 WHERE t5.`id` = ?", sql);
     }
 
     @Test
@@ -1711,7 +1715,7 @@ public class QueryTest extends BaseTest {
         System.out.println(topicTypeVO);
         Assert.assertNotNull(topicTypeVO);
 
-        Assert.assertEquals(TopicTypeEnum.TEACHER, topicTypeVO.getTopicType1());
+        Assert.assertEquals(TopicTypeEnum.TEACHER, topicTypeVO.getTopicType());
 
     }
 
@@ -1821,7 +1825,7 @@ public class QueryTest extends BaseTest {
         String sql = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "2"))
                 .select(BlogEntityVO1.class).limit(1).toSQL();
-        Assert.assertEquals("SELECT t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+        Assert.assertEquals("SELECT t.`score`,t.`status` AS `status1`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
     }
 
     @Test
@@ -1834,7 +1838,7 @@ public class QueryTest extends BaseTest {
         String sql = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "2"))
                 .select(BlogEntityVO1.class, o -> o.columnAll()).limit(1).toSQL();
-        Assert.assertEquals("SELECT t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+        Assert.assertEquals("SELECT t.`score`,t.`status` AS `status1`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
     }
 
     @Test
@@ -1847,7 +1851,7 @@ public class QueryTest extends BaseTest {
         String sql = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "2"))
                 .select(BlogEntityVO1.class, o -> o.columnIgnore(BlogEntity::getId)).limit(1).toSQL();
-        Assert.assertEquals("SELECT t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+        Assert.assertEquals("SELECT t.`score`,t.`status` AS `status1`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
     }
 
     @Test
@@ -1874,7 +1878,7 @@ public class QueryTest extends BaseTest {
         String sql = easyQuery.queryable(BlogEntity.class)
                 .where(o -> o.eq(BlogEntity::getId, "2"))
                 .select(BlogEntityVO1.class, o -> o.columnAll().columnIgnore(BlogEntity::getScore)).limit(1).toSQL();
-        Assert.assertEquals("SELECT t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
+        Assert.assertEquals("SELECT t.`status` AS `status1`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", sql);
     }
 
     @Test
