@@ -5,6 +5,7 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
@@ -16,6 +17,7 @@ import com.easy.query.core.expression.func.DefaultColumnFunction;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.BlogEntityTest2;
@@ -36,6 +38,8 @@ import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.func.SQLTestFunc;
+import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.navigateflat.MyUserHome2;
 import com.easy.query.test.vo.BlogEntityVO1;
 import com.easy.query.test.vo.BlogEntityVO2;
 import org.junit.Assert;
@@ -81,15 +85,21 @@ public class QueryTest extends BaseTest {
 //    }
     @Test
     public void query0() {
-//easyQuery.queryable(Topic.class)
-//        .select(t -> t.sqlNativeSegment("GROUP_CONCAT({0} SEPARATOR ',')",c->c.expression(Topic::getTitle)))
-//        .toList();
-        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
-                .where(o -> o.eq(SysUser::getId, "123xxx"));
-        String sql = queryable.toSQL();
-        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ?", sql);
-        SysUser sysUser = queryable.firstOrNull();
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        SysUser sysUser = easyEntityQuery.queryable(SysUser.class)
+                .where(s -> s.id().eq("123xxx"))
+                .firstOrNull();
         Assert.assertNull(sysUser);
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE `id` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123xxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 
     @Test
@@ -110,23 +120,42 @@ public class QueryTest extends BaseTest {
 
     @Test
     public void query0_1() {
-        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        SysUser sysUser = easyEntityQuery.queryable(SysUser.class)
                 .asAlias("x")
-                .where(o -> o.eq(SysUser::getId, "123xxx"));
-        String sql = queryable.toSQL();
-        Assert.assertEquals("SELECT x.`id`,x.`create_time`,x.`username`,x.`phone`,x.`id_card`,x.`address` FROM `easy-query-test`.`t_sys_user` x WHERE x.`id` = ?", sql);
-        SysUser sysUser = queryable.firstOrNull();
+                .where(s -> s.id().eq("123xxx"))
+                .firstOrNull();
         Assert.assertNull(sysUser);
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT x.`id`,x.`create_time`,x.`username`,x.`phone`,x.`id_card`,x.`address` FROM `easy-query-test`.`t_sys_user` x WHERE x.`id` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123xxx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
     }
 
     @Test
     public void query1() {
-        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.eq(BlogEntity::getId, "123"));
-        String sql = queryable.toSQL();
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` = ?", sql);
-        BlogEntity blogEntity = queryable.firstOrNull();
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        BlogEntity blogEntity = easyEntityQuery.queryable(BlogEntity.class)
+                .asAlias("x")
+                .where(s -> s.id().eq("123"))
+                .firstOrNull();
         Assert.assertNull(blogEntity);
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT x.`id`,x.`create_time`,x.`update_time`,x.`create_by`,x.`update_by`,x.`deleted`,x.`title`,x.`content`,x.`url`,x.`star`,x.`publish_time`,x.`score`,x.`status`,x.`order`,x.`is_top`,x.`top` FROM `t_blog` x WHERE x.`deleted` = ? AND x.`id` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
     @Test
