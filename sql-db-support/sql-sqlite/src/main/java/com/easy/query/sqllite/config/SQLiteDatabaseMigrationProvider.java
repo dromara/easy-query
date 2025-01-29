@@ -33,7 +33,7 @@ import java.util.UUID;
  */
 public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
     private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
-    private static final Log log= LogFactory.getLog(SQLiteDatabaseMigrationProvider.class);
+    private static final Log log = LogFactory.getLog(SQLiteDatabaseMigrationProvider.class);
 
     static {
         columnTypeMap.put(boolean.class, new ColumnDbTypeResult("boolean", false));
@@ -63,27 +63,20 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         super(dataSource, sqlKeyword);
     }
 
-
     @Override
-    public boolean databaseExists() {
-        log.warn("sqlite not support check database exists.");
-        return true;
-//        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from information_schema.schemata where schema_name=?", Collections.singletonList(getDatabaseName()));
-//        return EasyCollectionUtil.isNotEmpty(maps);
+    public String databaseExistSQL(String databaseName) {
+        throw new UnsupportedOperationException("sqlite not support check database exists.");
     }
 
     @Override
-    public MigrationCommand createDatabaseCommand() {
-        log.warn("sqlite not support create database command.");
-        return null;
-//        String databaseSQL = "CREATE DATABASE IF NOT EXISTS " + getQuoteSQLName(databaseName) + " default charset utf8mb4 COLLATE utf8mb4_0900_ai_ci;";
-//        return new DefaultMigrationCommand(null, databaseSQL);
+    public String createDatabaseSQL(String databaseName) {
+        throw new UnsupportedOperationException("sqlite not support create database command.");
     }
 
     @Override
-    public boolean tableExists(String schema,String tableName) {
+    public boolean tableExists(String schema, String tableName) {
         ArrayList<Object> sqlParameters = new ArrayList<>();
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, String.format("select 1 from %s.sqlite_master where type='table' and name='%s'",getDatabaseName(),tableName), sqlParameters);
+        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, String.format("select 1 from %s.sqlite_master where type='table' and name='%s'", getDatabaseName(), tableName), sqlParameters);
         return EasyCollectionUtil.isNotEmpty(maps);
     }
 
@@ -98,7 +91,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     public MigrationCommand createTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        sql.append("CREATE TABLE IF NOT EXISTS ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName())).append(" ( ");
+        sql.append("CREATE TABLE IF NOT EXISTS ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" ( ");
         for (ColumnMetadata column : entityMetadata.getColumns()) {
             sql.append(newLine)
                     .append(getQuoteSQLName(column.getName()))
@@ -154,7 +147,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
         //ALTER TABLE table_name RENAME COLUMN old_column_name TO new_column_name;
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()))
+        sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()))
                 .append(" RENAME COLUMN ").append(getQuoteSQLName(renameFrom))
                 .append(" TO ")
                 .append(getQuoteSQLName(column.getName())).append(" ");
@@ -179,7 +172,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     protected MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata column) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()))
+        sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()))
                 .append(" ADD COLUMN ").append(getQuoteSQLName(column.getName())).append(" ");
 
         ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
@@ -201,7 +194,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()) + ";");
+        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
 
 }

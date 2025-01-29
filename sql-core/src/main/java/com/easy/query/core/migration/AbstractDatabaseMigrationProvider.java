@@ -8,7 +8,9 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.core.util.EasyToSQLUtil;
@@ -16,7 +18,9 @@ import com.easy.query.core.util.EasyToSQLUtil;
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -53,10 +57,36 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
     @Override
     public String getDatabaseName() {
         if (databaseName == null) {
-            this.databaseName = EasyDatabaseUtil.getDatabaseName(dataSource);
+            this.databaseName = EasyDatabaseUtil.getDatabaseName(dataSource, null);
+        }
+        if (databaseName == null) {
+            EasyDatabaseUtil.checkAndCreateDatabase(dataSource, (databaseName) -> {
+                this.databaseName = databaseName;
+                return databaseExistSQL(databaseName);
+            }, databaseName -> {
+                return createDatabaseSQL(databaseName);
+            });
+            this.databaseName = EasyDatabaseUtil.getDatabaseName(dataSource, null);
         }
         return this.databaseName;
     }
+
+    @Override
+    public void createDatabaseIfNotExists() {
+        this.getDatabaseName();
+    }
+
+    //    @Override
+    public abstract String databaseExistSQL(String databaseName);
+
+    public abstract String createDatabaseSQL(String databaseName);
+//
+//    @Override
+//    public MigrationCommand createDatabaseCommand() {
+//        String databaseSQL = "CREATE DATABASE IF NOT EXISTS " + getQuoteSQLName(databaseName) + " ENGINE=Ordinary;";
+//        return new DefaultMigrationCommand(null, databaseSQL);
+//    }
+
 
     @Override
     public @NotNull ColumnDbTypeResult getColumnDbType(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {

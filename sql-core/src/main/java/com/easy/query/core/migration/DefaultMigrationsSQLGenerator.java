@@ -40,12 +40,12 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
     @Override
     public List<MigrationCommand> generateMigrationSQL(MigrationContext migrationContext) {
         ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
-        if (!databaseMigrationProvider.databaseExists()) {
-            MigrationCommand databaseCommand = databaseMigrationProvider.createDatabaseCommand();
-            if (databaseCommand != null) {
-                migrationCommands.add(databaseCommand);
-            }
-        }
+//        if (!databaseMigrationProvider.databaseExists()) {
+//            MigrationCommand databaseCommand = databaseMigrationProvider.createDatabaseCommand();
+//            if (databaseCommand != null) {
+//                migrationCommands.add(databaseCommand);
+//            }
+//        }
         for (Class<?> entity : migrationContext.getEntities()) {
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity);
             EntityMigrationMetadata entityMigrationMetadata = databaseMigrationProvider.createEntityMigrationMetadata(entityMetadata);

@@ -58,16 +58,25 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
         super(dataSource, sqlKeyword);
     }
 
-    @Override
-    public boolean databaseExists() {
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from pg_namespace where nspname = ?", Collections.singletonList(getDatabaseName()));
-        return EasyCollectionUtil.isNotEmpty(maps);
-    }
+//    @Override
+//    public boolean databaseExists() {
+//        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from pg_namespace where nspname = ?", Collections.singletonList(getDatabaseName()));
+//        return EasyCollectionUtil.isNotEmpty(maps);
+//    }
+//
+//    @Override
+//    public MigrationCommand createDatabaseCommand() {
+//        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
+//        return new DefaultMigrationCommand(null, databaseSQL);
+//    }
 
     @Override
-    public MigrationCommand createDatabaseCommand() {
-        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
-        return new DefaultMigrationCommand(null, databaseSQL);
+    public String databaseExistSQL(String databaseName) {
+        return String.format("select 1 from pg_namespace where nspname = '%s'", databaseName);
+    }
+    @Override
+    public String createDatabaseSQL(String databaseName) {
+        return "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
     }
 
     @Override

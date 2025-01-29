@@ -19,9 +19,10 @@ public interface DatabaseMigrationProvider {
 
     String getDatabaseName();
 
-    boolean databaseExists();
-
-    MigrationCommand createDatabaseCommand();
+    //    boolean databaseExists();
+//
+//    MigrationCommand createDatabaseCommand();
+    void createDatabaseIfNotExists();
 
     boolean tableExists(String schema, String tableName);
 

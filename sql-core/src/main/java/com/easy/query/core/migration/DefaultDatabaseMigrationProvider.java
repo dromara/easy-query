@@ -53,20 +53,29 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
     }
 
 
+//    @Override
+//    public boolean databaseExists() {
+//        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, , Collections.singletonList(getDatabaseName()));
+//        return EasyCollectionUtil.isNotEmpty(maps);
+//    }
+//
+//    @Override
+//    public MigrationCommand createDatabaseCommand() {
+//        String databaseSQL = "CREATE DATABASE IF NOT EXISTS " + getQuoteSQLName(databaseName) + " default charset utf8mb4 COLLATE utf8mb4_general_ci;";
+//        return new DefaultMigrationCommand(null, databaseSQL);
+//    }
+
     @Override
-    public boolean databaseExists() {
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from information_schema.schemata where schema_name=?", Collections.singletonList(getDatabaseName()));
-        return EasyCollectionUtil.isNotEmpty(maps);
+    public String databaseExistSQL(String databaseName) {
+        return String.format("select 1 from information_schema.schemata where schema_name='%s'", databaseName);
+    }
+    @Override
+    public String createDatabaseSQL(String databaseName) {
+        return "CREATE DATABASE IF NOT EXISTS " + getQuoteSQLName(databaseName) + " default charset utf8mb4 COLLATE utf8mb4_general_ci;";
     }
 
     @Override
-    public MigrationCommand createDatabaseCommand() {
-        String databaseSQL = "CREATE DATABASE IF NOT EXISTS " + getQuoteSQLName(databaseName) + " default charset utf8mb4 COLLATE utf8mb4_0900_ai_ci;";
-        return new DefaultMigrationCommand(null, databaseSQL);
-    }
-
-    @Override
-    public boolean tableExists(String schema,String tableName) {
+    public boolean tableExists(String schema, String tableName) {
         ArrayList<Object> sqlParameters = new ArrayList<>();
         sqlParameters.add(getDatabaseName());
         sqlParameters.add(tableName);
@@ -85,7 +94,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
     public MigrationCommand createTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        sql.append("CREATE TABLE IF NOT EXISTS ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName())).append(" ( ");
+        sql.append("CREATE TABLE IF NOT EXISTS ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" ( ");
         for (ColumnMetadata column : entityMetadata.getColumns()) {
             sql.append(newLine)
                     .append(getQuoteSQLName(column.getName()))
@@ -101,7 +110,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             if (column.isGeneratedKey()) {
                 sql.append(" AUTO_INCREMENT");
             }
-            String columnComment = getColumnComment(entityMigrationMetadata, column,"'");
+            String columnComment = getColumnComment(entityMigrationMetadata, column, "'");
             if (EasyStringUtil.isNotBlank(columnComment)) {
                 sql.append(" COMMENT ").append(columnComment);
             }
@@ -123,7 +132,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             }
         }
         sql.append(newLine).append(") Engine=InnoDB");
-        String tableComment = getTableComment(entityMigrationMetadata,"'");
+        String tableComment = getTableComment(entityMigrationMetadata, "'");
         if (EasyStringUtil.isNotBlank(tableComment)) {
             sql.append(" COMMENT=").append(tableComment);
         }
@@ -141,7 +150,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
 
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()))
+        sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()))
                 .append(" CHANGE ").append(getQuoteSQLName(renameFrom))
                 .append(" ")
                 .append(getQuoteSQLName(column.getName())).append(" ");
@@ -154,7 +163,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" NOT NULL");
         }
 
-        String columnComment = getColumnComment(entityMigrationMetadata, column,"'");
+        String columnComment = getColumnComment(entityMigrationMetadata, column, "'");
         if (EasyStringUtil.isNotBlank(columnComment)) {
             sql.append(" COMMENT ").append(columnComment);
         }
@@ -166,7 +175,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
     protected MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata column) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()))
+        sql.append("ALTER TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()))
                 .append(" ADD ").append(getQuoteSQLName(column.getName())).append(" ");
 
         ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
@@ -177,7 +186,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" NOT NULL");
         }
 
-        String columnComment = getColumnComment(entityMigrationMetadata, column,"'");
+        String columnComment = getColumnComment(entityMigrationMetadata, column, "'");
         if (EasyStringUtil.isNotBlank(columnComment)) {
             sql.append(" COMMENT ").append(columnComment);
         }
@@ -188,7 +197,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()) + ";");
+        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
 
 }

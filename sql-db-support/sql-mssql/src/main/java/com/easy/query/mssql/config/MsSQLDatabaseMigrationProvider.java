@@ -59,17 +59,27 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         super(dataSource, sqlKeyword);
     }
 
-    @Override
-    public boolean databaseExists() {
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, " select 1 from sys.databases where name= ? ", Collections.singletonList(getDatabaseName()));
-        return EasyCollectionUtil.isNotEmpty(maps);
-    }
+//    @Override
+//    public boolean databaseExists() {
+//        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, " select 1 from sys.databases where name= ? ", Collections.singletonList(getDatabaseName()));
+//        return EasyCollectionUtil.isNotEmpty(maps);
+//    }
+//
+//    @Override
+//    public MigrationCommand createDatabaseCommand() {
+//        String databaseSQL = "if not exists(select 1 from sys.databases where name= '" + this.databaseName + "') " + newLine + " create database " + getQuoteSQLName(this.databaseName) + ";";
+//        return new DefaultMigrationCommand(null, databaseSQL);
+//    }
 
     @Override
-    public MigrationCommand createDatabaseCommand() {
-        String databaseSQL = "if not exists(select 1 from sys.databases where name= '" + this.databaseName + "') " + newLine + " create database " + getQuoteSQLName(this.databaseName) + ";";
-        return new DefaultMigrationCommand(null, databaseSQL);
+    public String databaseExistSQL(String databaseName) {
+        return String.format(" select 1 from sys.databases where name= '%s' ", databaseName);
     }
+    @Override
+    public String createDatabaseSQL(String databaseName) {
+        return "if not exists(select 1 from sys.databases where name= '" + this.databaseName + "') " + newLine + " create database " + getQuoteSQLName(this.databaseName) + ";";
+    }
+
 
     @Override
     public boolean tableExists(String schema, String tableName) {

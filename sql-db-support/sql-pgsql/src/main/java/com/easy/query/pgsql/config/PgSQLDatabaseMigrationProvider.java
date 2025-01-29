@@ -58,17 +58,13 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
     public PgSQLDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
         super(dataSource, sqlKeyword);
     }
-
     @Override
-    public boolean databaseExists() {
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from pg_namespace where nspname = ?", Collections.singletonList(getDatabaseName()));
-        return EasyCollectionUtil.isNotEmpty(maps);
+    public String databaseExistSQL(String databaseName) {
+        return String.format("select 1 from pg_namespace where nspname = '%s'", databaseName);
     }
-
     @Override
-    public MigrationCommand createDatabaseCommand() {
-        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
-        return new DefaultMigrationCommand(null, databaseSQL);
+    public String createDatabaseSQL(String databaseName) {
+        return "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
     }
 
     @Override

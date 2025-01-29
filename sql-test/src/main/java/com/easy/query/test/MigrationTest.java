@@ -1,10 +1,15 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.CodeFirstExecutable;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationContext;
 import com.easy.query.core.migration.MigrationsSQLGenerator;
+import com.easy.query.core.util.EasyDatabaseUtil;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.common.MD5Util;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyMigrationBlog;
@@ -12,11 +17,17 @@ import com.easy.query.test.entity.MyMigrationBlog0;
 import com.easy.query.test.entity.NewTopic;
 import com.easy.query.test.entity.NewTopic3;
 import com.easy.query.test.entity.Topic;
+import com.zaxxer.hikari.HikariDataSource;
+import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * create time 2025/1/14 14:23
@@ -126,4 +137,53 @@ public class MigrationTest extends BaseTest {
         }
         Assert.assertNotNull(ex);
     }
+
+    @Test
+    public void test2(){
+//        DriverManager.getConnection()
+        String jdbcUrl = EasyDatabaseUtil.getJdbcUrl(dataSource);
+        System.out.println(jdbcUrl);
+        String databaseName = EasyDatabaseUtil.getDatabaseName(dataSource,null);
+        System.out.println(databaseName);
+        String s = EasyDatabaseUtil.parseDatabaseName(jdbcUrl);
+        System.out.println(s);
+        String serverBaseUrl = EasyDatabaseUtil.getServerBaseUrl(jdbcUrl);
+        System.out.println(serverBaseUrl);
+        String serverBaseUrl1 = EasyDatabaseUtil.getServerBaseUrl("jdbc:sqlserver://localhost:1433;databaseName=mydb;encrypt=true");
+        System.out.println(serverBaseUrl1);
+    }
+
+
+    @SneakyThrows
+    @Test
+    public void test3(){
+//        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true", "root", "root");
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/eq_db2?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
+        dataSource.setUsername("root");
+        dataSource.setPassword("root");
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setMaximumPoolSize(20);
+
+
+        EasyQueryClient client = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    //进行一系列可以选择的配置
+                    //op.setPrintSql(true);
+                })
+                .useDatabaseConfigure(new MySQLDatabaseConfiguration())
+                .build();
+        DefaultEasyEntityQuery entityQuery = new DefaultEasyEntityQuery(client);
+
+        DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+        //自动同步数据库表
+        CodeFirstExecutable codeFirstExecutable = databaseCodeFirst.syncTables(Arrays.asList(Topic.class, BlogEntity.class));
+        //执行命令
+        codeFirstExecutable.executeWithTransaction(arg->{
+            System.out.println(arg.sql);
+            arg.commit();
+        });
+    }
+
 }
