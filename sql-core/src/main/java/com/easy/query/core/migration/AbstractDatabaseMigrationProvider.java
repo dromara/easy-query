@@ -133,7 +133,10 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
                 return comment;
             }
         }
-        return null;
+        return getFieldComment(entityMigrationMetadata,columnMetadata.getFieldName());
+    }
+    protected String getFieldComment(EntityMigrationMetadata entityMigrationMetadata,String fieldName){
+        return entityMigrationMetadata.getFieldComment(fieldName);
     }
 
     @Override

@@ -266,7 +266,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
             File genJavaFile = new File(realPath, (genPackageName + "." + className).replace(".", "/") + ".java");
             if (!genJavaFile.getParentFile().exists() && !genJavaFile.getParentFile().mkdirs()) {
-                System.out.println(">>>>>ERROR: can not mkdirs by easy-query processor for: " + genJavaFile.getParentFile());
+                System.out.println(">>>>>ERROR: can not mk dirs by easy-query processor for: " + genJavaFile.getParentFile());
                 return;
             }
 
@@ -286,7 +286,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
     }
 
     public static String camelToUnderline(String string) {
-        if (string == null || string.trim().length() == 0) {
+        if (string == null || string.trim().isEmpty()) {
             return "";
         }
         int len = string.length();
@@ -387,7 +387,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 ValueObject valueObject = fieldElement.getAnnotation(ValueObject.class);
                 boolean isValueObject = valueObject != null;
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : entityName;
-                String fieldComment = getFiledComment(docComment, fieldName, propertyName);
+                FieldComment fieldComment = getFiledComment(docComment, fieldName, propertyName);
                 PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType, anyType);
                 aptFileCompiler.addImports(propertyColumn.getImport());
                 if (includeProperty) {
@@ -396,7 +396,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
                     } else {
-                        fieldComment += "\n//apt提示无法获取导航属性代理:" + propertyColumn.getPropertyType();
+                        fieldComment.proxyComment += "\n//apt提示无法获取导航属性代理:" + propertyColumn.getPropertyType();
                     }
                     if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
                         includeManyProperty = true;
@@ -459,7 +459,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 ValueObject valueObject = fieldElement.getAnnotation(ValueObject.class);
                 boolean isValueObject = valueObject != null;
                 String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : aptFileCompiler.getEntityClassName();
-                String fieldComment = getFiledComment(docComment, fieldName, propertyName);
+                FieldComment fieldComment = getFiledComment(docComment, fieldName, propertyName);
                 PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType, anyType);
                 aptFileCompiler.addImports(propertyColumn.getImport());
 
@@ -471,7 +471,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
                     } else {
-                        fieldComment += "\n//apt提示无法获取导航属性代理:" + propertyColumn.getPropertyType();
+                        fieldComment.proxyComment += "\n//apt提示无法获取导航属性代理:" + propertyColumn.getPropertyType();
                     }
                     if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
                         includeManyProperty = true;
@@ -526,11 +526,12 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "Proxy";
     }
 
-    private String getFiledComment(String docComment, String className, String propertyName) {
+    private FieldComment getFiledComment(String docComment, String className, String propertyName) {
         if (docComment == null) {
-            return FIELD_EMPTY_DOC_COMMENT_TEMPLATE
+            String proxyComment = FIELD_EMPTY_DOC_COMMENT_TEMPLATE
                     .replace("@{entityClass}", className)
                     .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName));
+            return new FieldComment(proxyComment,"");
         }
         String[] commentLines = docComment.trim().split("\n");
         StringBuilder fieldComment = new StringBuilder();
@@ -538,10 +539,12 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         for (int i = 1; i < commentLines.length; i++) {
             fieldComment.append("\n     *").append(commentLines[i]);
         }
-        return FIELD_DOC_COMMENT_TEMPLATE
-                .replace("@{comment}", fieldComment.toString())
+        String fieldCommentString = fieldComment.toString();
+        String proxyComment =  FIELD_DOC_COMMENT_TEMPLATE
+                .replace("@{comment}", fieldCommentString)
                 .replace("@{entityClass}", className)
                 .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName));
+        return new FieldComment(proxyComment,fieldCommentString);
     }
 
     private String getGenericTypeString(boolean isGeneric, boolean isDeclared, boolean includeProperty, TypeMirror type) {

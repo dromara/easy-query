@@ -3,6 +3,7 @@ package com.easy.query.ksp
 import com.easy.query.core.annotation.*
 import com.easy.query.core.enums.RelationTypeEnum
 import com.easy.query.core.util.EasyStringUtil
+import com.easy.query.processor.FieldComment
 import com.easy.query.processor.helper.*
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
@@ -181,7 +182,8 @@ class ProxyGeneratorSqlProcessor(
                 if (navigatePropertyProxyFullName != null) {
                     propertyColumn.navigateProxyName = navigatePropertyProxyFullName
                 } else {
-                    fieldComment = "$fieldComment\n//apt提示无法获取导航属性代理:${propertyColumn.propertyType}"
+//                    fieldComment.proxyComment = "$fieldComment\n//apt提示无法获取导航属性代理:${propertyColumn.propertyType}"
+                    fieldComment.proxyComment += "\n// apt提示无法获取导航属性代理: $propertyColumn.propertyType"
                 }
                 if (navigate?.value == RelationTypeEnum.OneToMany || navigate?.value == RelationTypeEnum.ManyToMany) {
                     includeManyProperty = true
@@ -257,11 +259,12 @@ class ProxyGeneratorSqlProcessor(
         return matchResult?.groupValues?.get(1) ?: genericTypeString
     }
 
-    private fun getFiledComment(docComment: String?, className: String, propertyName: String): String {
+    private fun getFiledComment(docComment: String?, className: String, propertyName: String): FieldComment {
         if (docComment == null) {
-            return FIELD_EMPTY_DOC_COMMENT_TEMPLATE
+            val proxyComment = FIELD_EMPTY_DOC_COMMENT_TEMPLATE
                 .replace("@{entityClass}", className)
                 .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName))
+            return FieldComment(proxyComment,"");
         }
         val commentLines = docComment.trim().split("\n".toRegex())
         val fieldComment = StringBuilder()
@@ -269,10 +272,12 @@ class ProxyGeneratorSqlProcessor(
         for (i in 1..<commentLines.size) {
             fieldComment.append("\n     *").append(commentLines[i])
         }
-        return FIELD_DOC_COMMENT_TEMPLATE
-            .replace("@{comment}", fieldComment.toString())
+        var entityComment = fieldComment.toString()
+        val proxyComment = FIELD_DOC_COMMENT_TEMPLATE
+            .replace("@{comment}", entityComment)
             .replace("@{entityClass}", className)
             .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName))
+        return FieldComment(proxyComment,entityComment);
     }
 
     @OptIn(KspExperimental::class)
@@ -355,7 +360,7 @@ class ProxyGeneratorSqlProcessor(
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.navigateProxyName = navigatePropertyProxyFullName
                     } else {
-                        fieldComment += "\n// apt提示无法获取导航属性代理: $propertyColumn.propertyType"
+                        fieldComment.proxyComment += "\n// apt提示无法获取导航属性代理: $propertyColumn.propertyType"
                     }
                     if (navigate?.value == RelationTypeEnum.OneToMany || navigate?.value == RelationTypeEnum.ManyToMany) {
                         includeManyProperty = true

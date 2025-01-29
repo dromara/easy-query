@@ -21,4 +21,5 @@ public class ValueCompanyDTO {
      */
     @ValueObject
     private ValueCompanyAddressDTO address;
+
 }

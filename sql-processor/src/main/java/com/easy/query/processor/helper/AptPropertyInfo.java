@@ -1,6 +1,7 @@
 package com.easy.query.processor.helper;
 
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.processor.FieldComment;
 
 /**
  * create time 2023/11/8 16:38
@@ -20,7 +21,7 @@ public class AptPropertyInfo{
     /**
      * 注释内容
      */
-    private final String comment;
+    private final FieldComment fieldComment;
     /**
      * 对象名
      */
@@ -32,11 +33,11 @@ public class AptPropertyInfo{
     private final String sqlColumnMethod;
     private final String proxyPropertyName;
 
-    public AptPropertyInfo(String propertyName, PropertyColumn propertyColumn, String comment, String entityName,boolean valueObject,boolean includeProperty,boolean includeManyProperty,String proxyPropertyName){
+    public AptPropertyInfo(String propertyName, PropertyColumn propertyColumn, FieldComment fieldComment, String entityName, boolean valueObject, boolean includeProperty, boolean includeManyProperty, String proxyPropertyName){
 
         this.propertyName = propertyName;
         this.propertyColumn = propertyColumn;
-        this.comment = comment;
+        this.fieldComment = fieldComment;
         this.entityName = entityName;
         this.valueObject = valueObject;
         this.includeProperty = includeProperty;
@@ -58,7 +59,10 @@ public class AptPropertyInfo{
     }
 
     public String getComment() {
-        return comment;
+        return this.fieldComment.proxyComment;
+    }
+    public String getEntityComment() {
+        return this.fieldComment.entityComment;
     }
 
     public String getPropertyType() {

@@ -49,21 +49,21 @@ public class MigrationTest extends BaseTest {
         MigrationCommand migrationCommand = migrationCommands.get(0);
         Assert.assertEquals("CREATE TABLE IF NOT EXISTS `my_migration_blog` ( \n" +
                 "`id` VARCHAR(255) NOT NULL ,\n" +
-                "`create_time` DATETIME(3) NULL ,\n" +
-                "`update_time` DATETIME(3) NULL ,\n" +
-                "`create_by` VARCHAR(255) NULL ,\n" +
-                "`update_by` VARCHAR(255) NULL ,\n" +
-                "`deleted` TINYINT(1) NULL ,\n" +
+                "`create_time` DATETIME(3) NULL  COMMENT '创建时间;创建时间',\n" +
+                "`update_time` DATETIME(3) NULL  COMMENT '修改时间;修改时间',\n" +
+                "`create_by` VARCHAR(255) NULL  COMMENT '创建人;创建人',\n" +
+                "`update_by` VARCHAR(255) NULL  COMMENT '修改人;修改人',\n" +
+                "`deleted` TINYINT(1) NULL  COMMENT '是否删除;是否删除',\n" +
                 "`title` VARCHAR(255) NULL  COMMENT '标题',\n" +
                 "`content` VARCHAR(255) NULL  COMMENT '内容',\n" +
                 "`url` VARCHAR(255) NULL  COMMENT '博客链接',\n" +
-                "`star` INT(11) NULL ,\n" +
-                "`publish_time` DATETIME(3) NULL ,\n" +
-                "`score` DECIMAL(16,2) NULL ,\n" +
-                "`status` INT(11) NULL ,\n" +
-                "`order` DECIMAL(16,2) NULL ,\n" +
-                "`is_top` TINYINT(1) NULL ,\n" +
-                "`top` TINYINT(1) NULL , \n" +
+                "`star` INT(11) NULL  COMMENT '点赞数',\n" +
+                "`publish_time` DATETIME(3) NULL  COMMENT '发布时间',\n" +
+                "`score` DECIMAL(16,2) NULL  COMMENT '评分',\n" +
+                "`status` INT(11) NULL  COMMENT '状态',\n" +
+                "`order` DECIMAL(16,2) NULL  COMMENT '排序',\n" +
+                "`is_top` TINYINT(1) NULL  COMMENT '是否置顶',\n" +
+                "`top` TINYINT(1) NULL  COMMENT '是否置顶', \n" +
                 " PRIMARY KEY (`id`)\n" +
                 ") Engine=InnoDB;", migrationCommand.toSQL());
     }
@@ -118,7 +118,7 @@ public class MigrationTest extends BaseTest {
             System.out.println(arg.sql);
             String md5 = MD5Util.getMD5Hash(arg.sql);
             System.out.println("sql-hash:" + md5);
-            Assert.assertEquals("ef793f270480e3ebe65328501cc51bd2", md5);
+            Assert.assertEquals("2a927e4ae0dbf7d6f6d687a50888df93", md5);
             arg.commit();
         });
         boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();

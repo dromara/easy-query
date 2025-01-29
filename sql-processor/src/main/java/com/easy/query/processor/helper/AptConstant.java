@@ -46,6 +46,8 @@ public class AptConstant {
             "\n" +
             "    @{selectorContext}\n" +
             "\n" +
+            "    @{fieldCommentContext}\n" +
+            "\n" +
             "}";
 
 
@@ -94,6 +96,15 @@ public class AptConstant {
             "        @{valueObjectContext}" +
             "    }";
 
+    public static final String FIELD_COMMENT_METHOD ="\n" +
+            "\n" +
+            "     public static String getFieldComment(String property){\n" +
+            "         switch (property){\n" +
+            "             @{caseContent}\n" +
+            "             default:\n" +
+            "                 return null;\n" +
+            "         }\n" +
+            "     }";
 
     public static final String PROXY_SELECTOR_TEMPLATE =
             "\n" +
@@ -122,4 +133,6 @@ public class AptConstant {
             "    public @{selectorName} @{proxyProperty}() {\n" +
             "            return add(getProxy().@{proxyProperty}());\n" +
             "    }";
+    public static final String FIELD_COMMENT_TEMPLATE = "\n" +
+            "           case \"@{property}\": return \"@{comment}\";";
 }

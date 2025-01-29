@@ -1,6 +1,7 @@
 package com.easy.query.processor.helper;
 
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.processor.FieldComment;
 
 /**
  * create time 2023/12/5 17:07
@@ -10,13 +11,13 @@ import com.easy.query.core.util.EasyStringUtil;
  */
 public class AptSelectPropertyInfo {
     private final String propertyName;
-    private final String comment;
+    private final FieldComment fieldComment;
     private final String proxyPropertyName;
 
-    public AptSelectPropertyInfo(String propertyName, String comment,String proxyPropertyName){
+    public AptSelectPropertyInfo(String propertyName, FieldComment fieldComment, String proxyPropertyName){
 
         this.propertyName = propertyName;
-        this.comment = comment;
+        this.fieldComment = fieldComment;
         this.proxyPropertyName = proxyPropertyName;
     }
 
@@ -32,7 +33,11 @@ public class AptSelectPropertyInfo {
     }
 
     public String getComment() {
-        return comment;
+        return fieldComment.proxyComment;
+    }
+
+    public String getEntityComment() {
+        return fieldComment.entityComment;
     }
 
 }

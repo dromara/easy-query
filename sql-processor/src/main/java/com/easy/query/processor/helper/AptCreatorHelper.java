@@ -1,5 +1,10 @@
 package com.easy.query.processor.helper;
 
+import com.easy.query.core.util.EasyBase64Util;
+import com.easy.query.core.util.EasyStringUtil;
+
+import java.nio.charset.StandardCharsets;
+
 /**
  * create time 2023/11/8 16:46
  * 文件说明
@@ -10,6 +15,7 @@ public class AptCreatorHelper {
     public static String createProxy(AptFileCompiler aptFileCompiler, AptValueObjectInfo aptValueObjectInfo) {
 
         String selectorContent = renderSelectorUI(aptFileCompiler);
+        String fieldCommentUI = renderStaticFieldCommentUI(aptFileCompiler);
         String propertyContent = renderPropertyUI(aptFileCompiler, aptValueObjectInfo);
         String valueObjectContent = renderValueObjectUI(aptFileCompiler, aptValueObjectInfo);
         String proxyTemplate = AptConstant.PROXY_TEMPLATE
@@ -19,7 +25,8 @@ public class AptCreatorHelper {
                 .replace("@{entityClassProxy}", aptFileCompiler.getEntityClassProxyName())
                 .replace("@{fieldContent}", propertyContent)
                 .replace("@{valueObjectContext}", valueObjectContent)
-                .replace("@{selectorContext}", selectorContent);
+                .replace("@{selectorContext}", selectorContent)
+                .replace("@{fieldCommentContext}", fieldCommentUI);
         return proxyTemplate;
     }
 
@@ -92,6 +99,25 @@ public class AptCreatorHelper {
                 .replace("@{selectorName}", selectorInfo.getName())
                 .replace("@{entityClassProxy}", aptFileCompiler.getEntityClassProxyName())
                 .replace("@{fieldSelectorContent}", fieldSelectorContent);
+    }
+    private static String renderStaticFieldCommentUI(AptFileCompiler aptFileCompiler) {
+        String fieldsContent = renderCommentCaseContentUI(aptFileCompiler);
+        return AptConstant.FIELD_COMMENT_METHOD
+                .replace("@{caseContent}", fieldsContent);
+    }
+
+    private static String renderCommentCaseContentUI(AptFileCompiler aptFileCompiler) {
+        AptSelectorInfo selectorInfo = aptFileCompiler.getSelectorInfo();
+        StringBuilder filedContent = new StringBuilder();
+        for (AptSelectPropertyInfo property : selectorInfo.getProperties()) {
+            String comment =EasyStringUtil.trimOuterWhitespaceOptimized(EasyStringUtil.startWithRemove(property.getEntityComment(),"*"));
+            String fieldString = AptConstant.FIELD_COMMENT_TEMPLATE
+                    .replace("@{property}", property.getPropertyName())
+                    .replace("@{comment}", new String(EasyBase64Util.encode(comment.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
+            filedContent.append(fieldString);
+
+        }
+        return filedContent.toString();
     }
 
     private static String renderSelectorPropertyUI(AptFileCompiler aptFileCompiler) {

@@ -2,6 +2,7 @@ package com.easy.query.core.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author xuejiaming
@@ -140,7 +141,33 @@ public class EasyStringUtil {
         return sb.toString();
     }
 
+    private static final Pattern LEADING_WHITESPACE = Pattern.compile("^\\s+");
+    private static final Pattern TRAILING_WHITESPACE = Pattern.compile("\\s+$");
 
+    /**
+     * 移除字符串前后空格
+     * @param input
+     * @return
+     */
+    public static String trimOuterWhitespaceOptimized(String input) {
+        if (input == null) return null;
+        String tmp = LEADING_WHITESPACE.matcher(input).replaceAll("");
+        return TRAILING_WHITESPACE.matcher(tmp).replaceAll("");
+    }
+
+
+
+    private static final Pattern NEWLINE_PATTERN = Pattern.compile("[\\r\\n]+");
+
+    /**
+     * 将字符串换行转成空格单行显示
+     * @param input
+     * @return
+     */
+    public static String convertToSingleLineOptimized(String input) {
+        if (input == null) return null;
+        return NEWLINE_PATTERN.matcher(input).replaceAll(" ").trim();
+    }
     /**
      * 去空格
      *
