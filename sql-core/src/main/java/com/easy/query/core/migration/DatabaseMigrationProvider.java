@@ -22,6 +22,10 @@ public interface DatabaseMigrationProvider {
     //    boolean databaseExists();
 //
 //    MigrationCommand createDatabaseCommand();
+
+    /**
+     * 创建数据库如果数据库不存在
+     */
     void createDatabaseIfNotExists();
 
     boolean tableExists(String schema, String tableName);

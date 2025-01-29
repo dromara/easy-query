@@ -60,20 +60,19 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
             this.databaseName = EasyDatabaseUtil.getDatabaseName(dataSource, null);
         }
         if (databaseName == null) {
-            EasyDatabaseUtil.checkAndCreateDatabase(dataSource, (databaseName) -> {
-                this.databaseName = databaseName;
-                return databaseExistSQL(databaseName);
-            }, databaseName -> {
-                return createDatabaseSQL(databaseName);
-            });
-            this.databaseName = EasyDatabaseUtil.getDatabaseName(dataSource, null);
+         throw new EasyQueryInvalidOperationException("cant get database name, Please confirm that the database has been created and exists.");
         }
         return this.databaseName;
     }
 
     @Override
     public void createDatabaseIfNotExists() {
-        this.getDatabaseName();
+        EasyDatabaseUtil.checkAndCreateDatabase(dataSource, (databaseName) -> {
+            this.databaseName = databaseName;
+            return databaseExistSQL(databaseName);
+        }, databaseName -> {
+            return createDatabaseSQL(databaseName);
+        });
     }
 
     //    @Override

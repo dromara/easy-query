@@ -26,6 +26,12 @@ public class DefaultDatabaseCodeFirst implements DatabaseCodeFirst{
 
 
     @Override
+    public void createDatabaseIfNotExists() {
+        DatabaseMigrationProvider service = runtimeContext.getService(DatabaseMigrationProvider.class);
+        service.createDatabaseIfNotExists();
+    }
+
+    @Override
     public boolean tableExists(Class<?> entity) {
         return false;
     }

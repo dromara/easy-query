@@ -13,7 +13,10 @@ import java.util.Map;
  * @author xuejiaming
  */
 public interface DatabaseCodeFirst {
-//    void createDatabaseIfNotExists();
+    /**
+     * 如果数据库不存在则创建数据库(oracle、damneg不支持)
+     */
+    void createDatabaseIfNotExists();
     /**
      * 表是否存在
      * @param entity 数据库对象

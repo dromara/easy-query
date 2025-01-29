@@ -159,7 +159,7 @@ public class MigrationTest extends BaseTest {
     public void test3(){
 //        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true", "root", "root");
         HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/eq_db2?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
+        dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/eq_db3?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
@@ -177,6 +177,7 @@ public class MigrationTest extends BaseTest {
         DefaultEasyEntityQuery entityQuery = new DefaultEasyEntityQuery(client);
 
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+        databaseCodeFirst.createDatabaseIfNotExists();
         //自动同步数据库表
         CodeFirstExecutable codeFirstExecutable = databaseCodeFirst.syncTables(Arrays.asList(Topic.class, BlogEntity.class));
         //执行命令

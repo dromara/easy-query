@@ -152,7 +152,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
         if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
             sql.append(newLine)
-                    .append(" CONSTRAINT ").append(getQuoteSQLName(getDatabaseName()+"_"+entityMetadata.getTableName()+"_pk1")).append(" ").append(" PRIMARY KEY (");
+                    .append(" CONSTRAINT ").append(getQuoteSQLName(entityMetadata.getTableName()+"_primary_key")).append(" ").append(" PRIMARY KEY (");
             int i = keyProperties.size();
             for (String keyProperty : keyProperties) {
                 i--;

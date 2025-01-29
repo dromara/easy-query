@@ -4,7 +4,10 @@ import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.migration.MigrationCommand;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +21,7 @@ import java.util.function.Consumer;
  * @author xuejiaming
  */
 public class DefaultCodeFirstExecutable implements CodeFirstExecutable {
+    private static final Log log= LogFactory.getLog(DefaultCodeFirstExecutable.class);
     private final QueryRuntimeContext runtimeContext;
     private final List<MigrationCommand> migrationCommands;
 
@@ -33,8 +37,12 @@ public class DefaultCodeFirstExecutable implements CodeFirstExecutable {
             sql.append(System.lineSeparator());
             sql.append(migrationCommand.toSQL());
         }
-        consumer.accept(new CodeFirstCommandArg(sql.toString()));
         String executeSQL = sql.toString();
+        if(EasyStringUtil.isBlank(executeSQL)){
+            log.info("execute sql is empty.");
+            return;
+        }
+        consumer.accept(new CodeFirstCommandArg(executeSQL));
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         long l = sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(executeSQL, Collections.emptyList());
     }
@@ -47,10 +55,14 @@ public class DefaultCodeFirstExecutable implements CodeFirstExecutable {
             sql.append(System.lineSeparator());
             sql.append(migrationCommand.toSQL());
         }
+        String executeSQL = sql.toString();
+        if(EasyStringUtil.isBlank(executeSQL)){
+            log.info("execute sql is empty.");
+            return;
+        }
         ConnectionManager connectionManager = runtimeContext.getConnectionManager();
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         try(Transaction transaction = connectionManager.beginTransaction()){
-            String executeSQL = sql.toString();
             ArrayList<Consumer<Transaction>> consumers = new ArrayList<>();
             consumer.accept(new CodeFirstCommandTxArg(transaction,executeSQL,consumers));
 

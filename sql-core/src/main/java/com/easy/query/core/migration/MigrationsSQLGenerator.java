@@ -10,6 +10,7 @@ import java.util.Map;
  * @author xuejiaming
  */
 public interface MigrationsSQLGenerator {
+
     List<MigrationCommand> generateMigrationSQL(MigrationContext migrationContext);
 
     List<MigrationCommand> generateCreateTableMigrationSQL(MigrationContext migrationContext);

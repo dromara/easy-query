@@ -1,5 +1,10 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
+
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -29,6 +34,7 @@ import java.util.regex.Pattern;
  * @author xuejiaming
  */
 public class EasyDatabaseUtil {
+    private static final Log log = LogFactory.getLog(EasyDatabaseUtil.class);
 
     /**
      * 从 DataSource 中解析 JDBC URL（通过反射，兼容常见连接池）
@@ -66,7 +72,7 @@ public class EasyDatabaseUtil {
         } catch (Exception e) {
 //            e.printStackTrace();
         }
-        if(def==null){
+        if (def == null) {
             return null;
         }
         return def.get(); // 未能获取数据库名称
@@ -85,7 +91,7 @@ public class EasyDatabaseUtil {
             }
             return columns;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("get columns error:" + e.getMessage(), e);
         }
         return new HashSet<>(); // 未能获取数据库名称
 
@@ -119,8 +125,7 @@ public class EasyDatabaseUtil {
             // 获取元数据
             return resultData;
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 
@@ -145,18 +150,20 @@ public class EasyDatabaseUtil {
             boolean databaseExist = false;
             try (Statement stmt = serverConn.createStatement()) {
                 String checkDbSQL = checkDbSqlFunc.apply(dbName);
+                log.info("check db sql:" + checkDbSQL);
                 ResultSet resultSet = stmt.executeQuery(checkDbSQL);
                 databaseExist = resultSet.next();
             }
             if (!databaseExist) {
                 try (Statement stmt = serverConn.createStatement()) {
-                    String createDbSql = createDbSqlFunc.apply(dbName);
-                    stmt.execute(createDbSql);
+                    String createDbSQL = createDbSqlFunc.apply(dbName);
+                    log.info("create db sql:" + createDbSQL);
+                    stmt.execute(createDbSQL);
                 }
             }
 //            String createDbSql = generateCreateDatabaseSql(dbName, jdbcUrl);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new EasyQuerySQLCommandException(e);
         }
     }
 
@@ -175,7 +182,7 @@ public class EasyDatabaseUtil {
                 Method getUrlMethod = dataSource.getClass().getMethod("getUrl");
                 return (String) getUrlMethod.invoke(dataSource);
             } catch (Exception e2) {
-                throw new RuntimeException("无法获取 JDBC URL", e2);
+                throw new EasyQuerySQLCommandException("无法获取 JDBC URL", e2);
             }
         }
     }
@@ -188,7 +195,7 @@ public class EasyDatabaseUtil {
             Method method = dataSource.getClass().getMethod(methodName);
             return (String) method.invoke(dataSource);
         } catch (Exception e) {
-            throw new RuntimeException("无法获取属性: " + methodName, e);
+            throw new EasyQueryInvalidOperationException("cant get datasource property: " + methodName, e);
         }
     }
 
@@ -225,11 +232,12 @@ public class EasyDatabaseUtil {
      */
     public static String getServerBaseUrl(String jdbcUrl) {
         String serverBaseUrl0 = getServerBaseUrl0(jdbcUrl);
-        if(jdbcUrl.contains("?")){
-            return serverBaseUrl0+"?"+jdbcUrl.split("\\?")[1];
+        if (jdbcUrl.contains("?")) {
+            return serverBaseUrl0 + "?" + jdbcUrl.split("\\?")[1];
         }
         return serverBaseUrl0;
     }
+
     public static String getServerBaseUrl0(String jdbcUrl) {
         // 处理不同数据库的 URL 格式
         if (jdbcUrl.contains("jdbc:sqlserver:")) {
