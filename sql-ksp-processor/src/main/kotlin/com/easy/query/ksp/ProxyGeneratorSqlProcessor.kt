@@ -76,7 +76,10 @@ class ProxyGeneratorSqlProcessor(
         }
 
         fun getPropertyColumn(fieldGenericType: String?, anyType: Boolean?): PropertyColumn {
-            return TYPE_COLUMN_MAPPING.getOrDefault(fieldGenericType, PropertyColumn("SQLAnyTypeColumn", fieldGenericType, anyType))
+            return TYPE_COLUMN_MAPPING.getOrDefault(
+                fieldGenericType,
+                PropertyColumn("SQLAnyTypeColumn", fieldGenericType, anyType)
+            )
         }
 
     }
@@ -96,6 +99,8 @@ class ProxyGeneratorSqlProcessor(
     private fun buildEntityProxy(entityClassElement: KSClassDeclaration, resolver: Resolver) {
         val basePath = ""
         val entityProxy = entityClassElement.getAnnotationsByType(EntityProxy::class).first()
+        val tableAnnotation = entityClassElement.getAnnotationsByType(Table::class).first()
+
 
         // 每一个 entity 生成一个独立的文件
         val entityFullName = entityClassElement.qualifiedName!!.asString()
@@ -106,7 +111,13 @@ class ProxyGeneratorSqlProcessor(
         val ignoreProperties = entityProxy.ignoreProperties.toHashSet()
 
         val aptFileCompiler =
-            AptFileCompiler(realGenPackage, entityClassName, proxyInstanceName, AptSelectorInfo("${proxyInstanceName}Fetcher"))
+            AptFileCompiler(
+                realGenPackage,
+                entityClassName,
+                proxyInstanceName,
+                tableAnnotation,
+                AptSelectorInfo("${proxyInstanceName}Fetcher")
+            )
         aptFileCompiler.addImports("com.easy.query.core.proxy.fetcher.AbstractFetcher")
         aptFileCompiler.addImports("com.easy.query.core.proxy.SQLSelectAsExpression")
         aptFileCompiler.addImports("com.easy.query.core.proxy.core.EntitySQLContext")
@@ -116,7 +127,8 @@ class ProxyGeneratorSqlProcessor(
         var currentClassElement: KSClassDeclaration? = entityClassElement
         while (currentClassElement != null) {
             fillPropertyAndColumns(resolver, aptFileCompiler, aptValueObjectInfo, currentClassElement, ignoreProperties)
-            currentClassElement = currentClassElement.superTypes.firstOrNull()?.resolve()?.declaration as KSClassDeclaration? ?: break
+            currentClassElement =
+                currentClassElement.superTypes.firstOrNull()?.resolve()?.declaration as KSClassDeclaration? ?: break
         }
 
         val content = buildTablesClass(aptFileCompiler, aptValueObjectInfo)
@@ -137,7 +149,7 @@ class ProxyGeneratorSqlProcessor(
         aptFileCompiler: AptFileCompiler,
         aptValueObjectInfo: AptValueObjectInfo,
         classElement: KSClassDeclaration,
-        ignoreProperties: Set<String>
+        ignoreProperties: Set<String>,
     ) {
         classElement.declarations.filterIsInstance<KSPropertyDeclaration>().forEach { fieldElement ->
             val modifiers = fieldElement.modifiers
@@ -169,16 +181,27 @@ class ProxyGeneratorSqlProcessor(
             val docComment = fieldElement.docString
             val valueObject = fieldElement.getAnnotationsByType(ValueObject::class).firstOrNull()
             val isValueObject = valueObject != null
-            val fieldName = if (isValueObject) fieldGenericType.substringAfterLast('.') else aptFileCompiler.entityClassName
+            val fieldName =
+                if (isValueObject) fieldGenericType.substringAfterLast('.') else aptFileCompiler.entityClassName
             var fieldComment = getFiledComment(docComment, fieldName, propertyName)
             val propertyColumn = getPropertyColumn(fieldGenericType, anyType)
             aptFileCompiler.addImports(propertyColumn.import)
 
             if (!includeProperty) {
-                aptFileCompiler.selectorInfo.addProperties(AptSelectPropertyInfo(propertyName, fieldComment, proxyPropertyName))
+                aptFileCompiler.selectorInfo.addProperties(
+                    AptSelectPropertyInfo(
+                        propertyName,
+                        fieldComment,
+                        proxyPropertyName
+                    )
+                )
             } else {
                 aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn")
-                val navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(resolver, propertyColumn.propertyType, navigate?.propIsProxy == true)
+                val navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(
+                    resolver,
+                    propertyColumn.propertyType,
+                    navigate?.propIsProxy == true
+                )
                 if (navigatePropertyProxyFullName != null) {
                     propertyColumn.navigateProxyName = navigatePropertyProxyFullName
                 } else {
@@ -210,7 +233,14 @@ class ProxyGeneratorSqlProcessor(
                 val fieldClass = type.declaration as KSClassDeclaration
                 val fieldAptValueObjectInfo = AptValueObjectInfo(valueObjectClassName)
                 aptValueObjectInfo.children.add(fieldAptValueObjectInfo)
-                fillValueObject(resolver, propertyName, fieldAptValueObjectInfo, fieldClass, aptFileCompiler, ignoreProperties)
+                fillValueObject(
+                    resolver,
+                    propertyName,
+                    fieldAptValueObjectInfo,
+                    fieldClass,
+                    aptFileCompiler,
+                    ignoreProperties
+                )
             }
         }
     }
@@ -219,7 +249,7 @@ class ProxyGeneratorSqlProcessor(
         isGeneric: Boolean,
         isDeclared: Boolean,
         includeProperty: Boolean,
-        type: KSType
+        type: KSType,
     ): String {
         val typeString = defTypeString(isDeclared, includeProperty, type)
         return if (typeString.contains(".")) {
@@ -240,10 +270,11 @@ class ProxyGeneratorSqlProcessor(
     private fun defTypeString(
         isDeclared: Boolean,
         includeProperty: Boolean,
-        type: KSType
+        type: KSType,
     ): String {
         return if (includeProperty) {
-            type.arguments.firstOrNull()?.type?.resolve()?.declaration?.qualifiedName?.asString() ?: type.declaration.qualifiedName!!.asString()
+            type.arguments.firstOrNull()?.type?.resolve()?.declaration?.qualifiedName?.asString()
+                ?: type.declaration.qualifiedName!!.asString()
         } else {
             val element = type.declaration
             element.qualifiedName!!.asString()
@@ -264,7 +295,7 @@ class ProxyGeneratorSqlProcessor(
             val proxyComment = FIELD_EMPTY_DOC_COMMENT_TEMPLATE
                 .replace("@{entityClass}", className)
                 .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName))
-            return FieldComment(proxyComment,"");
+            return FieldComment(proxyComment, "");
         }
         val commentLines = docComment.trim().split("\n".toRegex())
         val fieldComment = StringBuilder()
@@ -277,11 +308,15 @@ class ProxyGeneratorSqlProcessor(
             .replace("@{comment}", entityComment)
             .replace("@{entityClass}", className)
             .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName))
-        return FieldComment(proxyComment,entityComment);
+        return FieldComment(proxyComment, entityComment);
     }
 
     @OptIn(KspExperimental::class)
-    private fun getNavigatePropertyProxyFullName(resolver: Resolver, fullClassName: String, propIsProxy: Boolean): String? {
+    private fun getNavigatePropertyProxyFullName(
+        resolver: Resolver,
+        fullClassName: String,
+        propIsProxy: Boolean,
+    ): String? {
         val typeElement = resolver.getClassDeclarationByName(fullClassName)
         if (typeElement != null) {
             val annotation = typeElement.getAnnotationsByType(EntityProxy::class).firstOrNull()
@@ -304,7 +339,9 @@ class ProxyGeneratorSqlProcessor(
     }
 
     private fun getDefaultClassProxyName(fullClassName: String): String {
-        return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "Proxy"
+        return fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ".proxy." + fullClassName.substring(
+            fullClassName.lastIndexOf(".") + 1
+        ) + "Proxy"
     }
 
     private fun fillValueObject(
@@ -313,7 +350,7 @@ class ProxyGeneratorSqlProcessor(
         aptValueObjectInfo: AptValueObjectInfo,
         fieldClassElement: KSClassDeclaration,
         aptFileCompiler: AptFileCompiler,
-        ignoreProperties: Set<String>
+        ignoreProperties: Set<String>,
     ) {
         val entityName = aptValueObjectInfo.entityName
         val enclosedElements = fieldClassElement.declarations
@@ -356,7 +393,11 @@ class ProxyGeneratorSqlProcessor(
 
                 if (includeProperty) {
                     aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn")
-                    val navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(resolver, propertyColumn.propertyType, navigate?.propIsProxy == true)
+                    val navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(
+                        resolver,
+                        propertyColumn.propertyType,
+                        navigate?.propIsProxy == true
+                    )
                     if (navigatePropertyProxyFullName != null) {
                         propertyColumn.navigateProxyName = navigatePropertyProxyFullName
                     } else {
@@ -368,9 +409,18 @@ class ProxyGeneratorSqlProcessor(
                     }
                 }
 
-                aptValueObjectInfo.addProperties(AptPropertyInfo(
-                    propertyName, propertyColumn, fieldComment, fieldName, valueObject, includeProperty, includeManyProperty, proxyPropertyName
-                ))
+                aptValueObjectInfo.addProperties(
+                    AptPropertyInfo(
+                        propertyName,
+                        propertyColumn,
+                        fieldComment,
+                        fieldName,
+                        valueObject,
+                        includeProperty,
+                        includeManyProperty,
+                        proxyPropertyName
+                    )
+                )
 
                 if (valueObject) {
                     aptFileCompiler.addImports(fieldGenericType)
@@ -378,7 +428,14 @@ class ProxyGeneratorSqlProcessor(
                     val fieldClass = type.declaration as KSClassDeclaration
                     val fieldAptValueObjectInfo = AptValueObjectInfo(valueObjectClassName)
                     aptValueObjectInfo.children.add(fieldAptValueObjectInfo)
-                    fillValueObject(resolver, "$parentProperty.$propertyName", fieldAptValueObjectInfo, fieldClass, aptFileCompiler, ignoreProperties)
+                    fillValueObject(
+                        resolver,
+                        "$parentProperty.$propertyName",
+                        fieldAptValueObjectInfo,
+                        fieldClass,
+                        aptFileCompiler,
+                        ignoreProperties
+                    )
                 }
             }
         }

@@ -1,5 +1,7 @@
 package com.easy.query.processor.helper;
 
+import com.easy.query.core.annotation.Table;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -12,14 +14,16 @@ import java.util.Set;
 public class AptFileCompiler {
     private final String entityClassName;
     private final String entityClassProxyName;
+    private final Table tableAnnotation;
     private final AptSelectorInfo selectorInfo;
     private final String packageName;
     private Set<String> imports;
 
-    public AptFileCompiler(String packageName,String entityClassName,String entityClassProxyName,AptSelectorInfo selectorInfo) {
+    public AptFileCompiler(String packageName, String entityClassName, String entityClassProxyName, Table tableAnnotation, AptSelectorInfo selectorInfo) {
         this.packageName = packageName;
         this.entityClassName = entityClassName;
         this.entityClassProxyName = entityClassProxyName;
+        this.tableAnnotation = tableAnnotation;
         this.selectorInfo = selectorInfo;
         this.imports = new LinkedHashSet<>();
     }
@@ -41,9 +45,13 @@ public class AptFileCompiler {
     }
 
     public void addImports(String fullClassPackageName) {
-        if(fullClassPackageName!=null){
+        if (fullClassPackageName != null) {
             imports.add("import " + fullClassPackageName + ";");
         }
+    }
+
+    public boolean isTableEntity() {
+        return tableAnnotation != null;
     }
 
     public AptSelectorInfo getSelectorInfo() {

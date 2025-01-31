@@ -6,6 +6,7 @@ import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.ProxyProperty;
+import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.ValueObject;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.util.EasyStringUtil;
@@ -161,6 +162,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 }
                 EntityProxy entityProxy = entityClassElement.getAnnotation(EntityProxy.class);
 
+                Table tableAnnotation = entityClassElement.getAnnotation(Table.class);
+
                 entityClassNameReference.set(entityClassElement.toString());
 
                 //每一个 entity 生成一个独立的文件
@@ -176,7 +179,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
 
                 TypeElement classElement = (TypeElement) entityClassElement;
-                AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage, entityClassName, proxyInstanceName, new AptSelectorInfo(proxyInstanceName + "Fetcher"));
+                AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage, entityClassName, proxyInstanceName, tableAnnotation, new AptSelectorInfo(proxyInstanceName + "Fetcher"));
                 aptFileCompiler.addImports("com.easy.query.core.proxy.fetcher.AbstractFetcher");
                 aptFileCompiler.addImports("com.easy.query.core.proxy.SQLSelectAsExpression");
                 aptFileCompiler.addImports("com.easy.query.core.proxy.core.EntitySQLContext");
@@ -531,7 +534,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             String proxyComment = FIELD_EMPTY_DOC_COMMENT_TEMPLATE
                     .replace("@{entityClass}", className)
                     .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName));
-            return new FieldComment(proxyComment,"");
+            return new FieldComment(proxyComment, "");
         }
         String[] commentLines = docComment.trim().split("\n");
         StringBuilder fieldComment = new StringBuilder();
@@ -540,11 +543,11 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             fieldComment.append("\n     *").append(commentLines[i]);
         }
         String fieldCommentString = fieldComment.toString();
-        String proxyComment =  FIELD_DOC_COMMENT_TEMPLATE
+        String proxyComment = FIELD_DOC_COMMENT_TEMPLATE
                 .replace("@{comment}", fieldCommentString)
                 .replace("@{entityClass}", className)
                 .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName));
-        return new FieldComment(proxyComment,fieldCommentString);
+        return new FieldComment(proxyComment, fieldCommentString);
     }
 
     private String getGenericTypeString(boolean isGeneric, boolean isDeclared, boolean includeProperty, TypeMirror type) {

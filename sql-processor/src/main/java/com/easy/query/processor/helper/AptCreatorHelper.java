@@ -100,7 +100,11 @@ public class AptCreatorHelper {
                 .replace("@{entityClassProxy}", aptFileCompiler.getEntityClassProxyName())
                 .replace("@{fieldSelectorContent}", fieldSelectorContent);
     }
+
     private static String renderStaticFieldCommentUI(AptFileCompiler aptFileCompiler) {
+        if (!aptFileCompiler.isTableEntity()) {
+            return "";
+        }
         String fieldsContent = renderCommentCaseContentUI(aptFileCompiler);
         return AptConstant.FIELD_COMMENT_METHOD
                 .replace("@{caseContent}", fieldsContent);
@@ -110,7 +114,7 @@ public class AptCreatorHelper {
         AptSelectorInfo selectorInfo = aptFileCompiler.getSelectorInfo();
         StringBuilder filedContent = new StringBuilder();
         for (AptSelectPropertyInfo property : selectorInfo.getProperties()) {
-            String comment =EasyStringUtil.trimOuterWhitespaceOptimized(EasyStringUtil.startWithRemove(property.getEntityComment(),"*"));
+            String comment = EasyStringUtil.trimOuterWhitespaceOptimized(EasyStringUtil.startWithRemove(property.getEntityComment(), "*"));
             String fieldString = AptConstant.FIELD_COMMENT_TEMPLATE
                     .replace("@{property}", property.getPropertyName())
                     .replace("@{comment}", new String(EasyBase64Util.encode(comment.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
