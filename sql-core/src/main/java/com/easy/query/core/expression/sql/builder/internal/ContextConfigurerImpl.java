@@ -63,4 +63,13 @@ public class ContextConfigurerImpl implements ContextConfigurer {
         return expressionContext.getPrintNavSQL();
     }
 
+    @Override
+    public void setConfigureArgument(Object arg) {
+        expressionContext.setConfigureArgument(arg);
+    }
+
+    @Override
+    public Object getConfigureArgument() {
+        return expressionContext.getConfigureArgument();
+    }
 }

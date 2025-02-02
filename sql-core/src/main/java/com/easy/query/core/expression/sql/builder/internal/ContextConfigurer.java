@@ -46,4 +46,7 @@ public interface ContextConfigurer {
     void setPrintNavSQL(Boolean printSQL);
     Boolean getPrintNavSQL();
 
+    void setConfigureArgument(Object arg);
+    Object getConfigureArgument();
+
 }

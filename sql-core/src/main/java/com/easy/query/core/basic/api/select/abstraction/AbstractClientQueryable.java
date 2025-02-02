@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
 import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
@@ -872,8 +873,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         TableAvailable entityTable = table.getEntityTable();
 
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
+        ConfigureArgument configureArgument = getSQLEntityExpressionBuilder().getExpressionContext().getConfigureArgument();
 
-        selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, replace, 0);
+        selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, configureArgument, replace, 0);
         selectAutoIncludeFlat0(entityMetadataManager, this, entityMetadata, resultEntityMetadata);
         selectAutoIncludeJoin0(this, resultEntityMetadata);
     }
@@ -933,7 +935,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
 
-    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, boolean replace, int deep) {
+    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, ConfigureArgument configureArgument, boolean replace, int deep) {
 
         if (resultEntityMetadata.getTableName() != null) {
             log.warn("selectAutoInclude should not use database entity objects as return results :[{" + EasyClassUtil.getSimpleName(resultEntityMetadata.getEntityClass()) + "}] ");
@@ -959,10 +961,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     .include(t -> {
                         t.getIncludeNavigateParams().setReplace(replace);
 //                        ClientQueryable<Object> with = t.with(navigatePropName);
-                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()), EasyNavigateUtil.getNavigateLimit(resultNavigateMetadata, t.getIncludeNavigateParams().getNavigateMetadata()), EasyNavigateUtil.getNavigateOrderProps(resultNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), runtimeContext);
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
-                        selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, replace, deep + 1);
+                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()), EasyNavigateUtil.getNavigateLimit(resultNavigateMetadata, t.getIncludeNavigateParams().getNavigateMetadata()), EasyNavigateUtil.getNavigateOrderProps(resultNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), navigateEntityMetadata, configureArgument, runtimeContext);
+
+                        selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, configureArgument, replace, deep + 1);
                         selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata);
 //                        selectAutoIncludeJoin0(with.queryClass(), with, navigateEntityMetadata);
                         return with;

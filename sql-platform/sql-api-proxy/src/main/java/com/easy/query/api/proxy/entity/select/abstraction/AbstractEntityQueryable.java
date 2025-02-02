@@ -8,6 +8,7 @@ import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasySelectFlatQueryable;
 import com.easy.query.api.proxy.util.EasyProxyUtil;
 import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -187,6 +188,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     public <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata) {
         return clientQueryable.toList(resultClass, resultEntityMetadata);
     }
+
     @Override
     public List<T1> toTreeList(boolean ignore) {
         return clientQueryable.toTreeList(ignore);
@@ -388,7 +390,6 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
                 TPropertyProxy navigateColumn = navigateColumnQueryable.getQueryable().get1Proxy();
                 valueHolder.setValue(navigateColumn);
             });
-
             return include0(valueHolder.getValue(), includeAdapterExpression, groupSize);
         }
         return this;
@@ -397,12 +398,16 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     private <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include0(TPropertyProxy navigateColumn, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
 
         Objects.requireNonNull(navigateColumn.getNavValue(), "include [navValue] is null");
+
+        ConfigureArgument configureArgument = getQueryable().getSQLEntityExpressionBuilder().getExpressionContext().getConfigureArgument();
         getClientQueryable().<TProperty>include(navigateInclude -> {
 
             ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
                     navigateInclude.with(navigateColumn.getNavValue(), groupSize),
-                    new OffsetLimitEntry(navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOffset(),navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getLimit()),
+                    new OffsetLimitEntry(navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOffset(), navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getLimit()),
                     navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOrderProps(),
+                    runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getNavigatePropertyType()),
+                    configureArgument,
                     runtimeContext);
             TPropertyProxy tPropertyProxy = EntityQueryProxyManager.create(clientQueryable.queryClass());
             EasyEntityQueryable<TPropertyProxy, TProperty> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, clientQueryable);

@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.configuration.EasyQueryOption;
@@ -67,6 +68,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private long resultSizeLimit;
     private Boolean printSQL;
     private Boolean printNavSQL;
+    private ConfigureArgument configureArgument;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -88,6 +90,7 @@ public class EasyExpressionContext implements ExpressionContext {
         this.maxShardingQueryLimit = null;
         this.connectionMode = null;
         this.sharding = false;
+        this.configureArgument = new ConfigureArgument();
 
         ValueFilterFactory valueFilterFactory = runtimeContext.getValueFilterFactory();
         this.valueFilter = valueFilterFactory.getExpressionDefaultValueFilter();
@@ -491,5 +494,15 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public void setPrintNavSQL(Boolean printSQL) {
         this.printNavSQL = printSQL;
+    }
+
+    @Override
+    public void setConfigureArgument(Object arg) {
+        this.configureArgument.setArg(arg);
+    }
+
+    @Override
+    public ConfigureArgument getConfigureArgument() {
+        return configureArgument;
     }
 }
