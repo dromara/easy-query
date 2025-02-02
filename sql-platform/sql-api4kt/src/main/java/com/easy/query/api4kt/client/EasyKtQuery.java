@@ -27,7 +27,6 @@ import java.util.Map;
  * @Description: 文件说明
  * @Date: 2023/2/5 21:27
  */
-@Deprecated(message = "will remove this client api")
 public interface EasyKtQuery {
     EasyQueryClient getEasyQueryClient();
 
