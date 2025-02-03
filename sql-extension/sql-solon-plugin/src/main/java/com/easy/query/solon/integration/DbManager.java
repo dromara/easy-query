@@ -57,7 +57,7 @@ import com.easy.query.solon.integration.option.MapKeyConversionEnum;
 import com.easy.query.solon.integration.option.NameConversionEnum;
 import com.easy.query.solon.integration.option.PropertyModeEnum;
 import com.easy.query.solon.integration.option.SQLParameterPrintEnum;
-import com.easy.query.sqllite.config.SQLiteDatabaseConfiguration;
+import com.easy.query.sqlite.config.SQLiteDatabaseConfiguration;
 import org.noear.solon.Utils;
 import org.noear.solon.core.BeanWrap;
 import org.noear.solon.core.Props;

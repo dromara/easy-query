@@ -33,7 +33,7 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
-import com.easy.query.sqllite.config.SQLiteDatabaseConfiguration;
+import com.easy.query.sqlite.config.SQLiteDatabaseConfiguration;
 import com.easy.query.test.common.BusinessException;
 import com.easy.query.test.dto.SchoolClassAggregateDTO;
 import com.easy.query.test.dto.UserExtraDTO;

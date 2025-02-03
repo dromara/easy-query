@@ -71,7 +71,7 @@ import com.easy.query.sql.starter.conn.SpringConnectionManager;
 import com.easy.query.sql.starter.conn.SpringDataSourceUnitFactory;
 import com.easy.query.sql.starter.logging.Slf4jImpl;
 import com.easy.query.sql.starter.option.SQLParameterPrintEnum;
-import com.easy.query.sqllite.config.SQLiteDatabaseConfiguration;
+import com.easy.query.sqlite.config.SQLiteDatabaseConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
