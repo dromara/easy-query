@@ -9,6 +9,15 @@ import java.util.function.Consumer;
  * @author xuejiaming
  */
 public interface CodeFirstExecutable {
+    /**
+     * 使用环境事务自动提交
+     * @param consumer 自动提交前的打印
+     */
     void executeWithEnvTransaction(Consumer<CodeFirstCommandArg> consumer);
+
+    /**
+     * 使用eq内置事务可以手动控制是否提交事务
+     * @param consumer
+     */
     void executeWithTransaction(Consumer<CodeFirstCommandTxArg> consumer);
 }

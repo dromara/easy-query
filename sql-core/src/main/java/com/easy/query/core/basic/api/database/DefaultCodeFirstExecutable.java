@@ -63,11 +63,11 @@ public class DefaultCodeFirstExecutable implements CodeFirstExecutable {
         ConnectionManager connectionManager = runtimeContext.getConnectionManager();
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         try(Transaction transaction = connectionManager.beginTransaction()){
-            ArrayList<Consumer<Transaction>> consumers = new ArrayList<>();
-            consumer.accept(new CodeFirstCommandTxArg(transaction,executeSQL,consumers));
+            CodeFirstCommandTxArg codeFirstCommandTxArg = new CodeFirstCommandTxArg(transaction, executeSQL);
+            consumer.accept(codeFirstCommandTxArg);
 
             long l = sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(executeSQL, Collections.emptyList());
-            consumers.forEach(c->c.accept(transaction));
+            codeFirstCommandTxArg.getTransactionConsumer().accept(transaction);
         }
     }
 }

@@ -14,19 +14,27 @@ import java.util.function.Consumer;
 public class CodeFirstCommandTxArg {
     private final Transaction transaction;
     public final String sql;
-    private final List<Consumer<Transaction>> transactionConsumer;
+    private Consumer<Transaction> transactionConsumer;
 
 
-    public CodeFirstCommandTxArg(Transaction transaction, String sql, List<Consumer<Transaction>> transactionConsumer){
+    public CodeFirstCommandTxArg(Transaction transaction, String sql) {
         this.transaction = transaction;
         this.sql = sql;
-        this.transactionConsumer = transactionConsumer;
     }
 
-    public void commit(){
-        transactionConsumer.add(tx->tx.commit());
+    public void commit() {
+        transactionConsumer = Transaction::commit;
     }
-    public void rollback(){
-        transactionConsumer.add(tx->tx.rollback());
+
+    public void rollback() {
+        transactionConsumer = Transaction::rollback;
+    }
+
+    public Consumer<Transaction> getTransactionConsumer() {
+        if (transactionConsumer == null) {
+            return tx -> {
+            };
+        }
+        return transactionConsumer;
     }
 }
