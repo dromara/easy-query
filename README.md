@@ -24,12 +24,13 @@
         <img src="https://img.shields.io/badge/SpringBoot-v3.x-blue">
         <a target="_blank" href='https://gitee.com/noear/solon'><img src="https://img.shields.io/badge/Solon-v2.x-blue"></a>
     <br />
-    <a target="_blank" href='https://gitee.com/xuejm/easy-query'>
+    <a target="_blank" href='https://gitee.com/dromara/easy-query'>
 		<img src='https://gitee.com/xuejm/easy-query/badge/star.svg' alt='Gitee star'/>
 	</a>
-    <a target="_blank" href='https://github.com/xuejmnet/easy-query'>
+    <a target="_blank" href='https://github.com/dromara/easy-query'>
 		<img src="https://img.shields.io/github/stars/xuejmnet/easy-query.svg?logo=github" alt="Github star"/>
 	</a>
+      <a href='https://gitcode.com/dromara/easy-query'><img src='https://gitcode.com/dromara/easy-query/star/badge.svg' alt='fork'></a>
 </p>
 
 
