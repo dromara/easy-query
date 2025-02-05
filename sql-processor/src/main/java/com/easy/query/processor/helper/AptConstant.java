@@ -46,6 +46,15 @@ public class AptConstant {
             "\n" +
             "    @{selectorContext}\n" +
             "\n" +
+            "\n" +
+            "\n" +
+            "    public static final class Fields {\n" +
+            "@{fieldStaticContext}" +
+            "\n" +
+            "        private Fields() {\n" +
+            "        }\n" +
+            "    }" +
+            "\n" +
             "    @{fieldCommentContext}\n" +
             "\n" +
             "}";
@@ -135,4 +144,6 @@ public class AptConstant {
             "    }";
     public static final String FIELD_COMMENT_TEMPLATE = "\n" +
             "           case \"@{property}\": return \"@{comment}\";";
+    public static final String FIELD_STATIC_TEMPLATE =
+            "        public static final String @{property} = \"@{property}\";\n";
 }

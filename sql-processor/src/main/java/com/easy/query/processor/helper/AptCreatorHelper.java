@@ -2,6 +2,7 @@ package com.easy.query.processor.helper;
 
 import com.easy.query.core.util.EasyBase64Util;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.processor.FieldRenderVal;
 
 import java.nio.charset.StandardCharsets;
 
@@ -15,7 +16,7 @@ public class AptCreatorHelper {
     public static String createProxy(AptFileCompiler aptFileCompiler, AptValueObjectInfo aptValueObjectInfo) {
 
         String selectorContent = renderSelectorUI(aptFileCompiler);
-        String fieldCommentUI = renderStaticFieldCommentUI(aptFileCompiler);
+        FieldRenderVal fieldRenderVal = renderStaticFieldCommentUI(aptFileCompiler);
         String propertyContent = renderPropertyUI(aptFileCompiler, aptValueObjectInfo);
         String valueObjectContent = renderValueObjectUI(aptFileCompiler, aptValueObjectInfo);
         String proxyTemplate = AptConstant.PROXY_TEMPLATE
@@ -26,7 +27,8 @@ public class AptCreatorHelper {
                 .replace("@{fieldContent}", propertyContent)
                 .replace("@{valueObjectContext}", valueObjectContent)
                 .replace("@{selectorContext}", selectorContent)
-                .replace("@{fieldCommentContext}", fieldCommentUI);
+                .replace("@{fieldStaticContext}", fieldRenderVal.staticField.toString())
+                .replace("@{fieldCommentContext}", fieldRenderVal.fieldComment.toString());
         return proxyTemplate;
     }
 
@@ -101,27 +103,30 @@ public class AptCreatorHelper {
                 .replace("@{fieldSelectorContent}", fieldSelectorContent);
     }
 
-    private static String renderStaticFieldCommentUI(AptFileCompiler aptFileCompiler) {
-        if (!aptFileCompiler.isTableEntity()) {
-            return "";
-        }
-        String fieldsContent = renderCommentCaseContentUI(aptFileCompiler);
-        return AptConstant.FIELD_COMMENT_METHOD
-                .replace("@{caseContent}", fieldsContent);
-    }
 
-    private static String renderCommentCaseContentUI(AptFileCompiler aptFileCompiler) {
+    private static FieldRenderVal renderStaticFieldCommentUI(AptFileCompiler aptFileCompiler) {
+        boolean ignoreComment = !aptFileCompiler.isTableEntity();
+        FieldRenderVal fieldRenderVal = new FieldRenderVal();
         AptSelectorInfo selectorInfo = aptFileCompiler.getSelectorInfo();
-        StringBuilder filedContent = new StringBuilder();
+        StringBuilder fieldCase = new StringBuilder();
         for (AptSelectPropertyInfo property : selectorInfo.getProperties()) {
-            String comment = EasyStringUtil.trimOuterWhitespaceOptimized(EasyStringUtil.startWithRemove(property.getEntityComment(), "*"));
-            String fieldString = AptConstant.FIELD_COMMENT_TEMPLATE
-                    .replace("@{property}", property.getPropertyName())
-                    .replace("@{comment}", new String(EasyBase64Util.encode(comment.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
-            filedContent.append(fieldString);
-
+            if (!ignoreComment) {
+                String comment = EasyStringUtil.trimOuterWhitespaceOptimized(EasyStringUtil.startWithRemove(property.getEntityComment(), "*"));
+                String fieldString = AptConstant.FIELD_COMMENT_TEMPLATE
+                        .replace("@{property}", property.getPropertyName())
+                        .replace("@{comment}", new String(EasyBase64Util.encode(comment.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
+                fieldCase.append(fieldString);
+            }
+            String staticFiled = AptConstant.FIELD_STATIC_TEMPLATE
+                    .replace("@{property}", property.getPropertyName());
+            fieldRenderVal.staticField.append(staticFiled);
         }
-        return filedContent.toString();
+        if(!ignoreComment){
+            String fieldCommentMethod = AptConstant.FIELD_COMMENT_METHOD
+                    .replace("@{caseContent}", fieldCase.toString());
+            fieldRenderVal.fieldComment.append(fieldCommentMethod);
+        }
+        return fieldRenderVal;
     }
 
     private static String renderSelectorPropertyUI(AptFileCompiler aptFileCompiler) {
