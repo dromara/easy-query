@@ -30,7 +30,9 @@
     <a target="_blank" href='https://github.com/xuejmnet/easy-query'>
 		<img src="https://img.shields.io/github/stars/xuejmnet/easy-query.svg?logo=github" alt="Github star"/>
 	</a>
-      <a href='https://gitcode.com/dromara/easy-query'><img src='https://gitcode.com/dromara/easy-query/star/badge.svg' alt='fork'></a>
+      <a href='https://gitcode.com/dromara/easy-query'>
+        <img src='https://gitcode.com/dromara/easy-query/star/badge.svg' alt='fork'>
+      </a>
 </p>
 
 
