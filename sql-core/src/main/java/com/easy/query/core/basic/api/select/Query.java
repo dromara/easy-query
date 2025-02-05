@@ -47,6 +47,12 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @return
      */
     Query<T> cloneQueryable();
+   default Query<T> toCteAs(){
+      return toCteAs(WithTableAvailable.getDefaultClassWithTableName(queryClass()));
+   }
+   default Query<T> toCteAs(String tableName){
+       throw new UnsupportedOperationException();
+   }
 
     /**
      * 当前的查询表达式

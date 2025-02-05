@@ -1,6 +1,7 @@
 package com.easy.query.test.pgsql;
 
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
@@ -977,4 +978,33 @@ public void query10() {
         listenerContextManager.clear();
     }
 
+
+
+    @Test
+    public void testToWithAs2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+            ClientQueryable<BlogEntity> topicSQL = entityQuery.getEasyQueryClient().queryable(BlogEntity.class)
+                    .where(t_topic -> t_topic.eq("id", "456"))
+                    .toCteAs();
+
+            List<BlogEntity> list = entityQuery.getEasyQueryClient().queryable(BlogEntity.class)
+                    .leftJoin(topicSQL, (t_topic, t_topic1) -> t_topic.eq(t_topic1, "id", "id"))
+                    .leftJoin(topicSQL, (t_topic, t_topic1, t_topic2) -> t_topic.eq(t_topic2, "id", "id"))
+                    .where((t_topic, t_topic1,t_topic2) -> {
+                        t_topic.eq("id", "123");
+                        t_topic2.eq("id", "t2123");
+                    }).toList();
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH \"with_BlogEntity\" AS (SELECT t1.\"id\",t1.\"create_time\",t1.\"update_time\",t1.\"create_by\",t1.\"update_by\",t1.\"deleted\",t1.\"title\",t1.\"content\",t1.\"url\",t1.\"star\",t1.\"publish_time\",t1.\"score\",t1.\"status\",t1.\"order\",t1.\"is_top\",t1.\"top\" FROM \"t_blog\" t1 WHERE t1.\"deleted\" = ? AND t1.\"id\" = ?)  SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\" FROM \"t_blog\" t LEFT JOIN \"with_BlogEntity\" t2 ON t2.\"deleted\" = ? AND t.\"id\" = t2.\"id\" LEFT JOIN \"with_BlogEntity\" t3 ON t3.\"deleted\" = ? AND t.\"id\" = t3.\"id\" WHERE t.\"deleted\" = ? AND t.\"id\" = ? AND t3.\"id\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),456(String),false(Boolean),false(Boolean),false(Boolean),123(String),t2123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
 }

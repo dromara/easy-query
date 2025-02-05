@@ -10,6 +10,8 @@ import com.easy.query.core.expression.sql.expression.EntityInsertSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousTreeCTEQuerySQLExpressionImpl;
+import com.easy.query.core.expression.sql.expression.impl.AnonymousWithTableQuerySQLExpressionImpl;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 
 import java.util.Collection;
@@ -38,5 +40,8 @@ public interface ExpressionFactory {
 
     AnonymousEntityQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, List<EntityQuerySQLExpression> entityQuerySQLExpressions, SQLUnionEnum sqlUnion);
     AnonymousEntityQuerySQLExpression createEasyAnonymousCTEQuerySQLExpression(String cteTableName,EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression);
+   default AnonymousEntityQuerySQLExpression createEasyAnonymousWithTableQuerySQLExpression(String withTableName,EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression){
+       return new AnonymousWithTableQuerySQLExpressionImpl(withTableName,entitySQLExpressionMetadata,querySQLExpression);
+   }
 
 }

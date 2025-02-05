@@ -1,34 +1,26 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.LocalDateTimeProxy;
-import com.easy.query.api.proxy.base.StringProxy;
-import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.core.Expression;
-import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.test.doc.MyUser1;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyCategory;
 import com.easy.query.test.entity.MyCategoryVO;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
-import com.easy.query.test.entity.proxy.MyCategoryProxy;
 import com.easy.query.test.entity.proxy.MyCategoryVOProxy;
 import com.easy.query.test.entity.relation.MyRelationUser;
 import com.easy.query.test.entity.relation.MyRelationUserDTO;
@@ -458,6 +450,66 @@ public class QueryTest19 extends BaseTest {
 
 
                 }).toList();
+    }
+
+    @Test
+    public void testToWithAs(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            ClientQueryable<Topic> topicSQL = easyQueryClient.queryable(Topic.class)
+                    .where(t_topic -> t_topic.eq("id", "456"))
+                    .toCteAs("withTableTopic");
+
+            List<Topic> list = easyQueryClient.queryable(Topic.class)
+                    .leftJoin(topicSQL, (t_topic, t_topic1) -> t_topic.eq(t_topic1, "id", "id"))
+                    .where((t_topic, t_topic1) -> {
+                        t_topic.eq("id", "123");
+                    }).toList();
+        }catch (Exception ex){
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH `withTableTopic` AS (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `withTableTopic` t2 ON t.`id` = t2.`id` WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("456(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testToWithAs2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            ClientQueryable<Topic> topicSQL = easyQueryClient.queryable(Topic.class)
+                    .where(t_topic -> t_topic.eq("id", "456"))
+                    .toCteAs();
+
+            List<Topic> list = easyQueryClient.queryable(Topic.class)
+                    .leftJoin(topicSQL, (t_topic, t_topic1) -> t_topic.eq(t_topic1, "id", "id"))
+                    .leftJoin(topicSQL, (t_topic, t_topic1, t_topic2) -> t_topic.eq(t_topic2, "id", "id"))
+                    .where((t_topic, t_topic1,t_topic2) -> {
+                        t_topic.eq("id", "123");
+                        t_topic2.eq("id", "t2123");
+                    }).toList();
+        }catch (Exception ex){
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH `with_Topic` AS (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `with_Topic` t2 ON t.`id` = t2.`id` WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("456(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 
 }

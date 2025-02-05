@@ -61,6 +61,13 @@ public interface ClientQueryable<T1> extends Query<T1>,
      */
     @Override
     ClientQueryable<T1> cloneQueryable();
+    @Override
+   default ClientQueryable<T1> toCteAs(){
+        return toCteAs(WithTableAvailable.getDefaultClassWithTableName(queryClass()));
+    }
+
+    @Override
+    ClientQueryable<T1> toCteAs(String tableName);
 
     /**
      * select count(distinct column) from table

@@ -61,7 +61,6 @@ public interface KtQueryable<T1> extends Query<T1>,
     @Override
     KtQueryable<T1> cloneQueryable();
 
-
     long countDistinct(SQLExpression1<SQLKtColumnSelector<T1>> selectExpression);
 
     /**

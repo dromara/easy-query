@@ -26,6 +26,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable6;
 import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
+import com.easy.query.core.basic.api.select.WithTableAvailable;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable10;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable2;
@@ -53,12 +54,14 @@ import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -273,8 +276,22 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
         EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t2Class);
         EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
 
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
-        entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
+        boolean withTable = joinQueryable instanceof WithTableAvailable;
+        if (withTable) {
+            WithTableAvailable withTableAvailable = (WithTableAvailable) joinQueryable;
+            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, entityQueryExpressionBuilder.getRuntimeContext());
+            String withTableName = withTableAvailable.getWithTableName();
+            sqlTable.setTableNameAs(o -> {
+                return withTableName;
+            });
+            EntityQueryExpressionBuilder anonymousWithTableQueryExpressionBuilder = expressionBuilderFactory.createAnonymousWithTableQueryExpressionBuilder(withTableName, joinQueryableSQLEntityExpressionBuilder, entityQueryExpressionBuilder.getExpressionContext(), t2Class);
+            entityQueryExpressionBuilder.getExpressionContext().getDeclareExpressions().add(anonymousWithTableQueryExpressionBuilder);
+            entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
+        } else {
+
+            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
+            entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
+        }
 
         return new EasyClientQueryable2<>(t1Class, t2Class, entityQueryExpressionBuilder);
     }
@@ -298,8 +315,26 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
         EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t3Class);
         EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
 
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
-        entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
+        boolean withTable = joinQueryable instanceof WithTableAvailable;
+        if (withTable) {
+            WithTableAvailable withTableAvailable = (WithTableAvailable) joinQueryable;
+            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, entityQueryExpressionBuilder.getRuntimeContext());
+            String withTableName = withTableAvailable.getWithTableName();
+            sqlTable.setTableNameAs(o -> {
+                return withTableName;
+            });
+            List<ExpressionBuilder> declareExpressions = entityQueryExpressionBuilder.getExpressionContext().getDeclareExpressions();
+           if(!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions,withTableName)){
+               EntityQueryExpressionBuilder anonymousWithTableQueryExpressionBuilder = expressionBuilderFactory.createAnonymousWithTableQueryExpressionBuilder(withTableName, joinQueryableSQLEntityExpressionBuilder, entityQueryExpressionBuilder.getExpressionContext(), t2Class);
+               declareExpressions.add(anonymousWithTableQueryExpressionBuilder);
+           }
+
+            entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
+        } else {
+
+            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
+            entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
+        }
 
         return new EasyClientQueryable3<>(t1Class, t2Class, t3Class, entityQueryExpressionBuilder);
     }

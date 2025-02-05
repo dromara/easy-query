@@ -12,9 +12,9 @@ import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.api.select.WithTableAvailable;
+import com.easy.query.core.basic.api.select.impl.EasyClientWithTableAvailable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
-import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
-import com.easy.query.core.basic.extension.conversion.DefaultSQLPropertyConverter;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -22,7 +22,6 @@ import com.easy.query.core.common.RelationColumnResult;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
@@ -67,6 +66,7 @@ import com.easy.query.core.expression.segment.scec.expression.SubQueryParamExpre
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
@@ -98,6 +98,20 @@ import java.util.stream.Collectors;
  */
 public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
+    }
+
+    public static boolean withTableInDeclareExpressions(List<ExpressionBuilder> declareExpressions, String withTableName) {
+        boolean hasWithTable = false;
+        for (ExpressionBuilder declareExpression : declareExpressions) {
+            if (declareExpression instanceof WithTableAvailable) {
+                String declareWithTableName = ((WithTableAvailable) declareExpression).getWithTableName();
+                if (Objects.equals(declareWithTableName, withTableName)) {
+                    hasWithTable = true;
+                    break;
+                }
+            }
+        }
+        return hasWithTable;
     }
 
     public static <TR> SQLFuncExpression1<FillParams, Query<?>> getFillSQLExpression(SQLFuncExpression<Query<TR>> fillSetterExpression, String targetProperty, boolean consumeNull) {
@@ -169,6 +183,18 @@ public class EasySQLExpressionUtil {
     }
 
     public static <TSource> ClientQueryable<TSource> cloneAndSelectAllQueryable(ClientQueryable<TSource> queryable) {
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSQLEntityExpressionBuilder();
+        if (EasySQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(sqlEntityExpressionBuilder)) {
+            ClientQueryable<TSource> select = queryable.cloneQueryable().select(ColumnSelector::columnAll);
+            if (queryable instanceof WithTableAvailable) {
+                WithTableAvailable withTableAvailable = (WithTableAvailable) queryable;
+                return new EasyClientWithTableAvailable<>(select, withTableAvailable.getWithTableName());
+            }
+        }
+        return queryable.cloneQueryable();
+    }
+
+    public static <TSource> ClientQueryable<TSource> cloneAndSelectAllQueryable(ClientQueryable<TSource> queryable, boolean withTable) {
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSQLEntityExpressionBuilder();
         if (EasySQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(sqlEntityExpressionBuilder)) {
             return queryable.cloneQueryable().select(ColumnSelector::columnAll);

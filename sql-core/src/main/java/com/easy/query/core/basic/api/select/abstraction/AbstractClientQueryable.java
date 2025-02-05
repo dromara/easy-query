@@ -19,6 +19,7 @@ import com.easy.query.core.basic.api.select.JdbcResultWrap;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.executor.MethodQuery;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
+import com.easy.query.core.basic.api.select.impl.EasyClientWithTableAvailable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
@@ -188,6 +189,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public ClientQueryable<T1> cloneQueryable() {
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(this);
+    }
+
+    @Override
+    public ClientQueryable<T1> toCteAs(String tableName) {
+        return new EasyClientWithTableAvailable<>(cloneQueryable(), tableName);
     }
 
     private void setExecuteMethod(ExecuteMethodEnum executeMethod) {
