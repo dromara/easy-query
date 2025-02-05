@@ -10,10 +10,10 @@ import com.easy.query.core.basic.api.select.abstraction.AbstractClientQueryable1
  *
  * @author xuejiaming
  */
-public class EasyClientWithTableAvailable<T> extends AbstractClientQueryable1<T> implements WithTableAvailable {
+public class EasyWithClientQueryable<T> extends AbstractClientQueryable1<T> implements WithTableAvailable {
     private final String withTableName;
 
-    public EasyClientWithTableAvailable(ClientQueryable<T> clientQueryable, String withTableName) {
+    public EasyWithClientQueryable(ClientQueryable<T> clientQueryable, String withTableName) {
         super(clientQueryable.queryClass(), clientQueryable.getSQLEntityExpressionBuilder());
         this.withTableName = withTableName;
     }
@@ -21,7 +21,7 @@ public class EasyClientWithTableAvailable<T> extends AbstractClientQueryable1<T>
     @Override
     public ClientQueryable<T> cloneQueryable() {
         ClientQueryable<T> tClientQueryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(this);
-        return new EasyClientWithTableAvailable<>(tClientQueryable, withTableName);
+        return new EasyWithClientQueryable<>(tClientQueryable, withTableName);
     }
 
     @Override

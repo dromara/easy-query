@@ -8,6 +8,7 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.doc.proxy.MySignUpProxy;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 @Data
 @Table("my_sign_up")
 @EntityProxy
+@FieldNameConstants
 public class MySignUp implements ProxyEntityAvailable<MySignUp, MySignUpProxy> {
     @Column(primaryKey = true)
     private String id;

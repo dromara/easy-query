@@ -1,12 +1,19 @@
 package com.easy.query.test;
 
+import com.alibaba.fastjson2.JSON;
 import com.easy.query.api.proxy.base.LocalDateTimeProxy;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.basic.api.flat.MapQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilter;
+import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.core.Expression;
@@ -22,6 +29,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.MyCategoryVOProxy;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.relation.MyRelationUser;
 import com.easy.query.test.entity.relation.MyRelationUserDTO;
 import com.easy.query.test.entity.relation.MyRelationUserDTO1;
@@ -35,6 +43,8 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -452,6 +462,348 @@ public class QueryTest19 extends BaseTest {
                 }).toList();
     }
 
+
+    @Test
+    public void mapQuery(){
+
+        String tableName="aaa";
+        ArrayList<String> filterColumns = new ArrayList<>();
+        filterColumns.add("id");
+        filterColumns.add("name");
+        ArrayList<String> selectColumns = new ArrayList<>();
+        selectColumns.add("id");
+        selectColumns.add("age");
+        selectColumns.add("id_card");
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        try {
+            List<Map<String, Object>> maps = easyQueryClient.queryable(Map.class)
+                    .asTable(tableName)
+                    .where(m -> {
+                        for (String filterColumn : filterColumns) {
+                            m.eq(filterColumn, "123");
+                        }
+                    })
+                    .select(m -> {
+                        for (String selectColumn : selectColumns) {
+                            m.column(selectColumn);
+                        }
+                    }).toMaps();
+
+        }catch (Exception e){
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id` AS `id`,`age` AS `age`,`id_card` AS `id_card` FROM `aaa` WHERE `id` = ? AND `name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void mapInsert(){
+
+        List<Map<String,Object>> map = new ArrayList<>();
+        LinkedHashMap<String, Object> entity = new LinkedHashMap<>();
+        entity.put("id","1");
+        entity.put("stars","2");
+
+        map.add(entity);
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        try {
+
+            easyQueryClient.mapInsertable(map).asTable("xxxxx").executeRows();
+
+        }catch (Exception e){
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("INSERT INTO `xxxxx` (`id`,`stars`) VALUES (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void mapUpdate(){
+
+        List<Map<String,Object>> map = new ArrayList<>();
+        LinkedHashMap<String, Object> entity = new LinkedHashMap<>();
+        entity.put("id","1");
+        entity.put("stars","2");
+
+        map.add(entity);
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        try {
+
+            easyQueryClient.mapUpdatable(map).asTable("xxxxx").whereColumns("id").executeRows();
+
+        }catch (Exception e){
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `xxxxx` SET `stars` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+     public void mapJoinFixed(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        try {
+
+            List<Map<String, Object>> maps = easyQueryClient.queryable(Map.class)
+                    .asTable("table1")
+                    .leftJoin(Map.class, (t_table1, t_table2) -> {
+                        t_table1.eq(t_table2, "table1Id", "table2Id");
+                    }).asTable("table2")
+                    .where((t_table1, t_table2) -> {
+                        t_table1.eq("name1", "123");
+                        t_table2.eq("name2", "123");
+                    }).select(Map.class, (t_table1, t_table2) -> {
+                        t_table1.column("id1");
+                        t_table1.column("name1");
+                        t_table2.column("id2");
+                        t_table2.column("name2");
+                    }).toMaps();
+
+        }catch (Exception e){
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id1` AS `id1`,t.`name1` AS `name1`,t1.`id2` AS `id2`,t1.`name2` AS `name2` FROM `table1` t LEFT JOIN `table2` t1 ON t.`table1Id` = t1.`table2Id` WHERE t.`name1` = ? AND t1.`name2` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void mapJoin(){
+        ArrayList<String> tableNames = new ArrayList<>();
+        tableNames.add("table1");
+        tableNames.add("table2");
+        tableNames.add("table3");
+        ArrayList<String> filterColumns = new ArrayList<>();
+        filterColumns.add("id");
+        filterColumns.add("name");
+
+        MapQueryable mapQueryable = easyQueryClient.mapQueryable();
+        for (int i = 0; i < tableNames.size(); i++) {
+            String tableName = tableNames.get(i);
+            if(i==0){//使用from
+                mapQueryable=mapQueryable.asTable(tableName);
+            }else{
+                int finalI = i;
+                mapQueryable=mapQueryable.join(MultiTableTypeEnum.LEFT_JOIN, on->{
+                    EntitySQLTableOwner<?> nextTable = on.getTableOwner(finalI);
+                    WherePredicate<?> fromTableWhere = on.getWherePredicate(0);
+                    WherePredicate<?> joinTableWhere = on.getWherePredicate(finalI);
+                    fromTableWhere.eq(nextTable,"id","id");
+                    joinTableWhere.eq("name","aaa");
+                }).asTable(tableName);
+            }
+        }
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        try {
+
+            List<Map<String, Object>> list = mapQueryable.where(filter -> {
+                        WherePredicate<?> table1Where = filter.getWherePredicate(0);
+                        WherePredicate<?> table2Where = filter.getWherePredicate(1);
+                        WherePredicate<?> table3Where = filter.getWherePredicate(2);
+                        for (String filterColumn : filterColumns) {
+                            table1Where.eq(filterColumn, "123");
+                            table2Where.eq(filterColumn, "123");
+                            table3Where.eq(filterColumn, "123");
+                        }
+                    })
+                    .select(selector -> {
+                        ColumnAsSelector<?, ?> table1AsSelector = selector.getAsSelector(0);
+                        ColumnAsSelector<?, ?> table2AsSelector = selector.getAsSelector(1);
+                        ColumnAsSelector<?, ?> table3AsSelector = selector.getAsSelector(2);
+                        table1AsSelector.column("table1Column");
+                        table2AsSelector.column("table2Column");
+                        table3AsSelector.column("table3Column");
+                    }).toList();
+
+        }catch (Exception e){
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`table1Column` AS `table1Column`,t1.`table2Column` AS `table2Column`,t2.`table3Column` AS `table3Column` FROM `table1` t LEFT JOIN `table2` t1 ON t.`id` = t1.`id` AND t1.`name` = ? LEFT JOIN `table3` t2 ON t.`id` = t2.`id` AND t2.`name` = ? WHERE t.`id` = ? AND t1.`id` = ? AND t2.`id` = ? AND t.`name` = ? AND t1.`name` = ? AND t2.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("aaa(String),aaa(String),123(String),123(String),123(String),123(String),123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+
+    @Test
+     public void testMapJson(){
+         ArrayList<MapQueryJson> mapQueryJsons = new ArrayList<>();
+         {
+             MapQueryJson mapQueryJson = new MapQueryJson();
+             mapQueryJson.setTableName("table1");
+             mapQueryJson.setTableIndex(0);
+             ArrayList<MapQueryJson.InternalWhere> internalWheres = new ArrayList<>();
+             {
+                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                 internalWhere.setColumn("id1");
+                 internalWhere.setCompare("123");
+                 internalWheres.add(internalWhere);
+             }
+             {
+                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                 internalWhere.setColumn("name1");
+                 internalWhere.setCompare("456");
+                 internalWheres.add(internalWhere);
+             }
+             mapQueryJson.setWhereFilters(internalWheres);
+             mapQueryJsons.add(mapQueryJson);
+         }
+         {
+             MapQueryJson mapQueryJson = new MapQueryJson();
+             mapQueryJson.setTableName("table2");
+             mapQueryJson.setTableIndex(1);
+             ArrayList<MapQueryJson.InternalOn> internalOns = new ArrayList<>();
+             {
+                 MapQueryJson.InternalOn internalOn = new MapQueryJson.InternalOn();
+                 internalOn.setTableIndex(0);
+                 internalOn.setColumn("id1");
+                 internalOn.setCompare("id2");
+                 internalOns.add(internalOn);
+             }
+             mapQueryJson.setOnFilters(internalOns);
+
+             ArrayList<MapQueryJson.InternalWhere> internalWheres = new ArrayList<>();
+             {
+                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                 internalWhere.setColumn("id1");
+                 internalWhere.setCompare("123");
+                 internalWheres.add(internalWhere);
+             }
+             {
+                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                 internalWhere.setColumn("name1");
+                 internalWhere.setCompare("456");
+                 internalWheres.add(internalWhere);
+             }
+             mapQueryJson.setWhereFilters(internalWheres);
+             mapQueryJsons.add(mapQueryJson);
+         }
+         {
+             MapQueryJson mapQueryJson = new MapQueryJson();
+             mapQueryJson.setTableName("table3");
+             mapQueryJson.setTableIndex(2);
+             ArrayList<MapQueryJson.InternalOn> internalOns = new ArrayList<>();
+             {
+                 MapQueryJson.InternalOn internalOn = new MapQueryJson.InternalOn();
+                 internalOn.setTableIndex(0);
+                 internalOn.setColumn("id1");
+                 internalOn.setCompare("id3");
+                 internalOns.add(internalOn);
+             }
+             mapQueryJson.setOnFilters(internalOns);
+
+             ArrayList<MapQueryJson.InternalWhere> internalWheres = new ArrayList<>();
+             {
+                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                 internalWhere.setColumn("id3");
+                 internalWhere.setCompare("123");
+                 internalWheres.add(internalWhere);
+             }
+             {
+                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                 internalWhere.setColumn("name3");
+                 internalWhere.setCompare("456");
+                 internalWheres.add(internalWhere);
+             }
+             mapQueryJson.setWhereFilters(internalWheres);
+             mapQueryJsons.add(mapQueryJson);
+         }
+        System.out.println(JSON.toJSONString(mapQueryJsons));
+
+        MapQueryable mapQueryable = easyQueryClient.mapQueryable();
+        for (int i = 0; i < mapQueryJsons.size(); i++) {
+            MapQueryJson mapQueryJson = mapQueryJsons.get(i);
+            if(i==0){
+                mapQueryable.asTable(mapQueryJson.getTableName());
+            }else{
+
+                int finalI = i;
+                mapQueryable=mapQueryable.join(MultiTableTypeEnum.LEFT_JOIN, on->{
+                    WherePredicate<?> joinTableWhere = on.getWherePredicate(finalI);
+                    for (MapQueryJson.InternalOn onFilter : mapQueryJson.getOnFilters()) {
+                        if(onFilter.getTableIndex()==null){
+                            joinTableWhere.eq(onFilter.getColumn(),onFilter.getCompare());
+                        }else{
+                            EntitySQLTableOwner<?> otherTable = on.getTableOwner(onFilter.getTableIndex());
+                            joinTableWhere.eq(otherTable,onFilter.getColumn(),onFilter.getCompare().toString());
+                        }
+                    }
+                }).asTable(mapQueryJson.getTableName());
+            }
+        }
+
+
+        for (int i = 0; i < mapQueryJsons.size(); i++) {
+            MapQueryJson mapQueryJson = mapQueryJsons.get(i);
+            mapQueryable=mapQueryable.where(where->{
+                for (MapQueryJson.InternalWhere whereFilter : mapQueryJson.getWhereFilters()) {
+                    WherePredicate<?> wherePredicate = where.getWherePredicate(mapQueryJson.getTableIndex());
+                    wherePredicate.eq(whereFilter.getColumn(),whereFilter.getCompare());
+                }
+            });
+        }
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        try {
+
+            List<Map<String, Object>> list = mapQueryable.toList();
+
+        }catch (Exception e){
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT * FROM `table1` t LEFT JOIN `table2` t1 ON t1.`id1` = t.`id2` LEFT JOIN `table3` t2 ON t2.`id1` = t.`id3` WHERE t.`id1` = ? AND t.`name1` = ? AND t1.`id1` = ? AND t1.`name1` = ? AND t2.`id3` = ? AND t2.`name3` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),456(String),123(String),456(String),123(String),456(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
     @Test
     public void testToWithAs(){
 
@@ -507,8 +859,95 @@ public class QueryTest19 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("WITH `with_Topic` AS (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `with_Topic` t2 ON t.`id` = t2.`id` WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("456(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("WITH `with_Topic` AS (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `with_Topic` t2 ON t.`id` = t2.`id` LEFT JOIN `with_Topic` t3 ON t.`id` = t3.`id` WHERE t.`id` = ? AND t3.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("456(String),123(String),t2123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testToWithAs3(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            EntityQueryable<TopicProxy, Topic> cteAs = easyEntityQuery.queryable(Topic.class)
+                    .where(t_topic -> {
+                        t_topic.id().eq("456");
+                    }).toCteAs();
+
+            List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+                    .leftJoin(cteAs, (t_topic, t2) -> t_topic.id().eq(t2.id()))
+                    .leftJoin(cteAs, (t_topic, t_topic2, t3) -> t_topic.id().eq(t3.id()))
+                    .where((t_topic, t_topic2, t_topic3) -> {
+                        t_topic.id().eq("123");
+                        t_topic3.id().eq("t2123");
+                    }).toList();
+
+//            ClientQueryable<Topic> topicSQL = easyQueryClient.queryable(Topic.class)
+//                    .where(t_topic -> t_topic.eq("id", "456"))
+//                    .toCteAs();
+//
+//            List<Topic> list = easyQueryClient.queryable(Topic.class)
+//                    .leftJoin(topicSQL, (t_topic, t_topic1) -> t_topic.eq(t_topic1, "id", "id"))
+//                    .leftJoin(topicSQL, (t_topic, t_topic1, t_topic2) -> t_topic.eq(t_topic2, "id", "id"))
+//                    .where((t_topic, t_topic1,t_topic2) -> {
+//                        t_topic.eq("id", "123");
+//                        t_topic2.eq("id", "t2123");
+//                    }).toList();
+        }catch (Exception ex){
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH `with_Topic` AS (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `with_Topic` t2 ON t.`id` = t2.`id` LEFT JOIN `with_Topic` t3 ON t.`id` = t3.`id` WHERE t.`id` = ? AND t3.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("456(String),123(String),t2123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+
+    @Test
+    public void testToWithA43(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            EntityQueryable<TopicProxy, Topic> cteAs = easyEntityQuery.queryable(Topic.class)
+                    .where(t_topic -> {
+                        t_topic.id().eq("456");
+                    }).toCteAs();
+
+            List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+                    .innerJoin(cteAs, (t_topic, t2) -> t_topic.id().eq(t2.id()))
+                    .innerJoin(cteAs, (t_topic, t_topic2, t3) -> t_topic.id().eq(t3.id()))
+                    .where((t_topic, t_topic2, t_topic3) -> {
+                        t_topic.id().eq("123");
+                        t_topic3.id().eq("t2123");
+                    }).toList();
+
+//            ClientQueryable<Topic> topicSQL = easyQueryClient.queryable(Topic.class)
+//                    .where(t_topic -> t_topic.eq("id", "456"))
+//                    .toCteAs();
+//
+//            List<Topic> list = easyQueryClient.queryable(Topic.class)
+//                    .leftJoin(topicSQL, (t_topic, t_topic1) -> t_topic.eq(t_topic1, "id", "id"))
+//                    .leftJoin(topicSQL, (t_topic, t_topic1, t_topic2) -> t_topic.eq(t_topic2, "id", "id"))
+//                    .where((t_topic, t_topic1,t_topic2) -> {
+//                        t_topic.eq("id", "123");
+//                        t_topic2.eq("id", "t2123");
+//                    }).toList();
+        }catch (Exception ex){
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH `with_Topic` AS (SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` = ?)  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t INNER JOIN `with_Topic` t2 ON t.`id` = t2.`id` INNER JOIN `with_Topic` t3 ON t.`id` = t3.`id` WHERE t.`id` = ? AND t3.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("456(String),123(String),t2123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

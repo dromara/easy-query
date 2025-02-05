@@ -7,6 +7,8 @@ import com.easy.query.core.api.dynamic.executor.query.SelectAutoIncludeConfigura
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.enums.OrderByPropertyModeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.test.doc.MySignUp;
+import com.easy.query.test.entity.SysUser;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 

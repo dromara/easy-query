@@ -27,6 +27,7 @@ import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.ClientQueryableAvailable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.api.select.WithTableAvailable;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -70,6 +71,15 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
 
     @Override
     EntityQueryable<T1Proxy, T1> cloneQueryable();
+
+
+    @Override
+    default EntityQueryable<T1Proxy, T1> toCteAs(){
+        return toCteAs(WithTableAvailable.getDefaultClassWithTableName(queryClass()));
+    }
+
+    @Override
+    EntityQueryable<T1Proxy, T1> toCteAs(String tableName);
 
     long countDistinct(SQLFuncExpression1<T1Proxy, SQLColumn<?, ?>> selectExpression);
 

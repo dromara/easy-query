@@ -28,6 +28,7 @@ import com.easy.query.test.doc.dto.MyComUserDTO8;
 import com.easy.query.test.doc.dto.MyComUserDTO9;
 import com.easy.query.test.doc.proxy.MySignUpProxy;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp14;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassAggregate;

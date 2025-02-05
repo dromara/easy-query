@@ -96,6 +96,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
+    public EntityQueryable<T1Proxy, T1> toCteAs(String tableName) {
+        return new EasyEntityQueryable<>(get1Proxy(),getClientQueryable().toCteAs(tableName));
+    }
+
+    @Override
     public EntityQueryable<T1Proxy, T1> getQueryable() {
         return this;
     }

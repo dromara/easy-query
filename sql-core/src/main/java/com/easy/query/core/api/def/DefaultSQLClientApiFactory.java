@@ -245,6 +245,35 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
         return new EasyClientQueryable<>(queryClass, sqlEntityQueryExpressionBuilder);
     }
 
+
+    private <T> void addJoinTableExpressionBuilder(ClientQueryable<T> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+
+        Class<T> joinClass = joinQueryable.queryClass();
+
+        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(joinClass);
+        EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
+
+        boolean withTable = joinQueryable instanceof WithTableAvailable;
+        if (withTable) {
+            WithTableAvailable withTableAvailable = (WithTableAvailable) joinQueryable;
+            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, entityQueryExpressionBuilder.getRuntimeContext());
+            String withTableName = withTableAvailable.getWithTableName();
+            sqlTable.setTableNameAs(o -> {
+                return withTableName;
+            });
+            List<ExpressionBuilder> declareExpressions = entityQueryExpressionBuilder.getExpressionContext().getDeclareExpressions();
+            if(!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions,withTableName)){
+                EntityQueryExpressionBuilder anonymousWithTableQueryExpressionBuilder = expressionBuilderFactory.createAnonymousWithTableQueryExpressionBuilder(withTableName, joinQueryableSQLEntityExpressionBuilder, entityQueryExpressionBuilder.getExpressionContext(), joinClass);
+                declareExpressions.add(anonymousWithTableQueryExpressionBuilder);
+            }
+
+            entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
+        } else {
+
+            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
+            entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
+        }
+    }
     @Override
     public <T1, T2> ClientQueryable2<T1, T2> createQueryable2(Class<T1> t1Class, Class<T2> t2Class, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
@@ -271,29 +300,9 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T1, T2> ClientQueryable2<T1, T2> createQueryable2(Class<T1> t1Class, ClientQueryable<T2> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
-        Class<T2> t2Class = joinQueryable.queryClass();
+        addJoinTableExpressionBuilder(joinQueryable, selectTableInfoType, entityQueryExpressionBuilder);
 
-        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t2Class);
-        EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
-
-        boolean withTable = joinQueryable instanceof WithTableAvailable;
-        if (withTable) {
-            WithTableAvailable withTableAvailable = (WithTableAvailable) joinQueryable;
-            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, entityQueryExpressionBuilder.getRuntimeContext());
-            String withTableName = withTableAvailable.getWithTableName();
-            sqlTable.setTableNameAs(o -> {
-                return withTableName;
-            });
-            EntityQueryExpressionBuilder anonymousWithTableQueryExpressionBuilder = expressionBuilderFactory.createAnonymousWithTableQueryExpressionBuilder(withTableName, joinQueryableSQLEntityExpressionBuilder, entityQueryExpressionBuilder.getExpressionContext(), t2Class);
-            entityQueryExpressionBuilder.getExpressionContext().getDeclareExpressions().add(anonymousWithTableQueryExpressionBuilder);
-            entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
-        } else {
-
-            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
-            entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
-        }
-
-        return new EasyClientQueryable2<>(t1Class, t2Class, entityQueryExpressionBuilder);
+        return new EasyClientQueryable2<>(t1Class, joinQueryable.queryClass(), entityQueryExpressionBuilder);
     }
 
     @Override
@@ -309,34 +318,8 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T1, T2, T3> ClientQueryable3<T1, T2, T3> createQueryable3(Class<T1> t1Class, Class<T2> t2Class, ClientQueryable<T3> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-
-        Class<T3> t3Class = joinQueryable.queryClass();
-
-        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t3Class);
-        EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
-
-        boolean withTable = joinQueryable instanceof WithTableAvailable;
-        if (withTable) {
-            WithTableAvailable withTableAvailable = (WithTableAvailable) joinQueryable;
-            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, entityQueryExpressionBuilder.getRuntimeContext());
-            String withTableName = withTableAvailable.getWithTableName();
-            sqlTable.setTableNameAs(o -> {
-                return withTableName;
-            });
-            List<ExpressionBuilder> declareExpressions = entityQueryExpressionBuilder.getExpressionContext().getDeclareExpressions();
-           if(!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions,withTableName)){
-               EntityQueryExpressionBuilder anonymousWithTableQueryExpressionBuilder = expressionBuilderFactory.createAnonymousWithTableQueryExpressionBuilder(withTableName, joinQueryableSQLEntityExpressionBuilder, entityQueryExpressionBuilder.getExpressionContext(), t2Class);
-               declareExpressions.add(anonymousWithTableQueryExpressionBuilder);
-           }
-
-            entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
-        } else {
-
-            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
-            entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
-        }
-
-        return new EasyClientQueryable3<>(t1Class, t2Class, t3Class, entityQueryExpressionBuilder);
+        addJoinTableExpressionBuilder(joinQueryable, selectTableInfoType, entityQueryExpressionBuilder);
+        return new EasyClientQueryable3<>(t1Class, t2Class, joinQueryable.queryClass(), entityQueryExpressionBuilder);
     }
 
     @Override
@@ -353,15 +336,8 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T1, T2, T3, T4> ClientQueryable4<T1, T2, T3, T4> createQueryable4(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, ClientQueryable<T4> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
-        Class<T4> t4Class = joinQueryable.queryClass();
-
-        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t4Class);
-        EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
-
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
-        entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
-
-        return new EasyClientQueryable4<>(t1Class, t2Class, t3Class, t4Class, entityQueryExpressionBuilder);
+        addJoinTableExpressionBuilder(joinQueryable, selectTableInfoType, entityQueryExpressionBuilder);
+        return new EasyClientQueryable4<>(t1Class, t2Class, t3Class, joinQueryable.queryClass(), entityQueryExpressionBuilder);
     }
 
     @Override
@@ -378,15 +354,8 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T1, T2, T3, T4, T5> ClientQueryable5<T1, T2, T3, T4, T5> createQueryable5(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, ClientQueryable<T5> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
-        Class<T5> t5Class = joinQueryable.queryClass();
-
-        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t5Class);
-        EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
-
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
-        entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
-
-        return new EasyClientQueryable5<>(t1Class, t2Class, t3Class, t4Class, t5Class, entityQueryExpressionBuilder);
+        addJoinTableExpressionBuilder(joinQueryable, selectTableInfoType, entityQueryExpressionBuilder);
+        return new EasyClientQueryable5<>(t1Class, t2Class, t3Class, t4Class, joinQueryable.queryClass(), entityQueryExpressionBuilder);
     }
 
     @Override
@@ -403,13 +372,10 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T1, T2, T3, T4, T5, T6> ClientQueryable6<T1, T2, T3, T4, T5, T6> createQueryable6(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, ClientQueryable<T6> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
-        Class<T6> t6Class = joinQueryable.queryClass();
-        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t6Class);
-        EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
-        entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
 
-        return new EasyClientQueryable6<>(t1Class, t2Class, t3Class, t4Class, t5Class, t6Class, entityQueryExpressionBuilder);
+        addJoinTableExpressionBuilder(joinQueryable, selectTableInfoType, entityQueryExpressionBuilder);
+
+        return new EasyClientQueryable6<>(t1Class, t2Class, t3Class, t4Class, t5Class, joinQueryable.queryClass(), entityQueryExpressionBuilder);
     }
 
     @Override
@@ -426,13 +392,8 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     @Override
     public <T1, T2, T3, T4, T5, T6, T7> ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> createQueryable7(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, Class<T6> t6Class, ClientQueryable<T7> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
-        Class<T7> t7Class = joinQueryable.queryClass();
-        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t7Class);
-        EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
-        entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
-
-        return new EasyClientQueryable7<>(t1Class, t2Class, t3Class, t4Class, t5Class, t6Class, t7Class, entityQueryExpressionBuilder);
+        addJoinTableExpressionBuilder(joinQueryable, selectTableInfoType, entityQueryExpressionBuilder);
+        return new EasyClientQueryable7<>(t1Class, t2Class, t3Class, t4Class, t5Class, t6Class, joinQueryable.queryClass(), entityQueryExpressionBuilder);
 
     }
 
@@ -448,13 +409,9 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T1, T2, T3, T4, T5, T6, T7, T8> ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> createQueryable8(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, Class<T6> t6Class, Class<T7> t7Class, ClientQueryable<T8> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        Class<T8> t8Class = joinQueryable.queryClass();
-        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t8Class);
-        EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
-        entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
 
-        return new EasyClientQueryable8<>(t1Class, t2Class, t3Class, t4Class, t5Class, t6Class, t7Class, t8Class, entityQueryExpressionBuilder);
+        addJoinTableExpressionBuilder(joinQueryable, selectTableInfoType, entityQueryExpressionBuilder);
+        return new EasyClientQueryable8<>(t1Class, t2Class, t3Class, t4Class, t5Class, t6Class, t7Class, joinQueryable.queryClass(), entityQueryExpressionBuilder);
 
     }
 
@@ -470,13 +427,10 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T1, T2, T3, T4, T5, T6, T7, T8, T9> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> createQueryable9(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, Class<T6> t6Class, Class<T7> t7Class, Class<T8> t8Class, ClientQueryable<T9> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        Class<T9> t9Class = joinQueryable.queryClass();
-        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t9Class);
-        EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
-        entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
 
-        return new EasyClientQueryable9<>(t1Class, t2Class, t3Class, t4Class, t5Class, t6Class, t7Class, t8Class, t9Class, entityQueryExpressionBuilder);
+        addJoinTableExpressionBuilder(joinQueryable, selectTableInfoType, entityQueryExpressionBuilder);
+
+        return new EasyClientQueryable9<>(t1Class, t2Class, t3Class, t4Class, t5Class, t6Class, t7Class, t8Class, joinQueryable.queryClass(), entityQueryExpressionBuilder);
 
     }
 
@@ -492,13 +446,9 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> createQueryable10(Class<T1> t1Class, Class<T2> t2Class, Class<T3> t3Class, Class<T4> t4Class, Class<T5> t5Class, Class<T6> t6Class, Class<T7> t7Class, Class<T8> t8Class, Class<T9> t9Class, ClientQueryable<T10> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        Class<T10> t10Class = joinQueryable.queryClass();
-        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(t10Class);
-        EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, joinQueryableSQLEntityExpressionBuilder);
-        entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
 
-        return new EasyClientQueryable10<>(t1Class, t2Class, t3Class, t4Class, t5Class, t6Class, t7Class, t8Class, t9Class, t10Class, entityQueryExpressionBuilder);
+        addJoinTableExpressionBuilder(joinQueryable, selectTableInfoType, entityQueryExpressionBuilder);
+        return new EasyClientQueryable10<>(t1Class, t2Class, t3Class, t4Class, t5Class, t6Class, t7Class, t8Class, t9Class, joinQueryable.queryClass(), entityQueryExpressionBuilder);
 
     }
 

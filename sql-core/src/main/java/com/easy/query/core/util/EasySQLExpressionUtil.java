@@ -13,7 +13,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.WithTableAvailable;
-import com.easy.query.core.basic.api.select.impl.EasyClientWithTableAvailable;
+import com.easy.query.core.basic.api.select.impl.EasyWithClientQueryable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
@@ -188,8 +188,9 @@ public class EasySQLExpressionUtil {
             ClientQueryable<TSource> select = queryable.cloneQueryable().select(ColumnSelector::columnAll);
             if (queryable instanceof WithTableAvailable) {
                 WithTableAvailable withTableAvailable = (WithTableAvailable) queryable;
-                return new EasyClientWithTableAvailable<>(select, withTableAvailable.getWithTableName());
+                return new EasyWithClientQueryable<>(select, withTableAvailable.getWithTableName());
             }
+            return select;
         }
         return queryable.cloneQueryable();
     }
