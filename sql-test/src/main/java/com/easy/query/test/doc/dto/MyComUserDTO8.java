@@ -44,6 +44,11 @@ public class MyComUserDTO8 {
 
 
         @Override
+        public boolean isInheritedBehavior() {
+            return false;
+        }
+
+        @Override
         public <T> ClientQueryable<T> configure(ClientQueryable<T> queryable, ConfigureArgument configureArgument) {
             return queryable.where(o->o.eq(Fields.time,"123123"))
                     .orderByAsc(o->o.column(Fields.time));

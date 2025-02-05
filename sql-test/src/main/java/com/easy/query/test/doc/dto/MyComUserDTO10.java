@@ -1,14 +1,14 @@
 package com.easy.query.test.doc.dto;
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.api.proxy.extension.dynamic.EntitySelectAutoIncludeConfigurable;
 import com.easy.query.core.annotation.Navigate;
-import com.easy.query.core.annotation.OrderByProperty;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.api.dynamic.executor.query.SelectAutoIncludeConfigurable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.enums.OrderByPropertyModeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.test.doc.MySignUp;
-import com.easy.query.test.entity.SysUser;
+import com.easy.query.test.doc.proxy.MySignUpProxy;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
@@ -24,7 +24,7 @@ import java.util.Map;
  */
 
 @Data
-public class MyComUserDTO9 {
+public class MyComUserDTO10 {
 
 
     private String gw;
@@ -33,11 +33,11 @@ public class MyComUserDTO9 {
 
 
     /**
-     * {@link com.easy.query.test.doc.MySignUp }
+     * {@link MySignUp }
      */
     @Data
     @FieldNameConstants
-    public static class InternalMySignUps implements SelectAutoIncludeConfigurable {
+    public static class InternalMySignUps implements EntitySelectAutoIncludeConfigurable<MySignUp, MySignUpProxy> {
         private String id;
         private LocalDateTime time;
         private String content;
@@ -49,15 +49,10 @@ public class MyComUserDTO9 {
         }
 
         @Override
-        public <T> ClientQueryable<T> configure(ClientQueryable<T> queryable, ConfigureArgument configureArgument) {
-            Map<String, String> map = configureArgument.getTypeArg();
-            return queryable.where(o -> {
-                for (Map.Entry<String, String> stringStringEntry : map.entrySet()) {
-                    String column = stringStringEntry.getKey();
-                    String value = stringStringEntry.getValue();
-                    o.eq(column, value);
-                }
-            });
+        public EntityQueryable<MySignUpProxy, MySignUp> entityConfigure(EntityQueryable<MySignUpProxy, MySignUp> queryable, ConfigureArgument configureArgument) {
+            return queryable.where(o->{
+                o.userId().eq("12345");
+            }).orderBy(m -> m.content().asc());
         }
     }
 

@@ -16,6 +16,7 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.NavigateOrderProp;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * create time 2024/10/14 11:19
@@ -41,9 +42,16 @@ public class EasyNavigateUtil {
     public static <T> ClientQueryable<T> navigateOrderBy(ClientQueryable<T> clientQueryable, OffsetLimitEntry offsetLimit, List<NavigateOrderProp> navigateOrderProps, EntityMetadata navigateEntityMetadata, ConfigureArgument configureArgument, QueryRuntimeContext runtimeContext) {
         if (SelectAutoIncludeConfigurable.class.isAssignableFrom(navigateEntityMetadata.getEntityClass())) {
             SelectAutoIncludeConfigurable selectAutoIncludeConfigurable = (SelectAutoIncludeConfigurable) navigateEntityMetadata.getBeanConstructorCreator().get();
-            return selectAutoIncludeConfigurable.configure(clientQueryable, configureArgument);
 
+            ClientQueryable<T> configureQueryable = selectAutoIncludeConfigurable.configure(clientQueryable, configureArgument);
+            if (!selectAutoIncludeConfigurable.isInheritedBehavior()) {
+                return configureQueryable;
+            }
+            return navigateOrderBy0(configureQueryable, offsetLimit, navigateOrderProps, runtimeContext);
         }
+        return navigateOrderBy0(clientQueryable, offsetLimit, navigateOrderProps, runtimeContext);
+    }
+    private static <T> ClientQueryable<T> navigateOrderBy0(ClientQueryable<T> clientQueryable, OffsetLimitEntry offsetLimit, List<NavigateOrderProp> navigateOrderProps, QueryRuntimeContext runtimeContext) {
         return clientQueryable.limit(offsetLimit.offset, offsetLimit.limit).orderBy(EasyCollectionUtil.isNotEmpty(navigateOrderProps), o -> {
             TableAvailable table = o.getTable();
             OrderSelector orderSelector = o.getOrderSelector();

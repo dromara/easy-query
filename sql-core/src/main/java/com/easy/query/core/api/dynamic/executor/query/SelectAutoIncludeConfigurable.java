@@ -9,5 +9,11 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
  * @author xuejiaming
  */
 public interface SelectAutoIncludeConfigurable {
+    /**
+     * 标识该行为是否继承自实体的行为譬如order by limit等
+     * @return true 表示继承行为，false 表示独立行为
+     */
+    boolean isInheritedBehavior();
+
     <T> ClientQueryable<T> configure(ClientQueryable<T> queryable, ConfigureArgument configureArgument);
 }
