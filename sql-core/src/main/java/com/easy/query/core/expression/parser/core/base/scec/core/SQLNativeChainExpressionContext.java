@@ -13,7 +13,7 @@ import java.util.Collection;
 
 /**
  * create time 2023/10/12 13:39
- * 文件说明
+ * 原生sql的表达式链上下文
  *
  * @author xuejiaming
  */
