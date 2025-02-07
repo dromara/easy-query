@@ -15,7 +15,7 @@ import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousTreeCTEQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.impl.AnonymousWithTableQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousCteTableQueryExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ public interface ExpressionBuilderFactory {
         return new AnonymousTreeCTEQueryExpressionBuilder(cteTableName,sqlAnonymousUnionEntityQueryExpressionBuilder,queryExpressionContext,queryClass);
     }
     default EntityQueryExpressionBuilder createAnonymousWithTableQueryExpressionBuilder(String withTableName,EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass){
-        return new AnonymousWithTableQueryExpressionBuilder(withTableName,sqlAnonymousUnionEntityQueryExpressionBuilder,queryExpressionContext,queryClass);
+        return new AnonymousCteTableQueryExpressionBuilder(withTableName,sqlAnonymousUnionEntityQueryExpressionBuilder,queryExpressionContext,queryClass);
     }
     EntityInsertExpressionBuilder createEntityInsertExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass);
     EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass, boolean expression);

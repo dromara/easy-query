@@ -26,7 +26,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable6;
 import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
-import com.easy.query.core.basic.api.select.WithTableAvailable;
+import com.easy.query.core.basic.api.cte.CteTableAvailable;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable10;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable2;
@@ -253,11 +253,11 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
         EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(joinClass);
         EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
 
-        boolean withTable = joinQueryable instanceof WithTableAvailable;
+        boolean withTable = joinQueryable instanceof CteTableAvailable;
         if (withTable) {
-            WithTableAvailable withTableAvailable = (WithTableAvailable) joinQueryable;
+            CteTableAvailable withTableAvailable = (CteTableAvailable) joinQueryable;
             EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, entityQueryExpressionBuilder.getRuntimeContext());
-            String withTableName = withTableAvailable.getWithTableName();
+            String withTableName = withTableAvailable.getCteTableName();
             sqlTable.setTableNameAs(o -> {
                 return withTableName;
             });

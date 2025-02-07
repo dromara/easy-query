@@ -5,6 +5,7 @@ package com.easy.query.core.context;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
+import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
@@ -90,6 +91,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ValueFilterFactory valueFilterFactory;
     private final EntityMappingRule entityMappingRule;
     private final MigrationsSQLGenerator migrationsSQLGenerator;
+    private final CteTableNamedProvider cteTableNamedProvider;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -130,7 +132,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           PropertyDescriptorMatcher propertyDescriptorMatcher,
                                           ValueFilterFactory valueFilterFactory,
                                           EntityMappingRule entityMappingRule,
-                                          MigrationsSQLGenerator migrationsSQLGenerator) {
+                                          MigrationsSQLGenerator migrationsSQLGenerator,
+                                          CteTableNamedProvider cteTableNamedProvider) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -171,6 +174,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.valueFilterFactory = valueFilterFactory;
         this.entityMappingRule = entityMappingRule;
         this.migrationsSQLGenerator = migrationsSQLGenerator;
+        this.cteTableNamedProvider = cteTableNamedProvider;
     }
 
     @Override
@@ -372,5 +376,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public MigrationsSQLGenerator getMigrationsSQLGenerator() {
         return migrationsSQLGenerator;
+    }
+
+    @Override
+    public CteTableNamedProvider getCteTableNamedProvider() {
+        return cteTableNamedProvider;
     }
 }

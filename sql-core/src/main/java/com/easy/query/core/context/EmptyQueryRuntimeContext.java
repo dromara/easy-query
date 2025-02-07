@@ -3,6 +3,7 @@ package com.easy.query.core.context;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
+import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
@@ -239,6 +240,11 @@ public class EmptyQueryRuntimeContext implements QueryRuntimeContext{
 
     @Override
     public MigrationsSQLGenerator getMigrationsSQLGenerator() {
+        return null;
+    }
+
+    @Override
+    public CteTableNamedProvider getCteTableNamedProvider() {
         return null;
     }
 }

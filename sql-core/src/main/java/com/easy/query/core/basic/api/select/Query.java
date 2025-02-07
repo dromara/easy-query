@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.annotation.Nullable;
+import com.easy.query.core.basic.api.cte.CteTableAvailable;
 import com.easy.query.core.basic.api.select.executor.Fillable;
 import com.easy.query.core.basic.api.select.executor.MapAble;
 import com.easy.query.core.basic.api.select.executor.QueryExecutable;
@@ -35,10 +36,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
+ * create time 2023/3/3 16:30
+ * 提供的查询基础表达式接口
+ *
  * @author xuejiaming
- * @FileName: Query.java
- * @Description: 文件说明
- * @Date: 2023/3/3 16:30
  */
 public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble<T>, Fillable<T>, RuntimeContextAvailable {
 
@@ -49,13 +50,28 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @return
      */
     Query<T> cloneQueryable();
+
+    /**
+     * 生成with cte as临时表可复用
+     * @return 返回表达式
+     */
    default Query<T> toCteAs(){
-      return toCteAs(WithTableAvailable.getDefaultClassWithTableName(queryClass()));
+      return toCteAs(getRuntimeContext().getCteTableNamedProvider().getDefaultCteTableName(queryClass()));
    }
+
+    /**
+     * 生成with cte as临时表可复用
+     * @param tableName 手动指定表名
+     * @return 返回表达式
+     */
    default Query<T> toCteAs(String tableName){
        throw new UnsupportedOperationException();
    }
 
+    /**
+     * 当前eq的运行时上下文
+     * @return 运行时上下文
+     */
    @Override
    default QueryRuntimeContext getRuntimeContext(){
        return getSQLEntityExpressionBuilder().getRuntimeContext();

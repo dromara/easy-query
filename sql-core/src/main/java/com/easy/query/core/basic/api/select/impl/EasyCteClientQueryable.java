@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.impl;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.basic.api.select.WithTableAvailable;
+import com.easy.query.core.basic.api.cte.CteTableAvailable;
 import com.easy.query.core.basic.api.select.abstraction.AbstractClientQueryable1;
 
 /**
@@ -10,22 +10,22 @@ import com.easy.query.core.basic.api.select.abstraction.AbstractClientQueryable1
  *
  * @author xuejiaming
  */
-public class EasyWithClientQueryable<T> extends AbstractClientQueryable1<T> implements WithTableAvailable {
-    private final String withTableName;
+public class EasyCteClientQueryable<T> extends AbstractClientQueryable1<T> implements CteTableAvailable {
+    private final String cteTableName;
 
-    public EasyWithClientQueryable(ClientQueryable<T> clientQueryable, String withTableName) {
+    public EasyCteClientQueryable(ClientQueryable<T> clientQueryable, String cteTableName) {
         super(clientQueryable.queryClass(), clientQueryable.getSQLEntityExpressionBuilder());
-        this.withTableName = withTableName;
+        this.cteTableName = cteTableName;
     }
 
     @Override
     public ClientQueryable<T> cloneQueryable() {
         ClientQueryable<T> tClientQueryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(this);
-        return new EasyWithClientQueryable<>(tClientQueryable, withTableName);
+        return new EasyCteClientQueryable<>(tClientQueryable, cteTableName);
     }
 
     @Override
-    public String getWithTableName() {
-        return withTableName;
+    public String getCteTableName() {
+        return cteTableName;
     }
 }

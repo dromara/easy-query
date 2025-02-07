@@ -12,8 +12,8 @@ import com.easy.query.core.basic.api.select.ClientQueryable7;
 import com.easy.query.core.basic.api.select.ClientQueryable8;
 import com.easy.query.core.basic.api.select.ClientQueryable9;
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.basic.api.select.WithTableAvailable;
-import com.easy.query.core.basic.api.select.impl.EasyWithClientQueryable;
+import com.easy.query.core.basic.api.cte.CteTableAvailable;
+import com.easy.query.core.basic.api.select.impl.EasyCteClientQueryable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
@@ -103,8 +103,8 @@ public class EasySQLExpressionUtil {
     public static boolean withTableInDeclareExpressions(List<ExpressionBuilder> declareExpressions, String withTableName) {
         boolean hasWithTable = false;
         for (ExpressionBuilder declareExpression : declareExpressions) {
-            if (declareExpression instanceof WithTableAvailable) {
-                String declareWithTableName = ((WithTableAvailable) declareExpression).getWithTableName();
+            if (declareExpression instanceof CteTableAvailable) {
+                String declareWithTableName = ((CteTableAvailable) declareExpression).getCteTableName();
                 if (Objects.equals(declareWithTableName, withTableName)) {
                     hasWithTable = true;
                     break;
@@ -186,9 +186,9 @@ public class EasySQLExpressionUtil {
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSQLEntityExpressionBuilder();
         if (EasySQLExpressionUtil.shouldCloneSQLEntityQueryExpressionBuilder(sqlEntityExpressionBuilder)) {
             ClientQueryable<TSource> select = queryable.cloneQueryable().select(ColumnSelector::columnAll);
-            if (queryable instanceof WithTableAvailable) {
-                WithTableAvailable withTableAvailable = (WithTableAvailable) queryable;
-                return new EasyWithClientQueryable<>(select, withTableAvailable.getWithTableName());
+            if (queryable instanceof CteTableAvailable) {
+                CteTableAvailable withTableAvailable = (CteTableAvailable) queryable;
+                return new EasyCteClientQueryable<>(select, withTableAvailable.getCteTableName());
             }
             return select;
         }

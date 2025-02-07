@@ -3,6 +3,7 @@ package com.easy.query.core.context;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
+import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
@@ -32,7 +33,6 @@ import com.easy.query.core.expression.sql.include.multi.RelationValueFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.core.migration.MigrationsSQLGenerator;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 import com.easy.query.core.sharding.comparer.ShardingComparer;
@@ -41,9 +41,9 @@ import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
 
 /**
- * @FileName: JQDCRuntimeContext.java
- * @Description: 文件说明
- * @Date: 2023/2/11 13:46
+ * create time 2023/2/11 13:46
+ * eq实例的运行时上下文用来构建和获取eq实例的注入信息与功能接口
+ *
  * @author xuejiaming
  */
 public interface QueryRuntimeContext {
@@ -93,4 +93,10 @@ public interface QueryRuntimeContext {
     ValueFilterFactory getValueFilterFactory();
     EntityMappingRule getEntityMappingRule();
     MigrationsSQLGenerator getMigrationsSQLGenerator();
+
+    /**
+     * with cte as 生成的临时表的默认名称提供者
+     * @return 返回cte命名默认提供者
+     */
+    CteTableNamedProvider getCteTableNamedProvider();
 }

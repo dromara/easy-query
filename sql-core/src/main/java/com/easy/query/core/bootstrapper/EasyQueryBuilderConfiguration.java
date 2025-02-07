@@ -8,6 +8,8 @@ import com.easy.query.core.api.dynamic.executor.query.DefaultWhereObjectQueryExe
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.DefaultObjectSortQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
+import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
+import com.easy.query.core.basic.api.cte.DefaultCteTableNamedProvider;
 import com.easy.query.core.basic.entity.ColumnEntityMappingRule;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.formater.DefaultSQLParameterPrintFormat;
@@ -203,6 +205,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EntityMappingRule.class, ColumnEntityMappingRule.class)
                 .replaceService(MigrationsSQLGenerator.class, DefaultMigrationsSQLGenerator.class)
                 .replaceService(DatabaseMigrationProvider.class, DefaultDatabaseMigrationProvider.class)
+                .replaceService(CteTableNamedProvider.class, DefaultCteTableNamedProvider.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

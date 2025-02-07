@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
-import com.easy.query.core.basic.api.select.WithTableAvailable;
+import com.easy.query.core.basic.api.cte.CteTableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
@@ -9,16 +9,17 @@ import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMet
 
 /**
  * create time 2023/3/31 10:59
- * 文件说明
+ * cte 公共表达式
+ * [eg. with table as (...)]
  *
  * @author xuejiaming
  */
-public class AnonymousWithTableQueryExpressionBuilder extends QueryExpressionBuilder implements SQLAnonymousEntityQueryExpressionBuilder, WithTableAvailable {
+public class AnonymousCteTableQueryExpressionBuilder extends QueryExpressionBuilder implements SQLAnonymousEntityQueryExpressionBuilder, CteTableAvailable {
 
     private final String withTableName;
     private final EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder;
 
-    public AnonymousWithTableQueryExpressionBuilder(String withTableName, EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass) {
+    public AnonymousCteTableQueryExpressionBuilder(String withTableName, EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass) {
         super(queryExpressionContext, queryClass);
         this.withTableName = withTableName;
         this.sqlAnonymousUnionEntityQueryExpressionBuilder = sqlAnonymousUnionEntityQueryExpressionBuilder;
@@ -45,7 +46,7 @@ public class AnonymousWithTableQueryExpressionBuilder extends QueryExpressionBui
 
 
     @Override
-    public String getWithTableName() {
+    public String getCteTableName() {
         return withTableName;
     }
 }

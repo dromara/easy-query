@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.cte.CteTableAvailable;
 import com.easy.query.core.basic.api.internal.ContextConfigure;
 import com.easy.query.core.basic.api.internal.FilterConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
@@ -63,7 +64,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
     ClientQueryable<T1> cloneQueryable();
     @Override
    default ClientQueryable<T1> toCteAs(){
-        return toCteAs(WithTableAvailable.getDefaultClassWithTableName(queryClass()));
+        return toCteAs(getRuntimeContext().getCteTableNamedProvider().getDefaultCteTableName(queryClass()));
     }
 
     @Override

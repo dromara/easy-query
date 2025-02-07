@@ -21,7 +21,7 @@ import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.select.ClientQueryableAvailable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.basic.api.select.WithTableAvailable;
+import com.easy.query.core.basic.api.cte.CteTableAvailable;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -72,7 +72,7 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
     @Override
     default EntityQueryable<T1Proxy, T1> toCteAs(){
 //        getClientQueryable().getRuntimeContext()
-        return toCteAs(WithTableAvailable.getDefaultClassWithTableName(queryClass()));
+        return toCteAs(getRuntimeContext().getCteTableNamedProvider().getDefaultCteTableName(queryClass()));
     }
 
     @Override
