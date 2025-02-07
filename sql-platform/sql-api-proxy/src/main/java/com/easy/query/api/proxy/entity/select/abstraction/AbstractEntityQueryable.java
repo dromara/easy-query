@@ -336,9 +336,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> extraSelectExpression, boolean replace) {
+        T1Proxy queryProxy = get1Proxy();
         return clientQueryable.selectAutoInclude(resultClass, columnAsSelector -> {
             if (extraSelectExpression != null) {
-                SQLSelectAsExpression sqlSelectAsExpression = extraSelectExpression.apply(get1Proxy());
+                SQLSelectAsExpression sqlSelectAsExpression = extraSelectExpression.apply(queryProxy);
                 if (sqlSelectAsExpression != null) {
                     sqlSelectAsExpression.accept(columnAsSelector.getAsSelector());
                 }

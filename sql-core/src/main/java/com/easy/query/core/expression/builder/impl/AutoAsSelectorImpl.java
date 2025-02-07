@@ -23,6 +23,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -117,7 +118,7 @@ public class AutoAsSelectorImpl extends AbstractAsSelector<AsSelector> implement
 
 
     private AsSelector columnAll0(EntityTableExpressionBuilder tableExpressionBuilder) {
-        if (tableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
+        if (tableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder && EasyStringUtil.isBlank(tableExpressionBuilder.getEntityTable().getEntityMetadata().getTableName())) {
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) tableExpressionBuilder);
         } else {
             //只查询当前对象返回结果属性名称匹配

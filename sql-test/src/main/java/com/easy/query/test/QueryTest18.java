@@ -1299,6 +1299,7 @@ public class QueryTest18 extends BaseTest {
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
 //                Assert.assertEquals("SELECT t1.`id` AS `value1`,t1.`phone` AS `value2`,(SELECT COUNT(*) FROM `t_blog` t3 WHERE t3.`deleted` = ? AND t3.`title` = t1.`id`) AS `value3` FROM (SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE t.`phone` <> ? ORDER BY t.`create_time` DESC LIMIT 10 OFFSET 10) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals("SELECT t1.`id` AS `value1`,t1.`phone` AS `value2`,(SELECT COUNT(*) FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`title` = t1.`id`) AS `value3` FROM (SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t WHERE t.`phone` <> ? ORDER BY t.`create_time` DESC LIMIT 10 OFFSET 10) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                Assert.assertEquals("SELECT t.`id` AS `value1`,t.`phone` AS `value2`,(SELECT COUNT(*) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`title` = t.`id`) AS `value3` FROM `easy-query-test`.`t_sys_user` t WHERE t.`phone` <> ? ORDER BY t.`create_time` DESC LIMIT 10 OFFSET 10", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals("false(Boolean),L/vVSy7H9DYkzz3srmSVCQ==(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
             }
