@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
@@ -15,13 +15,12 @@ import java.util.function.Function;
  * @Date: 2023/3/4 16:29
  * @author xuejiaming
  */
-public interface EntityExpressionBuilder extends ExpressionBuilder {
+public interface EntityExpressionBuilder extends ExpressionBuilder , RuntimeContextAvailable {
     default boolean isQuery(){
         return false;
     }
     Class<?> getQueryClass();
     ExpressionContext getExpressionContext();
-    QueryRuntimeContext getRuntimeContext();
 
     /**
      * 添加表

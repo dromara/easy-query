@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.core;
 
 import com.easy.query.core.annotation.Nullable;
-import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.OrderSelector;
@@ -28,8 +28,7 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
  *
  * @author xuejiaming
  */
-public interface EntitySQLContext {
-    QueryRuntimeContext getRuntimeContext();
+public interface EntitySQLContext extends RuntimeContextAvailable {
 
     /**
      * 仅在where内可以获取否则为null

@@ -5,10 +5,12 @@ import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.executor.Fillable;
 import com.easy.query.core.basic.api.select.executor.MapAble;
 import com.easy.query.core.basic.api.select.executor.QueryExecutable;
+import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.ToSQLResult;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
@@ -38,7 +40,7 @@ import java.util.function.Supplier;
  * @Description: 文件说明
  * @Date: 2023/3/3 16:30
  */
-public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble<T>, Fillable<T> {
+public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble<T>, Fillable<T>, RuntimeContextAvailable {
 
     /**
      * 只clone表达式共享上下文
@@ -54,6 +56,10 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
        throw new UnsupportedOperationException();
    }
 
+   @Override
+   default QueryRuntimeContext getRuntimeContext(){
+       return getSQLEntityExpressionBuilder().getRuntimeContext();
+   }
     /**
      * 当前的查询表达式
      *

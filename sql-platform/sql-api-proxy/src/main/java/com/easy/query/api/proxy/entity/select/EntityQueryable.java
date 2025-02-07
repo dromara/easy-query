@@ -16,20 +16,12 @@ import com.easy.query.api.proxy.entity.select.extension.queryable.EntityOrderabl
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntitySelectable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityTree1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityUnion1;
-import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.api.internal.ContextConfigure;
 import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
-import com.easy.query.core.basic.api.internal.Interceptable;
-import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.basic.api.internal.QueryStrategy;
-import com.easy.query.core.basic.api.internal.TableLogicDeletable;
-import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.ClientQueryableAvailable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.WithTableAvailable;
-import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -69,12 +61,17 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
 //    @Deprecated
 //    <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(TRProxy trProxy);
 
+    /**
+     * 克隆一个查询表达式为了能够复用给其他代码而不再需要重新创建一个查询对象
+     * @return
+     */
     @Override
     EntityQueryable<T1Proxy, T1> cloneQueryable();
 
 
     @Override
     default EntityQueryable<T1Proxy, T1> toCteAs(){
+//        getClientQueryable().getRuntimeContext()
         return toCteAs(WithTableAvailable.getDefaultClassWithTableName(queryClass()));
     }
 

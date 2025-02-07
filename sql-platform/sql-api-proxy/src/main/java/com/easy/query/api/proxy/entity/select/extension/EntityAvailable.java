@@ -1,6 +1,6 @@
 package com.easy.query.api.proxy.entity.select.extension;
 
-import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
@@ -9,8 +9,7 @@ import com.easy.query.core.proxy.ProxyEntity;
  *
  * @author xuejiaming
  */
-public interface EntityAvailable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
+public interface EntityAvailable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends RuntimeContextAvailable {
 
     T1Proxy get1Proxy();
-    QueryRuntimeContext getRuntimeContext();
 }

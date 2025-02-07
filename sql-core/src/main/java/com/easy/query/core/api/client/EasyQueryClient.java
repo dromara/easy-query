@@ -10,12 +10,12 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
+import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -31,8 +31,7 @@ import java.util.Map;
  * @Description: 文件说明
  * @Date: 2023/2/5 21:27
  */
-public interface EasyQueryClient {
-    QueryRuntimeContext getRuntimeContext();
+public interface EasyQueryClient extends RuntimeContextAvailable {
 
     default <T> List<T> sqlQuery(String sql, Class<T> clazz) {
         return sqlQuery(sql, clazz, Collections.emptyList());

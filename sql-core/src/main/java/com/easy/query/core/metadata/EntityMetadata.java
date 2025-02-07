@@ -535,7 +535,7 @@ public class EntityMetadata {
             Class<? extends EncryptionStrategy> strategy = encryption.strategy();
             EncryptionStrategy easyEncryptionStrategy = configuration.getEasyEncryptionStrategy(strategy);
             if (easyEncryptionStrategy == null) {
-                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Encryption strategy unknown");
+                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Encryption strategy unknown, plz register this component");
             }
             columnOption.setEncryptionStrategy(easyEncryptionStrategy);
             columnOption.setSupportQueryLike(encryption.supportQueryLike());
@@ -547,7 +547,7 @@ public class EntityMetadata {
             if (!Objects.equals(DefaultValueConverter.class, conversionClass)) {
                 ValueConverter<?, ?> valueConverter = configuration.getValueConverter(conversionClass);
                 if (valueConverter == null) {
-                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion unknown");
+                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion unknown, plz register this component");
                 }
                 columnOption.setValueConverter(valueConverter);
             } else {
@@ -590,7 +590,7 @@ public class EntityMetadata {
                     if (!Objects.equals(DefaultGeneratedKeySQLColumnGenerator.class, generatedKeySQLColumnGeneratorClass)) {
                         GeneratedKeySQLColumnGenerator generatedKeySQLColumnGenerator = configuration.getGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGeneratorClass);
                         if (generatedKeySQLColumnGenerator == null) {
-                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown");
+                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " generated key sql column generator unknown, plz register this component");
                         }
                         columnOption.setGeneratedKeySQLColumnGenerator(generatedKeySQLColumnGenerator);
                     }
@@ -601,7 +601,7 @@ public class EntityMetadata {
 
                         PrimaryKeyGenerator primaryKeyGenerator = configuration.getPrimaryKeyGenerator(primaryKeyGeneratorClass);
                         if (primaryKeyGenerator == null) {
-                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " primary key generator unknown");
+                            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " primary key generator unknown, plz register this component");
                         }
                         columnOption.setPrimaryKeyGenerator(primaryKeyGenerator);
                         this.hasPrimaryKeyGenerator = true;
@@ -618,7 +618,7 @@ public class EntityMetadata {
 //                if (!Objects.equals(DefaultValueUpdateAtomicTrack.class, trackValueUpdateClass)) {
 //                    ValueUpdateAtomicTrack<?> trackValueUpdate = configuration.getValueUpdateAtomicTrack(trackValueUpdateClass);
 //                    if (trackValueUpdate == null) {
-//                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown");
+//                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown, plz register this component");
 //                    }
 //                    if(column.concurrent()){
 //                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + "conflict with trackValueUpdate and concurrent");
@@ -644,7 +644,7 @@ public class EntityMetadata {
                     //配置列值数据库转换器
                     ColumnValueSQLConverter columnValueSQLConverter = configuration.getColumnValueSQLConverter(columnValueSQLConverterClass);
                     if (columnValueSQLConverter == null) {
-                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " column value sql converter unknown");
+                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " column value sql converter unknown, plz register this component");
                     }
                     columnOption.setColumnValueSQLConverter(columnValueSQLConverter);
 //                    if (columnValueSQLConverter.isMergeSubQuery()) {
@@ -680,7 +680,7 @@ public class EntityMetadata {
                 Class<? extends VersionStrategy> strategy = version.strategy();
                 VersionStrategy easyVersionStrategy = configuration.getEasyVersionStrategyOrNull(strategy);
                 if (easyVersionStrategy == null) {
-                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Version strategy unknown");
+                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " Version strategy unknown, plz register this component");
                 }
                 columnOption.setVersion(true);
 

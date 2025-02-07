@@ -1,9 +1,9 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
+import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -30,9 +30,8 @@ import java.util.function.Predicate;
  * @Date: 2023/3/3 23:05
  * @author xuejiaming
  */
-public interface ExpressionContext {
+public interface ExpressionContext extends RuntimeContextAvailable {
     ExpressionContextInterceptor getExpressionContextInterceptor();
-    QueryRuntimeContext getRuntimeContext();
 
     String getQuoteName(String value);
     void deleteThrow(boolean ifDeleteThrowException);

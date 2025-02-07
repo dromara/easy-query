@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.builder;
 
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.core.SQLNative;
@@ -19,8 +19,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public interface AggregateFilter extends SQLNative<AggregateFilter> {
-    QueryRuntimeContext getRuntimeContext();
+public interface AggregateFilter extends SQLNative<AggregateFilter> , RuntimeContextAvailable {
 
     AggregateFilter func0(TableAvailable table, ColumnFunction columnFunction, String property, SQLPredicateCompare compare, Object val);
     AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, Object val);
