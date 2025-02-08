@@ -55,8 +55,6 @@ public class AptConstant {
             "        }\n" +
             "    }" +
             "\n" +
-            "    @{fieldCommentContext}\n" +
-            "\n" +
             "}";
 
 

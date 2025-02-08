@@ -44,29 +44,36 @@ public class MyMigrationBlog0 extends BaseEntity implements ProxyEntityAvailable
     /**
      * 点赞数
      */
+    @Column(comment = "点赞数")
     private Integer star;
     /**
      * 发布时间
      */
+    @Column(comment = "发布时间")
     private LocalDateTime publishTime;
     /**
      * 评分
      */
+    @Column(comment = "评分")
     private BigDecimal score;
     /**
      * 状态
      */
+    @Column(comment = "状态")
     private Integer status;
     /**
      * 排序
      */
+    @Column(comment = "排序")
     private BigDecimal order;
     /**
      * 是否置顶
      */
+    @Column(comment = "是否置顶")
     private Boolean isTop;
     /**
      * 是否置顶
      */
+    @Column(comment = "是否置顶")
     private Boolean top;
 }

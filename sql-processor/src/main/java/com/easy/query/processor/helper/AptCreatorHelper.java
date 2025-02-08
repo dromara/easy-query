@@ -27,8 +27,8 @@ public class AptCreatorHelper {
                 .replace("@{fieldContent}", propertyContent)
                 .replace("@{valueObjectContext}", valueObjectContent)
                 .replace("@{selectorContext}", selectorContent)
-                .replace("@{fieldStaticContext}", fieldRenderVal.staticField.toString())
-                .replace("@{fieldCommentContext}", fieldRenderVal.fieldComment.toString());
+                .replace("@{fieldStaticContext}", fieldRenderVal.staticField.toString());
+//                .replace("@{fieldCommentContext}", fieldRenderVal.fieldComment.toString());
         return proxyTemplate;
     }
 
@@ -105,27 +105,27 @@ public class AptCreatorHelper {
 
 
     private static FieldRenderVal renderStaticFieldCommentUI(AptFileCompiler aptFileCompiler) {
-        boolean ignoreComment = !aptFileCompiler.isTableEntity();
+//        boolean ignoreComment = !aptFileCompiler.isTableEntity();
         FieldRenderVal fieldRenderVal = new FieldRenderVal();
         AptSelectorInfo selectorInfo = aptFileCompiler.getSelectorInfo();
-        StringBuilder fieldCase = new StringBuilder();
+//        StringBuilder fieldCase = new StringBuilder();
         for (AptSelectPropertyInfo property : selectorInfo.getProperties()) {
-            if (!ignoreComment) {
-                String comment = EasyStringUtil.trimOuterWhitespaceOptimized(EasyStringUtil.startWithRemove(property.getEntityComment(), "*"));
-                String fieldString = AptConstant.FIELD_COMMENT_TEMPLATE
-                        .replace("@{property}", property.getPropertyName())
-                        .replace("@{comment}", new String(EasyBase64Util.encode(comment.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
-                fieldCase.append(fieldString);
-            }
+//            if (!ignoreComment) {
+//                String comment = EasyStringUtil.trimOuterWhitespaceOptimized(EasyStringUtil.startWithRemove(property.getEntityComment(), "*"));
+//                String fieldString = AptConstant.FIELD_COMMENT_TEMPLATE
+//                        .replace("@{property}", property.getPropertyName())
+//                        .replace("@{comment}", new String(EasyBase64Util.encode(comment.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
+//                fieldCase.append(fieldString);
+//            }
             String staticFiled = AptConstant.FIELD_STATIC_TEMPLATE
                     .replace("@{property}", property.getPropertyName());
             fieldRenderVal.staticField.append(staticFiled);
         }
-        if(!ignoreComment){
-            String fieldCommentMethod = AptConstant.FIELD_COMMENT_METHOD
-                    .replace("@{caseContent}", fieldCase.toString());
-            fieldRenderVal.fieldComment.append(fieldCommentMethod);
-        }
+//        if(!ignoreComment){
+//            String fieldCommentMethod = AptConstant.FIELD_COMMENT_METHOD
+//                    .replace("@{caseContent}", fieldCase.toString());
+//            fieldRenderVal.fieldComment.append(fieldCommentMethod);
+//        }
         return fieldRenderVal;
     }
 
