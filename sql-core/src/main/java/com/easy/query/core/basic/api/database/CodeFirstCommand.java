@@ -4,11 +4,11 @@ import java.util.function.Consumer;
 
 /**
  * create time 2025/1/26 08:39
- * 文件说明
+ * code first 命令
  *
  * @author xuejiaming
  */
-public interface CodeFirstExecutable {
+public interface CodeFirstCommand {
     /**
      * 使用环境事务自动提交
      * @param consumer 自动提交前的打印

@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public interface DatabaseCodeFirst {
     /**
-     * 如果数据库不存在则创建数据库(oracle、damneg不支持)
+     * 如果数据库不存在则创建数据库(oracle、dameng不支持)
      */
     void createDatabaseIfNotExists();
     /**
@@ -46,14 +46,14 @@ public interface DatabaseCodeFirst {
      * @param entities 数据库对象集合
      * @return 可创建的表的执行对象
      */
-    CodeFirstExecutable createTables(List<Class<?>> entities);
+    CodeFirstCommand createTableCommand(List<Class<?>> entities);
 
     /**
      * 删除表
      * @param entities 数据库对象集合
      * @return 可删除的表的执行对象
      */
-    CodeFirstExecutable dropTables(List<Class<?>> entities);
+    CodeFirstCommand dropTableCommand(List<Class<?>> entities);
 
     /**
      * 自动同步表结构
@@ -64,5 +64,5 @@ public interface DatabaseCodeFirst {
      * @param entities 数据库对象集合
      * @return 可同步的表的执行对象
      */
-    CodeFirstExecutable syncTables(List<Class<?>> entities);
+    CodeFirstCommand syncTableCommand(List<Class<?>> entities);
 }

@@ -9,7 +9,6 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.util.EasyStringUtil;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -20,12 +19,12 @@ import java.util.function.Consumer;
  *
  * @author xuejiaming
  */
-public class DefaultCodeFirstExecutable implements CodeFirstExecutable {
-    private static final Log log= LogFactory.getLog(DefaultCodeFirstExecutable.class);
+public class DefaultCodeFirstCommand implements CodeFirstCommand {
+    private static final Log log= LogFactory.getLog(DefaultCodeFirstCommand.class);
     private final QueryRuntimeContext runtimeContext;
     private final List<MigrationCommand> migrationCommands;
 
-    public DefaultCodeFirstExecutable(QueryRuntimeContext runtimeContext,List<MigrationCommand> migrationCommands){
+    public DefaultCodeFirstCommand(QueryRuntimeContext runtimeContext, List<MigrationCommand> migrationCommands){
         this.runtimeContext = runtimeContext;
         this.migrationCommands = migrationCommands;
     }

@@ -3,7 +3,7 @@ package com.easy.query.test.migration;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.api.database.CodeFirstExecutable;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -57,8 +57,8 @@ public class MigrationPgTest {
         if (databaseCodeFirst.tableExists(MyMigrationBlog0.class)) {
             System.out.println("存在表:MyMigrationBlog0");
             boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
-            CodeFirstExecutable codeFirstExecutable = databaseCodeFirst.dropTables(Arrays.asList(MyMigrationBlog0.class));
-            codeFirstExecutable.executeWithTransaction(arg -> {
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
+            codeFirstCommand.executeWithTransaction(arg -> {
                 System.out.println("执行删除");
                 System.out.println(arg.sql);
             });
@@ -66,8 +66,8 @@ public class MigrationPgTest {
             System.out.println("不存在表:MyMigrationBlog0");
         }
 
-        CodeFirstExecutable codeFirstExecutable = databaseCodeFirst.syncTables(Arrays.asList(MyMigrationBlog0.class));
-        codeFirstExecutable.executeWithTransaction(arg -> {
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MyMigrationBlog0.class));
+        codeFirstCommand.executeWithTransaction(arg -> {
             System.out.println(arg.sql);
             String md5 = MD5Util.getMD5Hash(arg.sql);
             System.out.println("sql-hash:"+md5);
@@ -76,8 +76,8 @@ public class MigrationPgTest {
         });
         boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
         Assert.assertFalse(any);
-        CodeFirstExecutable codeFirstExecutable1 = databaseCodeFirst.dropTables(Arrays.asList(MyMigrationBlog0.class));
-        codeFirstExecutable1.executeWithEnvTransaction(arg->{
+        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
+        codeFirstCommand1.executeWithEnvTransaction(arg->{
             System.out.println("执行删除");
             System.out.println(arg.sql);
         });

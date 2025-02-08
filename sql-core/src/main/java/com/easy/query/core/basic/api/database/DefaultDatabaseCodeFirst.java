@@ -6,10 +6,7 @@ import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationContext;
 import com.easy.query.core.migration.MigrationsSQLGenerator;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * create time 2025/1/26 08:43
@@ -37,26 +34,26 @@ public class DefaultDatabaseCodeFirst implements DatabaseCodeFirst{
     }
 
     @Override
-    public CodeFirstExecutable createTables(List<Class<?>> entities) {
+    public CodeFirstCommand createTableCommand(List<Class<?>> entities) {
         MigrationsSQLGenerator migrationsSQLGenerator = runtimeContext.getMigrationsSQLGenerator();
         MigrationContext migrationContext = new MigrationContext(entities);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateCreateTableMigrationSQL(migrationContext);
-        return new DefaultCodeFirstExecutable(runtimeContext,migrationCommands);
+        return new DefaultCodeFirstCommand(runtimeContext,migrationCommands);
     }
 
     @Override
-    public CodeFirstExecutable dropTables(List<Class<?>> entities) {
+    public CodeFirstCommand dropTableCommand(List<Class<?>> entities) {
         MigrationsSQLGenerator migrationsSQLGenerator = runtimeContext.getMigrationsSQLGenerator();
         MigrationContext migrationContext = new MigrationContext(entities);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateDropTableMigrationSQL(migrationContext);
-        return new DefaultCodeFirstExecutable(runtimeContext,migrationCommands);
+        return new DefaultCodeFirstCommand(runtimeContext,migrationCommands);
     }
 
     @Override
-    public CodeFirstExecutable syncTables(List<Class<?>> entities) {
+    public CodeFirstCommand syncTableCommand(List<Class<?>> entities) {
         MigrationsSQLGenerator migrationsSQLGenerator = runtimeContext.getMigrationsSQLGenerator();
         MigrationContext migrationContext = new MigrationContext(entities);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
-        return new DefaultCodeFirstExecutable(runtimeContext,migrationCommands);
+        return new DefaultCodeFirstCommand(runtimeContext,migrationCommands);
     }
 }
