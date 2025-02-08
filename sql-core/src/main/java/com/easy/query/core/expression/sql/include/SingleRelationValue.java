@@ -8,7 +8,8 @@ import java.util.Objects;
 
 /**
  * create time 2024/10/16 17:14
- * 文件说明
+ * 当且仅当selfProperty为长度为1或者空(主键情况)的数组时才会使用当前对象
+ * 比如:selfProperty=["id"]那么value为id的值
  *
  * @author xuejiaming
  */

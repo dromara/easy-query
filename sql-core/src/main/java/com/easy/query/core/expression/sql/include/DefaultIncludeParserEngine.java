@@ -65,7 +65,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         int i = 0;
         for (TEntity entity : entities) {
             Map<String, Object> extraColumns = relationExtraMetadata.getRelationExtraColumnList().get(i);
-            RelationExtraEntity relationExtraEntity = new RelationExtraEntityImpl(entity, extraColumns, extraColumnMetadata,expressionContext.getRuntimeContext().getRelationValueFactory());
+            RelationExtraEntity relationExtraEntity = new RelationExtraEntityImpl(entity, extraColumns, extraColumnMetadata, expressionContext.getRuntimeContext().getRelationValueFactory());
             relationExtraEntities.add(relationExtraEntity);
             i++;
         }
@@ -108,7 +108,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         }
 
         List<List<Object>> relationIds = relationExtraEntities.stream().map(o -> o.getRelationExtraColumns(navigateMetadata.getSelfPropertiesOrPrimary()))
-                .filter(o ->!o.isNull()).distinct().map(o->o.getValues()).collect(Collectors.toList());
+                .filter(o -> !o.isNull()).distinct().map(o -> o.getValues()).collect(Collectors.toList());
 //        ColumnMetadata selfRelationColumn = entityMetadata.getColumnNotNull(includeParseContext.getSelfProperty());
 //        Property<Object, ?> relationPropertyGetter = selfRelationColumn.getGetterCaller();
 //        List<Object> relationIds = result.stream().map(relationPropertyGetter::apply)
@@ -129,15 +129,15 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 //            String targetColumnName = mappingTargetColumnMetadata.getName();
 
             List<List<Object>> targetIds = includeParseContext.getMappingRows().stream()
-                    .map(relationValueColumnMetadata::getRelationValue).filter(o->!o.isNull())
+                    .map(relationValueColumnMetadata::getRelationValue).filter(o -> !o.isNull())
                     .distinct()
-                    .map(o->o.getValues())
+                    .map(o -> o.getValues())
                     .collect(Collectors.toList());
             relationIds.clear();
             relationIds.addAll(targetIds);
         }
         //导航属性追踪与否
-        List<RelationExtraEntity> includeResult = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeParseContext.getIncludeQueryableExpression(), includeNavigateParams, relationIds, q -> {
+        List<RelationExtraEntity> includeResult = relationIds.isEmpty() ? EasyCollectionUtil.emptyList() : EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeParseContext.getIncludeQueryableExpression(), includeNavigateParams, relationIds, q -> {
             ExpressionContext innerExpressionContext = q.getSQLEntityExpressionBuilder().getExpressionContext();
             List<?> list = q.toList();
             return getRelationExtraEntities(innerExpressionContext, list);
@@ -213,9 +213,10 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
     }
 
 //    private <TR, TProperty> List<TR> queryableGroupExecute(EasyQueryOption easyQueryOption, ClientQueryable<?> includeQueryable, IncludeNavigateParams includeNavigateParams, List<TProperty> relationIds, SQLFuncExpression1<ClientQueryable<?>, List<TR>> produce) {
-////        if(includeQueryable.getSQLEntityExpressionBuilder().hasLimit()){
-////            includeNavigateParams.setLimit(true);
-////        }
+
+    /// /        if(includeQueryable.getSQLEntityExpressionBuilder().hasLimit()){
+    /// /            includeNavigateParams.setLimit(true);
+    /// /        }
 //        return queryableExpressionGroupExecute(easyQueryOption, () -> includeQueryable, includeNavigateParams, relationIds, produce);
 //    }
 
@@ -251,7 +252,6 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 //        }
 //        return includeQueryable;
 //    }
-
     private <T> List<T> executeQueryableAndClearParams(ClientQueryable<?> mappingQueryable, IncludeNavigateParams includeNavigateParams, SQLFuncExpression1<ClientQueryable<?>, List<T>> produce) {
         List<T> result = produce.apply(mappingQueryable);
         includeNavigateParams.getRelationIds().clear();
