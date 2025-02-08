@@ -12,7 +12,7 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class MultiRelationValue implements RelationValue {
-    private final List<Object> values;
+    protected final List<Object> values;
 
     public MultiRelationValue(List<Object> values){
         this.values = values;

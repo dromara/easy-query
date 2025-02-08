@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class SingleRelationValue implements RelationValue {
-    private final Object value;
+    protected final Object value;
 
     public SingleRelationValue(Object value) {
         this.value = value;
