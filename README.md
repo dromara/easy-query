@@ -103,6 +103,57 @@ entity use `@EntityProxy` or `@EntityFileProxy` annotation then build project ap
 
 [https://central.sonatype.com/](https://central.sonatype.com/) search `com.easy-query`获取最新Installation包
 
+## single table preview
+
+```java
+
+List<Draft3<String, Integer, LocalDateTime>> myBlog = easyEntityQuery.queryable(BlogEntity.class)
+        .where(b -> {
+            b.content().like("my blog");
+            //other conditions
+            //b.id().eq("123");
+        })
+        .groupBy(b -> GroupKeys.of(b.title()))
+        .having(group -> {
+            group.groupTable().star().sum().lt(10);
+        })
+        // The select clause will wrap the select and previous expressions into a nested view (t1 table).
+        // If there are no subsequent chained operations, it will expand directly; otherwise, it will be represented as a nested view (t1 table).
+        .select(group -> Select.DRAFT.of(
+                group.key1(),//value1
+                group.groupTable().star().sum().asAnyType(Integer.class),//value2
+                group.groupTable().createTime().max()//value3
+        ))
+        // If orderBy is not added, no nested view (t1 table) SQL will be generated
+        // because orderBy operates on the results of the preceding select
+        .orderBy(group -> group.value3().desc())
+        // Apply result limit restrictions
+        limit(2,2)
+        .toList();
+
+
+SELECT
+    t1.`value1` AS `value1`,
+    t1.`value2` AS `value2`,
+    t1.`value3` AS `value3` 
+FROM
+    (SELECT
+        t.`title` AS `value1`,
+        SUM(t.`star`) AS `value2`,
+        MAX(t.`create_time`) AS `value3` 
+    FROM
+        `t_blog` t 
+    WHERE
+        t.`deleted` = false 
+        AND t.`content` LIKE '%my blog%' 
+    GROUP BY
+        t.`title` 
+    HAVING
+        SUM(t.`star`) < 10) t1 
+ORDER BY
+    t1.`value3` DESC LIMIT 2,2
+```
+
 ## Installation
 Here is the usage guide for spring-boot environment and console mode.
 ### spring-boot

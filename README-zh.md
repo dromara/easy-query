@@ -54,42 +54,56 @@
 </div>
 
 
+## 单表完整案例
+首先我们来看一下完整版本的单表查询,涉及到筛选、聚合、聚合筛选、映射查询、排序
+```java
+
+List<Draft3<String, Integer, LocalDateTime>> myBlog = easyEntityQuery.queryable(BlogEntity.class)
+        .where(b -> {
+            b.content().like("my blog");
+        })
+        .groupBy(b -> GroupKeys.of(b.title()))
+        .having(group -> {
+            group.groupTable().star().sum().lt(10);
+        })
+        //select那么会将select和之前的表达式作为一个内嵌视图(t1表)进行包裹如果后续没有链式配置则会展开否则以内嵌视图(t1表)表示
+        .select(group -> Select.DRAFT.of(
+                group.key1(),//value1
+                group.groupTable().star().sum().asAnyType(Integer.class),//value2
+                group.groupTable().createTime().max()//value3
+        ))
+        //如果不添加orderBy则不会生成内嵌视图(t1表)sql
+        //因为orderBy是对前面的select结果进行orderBy
+        .orderBy(group -> group.value3().desc())
+        limit(2,2)//对结果进行限制返回
+        .toList();
+
+
+
+-- 第1条sql数据
+SELECT
+    t1.`value1` AS `value1`,
+    t1.`value2` AS `value2`,
+    t1.`value3` AS `value3` 
+FROM
+    (SELECT
+        t.`title` AS `value1`,
+        SUM(t.`star`) AS `value2`,
+        MAX(t.`create_time`) AS `value3` 
+    FROM
+        `t_blog` t 
+    WHERE
+        t.`deleted` = false 
+        AND t.`content` LIKE '%my blog%' 
+    GROUP BY
+        t.`title` 
+    HAVING
+        SUM(t.`star`) < 10) t1 
+ORDER BY
+    t1.`value3` DESC LIMIT 2,2
+```
+
 ## 依赖
-### 使用属性
-```xml
-
-<properties>
-  <easy-query.version>last-version</easy-query.version>
-</properties>
-<!--<dependency>-->
-<!--  <groupId>com.easy-query</groupId>-->
-<!--  <artifactId>sql-core</artifactId>-->
-<!--  <version>${easy-query.version}</version>-->
-<!--</dependency>-->
-<!--sql-mysql已经包含sql-core-->
-<dependency>
-<groupId>com.easy-query</groupId>
-<artifactId>sql-mysql</artifactId>
-<version>${easy-query.version}</version>
-</dependency>
-```
-### 使用表达式
-```xml
-
-<properties>
-  <easy-query.version>last-version</easy-query.version>
-</properties>
-<dependency>
-<groupId>com.easy-query</groupId>
-<artifactId>sql-api4j</artifactId>
-<version>${easy-query.version}</version>
-</dependency>
-<dependency>
-<groupId>com.easy-query</groupId>
-<artifactId>sql-mysql</artifactId>
-<version>${easy-query.version}</version>
-</dependency>
-```
 ### 使用代理
 entity对象添加注解 `@EntityProxy` 然后build project apt 将会自动生成代理对象的java代码
 ```xml

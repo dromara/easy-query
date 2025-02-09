@@ -57,26 +57,28 @@ import java.util.Objects;
  */
 public class QueryTest19 extends BaseTest {
 
-    public static  class  MyNotNullOrEmptyValueFilter implements ValueFilter {
-        public static final ValueFilter DEFAULT=new MyNotNullOrEmptyValueFilter();
+    public static class MyNotNullOrEmptyValueFilter implements ValueFilter {
+        public static final ValueFilter DEFAULT = new MyNotNullOrEmptyValueFilter();
+
         @Override
         public boolean accept(@NotNull TableAvailable table, @NotNull String property, Object value) {
-            if(Objects.equals(table.getEntityClass(),Topic.class)&&Objects.equals(Topic.Fields.title,property)){
+            if (Objects.equals(table.getEntityClass(), Topic.class) && Objects.equals(Topic.Fields.title, property)) {
                 return true;
             }
 
-            if(value==null){
+            if (value == null) {
                 return false;
             }
-            if(value instanceof String){
+            if (value instanceof String) {
                 return EasyStringUtil.isNotBlank((String) value);
             }
             return true;
         }
 
     }
+
     @Test
-    public void testMyFilter(){
+    public void testMyFilter() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -359,7 +361,7 @@ public class QueryTest19 extends BaseTest {
 //    }
 
     @Test
-    public void aaa(){
+    public void aaa() {
         List<MyUserHome> list = easyEntityQuery.queryable(MyUserHome.class)
                 .where(m -> {
                     m.id().toNumber(Integer.class).add(1).eq(BigDecimal.valueOf(123));
@@ -369,7 +371,7 @@ public class QueryTest19 extends BaseTest {
     }
 
     @Test
-    public void aaa1(){
+    public void aaa1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -378,7 +380,7 @@ public class QueryTest19 extends BaseTest {
 
             List<MyUserHome2> list = easyQuery.queryable(MyUserHome2.class)
                     .toList();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -405,7 +407,7 @@ public class QueryTest19 extends BaseTest {
 //    }
 
     @Test
-    public  void testNow(){
+    public void testNow() {
         SQLFunc fx = easyQueryClient.getRuntimeContext().fx();
         SQLFunction now = fx.now();
 
@@ -423,22 +425,21 @@ public class QueryTest19 extends BaseTest {
         Long l1 = easyEntityQuery.queryable(Topic.class)
                 .selectColumn(t_topic -> t_topic.id().toNumber(Long.class).max()).singleOrDefault(0L);
         System.out.println(l1);
-        Assert.assertEquals(l,l1);
+        Assert.assertEquals(l, l1);
     }
 
 
     @Test
-    public void testConcat(){
+    public void testConcat() {
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
                     Expression expression = b.expression();
-                    b.updateTime().asAny().concat(s->s.value(",").expression(b.id()))
-                                    .ge(
-                                            expression.concat(o -> {
-                                                o.expression(b.updateTime().asAnyType(String.class)).value(",").expression(b.id());
-                                            })
-                                    );
-
+                    b.updateTime().asAny().concat(s -> s.value(",").expression(b.id()))
+                            .ge(
+                                    expression.concat(o -> {
+                                        o.expression(b.updateTime().asAnyType(String.class)).value(",").expression(b.id());
+                                    })
+                            );
 
 
                     expression.concat(o -> {
@@ -452,7 +453,7 @@ public class QueryTest19 extends BaseTest {
                         o.expression(b.updateTime().asAnyType(String.class)).value(",").expression(b.id());
                     });
 
-                    val right=expression.concat(o -> {
+                    val right = expression.concat(o -> {
                         o.expression(b.updateTime().asAny()).value(",").expression(b.id());
                     });
 
@@ -464,9 +465,9 @@ public class QueryTest19 extends BaseTest {
 
 
     @Test
-    public void mapQuery(){
+    public void mapQuery() {
 
-        String tableName="aaa";
+        String tableName = "aaa";
         ArrayList<String> filterColumns = new ArrayList<>();
         filterColumns.add("id");
         filterColumns.add("name");
@@ -493,7 +494,7 @@ public class QueryTest19 extends BaseTest {
                         }
                     }).toMaps();
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         listenerContextManager.clear();
@@ -504,13 +505,14 @@ public class QueryTest19 extends BaseTest {
         Assert.assertEquals("123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
-    @Test
-    public void mapInsert(){
 
-        List<Map<String,Object>> map = new ArrayList<>();
+    @Test
+    public void mapInsert() {
+
+        List<Map<String, Object>> map = new ArrayList<>();
         LinkedHashMap<String, Object> entity = new LinkedHashMap<>();
-        entity.put("id","1");
-        entity.put("stars","2");
+        entity.put("id", "1");
+        entity.put("stars", "2");
 
         map.add(entity);
 
@@ -522,7 +524,7 @@ public class QueryTest19 extends BaseTest {
 
             easyQueryClient.mapInsertable(map).asTable("xxxxx").executeRows();
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         listenerContextManager.clear();
@@ -532,13 +534,14 @@ public class QueryTest19 extends BaseTest {
         Assert.assertEquals("INSERT INTO `xxxxx` (`id`,`stars`) VALUES (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
-    @Test
-    public void mapUpdate(){
 
-        List<Map<String,Object>> map = new ArrayList<>();
+    @Test
+    public void mapUpdate() {
+
+        List<Map<String, Object>> map = new ArrayList<>();
         LinkedHashMap<String, Object> entity = new LinkedHashMap<>();
-        entity.put("id","1");
-        entity.put("stars","2");
+        entity.put("id", "1");
+        entity.put("stars", "2");
 
         map.add(entity);
 
@@ -551,7 +554,7 @@ public class QueryTest19 extends BaseTest {
 
             easyQueryClient.mapUpdatable(map).asTable("xxxxx").whereColumns("id").executeRows();
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         listenerContextManager.clear();
@@ -564,7 +567,7 @@ public class QueryTest19 extends BaseTest {
     }
 
     @Test
-     public void mapJoinFixed(){
+    public void mapJoinFixed() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -588,7 +591,7 @@ public class QueryTest19 extends BaseTest {
                         t_table2.column("name2");
                     }).toMaps();
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         listenerContextManager.clear();
@@ -599,8 +602,9 @@ public class QueryTest19 extends BaseTest {
         Assert.assertEquals("123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void mapJoin(){
+    public void mapJoin() {
         ArrayList<String> tableNames = new ArrayList<>();
         tableNames.add("table1");
         tableNames.add("table2");
@@ -612,20 +616,19 @@ public class QueryTest19 extends BaseTest {
         MapQueryable mapQueryable = easyQueryClient.mapQueryable();
         for (int i = 0; i < tableNames.size(); i++) {
             String tableName = tableNames.get(i);
-            if(i==0){//使用from
-                mapQueryable=mapQueryable.asTable(tableName);
-            }else{
+            if (i == 0) {//使用from
+                mapQueryable = mapQueryable.asTable(tableName);
+            } else {
                 int finalI = i;
-                mapQueryable=mapQueryable.join(MultiTableTypeEnum.LEFT_JOIN, on->{
+                mapQueryable = mapQueryable.join(MultiTableTypeEnum.LEFT_JOIN, on -> {
                     EntitySQLTableOwner<?> nextTable = on.getTableOwner(finalI);
                     WherePredicate<?> fromTableWhere = on.getWherePredicate(0);
                     WherePredicate<?> joinTableWhere = on.getWherePredicate(finalI);
-                    fromTableWhere.eq(nextTable,"id","id");
-                    joinTableWhere.eq("name","aaa");
+                    fromTableWhere.eq(nextTable, "id", "id");
+                    joinTableWhere.eq("name", "aaa");
                 }).asTable(tableName);
             }
         }
-
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -653,7 +656,7 @@ public class QueryTest19 extends BaseTest {
                         table3AsSelector.column("table3Column");
                     }).toList();
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         listenerContextManager.clear();
@@ -667,106 +670,106 @@ public class QueryTest19 extends BaseTest {
 
 
     @Test
-     public void testMapJson(){
-         ArrayList<MapQueryJson> mapQueryJsons = new ArrayList<>();
-         {
-             MapQueryJson mapQueryJson = new MapQueryJson();
-             mapQueryJson.setTableName("table1");
-             mapQueryJson.setTableIndex(0);
-             ArrayList<MapQueryJson.InternalWhere> internalWheres = new ArrayList<>();
-             {
-                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
-                 internalWhere.setColumn("id1");
-                 internalWhere.setCompare("123");
-                 internalWheres.add(internalWhere);
-             }
-             {
-                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
-                 internalWhere.setColumn("name1");
-                 internalWhere.setCompare("456");
-                 internalWheres.add(internalWhere);
-             }
-             mapQueryJson.setWhereFilters(internalWheres);
-             mapQueryJsons.add(mapQueryJson);
-         }
-         {
-             MapQueryJson mapQueryJson = new MapQueryJson();
-             mapQueryJson.setTableName("table2");
-             mapQueryJson.setTableIndex(1);
-             ArrayList<MapQueryJson.InternalOn> internalOns = new ArrayList<>();
-             {
-                 MapQueryJson.InternalOn internalOn = new MapQueryJson.InternalOn();
-                 internalOn.setTableIndex(0);
-                 internalOn.setColumn("id1");
-                 internalOn.setCompare("id2");
-                 internalOns.add(internalOn);
-             }
-             mapQueryJson.setOnFilters(internalOns);
+    public void testMapJson() {
+        ArrayList<MapQueryJson> mapQueryJsons = new ArrayList<>();
+        {
+            MapQueryJson mapQueryJson = new MapQueryJson();
+            mapQueryJson.setTableName("table1");
+            mapQueryJson.setTableIndex(0);
+            ArrayList<MapQueryJson.InternalWhere> internalWheres = new ArrayList<>();
+            {
+                MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                internalWhere.setColumn("id1");
+                internalWhere.setCompare("123");
+                internalWheres.add(internalWhere);
+            }
+            {
+                MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                internalWhere.setColumn("name1");
+                internalWhere.setCompare("456");
+                internalWheres.add(internalWhere);
+            }
+            mapQueryJson.setWhereFilters(internalWheres);
+            mapQueryJsons.add(mapQueryJson);
+        }
+        {
+            MapQueryJson mapQueryJson = new MapQueryJson();
+            mapQueryJson.setTableName("table2");
+            mapQueryJson.setTableIndex(1);
+            ArrayList<MapQueryJson.InternalOn> internalOns = new ArrayList<>();
+            {
+                MapQueryJson.InternalOn internalOn = new MapQueryJson.InternalOn();
+                internalOn.setTableIndex(0);
+                internalOn.setColumn("id1");
+                internalOn.setCompare("id2");
+                internalOns.add(internalOn);
+            }
+            mapQueryJson.setOnFilters(internalOns);
 
-             ArrayList<MapQueryJson.InternalWhere> internalWheres = new ArrayList<>();
-             {
-                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
-                 internalWhere.setColumn("id1");
-                 internalWhere.setCompare("123");
-                 internalWheres.add(internalWhere);
-             }
-             {
-                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
-                 internalWhere.setColumn("name1");
-                 internalWhere.setCompare("456");
-                 internalWheres.add(internalWhere);
-             }
-             mapQueryJson.setWhereFilters(internalWheres);
-             mapQueryJsons.add(mapQueryJson);
-         }
-         {
-             MapQueryJson mapQueryJson = new MapQueryJson();
-             mapQueryJson.setTableName("table3");
-             mapQueryJson.setTableIndex(2);
-             ArrayList<MapQueryJson.InternalOn> internalOns = new ArrayList<>();
-             {
-                 MapQueryJson.InternalOn internalOn = new MapQueryJson.InternalOn();
-                 internalOn.setTableIndex(0);
-                 internalOn.setColumn("id1");
-                 internalOn.setCompare("id3");
-                 internalOns.add(internalOn);
-             }
-             mapQueryJson.setOnFilters(internalOns);
+            ArrayList<MapQueryJson.InternalWhere> internalWheres = new ArrayList<>();
+            {
+                MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                internalWhere.setColumn("id1");
+                internalWhere.setCompare("123");
+                internalWheres.add(internalWhere);
+            }
+            {
+                MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                internalWhere.setColumn("name1");
+                internalWhere.setCompare("456");
+                internalWheres.add(internalWhere);
+            }
+            mapQueryJson.setWhereFilters(internalWheres);
+            mapQueryJsons.add(mapQueryJson);
+        }
+        {
+            MapQueryJson mapQueryJson = new MapQueryJson();
+            mapQueryJson.setTableName("table3");
+            mapQueryJson.setTableIndex(2);
+            ArrayList<MapQueryJson.InternalOn> internalOns = new ArrayList<>();
+            {
+                MapQueryJson.InternalOn internalOn = new MapQueryJson.InternalOn();
+                internalOn.setTableIndex(0);
+                internalOn.setColumn("id1");
+                internalOn.setCompare("id3");
+                internalOns.add(internalOn);
+            }
+            mapQueryJson.setOnFilters(internalOns);
 
-             ArrayList<MapQueryJson.InternalWhere> internalWheres = new ArrayList<>();
-             {
-                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
-                 internalWhere.setColumn("id3");
-                 internalWhere.setCompare("123");
-                 internalWheres.add(internalWhere);
-             }
-             {
-                 MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
-                 internalWhere.setColumn("name3");
-                 internalWhere.setCompare("456");
-                 internalWheres.add(internalWhere);
-             }
-             mapQueryJson.setWhereFilters(internalWheres);
-             mapQueryJsons.add(mapQueryJson);
-         }
+            ArrayList<MapQueryJson.InternalWhere> internalWheres = new ArrayList<>();
+            {
+                MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                internalWhere.setColumn("id3");
+                internalWhere.setCompare("123");
+                internalWheres.add(internalWhere);
+            }
+            {
+                MapQueryJson.InternalWhere internalWhere = new MapQueryJson.InternalWhere();
+                internalWhere.setColumn("name3");
+                internalWhere.setCompare("456");
+                internalWheres.add(internalWhere);
+            }
+            mapQueryJson.setWhereFilters(internalWheres);
+            mapQueryJsons.add(mapQueryJson);
+        }
         System.out.println(JSON.toJSONString(mapQueryJsons));
 
         MapQueryable mapQueryable = easyQueryClient.mapQueryable();
         for (int i = 0; i < mapQueryJsons.size(); i++) {
             MapQueryJson mapQueryJson = mapQueryJsons.get(i);
-            if(i==0){
+            if (i == 0) {
                 mapQueryable.asTable(mapQueryJson.getTableName());
-            }else{
+            } else {
 
                 int finalI = i;
-                mapQueryable=mapQueryable.join(MultiTableTypeEnum.LEFT_JOIN, on->{
+                mapQueryable = mapQueryable.join(MultiTableTypeEnum.LEFT_JOIN, on -> {
                     WherePredicate<?> joinTableWhere = on.getWherePredicate(finalI);
                     for (MapQueryJson.InternalOn onFilter : mapQueryJson.getOnFilters()) {
-                        if(onFilter.getTableIndex()==null){
-                            joinTableWhere.eq(onFilter.getColumn(),onFilter.getCompare());
-                        }else{
+                        if (onFilter.getTableIndex() == null) {
+                            joinTableWhere.eq(onFilter.getColumn(), onFilter.getCompare());
+                        } else {
                             EntitySQLTableOwner<?> otherTable = on.getTableOwner(onFilter.getTableIndex());
-                            joinTableWhere.eq(otherTable,onFilter.getColumn(),onFilter.getCompare().toString());
+                            joinTableWhere.eq(otherTable, onFilter.getColumn(), onFilter.getCompare().toString());
                         }
                     }
                 }).asTable(mapQueryJson.getTableName());
@@ -776,10 +779,10 @@ public class QueryTest19 extends BaseTest {
 
         for (int i = 0; i < mapQueryJsons.size(); i++) {
             MapQueryJson mapQueryJson = mapQueryJsons.get(i);
-            mapQueryable=mapQueryable.where(where->{
+            mapQueryable = mapQueryable.where(where -> {
                 for (MapQueryJson.InternalWhere whereFilter : mapQueryJson.getWhereFilters()) {
                     WherePredicate<?> wherePredicate = where.getWherePredicate(mapQueryJson.getTableIndex());
-                    wherePredicate.eq(whereFilter.getColumn(),whereFilter.getCompare());
+                    wherePredicate.eq(whereFilter.getColumn(), whereFilter.getCompare());
                 }
             });
         }
@@ -792,7 +795,7 @@ public class QueryTest19 extends BaseTest {
 
             List<Map<String, Object>> list = mapQueryable.toList();
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         listenerContextManager.clear();
@@ -805,7 +808,7 @@ public class QueryTest19 extends BaseTest {
     }
 
     @Test
-    public void testToWithAs(){
+    public void testToWithAs() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -821,7 +824,7 @@ public class QueryTest19 extends BaseTest {
                     .where((t_topic, t_topic1) -> {
                         t_topic.eq("id", "123");
                     }).toList();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         listenerContextManager.clear();
@@ -834,7 +837,7 @@ public class QueryTest19 extends BaseTest {
     }
 
     @Test
-    public void testToWithAs2(){
+    public void testToWithAs2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -848,11 +851,11 @@ public class QueryTest19 extends BaseTest {
             List<Topic> list = easyQueryClient.queryable(Topic.class)
                     .leftJoin(topicSQL, (t_topic, t_topic1) -> t_topic.eq(t_topic1, "id", "id"))
                     .leftJoin(topicSQL, (t_topic, t_topic1, t_topic2) -> t_topic.eq(t_topic2, "id", "id"))
-                    .where((t_topic, t_topic1,t_topic2) -> {
+                    .where((t_topic, t_topic1, t_topic2) -> {
                         t_topic.eq("id", "123");
                         t_topic2.eq("id", "t2123");
                     }).toList();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         listenerContextManager.clear();
@@ -865,7 +868,7 @@ public class QueryTest19 extends BaseTest {
     }
 
     @Test
-    public void testToWithAs3(){
+    public void testToWithAs3() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -895,7 +898,7 @@ public class QueryTest19 extends BaseTest {
 //                        t_topic.eq("id", "123");
 //                        t_topic2.eq("id", "t2123");
 //                    }).toList();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         listenerContextManager.clear();
@@ -909,7 +912,7 @@ public class QueryTest19 extends BaseTest {
 
 
     @Test
-    public void testToWithA43(){
+    public void testToWithA43() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -939,7 +942,7 @@ public class QueryTest19 extends BaseTest {
 //                        t_topic.eq("id", "123");
 //                        t_topic2.eq("id", "t2123");
 //                    }).toList();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         listenerContextManager.clear();
