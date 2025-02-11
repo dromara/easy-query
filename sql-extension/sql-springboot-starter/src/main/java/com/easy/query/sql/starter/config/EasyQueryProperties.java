@@ -125,7 +125,7 @@ public class EasyQueryProperties {
     /**
      * sqlNativeSegment保持输入风格单引号自动改为双引号
      */
-    private boolean keepNativeStyle = false;
+    private boolean keepNativeStyle = true;
     /**
      * 参数映射丢失警告
      */

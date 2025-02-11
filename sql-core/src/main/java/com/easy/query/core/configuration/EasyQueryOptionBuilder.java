@@ -117,7 +117,7 @@ public class EasyQueryOptionBuilder {
         this.startTimeJob = false;
         this.defaultTrack = false;
         this.relationGroupSize = 512;
-        this.keepNativeStyle = false;
+        this.keepNativeStyle = true;
         this.reverseOffsetThreshold = 0;
         this.warningColumnMiss = true;
         this.shardingFetchSize = 1000;
