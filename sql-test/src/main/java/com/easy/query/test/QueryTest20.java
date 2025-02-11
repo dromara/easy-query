@@ -655,4 +655,6 @@ public class QueryTest20 extends BaseTest {
         System.out.println(format);
         Assert.assertEquals("2025Q1",format);
     }
+
+
 }

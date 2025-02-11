@@ -1,22 +1,30 @@
 package com.easy.query.test;
 
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.dto.autodto.SchoolClassAOProp9;
+import com.easy.query.test.entity.TestInsert;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAutoNative;
 import com.easy.query.test.entity.TopicFile;
 import com.easy.query.test.entity.proxy.TopicFileProxy;
+import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -142,5 +150,68 @@ public class InsertTest1 extends BaseTest {
         Assert.assertEquals("INSERT INTO `xxx` (`id`,`stars`) VALUES (?,ifnull(`stars`,0)+?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+
+    @Test
+    public void testInsert(){
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(TestInsert.class));
+        codeFirstCommand.executeWithTransaction(arg->{
+            System.out.println(arg.sql);
+            arg.commit();
+        });
+
+        easyEntityQuery.deletable(TestInsert.class).disableLogicDelete().allowDeleteStatement(true)
+                .where(t -> t.id().isNotNull())
+                .executeRows();
+        ArrayList<TestInsert> testInserts = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            TestInsert testInsert = new TestInsert();
+            testInsert.setId(String.valueOf(i));
+            testInsert.setColumn1(i%2==0?i+":column1":null);
+            testInsert.setColumn2(i%3==0?i+":column2":null);
+            testInserts.add(testInsert);
+        }
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.insertable(testInserts).batch().executeRows();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(4, listenerContext.getJdbcExecuteAfterArgs().size());
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("INSERT INTO `t_test_insert` (`id`,`column1`,`column2`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("0(String),0:column1(String),0:column2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("6(String),6:column1(String),6:column2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(1)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("INSERT INTO `t_test_insert` (`id`) VALUES (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("5(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(1)));
+            Assert.assertEquals("7(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(2)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("INSERT INTO `t_test_insert` (`id`,`column1`) VALUES (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("2(String),2:column1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("4(String),4:column1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(1)));
+            Assert.assertEquals("8(String),8:column1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(2)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("INSERT INTO `t_test_insert` (`id`,`column2`) VALUES (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("3(String),3:column2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        System.out.println("1");
+        easyEntityQuery.deletable(TestInsert.class).disableLogicDelete().allowDeleteStatement(true)
+                .where(t -> t.id().isNotNull())
+                .executeRows();
     }
 }
