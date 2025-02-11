@@ -154,7 +154,7 @@ public class EasyQueryProperties {
     /**
      * 映射策略
      */
-    private EntityMappingStrategyEnum mappingStrategy = EntityMappingStrategyEnum.COLUMN_ONLY;
+    private EntityMappingStrategyEnum mappingStrategy = EntityMappingStrategyEnum.PROPERTY_FIRST;
 
     public Boolean getEnable() {
         return enable;

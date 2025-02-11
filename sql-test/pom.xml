@@ -93,12 +93,6 @@
         <!--            <version>11.2.0.3</version>-->
         <!--        </dependency>-->
         <dependency>
-            <groupId>com.easy-query</groupId>
-            <artifactId>sql-api4kt</artifactId>
-            <version>2.5.4</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.bestvike</groupId>
             <artifactId>linq</artifactId>
             <version>6.0.0</version>

@@ -3,7 +3,6 @@ package com.easy.query.solon.integration.holder;
 import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api4j.client.EasyQuery;
-import com.easy.query.api4kt.client.EasyKtQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -25,17 +24,14 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
     private final EasyEntityQuery entityQuery;
     private final EasyQuery easyQuery;
     private final EasyProxyQuery easyProxyQuery;
-    private final EasyKtQuery easyKtQuery;
 //    private final EntityQuery entityQuery;
 
-    public DefaultEasyQueryHolder(EasyQueryClient easyQueryClient, EasyEntityQuery entityQuery, EasyQuery easyQuery, EasyProxyQuery easyProxyQuery, EasyKtQuery easyKtQuery){
+    public DefaultEasyQueryHolder(EasyQueryClient easyQueryClient, EasyEntityQuery entityQuery, EasyQuery easyQuery, EasyProxyQuery easyProxyQuery){
         this.easyQueryClient = easyQueryClient;
         this.entityQuery = entityQuery;
         this.easyQuery = easyQuery;
 
         this.easyProxyQuery = easyProxyQuery;
-        this.easyKtQuery = easyKtQuery;
-//        this.entityQuery = entityQuery;
     }
 
     @Override
@@ -65,9 +61,6 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
             return EasyObjectUtil.typeCastNullable(this.easyProxyQuery);
         }
 
-        if (Objects.equals(EasyKtQuery.class,clazz)) {
-            return EasyObjectUtil.typeCastNullable(this.easyKtQuery);
-        }
         throw new UnsupportedOperationException(EasyClassUtil.getSimpleName(clazz));
     }
 
@@ -101,11 +94,6 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
 
         if (Objects.equals(EasyProxyQuery.class,varH.getType())) {
             varH.setValue(this.easyProxyQuery);
-            return;
-        }
-
-        if (Objects.equals(EasyKtQuery.class,varH.getType())) {
-            varH.setValue(this.easyKtQuery);
             return;
         }
         if(Objects.equals(QueryConfiguration.class,varH.getType())){

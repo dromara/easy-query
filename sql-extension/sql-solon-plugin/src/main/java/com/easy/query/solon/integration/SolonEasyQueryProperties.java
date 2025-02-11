@@ -34,7 +34,7 @@ public class SolonEasyQueryProperties {
     private final static PropertyModeEnum propertyMode = PropertyModeEnum.FIRST_LOWER;
     private final static ShardingQueryInTransactionEnum shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
     private final static RelationTableAppendEnum relationTableAppend = RelationTableAppendEnum.SMART;
-    private final static EntityMappingStrategyEnum mappingStrategy = EntityMappingStrategyEnum.COLUMN_ONLY;
+    private final static EntityMappingStrategyEnum mappingStrategy = EntityMappingStrategyEnum.PROPERTY_FIRST;
     /**
      * 仅分片时有效默认同时5个线程5
      */
