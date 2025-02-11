@@ -22,6 +22,8 @@ public class MsSQLMyTopicProxy extends AbstractProxyEntity<MsSQLMyTopicProxy, Ms
 
     private static final Class<MsSQLMyTopic> entityClass = MsSQLMyTopic.class;
 
+    public static final MsSQLMyTopicProxy TABLE = createTable().createEmpty();
+
     public static MsSQLMyTopicProxy createTable() {
         return new MsSQLMyTopicProxy();
     }

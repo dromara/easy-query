@@ -13,7 +13,9 @@ import com.easy.query.test.mssql.entity.MsSQLMyTopic1;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2023/7/27 17:34
@@ -219,6 +221,127 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("UPDATE t SET t.[Title] = ? FROM [MyTopic] t WHERE t.[Id] IS NULL AND EXISTS (SELECT 1 FROM [MyTopic] t1 WHERE t1.[Id] = t.[Id])", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123xx(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+     public void testLikeConcat1(){
+
+//        List<Map<String, Object>> maps = entityQuery.sqlQueryMap("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Title] LIKE ('%'+(CAST(? + [Id] + ? AS NVARCHAR(MAX))+'%')");
+
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<MsSQLMyTopic> list = entityQuery.queryable(MsSQLMyTopic.class)
+                .where(m -> {
+                    m.title().like(
+                            m.expression().concat(s -> {
+                                s.value("%");
+                                s.expression(m.id());
+                                s.value("%");
+                            })
+                    );
+//                    m.title().likeMatchLeft(
+//                            m.expression().concat(s -> {
+//                                s.value("%");
+//                                s.expression(m.id());
+//                                s.value("%");
+//                            })
+//                    );
+//                    m.title().likeMatchRight(
+//                            m.expression().concat(s -> {
+//                                s.value("%");
+//                                s.expression(m.id());
+//                                s.value("%");
+//                            })
+//                    );
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Title] LIKE ('%'+CAST(? + [Id] + ? AS NVARCHAR(MAX))+'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%(String),%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+     public void testLikeConcat2(){
+
+//        List<Map<String, Object>> maps = entityQuery.sqlQueryMap("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Title] LIKE ('%'+(CAST(? + [Id] + ? AS NVARCHAR(MAX))+'%')");
+
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<MsSQLMyTopic> list = entityQuery.queryable(MsSQLMyTopic.class)
+                .where(m -> {
+//                    m.title().like(
+//                            m.expression().concat(s -> {
+//                                s.value("%");
+//                                s.expression(m.id());
+//                                s.value("%");
+//                            })
+//                    );
+                    m.title().likeMatchLeft(
+                            m.expression().concat(s -> {
+                                s.value("%");
+                                s.expression(m.id());
+                                s.value("%");
+                            })
+                    );
+//                    m.title().likeMatchRight(
+//                            m.expression().concat(s -> {
+//                                s.value("%");
+//                                s.expression(m.id());
+//                                s.value("%");
+//                            })
+//                    );
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Title] LIKE (CAST(? + [Id] + ? AS NVARCHAR(MAX))+'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%(String),%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+     public void testLikeConcat3(){
+
+//        List<Map<String, Object>> maps = entityQuery.sqlQueryMap("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Title] LIKE ('%'+(CAST(? + [Id] + ? AS NVARCHAR(MAX))+'%')");
+
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<MsSQLMyTopic> list = entityQuery.queryable(MsSQLMyTopic.class)
+                .where(m -> {
+//                    m.title().like(
+//                            m.expression().concat(s -> {
+//                                s.value("%");
+//                                s.expression(m.id());
+//                                s.value("%");
+//                            })
+//                    );
+//                    m.title().likeMatchLeft(
+//                            m.expression().concat(s -> {
+//                                s.value("%");
+//                                s.expression(m.id());
+//                                s.value("%");
+//                            })
+//                    );
+                    m.title().likeMatchRight(
+                            m.expression().concat(s -> {
+                                s.value("%");
+                                s.expression(m.id());
+                                s.value("%");
+                            })
+                    );
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Title] LIKE ('%'+CAST(? + [Id] + ? AS NVARCHAR(MAX)))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%(String),%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 }
