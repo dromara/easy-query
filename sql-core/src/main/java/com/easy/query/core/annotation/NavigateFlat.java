@@ -49,4 +49,13 @@ public @interface NavigateFlat {
      * @return 静态路径名称
      */
     String pathAlias() default "";
+
+    /**
+     * 路径别名是否是前缀
+     * 如果是前缀则不需要将别名一直写写到属性而是使用当前属性名作为拉取的属性
+     *
+     * @return
+     */
+    boolean prefix() default false;
+
 }

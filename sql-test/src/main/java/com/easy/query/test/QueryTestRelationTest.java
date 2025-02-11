@@ -19,6 +19,8 @@ import com.easy.query.test.doc.MyComUserDTO;
 import com.easy.query.test.doc.MyCompany;
 import com.easy.query.test.doc.MySignUp;
 import com.easy.query.test.doc.MySignUpDTO;
+import com.easy.query.test.doc.MySignUpDTOx;
+import com.easy.query.test.doc.MySignUpDTOy;
 import com.easy.query.test.doc.MyUser;
 import com.easy.query.test.doc.dto.MyComUserDTO1;
 import com.easy.query.test.doc.dto.MyComUserDTO10;
@@ -424,6 +426,70 @@ public class QueryTestRelationTest extends BaseTest {
         try {
 
 
+            {
+                System.out.println("1");
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+
+                EasyPageResult<MySignUpDTOy> list1 = easyEntityQuery.queryable(MySignUp.class)
+                        .where(m -> {
+                            m.id().isNotNull();
+//                            m.comUser().id().isNotNull();
+                        }).orderBy(m -> m.content().asc())
+                        .toPageSelectResult(q->{
+                            System.out.println(q);
+                            return q.selectAutoInclude(MySignUpDTOy.class);
+                        },1,10);
+
+                {
+
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                    Assert.assertEquals("SELECT COUNT(*) FROM `my_sign_up` WHERE `id` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                    Assert.assertEquals("SELECT t2.`gw` AS `gw`,t2.`com_id` AS `com_id`,t2.`user_id` AS `user_id`,t1.`id`,t1.`com_id`,t1.`user_id`,t1.`time`,t1.`content` FROM (SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t WHERE t.`id` IS NOT NULL ORDER BY t.`content` ASC LIMIT 4) t1 LEFT JOIN `my_com_user` t2 ON (t2.`com_id` = t1.`com_id` AND t2.`user_id` = t1.`user_id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("c1(String),u1(String),c2(String),u1(String),c1(String),u2(String),c1(String),u3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+
+                System.out.println("11");
+            }
+
+            {
+                System.out.println("1");
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+
+                EasyPageResult<MySignUpDTOx> list1 = easyEntityQuery.queryable(MySignUp.class)
+                        .where(m -> {
+                            m.id().isNotNull();
+//                            m.comUser().id().isNotNull();
+                        }).orderBy(m -> m.content().asc())
+                        .toPageSelectResult(q->{
+                            System.out.println(q);
+                            return q.selectAutoInclude(MySignUpDTOx.class);
+                        },1,10);
+
+                {
+
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                    Assert.assertEquals("SELECT COUNT(*) FROM `my_sign_up` WHERE `id` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                    Assert.assertEquals("SELECT t1.`id`,t1.`time`,t1.`content`,t1.`com_id` AS `__relation__comId`,t1.`user_id` AS `__relation__userId` FROM (SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t WHERE t.`id` IS NOT NULL ORDER BY t.`content` ASC LIMIT 4) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("c1(String),u1(String),c2(String),u1(String),c1(String),u2(String),c1(String),u3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                    Assert.assertEquals("SELECT `gw`,`com_id`,`user_id` FROM `my_com_user` WHERE ((`com_id` =? AND `user_id` =?) OR (`com_id` =? AND `user_id` =?) OR (`com_id` =? AND `user_id` =?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("c1(String),u1(String),c1(String),u3(String),c2(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+
+                System.out.println("11");
+            }
             {
                 System.out.println("1");
                 ListenerContext listenerContext = new ListenerContext(true);

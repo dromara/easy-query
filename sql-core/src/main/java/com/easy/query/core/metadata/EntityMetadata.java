@@ -388,14 +388,30 @@ public class EntityMetadata {
         property2NavigateMap.put(property, navigateMetadata);
     }
 
-    private String[] getFlatMappingPath(NavigateFlat navigateFlat, Map<String, Field> staticFields) {
+    private String[] getFlatMappingPath(NavigateFlat navigateFlat, Map<String, Field> staticFields, String property) {
+        String[] path0 = getFlatMappingPath0(navigateFlat, staticFields);
+        if (navigateFlat.prefix()) {
+            return EasyArrayUtil.concat(path0, new String[]{property});
+        }
+        return path0;
+    }
+
+    private String[] getFlatMappingPath0(NavigateFlat navigateFlat, Map<String, Field> staticFields) {
         if (navigateFlat.mappingPath().length == 0) {
             return getMappingPath(navigateFlat.pathAlias(), staticFields, navigateFlat.mappingPath());
         }
         return navigateFlat.mappingPath();
     }
 
-    private String[] getJoinMappingPath(NavigateJoin navigateJoin, Map<String, Field> staticFields) {
+    private String[] getJoinMappingPath(NavigateJoin navigateJoin, Map<String, Field> staticFields, String property) {
+        String[] path0 = getJoinMappingPath0(navigateJoin, staticFields);
+        if (navigateJoin.prefix()) {
+            return EasyArrayUtil.concat(path0, new String[]{property});
+        }
+        return path0;
+    }
+
+    private String[] getJoinMappingPath0(NavigateJoin navigateJoin, Map<String, Field> staticFields) {
         if (navigateJoin.mappingPath().length == 0) {
             return getMappingPath(navigateJoin.pathAlias(), staticFields, navigateJoin.mappingPath());
         }
@@ -420,7 +436,7 @@ public class EntityMetadata {
     }
 
     private void createNavigateFlatMappingMetadata(NavigateFlat navigateFlat, Map<String, Field> staticFields, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
-        String[] mappingPath = getFlatMappingPath(navigateFlat, staticFields);
+        String[] mappingPath = getFlatMappingPath(navigateFlat, staticFields, property);
         if (mappingPath.length <= 1) {
             throw new EasyQueryInvalidOperationException("navigate flat, mappingPath at least two path");
         }
@@ -465,7 +481,7 @@ public class EntityMetadata {
     }
 
     private void createNavigateJoinMappingMetadata(NavigateJoin navigateJoin, Map<String, Field> staticFields, String property) {
-        String[] mappingPath = getJoinMappingPath(navigateJoin, staticFields);
+        String[] mappingPath = getJoinMappingPath(navigateJoin, staticFields, property);
         if (mappingPath.length <= 1) {
             throw new EasyQueryInvalidOperationException("navigate join, mappingPath at least two path");
         }
