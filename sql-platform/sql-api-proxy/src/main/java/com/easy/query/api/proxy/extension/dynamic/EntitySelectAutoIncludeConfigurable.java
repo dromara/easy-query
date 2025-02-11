@@ -12,7 +12,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2025/2/5 20:57
- * 文件说明
+ * 对象模式配置自动包含解耦画的一些配置
  *
  * @author xuejiaming
  */

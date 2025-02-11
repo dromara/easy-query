@@ -60,7 +60,7 @@ public class TopicShardingTimeShardingInitializer extends AbstractShardingMonthI
         builder.paginationReverse(0.5,100)
                 .ascSequenceConfigure(new TableNameStringComparator())
                 .addPropertyDefaultUseDesc("createTime")
-                .defaultAffectedMethod(false, ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.COUNT,ExecuteMethodEnum.FIRST)
+                .defaultAffectedMethod(false, ExecuteMethodEnum.LIST,ExecuteMethodEnum.FIRST,ExecuteMethodEnum.SINGLE,ExecuteMethodEnum.FIND,ExecuteMethodEnum.StreamResult)
                 .useMaxShardingQueryLimit(2,ExecuteMethodEnum.LIST,ExecuteMethodEnum.ANY,ExecuteMethodEnum.FIRST);
 
     }

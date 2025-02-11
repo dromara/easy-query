@@ -28,7 +28,7 @@ public abstract class AbstractShardingQuarterInitializer<T> extends AbstractShar
     @Override
     protected String formatTail(LocalDateTime time) {
 
-        return EasyUtil.getQuarterStart(time).format(DateTimeFormatter.ofPattern("'Q'Q"));
+        return EasyUtil.getQuarterStart(time).format(DateTimeFormatter.ofPattern("yyyy'Q'Q"));
 //        return time.format(DateTimeFormatter.ofPattern("yyyyMM"));
     }
 

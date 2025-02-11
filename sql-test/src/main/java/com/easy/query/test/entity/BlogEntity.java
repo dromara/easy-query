@@ -1,7 +1,8 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.EntityFileProxy;
+import com.easy.query.core.annotation.EasyAlias;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
@@ -27,7 +28,8 @@ import java.util.List;
 @Getter
 @Setter
 @Table("t_blog")
-@EntityFileProxy
+@EntityProxy
+@EasyAlias("t_blog")
 @ToString
 public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogEntity, BlogEntityProxy> {
 

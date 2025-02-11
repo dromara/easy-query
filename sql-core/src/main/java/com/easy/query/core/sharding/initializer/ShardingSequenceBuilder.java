@@ -53,7 +53,7 @@ public class ShardingSequenceBuilder<T> {
     }
 
     /**
-     * 表达式没有order的时候哪些方法需要支持顺序排序,譬如any可以设置连接数不需要那么大,first可以设置只需要2个连接查询譬如,并且不需要查询所有表
+     * 表达式没有order的时候哪些方法需要支持顺序排序,比如我查询list当我不加orderBy的时候默认用{@link ShardingSequenceBuilder#addPropertyDefaultUseDesc}作为排序进行查询
      *
      * @param asc
      * @param executeMethods

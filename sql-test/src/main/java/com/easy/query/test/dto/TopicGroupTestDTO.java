@@ -1,6 +1,7 @@
 package com.easy.query.test.dto;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import lombok.Data;
 import lombok.ToString;
 import org.junit.Ignore;
@@ -12,6 +13,7 @@ import org.junit.Ignore;
  * @author xuejiaming
  */
 @ToString
+@EntityProxy
 public class TopicGroupTestDTO {
 
     private String id;
