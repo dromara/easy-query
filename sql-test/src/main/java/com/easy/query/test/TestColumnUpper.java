@@ -19,4 +19,5 @@ import lombok.Data;
 public class TestColumnUpper implements ProxyEntityAvailable<TestColumnUpper , TestColumnUpperProxy> {
     @Column(value = "ROLEID")
     private String roleid;
+
 }
