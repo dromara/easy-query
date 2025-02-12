@@ -38,6 +38,8 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.migration.DatabaseMigrationProvider;
+import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyIncludeUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -46,6 +48,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -352,5 +355,11 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
     @Override
     public DatabaseCodeFirst getDatabaseCodeFirst() {
         return easySQLApiFactory.createDatabaseCodeFirst(runtimeContext);
+    }
+    @Override
+    public void setMigrationParser(MigrationEntityParser migrationParser) {
+        Objects.requireNonNull(migrationParser, "migrationParser can not be null");
+        DatabaseMigrationProvider databaseMigrationProvider = runtimeContext.getService(DatabaseMigrationProvider.class);
+        databaseMigrationProvider.setMigrationParser(migrationParser);
     }
 }
