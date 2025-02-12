@@ -3,6 +3,8 @@ package com.easy.query.test.h2;
 import com.easy.query.api.proxy.base.LocalDateTimeProxy;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.doc.dto.BankCardVO;
@@ -371,6 +373,111 @@ public class H2DocTest extends H2BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.id,t.name,t.phone,t.age,IFNULL(t.age,1) AS card_count FROM doc_user t WHERE t.name LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%小明%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+
+
+
+    @Test
+    public void selectProxyTestDoc1() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            List<DocBankCard> xmCards = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.user().name().eq("小明");
+                    })
+                    .toList();
+        } catch (Exception ex) {
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.id,t.uid,t.code,t.type,t.bank_id FROM doc_bank_card t LEFT JOIN doc_user t1 ON t1.id = t.uid WHERE t1.name = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void selectProxyTestDoc2() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            String queryName=null;
+            List<DocBankCard> xmCards = easyEntityQuery.queryable(DocBankCard.class)
+                    .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                    .where(bank_card -> {
+                        bank_card.user().name().eq(queryName);
+                    })
+                    .toList();
+        } catch (Exception ex) {
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.id,t.uid,t.code,t.type,t.bank_id FROM doc_bank_card t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void selectProxyTestDoc3() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            List<Draft3<String, String, String>> result = easyEntityQuery.queryable(DocBankCard.class)
+                    .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                    .where(bank_card -> {
+                        bank_card.user().name().eq("小明");
+                    })
+                    .select(bank_card -> Select.DRAFT.of(
+                            bank_card.code(),
+                            bank_card.user().name(),
+                            bank_card.bank().name()
+                    )).toList();
+        } catch (Exception ex) {
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.code AS value1,t1.name AS value2,t2.name AS value3 FROM doc_bank_card t LEFT JOIN doc_user t1 ON t1.id = t.uid LEFT JOIN doc_bank t2 ON t2.id = t.bank_id WHERE t1.name = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void selectProxyTestDoc4() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            List<Draft3<String, String, String>> result = easyEntityQuery.queryable(DocBankCard.class)
+                    .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                    .leftJoin(DocBank.class,(bank_card, bank) -> bank_card.bankId().eq(bank.id()))
+                    .where((bank_card, bank) -> {
+                        bank_card.user().name().eq("小明");
+                    })
+                    .select((bank_card, bank) -> Select.DRAFT.of(
+                            bank_card.code(),
+                            bank_card.user().name(),
+                            bank.name()
+                    )).toList();
+        } catch (Exception ex) {
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.code AS value1,t2.name AS value2,t1.name AS value3 FROM doc_bank_card t LEFT JOIN doc_bank t1 ON t.bank_id = t1.id LEFT JOIN doc_user t2 ON t2.id = t.uid WHERE t2.name = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

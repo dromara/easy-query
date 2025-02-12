@@ -4,6 +4,7 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import lombok.Data;
 import lombok.ToString;
+import lombok.experimental.FieldNameConstants;
 import org.junit.Ignore;
 
 /**
@@ -14,6 +15,7 @@ import org.junit.Ignore;
  */
 @ToString
 @EntityProxy
+@FieldNameConstants
 public class TopicGroupTestDTO {
 
     private String id;

@@ -17,6 +17,8 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.migration.DatabaseMigrationProvider;
+import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -134,4 +136,6 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
     <T> void loadInclude(List<T> entities,String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure);
 
     DatabaseCodeFirst getDatabaseCodeFirst();
+    //DatabaseMigrationProvider
+    void setMigrationParser(MigrationEntityParser migrationParser);
 }

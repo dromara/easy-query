@@ -25,6 +25,7 @@ public class MyComUserDTO8 {
 
 
     private String gw;
+    //dto显式指定了order那么会覆盖掉entity的
     @Navigate(value = RelationTypeEnum.OneToMany, orderByProps = {
             @OrderByProperty(property = "comId"),
             @OrderByProperty(property = "time", asc = false, mode = OrderByPropertyModeEnum.NULLS_LAST),
@@ -45,7 +46,7 @@ public class MyComUserDTO8 {
 
         @Override
         public boolean isInheritedBehavior() {
-            return false;
+            return false;//接口说不继承父类行为则会无视entity的排序配置和dto自身当前节点的排序limit等配置 优先级最高
         }
 
         @Override
@@ -54,6 +55,4 @@ public class MyComUserDTO8 {
                     .orderByAsc(o->o.column(Fields.time));
         }
     }
-
-
 }

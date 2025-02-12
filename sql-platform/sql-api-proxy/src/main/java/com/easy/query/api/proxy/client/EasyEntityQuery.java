@@ -11,6 +11,7 @@ import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -119,5 +120,8 @@ public interface EasyEntityQuery extends EasyBaseQuery{
 
     default DatabaseCodeFirst getDatabaseCodeFirst(){
         return getEasyQueryClient().getDatabaseCodeFirst();
+    }
+    default void setMigrationParser(MigrationEntityParser migrationParser){
+        getEasyQueryClient().setMigrationParser(migrationParser);
     }
 }

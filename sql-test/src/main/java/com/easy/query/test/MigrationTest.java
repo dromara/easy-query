@@ -173,6 +173,7 @@ public class MigrationTest extends BaseTest {
         DefaultEasyEntityQuery entityQuery = new DefaultEasyEntityQuery(client);
 
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+
         databaseCodeFirst.createDatabaseIfNotExists();
         //自动同步数据库表
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class, BlogEntity.class));
