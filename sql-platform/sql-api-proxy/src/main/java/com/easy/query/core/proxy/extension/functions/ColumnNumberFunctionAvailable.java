@@ -74,6 +74,40 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     default <T extends Number> ColumnFunctionCompareComparableNumberChainExpression<T> sum(Class<T> resultClass) {
         return sum(false).asAnyType(resultClass);
     }
+    /**
+     * 计算求和 SUM(age)
+     *
+     * @return 计算求和 SUM(age)
+     */
+    default ColumnFunctionCompareComparableNumberChainExpression<Integer> sumInt() {
+        return sum(false).asAnyType(Integer.class);
+    }
+    /**
+     * 计算求和 SUM(age)
+     *
+     * @param distinct 是否去重
+     * @return 计算求和 SUM(age)
+     */
+    default ColumnFunctionCompareComparableNumberChainExpression<Integer> sumInt(boolean distinct) {
+        return sum(distinct).asAnyType(Integer.class);
+    }
+    /**
+     * 计算求和 SUM(age)
+     *
+     * @return 计算求和 SUM(age)
+     */
+    default ColumnFunctionCompareComparableNumberChainExpression<Long> sumLong() {
+        return sum(false).asAnyType(Long.class);
+    }
+    /**
+     * 计算求和 SUM(age)
+     *
+     * @param distinct 是否去重
+     * @return 计算求和 SUM(age)
+     */
+    default ColumnFunctionCompareComparableNumberChainExpression<Long> sumLong(boolean distinct) {
+        return sum(distinct).asAnyType(Long.class);
+    }
 
     /**
      * 计算去重求和 SUM(DISTINCT age)
