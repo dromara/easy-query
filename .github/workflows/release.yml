@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+    - '[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '8'
+        cache: 'maven'
+        server-id: local
+        server-username: MAVEN_USERNAME
+        gpg-passphrase: MAVEN_GPG_PASSPHRASE
+        gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+    # - name: Publish to Maven
+    #   run: mvn -B deploy
+    #   env:
+    #     MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+    #     # MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+    #     MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+    - name: Build Changelog
+      id: build_changelog
+      uses: mikepenz/release-changelog-builder-action@v5
+      with:
+        mode: COMMIT
+        configurationJson: |
+          {
+            "template": "#{{CHANGELOG}}",
+            "categories": [
+              {
+                  "title": "## 🚀 Feat",
+                  "labels": ["feat"]
+              },
+              {
+                  "title": "## 🐞 Fix",
+                  "labels": ["fix"]
+              },
+              {
+                  "title": "## 🔄 Other",
+                  "labels": []
+              }
+            ],
+            "label_extractor": [
+              {
+                "pattern": "^(fix|feat){1}(\\([\\w\\-\\.]+\\))?(!)?: ([\\w ])+([\\s\\S]*)",
+                "target": "$1"
+              }
+            ]
+          }
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: v${{ github.ref_name }}
+        body: ${{steps.build_changelog.outputs.changelog}}
