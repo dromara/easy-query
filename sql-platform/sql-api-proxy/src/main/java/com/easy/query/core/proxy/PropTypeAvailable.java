@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy;
 
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * create time 2023/12/19 09:34

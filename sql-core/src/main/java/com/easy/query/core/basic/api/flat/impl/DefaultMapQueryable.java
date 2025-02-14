@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.flat.impl;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.flat.MapQueryable;
 import com.easy.query.core.basic.api.flat.provider.MapFilter;

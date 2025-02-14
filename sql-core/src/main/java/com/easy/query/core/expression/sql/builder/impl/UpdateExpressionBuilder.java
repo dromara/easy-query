@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.interceptor.UpdateEntityColumnInterceptor;
 import com.easy.query.core.basic.extension.interceptor.UpdateSetInterceptor;

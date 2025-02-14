@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.api.proxy.util.EasyPropertyLambdaUtil;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.builder.Selector;

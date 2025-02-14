@@ -3,7 +3,7 @@ package com.easy.query.test;
 import com.alibaba.fastjson2.JSON;
 import com.easy.query.api.proxy.base.LocalDateTimeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.basic.api.flat.MapQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -38,6 +38,7 @@ import com.easy.query.test.navigateflat.MyUserHome;
 import com.easy.query.test.navigateflat.MyUserHome2;
 import com.easy.query.test.vo.MyUnion;
 import lombok.val;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -61,7 +62,7 @@ public class QueryTest19 extends BaseTest {
         public static final ValueFilter DEFAULT = new MyNotNullOrEmptyValueFilter();
 
         @Override
-        public boolean accept(@NotNull TableAvailable table, @NotNull String property, Object value) {
+        public boolean accept(@Nullable TableAvailable table, @Nullable String property, Object value) {
             if (Objects.equals(table.getEntityClass(), Topic.class) && Objects.equals(Topic.Fields.title, property)) {
                 return true;
             }

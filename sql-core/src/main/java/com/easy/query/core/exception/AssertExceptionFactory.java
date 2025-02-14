@@ -1,6 +1,6 @@
 package com.easy.query.core.exception;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.basic.api.select.Query;
 
 /**

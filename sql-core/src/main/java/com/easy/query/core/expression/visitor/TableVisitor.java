@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.visitor;
 
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**

@@ -1,8 +1,9 @@
 package com.easy.query.core.expression.builder.core;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.util.EasyStringUtil;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * create time 2023/8/19 15:03
@@ -13,7 +14,7 @@ import com.easy.query.core.util.EasyStringUtil;
 public class NotNullOrEmptyValueFilter implements ValueFilter {
     public static final ValueFilter DEFAULT=new NotNullOrEmptyValueFilter();
     @Override
-    public boolean accept(@NotNull TableAvailable table,@NotNull String property, Object value) {
+    public boolean accept(@Nullable TableAvailable table, @Nullable String property, Object value) {
         if(value==null){
             return false;
         }

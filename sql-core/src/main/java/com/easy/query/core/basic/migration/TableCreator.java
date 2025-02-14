@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.migration;
 
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 

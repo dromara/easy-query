@@ -1,6 +1,6 @@
 package com.easy.query.test.navigate;
 
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.expression.lambda.SQLExpression1;

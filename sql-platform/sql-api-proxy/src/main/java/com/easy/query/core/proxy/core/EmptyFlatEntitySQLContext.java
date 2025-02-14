@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.core;
 
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AggregateFilter;

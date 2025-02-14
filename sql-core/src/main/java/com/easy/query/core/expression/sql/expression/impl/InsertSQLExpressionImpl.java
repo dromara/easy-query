@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;

@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.builder;
 
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.SelectorColumn;

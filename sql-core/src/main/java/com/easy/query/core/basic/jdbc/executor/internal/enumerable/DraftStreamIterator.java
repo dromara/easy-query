@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;

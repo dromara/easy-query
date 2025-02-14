@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.key;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.math.BigDecimal;

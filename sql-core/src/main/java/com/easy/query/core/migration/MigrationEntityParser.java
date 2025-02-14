@@ -1,6 +1,6 @@
 package com.easy.query.core.migration;
 
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.metadata.ColumnMetadata;
 
 /**

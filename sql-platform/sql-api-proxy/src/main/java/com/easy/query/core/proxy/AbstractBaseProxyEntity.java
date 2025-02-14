@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;

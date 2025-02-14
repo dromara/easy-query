@@ -9,7 +9,7 @@
 //import com.easy.query.core.annotation.Navigate;
 //import com.easy.query.core.annotation.NavigateFlat;
 //import com.easy.query.core.annotation.NavigateJoin;
-//import com.easy.query.core.annotation.NotNull;
+//import org.jetbrains.annotations.NotNull;
 //import com.easy.query.core.annotation.ShardingDataSourceKey;
 //import com.easy.query.core.annotation.ShardingExtraDataSourceKey;
 //import com.easy.query.core.annotation.ShardingExtraTableKey;

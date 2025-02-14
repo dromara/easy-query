@@ -1,6 +1,6 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.common.IncludeRelationIdAvailable;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;

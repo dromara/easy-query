@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.api.cte.CteTableAvailable;
 import com.easy.query.core.basic.api.select.executor.Fillable;
 import com.easy.query.core.basic.api.select.executor.MapAble;

@@ -1,6 +1,6 @@
 package com.easy.query.test.common;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.metadata.EntityMetadata;

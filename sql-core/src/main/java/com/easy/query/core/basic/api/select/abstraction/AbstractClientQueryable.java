@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;

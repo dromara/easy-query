@@ -53,6 +53,18 @@
         <solon.version>2.6.5</solon.version>
         <mysql.version>8.0.17</mysql.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>26.0.2</version>
+                <scope>provided</scope>
+                <optional>true</optional>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <distributionManagement>
         <repository>
             <!--这两个id需要和setting.xml文件中的server字段的id进行对应-->

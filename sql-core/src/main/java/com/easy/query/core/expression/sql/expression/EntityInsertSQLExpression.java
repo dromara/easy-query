@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.sql.expression;
 
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 
 import java.util.List;

@@ -1,7 +1,8 @@
 package com.easy.query.core.expression.builder.core;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * create time 2023/8/19 15:06
@@ -15,7 +16,7 @@ public class AnyValueFilter implements ValueFilter {
 
     }
     @Override
-    public boolean accept(@NotNull TableAvailable table,@NotNull String property, Object value) {
+    public boolean accept(@Nullable TableAvailable table, @Nullable String property, Object value) {
         return true;
     }
 }

@@ -16,7 +16,7 @@ import com.easy.query.api4j.sql.impl.SQLGroupBySelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLOrderByColumnSelectorImpl;
 import com.easy.query.api4j.sql.impl.SQLWhereAggregatePredicateImpl;
 import com.easy.query.api4j.sql.impl.SQLWherePredicateImpl;
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;

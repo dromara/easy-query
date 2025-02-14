@@ -1059,13 +1059,12 @@ public class QueryTest8 extends BaseTest {
     @Test
      public void testNativeSql(){
 
-
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<BlogEntity> list1 = easyQuery.queryable(BlogEntity.class)
                 .where(o -> {
-                    o.sqlNativeSegment("date_format({0},''%y%m%d'') <= date_format({1},''%y%m%d'')", c -> {
+                    o.sqlNativeSegment("date_format({0},'%y%m%d') <= date_format({1},'%y%m%d')", c -> {
                         c
                                 //.keepStyle()
                                 .expression(BlogEntity::getPublishTime).value("2023-01-01 00:00:00");

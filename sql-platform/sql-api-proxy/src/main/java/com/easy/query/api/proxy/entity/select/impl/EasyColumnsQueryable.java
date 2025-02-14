@@ -1,6 +1,6 @@
 //package com.easy.query.api.proxy.entity.select.impl;
 //
-//import com.easy.query.core.annotation.NotNull;
+//import org.jetbrains.annotations.NotNull;
 //import com.easy.query.core.api.pagination.EasyPageResult;
 //import com.easy.query.core.basic.api.select.Query;
 //import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;

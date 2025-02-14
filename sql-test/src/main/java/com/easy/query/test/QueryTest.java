@@ -777,7 +777,7 @@ public class QueryTest extends BaseTest {
         String limitSql = sql.cloneQueryable().limit(2, 2).toSQL();
         Assert.assertEquals("SELECT IFNULL(t1.`id`,?) AS `id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY IFNULL(t1.`id`,?) LIMIT 2 OFFSET 2", limitSql);
         String sql1 = sql.cloneQueryable().selectColumn(t_blog -> t_blog.id().count()).toSQL();
-        Assert.assertEquals(":SELECT COUNT(t2.`id`) FROM (SELECT IFNULL(t1.`id`,?) AS `id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY IFNULL(t1.`id`,?)) t2", sql1);
+        Assert.assertEquals("SELECT COUNT(t2.`id`) FROM (SELECT IFNULL(t1.`id`,?) AS `id`,SUM(t1.`score`) AS `score` FROM `t_topic` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY IFNULL(t1.`id`,?)) t2", sql1);
 
     }
 

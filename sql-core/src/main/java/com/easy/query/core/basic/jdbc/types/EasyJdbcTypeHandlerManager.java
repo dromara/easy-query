@@ -1,8 +1,8 @@
 package com.easy.query.core.basic.jdbc.types;
 
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.jdbc.types.handler.BigDecimalTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.BlobTypeHandler;
 import com.easy.query.core.basic.jdbc.types.handler.BooleanTypeHandler;
