@@ -143,8 +143,7 @@ public class UpdateTest extends BaseTest {
 
     @Test
     public void updateTest1_1() {
-        TopicProxy table = TopicProxy.createTable();
-        String sql = easyProxyQuery.updatable(table)
+        String sql = easyEntityQuery.updatable(Topic.class)
                 .setColumns(t -> {
                     t.stars().set(123);
                 })
@@ -155,8 +154,7 @@ public class UpdateTest extends BaseTest {
 
     @Test
     public void updateTest1_2() {
-        TopicProxy table = TopicProxy.createTable();
-        String sql = easyProxyQuery.updatable(table)
+        String sql = easyEntityQuery.updatable(Topic.class)
                 .setColumns(t -> {
                     t.stars().set(123);
                 })
@@ -164,7 +162,7 @@ public class UpdateTest extends BaseTest {
                 .toSQL();
         Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `id` = ?", sql);
         try {
-            String sql1 = easyProxyQuery.updatable(table)
+            String sql1 = easyEntityQuery.updatable(Topic.class)
                     .setColumns(t -> {
                         t.stars().set(123);
                     })
@@ -424,8 +422,7 @@ public class UpdateTest extends BaseTest {
     public void updateTest12_1() {
         Topic topic = easyQuery.queryable(Topic.class).whereById("15").firstOrNull();
         Assert.assertNotNull(topic);
-        String sql = easyProxyQuery.updatable(topic)
-                .useProxy(TopicProxy.createTable())
+        String sql = easyEntityQuery.updatable(topic)
                 .whereColumns(o -> o.FETCHER.columnKeys().stars()).toSQL(topic);
         Assert.assertEquals("UPDATE `t_topic` SET `title` = ?,`create_time` = ? WHERE `id` = ? AND `stars` = ?", sql);
     }

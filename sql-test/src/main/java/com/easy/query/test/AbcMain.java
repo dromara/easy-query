@@ -1,9 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.logging.LogFactory;
@@ -43,7 +41,6 @@ public class AbcMain {
 
         EasyEntityQuery easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         //不需要实现接口但是使用方式有点区别
-        EasyProxyQuery easyProxyQuery = new DefaultEasyProxyQuery(easyQueryClient);
 
         //根据id查询第一条
         Topic topic1 = easyEntityQuery.queryable(Topic.class)

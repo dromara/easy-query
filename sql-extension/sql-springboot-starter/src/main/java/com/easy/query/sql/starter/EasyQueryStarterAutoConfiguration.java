@@ -1,9 +1,7 @@
 package com.easy.query.sql.starter;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.clickhouse.config.ClickHouseDatabaseConfiguration;
@@ -342,11 +340,6 @@ public class EasyQueryStarterAutoConfiguration {
         return new DefaultEasyEntityQuery(easyQueryClient);
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public EasyProxyQuery easyProxyQuery(EasyQueryClient easyQueryClient) {
-        return new DefaultEasyProxyQuery(easyQueryClient);
-    }
 //    @Bean
 //    @ConditionalOnMissingBean
 //    public EntityQuery entityQuery(EasyQueryClient easyQueryClient) {

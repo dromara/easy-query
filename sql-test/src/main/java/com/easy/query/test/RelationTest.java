@@ -2096,15 +2096,6 @@ public class RelationTest extends BaseTest {
                     Assert.assertNull(schoolStudent.getSchoolStudentAddress());
                 }
             }
-            {
-
-                SchoolStudentProxy table = SchoolStudentProxy.createTable();
-                List<SchoolStudent> listp = easyProxyQuery.queryable(table).toList();
-                Assert.assertEquals(3, listp.size());
-                for (SchoolStudent schoolStudent : listp) {
-                    Assert.assertNull(schoolStudent.getSchoolStudentAddress());
-                }
-            }
 
 
             {

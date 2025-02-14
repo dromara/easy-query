@@ -1,6 +1,5 @@
 package com.easy.query.solon.integration.holder;
 
-import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -23,15 +22,13 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
     private final EasyQueryClient easyQueryClient;
     private final EasyEntityQuery entityQuery;
     private final EasyQuery easyQuery;
-    private final EasyProxyQuery easyProxyQuery;
 //    private final EntityQuery entityQuery;
 
-    public DefaultEasyQueryHolder(EasyQueryClient easyQueryClient, EasyEntityQuery entityQuery, EasyQuery easyQuery, EasyProxyQuery easyProxyQuery){
+    public DefaultEasyQueryHolder(EasyQueryClient easyQueryClient, EasyEntityQuery entityQuery, EasyQuery easyQuery){
         this.easyQueryClient = easyQueryClient;
         this.entityQuery = entityQuery;
         this.easyQuery = easyQuery;
 
-        this.easyProxyQuery = easyProxyQuery;
     }
 
     @Override
@@ -55,10 +52,6 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
 
         if (Objects.equals(EasyQueryClient.class,clazz)) {
             return EasyObjectUtil.typeCastNullable(this.easyQueryClient);
-        }
-
-        if (Objects.equals(EasyProxyQuery.class,clazz)) {
-            return EasyObjectUtil.typeCastNullable(this.easyProxyQuery);
         }
 
         throw new UnsupportedOperationException(EasyClassUtil.getSimpleName(clazz));
@@ -89,11 +82,6 @@ public class DefaultEasyQueryHolder implements EasyQueryHolder{
 
         if (Objects.equals(EasyQueryClient.class,varH.getType())) {
             varH.setValue(this.easyQueryClient);
-            return;
-        }
-
-        if (Objects.equals(EasyProxyQuery.class,varH.getType())) {
-            varH.setValue(this.easyProxyQuery);
             return;
         }
         if(Objects.equals(QueryConfiguration.class,varH.getType())){
