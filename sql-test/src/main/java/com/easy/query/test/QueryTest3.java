@@ -27,6 +27,7 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.test.common.MyLimitPager;
 import com.easy.query.test.common.MyPager;
 import com.easy.query.test.common.PageResult;
 import com.easy.query.test.dto.BlogQuery1Request;
@@ -1862,6 +1863,24 @@ public class QueryTest3 extends BaseTest {
         Assert.assertEquals(1, pageResult.getTotalCount());
         Assert.assertEquals("1" , pageResult.getList().get(0).getId());
     }
+//    @Test
+//    public void testGenericKey2_1() {
+//        PageResult<TopicGenericKey> pageResult = easyQuery
+//                .queryable(TopicGenericKey.class)
+//                .whereById("1" )
+//                .toPageResult(new MyLimitPager<>(1, 20));
+//
+//       var pageResult1 = easyQuery
+//                .queryable(TopicGenericKey.class)
+//                .whereById("1" )
+//                .select(TopicTypeVO.class)
+//                .toPageResult(new MyLimitPager<>(1, -1));
+//
+//        List<TopicTypeVO> list = pageResult1.getList();
+//
+//        Assert.assertEquals(1, pageResult.getTotalCount());
+//        Assert.assertEquals("1" , pageResult.getList().get(0).getId());
+//    }
 
     @Test
     public void nativePage1() {
