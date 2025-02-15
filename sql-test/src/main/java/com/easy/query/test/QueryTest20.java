@@ -8,7 +8,10 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable3;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.api4j.select.Queryable;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
@@ -21,6 +24,7 @@ import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.proxy.TopicGroupTestDTOProxy;
 import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.EntityColumnKey;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.entity.blogtest.proxy.SysUserProxy;
@@ -37,6 +41,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -654,6 +659,22 @@ public class QueryTest20 extends BaseTest {
         String format = EasyUtil.getQuarterStart(LocalDateTime.now()).format(DateTimeFormatter.ofPattern("yyyy'Q'Q"));
         System.out.println(format);
         Assert.assertEquals("2025Q1",format);
+    }
+    @Test
+    public void test2(){
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        databaseCodeFirst.createDatabaseIfNotExists();
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(EntityColumnKey.class));
+        codeFirstCommand.executeWithTransaction(arg->arg.commit());
+        easyEntityQuery.deletable(EntityColumnKey.class).allowDeleteStatement(true).executeRows();
+        EntityColumnKey entityColumnKey = new EntityColumnKey();
+        entityColumnKey.setId("1");
+        entityColumnKey.setKey("2");
+        easyEntityQuery.insertable(entityColumnKey).executeRows();
+        List<EntityColumnKey> list = easyEntityQuery.queryable(EntityColumnKey.class).toList();
+        System.out.println(list);
+
+
     }
 
 
