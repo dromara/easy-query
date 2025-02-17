@@ -1045,6 +1045,7 @@ public class QueryTest15 extends BaseTest {
                     m.createTime().format("yyyy年MM月dd日").eq("2022年01月01日");
                 }).toSQL();
         Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE strftime('%Y年%m月%d日', \"create_time\") = ?", sql);
+
     }
 
 //    @Test
