@@ -1,8 +1,10 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.flat.MapQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintFormat;
@@ -30,6 +32,7 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
@@ -56,6 +59,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -66,7 +70,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class QueryTest15 extends BaseTest {
     @Test
-    public void testSimple(){
+    public void testSimple() {
 
 
         {
@@ -91,7 +95,6 @@ public class QueryTest15 extends BaseTest {
 
     @Test
     public void test1() {
-
 
 
         {
@@ -153,7 +156,7 @@ public class QueryTest15 extends BaseTest {
     }
 
     @Test
-    public void test1_1(){
+    public void test1_1() {
 
         {
 
@@ -537,7 +540,7 @@ public class QueryTest15 extends BaseTest {
 
                     TopicProxy topicProxy = new TopicProxy();
                     topicProxy.title().set(
-                            t.expression().caseWhen(() -> t.title().eq("123")).then("1").elseEnd("2")
+                            t.expression().caseWhen(() -> t.title().eq("123")).then("1").elseEnd("2").asAnyType(String.class)
                     );
                     return topicProxy;
                 }).toList();
@@ -849,8 +852,9 @@ public class QueryTest15 extends BaseTest {
 //                    t.createTime().gt(LocalDateTime.now());
 //                }).toList();
     }
+
     @Test
-    public void testColumn(){
+    public void testColumn() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -868,8 +872,9 @@ public class QueryTest15 extends BaseTest {
         Assert.assertEquals("6261(String),-3(Long),-1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testColumn1(){
+    public void testColumn1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -883,8 +888,9 @@ public class QueryTest15 extends BaseTest {
             System.out.println(localDateTime);
         }
     }
+
     @Test
-    public void testColumn2(){
+    public void testColumn2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -894,10 +900,11 @@ public class QueryTest15 extends BaseTest {
         Assert.assertEquals("SELECT t.`stars` FROM `t_topic` t LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("6261(String),-3(Integer),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
-       Assert.assertNotNull(i);
+        Assert.assertNotNull(i);
     }
+
     @Test
-    public void testFETCHER(){
+    public void testFETCHER() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -917,31 +924,31 @@ public class QueryTest15 extends BaseTest {
     }
 
     @Test
-     public void testxxx1(){
+    public void testxxx1() {
         List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     Expression expression = o.expression();
-                    o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" );
+                    o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                     o.or(() -> {
                         o.stars().ne(1);
                         o.createTime().le(LocalDateTime.of(2024, 1, 1, 1, 1));
-                        o.title().notLike("abc" );
+                        o.title().notLike("abc");
                     });
-                    o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" );
-                    o.id().nullOrDefault("yyyy/MM/dd" ).eq("xxx" );
-                    expression.sql("{0} != {1}" , c -> {
+                    o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
+                    o.id().nullOrDefault("yyyy/MM/dd").eq("xxx");
+                    expression.sql("{0} != {1}", c -> {
                         c.expression(o.stars()).expression(o.createTime());
                     });
                     o.or(() -> {
-                        o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" );
-                        o.id().nullOrDefault("yyyy/MM/dd" ).eq("xxx" );
-                        expression.sql("{0} != {1}" , c -> {
+                        o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
+                        o.id().nullOrDefault("yyyy/MM/dd").eq("xxx");
+                        expression.sql("{0} != {1}", c -> {
                             c.expression(o.stars()).expression(o.createTime());
                         });
                     });
 
-                    o.createTime().format("yyyy/MM/dd" ).eq("2023/01/02" );
-                    o.id().nullOrDefault("yyyy/MM/dd2" ).eq("xxx1" );
+                    o.createTime().format("yyyy/MM/dd").eq("2023/01/02");
+                    o.id().nullOrDefault("yyyy/MM/dd2").eq("xxx1");
                 })
                 .select(o -> o.FETCHER
                         .allFieldsExclude(o.id(), o.title())
@@ -950,19 +957,19 @@ public class QueryTest15 extends BaseTest {
                 .toList();
 
         List<Topic> list3 = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
-                .select(o -> new TopicProxy().adapter(r->{
+                .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
+                .select(o -> new TopicProxy().adapter(r -> {
 
                     r.title().set(o.stars().nullOrDefault(0).toStr());
-                    r.alias().setSQL("IFNULL({0},'')" , c -> {
+                    r.alias().setSQL("IFNULL({0},'')", c -> {
                         c.keepStyle();
                         c.expression(o.id());
                     });
                 }))
                 .toList();
         List<Topic> list4 = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.createTime().format("yyyy/MM/dd" ).eq("2023/01/01" ))
-                .select(o -> new TopicProxy().adapter(r->{
+                .where(o -> o.createTime().format("yyyy/MM/dd").eq("2023/01/01"))
+                .select(o -> new TopicProxy().adapter(r -> {
 
                     r.title().set(o.stars().nullOrDefault(0).toStr());
 
@@ -978,7 +985,7 @@ public class QueryTest15 extends BaseTest {
     }
 
     @Test
-     public void test1c(){
+    public void test1c() {
         Topic xxx = easyQuery.queryable(Topic.class).firstNotNull(() -> new BusinessException("xxx"));
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -1007,7 +1014,6 @@ public class QueryTest15 extends BaseTest {
 //                    b.title().subString()
 //                });
     }
-
 
 
     @Test
@@ -1047,17 +1053,40 @@ public class QueryTest15 extends BaseTest {
         Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE strftime('%Y年%m月%d日', \"create_time\") = ?", sql);
 
 
-
-
-
     }
 
-//    @Test
-//    public void aaa(){
-//
-////        BlogEntity blogEntity = easyEntityQuery.queryable(BlogEntityProxy.createTable())
-////                .where(b -> b.title().eq("123"))
-////                .firstOrNull();
-//    }
+    @Test
+    public void aaa() {
+
+//        BlogEntity blogEntity = easyEntityQuery.queryable(BlogEntityProxy.createTable())
+//                .where(b -> b.title().eq("123"))
+//                .firstOrNull();
+
+        EasyPageResult<Map<String, Object>> pageResult = easyEntityQuery.queryable(Topic.class)
+                .where(t_topic -> {
+                    t_topic.id().eq("1");
+                })
+                .select(t_topic -> new MapProxy().selectAll(t_topic))
+                .toPageResult(1, 20);
+        System.out.println(pageResult.getTotal());
+        System.out.println(pageResult.getData());
+    }
+
+    @Test
+    public void aaa1() {
+
+//        BlogEntity blogEntity = easyEntityQuery.queryable(BlogEntityProxy.createTable())
+//                .where(b -> b.title().eq("123"))
+//                .firstOrNull();
+        Class<Map<String, Object>> resultClazz = EasyObjectUtil.typeCastNullable(Map.class);
+        EasyPageResult<Map<String, Object>> pageResult = easyEntityQuery.queryable(Topic.class)
+                .where(t_topic -> {
+                    t_topic.id().eq("1");
+                })
+                .select(resultClazz, t_topic -> t_topic.FETCHER.allFields())
+                .toPageResult(1, 20);
+        System.out.println(pageResult.getTotal());
+        System.out.println(pageResult.getData());
+    }
 
 }

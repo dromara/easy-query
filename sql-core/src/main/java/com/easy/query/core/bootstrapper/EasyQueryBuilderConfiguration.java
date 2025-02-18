@@ -45,7 +45,9 @@ import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.configuration.column2mapkey.DefaultColumn2MapKeyConversion;
 import com.easy.query.core.configuration.dialect.DefaultSQLKeyword;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
+import com.easy.query.core.configuration.nameconversion.MapKeyNameConversion;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.DefaultMapKeyNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
 import com.easy.query.core.context.DefaultEasyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -206,6 +208,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(MigrationsSQLGenerator.class, DefaultMigrationsSQLGenerator.class)
                 .replaceService(DatabaseMigrationProvider.class, DefaultDatabaseMigrationProvider.class)
                 .replaceService(CteTableNamedProvider.class, DefaultCteTableNamedProvider.class)
+                .replaceService(MapKeyNameConversion.class, DefaultMapKeyNameConversion.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

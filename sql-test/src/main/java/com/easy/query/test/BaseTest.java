@@ -13,6 +13,7 @@ import com.easy.query.core.basic.entity.PropertyEntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
+import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -66,6 +67,7 @@ import com.easy.query.test.keytest.MyTestPrimaryKeyGenerator;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
+import com.easy.query.test.mypage.MyEasyPageResultProvider;
 import com.easy.query.test.parser.MyLambdaParser;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
 import com.easy.query.test.sharding.DataSourceShardingInitializer;
@@ -186,6 +188,7 @@ public abstract class BaseTest {
                 .replaceService(QueryConfiguration.class, MyQueryConfiguration.class)
 //                .replaceService(EntityMappingRule.class, PropertyEntityMappingRule.class)
                 .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
+//                .replaceService(EasyPageResultProvider.class,MyEasyPageResultProvider.class)
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();

@@ -46,7 +46,7 @@ public interface SQLSegmentFactory {
 //    ColumnAsConstSegment createColumnAsConstSegment(TableAvailable table, QueryRuntimeContext runtimeContext,String columnConst, String alias);
     SQLNativeSegment createSQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression);
     InsertUpdateSetColumnSQLSegment createInsertColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext);
-    InsertUpdateSetColumnSQLSegment createInsertMapColumnSegment(String columnName, QueryRuntimeContext runtimeContext);
+    InsertUpdateSetColumnSQLSegment createInsertMapColumnSegment(String columnName, String mapKey, QueryRuntimeContext runtimeContext);
     InsertUpdateSetColumnSQLSegment createColumnWithSelfSegment(boolean increment, TableAvailable table, String propertyName, Object val, ExpressionContext expressionContext);
     default InsertUpdateSetColumnSQLSegment createUpdateColumnSegment(TableAvailable table, String propertyName, ExpressionContext expressionContext, VersionStrategy versionStrategy){
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);

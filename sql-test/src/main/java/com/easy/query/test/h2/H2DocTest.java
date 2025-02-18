@@ -30,13 +30,26 @@ public class H2DocTest extends H2BaseTest {
 
     @Test
     public void selectProxyTest1() {
+//
+//        List<DocUser> list1 = easyEntityQuery.queryable(DocUser.class)
+//                .where(user -> {
+//
+//                    //表示用户下的银行卡是储蓄卡的必须有至少一张
+//                    user.bankCards().where(o -> o.type().eq("储蓄卡")).any();
+//
+//
+//                    //表示用户下的银行卡是储蓄卡的必须只能有2张
+//                    user.bankCards().where(o -> o.type().eq("储蓄卡")).count().eq(2L);
+//                })
+//                .toList();
 
-        easyEntityQuery.queryable(DocUser.class)
-                .selectAutoInclude(DocUserVO.class);
 
-        easyEntityQuery.queryable(DocUser.class)
-                .includes(user -> user.bankCards(),cq->cq.where(c->c.bankId().eq("招商银行")))
-                .selectAutoInclude(DocUserVO.class);
+//        easyEntityQuery.queryable(DocUser.class)
+//                .selectAutoInclude(DocUserVO.class);
+//
+//        easyEntityQuery.queryable(DocUser.class)
+//                .includes(user -> user.bankCards(),cq->cq.where(c->c.bankId().eq("招商银行")))
+//                .selectAutoInclude(DocUserVO.class);
 
 
         ListenerContext listenerContext = new ListenerContext();
