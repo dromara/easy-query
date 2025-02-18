@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.common.MapValue;
+import com.easy.query.core.configuration.nameconversion.MapKeyNameConversion;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
@@ -171,6 +172,7 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
         //查询其他所有列除了在where里面的
         Set<String> columns = map.keySet();
 
+        MapKeyNameConversion mapKeyNameConversion = getRuntimeContext().getMapKeyNameConversion();
 
         boolean hasConfigure = columnConfigurers != null && !columnConfigurers.isEmpty();
         Set<String> ignorePropertySet = new HashSet<>(map.size());
@@ -181,11 +183,11 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
             }
             if (whereColumns.contains(column)) {
                 Object val = map.get(column);
-                if(!(val instanceof MapValue)){
+                if (!(val instanceof MapValue)) {
                     continue;
                 }
             }
-            UpdateMapColumnSegmentImpl updateMapColumnSegment = new UpdateMapColumnSegmentImpl(entityTable, column, runtimeContext);
+            UpdateMapColumnSegmentImpl updateMapColumnSegment = new UpdateMapColumnSegmentImpl(entityTable, mapKeyNameConversion.convert(column), column, runtimeContext);
             if (hasConfigure) {
                 ColumnConfigurerContext columnConfigurerContext = columnConfigurers.get(column);
                 if (columnConfigurerContext != null) {
@@ -223,8 +225,15 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
             Predicate<Object> valuePredicate = Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull;
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 Object value = entry.getValue();
-                if (valuePredicate.test(value)) {
-                    ignoreUpdateSet.add(entry.getKey());
+                if(value instanceof MapValue){
+                    MapValue mapValue = (MapValue) value;
+                    if (valuePredicate.test(mapValue.getCurrentValue())) {
+                        ignoreUpdateSet.add(entry.getKey());
+                    }
+                }else{
+                    if (valuePredicate.test(value)) {
+                        ignoreUpdateSet.add(entry.getKey());
+                    }
                 }
             }
         }
@@ -235,6 +244,7 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
         if (EasyCollectionUtil.isEmpty(whereColumns)) {
             throw new EasyQueryException("map update whereColumns is empty");
         }
+        MapKeyNameConversion mapKeyNameConversion = getRuntimeContext().getMapKeyNameConversion();
         for (String whereColumn : whereColumns) {
             Object val = map.get(whereColumn);
             Object predicateValue = val;
@@ -243,11 +253,11 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
                 predicateValue = mapValue.getPredicateValue();
             }
             if (predicateValue == null) {
-                MapColumnNullAssertPredicate columnPredicate = new MapColumnNullAssertPredicate(tableExpressionBuilder.getEntityTable(), whereColumn, SQLPredicateCompareEnum.IS_NULL, runtimeContext);
+                MapColumnNullAssertPredicate columnPredicate = new MapColumnNullAssertPredicate(tableExpressionBuilder.getEntityTable(), mapKeyNameConversion.convert(whereColumn), SQLPredicateCompareEnum.IS_NULL, runtimeContext);
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnPredicate);
                 where.addPredicateSegment(andPredicateSegment);
             } else {
-                MapColumnValuePredicate columnValuePredicate = new MapColumnValuePredicate(tableExpressionBuilder.getEntityTable(), whereColumn,SQLPredicateCompareEnum.EQ, runtimeContext);
+                MapColumnValuePredicate columnValuePredicate = new MapColumnValuePredicate(tableExpressionBuilder.getEntityTable(), mapKeyNameConversion.convert(whereColumn), whereColumn, SQLPredicateCompareEnum.EQ, runtimeContext);
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment(columnValuePredicate);
                 where.addPredicateSegment(andPredicateSegment);
             }

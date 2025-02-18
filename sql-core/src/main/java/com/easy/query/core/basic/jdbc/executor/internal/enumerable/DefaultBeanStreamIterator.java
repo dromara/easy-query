@@ -110,10 +110,10 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
                         dataReader = new BeanDataReader(dataReader, new RelationExtraPropertyDataReader(relationExtraResultColumnMetadata));
                         continue;
                     } else if(easyQueryOption.isWarningColumnMiss()){
-                        log.warn("sql result column name:["+colName+"] mapping miss in class:["+ EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) +"]");
+                        log.warn("!!!sql result column name:["+colName+"] mapping miss in class:["+ EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) +"]");
                     }
                 } else if(easyQueryOption.isWarningColumnMiss()){
-                    log.warn("sql result column name:["+colName+"] mapping miss in class:["+ EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) +"]");
+                    log.warn("!!!sql result column name:["+colName+"] mapping miss in class:["+ EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) +"]");
                 }
                 continue;
             }

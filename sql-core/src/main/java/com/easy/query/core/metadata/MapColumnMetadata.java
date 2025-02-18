@@ -11,8 +11,8 @@ public class MapColumnMetadata extends ColumnMetadata{
         super(columnOption);
     }
 
-    @Override
-    public String getPropertyName() {
-        return super.getName();
-    }
+//    @Override
+//    public String getPropertyName() {
+//        return super.getName();
+//    }
 }

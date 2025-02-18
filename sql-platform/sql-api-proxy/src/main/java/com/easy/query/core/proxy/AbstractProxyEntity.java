@@ -262,11 +262,9 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * </pre></blockquote>
      *
      * @param ignoreTableProps
-     * @param <TRProxy>
-     * @param <TREntity>
      * @return
      */
-    public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> TProxy selectIgnores(TablePropColumn... ignoreTableProps) {
+    public TProxy selectIgnores(TablePropColumn... ignoreTableProps) {
         entitySQLContext.accept(new SQLSelectIgnoreImpl(ignoreTableProps));
         return castChain();
     }

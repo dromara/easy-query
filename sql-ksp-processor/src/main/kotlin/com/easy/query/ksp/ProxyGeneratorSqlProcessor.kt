@@ -99,7 +99,8 @@ class ProxyGeneratorSqlProcessor(
     private fun buildEntityProxy(entityClassElement: KSClassDeclaration, resolver: Resolver) {
         val basePath = ""
         val entityProxy = entityClassElement.getAnnotationsByType(EntityProxy::class).first()
-        val tableAnnotation = entityClassElement.getAnnotationsByType(Table::class).first()
+        //dto相关类型无Table注解
+        val tableAnnotation = entityClassElement.getAnnotationsByType(Table::class).firstOrNull()
 
 
         // 每一个 entity 生成一个独立的文件

@@ -1,12 +1,21 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.configuration.nameconversion.MapKeyNameConversion;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.oracle.config.OracleDatabaseConfiguration;
+import com.easy.query.test.conversion.UpperMapKeyNameConversion;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp9;
 import com.easy.query.test.entity.TestInsert;
 import com.easy.query.test.entity.Topic;
@@ -15,6 +24,8 @@ import com.easy.query.test.entity.TopicFile;
 import com.easy.query.test.entity.proxy.TopicFileProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.listener.ListenerContextManager;
+import com.easy.query.test.listener.MyJdbcListener;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -213,5 +224,81 @@ public class InsertTest1 extends BaseTest {
         easyEntityQuery.deletable(TestInsert.class).disableLogicDelete().allowDeleteStatement(true)
                 .where(t -> t.id().isNotNull())
                 .executeRows();
+    }
+
+
+    @Test
+    public void tesInsertMapKey2(){
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(2);
+                    op.setMaxShardingQueryLimit(1);
+                    op.setUpdateStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
+                })
+                .useDatabaseConfigure(new OracleDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .replaceService(MapKeyNameConversion.class, new UpperMapKeyNameConversion())
+                .build();
+        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+
+        {
+
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+                map.put("id","1");
+                map.put("stars","2");
+                map.put("UserName","2");
+
+                easyQueryClient.mapInsertable(map)
+                        .asTable("xxx")
+                        .columnConfigure(x -> {
+                            x.column("stars", "ifnull({0},0)+{1}", (context, sqlParameter) -> {
+                                context.expression("stars")
+                                        .value(sqlParameter);
+                            });
+                        }).executeRows();
+            } catch (Exception ex) {
+                Throwable cause = ex.getCause();
+                Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+                EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+                String sql = cause1.getSQL();
+                Assert.assertEquals("INSERT INTO \"xxx\" (\"ID\",\"STARS\",\"USERNAME\") VALUES (?,ifnull(\"STARS\",0)+?,?)", sql);
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("INSERT INTO \"xxx\" (\"ID\",\"STARS\",\"USERNAME\") VALUES (?,ifnull(\"STARS\",0)+?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+
+        }
+        {
+
+            try {
+
+                HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+                stringObjectHashMap.put("id", "123");
+                stringObjectHashMap.put("name", "123");
+                stringObjectHashMap.put("name1", null);
+                easyQueryClient.mapUpdatable(stringObjectHashMap).asTable("aaa")
+                        .setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS)
+                        .whereColumns("id")
+                        .executeRows();
+            } catch (Exception ex) {
+                Throwable cause = ex.getCause();
+                Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
+                EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
+                String sql = cause1.getSQL();
+                Assert.assertEquals("UPDATE \"aaa\" SET \"NAME\" = ?,\"NAME1\" = ? WHERE \"ID\" = ?", sql);
+            }
+        }
+
     }
 }

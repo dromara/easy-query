@@ -18,12 +18,14 @@ import com.easy.query.core.util.EasySQLUtil;
 public class MapColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     private final TableAvailable table;
     private final String columnName;
+    private final String mapKey;
     private final SQLPredicateCompare compare;
     private final QueryRuntimeContext runtimeContext;
 
-    public MapColumnValuePredicate(TableAvailable table, String columnName, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
+    public MapColumnValuePredicate(TableAvailable table, String columnName,String mapKey, SQLPredicateCompare compare, QueryRuntimeContext runtimeContext) {
         this.table = table;
         this.columnName = columnName;
+        this.mapKey = mapKey;
         this.compare = compare;
         this.runtimeContext = runtimeContext;
     }
@@ -48,7 +50,7 @@ public class MapColumnValuePredicate implements ValuePredicate, ShardingPredicat
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-        return new MapColumnValuePredicate(table, columnName, compare, runtimeContext);
+        return new MapColumnValuePredicate(table, columnName,mapKey, compare, runtimeContext);
     }
 
     @Override
@@ -58,6 +60,6 @@ public class MapColumnValuePredicate implements ValuePredicate, ShardingPredicat
 
     @Override
     public SQLParameter getParameter() {
-        return new MapSQLParameter(columnName,true);
+        return new MapSQLParameter(mapKey,true);
     }
 }

@@ -998,6 +998,7 @@ public class QueryTest18 extends BaseTest {
                                 t.stars().subtract(5).lt(BigDecimal.valueOf(0));
                             }).then(0).elseEnd(t.stars().subtract(5))
                     );
+
                 }).where(t -> {
                     t.id().eq("123xxxa");
                 }).executeRows();

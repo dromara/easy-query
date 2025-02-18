@@ -26,33 +26,33 @@ public class MsSQLLikeSQLFunction extends AbstractExpressionSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if(columnExpressions.size()!=2){
+        if (columnExpressions.size() != 2) {
             throw new IllegalArgumentException("bank arguments != 1");
         }
         ColumnExpression columnExpression = columnExpressions.get(1);
-        if(columnExpression instanceof ColumnFuncValueExpression){
+        if (columnExpression instanceof ColumnFuncValueExpression) {
             ColumnFuncValueExpression columnFuncValueExpression = (ColumnFuncValueExpression) columnExpression;
             Object value = columnFuncValueExpression.getValue();
-            if(value!=null){
+            if (value != null) {
                 String valueString = value.toString();
-                if(valueString.contains("%")){
-                    if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_RIGHT){
+                if (valueString.contains("%")) {
+                    if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
                         return "CHARINDEX({1},{0}) = 1";
                     }
-                    if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_LEFT){
+                    if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_LEFT) {
                         return "CHARINDEX({1},{0}) = LEN({0})";
                     }
                     return "CHARINDEX({1},{0}) > 0";
                 }
             }
         }
-        if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_RIGHT){
-            return "{0} LIKE (CAST({1} AS NVARCHAR(MAX)+'%'))";
+        if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
+            return "{0} LIKE (CAST({1} AS NVARCHAR(MAX))+'%')";
         }
-        if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_LEFT){
-            return "{0} LIKE ('%'+CAST({1} AS NVARCHAR(MAX))";
+        if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_LEFT) {
+            return "{0} LIKE ('%'+CAST({1} AS NVARCHAR(MAX)))";
         }
-        return "{0} LIKE ('%'+CAST({1} AS NVARCHAR(MAX)+'%')";
+        return "{0} LIKE ('%'+CAST({1} AS NVARCHAR(MAX))+'%')";
     }
 
     @Override

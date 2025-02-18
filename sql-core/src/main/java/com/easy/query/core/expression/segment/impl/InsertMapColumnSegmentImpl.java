@@ -17,10 +17,12 @@ import com.easy.query.core.util.EasySQLUtil;
 public class InsertMapColumnSegmentImpl implements InsertUpdateSetColumnSQLSegment {
 
     private final String columnName;
+    private final String mapKey;
     private final QueryRuntimeContext runtimeContext;
 
-    public InsertMapColumnSegmentImpl(String columnName, QueryRuntimeContext runtimeContext){
+    public InsertMapColumnSegmentImpl(String columnName,String mapKey, QueryRuntimeContext runtimeContext){
         this.columnName = columnName;
+        this.mapKey = mapKey;
         this.runtimeContext = runtimeContext;
     }
     @Override
@@ -30,12 +32,12 @@ public class InsertMapColumnSegmentImpl implements InsertUpdateSetColumnSQLSegme
 
     @Override
     public InsertUpdateSetColumnSQLSegment cloneSQLColumnSegment() {
-        return new InsertMapColumnSegmentImpl(columnName,runtimeContext);
+        return new InsertMapColumnSegmentImpl(columnName,mapKey,runtimeContext);
     }
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        MapSQLParameter mapSQLParameter = new MapSQLParameter(columnName,false);
+        MapSQLParameter mapSQLParameter = new MapSQLParameter(mapKey,false);
         EasySQLUtil.addParameter(toSQLContext, mapSQLParameter);
         return "?";
     }

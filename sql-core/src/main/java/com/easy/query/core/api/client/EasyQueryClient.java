@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author xuejiaming
@@ -59,7 +60,8 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
     long sqlExecute(String sql, List<Object> parameters);
 
     <T> ClientQueryable<T> queryable(Class<T> clazz);
-    default ClientQueryable<Map<String,Object>> queryable(String tableName){
+
+    default ClientQueryable<Map<String, Object>> queryable(String tableName) {
         return EasyObjectUtil.typeCastNullable(
                 queryable(Map.class).asTable(tableName)
         );
@@ -67,12 +69,14 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
 
 
     MapQueryable mapQueryable();
+
     MapQueryable mapQueryable(String sql);
 
-   default  <T> ClientQueryable<T> queryable(String sql, Class<T> clazz){
-       return queryable(sql,clazz,Collections.emptyList());
-   }
-    <T> ClientQueryable<T> queryable(String sql, Class<T> clazz,Collection<Object> sqlParams);
+    default <T> ClientQueryable<T> queryable(String sql, Class<T> clazz) {
+        return queryable(sql, clazz, Collections.emptyList());
+    }
+
+    <T> ClientQueryable<T> queryable(String sql, Class<T> clazz, Collection<Object> sqlParams);
 
     default Transaction beginTransaction() {
         return beginTransaction(null);
@@ -114,28 +118,35 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
      * @return true:添加成功,false:已经存在相同对象 或者未开启追踪
      */
     boolean addTracking(Object entity);
+
     boolean removeTracking(Object entity);
 
     EntityState getTrackEntityStateNotNull(Object entity);
-    MapClientInsertable<Map<String,Object>> mapInsertable(Map<String,Object> map);
-    MapClientInsertable<Map<String,Object>> mapInsertable(Collection<Map<String,Object>> maps);
-    MapClientUpdatable<Map<String,Object>> mapUpdatable(Map<String,Object> map);
 
-    MapClientUpdatable<Map<String,Object>> mapUpdatable(Collection<Map<String,Object>> maps);
+    MapClientInsertable<Map<String, Object>> mapInsertable(Map<String, Object> map);
 
-//
-    default <T> void loadInclude(T entity,String navigateProperty){
-         loadInclude(Collections.singletonList(entity),navigateProperty);
+    MapClientInsertable<Map<String, Object>> mapInsertable(Collection<Map<String, Object>> maps);
+
+    MapClientUpdatable<Map<String, Object>> mapUpdatable(Map<String, Object> map);
+
+    MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps);
+
+    //
+    default <T> void loadInclude(T entity, String navigateProperty) {
+        loadInclude(Collections.singletonList(entity), navigateProperty);
     }
-    default <T> void loadInclude(T entity,String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
-         loadInclude(Collections.singletonList(entity),navigateProperty,configure);
+
+    default <T> void loadInclude(T entity, String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
+        loadInclude(Collections.singletonList(entity), navigateProperty, configure);
     }
-    default <T> void loadInclude(List<T> entities,String navigateProperty){
-         loadInclude(entities,navigateProperty,null);
+
+    default <T> void loadInclude(List<T> entities, String navigateProperty) {
+        loadInclude(entities, navigateProperty, null);
     }
-    <T> void loadInclude(List<T> entities,String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure);
+
+    <T> void loadInclude(List<T> entities, String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure);
 
     DatabaseCodeFirst getDatabaseCodeFirst();
-    //DatabaseMigrationProvider
+
     void setMigrationParser(MigrationEntityParser migrationParser);
 }

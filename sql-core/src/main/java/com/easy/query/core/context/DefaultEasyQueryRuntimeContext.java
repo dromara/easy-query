@@ -20,6 +20,7 @@ import com.easy.query.core.common.MapColumnNameChecker;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
+import com.easy.query.core.configuration.nameconversion.MapKeyNameConversion;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.exception.AssertExceptionFactory;
@@ -92,6 +93,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final EntityMappingRule entityMappingRule;
     private final MigrationsSQLGenerator migrationsSQLGenerator;
     private final CteTableNamedProvider cteTableNamedProvider;
+    private final MapKeyNameConversion mapKeyNameConversion;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -133,7 +135,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           ValueFilterFactory valueFilterFactory,
                                           EntityMappingRule entityMappingRule,
                                           MigrationsSQLGenerator migrationsSQLGenerator,
-                                          CteTableNamedProvider cteTableNamedProvider) {
+                                          CteTableNamedProvider cteTableNamedProvider,
+                                          MapKeyNameConversion mapKeyNameConversion) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -175,6 +178,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.entityMappingRule = entityMappingRule;
         this.migrationsSQLGenerator = migrationsSQLGenerator;
         this.cteTableNamedProvider = cteTableNamedProvider;
+        this.mapKeyNameConversion = mapKeyNameConversion;
     }
 
     @Override
@@ -381,5 +385,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public CteTableNamedProvider getCteTableNamedProvider() {
         return cteTableNamedProvider;
+    }
+
+    @Override
+    public MapKeyNameConversion getMapKeyNameConversion() {
+        return mapKeyNameConversion;
     }
 }

@@ -87,8 +87,8 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public InsertUpdateSetColumnSQLSegment createInsertMapColumnSegment(String columnName, QueryRuntimeContext runtimeContext) {
-        return new InsertMapColumnSegmentImpl(columnName, runtimeContext);
+    public InsertUpdateSetColumnSQLSegment createInsertMapColumnSegment(String columnName,String mapKey, QueryRuntimeContext runtimeContext) {
+        return new InsertMapColumnSegmentImpl(columnName,mapKey, runtimeContext);
     }
 
     @Override

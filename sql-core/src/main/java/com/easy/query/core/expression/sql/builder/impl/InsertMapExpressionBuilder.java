@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
+import com.easy.query.core.common.MapValue;
+import com.easy.query.core.configuration.nameconversion.MapKeyNameConversion;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -38,6 +40,7 @@ import java.util.function.Predicate;
 public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder implements EntityInsertExpressionBuilder {
 
     protected Map<String, ColumnConfigurerContext> columnConfigurers;
+
     public InsertMapExpressionBuilder(ExpressionContext expressionContext) {
         super(expressionContext, Map.class);
     }
@@ -96,8 +99,15 @@ public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder 
             Predicate<Object> valuePredicate = Objects.equals(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS, updateStrategy) ? Objects::isNull : Objects::nonNull;
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 Object value = entry.getValue();
-                if (valuePredicate.test(value)) {
-                    ignoreUpdateSet.add(entry.getKey());
+                if (value instanceof MapValue) {
+                    MapValue mapValue = (MapValue) value;
+                    if (valuePredicate.test(mapValue.getCurrentValue())) {
+                        ignoreUpdateSet.add(entry.getKey());
+                    }
+                } else {
+                    if (valuePredicate.test(value)) {
+                        ignoreUpdateSet.add(entry.getKey());
+                    }
                 }
             }
         }
@@ -114,6 +124,8 @@ public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder 
         EntityTableExpressionBuilder table = getTable(0);
         QueryRuntimeContext runtimeContext = getRuntimeContext();
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
+        MapKeyNameConversion mapKeyNameConversion = runtimeContext.getMapKeyNameConversion();
+
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         EntityInsertSQLExpression easyInsertSQLExpression = expressionFactory.createEasyInsertSQLExpression(entitySQLExpressionMetadata, table.toExpression());
         SQLBuilderSegment insertCloneColumns = new ProjectSQLBuilderSegmentImpl();
@@ -124,10 +136,10 @@ public class InsertMapExpressionBuilder extends AbstractEntityExpressionBuilder 
         Set<String> ignorePropertySet = new HashSet<>(map.size());
         boolean clearIgnoreProperties = clearIgnoreProperties(ignorePropertySet, getRuntimeContext(), map);
         for (String columnName : map.keySet()) {
-            if(clearIgnoreProperties&&ignorePropertySet.contains(columnName)){
+            if (clearIgnoreProperties && ignorePropertySet.contains(columnName)) {
                 continue;
             }
-            InsertUpdateSetColumnSQLSegment columnInsertSegment = sqlSegmentFactory.createInsertMapColumnSegment(columnName, runtimeContext);
+            InsertUpdateSetColumnSQLSegment columnInsertSegment = sqlSegmentFactory.createInsertMapColumnSegment(mapKeyNameConversion.convert(columnName), columnName, runtimeContext);
 
             if (hasConfigure) {
                 ColumnConfigurerContext columnConfigurerContext = this.columnConfigurers.get(columnName);

@@ -1,11 +1,8 @@
 package com.easy.query.test.mssql.entity.proxy;
 
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
-import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
@@ -21,6 +18,8 @@ import com.easy.query.core.proxy.columns.types.SQLLocalDateTimeTypeColumn;
 public class MsSQLMyTopicProxy extends AbstractProxyEntity<MsSQLMyTopicProxy, MsSQLMyTopic> {
 
     private static final Class<MsSQLMyTopic> entityClass = MsSQLMyTopic.class;
+
+    public static final MsSQLMyTopicProxy TABLE = createTable().createEmpty();
 
     public static MsSQLMyTopicProxy createTable() {
         return new MsSQLMyTopicProxy();

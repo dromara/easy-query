@@ -18,6 +18,7 @@ import com.easy.query.core.common.MapColumnNameChecker;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
+import com.easy.query.core.configuration.nameconversion.MapKeyNameConversion;
 import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.exception.AssertExceptionFactory;
@@ -99,4 +100,5 @@ public interface QueryRuntimeContext {
      * @return 返回cte命名默认提供者
      */
     CteTableNamedProvider getCteTableNamedProvider();
+    MapKeyNameConversion getMapKeyNameConversion();
 }

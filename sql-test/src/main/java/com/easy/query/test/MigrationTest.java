@@ -95,7 +95,6 @@ public class MigrationTest extends BaseTest {
     @Test
     public void createTableSQLTest4() {
 
-
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         if (databaseCodeFirst.tableExists(MyMigrationBlog0.class)) {
             System.out.println("存在表:MyMigrationBlog0");
@@ -117,6 +116,7 @@ public class MigrationTest extends BaseTest {
             Assert.assertEquals("2a927e4ae0dbf7d6f6d687a50888df93", md5);
             arg.commit();
         });
+
         boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
         Assert.assertFalse(any);
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
