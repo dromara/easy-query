@@ -9,8 +9,6 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
-import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
-import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -93,7 +91,6 @@ public abstract class BaseTest {
     public static EasyQueryShardingOption easyQueryShardingOption;
     public static EasyQueryClient easyQueryClient;
     public static EasyQuery easyQuery;
-    public static EasyProxyQuery easyProxyQuery;
     public static EasyEntityQuery easyEntityQuery;
     public static ListenerContextManager listenerContextManager;
 

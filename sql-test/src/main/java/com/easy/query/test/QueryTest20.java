@@ -667,7 +667,7 @@ public class QueryTest20 extends BaseTest {
         databaseCodeFirst.createDatabaseIfNotExists();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(EntityColumnKey.class));
         codeFirstCommand.executeWithTransaction(arg->arg.commit());
-        easyEntityQuery.deletable(EntityColumnKey.class).allowDeleteStatement(true).executeRows();
+        easyEntityQuery.deletable(EntityColumnKey.class).allowDeleteStatement(true).where(e -> e.expression().sql("1=1")).executeRows();
         EntityColumnKey entityColumnKey = new EntityColumnKey();
         entityColumnKey.setId("1");
         entityColumnKey.setKey("2");
