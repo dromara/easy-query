@@ -1,6 +1,7 @@
 package com.easy.query.test.entity.relation;
 
 import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
+import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterCancelable;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -15,7 +16,7 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class BookNavigateExtraFilterStrategy implements NavigateExtraFilterStrategy {
+public class BookNavigateExtraFilterStrategy implements NavigateExtraFilterStrategy, NavigateExtraFilterCancelable {
     @Override
     public SQLExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder) {
         //parentType
@@ -48,5 +49,10 @@ public class BookNavigateExtraFilterStrategy implements NavigateExtraFilterStrat
             }
         }
         return null;
+    }
+
+    @Override
+    public String name() {
+        return "BookNavigateExtraFilterStrategy";
     }
 }
