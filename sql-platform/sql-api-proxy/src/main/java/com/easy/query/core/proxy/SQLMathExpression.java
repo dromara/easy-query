@@ -128,21 +128,21 @@ public interface SQLMathExpression {
             }, MathMethodEnum.Log);
         }, BigDecimal.class);
     }
-    default <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> log10(PropTypeColumn<TProperty> propTypeColumn) {
+    static <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> log10(PropTypeColumn<TProperty> propTypeColumn) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(propTypeColumn.getEntitySQLContext(), propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
             return fx.math(o -> {
                 PropTypeColumn.columnFuncSelector(o,propTypeColumn);
             }, MathMethodEnum.Log10);
         }, BigDecimal.class);
     }
-    default <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> pow(PropTypeColumn<TProperty> propTypeColumn) {
+    static <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> pow(PropTypeColumn<TProperty> propTypeColumn) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(propTypeColumn.getEntitySQLContext(), propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
             return fx.math(o -> {
                 PropTypeColumn.columnFuncSelector(o,propTypeColumn);
             }, MathMethodEnum.Pow);
         }, BigDecimal.class);
     }
-    default <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> pow(PropTypeColumn<TProperty> propTypeColumn, BigDecimal exponent) {
+    static <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> pow(PropTypeColumn<TProperty> propTypeColumn, BigDecimal exponent) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(propTypeColumn.getEntitySQLContext(), propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
             return fx.math(o -> {
                 PropTypeColumn.columnFuncSelector(o,propTypeColumn);
@@ -150,28 +150,28 @@ public interface SQLMathExpression {
             }, MathMethodEnum.Pow);
         }, BigDecimal.class);
     }
-    default <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sqrt(PropTypeColumn<TProperty> propTypeColumn) {
+    static <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sqrt(PropTypeColumn<TProperty> propTypeColumn) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(propTypeColumn.getEntitySQLContext(), propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
             return fx.math(o -> {
                 PropTypeColumn.columnFuncSelector(o,propTypeColumn);
             }, MathMethodEnum.Sqrt);
         }, BigDecimal.class);
     }
-    default <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> cos(PropTypeColumn<TProperty> propTypeColumn) {
+    static <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> cos(PropTypeColumn<TProperty> propTypeColumn) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(propTypeColumn.getEntitySQLContext(), propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
             return fx.math(o -> {
                 PropTypeColumn.columnFuncSelector(o,propTypeColumn);
             }, MathMethodEnum.Cos);
         }, BigDecimal.class);
     }
-    default <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sin(PropTypeColumn<TProperty> propTypeColumn) {
+    static <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sin(PropTypeColumn<TProperty> propTypeColumn) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(propTypeColumn.getEntitySQLContext(), propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
             return fx.math(o -> {
                 PropTypeColumn.columnFuncSelector(o,propTypeColumn);
             }, MathMethodEnum.Sin);
         }, BigDecimal.class);
     }
-    default <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> tan(PropTypeColumn<TProperty> propTypeColumn) {
+    static <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> tan(PropTypeColumn<TProperty> propTypeColumn) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(propTypeColumn.getEntitySQLContext(), propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
             return fx.math(o -> {
                 PropTypeColumn.columnFuncSelector(o,propTypeColumn);
@@ -185,28 +185,28 @@ public interface SQLMathExpression {
             }, MathMethodEnum.Acos);
         }, BigDecimal.class);
     }
-    default <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> asin(PropTypeColumn<TProperty> propTypeColumn) {
+    static <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> asin(PropTypeColumn<TProperty> propTypeColumn) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(propTypeColumn.getEntitySQLContext(), propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
             return fx.math(o -> {
                 PropTypeColumn.columnFuncSelector(o,propTypeColumn);
             }, MathMethodEnum.Asin);
         }, BigDecimal.class);
     }
-    default <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> atan(PropTypeColumn<TProperty> propTypeColumn) {
+    static <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> atan(PropTypeColumn<TProperty> propTypeColumn) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(propTypeColumn.getEntitySQLContext(), propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
             return fx.math(o -> {
                 PropTypeColumn.columnFuncSelector(o,propTypeColumn);
             }, MathMethodEnum.Atan);
         }, BigDecimal.class);
     }
-    default <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> atan2(PropTypeColumn<TProperty> propTypeColumn) {
+    static <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> atan2(PropTypeColumn<TProperty> propTypeColumn) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(propTypeColumn.getEntitySQLContext(), propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
             return fx.math(o -> {
                 PropTypeColumn.columnFuncSelector(o,propTypeColumn);
             }, MathMethodEnum.Atan2);
         }, BigDecimal.class);
     }
-    default <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> truncate(PropTypeColumn<TProperty> propTypeColumn) {
+    static <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> truncate(PropTypeColumn<TProperty> propTypeColumn) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(propTypeColumn.getEntitySQLContext(), propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
             return fx.math(o -> {
                 PropTypeColumn.columnFuncSelector(o,propTypeColumn);

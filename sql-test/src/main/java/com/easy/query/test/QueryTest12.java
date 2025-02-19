@@ -24,6 +24,7 @@ import com.easy.query.test.entity.BlogEntity2;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.relation.DynamicExtraFilter;
 import com.easy.query.test.entity.relation.MyRelationUser;
 import com.easy.query.test.entity.relation.MyRelationUserDTO;
 import com.easy.query.test.entity.relation.MyRelationUserDTO1;
@@ -1461,6 +1462,29 @@ public class QueryTest12 extends BaseTest {
                 .toSQL();
         System.out.println(sql);
 
+    }
+    @Test
+    public void testDoc22(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            try(DynamicExtraFilter.ExtraFilterScope scope = DynamicExtraFilter.createScope(false)){
+                List<RelationUser> users = easyEntityQuery.queryable(RelationUser.class)
+                        .where(r -> r.teachers().any(book -> {
+                            book.name().like("小学");
+                        }))
+                        .toList();
+            }
+        }catch (Exception ex){
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `relation_user` t WHERE EXISTS (SELECT 1 FROM `relation_teacher` t1 WHERE EXISTS (SELECT 1 FROM `relation_route` t2 WHERE t2.`second_id` = t1.`id` AND t2.`first_id` = t.`id` AND t2.`type` = ? LIMIT 1) AND t1.`name` LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),%小学%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
 }
