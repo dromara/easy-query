@@ -28,6 +28,12 @@ public class EasyObjectUtil {
         }
         return getter.apply(source);
     }
+    public static <TR> TR nullToDefault(TR source,TR def){
+        if(Objects.isNull(source)){
+            return def;
+        }
+        return def;
+    }
 
     /**
      * 强制类型转换

@@ -53,7 +53,6 @@ public class SchoolStudentProxy extends AbstractProxyEntity<SchoolStudentProxy, 
     }
 
     /**
-     * private Integer age;
      * {@link SchoolStudent#getSchoolClass}
      */
     public com.easy.query.test.entity.school.proxy.SchoolClassProxy schoolClass() {

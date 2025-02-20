@@ -28,6 +28,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -554,22 +555,31 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         if (isGeneric) {
             return "java.lang.Object";
         }
-        String typeString = defTypeString(isDeclared, includeProperty, type);
-        if (typeString.contains("<") && typeString.contains(">")) {
-            String trim = type.toString().trim();
-            if (type.getAnnotationMirrors().size() > 0) {
-                if (trim.lastIndexOf(") ::") > -1) {
-                    return type.toString().trim().substring(type.toString().trim().lastIndexOf(") ::") + 4).replaceAll(">\\)", ">");
-                } else {
-                    for (AnnotationMirror annotationMirror : type.getAnnotationMirrors()) {
-                        trim = trim.replace(annotationMirror.toString(), "").trim();
+
+        if (type.getKind() == TypeKind.ARRAY) {
+            // 处理数组类型，递归获取组件类型
+            ArrayType arrayType = (ArrayType) type;
+            String componentTypeName = getGenericTypeString(isGeneric, isDeclared, includeProperty, arrayType.getComponentType());
+            return componentTypeName + "[]";
+        } else {
+
+            String typeString = defTypeString(isDeclared, includeProperty, type);
+            if (typeString.contains("<") && typeString.contains(">")) {
+                String trim = type.toString().trim();
+                if (type.getAnnotationMirrors().size() > 0) {
+                    if (trim.lastIndexOf(") ::") > -1) {
+                        return type.toString().trim().substring(type.toString().trim().lastIndexOf(") ::") + 4).replaceAll(">\\)", ">");
+                    } else {
+                        for (AnnotationMirror annotationMirror : type.getAnnotationMirrors()) {
+                            trim = trim.replace(annotationMirror.toString(), "").trim();
+                        }
                     }
                 }
+                return trim;
             }
-            return trim;
-        }
 
-        return TYPE_MAPPING.getOrDefault(typeString, typeString);
+            return TYPE_MAPPING.getOrDefault(typeString, typeString);
+        }
     }
 
     private String defTypeString(boolean isDeclared, boolean includeProperty, TypeMirror type) {

@@ -323,4 +323,14 @@ public class EmptyExpressionContext implements ExpressionContext{
     public ConfigureArgument getConfigureArgument() {
         return null;
     }
+
+    @Override
+    public void setReverseOrder(boolean reverseOrder) {
+
+    }
+
+    @Override
+    public boolean isReverseOrder() {
+        return false;
+    }
 }

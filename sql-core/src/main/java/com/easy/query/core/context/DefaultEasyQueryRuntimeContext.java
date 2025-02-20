@@ -32,7 +32,8 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
-import com.easy.query.core.expression.sql.include.multi.RelationValueFactory;
+import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
+import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.job.EasyTimeJobManager;
@@ -87,6 +88,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final Column2MapKeyConversion column2MapKeyConversion;
     private final JdbcSQLPrinter jdbcSQLPrinter;
     private final RelationValueFactory relationValueFactory;
+    private final RelationValueColumnMetadataFactory relationValueColumnMetadataFactory;
     private final MapColumnNameChecker mapColumnNameChecker;
     private final PropertyDescriptorMatcher propertyDescriptorMatcher;
     private final ValueFilterFactory valueFilterFactory;
@@ -130,6 +132,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           Column2MapKeyConversion column2MapKeyConversion,
                                           JdbcSQLPrinter jdbcSQLPrinter,
                                           RelationValueFactory relationValueFactory,
+                                          RelationValueColumnMetadataFactory relationValueColumnMetadataFactory,
                                           MapColumnNameChecker mapColumnNameChecker,
                                           PropertyDescriptorMatcher propertyDescriptorMatcher,
                                           ValueFilterFactory valueFilterFactory,
@@ -172,6 +175,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.column2MapKeyConversion = column2MapKeyConversion;
         this.jdbcSQLPrinter = jdbcSQLPrinter;
         this.relationValueFactory = relationValueFactory;
+        this.relationValueColumnMetadataFactory = relationValueColumnMetadataFactory;
         this.mapColumnNameChecker = mapColumnNameChecker;
         this.propertyDescriptorMatcher = propertyDescriptorMatcher;
         this.valueFilterFactory = valueFilterFactory;
@@ -355,6 +359,11 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public RelationValueFactory getRelationValueFactory() {
         return relationValueFactory;
+    }
+
+    @Override
+    public RelationValueColumnMetadataFactory getRelationValueColumnMetadataFactory() {
+        return relationValueColumnMetadataFactory;
     }
 
     @Override

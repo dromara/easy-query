@@ -342,6 +342,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                             navigateMetadata.predicateMappingClassFilterApply(m);
                         }).limit(1);
                         x.exists(subMappingQueryable);
+                        navigateMetadata.predicateFilterApply(x);
                     });
                 });
             } else {
@@ -384,6 +385,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                             navigateMetadata.predicateMappingClassFilterApply(m);
                         }).limit(1);
                         x.exists(subMappingQueryable);
+                        navigateMetadata.predicateFilterApply(x);
                     });
                 });
             } else {

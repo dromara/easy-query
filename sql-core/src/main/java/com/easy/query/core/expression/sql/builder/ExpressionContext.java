@@ -118,5 +118,6 @@ public interface ExpressionContext extends RuntimeContextAvailable {
 
     void setConfigureArgument(Object configureArgument);
     ConfigureArgument getConfigureArgument();
-
+    void setReverseOrder(boolean reverseOrder);
+    boolean isReverseOrder();
 }

@@ -3,19 +3,17 @@ package com.easy.query.core.expression.include;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
-import com.easy.query.core.expression.sql.include.MultiRelationValue;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.expression.sql.include.RelationValue;
-import com.easy.query.core.expression.sql.include.multi.RelationValueColumnMetadata;
-import com.easy.query.core.expression.sql.include.multi.RelationValueFactory;
-import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadata;
+import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
+import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +30,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     protected final EntityMetadata selfEntityMetadata;
     protected final IncludeParserResult includeParserResult;
     protected final QueryRuntimeContext runtimeContext;
-    protected final RelationValueFactory relationValueFactory;
+    protected final RelationValueColumnMetadataFactory relationValueColumnMetadataFactory;
     protected final EntityMetadata targetEntityMetadata;
     protected final String[] targetColumnMetadataPropertyNames;
 
@@ -43,16 +41,17 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         this.includeParserResult = includeParserResult;
         this.selfEntityMetadata = includeParserResult.getEntityMetadata();
         this.runtimeContext = runtimeContext;
-        this.relationValueFactory = runtimeContext.getRelationValueFactory();
+        this.relationValueColumnMetadataFactory = runtimeContext.getRelationValueColumnMetadataFactory();
         this.targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(includeParserResult.getNavigatePropertyType());
-       this.targetColumnMetadataPropertyNames = getTargetRelationColumn();
-       }
+        this.targetColumnMetadataPropertyNames = getTargetRelationColumn();
+    }
 
 
-    private String[] getTargetRelationColumn(){
+    private String[] getTargetRelationColumn() {
         return EasyArrayUtil.isEmpty(includeParserResult.getTargetProperties()) ? new String[]{getTargetSingleKeyProperty()} : includeParserResult.getTargetProperties();
     }
-    private String getTargetSingleKeyProperty(){
+
+    private String getTargetSingleKeyProperty() {
         Collection<String> keyProperties = targetEntityMetadata.getKeyProperties();
 
         if (EasyCollectionUtil.isNotSingle(keyProperties)) {
@@ -63,9 +62,10 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
 
     /**
      * 获取对象关系id为key的对象集合为value的map
+     *
      * @param includes
-     * @return
      * @param <TNavigateEntity>
+     * @return
      */
     protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes) {
         Class<?> collectionType = EasyClassUtil.getCollectionImplType(includeParserResult.getNavigateOriginalPropertyType());
@@ -74,28 +74,30 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         for (RelationExtraEntity target : includes) {
             RelationValue targetRelationId = target.getRelationExtraColumns(targetColumnMetadataPropertyNames);
             Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(targetRelationId, k -> (Collection<TNavigateEntity>) EasyClassUtil.newInstance(collectionType));
-            objects.add((TNavigateEntity)target.getEntity());
+            objects.add((TNavigateEntity) target.getEntity());
         }
         return resultMap;
     }
 
-    protected Class<?> getCollectionType(){
-        if(collectionType==null){
+    protected Class<?> getCollectionType() {
+        if (collectionType == null) {
             collectionType = EasyClassUtil.getCollectionImplType(includeParserResult.getNavigateOriginalPropertyType());
         }
         return collectionType;
     }
-    protected <TNavigateEntity> Collection<TNavigateEntity> createManyCollection(){
+
+    protected <TNavigateEntity> Collection<TNavigateEntity> createManyCollection() {
         Class<?> collectionType = getCollectionType();
         return EasyObjectUtil.typeCastNullable(EasyClassUtil.newInstance(collectionType));
     }
+
     protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes, List<Map<String, Object>> mappingRows) {
 
         Map<RelationValue, Collection<TNavigateEntity>> resultMap = new HashMap<>();
 
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(includeParserResult.getMappingClass());
-        RelationValueColumnMetadata selfRelationColumn = relationValueFactory.create(entityMetadata, includeParserResult.getSelfMappingProperties());
-        RelationValueColumnMetadata targetRelationColumn = relationValueFactory.create(entityMetadata, includeParserResult.getTargetMappingProperties());
+        RelationValueColumnMetadata selfRelationColumn = relationValueColumnMetadataFactory.create(entityMetadata, includeParserResult.getSelfMappingProperties());
+        RelationValueColumnMetadata targetRelationColumn = relationValueColumnMetadataFactory.create(entityMetadata, includeParserResult.getTargetMappingProperties());
 
 
         Map<RelationValue, Collection<TNavigateEntity>> targetToManyMap = getTargetToManyMap(includes);
@@ -104,7 +106,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
             RelationValue targetRelationId = targetRelationColumn.getRelationValue(mappingRow);
             Collection<TNavigateEntity> targetEntities = resultMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
             Collection<TNavigateEntity> targets = targetToManyMap.get(targetRelationId);
-            if(EasyCollectionUtil.isNotEmpty(targets)){
+            if (EasyCollectionUtil.isNotEmpty(targets)) {
                 targetEntities.addAll(targets);
             }
         }
@@ -156,7 +158,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
                 ManyToOneProcess(includeParserResult.getIncludeResult());
                 return;
             case ManyToMany:
-                ManyToManyProcess(includeParserResult.getIncludeResult(),includeParserResult.getMappingRows());
+                ManyToManyProcess(includeParserResult.getIncludeResult(), includeParserResult.getMappingRows());
                 return;
         }
         throw new UnsupportedOperationException("not support include relation type:" + includeParserResult.getRelationType());
@@ -171,8 +173,8 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     protected abstract void ManyToManyProcess(List<RelationExtraEntity> includes, List<Map<String, Object>> mappingRows);
 
 
-    protected <T> void setEntityValue(T entity,Object value){
-        includeParserResult.getSetter().call(entity,value);
+    protected <T> void setEntityValue(T entity, Object value) {
+        includeParserResult.getSetter().call(entity, value);
     }
 
     public String[] getSelfRelationColumn() {

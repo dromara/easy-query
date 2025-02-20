@@ -17,6 +17,7 @@ import com.easy.query.test.dto.UserBookEncryptVO;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.Company;
 import com.easy.query.test.entity.blogtest.CompanyVO;
+import com.easy.query.test.entity.blogtest.SysMenu;
 import com.easy.query.test.entity.blogtest.SysRole;
 import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.entity.blogtest.SysUserAddress;
@@ -160,7 +161,10 @@ public class QueryTest16 extends BaseTest {
 //    public void test6() {
 //        List<SysMenu> menus = easyEntityQuery.queryable(SysMenu.class)
 //                .where(s -> {
-////                    s.roles().configure(x->x.disableLogicDelete()).any();
+//                    s.roles().configure(x->{
+//                        x.disableLogicDelete();
+//                        x.disableLogicDelete();
+//                    }).any();
 //                    //判断菜单下的角色存在角色的用户叫做小明的
 //                    s.roles().any(role -> {
 //                        role.users().any(user -> {
@@ -181,19 +185,41 @@ public class QueryTest16 extends BaseTest {
 //                .toList();
 //    }
 //
+    @Test
+    public void test8() {
+       try {
+           List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
+                   .where(s -> {
+                       s.address().relationLogicDelete(()->false);
+//                    EntityTableExpressionBuilder entityTableExpressionBuilder = s.getEntitySQLContext().getEntityExpressionBuilder().getRelationTables().get(new RelationTableKey(s.getEntityClass(), s.address().getTable().getEntityClass()));
+//                    entityTableExpressionBuilder.setTableLogicDelete(()->false);
+                       //隐式子查询会自动join用户表和地址表
+                       s.or(() -> {
+                           s.address().city().eq("杭州市");
+                           s.address().city().eq("绍兴市");
+                       });
+                   }).toList();
+       }catch (Exception ex){
+
+       }
+    }
 //    @Test
-//    public void test8() {
-//        List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
-//                .where(s -> {
-//                    s.address().relationLogicDelete(()->false);
+//    public void test8_1() {
+//       try {
+//           List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
+//                   .where(s -> {
+////                       s.address().relationLogicDelete(()->false);
 ////                    EntityTableExpressionBuilder entityTableExpressionBuilder = s.getEntitySQLContext().getEntityExpressionBuilder().getRelationTables().get(new RelationTableKey(s.getEntityClass(), s.address().getTable().getEntityClass()));
 ////                    entityTableExpressionBuilder.setTableLogicDelete(()->false);
-//                    //隐式子查询会自动join用户表和地址表
-//                    s.or(() -> {
-//                        s.address().city().eq("杭州市");
-//                        s.address().city().eq("绍兴市");
-//                    });
-//                }).toList();
+//                       //隐式子查询会自动join用户表和地址表
+//                       s.or(() -> {
+//                           s.address().city().eq("杭州市");
+//                           s.address().city().eq("绍兴市");
+//                       });
+//                   }).toList();
+//       }catch (Exception ex){
+//
+//       }
 //    }
 //
 //    @Test

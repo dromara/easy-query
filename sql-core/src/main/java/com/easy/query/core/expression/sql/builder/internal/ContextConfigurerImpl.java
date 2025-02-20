@@ -72,4 +72,9 @@ public class ContextConfigurerImpl implements ContextConfigurer {
     public Object getConfigureArgument() {
         return expressionContext.getConfigureArgument();
     }
+
+    @Override
+    public void setReverseOrder(boolean reverseOrder) {
+        expressionContext.setReverseOrder(reverseOrder);
+    }
 }
