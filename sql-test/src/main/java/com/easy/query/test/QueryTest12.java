@@ -28,6 +28,7 @@ import com.easy.query.test.entity.relation.DynamicExtraFilter;
 import com.easy.query.test.entity.relation.MyRelationUser;
 import com.easy.query.test.entity.relation.MyRelationUserDTO;
 import com.easy.query.test.entity.relation.MyRelationUserDTO1;
+import com.easy.query.test.entity.relation.RelationTeacher;
 import com.easy.query.test.entity.relation.RelationUser;
 import com.easy.query.test.entity.school.MySchoolStudent;
 import com.easy.query.test.entity.school.SchoolClass;
@@ -1476,6 +1477,8 @@ public class QueryTest12 extends BaseTest {
                         }))
                         .toList();
             }
+
+
         }catch (Exception ex){
 
         }
@@ -1484,6 +1487,59 @@ public class QueryTest12 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`name` FROM `relation_user` t WHERE EXISTS (SELECT 1 FROM `relation_teacher` t1 WHERE EXISTS (SELECT 1 FROM `relation_route` t2 WHERE t2.`second_id` = t1.`id` AND t2.`first_id` = t.`id` AND t2.`type` = ? LIMIT 1) AND t1.`name` LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),%小学%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDoc23(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            easyEntityQuery.deletable(RelationUser.class)
+                    .where(user -> {
+                        user.expression().exists(()->{
+                            return easyEntityQuery.queryable(RelationTeacher.class)
+                                    .where(teach -> {
+                                        teach.users().any(u->u.id().eq(user.id()));
+                                        teach.name().like("小明");
+                                    });
+                        });
+                    }).executeRows();
+
+
+        }catch (Exception ex){
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("DELETE FROM `relation_user` t WHERE EXISTS (SELECT 1 FROM `relation_teacher` t1 WHERE EXISTS (SELECT 1 FROM `relation_user` t2 WHERE EXISTS (SELECT 1 FROM `relation_route` t3 WHERE t3.`first_id` = t2.`id` AND t3.`second_id` = t1.`id` LIMIT 1) AND t2.`id` = t.`id` LIMIT 1) AND t1.`name` LIKE ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小明%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDoc24(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            easyEntityQuery.deletable(RelationUser.class)
+                    .where(user -> {
+                        user.teachers().flatElement().name().like("小明");
+
+                    }).executeRows();
+
+
+        }catch (Exception ex){
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("DELETE FROM `relation_user` t WHERE EXISTS (SELECT 1 FROM `relation_teacher` t1 WHERE (EXISTS (SELECT 1 FROM `relation_route` t2 WHERE t2.`second_id` = t1.`id` AND t2.`first_id` = t.`id` AND t2.`type` = ? LIMIT 1) AND t1.`name` = ?) AND t1.`name` LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),12345(String),%小明%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 

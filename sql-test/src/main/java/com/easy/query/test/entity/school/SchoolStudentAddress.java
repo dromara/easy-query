@@ -23,6 +23,7 @@ public class SchoolStudentAddress implements ProxyEntityAvailable<SchoolStudentA
     private String id;
     private String studentId;
     private String address;
+    private Integer age;
     @Navigate(value = RelationTypeEnum.ManyToOne,selfProperty = "studentId",targetProperty = "id")
     private SchoolStudent schoolStudent;
 }

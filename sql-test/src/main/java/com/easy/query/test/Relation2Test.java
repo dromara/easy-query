@@ -143,7 +143,7 @@ public class Relation2Test extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<MySchoolClass> list = easyEntityQuery.queryable(MySchoolClass.class)
                 .where(m -> {
-                    m.schoolStudents().where(x->x.name().like("1234")).sum(x->x.name().asAnyType(BigDecimal.class)).gt(new BigDecimal("1"));
+                    m.schoolStudents().where(x->x.name().like("1234")).sumBigDecimal(x->x.name().toNumber(Long.class)).gt(new BigDecimal("1"));
 //                    m.id().setSubQuery();
 //                    m.schoolStudents().where(x->x.name().like("123")).selectCount().
 //                    m.SQLConstant().valueOf(1L).gt(m.schoolStudents().where(x->x.name().like("123")).selectCount());
@@ -161,7 +161,7 @@ public class Relation2Test extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<MySchoolClass> list = easyEntityQuery.queryable(MySchoolClass.class)
                 .where(m -> {
-                    m.schoolStudents().where(x->x.name().like("1234")).avg(x->x.name().asAny()).gt(new BigDecimal("1"));
+                    m.schoolStudents().where(x->x.name().like("1234")).avg(x->x.name().toNumber(BigDecimal.class)).gt(new BigDecimal("1"));
 //                    m.id().setSubQuery();
 //                    m.schoolStudents().where(x->x.name().like("123")).selectCount().
 //                    m.SQLConstant().valueOf(1L).gt(m.schoolStudents().where(x->x.name().like("123")).selectCount());
@@ -179,14 +179,14 @@ public class Relation2Test extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<MySchoolClass> list = easyEntityQuery.queryable(MySchoolClass.class)
                 .where(m -> {
-                    m.schoolStudents().where(x->x.name().like("1234")).sumBigDecimal(x->x.name().asAnyType(BigDecimal.class)).gt(new BigDecimal("1"));
+                    m.schoolStudents().where(x->x.name().like("1234")).sumBigDecimal(x->x.name().toNumber(BigDecimal.class)).gt(new BigDecimal("1"));
 //                    m.id().setSubQuery();
 //                    m.schoolStudents().where(x->x.name().like("123")).selectCount().
 //                    m.SQLConstant().valueOf(1L).gt(m.schoolStudents().where(x->x.name().like("123")).selectCount());
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_school_class` t WHERE IFNULL((SELECT SUM(t1.`name`) FROM `my_school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?),0) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_school_class` t WHERE IFNULL((SELECT SUM(CAST(t1.`name` AS DECIMAL(36,18))) FROM `my_school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?),0) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%1234%(String),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -197,15 +197,33 @@ public class Relation2Test extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<MySchoolClass> list = easyEntityQuery.queryable(MySchoolClass.class)
                 .where(m -> {
-                    m.schoolStudents().where(x->x.name().like("1234")).sumBigDecimal(x->x.name().asAny()).gt(new BigDecimal("1"));
+                    m.schoolStudents().where(x->x.name().like("1234")).sumBigDecimal(x->x.name().toNumber(BigDecimal.class)).gt(new BigDecimal("1"));
 //                    m.id().setSubQuery();
 //                    m.schoolStudents().where(x->x.name().like("123")).selectCount().
 //                    m.SQLConstant().valueOf(1L).gt(m.schoolStudents().where(x->x.name().like("123")).selectCount());
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_school_class` t WHERE IFNULL((SELECT SUM(t1.`name`) FROM `my_school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?),0) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_school_class` t WHERE IFNULL((SELECT SUM(CAST(t1.`name` AS DECIMAL(36,18))) FROM `my_school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?),0) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%1234%(String),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void test9_2() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<MySchoolClass> list = easyEntityQuery.queryable(MySchoolClass.class)
+                .where(m -> {
+                    m.schoolStudents().where(x->x.name().like("1234")).select(x->x.name().asAny().sum()).nullOrDefault(0).gt(new BigDecimal("1"));
+//                    m.id().setSubQuery();
+//                    m.schoolStudents().where(x->x.name().like("123")).selectCount().
+//                    m.SQLConstant().valueOf(1L).gt(m.schoolStudents().where(x->x.name().like("123")).selectCount());
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_school_class` t WHERE IFNULL((SELECT SUM(t1.`name`) FROM `my_school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?),?) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%1234%(String),0(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
     @Test

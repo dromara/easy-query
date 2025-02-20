@@ -32,4 +32,9 @@ public class RelationTeacher implements ProxyEntityAvailable<RelationTeacher , R
     @Navigate(value = RelationTypeEnum.OneToMany,targetProperty ="userId", extraFilter = BookNavigateExtraFilterStrategy.class)
     private List<RelationBook> books;
 
+    @Navigate(value = RelationTypeEnum.ManyToMany,
+            mappingClass = RelationRoute.class
+            ,selfMappingProperty = "secondId"
+            ,targetMappingProperty = "firstId")
+    private List<RelationUser> users;
 }

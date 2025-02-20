@@ -12,6 +12,8 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
+import com.easy.query.core.proxy.core.draft.Draft8;
+import com.easy.query.core.proxy.core.draft.proxy.Draft8Proxy;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -539,7 +541,7 @@ public class QueryTest20 extends BaseTest {
     }
 
     @Test
-    public void testWhere1(){
+    public void testWhere1() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -557,7 +559,7 @@ public class QueryTest20 extends BaseTest {
     }
 
     @Test
-    public void testWhere2(){
+    public void testWhere2() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -573,13 +575,14 @@ public class QueryTest20 extends BaseTest {
         Assert.assertEquals("%123%(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testWhere3(){
+    public void testWhere3() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         easyEntityQuery.queryable(Topic.class)
-                .leftJoin(BlogEntity.class,(t_topic, t_blog) -> {
+                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> {
                     t_topic.id().eq(t_blog.id());
                 })
                 .where((t_topic, t_blog) -> {
@@ -593,8 +596,9 @@ public class QueryTest20 extends BaseTest {
         Assert.assertEquals("false(Boolean),%123%(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testMap1(){
+    public void testMap1() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -607,7 +611,7 @@ public class QueryTest20 extends BaseTest {
                 }).select((t_topic, t_blog) -> new MapProxy()
                         .put("v1", t_topic.id())
                         .put("v2", t_blog.star().add(1))
-                        .put("v3", t_topic.createTime().nullOrDefault(LocalDateTime.of(2024,1,1,0,0)))
+                        .put("v3", t_topic.createTime().nullOrDefault(LocalDateTime.of(2024, 1, 1, 0, 0)))
                 ).toList();
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -616,8 +620,9 @@ public class QueryTest20 extends BaseTest {
         Assert.assertEquals("1(Integer),2024-01-01T00:00(LocalDateTime),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testMap2(){
+    public void testMap2() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         MapKey<String> str = MapKeys.stringKey("str");
@@ -633,7 +638,7 @@ public class QueryTest20 extends BaseTest {
                 }).select((t_topic, t_blog) -> new MapTypeProxy()
                         .put(str, t_topic.id())
                         .put(integer, t_blog.star().add(1))
-                        .put(time, t_topic.createTime().nullOrDefault(LocalDateTime.of(2024,1,1,0,0)))
+                        .put(time, t_topic.createTime().nullOrDefault(LocalDateTime.of(2024, 1, 1, 0, 0)))
                 ).toList();
         for (Map<String, Object> map : list) {
             String value1OrNull = str.getValueOrNull(map);
@@ -650,10 +655,11 @@ public class QueryTest20 extends BaseTest {
     }
 
     @Test
-    public void test1(){
+    public void test1() {
         String format = EasyUtil.getQuarterStart(LocalDateTime.now()).format(DateTimeFormatter.ofPattern("yyyy'Q'Q"));
         System.out.println(format);
-        Assert.assertEquals("2025Q1",format);
+        Assert.assertEquals("2025Q1", format);
+
 
     }
 
