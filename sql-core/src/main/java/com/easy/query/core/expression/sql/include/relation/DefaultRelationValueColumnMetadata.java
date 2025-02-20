@@ -1,7 +1,6 @@
-package com.easy.query.core.expression.sql.include.multi;
+package com.easy.query.core.expression.sql.include.relation;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.sql.include.MultiRelationValue;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -17,20 +16,18 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class MultiRelationValueColumnMetadata implements RelationValueColumnMetadata {
+public class DefaultRelationValueColumnMetadata implements RelationValueColumnMetadata {
     private final List<ColumnMetadata> columnMetadataList;
-    private final RelationValue columnName;
+    private final RelationValueFactory relationValueFactory;
 
-    public MultiRelationValueColumnMetadata(EntityMetadata entityMetadata, String[] properties) {
+    public DefaultRelationValueColumnMetadata(EntityMetadata entityMetadata, String[] properties,RelationValueFactory relationValueFactory) {
+        this.relationValueFactory = relationValueFactory;
         ArrayList<ColumnMetadata> columnMetadataList = new ArrayList<>(properties.length);
         for (String property : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
             columnMetadataList.add(columnMetadata);
         }
         this.columnMetadataList = columnMetadataList;
-
-        List<Object> columnNames = EasyCollectionUtil.select(columnMetadataList, (columnMetadata, index) -> columnMetadata.getName());
-        this.columnName = new MultiRelationValue(columnNames);
     }
 
     @Override
@@ -39,17 +36,12 @@ public class MultiRelationValueColumnMetadata implements RelationValueColumnMeta
             throw new EasyQueryInvalidOperationException("current entity can not be null");
         }
         List<Object> values = EasyCollectionUtil.select(columnMetadataList, (columnMetadata, index) -> columnMetadata.getGetterCaller().apply(entity));
-        return new MultiRelationValue(values);
+        return relationValueFactory.createRelationValue(values);
     }
 
     @Override
     public RelationValue getRelationValue(Map<String, Object> mappingRow) {
         List<Object> values = EasyCollectionUtil.select(columnMetadataList, (columnMetadata, index) -> mappingRow.get(columnMetadata.getName()));
-        return new MultiRelationValue(values);
-    }
-
-    @Override
-    public RelationValue getName() {
-        return columnName;
+        return relationValueFactory.createRelationValue(values);
     }
 }

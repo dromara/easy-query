@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.include;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.sql.include.multi.RelationValueFactory;
+import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
 import com.easy.query.core.metadata.RelationExtraColumn;
 import com.easy.query.core.util.EasyClassUtil;
 

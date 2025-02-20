@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.sql.include.multi;
+package com.easy.query.core.expression.sql.include.relation;
 
 import com.easy.query.core.expression.sql.include.RelationValue;
 
@@ -14,6 +14,4 @@ public interface RelationValueColumnMetadata {
     RelationValue getRelationValue(Object entity);
 
     RelationValue getRelationValue(Map<String, Object> mappingRow);
-
-    RelationValue getName();
 }

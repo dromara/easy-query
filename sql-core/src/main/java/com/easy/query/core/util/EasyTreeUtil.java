@@ -3,15 +3,15 @@ package com.easy.query.core.util;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.expression.sql.include.EasyTreeNode;
-import com.easy.query.core.expression.sql.include.multi.RelationValueColumnMetadata;
-import com.easy.query.core.expression.sql.include.multi.RelationValueFactory;
+import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadata;
+import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
+import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,9 +34,9 @@ public class EasyTreeUtil {
      */
     public static <T> List<T> generateTrees(List<T> nodes, EntityMetadata entityMetadata, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
 
-        RelationValueFactory relationValueFactory = runtimeContext.getRelationValueFactory();
-        RelationValueColumnMetadata selfRelationValueColumnMetadata = relationValueFactory.create(entityMetadata, navigateMetadata.getSelfPropertiesOrPrimary());
-        RelationValueColumnMetadata targetRelationValueColumnMetadata = relationValueFactory.create(entityMetadata, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+        RelationValueColumnMetadataFactory relationValueColumnMetadataFactory = runtimeContext.getRelationValueColumnMetadataFactory();
+        RelationValueColumnMetadata selfRelationValueColumnMetadata = relationValueColumnMetadataFactory.create(entityMetadata, navigateMetadata.getSelfPropertiesOrPrimary());
+        RelationValueColumnMetadata targetRelationValueColumnMetadata = relationValueColumnMetadataFactory.create(entityMetadata, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
 //        relationValueColumnMetadata.getRelationValue()
         Map<RelationValue, T> targetMap = new HashMap<>();
         ArrayList<EasyTreeNode<T>> easyTreeNodes = new ArrayList<>();

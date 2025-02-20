@@ -69,6 +69,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private Boolean printSQL;
     private Boolean printNavSQL;
     private ConfigureArgument configureArgument;
+    private boolean reverseOrder;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
 
@@ -90,6 +91,7 @@ public class EasyExpressionContext implements ExpressionContext {
         this.maxShardingQueryLimit = null;
         this.connectionMode = null;
         this.sharding = false;
+        this.reverseOrder = true;
         this.configureArgument = new ConfigureArgument();
 
         ValueFilterFactory valueFilterFactory = runtimeContext.getValueFilterFactory();
@@ -273,6 +275,8 @@ public class EasyExpressionContext implements ExpressionContext {
         otherExpressionContext.setMaxShardingQueryLimit(this.maxShardingQueryLimit);
         otherExpressionContext.setConnectionMode(this.connectionMode);
         otherExpressionContext.filterConfigure(this.valueFilter);
+        otherExpressionContext.setConfigureArgument(this.configureArgument);
+        otherExpressionContext.setReverseOrder(this.reverseOrder);
         if (hasRelationExtraMetadata()) {
             this.relationExtraMetadata.copyTo(otherExpressionContext.getRelationExtraMetadata());
         }
@@ -386,6 +390,8 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.relationExtraMetadata = this.relationExtraMetadata;
         easyExpressionContext.printSQL = this.printSQL;
         easyExpressionContext.printNavSQL = this.printNavSQL;
+        easyExpressionContext.configureArgument=this.configureArgument;
+        easyExpressionContext.reverseOrder=this.reverseOrder;
         if (hasIncludes()) {
             easyExpressionContext.getIncludes().putAll(this.includes);
         }
@@ -504,5 +510,15 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public ConfigureArgument getConfigureArgument() {
         return configureArgument;
+    }
+
+    @Override
+    public void setReverseOrder(boolean reverseOrder) {
+        this.reverseOrder = reverseOrder;
+    }
+
+    @Override
+    public boolean isReverseOrder() {
+        return this.reverseOrder;
     }
 }

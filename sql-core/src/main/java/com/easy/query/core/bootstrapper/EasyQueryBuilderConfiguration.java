@@ -78,8 +78,10 @@ import com.easy.query.core.expression.sql.expression.factory.DefaultEasyExpressi
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.DefaultIncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
-import com.easy.query.core.expression.sql.include.multi.DefaultRelationValueFactory;
-import com.easy.query.core.expression.sql.include.multi.RelationValueFactory;
+import com.easy.query.core.expression.sql.include.relation.DefaultRelationValueColumnMetadataFactory;
+import com.easy.query.core.expression.sql.include.relation.DefaultRelationValueFactory;
+import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
+import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.inject.ServiceCollection;
@@ -202,6 +204,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(JdbcSQLPrinter.class, DefaultJdbcSQLPrinter.class)
                 .replaceService(Column2MapKeyConversion.class, DefaultColumn2MapKeyConversion.class)
                 .replaceService(RelationValueFactory.class, DefaultRelationValueFactory.class)
+                .replaceService(RelationValueColumnMetadataFactory.class, DefaultRelationValueColumnMetadataFactory.class)
                 .replaceService(PropertyDescriptorMatcher.class, DefaultPropertyDescriptorMatcher.class)
                 .replaceService(ValueFilterFactory.class, AnyValueFilterFactory.class)
                 .replaceService(EntityMappingRule.class, ColumnEntityMappingRule.class)

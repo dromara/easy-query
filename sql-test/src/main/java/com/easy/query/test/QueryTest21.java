@@ -101,7 +101,7 @@ public class QueryTest21 extends BaseTest {
     }
 
     @Test
-    public void searchCountPageTest(){
+    public void searchCountPageTest() {
         System.out.println("查询count");
 
         {
@@ -121,7 +121,7 @@ public class QueryTest21 extends BaseTest {
 
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                 Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` WHERE `title` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             }
             {
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
@@ -181,5 +181,39 @@ public class QueryTest21 extends BaseTest {
             }
             listenerContextManager.clear();
         }
+    }
+
+    @Test
+    public void TestReverse(){
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        EasyPageResult<Topic> pageResult2 = easyEntityQuery.queryable(Topic.class)
+                .configure(op->{
+                    op.setReverseOrder(false);
+                })
+                .where(t_topic -> {
+                    t_topic.id().isNotNull();
+                }).orderBy(t_topic -> t_topic.createTime().asc())
+                .toPageResult(7, 10);
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+
+        {
+            {
+
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT COUNT(*) FROM `t_topic` WHERE `id` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` IS NOT NULL ORDER BY `create_time` ASC LIMIT 10 OFFSET 60", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+        }
+        listenerContextManager.clear();
     }
 }

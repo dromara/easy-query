@@ -1254,7 +1254,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (realTake <= 0) {
             return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, EasyCollectionUtil.emptyList());
         }
-        boolean enableReverseOrder = runtimeContext.getQueryConfiguration().getEasyQueryOption().enableReverseOrder(offset);
+        boolean expressionReverseOrder = entityQueryExpressionBuilder.getExpressionContext().isReverseOrder();
+        boolean enableReverseOrder = expressionReverseOrder && runtimeContext.getQueryConfiguration().getEasyQueryOption().enableReverseOrder(offset);
         OrderBySQLBuilderSegment order = entityQueryExpressionBuilder.getOrder();
         //反排序 当偏移量大于1/2 总量时 (优化深分页)
         boolean reverseOrder = enableReverseOrder && offset > (total / 2) && EasySQLSegmentUtil.isNotEmpty(order) && entityQueryExpressionBuilder.getOrder().reverseOrder();
