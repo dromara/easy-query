@@ -8,7 +8,6 @@ import com.easy.query.core.proxy.fetcher.AbstractFetcher;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.test.entity.school.SchoolStudent;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
-import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
 import com.easy.query.core.proxy.columns.SQLNavigateColumn;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 
@@ -51,13 +50,6 @@ public class SchoolStudentProxy extends AbstractProxyEntity<SchoolStudentProxy, 
      */
     public SQLStringTypeColumn<SchoolStudentProxy> name() {
         return getStringTypeColumn("name");
-    }
-
-    /**
-     * {@link SchoolStudent#getAge}
-     */
-    public SQLIntegerTypeColumn<SchoolStudentProxy> age() {
-        return getIntegerTypeColumn("age");
     }
 
     /**
@@ -115,13 +107,6 @@ public class SchoolStudentProxy extends AbstractProxyEntity<SchoolStudentProxy, 
          */
         public SchoolStudentProxyFetcher name() {
             return add(getProxy().name());
-        }
-
-        /**
-         * {@link SchoolStudent#getAge}
-         */
-        public SchoolStudentProxyFetcher age() {
-            return add(getProxy().age());
         }
 
 

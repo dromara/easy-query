@@ -150,7 +150,7 @@ public class Relation2Test extends BaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_school_class` t WHERE IFNULL((SELECT SUM(t1.`name`) FROM `my_school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?),0) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_school_class` t WHERE IFNULL((SELECT SUM(CAST(t1.`name` AS SIGNED)) FROM `my_school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?),0) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%1234%(String),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -168,7 +168,7 @@ public class Relation2Test extends BaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_school_class` t WHERE IFNULL((SELECT AVG(t1.`name`) FROM `my_school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?),0) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_school_class` t WHERE IFNULL((SELECT AVG(CAST(t1.`name` AS DECIMAL(36,18))) FROM `my_school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?),0) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%1234%(String),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
