@@ -7,6 +7,7 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
@@ -30,6 +31,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -1249,6 +1251,77 @@ public class MyTest1 extends BaseTest {
             Long value2 = stringLongDraft2.getValue2();
         }
 
+    }
+
+
+    @Test
+    public void testDraft11() {
+        String id = "123456zz9xx1";
+        easyEntityQuery.deletable(BlogEntity.class)
+                .whereById(id)
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .executeRows();
+        BlogEntity blog = new BlogEntity();
+        blog.setId(id);
+        blog.setCreateBy("z");
+        blog.setCreateTime(LocalDateTime.of(2022, 1, 2, 3, 4, 5));
+        blog.setUpdateBy("z");
+        blog.setUpdateTime(LocalDateTime.of(2022, 2, 3, 4, 5, 6));
+        blog.setTitle("titlez");
+        blog.setContent("contentz");
+        blog.setUrl("http://blog.easy-query.com/z");
+        blog.setStar(1);
+        blog.setScore(new BigDecimal("1.2"));
+        blog.setStatus(1);
+        blog.setOrder(new BigDecimal("1.2").multiply(BigDecimal.valueOf(1)));
+        blog.setIsTop(false);
+        blog.setTop(true);
+        blog.setDeleted(false);
+        easyEntityQuery.insertable(blog)
+                .executeRows();
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Draft7<Long, Long, Long, Long, Long, Long, Long> draft3 = easyEntityQuery.queryable(BlogEntity.class)
+                .whereById(id)
+                .select(o -> Select.DRAFT.of(
+                        o.createTime().duration(o.updateTime()).toDays(),
+                        o.createTime().duration(o.updateTime()).toHours(),
+                        o.createTime().duration(o.updateTime()).toMinutes(),
+                        o.createTime().duration(o.updateTime()).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(1, TimeUnit.DAYS)).toDays(),
+                        o.createTime().duration(o.createTime().plus(2, TimeUnit.SECONDS)).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(3, TimeUnit.MINUTES)).toMinutes()
+                )).firstOrNull();
+
+        Assert.assertNotNull(draft3);
+        Long value1 = draft3.getValue1();
+        Assert.assertEquals(32, (long) value1);
+        Long value2 = draft3.getValue2();
+        Assert.assertEquals(769, (long) value2);
+        Long value3 = draft3.getValue3();
+        Assert.assertEquals(46141, (long) value3);
+        Long value4 = draft3.getValue4();
+        Assert.assertEquals(2768461, (long) value4);
+        Long value5 = draft3.getValue5();
+        Assert.assertEquals(1, (long) value5);
+        Long value6 = draft3.getValue6();
+        Assert.assertEquals(2, (long) value6);
+        Long value7 = draft3.getValue7();
+        Assert.assertEquals(3, (long) value7);
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT timestampdiff(DAY, t.`create_time`, t.`update_time`) AS `value1`,timestampdiff(HOUR, t.`create_time`, t.`update_time`) AS `value2`,timestampdiff(MINUTE, t.`create_time`, t.`update_time`) AS `value3`,timestampdiff(SECOND, t.`create_time`, t.`update_time`) AS `value4`,timestampdiff(DAY, t.`create_time`, date_add(t.`create_time`, interval (?) microsecond)) AS `value5`,timestampdiff(SECOND, t.`create_time`, date_add(t.`create_time`, interval (?) microsecond)) AS `value6`,timestampdiff(MINUTE, t.`create_time`, date_add(t.`create_time`, interval (?) microsecond)) AS `value7` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("86400000000(Long),2000000(Long),180000000(Long),false(Boolean),123456zz9xx1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+        easyEntityQuery.deletable(BlogEntity.class)
+                .whereById(id)
+                .disableLogicDelete()
+                .allowDeleteStatement(true)
+                .executeRows();
     }
 
 

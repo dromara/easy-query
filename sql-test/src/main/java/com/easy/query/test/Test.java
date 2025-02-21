@@ -3,7 +3,9 @@ package com.easy.query.test;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,6 +18,12 @@ import java.util.regex.Pattern;
  */
 public class Test {
     public static void main(String[] args) {
+
+        Duration between = Duration.between(LocalDateTime.of(2024, 1, 1, 0, 0), LocalDateTime.of(2025, 1, 1, 0, 0));
+        long days = between.toDays();
+        Duration between1 = Duration.between(LocalDateTime.of(2025, 1, 1, 0, 0),LocalDateTime.of(2024, 1, 1, 0, 0));
+        long days1 = between1.toDays();
+        System.out.println("1");
 //        EasyQueryClient build1 = EasyQueryBootstrapper.defaultBuilderConfiguration()
 //                .replaceService(Test.class).build();
 //        EasyQueryClient build2 = EasyQueryBootstrapper.defaultBuilderConfiguration()
