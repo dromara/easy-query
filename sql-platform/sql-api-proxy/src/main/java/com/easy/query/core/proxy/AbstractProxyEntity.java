@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
@@ -10,6 +11,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
 import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
@@ -20,8 +22,11 @@ import com.easy.query.core.proxy.impl.SQLSelectAsEntryImpl;
 import com.easy.query.core.proxy.impl.SQLSelectIgnoreImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
+import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -201,6 +206,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 如果当前表示关联关系表则可以选择性的设置是否逻辑删除
+     *
      * @param tableLogic
      */
     public void relationLogicDelete(Supplier<Boolean> tableLogic) {
@@ -426,5 +432,52 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable) columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy, navigateSelectExpression));
+    }
+
+    /**
+     * 判断当前对象是否不存在默认 key is null
+     */
+    public void isNull() {
+        isNull(true);
+    }
+
+    /**
+     * 判断当前对象是否不存在默认 key is null
+     * @param condition false不生效 true生效
+     */
+    public void isNull(boolean condition) {
+        if (condition) {
+            TableAvailable tableAvailable = this.getTable();
+            Collection<String> keyProperties = tableAvailable.getEntityMetadata().getKeyProperties();
+            if (EasyCollectionUtil.isEmpty(keyProperties)) {
+                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(tableAvailable.getEntityMetadata().getEntityClass()) +" not found any key,proxy.isNull() not support");
+            }
+
+            String key = EasyCollectionUtil.first(keyProperties);
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNull(tableAvailable, key)));
+        }
+    }
+
+    /**
+     * 判断当前对象是否不存在默认 key is not null
+     */
+    public void isNotNull() {
+        isNotNull(true);
+    }
+
+    /**
+     * 判断当前对象是否不存在默认 key is not null
+     * @param condition false不生效 true生效
+     */
+    public void isNotNull(boolean condition) {
+        if (condition) {
+            TableAvailable tableAvailable = this.getTable();
+            Collection<String> keyProperties = tableAvailable.getEntityMetadata().getKeyProperties();
+            if (EasyCollectionUtil.isEmpty(keyProperties)) {
+                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(tableAvailable.getEntityMetadata().getEntityClass()) +" not found any key,proxy.isNotNull() not support");
+            }
+            String key = EasyCollectionUtil.first(keyProperties);
+            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNotNull(tableAvailable, key)));
+        }
     }
 }

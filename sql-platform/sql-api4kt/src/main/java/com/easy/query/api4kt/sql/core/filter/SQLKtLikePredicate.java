@@ -15,7 +15,7 @@ import kotlin.reflect.KProperty1;
 public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, SQLKtWherePredicateAvailable<T1>, ChainCast<TChain> {
 
     /**
-     * column like val%
+     * column like 'value%'
      * 列匹配前半部分
      *
      * @param column
@@ -28,7 +28,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
     }
 
     /**
-     * column like val%
+     * column like 'value%'
      * 列匹配前半部分
      *
      * @param condition
@@ -42,7 +42,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
     }
 
     /**
-     * column like %val
+     * column like '%value'
      * 列匹配后半部分
      *
      * @param column
@@ -55,7 +55,7 @@ public interface SQLKtLikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>,
     }
 
     /**
-     * column like %val
+     * column like '%value'
      * 列匹配后半部分
      *
      * @param condition

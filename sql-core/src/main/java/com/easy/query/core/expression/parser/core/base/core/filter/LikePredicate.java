@@ -13,7 +13,7 @@ import com.easy.query.core.expression.parser.core.available.ChainCast;
 public interface LikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, FilterAvailable, ChainCast<TChain> {
 
     /**
-     * column like val%
+     * column like 'value%'
      * 列匹配前半部分
      *
      * @param property
@@ -25,7 +25,7 @@ public interface LikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, Filt
     }
 
     /**
-     * column like val%
+     * column like 'value%'
      * 列匹配前半部分
      *
      * @param condition
@@ -38,7 +38,7 @@ public interface LikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, Filt
     }
 
     /**
-     * column like %val
+     * column like '%value'
      * 列匹配后半部分
      *
      * @param property
@@ -50,7 +50,7 @@ public interface LikePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, Filt
     }
 
     /**
-     * column like %val
+     * column like '%value'
      * 列匹配后半部分
      *
      * @param condition

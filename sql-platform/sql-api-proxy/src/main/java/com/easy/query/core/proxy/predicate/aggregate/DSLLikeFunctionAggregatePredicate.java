@@ -13,6 +13,12 @@ import com.easy.query.core.proxy.predicate.DSLLikeFunctionPredicate;
  * @author xuejiaming
  */
 public interface DSLLikeFunctionAggregatePredicate<TProperty> extends DSLLikeFunctionPredicate<TProperty>,  DSLSQLFunctionAvailable {
+    /**
+     * column like 'value%'
+     * @param condition
+     * @param column
+     * @param <T1>
+     */
     @Override
     default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void likeMatchLeft(boolean condition, T1 column) {
         if (condition) {
@@ -27,6 +33,12 @@ public interface DSLLikeFunctionAggregatePredicate<TProperty> extends DSLLikeFun
         }
     }
 
+    /**
+     * column like '%value'
+     * @param condition
+     * @param column
+     * @param <T1>
+     */
     @Override
     default <T1 extends SQLTableOwner & DSLSQLFunctionAvailable> void likeMatchRight(boolean condition, T1 column) {
         if (condition) {

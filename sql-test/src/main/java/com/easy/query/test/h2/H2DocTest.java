@@ -387,4 +387,60 @@ public class H2DocTest extends H2BaseTest {
 
     }
 
+
+    @Test
+    public void testToOne(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        try {
+
+            List<DocUser> result = easyEntityQuery.queryable(DocUser.class)
+                    .where(user -> {
+                        user.name().like("小明");
+                        user.isNull();
+                        user.isNotNull();
+                    }).toList();
+        } catch (Exception e) {
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.id,t.name,t.phone,t.age,IFNULL(t.age,1) AS card_count FROM doc_user t WHERE t.name LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小明%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testToOne1(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        try {
+
+            List<DocBankCard> result = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.type().like("储蓄卡");
+                        bank_card.user().isNull();
+                        bank_card.user().isNotNull();
+                    }).toList();
+        } catch (Exception e) {
+
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.id,t.name,t.phone,t.age,IFNULL(t.age,1) AS card_count FROM doc_user t WHERE t.name LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小明%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
 }

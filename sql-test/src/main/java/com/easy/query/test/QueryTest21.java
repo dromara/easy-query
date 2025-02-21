@@ -39,6 +39,7 @@ public class QueryTest21 extends BaseTest {
     public void typeTest() {
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
+                    t_blog.isNull();
                     t_blog.score().nullOrDefault(BigDecimal.ZERO).gt(BigDecimal.ZERO);
                     t_blog.score().subtract(t_blog.star()).gt(BigDecimal.valueOf(15));
                 }).toList();
@@ -217,4 +218,5 @@ public class QueryTest21 extends BaseTest {
         }
         listenerContextManager.clear();
     }
+
 }
