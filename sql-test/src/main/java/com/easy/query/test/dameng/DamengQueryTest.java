@@ -3,6 +3,7 @@ package com.easy.query.test.dameng;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
@@ -194,9 +195,9 @@ public class DamengQueryTest extends DamengBaseTest {
                 Draft3<Long, Long, Long> draft3 = entityQuery.queryable(DamengMyTopic.class)
                         .whereById(id)
                         .select(o -> Select.DRAFT.of(
-                                o.createTime().duration(o.createTime().plus(1, TimeUnit.DAYS), DateTimeDurationEnum.Days),
-                                o.createTime().duration(o.createTime().plus(2, TimeUnit.SECONDS), DateTimeDurationEnum.Seconds),
-                                o.createTime().duration(o.createTime().plus(3, TimeUnit.MINUTES), DateTimeDurationEnum.Minutes)
+                                o.createTime().duration(o.createTime().plus(1, TimeUnitEnum.DAYS), DateTimeDurationEnum.Days),
+                                o.createTime().duration(o.createTime().plus(2, TimeUnitEnum.SECONDS), DateTimeDurationEnum.Seconds),
+                                o.createTime().duration(o.createTime().plus(3, TimeUnitEnum.MINUTES), DateTimeDurationEnum.Minutes)
                         )).firstOrNull();
 
                 Assert.assertNotNull(draft3);
