@@ -233,6 +233,7 @@ public interface SQLDateTimeFunc {
      * @param durationEnum
      * @return 相差时间函数
      */
+    @Deprecated
     default SQLFunction duration(String property, LocalDateTime otherDateTime, DateTimeDurationEnum durationEnum) {
         return duration(s -> {
             s.column(property)
@@ -250,6 +251,7 @@ public interface SQLDateTimeFunc {
      * @param durationEnum
      * @return 相差时间函数
      */
+    @Deprecated
     default SQLFunction duration(String property, SQLTableOwner otherTable, String otherProperty, DateTimeDurationEnum durationEnum) {
         return duration(s -> {
             s.column(property)
@@ -266,6 +268,7 @@ public interface SQLDateTimeFunc {
      * @param durationEnum
      * @return 相差时间函数
      */
+    @Deprecated
     default SQLFunction duration(String property, SQLFunction sqlFunction, DateTimeDurationEnum durationEnum) {
         return duration(s -> {
             s.column(property).sqlFunc(sqlFunction);
@@ -281,6 +284,7 @@ public interface SQLDateTimeFunc {
      * @param durationEnum
      * @return 相差时间函数
      */
+    @Deprecated
     default SQLFunction duration(SQLFunction sqlFunction, LocalDateTime otherDateTime, DateTimeDurationEnum durationEnum) {
         return duration(s -> {
             s.sqlFunc(sqlFunction)
@@ -298,12 +302,14 @@ public interface SQLDateTimeFunc {
      * @param durationEnum
      * @return 相差时间函数
      */
+    @Deprecated
     default SQLFunction duration(SQLFunction sqlFunction, SQLTableOwner otherTable, String otherProperty, DateTimeDurationEnum durationEnum) {
         return duration(s -> {
             s.sqlFunc(sqlFunction)
                     .column(otherTable, otherProperty);
         }, durationEnum);
     }
+    @Deprecated
     default SQLFunction duration(SQLTableOwner otherTable, String otherProperty,SQLFunction sqlFunction,  DateTimeDurationEnum durationEnum) {
         return duration(s -> {
             s.column(otherTable, otherProperty)
@@ -320,6 +326,7 @@ public interface SQLDateTimeFunc {
      * @param durationEnum
      * @return 相差时间函数
      */
+    @Deprecated
     default SQLFunction duration(SQLFunction sqlFunction1, SQLFunction sqlFunction2, DateTimeDurationEnum durationEnum) {
         return duration(s -> {
             s.sqlFunc(sqlFunction1).sqlFunc(sqlFunction2);
@@ -334,7 +341,9 @@ public interface SQLDateTimeFunc {
      * @param durationEnum
      * @return 相差时间函数
      */
+    @Deprecated
     SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum);
+    SQLFunction duration2(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum);
 
 //
 //    /**

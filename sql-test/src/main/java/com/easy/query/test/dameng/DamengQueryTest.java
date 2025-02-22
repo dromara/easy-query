@@ -278,7 +278,7 @@ public class DamengQueryTest extends DamengBaseTest {
                 .toList();
         List<DamengMyTopic> list1 = entityQuery.queryable(DamengMyTopic.class)
                 .where(x -> {
-                    x.createTime().duration(LocalDateTime.now(), DateTimeDurationEnum.Seconds).gt(100L);
+                    x.expression().constant().valueOf(LocalDateTime.now()).duration(x.createTime()).toSeconds().gt(100L);
                 }).toList();
     }
 

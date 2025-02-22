@@ -17,7 +17,7 @@ import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComp
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
-import com.easy.query.core.proxy.impl.duration.DurationBuilder;
+import com.easy.query.core.proxy.impl.duration.DurationExpression;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.time.Duration;
@@ -228,8 +228,8 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
      * @param after 被比较的时间
      * @return 后续duration操作
      */
-    default DurationBuilder duration(ColumnDateTimeFunctionAvailable<TProperty> after) {
-        return new DurationBuilder(after,this.getEntitySQLContext(), this.getTable(), this.getValue());
+    default DurationExpression duration(ColumnDateTimeFunctionAvailable<TProperty> after) {
+        return new DurationExpression(this,after);
     }
 
     /**
@@ -240,8 +240,8 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
      * @param after 被比较的时间
      * @return 后续duration操作
      */
-    default DurationBuilder duration(LocalDateTime after) {
-        return new DurationBuilder(after,this.getEntitySQLContext(), this.getTable(), this.getValue());
+    default DurationExpression duration(LocalDateTime after) {
+        return new DurationExpression(this,after);
     }
 
     /**
