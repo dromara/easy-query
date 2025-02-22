@@ -22,10 +22,13 @@ import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctio
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
+import com.easy.query.core.proxy.impl.duration.DurationAnyBuilder;
+import com.easy.query.core.proxy.impl.duration.DurationBuilder;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -667,14 +670,19 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     /**
-     * a.duration(b,DateTimeDurationEnum.Days)
-     * a比b大多少天,如果a小于b则返回负数
-     * 两个日期a,b之间相隔多少天
+     * 新版本和老版本结果相反更符合java的{@link Duration}的类
+     * 新版本是a大于b则返回负数,如果a小于b则返回正数
+     * 新版本是a大于b则返回负数,如果a小于b则返回正数
+     * 新版本是a大于b则返回负数,如果a小于b则返回正数
+     * 请使用单入参函数{@link #duration(ColumnDateTimeFunctionAvailable)}
+     * 当前方法是a.duration(b,DateTimeDurationEnum.DAYS)
+     * 如果a大于b则返回正数,如果a小于b则返回负数
      *
      * @param otherDateTime 被比较的时间
      * @param durationEnum  返回相差枚举比如天数
      * @return 如果为负数表示
      */
+    @Deprecated
     default ColumnFunctionCompareComparableAnyChainExpression<Long> duration(ColumnDateTimeFunctionAvailable<TProperty> otherDateTime, DateTimeDurationEnum durationEnum) {
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -699,14 +707,19 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     /**
-     * a.duration(b,DateTimeDurationEnum.Days)
-     * a比b大多少天,如果a小于b则返回负数
-     * 两个日期a,b之间相隔多少天
+     * 新版本和老版本结果相反更符合java的{@link Duration}的类
+     * 新版本是a大于b则返回负数,如果a小于b则返回正数
+     * 新版本是a大于b则返回负数,如果a小于b则返回正数
+     * 新版本是a大于b则返回负数,如果a小于b则返回正数
+     * 请使用单入参函数{@link #duration(LocalDateTime)}
+     * 当前方法是a.duration(b,DateTimeDurationEnum.DAYS)
+     * 如果a大于b则返回正数,如果a小于b则返回负数
      *
      * @param otherDateTime 被比较的时间
      * @param durationEnum  返回相差枚举比如天数
      * @return 如果为负数表示
      */
+    @Deprecated
     default ColumnFunctionCompareComparableAnyChainExpression<Long> duration(LocalDateTime otherDateTime, DateTimeDurationEnum durationEnum) {
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
@@ -717,6 +730,32 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
             }
         }, Long.class);
     }
+
+
+    /**
+     * a.duration(b).toDays()
+     * a比b少多少天,如果a小于b则返回正数,如果a大于b则返回负数
+     * 两个日期a,b之间相隔多少天如果不需考虑时间则请使用abs函数保证肯定是正数
+     *
+     * @param after 被比较的时间
+     * @return 后续duration操作
+     */
+    default DurationAnyBuilder duration(ColumnDateTimeFunctionAvailable<TProperty> after) {
+        return new DurationAnyBuilder(after,this.getEntitySQLContext(), this.getTable(), this.getValue());
+    }
+
+    /**
+     * a.duration(b).toDays()
+     * a比b少多少天,如果a小于b则返回正数,如果a大于b则返回负数
+     * 两个日期a,b之间相隔多少天如果不需考虑时间则请使用abs函数保证肯定是正数
+     *
+     * @param after 被比较的时间
+     * @return 后续duration操作
+     */
+    default DurationAnyBuilder duration(LocalDateTime after) {
+        return new DurationAnyBuilder(after,this.getEntitySQLContext(), this.getTable(), this.getValue());
+    }
+
 
     static ColumnFunctionCompareComparableAnyChainExpression<Integer> dateTimeProp(PropColumn propColumn, EntitySQLContext entitySQLContext, TableAvailable table, String property, DateTimeUnitEnum dateTimeUnitEnum) {
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(entitySQLContext, table, property, fx -> {

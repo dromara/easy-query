@@ -85,26 +85,10 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
 
     default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusMonths(long month) {
         return plus(month,TimeUnitEnum.MONTHS);
-//        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
-//            if (this instanceof DSLSQLFunctionAvailable) {
-//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-//                return fx.plusDateTimeMonths(sqlFunction, month);
-//            } else {
-//                return fx.plusDateTimeMonths(this.getValue(), month);
-//            }
-//        }, getPropertyType());
     }
 
     default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusYears(long year) {
         return plus(year,TimeUnitEnum.YEARS);
-//        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),  fx -> {
-//            if (this instanceof DSLSQLFunctionAvailable) {
-//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-//                return fx.plusDateTimeYears(sqlFunction, year);
-//            } else {
-//                return fx.plusDateTimeYears(this.getValue(), year);
-//            }
-//        }, getPropertyType());
     }
 
     default ColumnFunctionCompareComparableNumberChainExpression<Integer> dayOfYear() {
