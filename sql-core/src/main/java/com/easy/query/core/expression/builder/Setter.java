@@ -36,6 +36,7 @@ public interface Setter extends SQLSetNative<Setter>, RuntimeContextAvailable {
     }
 
     Setter setWithColumn(boolean condition,TableAvailable table, String property1, String property2);
+    Setter setWithColumn(boolean condition,TableAvailable table1, String property1,TableAvailable table2, String property2);
 
     default Setter setIncrement(TableAvailable table,String property) {
         return setIncrement(true,table, property);

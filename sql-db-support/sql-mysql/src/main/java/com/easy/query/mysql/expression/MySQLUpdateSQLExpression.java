@@ -12,7 +12,7 @@ import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImp
  */
 public class MySQLUpdateSQLExpression extends UpdateSQLExpressionImpl {
 
-    public MySQLUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression table) {
-        super(entitySQLExpressionMetadata, table);
+    public MySQLUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        super(entitySQLExpressionMetadata);
     }
 }

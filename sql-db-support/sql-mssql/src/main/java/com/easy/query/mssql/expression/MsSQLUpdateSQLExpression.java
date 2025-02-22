@@ -1,7 +1,6 @@
 package com.easy.query.mssql.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.ToTableContext;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
@@ -19,8 +18,8 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
  */
 public class MsSQLUpdateSQLExpression extends UpdateSQLExpressionImpl {
     private static final Log log= LogFactory.getLog(MsSQLUpdateSQLExpression.class);
-    public MsSQLUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression table) {
-        super(entitySQLExpressionMetadata, table);
+    public MsSQLUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        super(entitySQLExpressionMetadata);
     }
 
     @Override
@@ -36,8 +35,14 @@ public class MsSQLUpdateSQLExpression extends UpdateSQLExpressionImpl {
         int tableSize = toTableContext.getTableSize();
         if(tableSize>1){
             String alias = toTableContext.getAlias(easyTableSQLExpression.getEntityTable());
-            return "UPDATE " + alias + " SET " + setColumns.toSQL(toSQLContext) +" FROM "+ tableName + " WHERE " +
-                    where.toSQL(toSQLContext);
+            StringBuilder sql = new StringBuilder();
+            sql.append("UPDATE ").append(alias).append(" SET ").append(setColumns.toSQL(toSQLContext)).append(" FROM ");
+            buildSQLTableJoinAndWhere(sql,getTables(),toSQLContext);
+            sql.append(" WHERE ").append(where.toSQL(toSQLContext));
+            return sql.toString();
+
+//            return "UPDATE " + alias + " SET " + setColumns.toSQL(toSQLContext) +" FROM "+ tableName + " WHERE " +
+//                    where.toSQL(toSQLContext);
 
         }else{
             return "UPDATE " + tableName + " SET " + setColumns.toSQL(toSQLContext) + " WHERE " +

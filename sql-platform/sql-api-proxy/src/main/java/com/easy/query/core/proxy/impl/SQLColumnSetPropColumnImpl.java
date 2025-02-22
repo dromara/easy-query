@@ -34,10 +34,10 @@ public class SQLColumnSetPropColumnImpl implements SQLColumnSetExpression {
     public void accept(Setter s) {
         if (val instanceof SQLColumn) {
             SQLColumn<?, ?> sqlColumn = (SQLColumn<?, ?>) val;
-            if (table != sqlColumn.getTable()) {
-                throw new UnsupportedOperationException();
-            }
-            s.setWithColumn(table, property, sqlColumn.getValue());
+//            if (table != sqlColumn.getTable()) {
+//                throw new UnsupportedOperationException();
+//            }
+            s.setWithColumn(true,table, property,sqlColumn.getTable(), sqlColumn.getValue());
         } else if (val instanceof DSLSQLFunctionAvailable) {
             DSLSQLFunctionAvailable sqlFunctionAvailable = (DSLSQLFunctionAvailable) val;
             Function<SQLFunc, SQLFunction> func = sqlFunctionAvailable.func();

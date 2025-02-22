@@ -39,8 +39,8 @@ public class GaussDBExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new GaussDBUpdateSQLExpression(entitySQLExpressionMetadata, entityTableSQLExpression);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        return new GaussDBUpdateSQLExpression(entitySQLExpressionMetadata);
     }
 
     @Override

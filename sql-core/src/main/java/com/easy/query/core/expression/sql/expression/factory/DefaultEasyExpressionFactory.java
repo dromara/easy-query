@@ -42,8 +42,8 @@ public class DefaultEasyExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new UpdateSQLExpressionImpl(entitySQLExpressionMetadata, entityTableSQLExpression);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        return new UpdateSQLExpressionImpl(entitySQLExpressionMetadata);
     }
 
     @Override

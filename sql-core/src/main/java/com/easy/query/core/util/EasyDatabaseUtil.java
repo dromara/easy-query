@@ -210,8 +210,8 @@ public class EasyDatabaseUtil {
             return genericMatcher.group(1);
         }
 
-        // 匹配 SQL Server 的 databaseName 参数
-        Pattern sqlServerPattern = Pattern.compile(";databaseName=([^;]+)", Pattern.CASE_INSENSITIVE);
+        // 匹配 SQL Server 的 database 参数
+        Pattern sqlServerPattern = Pattern.compile(";database=([^;]+)", Pattern.CASE_INSENSITIVE);
         Matcher sqlServerMatcher = sqlServerPattern.matcher(jdbcUrl);
         if (sqlServerMatcher.find()) {
             return sqlServerMatcher.group(1);

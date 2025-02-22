@@ -66,6 +66,14 @@ public class SetterImpl implements Setter {
         return this;
     }
 
+    @Override
+    public Setter setWithColumn(boolean condition, TableAvailable table1, String property1, TableAvailable table2, String property2) {
+        if (condition) {
+            InsertUpdateSetColumnSQLSegment updateSetSelfColumnSegment = sqlSegmentFactory.createUpdateSetSelfColumnSegment(table1, property1, table2, property2, entityExpressionBuilder.getExpressionContext());
+            sqlBuilderSegment.append(updateSetSelfColumnSegment);
+        }
+        return this;
+    }
 
     private void setSelf(boolean increment, TableAvailable table, String property, Number val) {
 

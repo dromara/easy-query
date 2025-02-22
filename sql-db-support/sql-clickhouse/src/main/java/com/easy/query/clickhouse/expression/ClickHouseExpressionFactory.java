@@ -39,8 +39,8 @@ public class ClickHouseExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new ClickHouseUpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        return new ClickHouseUpdateSQLExpression(entitySQLExpressionMetadata);
     }
 
     @Override

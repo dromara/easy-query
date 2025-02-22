@@ -159,7 +159,8 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
 
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
-        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, tableExpressionBuilder.toExpression());
+        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata);
+        easyUpdateSQLExpression.getTables().add(tableExpressionBuilder.toExpression());
         updateSet.copyTo(easyUpdateSQLExpression.getSetColumns());
         where.copyTo(easyUpdateSQLExpression.getWhere());
         return easyUpdateSQLExpression;

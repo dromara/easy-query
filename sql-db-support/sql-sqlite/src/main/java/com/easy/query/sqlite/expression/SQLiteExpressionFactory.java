@@ -39,8 +39,8 @@ public class SQLiteExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new SQLiteUpdateSQLExpression(entitySQLExpressionMetadata, entityTableSQLExpression);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+        return new SQLiteUpdateSQLExpression(entitySQLExpressionMetadata);
     }
 
     @Override
