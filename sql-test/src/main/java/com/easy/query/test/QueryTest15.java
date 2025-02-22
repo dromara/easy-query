@@ -24,6 +24,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.core.Expression;
@@ -467,7 +468,7 @@ public class QueryTest15 extends BaseTest {
                     .where(t -> {
                         SQLConstantExpression constant = t.expression().constant();
                         t.createTime().lt(
-                                constant.valueOf(format).toDateTime(LocalDateTime.class).plus(1, TimeUnit.DAYS)
+                                constant.valueOf(format).toDateTime(LocalDateTime.class).plus(1, TimeUnitEnum.DAYS)
                         );
                     }).toList();
         }
@@ -483,7 +484,7 @@ public class QueryTest15 extends BaseTest {
 //
 //                    return Select.DRAFT.of(
 ////                            constant.valueOf(1).devide(constant.valueOf(2))
-//                            t.createTime().plus(1, TimeUnit.DAYS).format("yyyy-MM")
+//                            t.createTime().plus(1, TimeUnitEnum.DAYS).format("yyyy-MM")
 //                    );
 //                }).toList();
 
@@ -973,7 +974,7 @@ public class QueryTest15 extends BaseTest {
 
                     r.title().set(o.stars().nullOrDefault(0).toStr());
 
-                    PropTypeColumn<String> nullProperty = o.expression().sqlType("IFNULL({0},'')", c -> {
+                    PropTypeColumn<String> nullProperty = o.expression().sqlSegment("IFNULL({0},'')", c -> {
                         c.keepStyle();
                         c.expression(o.id());
                     }).asAnyType(String.class);

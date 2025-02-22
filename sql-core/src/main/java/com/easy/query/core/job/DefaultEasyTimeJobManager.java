@@ -3,6 +3,7 @@ package com.easy.query.core.job;
 import com.easy.query.core.basic.thread.EasyQueryThreadFactory;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;

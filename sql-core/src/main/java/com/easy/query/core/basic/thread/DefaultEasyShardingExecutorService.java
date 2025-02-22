@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.thread;
 
 import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;

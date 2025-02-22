@@ -94,18 +94,62 @@ public class DurationBuilder {
         }
     }
 
+    /**
+     * 返回两者相差天数
+     * a.duration(b)
+     * a小于b则返回正数
+     * a大于b则返回负数
+     *
+     * @return
+     */
+
     public ColumnFunctionCompareComparableNumberChainExpression<Long> toDays() {
         return duration(DateTimeDurationEnum.Days);
     }
+
+    /**
+     * 返回两者相差小时数
+     * a.duration(b)
+     * a小于b则返回正数
+     * a大于b则返回负数
+     *
+     * @return
+     */
     public ColumnFunctionCompareComparableNumberChainExpression<Long> toHours() {
         return duration(DateTimeDurationEnum.Hours);
     }
+
+    /**
+     * 返回两者相差分钟数
+     * a.duration(b)
+     * a小于b则返回正数
+     * a大于b则返回负数
+     *
+     * @return
+     */
     public ColumnFunctionCompareComparableNumberChainExpression<Long> toMinutes() {
         return duration(DateTimeDurationEnum.Minutes);
     }
+
+    /**
+     * 返回两者相差秒数
+     * a.duration(b)
+     * a小于b则返回正数
+     * a大于b则返回负数
+     * @return
+     */
     public ColumnFunctionCompareComparableNumberChainExpression<Long> toSeconds() {
         return duration(DateTimeDurationEnum.Seconds);
     }
+
+    /**
+     * 返回两者相差值
+     * a.duration(b)
+     * a小于b则返回正数
+     * a大于b则返回负数
+     * @param durationEnum 返回什么值
+     * @return
+     */
     public ColumnFunctionCompareComparableNumberChainExpression<Long> toValues(DateTimeDurationEnum durationEnum) {
         return duration(durationEnum);
     }

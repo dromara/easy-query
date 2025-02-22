@@ -205,21 +205,21 @@ public void query10() {
         Draft3<LocalDateTime, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(BlogEntity.class)
                 .whereById(id)
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().plus(1, TimeUnit.DAYS),
-                        o.createTime().plus(2, TimeUnit.SECONDS),
-                        o.createTime().plus(3, TimeUnit.MINUTES)
+                        o.createTime().plus(1, TimeUnitEnum.DAYS),
+                        o.createTime().plus(2, TimeUnitEnum.SECONDS),
+                        o.createTime().plus(3, TimeUnitEnum.MINUTES)
                 )).firstOrNull();
 
         Draft7<Long, Long, Long, Long, Long, Long, Long> draft3 = entityQuery.queryable(BlogEntity.class)
                 .whereById(id)
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(1,TimeUnit.DAYS), DateTimeDurationEnum.Days),
-                        o.createTime().duration(o.createTime().plus(2,TimeUnit.SECONDS),DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(3,TimeUnit.MINUTES),DateTimeDurationEnum.Minutes)
+                        o.updateTime().duration(o.createTime()).toDays(),
+                        o.updateTime().duration(o.createTime()).toHours(),
+                        o.updateTime().duration(o.createTime()).toMinutes(),
+                        o.updateTime().duration(o.createTime()).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS)).toDays(),
+                        o.createTime().duration(o.createTime().plus(2,TimeUnitEnum.SECONDS)).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(3,TimeUnitEnum.MINUTES)).toMinutes()
                 )).firstOrNull();
 
         Assert.assertNotNull(draft3);
@@ -232,21 +232,21 @@ public void query10() {
         Long value4 = draft3.getValue4();
         Assert.assertEquals(-2768461, (long) value4);
         Long value5 = draft3.getValue5();
-        Assert.assertEquals(-1, (long) value5);
+        Assert.assertEquals(1, (long) value5);
         Long value6 = draft3.getValue6();
-        Assert.assertEquals(-2, (long) value6);
+        Assert.assertEquals(2, (long) value6);
         Long value7 = draft3.getValue7();
-        Assert.assertEquals(-3, (long) value7);
+        Assert.assertEquals(3, (long) value7);
         Draft7<Long, Long, Long, Long, Long, Long, Long> draft4 = entityQuery.queryable(BlogEntity.class)
                 .whereById(id)
                 .select(o -> Select.DRAFT.of(
-                        SQLMathExpression.abs(o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days)),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(1,TimeUnit.DAYS), DateTimeDurationEnum.Days),
-                        o.createTime().duration(o.createTime().plus(2,TimeUnit.SECONDS),DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(1,TimeUnit.DAYS).plus(3,TimeUnit.MINUTES),DateTimeDurationEnum.Minutes)
+                        SQLMathExpression.abs(o.createTime().duration(o.updateTime()).toDays()),
+                        o.updateTime().duration(o.createTime()).toHours(),
+                        o.updateTime().duration(o.createTime()).toMinutes(),
+                        o.updateTime().duration(o.createTime()).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS)).toDays(),
+                        o.createTime().duration(o.createTime().plus(2,TimeUnitEnum.SECONDS)).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS).plus(3,TimeUnitEnum.MINUTES)).toMinutes()
                 )).firstOrNull();
         Assert.assertEquals(-1443,(long)draft4.getValue7());
 
@@ -296,13 +296,13 @@ public void query10() {
         Draft7<Long, Long, Long, Long, Long, Long, Long> draft3 = entityQuery.queryable(BlogEntity.class)
                 .whereById(id)
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS), DateTimeDurationEnum.Days),
-                        o.createTime().duration(o.createTime().plus(2,TimeUnitEnum.SECONDS),DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(3,TimeUnitEnum.MINUTES),DateTimeDurationEnum.Minutes)
+                        o.createTime().duration(o.updateTime()).toDays(),
+                        o.createTime().duration(o.updateTime()).toHours(),
+                        o.createTime().duration(o.updateTime()).toMinutes(),
+                        o.createTime().duration(o.updateTime()).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS)).toDays(),
+                        o.createTime().duration(o.createTime().plus(2,TimeUnitEnum.SECONDS)).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(3,TimeUnitEnum.MINUTES)).toMinutes()
                 )).firstOrNull();
 
         Assert.assertNotNull(draft3);
@@ -315,21 +315,21 @@ public void query10() {
         Long value4 = draft3.getValue4();
         Assert.assertEquals(-2768461, (long) value4);
         Long value5 = draft3.getValue5();
-        Assert.assertEquals(-1, (long) value5);
+        Assert.assertEquals(1, (long) value5);
         Long value6 = draft3.getValue6();
-        Assert.assertEquals(-2, (long) value6);
+        Assert.assertEquals(2, (long) value6);
         Long value7 = draft3.getValue7();
-        Assert.assertEquals(-3, (long) value7);
+        Assert.assertEquals(3, (long) value7);
         Draft7<Long, Long, Long, Long, Long, Long, Long> draft4 = entityQuery.queryable(BlogEntity.class)
                 .whereById(id)
                 .select(o -> Select.DRAFT.of(
-                        SQLMathExpression.abs(o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days)),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS), DateTimeDurationEnum.Days),
-                        o.createTime().duration(o.createTime().plus(2,TimeUnitEnum.SECONDS),DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS).plus(3,TimeUnitEnum.MINUTES),DateTimeDurationEnum.Minutes)
+                        SQLMathExpression.abs(o.createTime().duration(o.updateTime()).toDays()),
+                        o.createTime().duration(o.updateTime()).toHours(),
+                        o.createTime().duration(o.updateTime()).toMinutes(),
+                        o.createTime().duration(o.updateTime()).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS)).toDays(),
+                        o.createTime().duration(o.createTime().plus(2,TimeUnitEnum.SECONDS)).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(1,TimeUnitEnum.DAYS).plus(3,TimeUnitEnum.MINUTES)).toMinutes()
                 )).firstOrNull();
         Assert.assertEquals(-1443,(long)draft4.getValue7());
 

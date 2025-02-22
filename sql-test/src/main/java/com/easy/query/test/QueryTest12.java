@@ -390,7 +390,7 @@ public class QueryTest12 extends BaseTest {
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .select(b -> new BlogEntityProxy().adapter(r -> {
                     r.score().set(
-                            b.expression().sqlType("SUM({0})-SUM({1})", c -> {
+                            b.expression().sqlSegment("SUM({0})-SUM({1})", c -> {
                                 c.expression(b.score()).expression(b.score());
                             }).asAnyType(BigDecimal.class)
                     );
@@ -493,7 +493,7 @@ public class QueryTest12 extends BaseTest {
                 .where(b -> {
                     SQLMathExpression.floor(b.score()).eq(BigDecimal.ZERO);
                 })
-                .selectColumn(b -> b.expression().sqlType("GROUP_CONCAT({0})", c -> c.expression(b.title())).asAnyType(String.class));
+                .selectColumn(b -> b.expression().sqlSegment("GROUP_CONCAT({0})", c -> c.expression(b.title())).asAnyType(String.class));
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
                     Expression expression = b.expression();
@@ -650,7 +650,7 @@ public class QueryTest12 extends BaseTest {
                 .groupBy(b -> GroupKeys.of(b.id()))
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    PropTypeColumn<Integer> integerPropTypeColumn = b.expression().sqlType("case {0} when {1} then 1 else 0 end",
+                    PropTypeColumn<Integer> integerPropTypeColumn = b.expression().sqlSegment("case {0} when {1} then 1 else 0 end",
                             c -> {
                                 c.expression(b.groupTable().score()).value(1);
                             }).asAnyType(Integer.class);
@@ -673,7 +673,7 @@ public class QueryTest12 extends BaseTest {
                 .groupBy(b -> GroupKeys.of(b.id()))
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    blogEntityProxy.score().set(b.min(b.expression().sqlType("case {0} when {1} then 1 else 0 end",
+                    blogEntityProxy.score().set(b.min(b.expression().sqlSegment("case {0} when {1} then 1 else 0 end",
                             c -> {
                                 c.expression(b.groupTable().score()).value(1);
                             }).asAnyType(BigDecimal.class)));
@@ -908,7 +908,7 @@ public class QueryTest12 extends BaseTest {
                                     .then(1).elseEnd(0)
                                     .sum()
                     );
-                    blogEntityProxy.score().set(b.min(b.expression().sqlType("case {0} when {1} then 1 else 0 end",
+                    blogEntityProxy.score().set(b.min(b.expression().sqlSegment("case {0} when {1} then 1 else 0 end",
                             c -> {
                                 c.expression(b.groupTable().score()).value(1);
                             }).asAnyType(BigDecimal.class)));

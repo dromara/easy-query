@@ -7,6 +7,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -280,287 +281,6 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, BigDecimal.class);
     }
 
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<TProperty> abs() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Abs);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Abs);
-            }
-        }, getPropertyType());
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<Integer> sign() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Sin);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Sin);
-            }
-        }, Integer.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> floor() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Floor);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Floor);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> ceiling() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Ceiling);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Ceiling);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> round() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Round);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Round);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> round(int decimals) {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction).value(decimals);
-                }, MathMethodEnum.Ceiling);
-            } else {
-                return fx.math(o -> o.column(this.getValue()).value(decimals), MathMethodEnum.Ceiling);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> exp() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Exp);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Exp);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> log() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Log);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Log);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> log10() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Log10);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Log10);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> pow() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Pow);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Pow);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> pow(BigDecimal exponent) {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction).value(exponent);
-                }, MathMethodEnum.Pow);
-            } else {
-                return fx.math(o -> o.column(this.getValue()).value(exponent), MathMethodEnum.Pow);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> sqrt() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Sqrt);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Sqrt);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> cos() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Cos);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Cos);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> sin() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Sin);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Sin);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> tan() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Tan);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Tan);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> acos() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Acos);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Acos);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> asin() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Asin);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Asin);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> atan() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Atan);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Atan);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> atan2() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Atan2);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Atan2);
-            }
-        }, BigDecimal.class);
-    }
-
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> truncate() {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Truncate);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Truncate);
-            }
-        }, BigDecimal.class);
-    }
-
-
     default ColumnFunctionCompareComparableAnyChainExpression<String> dateTimeFormat(String javaFormat) {
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.dateTimeFormat(this.getValue(), javaFormat);
@@ -574,36 +294,59 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
      * @param timeUnit
      * @return
      */
-    default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusTimeUnit(long duration, TimeUnit timeUnit) {
+    default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusTimeUnit(long duration, TimeUnitEnum timeUnit) {
         return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.plusDateTime(sqlFunction, duration, timeUnit);
-            } else {
-                return fx.plusDateTime(this.getValue(), duration, timeUnit);
-            }
+            return fx.plusDateTime2(selector->{
+                PropTypeColumn.columnFuncSelector(selector,this);
+                selector.value(duration);
+            }, timeUnit);
+        }, getPropertyType());
+    }
+    default <T extends Number> ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusTimeUnit(PropTypeColumn<T> propTypeColumn, TimeUnitEnum timeUnit) {
+        return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            return fx.plusDateTime2(selector->{
+                PropTypeColumn.columnFuncSelector(selector,this);
+                PropTypeColumn.columnFuncSelector(selector,propTypeColumn);
+            },timeUnit);
         }, getPropertyType());
     }
 
+
     default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusMonths(int month) {
+
         return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.plusDateTimeMonths(sqlFunction, month);
-            } else {
-                return fx.plusDateTimeMonths(this.getValue(), month);
-            }
+            return fx.plusDateTime2(selector->{
+                PropTypeColumn.columnFuncSelector(selector,this);
+                selector.value(month);
+            },TimeUnitEnum.MONTHS);
+        }, getPropertyType());
+    }
+
+    default <T extends Number> ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusMonths(PropTypeColumn<T> propTypeColumn) {
+
+        return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            return fx.plusDateTime2(selector->{
+                PropTypeColumn.columnFuncSelector(selector,this);
+                PropTypeColumn.columnFuncSelector(selector,propTypeColumn);
+            },TimeUnitEnum.MONTHS);
         }, getPropertyType());
     }
 
     default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusYears(int year) {
         return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.plusDateTimeYears(sqlFunction, year);
-            } else {
-                return fx.plusDateTimeYears(this.getValue(), year);
-            }
+            return fx.plusDateTime2(selector->{
+                PropTypeColumn.columnFuncSelector(selector,this);
+                selector.value(year);
+            },TimeUnitEnum.MONTHS);
+        }, getPropertyType());
+    }
+
+    default <T extends Number> ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusYears(PropTypeColumn<T> propTypeColumn) {
+        return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            return fx.plusDateTime2(selector->{
+                PropTypeColumn.columnFuncSelector(selector,this);
+                PropTypeColumn.columnFuncSelector(selector,propTypeColumn);
+            },TimeUnitEnum.MONTHS);
         }, getPropertyType());
     }
 
@@ -668,69 +411,6 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     default ColumnFunctionCompareComparableAnyChainExpression<Integer> second() {
         return dateTimeProp(this, this.getEntitySQLContext(), this.getTable(), this.getValue(), DateTimeUnitEnum.Second);
     }
-
-    /**
-     * 新版本和老版本结果相反更符合java的{@link Duration}的类
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 请使用单入参函数{@link #duration(ColumnDateTimeFunctionAvailable)}
-     * 当前方法是a.duration(b,DateTimeDurationEnum.DAYS)
-     * 如果a大于b则返回正数,如果a小于b则返回负数
-     *
-     * @param otherDateTime 被比较的时间
-     * @param durationEnum  返回相差枚举比如天数
-     * @return 如果为负数表示
-     */
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<Long> duration(ColumnDateTimeFunctionAvailable<TProperty> otherDateTime, DateTimeDurationEnum durationEnum) {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                if (otherDateTime instanceof DSLSQLFunctionAvailable) {
-                    DSLSQLFunctionAvailable otherFunction = (DSLSQLFunctionAvailable) otherDateTime;
-                    SQLFunction otherDateTimeFunction = otherFunction.func().apply(fx);
-                    return fx.duration(sqlFunction, otherDateTimeFunction, durationEnum);
-                } else {
-                    return fx.duration(sqlFunction, otherDateTime, otherDateTime.getValue(), durationEnum);
-                }
-            } else {
-                if (otherDateTime instanceof DSLSQLFunctionAvailable) {
-                    DSLSQLFunctionAvailable otherFunction = (DSLSQLFunctionAvailable) otherDateTime;
-                    SQLFunction otherDateTimeFunction = otherFunction.func().apply(fx);
-                    return fx.duration(this.getValue(), otherDateTimeFunction, durationEnum);
-                } else {
-                    return fx.duration(this.getValue(), otherDateTime, otherDateTime.getValue(), durationEnum);
-                }
-            }
-        }, Long.class);
-    }
-
-    /**
-     * 新版本和老版本结果相反更符合java的{@link Duration}的类
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 请使用单入参函数{@link #duration(LocalDateTime)}
-     * 当前方法是a.duration(b,DateTimeDurationEnum.DAYS)
-     * 如果a大于b则返回正数,如果a小于b则返回负数
-     *
-     * @param otherDateTime 被比较的时间
-     * @param durationEnum  返回相差枚举比如天数
-     * @return 如果为负数表示
-     */
-    @Deprecated
-    default ColumnFunctionCompareComparableAnyChainExpression<Long> duration(LocalDateTime otherDateTime, DateTimeDurationEnum durationEnum) {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.duration(sqlFunction, otherDateTime, durationEnum);
-            } else {
-                return fx.duration(this.getValue(), otherDateTime, durationEnum);
-            }
-        }, Long.class);
-    }
-
 
     /**
      * a.duration(b).toDays()

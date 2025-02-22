@@ -7,6 +7,7 @@ import com.easy.query.core.basic.jdbc.conn.DataSourceWrapper;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.conn.EasyConnectionFactory;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.sharding.EasyQueryDataSource;
 
 import java.sql.Connection;

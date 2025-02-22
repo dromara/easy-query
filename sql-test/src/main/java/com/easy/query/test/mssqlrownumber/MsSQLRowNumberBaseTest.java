@@ -5,11 +5,14 @@ import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mssql.config.MsSQLRowNumberDatabaseConfiguration;
+import com.easy.query.test.listener.ListenerContextManager;
+import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -27,6 +30,7 @@ public abstract class MsSQLRowNumberBaseTest {
     public static HikariDataSource dataSource;
     public static EasyQuery easyQuery;
     public static EasyEntityQuery entityQuery;
+    public static ListenerContextManager listenerContextManager;
 
     static {
         LogFactory.useStdOutLogging();
@@ -51,12 +55,15 @@ public abstract class MsSQLRowNumberBaseTest {
     }
 
     public static void initEasyQuery() {
+        listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
         EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
                 })
                 .useDatabaseConfigure(new MsSQLRowNumberDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .replaceService(NameConversion.class, UpperCamelCaseNameConversion.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();

@@ -2,10 +2,15 @@ package com.easy.query.test.mssqlrownumber;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.Topic;
+import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic1;
 import com.easy.query.test.mssqlrownumber.entity.MsSQLRowNumberMyTopic;
@@ -183,19 +188,28 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
         Draft3<LocalDateTime, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
                 .whereById(id)
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().plus(1, TimeUnit.DAYS),
-                        o.createTime().plus(2, TimeUnit.SECONDS),
-                        o.createTime().plus(3, TimeUnit.MINUTES)
+                        o.createTime().plus(1, TimeUnitEnum.DAYS),
+                        o.createTime().plus(2, TimeUnitEnum.SECONDS),
+                        o.createTime().plus(3, TimeUnitEnum.MINUTES)
                 )).firstOrNull();
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
 
         Draft4<Long, Long, Long, Long> draft3 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
                 .whereById(id)
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().duration(o.createTime().plus(1,TimeUnit.DAYS), DateTimeDurationEnum.Days),
-                        o.createTime().duration(o.createTime().plus(2,TimeUnit.SECONDS),DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(3,TimeUnit.MINUTES),DateTimeDurationEnum.Minutes),
-                        o.createTime().duration(o.createTime().plus(3,TimeUnit.HOURS),DateTimeDurationEnum.Minutes)
+                        o.createTime().plus(1,TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
+                        o.createTime().plus(2,TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
+                        o.createTime().plus(3,TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes(),
+                        o.createTime().plus(3,TimeUnitEnum.HOURS).duration(o.createTime()).toMinutes()
                 )).firstOrNull();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN ? ELSE ? END) AS `title`,t.`id` AS `id` FROM `t_topic` t WHERE t.`title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(String),2(String),someTitle(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
         Assert.assertNotNull(draft3);
         Long value1 = draft3.getValue1();

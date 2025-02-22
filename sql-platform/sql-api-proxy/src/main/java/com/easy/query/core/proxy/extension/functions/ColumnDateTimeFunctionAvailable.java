@@ -46,26 +46,6 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
             }
         }, String.class);
     }
-
-    /**
-     * 最小精度为秒部分数据库支持秒以下精度
-     * 请使用{@link #plus(long, TimeUnitEnum)}
-     *
-     * @param duration
-     * @param timeUnit
-     * @return
-     */
-    @Deprecated
-    default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plus(long duration, TimeUnit timeUnit) {
-        return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.plusDateTime(sqlFunction, duration, timeUnit);
-            } else {
-                return fx.plusDateTime(this.getValue(), duration, timeUnit);
-            }
-        }, getPropertyType());
-    }
     default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plus(long duration, TimeUnitEnum timeUnit) {
         return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.plusDateTime2(selector->{
@@ -159,68 +139,6 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
     }
 
     /**
-     * 新版本和老版本结果相反更符合java的{@link Duration}的类
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 请使用单入参函数{@link #duration(ColumnDateTimeFunctionAvailable)}
-     * 当前方法是a.duration(b,DateTimeDurationEnum.DAYS)
-     * 如果a大于b则返回正数,如果a小于b则返回负数
-     *
-     * @param otherDateTime 被比较的时间
-     * @param durationEnum  返回相差枚举比如天数
-     * @return 如果为负数表示
-     */
-    @Deprecated
-    default ColumnFunctionCompareComparableNumberChainExpression<Long> duration(ColumnDateTimeFunctionAvailable<TProperty> otherDateTime, DateTimeDurationEnum durationEnum) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                if (otherDateTime instanceof DSLSQLFunctionAvailable) {
-                    DSLSQLFunctionAvailable otherFunction = (DSLSQLFunctionAvailable) otherDateTime;
-                    SQLFunction otherDateTimeFunction = otherFunction.func().apply(fx);
-                    return fx.duration(sqlFunction, otherDateTimeFunction, durationEnum);
-                } else {
-                    return fx.duration(sqlFunction, otherDateTime, otherDateTime.getValue(), durationEnum);
-                }
-            } else {
-                if (otherDateTime instanceof DSLSQLFunctionAvailable) {
-                    DSLSQLFunctionAvailable otherFunction = (DSLSQLFunctionAvailable) otherDateTime;
-                    SQLFunction otherDateTimeFunction = otherFunction.func().apply(fx);
-                    return fx.duration(this.getValue(), otherDateTimeFunction, durationEnum);
-                } else {
-                    return fx.duration(this.getValue(), otherDateTime, otherDateTime.getValue(), durationEnum);
-                }
-            }
-        }, Long.class);
-    }
-
-    /**
-     * 新版本和老版本结果相反更符合java的{@link Duration}的类
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 新版本是a大于b则返回负数,如果a小于b则返回正数
-     * 请使用单入参函数{@link #duration(LocalDateTime)}
-     * 当前方法是a.duration(b,DateTimeDurationEnum.DAYS)
-     * 如果a大于b则返回正数,如果a小于b则返回负数
-     *
-     * @param otherDateTime 被比较的时间
-     * @param durationEnum  返回相差枚举比如天数
-     * @return 如果为负数表示
-     */
-    @Deprecated
-    default ColumnFunctionCompareComparableNumberChainExpression<Long> duration(LocalDateTime otherDateTime, DateTimeDurationEnum durationEnum) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.duration(sqlFunction, otherDateTime, durationEnum);
-            } else {
-                return fx.duration(this.getValue(), otherDateTime, durationEnum);
-            }
-        }, Long.class);
-    }
-
-    /**
      * a.duration(b).toDays()
      * a比b少多少天,如果a小于b则返回正数,如果a大于b则返回负数
      * 两个日期a,b之间相隔多少天如果不需考虑时间则请使用abs函数保证肯定是正数
@@ -229,7 +147,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
      * @return 后续duration操作
      */
     default DurationBuilder duration(ColumnDateTimeFunctionAvailable<TProperty> after) {
-        return new DurationBuilder(after,this.getEntitySQLContext(), this.getTable(), this.getValue());
+        return new DurationBuilder(this,after);
     }
 
     /**
@@ -241,7 +159,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
      * @return 后续duration操作
      */
     default DurationBuilder duration(LocalDateTime after) {
-        return new DurationBuilder(after,this.getEntitySQLContext(), this.getTable(), this.getValue());
+        return new DurationBuilder(this,after);
     }
 
     /**

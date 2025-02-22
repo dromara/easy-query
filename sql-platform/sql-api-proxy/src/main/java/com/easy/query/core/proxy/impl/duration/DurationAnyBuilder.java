@@ -45,48 +45,25 @@ public class DurationAnyBuilder {
     private ColumnFunctionCompareComparableAnyChainExpression<Long> duration(DateTimeDurationEnum durationEnum) {
         if (afterConstant != null) {
             return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.entitySQLContext, this.table, this.property, fx -> {
-                if (this instanceof DSLSQLFunctionAvailable) {
-                    SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                    return fx.duration(s -> {
-                        s.value(afterConstant).sqlFunc(sqlFunction);
-                    }, durationEnum);
-                } else {
-                    return fx.duration(s -> {
-                        s.value(afterConstant)
-                                .column(property);
-                    }, durationEnum);
-                }
+                return fx.duration(s -> {
+                    s.value(afterConstant)
+                            .column(this.table, property);
+                }, durationEnum);
             }, Long.class);
         } else if (afterColumn != null) {
 
             return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.entitySQLContext, this.table, this.property, fx -> {
-                if (this instanceof DSLSQLFunctionAvailable) {
-                    SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                    if (afterColumn instanceof DSLSQLFunctionAvailable) {
-                        DSLSQLFunctionAvailable otherFunction = (DSLSQLFunctionAvailable) afterColumn;
-                        SQLFunction otherDateTimeFunction = otherFunction.func().apply(fx);
-                        return fx.duration(s -> {
-                            s.sqlFunc(otherDateTimeFunction).sqlFunc(sqlFunction);
-                        }, durationEnum);
-                    } else {
-                        return fx.duration(s -> {
-                            s.column(afterColumn, afterColumn.getValue())
-                                    .sqlFunc(sqlFunction);
-                        }, durationEnum);
-                    }
+                if (afterColumn instanceof DSLSQLFunctionAvailable) {
+                    DSLSQLFunctionAvailable otherFunction = (DSLSQLFunctionAvailable) afterColumn;
+                    SQLFunction otherDateTimeFunction = otherFunction.func().apply(fx);
+                    return fx.duration(s -> {
+                        s.sqlFunc(otherDateTimeFunction).column(this.table, property);
+                    }, durationEnum);
                 } else {
-                    if (afterColumn instanceof DSLSQLFunctionAvailable) {
-                        DSLSQLFunctionAvailable otherFunction = (DSLSQLFunctionAvailable) afterColumn;
-                        SQLFunction otherDateTimeFunction = otherFunction.func().apply(fx);
-                        return fx.duration(s -> {
-                            s.sqlFunc(otherDateTimeFunction).column(property);
-                        }, durationEnum);
-                    } else {
-                        return fx.duration(s -> {
-                            s.column(afterColumn, afterColumn.getValue())
-                                    .column(property);
-                        }, durationEnum);
-                    }
+                    return fx.duration(s -> {
+                        s.column(afterColumn, afterColumn.getValue())
+                                .column(this.table, property);
+                    }, durationEnum);
                 }
             }, Long.class);
         } else {
@@ -94,18 +71,64 @@ public class DurationAnyBuilder {
         }
     }
 
+    /**
+     * 返回两者相差天数
+     * a.duration(b)
+     * a小于b则返回正数
+     * a大于b则返回负数
+     *
+     * @return
+     */
+
     public ColumnFunctionCompareComparableAnyChainExpression<Long> toDays() {
         return duration(DateTimeDurationEnum.Days);
     }
+
+    /**
+     * 返回两者相差小时数
+     * a.duration(b)
+     * a小于b则返回正数
+     * a大于b则返回负数
+     *
+     * @return
+     */
     public ColumnFunctionCompareComparableAnyChainExpression<Long> toHours() {
         return duration(DateTimeDurationEnum.Hours);
     }
+
+    /**
+     * 返回两者相差分钟数
+     * a.duration(b)
+     * a小于b则返回正数
+     * a大于b则返回负数
+     *
+     * @return
+     */
     public ColumnFunctionCompareComparableAnyChainExpression<Long> toMinutes() {
         return duration(DateTimeDurationEnum.Minutes);
     }
+
+    /**
+     * 返回两者相差秒数
+     * a.duration(b)
+     * a小于b则返回正数
+     * a大于b则返回负数
+     *
+     * @return
+     */
     public ColumnFunctionCompareComparableAnyChainExpression<Long> toSeconds() {
         return duration(DateTimeDurationEnum.Seconds);
     }
+
+    /**
+     * 返回两者相差值
+     * a.duration(b)
+     * a小于b则返回正数
+     * a大于b则返回负数
+     *
+     * @param durationEnum 返回什么值
+     * @return
+     */
     public ColumnFunctionCompareComparableAnyChainExpression<Long> toValues(DateTimeDurationEnum durationEnum) {
         return duration(durationEnum);
     }

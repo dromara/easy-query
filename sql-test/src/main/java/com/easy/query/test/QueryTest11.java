@@ -167,7 +167,7 @@ public class QueryTest11 extends BaseTest {
                         });
                     })
                     .select(o -> new BlogEntityProxy().adapter(r -> {
-                        PropTypeColumn<BigDecimal> integerPropTypeColumn = o.expression().sqlType("1").asAnyType(BigDecimal.class);
+                        PropTypeColumn<BigDecimal> integerPropTypeColumn = o.expression().sqlSegment("1").asAnyType(BigDecimal.class);
                         r.score().set(integerPropTypeColumn);
                     })).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -524,9 +524,9 @@ public class QueryTest11 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<TopicTypeTest1> list = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.SQLParameter().valueOf(begin).le(o.createTime());
+            o.expression().constant().valueOf(begin).le(o.createTime());
             o.createTime().le(end);
-            o.createTime().le(o.SQLParameter().valueOf(end).plusMonths(-3));
+            o.createTime().le(o.expression().constant().valueOf(end).plusMonths(-3));
         }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -540,11 +540,11 @@ public class QueryTest11 extends BaseTest {
 
         LocalDateTime end = LocalDateTime.of(2022, 1, 1, 1, 1);
         List<TopicTypeTest1> list1 = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.SQLParameter().valueOf(end).le(o.SQLParameter().valueOf(end).plusMonths(-3));
+            o.expression().constant().valueOf(end).le(o.expression().constant().valueOf(end).plusMonths(-3));
         }).toList();
         Assert.assertEquals(0, list1.size());
         List<TopicTypeTest1> list2 = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.SQLParameter().valueOf(end).ge(o.SQLParameter().valueOf(end).plusMonths(-3));
+            o.expression().constant().valueOf(end).ge(o.expression().constant().valueOf(end).plusMonths(-3));
         }).toList();
         Assert.assertTrue(list2.size() > 0);
     }
@@ -554,11 +554,11 @@ public class QueryTest11 extends BaseTest {
 
         LocalDateTime end = LocalDateTime.of(2022, 1, 1, 1, 1);
         List<TopicTypeTest1> list1 = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.SQLParameter().valueOf(end).le(o.SQLParameter().valueOf(end).plusMonths(-3));
+            o.expression().constant().valueOf(end).le(o.expression().constant().valueOf(end).plusMonths(-3));
         }).toList();
         Assert.assertEquals(0, list1.size());
         List<TopicTypeTest1> list2 = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.SQLParameter().valueOf(end).ge(o.SQLParameter().valueOf(end).plusMonths(-3));
+            o.expression().constant().valueOf(end).ge(o.expression().constant().valueOf(end).plusMonths(-3));
         }).toList();
         Assert.assertTrue(list2.size() > 0);
         ListenerContext listenerContext = new ListenerContext();
@@ -617,7 +617,7 @@ public class QueryTest11 extends BaseTest {
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select1 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("123"))
                 .select(o -> Select.DRAFT.of(
-                        o.SQLParameter().valueOf("type1"),
+                        o.expression().constant().valueOf("type1"),
                         o.expression().count()
                 ));
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select2 = easyEntityQuery.queryable(Topic.class)
@@ -711,7 +711,7 @@ public class QueryTest11 extends BaseTest {
                     Query<Long> longQuery = easyEntityQuery.queryable(Topic.class)
                             .where(x -> x.id().eq(o.id())).selectCount();
 
-                    o.SQLConstant().valueOf(0L)
+                    o.expression().constant().valueOf(0L)
                             .eq(longQuery);
 
                     Query<Integer> intQuery = easyEntityQuery.queryable(Topic.class)

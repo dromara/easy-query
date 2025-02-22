@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
@@ -54,7 +55,7 @@ public class MyTest1 extends BaseTest {
                 .where(o -> {
                     o.title().length().eq(123);
 //                    o.createTime().
-//                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
+//                    LocalDateTime.now().plus(1, TimeUnitEnum.MILLISECONDS)
                 })
                 .groupBy(o -> GroupKeys.of(o.content()))
                 .select(o -> Select.DRAFT.of(
@@ -78,7 +79,7 @@ public class MyTest1 extends BaseTest {
                 .where(o -> {
                     o.title().length().eq(123);
 //                    o.createTime().
-//                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
+//                    LocalDateTime.now().plus(1, TimeUnitEnum.MILLISECONDS)
                 })
                 .groupBy(o -> GroupKeys.of(o.content()))
                 .select(o -> Select.DRAFT.of(
@@ -102,7 +103,7 @@ public class MyTest1 extends BaseTest {
                 .where(o -> {
                     o.title().toNumber(Integer.class).asAny().eq(123);
 //                    o.createTime().
-//                    LocalDateTime.now().plus(1, TimeUnit.MILLISECONDS)
+//                    LocalDateTime.now().plus(1, TimeUnitEnum.MILLISECONDS)
                 })
                 .groupBy(o -> GroupKeys.of(o.content()))
                 .select(o -> Select.DRAFT.of(
@@ -134,7 +135,7 @@ public class MyTest1 extends BaseTest {
 
         Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().plus(2, TimeUnit.DAYS)
+                        o.createTime().plus(2, TimeUnitEnum.DAYS)
                 )).firstOrNull();
         Assert.assertNotNull(localDateTimeDraft1);
         LocalDateTime value1 = localDateTimeDraft1.getValue1();
@@ -176,7 +177,7 @@ public class MyTest1 extends BaseTest {
 
         Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().plusMonths(12).plus(1, TimeUnit.DAYS)
+                        o.createTime().plusMonths(12).plus(1, TimeUnitEnum.DAYS)
                 )).firstOrNull();
         Assert.assertNotNull(localDateTimeDraft1);
         LocalDateTime value1 = localDateTimeDraft1.getValue1();
@@ -225,9 +226,9 @@ public class MyTest1 extends BaseTest {
                     o.createTime().plusYears(1).le(LocalDateTime.of(2023, 1, 1, 0, 0));
                 })
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().plusMonths(12).plus(1, TimeUnit.DAYS),
+                        o.createTime().plusMonths(12).plus(1, TimeUnitEnum.DAYS),
                         o.createTime().plusYears(1),
-                        o.createTime().plus(3, TimeUnit.SECONDS)
+                        o.createTime().plus(3, TimeUnitEnum.SECONDS)
                 )).firstOrNull();
         Assert.assertNotNull(draft3);
         LocalDateTime value1 = draft3.getValue1();
@@ -439,13 +440,13 @@ public class MyTest1 extends BaseTest {
         Draft7<Long, Long, Long, Long, Long, Long, Long> draft3 = easyEntityQuery.queryable(BlogEntity.class)
                 .whereById(id)
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Days),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Hours),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Minutes),
-                        o.createTime().duration(o.updateTime(), DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(1, TimeUnit.DAYS), DateTimeDurationEnum.Days),
-                        o.createTime().duration(o.createTime().plus(2, TimeUnit.SECONDS), DateTimeDurationEnum.Seconds),
-                        o.createTime().duration(o.createTime().plus(3, TimeUnit.MINUTES), DateTimeDurationEnum.Minutes)
+                        o.createTime().duration(o.updateTime()).toDays(),
+                        o.createTime().duration(o.updateTime()).toHours(),
+                        o.createTime().duration(o.updateTime()).toMinutes(),
+                        o.createTime().duration(o.updateTime()).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(1, TimeUnitEnum.DAYS)).toDays(),
+                        o.createTime().duration(o.createTime().plus(2, TimeUnitEnum.SECONDS)).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(3, TimeUnitEnum.MINUTES)).toMinutes()
                 )).firstOrNull();
 
         Assert.assertNotNull(draft3);
@@ -458,11 +459,11 @@ public class MyTest1 extends BaseTest {
         Long value4 = draft3.getValue4();
         Assert.assertEquals(-2768461, (long) value4);
         Long value5 = draft3.getValue5();
-        Assert.assertEquals(-1, (long) value5);
+        Assert.assertEquals(1, (long) value5);
         Long value6 = draft3.getValue6();
-        Assert.assertEquals(-2, (long) value6);
+        Assert.assertEquals(2, (long) value6);
         Long value7 = draft3.getValue7();
-        Assert.assertEquals(-3, (long) value7);
+        Assert.assertEquals(3, (long) value7);
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -490,7 +491,7 @@ public class MyTest1 extends BaseTest {
                                 .where(x -> x.id().eq(o.id()));
                     });
                     //创建时间和现在的相差天数现在小于0
-                    o.createTime().duration(LocalDateTime.of(2021, 1, 1, 1, 1), DateTimeDurationEnum.Days).le(0L);
+                    o.expression().constant().valueOf(LocalDateTime.of(2021, 1, 1, 1, 1)).duration(o.createTime()).toDays().le(0L);
                 })
                 .select(o -> Select.DRAFT.of(
                         o.id(),
@@ -1170,7 +1171,7 @@ public class MyTest1 extends BaseTest {
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.of(
-                        t.expression().sqlType("SUBSTR({0},2,2)", c -> c.expression(t.title())),
+                        t.expression().sqlSegment("SUBSTR({0},2,2)", c -> c.expression(t.title())),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 )).toList();
 
@@ -1195,7 +1196,7 @@ public class MyTest1 extends BaseTest {
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.of(
-                        t.expression().sqlType("SUBSTR({0},2,2)", c -> c.expression(t.title())).asAnyType(String.class),
+                        t.expression().sqlSegment("SUBSTR({0},2,2)", c -> c.expression(t.title())).asAnyType(String.class),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
                 .select(o -> Select.DRAFT.of(
@@ -1231,7 +1232,7 @@ public class MyTest1 extends BaseTest {
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.of(
-                        t.expression().sqlType("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022, 1, 1, 1, 2))).asAnyType(LocalDateTime.class),
+                        t.expression().sqlSegment("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022, 1, 1, 1, 2))).asAnyType(LocalDateTime.class),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
                 .select(o -> Select.DRAFT.of(
@@ -1290,9 +1291,9 @@ public class MyTest1 extends BaseTest {
                         o.createTime().duration(o.updateTime()).toHours(),
                         o.createTime().duration(o.updateTime()).toMinutes(),
                         o.createTime().duration(o.updateTime()).toSeconds(),
-                        o.createTime().duration(o.createTime().plus(1, TimeUnit.DAYS)).toDays(),
-                        o.createTime().duration(o.createTime().plus(2, TimeUnit.SECONDS)).toSeconds(),
-                        o.createTime().duration(o.createTime().plus(3, TimeUnit.MINUTES)).toMinutes()
+                        o.createTime().duration(o.createTime().plus(1, TimeUnitEnum.DAYS)).toDays(),
+                        o.createTime().duration(o.createTime().plus(2, TimeUnitEnum.SECONDS)).toSeconds(),
+                        o.createTime().duration(o.createTime().plus(3, TimeUnitEnum.MINUTES)).toMinutes()
                 )).firstOrNull();
 
         Assert.assertNotNull(draft3);

@@ -401,27 +401,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         }
     }
 
-    /**
-     * 请使用SQLConstant方法
-     *
-     * @return 数据库常量值构建方法
-     */
-    @Deprecated
-    public SQLConstantExpression SQLParameter() {
-        return new SQLConstantExpressionImpl(this.getEntitySQLContext());
-    }
-
-    /**
-     * {@link #expression()}或者{@link Expression#constant()}
-     * 创建常量值用于比较或者处理
-     *
-     * @return 数据库常量值构建方法
-     */
-    @Deprecated
-    public SQLConstantExpression SQLConstant() {
-        return new SQLConstantExpressionImpl(this.getEntitySQLContext());
-    }
-
     public Expression expression() {
         return Expression.of(entitySQLContext);
     }

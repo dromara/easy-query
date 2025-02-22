@@ -2,6 +2,7 @@ package com.easy.query.core.basic.thread;
 
 import com.easy.query.core.exception.EasyQueryFutureInvokeSQLException;
 import com.easy.query.core.exception.EasyQueryTimeoutSQLException;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 
 import java.io.Closeable;
 import java.sql.SQLException;

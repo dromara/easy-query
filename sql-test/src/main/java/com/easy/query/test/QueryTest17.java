@@ -17,6 +17,7 @@ import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.expression.sql.builder.EmptyEntityExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
@@ -654,9 +655,9 @@ public class QueryTest17 extends BaseTest {
     public void aaaa() {
         List<Draft1<LocalDateTime>> list = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
-                    t.createTime().plus(1, TimeUnit.DAYS).lt(LocalDateTime.now());
+                    t.createTime().plus(1, TimeUnitEnum.DAYS).lt(LocalDateTime.now());
                 }).select(t -> Select.DRAFT.of(
-                        t.createTime().plus(1, TimeUnit.DAYS)
+                        t.createTime().plus(1, TimeUnitEnum.DAYS)
                 )).toList();
 
         List<Draft1<LocalDateTime>> list1 = easyEntityQuery.queryable(Topic.class)
@@ -667,7 +668,7 @@ public class QueryTest17 extends BaseTest {
                     });
 
                 }).select(t -> Select.DRAFT.of(
-                        t.expression().sqlType("({0} + interval 1 day)", c -> {
+                        t.expression().sqlSegment("({0} + interval 1 day)", c -> {
                             c.expression(t.createTime());
                         }).asAnyType(LocalDateTime.class)
                 )).toList();
@@ -1128,8 +1129,8 @@ public class QueryTest17 extends BaseTest {
                     .where(b -> {
                         b.id().eq("123");
                     }).select(t -> Select.DRAFT.of(
-                            t.expression().sqlType("RAND()").asAnyType(Double.class),
-                            t.expression().sqlType("IFNULL({0},{1})", c -> {
+                            t.expression().sqlSegment("RAND()").asAnyType(Double.class),
+                            t.expression().sqlSegment("IFNULL({0},{1})", c -> {
                                 c.expression(t.stars()).value(1);
                             }).asAnyType(Integer.class)
                     )).toList();
@@ -1152,21 +1153,18 @@ public class QueryTest17 extends BaseTest {
                     .where(b -> {
                         b.id().eq("123");
                     }).select(Topic.class, t -> Select.of(
-                            t.expression().sqlType("RAND()", c -> {
-                                c.setAlias(t.stars());
-                            }).asAnyType(Double.class),
-                            t.expression().sqlType("IFNULL({0},{1})", c -> {
+                            t.expression().sqlSegment("RAND()").asAnyType(Double.class).as(t.stars()),
+                            t.expression().sqlSegment("IFNULL({0},{1})", c -> {
                                 c.expression(t.stars());
                                 c.value(1);
-                                c.setAlias(t.createTime());
-                            }).asAnyType(Integer.class)
+                            }).asAnyType(Integer.class).as(t.createTime())
                     )).toList();
 
             listenerContextManager.clear();
 
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT RAND() AS `stars`,IFNULL(t.`stars`,?) AS `createTime` FROM `t_topic` t WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT RAND() AS `stars`,IFNULL(t.`stars`,?) AS `create_time` FROM `t_topic` t WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
         }
