@@ -29,10 +29,10 @@ public class DamengDateTime2PlusSQLFunction extends AbstractExpressionSQLFunctio
             throw new IllegalArgumentException("columnExpressions.size() != 2");
         }
         switch (timeUnit){
-            case MILLISECONDS: return "({0}+({1})/86400000)";
-            case SECONDS: return "({0}+({1})/86400)";
-            case MINUTES: return "({0}+({1})/1440)";
-            case HOURS: return "({0}+({1})/24)";
+            case MILLISECONDS: return "({0}+({1})/86400000.0)";
+            case SECONDS: return "({0}+({1})/86400.0)";
+            case MINUTES: return "({0}+({1})/1440.0)";
+            case HOURS: return "({0}+({1})/24.0)";
             case DAYS: return "({0}+{1})";
             case MONTHS: return "add_months({0},{1})";
             case YEARS: return "add_months({0},({1})*12)";
