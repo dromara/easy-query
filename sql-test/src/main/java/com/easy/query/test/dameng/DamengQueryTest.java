@@ -2,13 +2,19 @@ package com.easy.query.test.dameng;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
+import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.proxy.TopicProxy;
+import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import org.junit.Assert;
@@ -191,13 +197,24 @@ public class DamengQueryTest extends DamengBaseTest {
                     )).firstOrNull();
             {
 
+
+
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
                 Draft3<Long, Long, Long> draft3 = entityQuery.queryable(DamengMyTopic.class)
                         .whereById(id)
                         .select(o -> Select.DRAFT.of(
                                 o.createTime().plus(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
-                                o.createTime().duration(o.createTime().plus(2, TimeUnitEnum.SECONDS)).toSeconds(),
-                                o.createTime().duration(o.createTime().plus(3, TimeUnitEnum.MINUTES)).toMinutes()
+                                o.createTime().plus(2, TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
+                                o.createTime().plus(3, TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes()
                         )).firstOrNull();
+                listenerContextManager.clear();
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT EXTRACT(DAY FROM (CAST(t.\"CREATE_TIME\" AS TIMESTAMP WITH TIME ZONE)-(t.\"CREATE_TIME\"+?))) AS \"VALUE1\",(EXTRACT(DAY FROM (CAST(t.\"CREATE_TIME\" AS TIMESTAMP WITH TIME ZONE)-(t.\"CREATE_TIME\"+(?)/86400.0)))*86400+EXTRACT(HOUR FROM (CAST(t.\"CREATE_TIME\" AS TIMESTAMP WITH TIME ZONE)-(t.\"CREATE_TIME\"+(?)/86400.0)))*3600+EXTRACT(MINUTE FROM (CAST(t.\"CREATE_TIME\" AS TIMESTAMP WITH TIME ZONE)-(t.\"CREATE_TIME\"+(?)/86400.0)))*60+EXTRACT(SECOND FROM (CAST(t.\"CREATE_TIME\" AS TIMESTAMP WITH TIME ZONE)-(t.\"CREATE_TIME\"+(?)/86400.0)))) AS \"VALUE2\",(EXTRACT(DAY FROM (CAST(t.\"CREATE_TIME\" AS TIMESTAMP WITH TIME ZONE)-(t.\"CREATE_TIME\"+(?)/1440.0)))*1440+EXTRACT(HOUR FROM (CAST(t.\"CREATE_TIME\" AS TIMESTAMP WITH TIME ZONE)-(t.\"CREATE_TIME\"+(?)/1440.0)))*60+EXTRACT(MINUTE FROM (CAST(t.\"CREATE_TIME\" AS TIMESTAMP WITH TIME ZONE)-(t.\"CREATE_TIME\"+(?)/1440.0)))) AS \"VALUE3\" FROM \"MY_TOPIC\" t WHERE t.\"ID\" = ? AND ROWNUM < 2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("1(Long),2(Long),2(Long),2(Long),2(Long),3(Long),3(Long),3(Long),123456zz9(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
 
                 Assert.assertNotNull(draft3);
                 Long value1 = draft3.getValue1();
