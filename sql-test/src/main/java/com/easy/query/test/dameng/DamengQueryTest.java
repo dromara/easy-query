@@ -196,8 +196,8 @@ public class DamengQueryTest extends DamengBaseTest {
                         .whereById(id)
                         .select(o -> Select.DRAFT.of(
                                 o.createTime().plus(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
-                                o.createTime().plus(2, TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
-                                o.createTime().plus(3, TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes()
+                                o.createTime().duration(o.createTime().plus(2, TimeUnitEnum.SECONDS)).toSeconds(),
+                                o.createTime().duration(o.createTime().plus(3, TimeUnitEnum.MINUTES)).toMinutes()
                         )).firstOrNull();
 
                 Assert.assertNotNull(draft3);
