@@ -128,6 +128,11 @@ public class DamengSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
+    public SQLFunction duration2(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
+        return new DamengDateTimeDuration2SQLFunction(getColumnExpressions(sqlExpression), durationEnum);
+    }
+
+    @Override
     public SQLFunction math(SQLExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
         return new DamengMathSQLFunction(getColumnExpressions(sqlExpression), mathMethodEnum);
     }

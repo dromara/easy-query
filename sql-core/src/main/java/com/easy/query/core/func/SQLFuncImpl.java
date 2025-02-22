@@ -26,6 +26,7 @@ import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.ConstSQLFunction;
 import com.easy.query.core.func.def.impl.CountOverSQLFunction;
 import com.easy.query.core.func.def.impl.CountSQLFunction;
+import com.easy.query.core.func.def.impl.DateTimeDuration2SQLFunction;
 import com.easy.query.core.func.def.impl.DenseRankOverSQLFunction;
 import com.easy.query.core.func.def.impl.DateTime2PlusSQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeDurationSQLFunction;
@@ -293,6 +294,11 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
         return new DateTimeDurationSQLFunction(getColumnExpressions(sqlExpression), durationEnum);
+    }
+
+    @Override
+    public SQLFunction duration2(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
+        return new DateTimeDuration2SQLFunction(getColumnExpressions(sqlExpression), durationEnum);
     }
 
     @Override
