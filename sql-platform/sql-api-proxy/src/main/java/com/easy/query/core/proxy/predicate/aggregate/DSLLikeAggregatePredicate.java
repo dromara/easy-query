@@ -21,6 +21,11 @@ import java.util.function.Function;
  */
 public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<TProperty>,DSLSQLFunctionAvailable {
 
+    /**
+     * column like 'value%'
+     * @param condition
+     * @param val
+     */
     @Override
     default void likeMatchLeft(boolean condition, TProperty val) {
         if (condition) {
@@ -28,6 +33,11 @@ public interface DSLLikeAggregatePredicate<TProperty> extends DSLLikePredicate<T
         }
     }
 
+    /**
+     * column like '%value'
+     * @param condition
+     * @param val
+     */
     @Override
     default void likeMatchRight(boolean condition, TProperty val) {
         if (condition) {

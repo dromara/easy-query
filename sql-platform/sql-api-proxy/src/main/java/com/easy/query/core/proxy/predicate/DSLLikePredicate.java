@@ -13,19 +13,38 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
  * @author xuejiaming
  */
 public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
+    /**
+     * column like 'value%'
+     * @param val
+     */
     default void likeMatchLeft(TProperty val) {
         likeMatchLeft(true, val);
     }
 
+    /**
+     * column like 'value%'
+     * @param condition
+     * @param val
+     */
     default void likeMatchLeft(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT)));
         }
     }
+
+    /**
+     * column like '%value'
+     * @param val
+     */
     default void likeMatchRight(TProperty val) {
         likeMatchRight(true, val);
     }
 
+    /**
+     * column like '%value'
+     * @param condition
+     * @param val
+     */
     default void likeMatchRight(boolean condition, TProperty val) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_LEFT)));

@@ -304,6 +304,12 @@ public interface SQLDateTimeFunc {
                     .column(otherTable, otherProperty);
         }, durationEnum);
     }
+    default SQLFunction duration(SQLTableOwner otherTable, String otherProperty,SQLFunction sqlFunction,  DateTimeDurationEnum durationEnum) {
+        return duration(s -> {
+            s.column(otherTable, otherProperty)
+                    .sqlFunc(sqlFunction);
+        }, durationEnum);
+    }
 
     /**
      * 相差时间函数

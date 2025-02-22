@@ -15,10 +15,21 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  * @author xuejiaming
  */
 public interface DSLLikeFunctionPredicate<TProperty> extends TablePropColumn, EntitySQLContextAvailable {
+    /**
+     * column like 'value%'
+     * @param column
+     * @param <T>
+     */
     default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void likeMatchLeft(T column) {
         likeMatchLeft(true, column);
     }
 
+    /**
+     * column like 'value%'
+     * @param condition
+     * @param column
+     * @param <T>
+     */
     default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void   likeMatchLeft(boolean condition, T column) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
@@ -27,10 +38,22 @@ public interface DSLLikeFunctionPredicate<TProperty> extends TablePropColumn, En
             }));
         }
     }
-    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void   likeMatchRight(T column) {
+
+    /**
+     * column like '%value'
+     * @param column
+     * @param <T>
+     */
+    default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  likeMatchRight(T column) {
         likeMatchRight(true, column);
     }
 
+    /**
+     * column like '%value'
+     * @param condition
+     * @param column
+     * @param <T>
+     */
     default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  likeMatchRight(boolean condition, T column) {
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
