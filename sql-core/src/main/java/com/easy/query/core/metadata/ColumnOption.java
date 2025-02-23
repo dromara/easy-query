@@ -37,7 +37,7 @@ public final class ColumnOption {
     private boolean generatedKey = false;
 
 
-//        private  boolean nullable=true;
+    private boolean nullable = true;
     private boolean version = false;
     private boolean insertIgnore = false;
     private boolean updateIgnore = false;
@@ -64,7 +64,7 @@ public final class ColumnOption {
 //    private boolean concurrentUpdateInTrack = false;
 
 
-    public ColumnOption(boolean tableEntity, EntityMetadata entityMetadata, String name, String propertyName,String fieldName) {
+    public ColumnOption(boolean tableEntity, EntityMetadata entityMetadata, String name, String propertyName, String fieldName) {
         this.tableEntity = tableEntity;
         this.entityMetadata = entityMetadata;
         this.name = name;
@@ -278,6 +278,15 @@ public final class ColumnOption {
     public String getFieldName() {
         return fieldName;
     }
+
+    public boolean isNullable() {
+        return nullable;
+    }
+
+    public void setNullable(boolean nullable) {
+        this.nullable = nullable;
+    }
+
     //    public boolean isNullable() {
 //        return nullable;
 //    }

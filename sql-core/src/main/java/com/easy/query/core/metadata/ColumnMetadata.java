@@ -60,7 +60,7 @@ public class ColumnMetadata {
     private final boolean generatedKey;
 
 
-//    private  boolean nullable=true;
+    private boolean nullable = true;
     /**
      * 是否是乐观锁版本号
      */
@@ -175,6 +175,7 @@ public class ColumnMetadata {
         this.complexPropType = columnOption.getComplexPropType();
         this.valueObject = columnOption.isValueObject();
         this.beanConstructorCreator = columnOption.getBeanConstructorCreator();
+        this.nullable = columnOption.isNullable();
         if (this.valueObject) {
             this.valueObjectColumnMetadataList = new ArrayList<>(columnOption.getValueObjectColumnOptions().size());
         } else {
@@ -311,9 +312,9 @@ public class ColumnMetadata {
         return fieldName;
     }
 
-    //    public boolean isNullable() {
-//        return nullable;
-//    }
+    public boolean isNullable() {
+        return nullable;
+    }
     //    public boolean isConcurrentUpdateInTrack() {
 //        return concurrentUpdateInTrack;
 //    }

@@ -443,6 +443,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 判断当前对象是否不存在默认 key is null
+     *
      * @param condition false不生效 true生效
      */
     public void isNull(boolean condition) {
@@ -450,11 +451,21 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
             TableAvailable tableAvailable = this.getTable();
             Collection<String> keyProperties = tableAvailable.getEntityMetadata().getKeyProperties();
             if (EasyCollectionUtil.isEmpty(keyProperties)) {
-                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(tableAvailable.getEntityMetadata().getEntityClass()) +" not found any key,proxy.isNull() not support");
+
+                Collection<ColumnMetadata> columns = tableAvailable.getEntityMetadata().getColumns();
+                ColumnMetadata columnMetadata = EasyCollectionUtil.firstOrDefault(columns, c -> !c.isNullable(), null);
+                if(columnMetadata!=null){
+                    getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNull(tableAvailable, columnMetadata.getPropertyName())));
+                    return;
+                }
+            } else {
+                String key = EasyCollectionUtil.first(keyProperties);
+                getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNull(tableAvailable, key)));
+                return;
             }
 
-            String key = EasyCollectionUtil.first(keyProperties);
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNull(tableAvailable, key)));
+
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(tableAvailable.getEntityMetadata().getEntityClass()) + " not found any key,proxy.isNull() not support");
         }
     }
 
@@ -467,17 +478,28 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 判断当前对象是否不存在默认 key is not null
+     *
      * @param condition false不生效 true生效
      */
     public void isNotNull(boolean condition) {
         if (condition) {
             TableAvailable tableAvailable = this.getTable();
             Collection<String> keyProperties = tableAvailable.getEntityMetadata().getKeyProperties();
+
             if (EasyCollectionUtil.isEmpty(keyProperties)) {
-                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(tableAvailable.getEntityMetadata().getEntityClass()) +" not found any key,proxy.isNotNull() not support");
+
+                Collection<ColumnMetadata> columns = tableAvailable.getEntityMetadata().getColumns();
+                ColumnMetadata columnMetadata = EasyCollectionUtil.firstOrDefault(columns, c -> !c.isNullable(), null);
+                if(columnMetadata!=null){
+                    getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNotNull(tableAvailable, columnMetadata.getPropertyName())));
+                    return;
+                }
+            } else {
+                String key = EasyCollectionUtil.first(keyProperties);
+                getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNotNull(tableAvailable, key)));
+                return;
             }
-            String key = EasyCollectionUtil.first(keyProperties);
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNotNull(tableAvailable, key)));
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(tableAvailable.getEntityMetadata().getEntityClass()) + " not found any key,proxy.isNotNull() not support");
         }
     }
 }

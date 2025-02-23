@@ -557,6 +557,7 @@ public class EntityMetadata {
             columnOption.setSupportQueryLike(encryption.supportQueryLike());
         }
         if (column != null) {
+            columnOption.setNullable(column.nullable());
             //获取默认的属性值转换
             Class<? extends ValueConverter<?, ?>> conversionClass = column.conversion();
             //如果不是默认的就代表添加了
