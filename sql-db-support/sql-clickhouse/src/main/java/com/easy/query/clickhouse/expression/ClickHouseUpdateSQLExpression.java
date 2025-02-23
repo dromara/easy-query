@@ -12,7 +12,7 @@ import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImp
  */
 public class ClickHouseUpdateSQLExpression extends UpdateSQLExpressionImpl {
 
-    public ClickHouseUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        super(entitySQLExpressionMetadata);
+    public ClickHouseUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        super(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 }

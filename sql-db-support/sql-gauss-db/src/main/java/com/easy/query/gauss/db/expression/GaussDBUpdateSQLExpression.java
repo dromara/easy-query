@@ -1,6 +1,7 @@
 package com.easy.query.gauss.db.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImpl;
@@ -20,8 +21,8 @@ import java.util.List;
 public class GaussDBUpdateSQLExpression extends UpdateSQLExpressionImpl {
     private static final Log log = LogFactory.getLog(GaussDBUpdateSQLExpression.class);
 
-    public GaussDBUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        super(entitySQLExpressionMetadata);
+    public GaussDBUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        super(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class GaussDBUpdateSQLExpression extends UpdateSQLExpressionImpl {
 
         if (tables.size() > 1) {
             List<EntityTableSQLExpression> joinTables = tables.subList(1, tables.size());
-            pgSQLUpdateJoinAndWhere(sql, joinTables, toSQLContext, where);
+            EasySQLExpressionUtil.pgSQLUpdateDeleteJoinAndWhere(sql, joinTables, toSQLContext, where, MultiTableTypeEnum.FROM);
         } else {
             sql.append(" WHERE ");
             sql.append(where.toSQL(toSQLContext));

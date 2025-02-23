@@ -11,7 +11,7 @@ import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImp
  * @author xuejiaming
  */
 public class DB2UpdateSQLExpression extends UpdateSQLExpressionImpl {
-    public DB2UpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        super(entitySQLExpressionMetadata);
+    public DB2UpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        super(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 }

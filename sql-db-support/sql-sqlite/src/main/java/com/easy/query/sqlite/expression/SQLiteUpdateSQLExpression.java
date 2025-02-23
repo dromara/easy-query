@@ -12,7 +12,7 @@ import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImp
  */
 public class SQLiteUpdateSQLExpression extends UpdateSQLExpressionImpl {
 
-    public SQLiteUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        super(entitySQLExpressionMetadata);
+    public SQLiteUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        super(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 }

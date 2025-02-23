@@ -42,8 +42,8 @@ public class DefaultEasyExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        return new UpdateSQLExpressionImpl(entitySQLExpressionMetadata);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new UpdateSQLExpressionImpl(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 
     @Override
@@ -53,25 +53,26 @@ public class DefaultEasyExpressionFactory implements ExpressionFactory {
 
     @Override
     public EntityTableSQLExpression createEntityTableSQLExpression(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
-        return new TableSQLExpressionImpl(entityTable,multiTableType,runtimeContext);
+        return new TableSQLExpressionImpl(entityTable, multiTableType, runtimeContext);
     }
 
     @Override
     public EntityTableSQLExpression createAnonymousEntityTableSQLExpression(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQuerySQLExpression entityQuerySQLExpression, QueryRuntimeContext runtimeContext) {
-        return new AnonymousEntityTableSQLExpressionImpl(entityTable,multiTableType, entityQuerySQLExpression,runtimeContext);
+        return new AnonymousEntityTableSQLExpressionImpl(entityTable, multiTableType, entityQuerySQLExpression, runtimeContext);
     }
+
     @Override
     public AnonymousEntityQuerySQLExpression createEasyAnonymousQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, String sql, Collection<Object> sqlParams) {
-        return new AnonymousEntityQuerySQLExpressionImpl(entitySQLExpressionMetadata,sql,sqlParams);
+        return new AnonymousEntityQuerySQLExpressionImpl(entitySQLExpressionMetadata, sql, sqlParams);
     }
 
     @Override
     public AnonymousEntityQuerySQLExpression createEasyAnonymousUnionQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, List<EntityQuerySQLExpression> entityQuerySQLExpressions, SQLUnionEnum sqlUnion) {
-        return new AnonymousUnionQuerySQLExpressionImpl(entitySQLExpressionMetadata, entityQuerySQLExpressions,sqlUnion);
+        return new AnonymousUnionQuerySQLExpressionImpl(entitySQLExpressionMetadata, entityQuerySQLExpressions, sqlUnion);
     }
 
     @Override
     public AnonymousEntityQuerySQLExpression createEasyAnonymousCTEQuerySQLExpression(String cteTableName, EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression) {
-        return new AnonymousTreeCTEQuerySQLExpressionImpl(cteTableName,entitySQLExpressionMetadata,querySQLExpression);
+        return new AnonymousTreeCTEQuerySQLExpressionImpl(cteTableName, entitySQLExpressionMetadata, querySQLExpression);
     }
 }

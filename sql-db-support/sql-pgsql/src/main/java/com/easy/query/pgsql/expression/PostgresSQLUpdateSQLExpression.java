@@ -25,8 +25,8 @@ import java.util.List;
 public class PostgresSQLUpdateSQLExpression extends UpdateSQLExpressionImpl {
     private static final Log log = LogFactory.getLog(PostgresSQLUpdateSQLExpression.class);
 
-    public PostgresSQLUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        super(entitySQLExpressionMetadata);
+    public PostgresSQLUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        super(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PostgresSQLUpdateSQLExpression extends UpdateSQLExpressionImpl {
 
         if (tables.size() > 1) {
             List<EntityTableSQLExpression> joinTables = tables.subList(1, tables.size());
-            pgSQLUpdateJoinAndWhere(sql, joinTables, toSQLContext, where);
+            EasySQLExpressionUtil.pgSQLUpdateDeleteJoinAndWhere(sql, joinTables, toSQLContext, where, MultiTableTypeEnum.FROM);
         } else {
             sql.append(" WHERE ");
             sql.append(where.toSQL(toSQLContext));

@@ -11,7 +11,7 @@ import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImp
  * @author xuejiaming
  */
 public class DamengUpdateSQLExpression extends UpdateSQLExpressionImpl {
-    public DamengUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        super(entitySQLExpressionMetadata);
+    public DamengUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        super(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 }

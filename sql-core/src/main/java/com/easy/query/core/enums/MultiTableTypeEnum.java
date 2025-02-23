@@ -13,6 +13,7 @@ public enum MultiTableTypeEnum {
     LEFT_JOIN("LEFT JOIN"),
     INNER_JOIN("INNER JOIN"),
     RIGHT_JOIN("RIGHT JOIN"),
+    USING("USING"),
     DTO(",");
 
     private final String appendSQL;

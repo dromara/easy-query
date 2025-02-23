@@ -38,8 +38,8 @@ public class DamengExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        return new DamengUpdateSQLExpression(entitySQLExpressionMetadata);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new DamengUpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override

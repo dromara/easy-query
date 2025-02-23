@@ -3,22 +3,16 @@ package com.easy.query.test;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.proxy.core.draft.Draft3;
-import com.easy.query.core.proxy.sql.GroupKeys;
-import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.doc.entity.DocBank;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocUser;
-import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * create time 2025/2/22 22:24
@@ -26,15 +20,22 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class UpdateJoinTest extends BaseTest{
+public class UpdateDeleteJoinTest extends BaseTest{
 
-//    @Before
-//     public void testBefore(){
-//        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
-//        databaseCodeFirst.createDatabaseIfNotExists();
-//        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocUser.class, DocBank.class));
-//        codeFirstCommand.executeWithTransaction(a->a.commit());
-//    }
+    @Before
+     public void testBefore(){
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        databaseCodeFirst.createDatabaseIfNotExists();
+        {
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBankCard.class, DocUser.class, DocBank.class));
+            codeFirstCommand.executeWithTransaction(a->a.commit());
+
+        }
+        {
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocUser.class, DocBank.class));
+            codeFirstCommand.executeWithTransaction(a->a.commit());
+        }
+    }
     @Test
     public void testUpdateJoin1(){
 
@@ -74,6 +75,48 @@ public class UpdateJoinTest extends BaseTest{
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("UPDATE `doc_bank_card` t INNER JOIN `doc_bank` t1 ON t1.`id` = t.`bank_id` INNER JOIN `doc_user` t2 ON t2.`id` = t.`uid` SET t.`type` = t1.`name` WHERE t2.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+
+
+    @Test
+    public void testDeleteJoin1(){
+//        easyEntityQuery.sqlExecute("DELETE FROM `doc_bank_card` t INNER JOIN `doc_user` t1 ON t1.`id` = t.`uid` WHERE t1.`name` LIKE '123'");
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.deletable(DocBankCard.class)
+                .allowDeleteStatement(true)
+                .where(bank_card -> {
+                    bank_card.user().name().like("123");
+                }).executeRows();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("DELETE t FROM `doc_bank_card` t INNER JOIN `doc_user` t1 ON t1.`id` = t.`uid` WHERE t1.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testDeleteJoin2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.deletable(DocBankCard.class)
+                .allowDeleteStatement(true)
+                .where(bank_card -> {
+                    bank_card.user().name().like("123");
+                }).executeRows();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("DELETE t FROM `doc_bank_card` t INNER JOIN `doc_user` t1 ON t1.`id` = t.`uid` WHERE t1.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }

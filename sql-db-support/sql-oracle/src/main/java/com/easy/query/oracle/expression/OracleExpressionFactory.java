@@ -39,8 +39,8 @@ public class OracleExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        return new OracleUpdateSQLExpression(entitySQLExpressionMetadata);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new OracleUpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override

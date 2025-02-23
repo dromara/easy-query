@@ -39,8 +39,8 @@ public class MsSQLExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        return new MsSQLUpdateSQLExpression(entitySQLExpressionMetadata);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new MsSQLUpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override

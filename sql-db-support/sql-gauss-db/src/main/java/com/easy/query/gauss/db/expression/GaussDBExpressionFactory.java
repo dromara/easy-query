@@ -39,8 +39,8 @@ public class GaussDBExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        return new GaussDBUpdateSQLExpression(entitySQLExpressionMetadata);
+    public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        return new GaussDBUpdateSQLExpression(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 
     @Override
@@ -71,6 +71,6 @@ public class GaussDBExpressionFactory implements ExpressionFactory {
 
     @Override
     public AnonymousEntityQuerySQLExpression createEasyAnonymousCTEQuerySQLExpression(String cteTableName, EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression) {
-        return new AnonymousTreeCTEQuerySQLExpressionImpl(cteTableName,entitySQLExpressionMetadata,querySQLExpression);
+        return new AnonymousTreeCTEQuerySQLExpressionImpl(cteTableName, entitySQLExpressionMetadata, querySQLExpression);
     }
 }

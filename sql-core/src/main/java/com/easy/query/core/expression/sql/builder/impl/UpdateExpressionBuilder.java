@@ -207,20 +207,9 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         PredicateSegment sqlWhere = sqlPredicateFilter(tableExpressionBuilder, where);
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
-        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata);
-        easyUpdateSQLExpression.getTables().add(tableExpressionBuilder.toExpression());
+        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata,tableExpressionBuilder.toExpression());
 
-        if(hasRelationTables()){
-            for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> relationTableKV : getRelationTables().entrySet()) {
-                EntityTableExpressionBuilder value = relationTableKV.getValue();
-                EntityTableSQLExpression tableExpression = (EntityTableSQLExpression) toTableExpressionSQL(value, false);
-                easyUpdateSQLExpression.getTables().add(tableExpression);
-                PredicateSegment on = getTableOnWithQueryFilter(value);
-                if (on != null && on.isNotEmpty()) {
-                    tableExpression.setOn(on);
-                }
-            }
-        }
+        addRelationTables(easyUpdateSQLExpression);
 
         updateSetSQLSegment.copyTo(easyUpdateSQLExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());
@@ -277,28 +266,12 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
-        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata);
-        easyUpdateSQLExpression.getTables().add(tableExpressionBuilder.toExpression());
+        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata,tableExpressionBuilder.toExpression());
 
 
         updateSet.copyTo(easyUpdateSQLExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());
         return easyUpdateSQLExpression;
-    }
-
-    protected SQLExpression toTableExpressionSQL(EntityTableExpressionBuilder entityTableExpressionBuilder, boolean onlySingleAnonymousTable) {
-        if (entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
-
-            EntityQueryExpressionBuilder sqlEntityQueryExpression = ((AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder).getEntityQueryExpressionBuilder();
-            //如果只有单匿名表且未对齐select那么嵌套表需要被展开
-            //todo 如果对其进行order 或者 where了呢怎么办
-            return onlySingleAnonymousTable ? sqlEntityQueryExpression.toExpression() : entityTableExpressionBuilder.toExpression();
-        }
-        return entityTableExpressionBuilder.toExpression();
-    }
-
-    protected PredicateSegment getTableOnWithQueryFilter(EntityTableExpressionBuilder table) {
-        return sqlPredicateFilter(table, table.hasOn() ? table.getOn() : null);
     }
 
     private SQLBuilderSegment updateSetConfigurer(TableExpressionBuilder tableExpressionBuilder, SQLBuilderSegment updateSet,@NotNull Object entity) {

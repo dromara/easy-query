@@ -22,6 +22,7 @@ import com.easy.query.core.common.RelationColumnResult;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
@@ -652,6 +653,71 @@ public class EasySQLExpressionUtil {
                     });
                 }
             }
+        }
+    }
+
+
+    public static void joinUpdateDeleteTableAppend(StringBuilder sql, List<EntityTableSQLExpression> tables, ToSQLContext toSQLContext) {
+
+        Iterator<EntityTableSQLExpression> iterator = tables.iterator();
+        EntityTableSQLExpression firstTable = iterator.next();
+        sql.append(firstTable.toSQL(toSQLContext));
+        while (iterator.hasNext()) {
+            EntityTableSQLExpression table = iterator.next();
+            sql.append(table.toSQL(toSQLContext));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
+
+            PredicateSegment on = table.getOn();
+            if (on != null && on.isNotEmpty()) {
+                sql.append(" ON ").append(on.toSQL(toSQLContext));
+            }
+        }
+    }
+
+
+    public static void pgSQLUpdateDeleteJoinAndWhere(StringBuilder sql, List<EntityTableSQLExpression> tables, ToSQLContext toSQLContext, PredicateSegment where,MultiTableTypeEnum multiTableType) {
+
+        if (EasyCollectionUtil.isSingle(tables)) {
+            EntityTableSQLExpression entityTableSQLExpression = tables.get(0);
+            entityTableSQLExpression.setMultiTableType(multiTableType);
+            sql.append(entityTableSQLExpression.toSQL(toSQLContext));
+
+            sql.append(" WHERE ");
+
+            sql.append(entityTableSQLExpression.getOn().toSQL(toSQLContext));
+            if(EasySQLSegmentUtil.isNotEmpty(where)){
+                sql.append(" AND ");
+                sql.append(where.toSQL(toSQLContext));
+            }
+
+        } else {
+            StringBuilder whereSQL=new StringBuilder();
+            Iterator<EntityTableSQLExpression> iterator = tables.iterator();
+            EntityTableSQLExpression firstTable = iterator.next();
+            firstTable.setMultiTableType(multiTableType);
+            sql.append(firstTable.toSQL(toSQLContext));
+            whereSQL.append(firstTable.getOn().toSQL(toSQLContext));
+            while (iterator.hasNext()) {
+                EntityTableSQLExpression table = iterator.next();
+                table.setMultiTableType(MultiTableTypeEnum.DTO);
+                sql.append(table.toSQL(toSQLContext));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
+
+                whereSQL.append(" AND ");
+                whereSQL.append(table.getOn().toSQL(toSQLContext));
+//                PredicateSegment on = table.getOn();
+//                if (on != null && on.isNotEmpty()) {
+//                    sql.append(" ON ").append(on.toSQL(toSQLContext));
+//                }
+            }
+
+            sql.append(" WHERE ");
+
+            sql.append(whereSQL);
+
+            if(EasySQLSegmentUtil.isNotEmpty(where)){
+                sql.append(" AND ");
+                sql.append(where.toSQL(toSQLContext));
+            }
+
         }
     }
 }

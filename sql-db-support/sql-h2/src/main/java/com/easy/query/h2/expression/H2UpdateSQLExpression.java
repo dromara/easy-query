@@ -12,7 +12,7 @@ import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImp
  */
 public class H2UpdateSQLExpression extends UpdateSQLExpressionImpl {
 
-    public H2UpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        super(entitySQLExpressionMetadata);
+    public H2UpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        super(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 }

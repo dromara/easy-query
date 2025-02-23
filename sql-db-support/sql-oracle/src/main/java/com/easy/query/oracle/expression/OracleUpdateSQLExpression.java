@@ -11,7 +11,7 @@ import com.easy.query.core.expression.sql.expression.impl.UpdateSQLExpressionImp
  * @author xuejiaming
  */
 public class OracleUpdateSQLExpression extends UpdateSQLExpressionImpl {
-    public OracleUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
-        super(entitySQLExpressionMetadata);
+    public OracleUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
+        super(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 }

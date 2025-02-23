@@ -33,8 +33,9 @@ public class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
     protected final List<EntityTableSQLExpression> tables = new ArrayList<>(3);
     protected final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
 
-    public UpdateSQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
+    public UpdateSQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata,EntityTableSQLExpression entityTableSQLExpression) {
         this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;
+        this.tables.add(entityTableSQLExpression);
         this.setColumns = new UpdateSetSQLBuilderSegment();
         this.where = new AndPredicateSegment(true);
     }
@@ -77,7 +78,8 @@ public class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
 //        String tableName = easyTableSQLExpression.toSQL(toSQLContext);
         StringBuilder sql = new StringBuilder();
         sql.append("UPDATE ");
-        buildSQLTableJoinAndWhere(sql, tables, toSQLContext);
+
+        EasySQLExpressionUtil.joinUpdateDeleteTableAppend(sql, tables, toSQLContext);
         sql.append(" SET ");
         sql.append(setColumns.toSQL(toSQLContext));
         sql.append(" WHERE ");
@@ -87,33 +89,15 @@ public class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
 //                where.toSQL(toSQLContext);
     }
 
-    protected void buildSQLTableJoinAndWhere(StringBuilder sql, List<EntityTableSQLExpression> tables, ToSQLContext toSQLContext) {
-
-        if (EasyCollectionUtil.isSingle(tables)) {
-            EntityTableSQLExpression firstTable = tables.get(0);
-            sql.append(firstTable.toSQL(toSQLContext));
-        } else {
-            Iterator<EntityTableSQLExpression> iterator = getTables().iterator();
-            EntityTableSQLExpression firstTable = iterator.next();
-            sql.append(firstTable.toSQL(toSQLContext));
-            while (iterator.hasNext()) {
-                EntityTableSQLExpression table = iterator.next();
-                sql.append(table.toSQL(toSQLContext));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
-
-                PredicateSegment on = table.getOn();
-                if (on != null && on.isNotEmpty()) {
-                    sql.append(" ON ").append(on.toSQL(toSQLContext));
-                }
-            }
-        }
-    }
-
     @Override
     public EntityUpdateSQLExpression cloneSQLExpression() {
 
         ExpressionFactory expressionFactory = entitySQLExpressionMetadata.getRuntimeContext().getExpressionFactory();
-        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata);
-        for (EntityTableSQLExpression table : tables) {
+        Iterator<EntityTableSQLExpression> iterator = tables.iterator();
+        EntityTableSQLExpression firstTable = iterator.next();
+        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata,firstTable.cloneSQLExpression());
+        while(iterator.hasNext()){
+            EntityTableSQLExpression table = iterator.next();
             easyUpdateSQLExpression.getTables().add(table.cloneSQLExpression());
         }
         if (EasySQLSegmentUtil.isNotEmpty(where)) {
@@ -126,50 +110,4 @@ public class UpdateSQLExpressionImpl implements EntityUpdateSQLExpression {
     }
 
 
-    public static void pgSQLUpdateJoinAndWhere(StringBuilder sql, List<EntityTableSQLExpression> tables, ToSQLContext toSQLContext, PredicateSegment where) {
-
-        if (EasyCollectionUtil.isSingle(tables)) {
-            EntityTableSQLExpression entityTableSQLExpression = tables.get(0);
-            entityTableSQLExpression.setMultiTableType(MultiTableTypeEnum.FROM);
-            sql.append(entityTableSQLExpression.toSQL(toSQLContext));
-
-            sql.append(" WHERE ");
-
-            sql.append(entityTableSQLExpression.getOn().toSQL(toSQLContext));
-            if(EasySQLSegmentUtil.isNotEmpty(where)){
-                sql.append(" AND ");
-                sql.append(where.toSQL(toSQLContext));
-            }
-
-        } else {
-            StringBuilder whereSQL=new StringBuilder();
-            Iterator<EntityTableSQLExpression> iterator = tables.iterator();
-            EntityTableSQLExpression firstTable = iterator.next();
-            firstTable.setMultiTableType(MultiTableTypeEnum.FROM);
-            sql.append(firstTable.toSQL(toSQLContext));
-            whereSQL.append(firstTable.getOn().toSQL(toSQLContext));
-            while (iterator.hasNext()) {
-                EntityTableSQLExpression table = iterator.next();
-                table.setMultiTableType(MultiTableTypeEnum.DTO);
-                sql.append(table.toSQL(toSQLContext));// [from table alias] | [left join table alias] 匿名表 应该使用  [left join (table) alias]
-
-                whereSQL.append(" AND ");
-                whereSQL.append(table.getOn().toSQL(toSQLContext));
-//                PredicateSegment on = table.getOn();
-//                if (on != null && on.isNotEmpty()) {
-//                    sql.append(" ON ").append(on.toSQL(toSQLContext));
-//                }
-            }
-
-            sql.append(" WHERE ");
-
-            sql.append(whereSQL);
-
-            if(EasySQLSegmentUtil.isNotEmpty(where)){
-                sql.append(" AND ");
-                sql.append(where.toSQL(toSQLContext));
-            }
-
-        }
-    }
 }
