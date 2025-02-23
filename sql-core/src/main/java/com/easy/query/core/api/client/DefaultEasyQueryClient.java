@@ -354,7 +354,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
     @Override
     public DatabaseCodeFirst getDatabaseCodeFirst() {
-        return easySQLApiFactory.createDatabaseCodeFirst(runtimeContext);
+        return runtimeContext.getDatabaseCodeFirst();
     }
     @Override
     public void setMigrationParser(MigrationEntityParser migrationParser) {

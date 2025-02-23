@@ -6,6 +6,7 @@ import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
@@ -96,6 +97,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final MigrationsSQLGenerator migrationsSQLGenerator;
     private final CteTableNamedProvider cteTableNamedProvider;
     private final MapKeyNameConversion mapKeyNameConversion;
+    private final DatabaseCodeFirst databaseCodeFirst;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -139,7 +141,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           EntityMappingRule entityMappingRule,
                                           MigrationsSQLGenerator migrationsSQLGenerator,
                                           CteTableNamedProvider cteTableNamedProvider,
-                                          MapKeyNameConversion mapKeyNameConversion) {
+                                          MapKeyNameConversion mapKeyNameConversion,
+                                          DatabaseCodeFirst databaseCodeFirst) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -183,6 +186,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.migrationsSQLGenerator = migrationsSQLGenerator;
         this.cteTableNamedProvider = cteTableNamedProvider;
         this.mapKeyNameConversion = mapKeyNameConversion;
+        this.databaseCodeFirst = databaseCodeFirst;
     }
 
     @Override
@@ -399,5 +403,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public MapKeyNameConversion getMapKeyNameConversion() {
         return mapKeyNameConversion;
+    }
+
+    @Override
+    public DatabaseCodeFirst getDatabaseCodeFirst() {
+        return databaseCodeFirst;
     }
 }

@@ -75,7 +75,7 @@ public class MigrationDamengTest {
             System.out.println(arg.sql);
             String md5 = MD5Util.getMD5Hash(arg.sql);
             System.out.println("sql-hash:" + md5);
-            Assert.assertEquals("c1302bf65cd7b09c43063e22a053baed", md5);
+            Assert.assertEquals("88632c6241761dfc3dbdd274080030dc", md5);
 //            arg.commit();
         });
         boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();

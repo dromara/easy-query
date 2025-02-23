@@ -1,4 +1,4 @@
-package com.easy.query.dameng.config;
+package com.easy.query.oracle.migration;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.logging.Log;
@@ -13,18 +13,15 @@ import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.core.util.EasyToSQLUtil;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -33,9 +30,9 @@ import java.util.UUID;
  *
  * @author xuejiaming
  */
-public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
+public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
     private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
-    private static final Log log= LogFactory.getLog(DamengDatabaseMigrationProvider.class);
+    private static final Log log= LogFactory.getLog(OracleDatabaseMigrationProvider.class);
 
     static {
         columnTypeMap.put(boolean.class, new ColumnDbTypeResult("number(1)", false));
@@ -57,41 +54,28 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         columnTypeMap.put(String.class, new ColumnDbTypeResult("nvarchar2(255)", ""));
         columnTypeMap.put(UUID.class, new ColumnDbTypeResult("char(36)", null));
     }
-    public DamengDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
+    public OracleDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
         super(dataSource, sqlKeyword);
     }
-
-//    @Override
-//    public boolean databaseExists() {
-//        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, , Collections.singletonList(getDatabaseName()));
-//        return EasyCollectionUtil.isNotEmpty(maps);
-//    }
-//
-//    @Override
-//    public MigrationCommand createDatabaseCommand() {
-//        log.warn("dameng not support create database command.");
-//        return null;
-
     @Override
     public String databaseExistSQL(String databaseName) {
-       return String.format("select 1 from sys.dba_users where username='%s'",databaseName);
+        return String.format("select 1 from sys.dba_users where username='%s'",databaseName);
     }
 
     @Override
-    public String createDatabaseSQL(String databaseName) {
-        throw new UnsupportedOperationException("dameng not support create database command.");
+    public void createDatabaseIfNotExists() {
+
     }
-
-    ////        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
-////        return new DefaultMigrationCommand(null, databaseSQL);
-//    }
-
+    @Override
+    public String createDatabaseSQL(String databaseName) {
+        throw new UnsupportedOperationException("oracle not support create database command.");
+    }
 
     @Override
     public boolean tableExists(String schema,String tableName) {
         ArrayList<Object> sqlParameters = new ArrayList<>();
         if(EasyStringUtil.isBlank(schema)){
-            sqlParameters.add("public");
+            sqlParameters.add("SYSDBA");
         }else{
             sqlParameters.add(schema);
         }
@@ -152,7 +136,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
         if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
             sql.append(newLine)
-                    .append(" CONSTRAINT ").append(getQuoteSQLName(entityMetadata.getTableName()+"_primary_key")).append(" ").append(" PRIMARY KEY (");
+                    .append(" CONSTRAINT ").append(getQuoteSQLName(getDatabaseName()+"_"+entityMetadata.getTableName()+"_pk1")).append(" ").append(" PRIMARY KEY (");
             int i = keyProperties.size();
             for (String keyProperty : keyProperties) {
                 i--;

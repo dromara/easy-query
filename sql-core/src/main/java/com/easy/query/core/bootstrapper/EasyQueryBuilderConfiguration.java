@@ -10,6 +10,8 @@ import com.easy.query.core.api.dynamic.executor.sort.DefaultObjectSortQueryExecu
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
 import com.easy.query.core.basic.api.cte.DefaultCteTableNamedProvider;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
+import com.easy.query.core.basic.api.database.DefaultDatabaseCodeFirst;
 import com.easy.query.core.basic.entity.ColumnEntityMappingRule;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.formater.DefaultSQLParameterPrintFormat;
@@ -212,6 +214,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(DatabaseMigrationProvider.class, DefaultDatabaseMigrationProvider.class)
                 .replaceService(CteTableNamedProvider.class, DefaultCteTableNamedProvider.class)
                 .replaceService(MapKeyNameConversion.class, DefaultMapKeyNameConversion.class)
+                .replaceService(DatabaseCodeFirst.class, DefaultDatabaseCodeFirst.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

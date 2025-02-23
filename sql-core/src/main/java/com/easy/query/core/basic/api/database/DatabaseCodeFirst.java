@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.database;
 
+import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.HashMap;
@@ -65,4 +66,6 @@ public interface DatabaseCodeFirst {
      * @return 可同步的表的执行对象
      */
     CodeFirstCommand syncTableCommand(List<Class<?>> entities);
+
+    CodeFirstCommand createCodeFirstCommand(List<MigrationCommand> migrationCommands);
 }
