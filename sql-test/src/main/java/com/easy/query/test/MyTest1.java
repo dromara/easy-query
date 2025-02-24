@@ -5,10 +5,8 @@ import com.easy.query.api.proxy.base.LongProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
@@ -32,10 +30,8 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2023/12/23 23:54
@@ -135,7 +131,7 @@ public class MyTest1 extends BaseTest {
 
         Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().plus(2, TimeUnitEnum.DAYS)
+                        o.createTime().plusTime(2, TimeUnitEnum.DAYS)
                 )).firstOrNull();
         Assert.assertNotNull(localDateTimeDraft1);
         LocalDateTime value1 = localDateTimeDraft1.getValue1();
@@ -177,7 +173,7 @@ public class MyTest1 extends BaseTest {
 
         Draft1<LocalDateTime> localDateTimeDraft1 = easyEntityQuery.queryable(BlogEntity.class)
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().plusMonths(12).plus(1, TimeUnitEnum.DAYS)
+                        o.createTime().plusMonths(12).plusTime(1, TimeUnitEnum.DAYS)
                 )).firstOrNull();
         Assert.assertNotNull(localDateTimeDraft1);
         LocalDateTime value1 = localDateTimeDraft1.getValue1();
@@ -226,9 +222,9 @@ public class MyTest1 extends BaseTest {
                     o.createTime().plusYears(1).le(LocalDateTime.of(2023, 1, 1, 0, 0));
                 })
                 .select(o -> Select.DRAFT.of(
-                        o.createTime().plusMonths(12).plus(1, TimeUnitEnum.DAYS),
+                        o.createTime().plusMonths(12).plusTime(1, TimeUnitEnum.DAYS),
                         o.createTime().plusYears(1),
-                        o.createTime().plus(3, TimeUnitEnum.SECONDS)
+                        o.createTime().plusTime(3, TimeUnitEnum.SECONDS)
                 )).firstOrNull();
         Assert.assertNotNull(draft3);
         LocalDateTime value1 = draft3.getValue1();
@@ -446,9 +442,9 @@ public class MyTest1 extends BaseTest {
                             o.createTime().duration(o.updateTime()).toHours(),
                             o.createTime().duration(o.updateTime()).toMinutes(),
                             o.createTime().duration(o.updateTime()).toSeconds(),
-                            o.createTime().duration(o.createTime().plus(1, TimeUnitEnum.DAYS)).toDays(),
-                            o.createTime().duration(o.createTime().plus(2, TimeUnitEnum.SECONDS)).toSeconds(),
-                            o.createTime().duration(o.createTime().plus(3, TimeUnitEnum.MINUTES)).toMinutes()
+                            o.createTime().duration(o.createTime().plusTime(1, TimeUnitEnum.DAYS)).toDays(),
+                            o.createTime().duration(o.createTime().plusTime(2, TimeUnitEnum.SECONDS)).toSeconds(),
+                            o.createTime().duration(o.createTime().plusTime(3, TimeUnitEnum.MINUTES)).toMinutes()
                     )).firstOrNull();
 
             Assert.assertNotNull(draft3);
@@ -1297,9 +1293,9 @@ public class MyTest1 extends BaseTest {
                             o.createTime().duration(o.updateTime()).toHours(),
                             o.createTime().duration(o.updateTime()).toMinutes(),
                             o.createTime().duration(o.updateTime()).toSeconds(),
-                            o.createTime().duration(o.createTime().plus(1, TimeUnitEnum.DAYS)).toDays(),
-                            o.createTime().duration(o.createTime().plus(2, TimeUnitEnum.SECONDS)).toSeconds(),
-                            o.createTime().duration(o.createTime().plus(3, TimeUnitEnum.MINUTES)).toMinutes()
+                            o.createTime().duration(o.createTime().plusTime(1, TimeUnitEnum.DAYS)).toDays(),
+                            o.createTime().duration(o.createTime().plusTime(2, TimeUnitEnum.SECONDS)).toSeconds(),
+                            o.createTime().duration(o.createTime().plusTime(3, TimeUnitEnum.MINUTES)).toMinutes()
                     )).firstOrNull();
 
             Assert.assertNotNull(draft3);

@@ -3,7 +3,6 @@ package com.easy.query.core.proxy.extension.functions;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.PropColumn;
@@ -20,9 +19,7 @@ import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctio
 import com.easy.query.core.proxy.impl.duration.DurationExpression;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -46,7 +43,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
             }
         }, String.class);
     }
-    default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plus(long duration, TimeUnitEnum timeUnit) {
+    default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusTime(long duration, TimeUnitEnum timeUnit) {
         return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.plusDateTime2(selector->{
                 PropTypeColumn.columnFuncSelector(selector,this);
@@ -54,7 +51,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
             },timeUnit);
         }, getPropertyType());
     }
-    default <T extends Number> ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plus(PropTypeColumn<T> propTypeColumn, TimeUnitEnum timeUnit) {
+    default <T extends Number> ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusTime(PropTypeColumn<T> propTypeColumn, TimeUnitEnum timeUnit) {
         return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.plusDateTime2(selector->{
                 PropTypeColumn.columnFuncSelector(selector,this);
@@ -64,11 +61,11 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
     }
 
     default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusMonths(long month) {
-        return plus(month,TimeUnitEnum.MONTHS);
+        return plusTime(month,TimeUnitEnum.MONTHS);
     }
 
     default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusYears(long year) {
-        return plus(year,TimeUnitEnum.YEARS);
+        return plusTime(year,TimeUnitEnum.YEARS);
     }
 
     default ColumnFunctionCompareComparableNumberChainExpression<Integer> dayOfYear() {

@@ -53,7 +53,6 @@ import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.nop.MyObject;
 import com.easy.query.test.nop.OtherTable;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -63,7 +62,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -655,9 +653,9 @@ public class QueryTest17 extends BaseTest {
     public void aaaa() {
         List<Draft1<LocalDateTime>> list = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
-                    t.createTime().plus(1, TimeUnitEnum.DAYS).lt(LocalDateTime.now());
+                    t.createTime().plusTime(1, TimeUnitEnum.DAYS).lt(LocalDateTime.now());
                 }).select(t -> Select.DRAFT.of(
-                        t.createTime().plus(1, TimeUnitEnum.DAYS)
+                        t.createTime().plusTime(1, TimeUnitEnum.DAYS)
                 )).toList();
 
         List<Draft1<LocalDateTime>> list1 = easyEntityQuery.queryable(Topic.class)

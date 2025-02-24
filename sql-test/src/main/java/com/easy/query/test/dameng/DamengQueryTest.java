@@ -3,7 +3,6 @@ package com.easy.query.test.dameng;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
@@ -12,8 +11,6 @@ import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
-import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -24,7 +21,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2023/7/28 14:29
@@ -191,9 +187,9 @@ public class DamengQueryTest extends DamengBaseTest {
             Draft3<Long, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(DamengMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
-                            o.createTime().plus(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
-                            o.createTime().plus(2, TimeUnitEnum.SECONDS),
-                            o.createTime().plus(3, TimeUnitEnum.MINUTES)
+                            o.createTime().plusTime(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
+                            o.createTime().plusTime(2, TimeUnitEnum.SECONDS),
+                            o.createTime().plusTime(3, TimeUnitEnum.MINUTES)
                     )).firstOrNull();
             {
 
@@ -205,9 +201,9 @@ public class DamengQueryTest extends DamengBaseTest {
                 Draft3<Long, Long, Long> draft3 = entityQuery.queryable(DamengMyTopic.class)
                         .whereById(id)
                         .select(o -> Select.DRAFT.of(
-                                o.createTime().plus(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
-                                o.createTime().plus(2, TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
-                                o.createTime().plus(3, TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes()
+                                o.createTime().plusTime(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
+                                o.createTime().plusTime(2, TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
+                                o.createTime().plusTime(3, TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes()
                         )).firstOrNull();
                 listenerContextManager.clear();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -229,14 +225,14 @@ public class DamengQueryTest extends DamengBaseTest {
             Draft1<LocalDateTime> localDateTimeDraft1 = entityQuery.queryable(DamengMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
-                            o.expression().constant().valueOf(of).plus(3, TimeUnitEnum.MINUTES)
+                            o.expression().constant().valueOf(of).plusTime(3, TimeUnitEnum.MINUTES)
                     )).firstOrNull();
             Assert.assertEquals(localDateTimeDraft1.getValue1(), of.plusMinutes(3));
 
             Draft1<BigDecimal> localDateTimeDraft121 = entityQuery.queryable(DamengMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
-                            o.expression().constant().valueOf(of).plus(3, TimeUnitEnum.MINUTES).duration(o.expression().constant().valueOf(of)).toSeconds().asAnyType(BigDecimal.class)
+                            o.expression().constant().valueOf(of).plusTime(3, TimeUnitEnum.MINUTES).duration(o.expression().constant().valueOf(of)).toSeconds().asAnyType(BigDecimal.class)
                     )).firstOrNull();
 
             Assert.assertEquals(BigDecimal.valueOf(-180).compareTo(localDateTimeDraft121.getValue1()), 0);
@@ -246,9 +242,9 @@ public class DamengQueryTest extends DamengBaseTest {
                 Draft3<Long, Long, Long> draft3 = entityQuery.queryable(DamengMyTopic.class)
                         .whereById(id)
                         .select(o -> Select.DRAFT.of(
-                                o.createTime().plus(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
-                                o.createTime().plus(2, TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
-                                o.createTime().plus(1, TimeUnitEnum.DAYS).plus(3, TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes()
+                                o.createTime().plusTime(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
+                                o.createTime().plusTime(2, TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
+                                o.createTime().plusTime(1, TimeUnitEnum.DAYS).plusTime(3, TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes()
                         )).firstOrNull();
 
 

@@ -61,7 +61,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2024/3/8 11:08
@@ -468,7 +467,7 @@ public class QueryTest15 extends BaseTest {
                     .where(t -> {
                         SQLConstantExpression constant = t.expression().constant();
                         t.createTime().lt(
-                                constant.valueOf(format).toDateTime(LocalDateTime.class).plus(1, TimeUnitEnum.DAYS)
+                                constant.valueOf(format).toDateTime(LocalDateTime.class).plusTime(1, TimeUnitEnum.DAYS)
                         );
                     }).toList();
         }

@@ -293,7 +293,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
      * @param timeUnit
      * @return
      */
-    default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusTimeUnit(long duration, TimeUnitEnum timeUnit) {
+    default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusTime(long duration, TimeUnitEnum timeUnit) {
         return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.plusDateTime2(selector->{
                 PropTypeColumn.columnFuncSelector(selector,this);
@@ -301,7 +301,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
             }, timeUnit);
         }, getPropertyType());
     }
-    default <T extends Number> ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusTimeUnit(PropTypeColumn<T> propTypeColumn, TimeUnitEnum timeUnit) {
+    default <T extends Number> ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusTime(PropTypeColumn<T> propTypeColumn, TimeUnitEnum timeUnit) {
         return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.plusDateTime2(selector->{
                 PropTypeColumn.columnFuncSelector(selector,this);
@@ -321,30 +321,11 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, getPropertyType());
     }
 
-    default <T extends Number> ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusMonths(PropTypeColumn<T> propTypeColumn) {
-
-        return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.plusDateTime2(selector->{
-                PropTypeColumn.columnFuncSelector(selector,this);
-                PropTypeColumn.columnFuncSelector(selector,propTypeColumn);
-            },TimeUnitEnum.MONTHS);
-        }, getPropertyType());
-    }
-
     default ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusYears(int year) {
         return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.plusDateTime2(selector->{
                 PropTypeColumn.columnFuncSelector(selector,this);
                 selector.value(year);
-            },TimeUnitEnum.MONTHS);
-        }, getPropertyType());
-    }
-
-    default <T extends Number> ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> plusYears(PropTypeColumn<T> propTypeColumn) {
-        return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.plusDateTime2(selector->{
-                PropTypeColumn.columnFuncSelector(selector,this);
-                PropTypeColumn.columnFuncSelector(selector,propTypeColumn);
             },TimeUnitEnum.MONTHS);
         }, getPropertyType());
     }

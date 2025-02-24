@@ -3,13 +3,11 @@ package com.easy.query.test.mssqlrownumber;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic1;
@@ -19,7 +17,6 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2023/7/27 17:34
@@ -196,9 +193,9 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
             Draft3<LocalDateTime, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
-                            o.createTime().plus(1, TimeUnitEnum.DAYS),
-                            o.createTime().plus(2, TimeUnitEnum.SECONDS),
-                            o.createTime().plus(3, TimeUnitEnum.MINUTES)
+                            o.createTime().plusTime(1, TimeUnitEnum.DAYS),
+                            o.createTime().plusTime(2, TimeUnitEnum.SECONDS),
+                            o.createTime().plusTime(3, TimeUnitEnum.MINUTES)
                     )).firstOrNull();
 
             ListenerContext listenerContext = new ListenerContext();
@@ -208,10 +205,10 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
             Draft4<Long, Long, Long, Long> draft3 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
-                            o.createTime().plus(1,TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
-                            o.createTime().plus(2,TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
-                            o.createTime().plus(3,TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes(),
-                            o.createTime().plus(3,TimeUnitEnum.HOURS).duration(o.createTime()).toMinutes()
+                            o.createTime().plusTime(1,TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
+                            o.createTime().plusTime(2,TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
+                            o.createTime().plusTime(3,TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes(),
+                            o.createTime().plusTime(3,TimeUnitEnum.HOURS).duration(o.createTime()).toMinutes()
                     )).singleOrNull();
             listenerContextManager.clear();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
