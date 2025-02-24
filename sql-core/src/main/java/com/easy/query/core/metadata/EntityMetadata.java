@@ -430,6 +430,8 @@ public class EntityMetadata {
                         return mappingPathValue.split("\\.");
                     }
                 }
+            } else if (mapping.contains(".")) {
+                return mapping.split("\\.");
             }
         }
         return def;
