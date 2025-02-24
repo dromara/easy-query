@@ -71,6 +71,6 @@ public class GaussDBExpressionFactory implements ExpressionFactory {
 
     @Override
     public AnonymousEntityQuerySQLExpression createEasyAnonymousCTEQuerySQLExpression(String cteTableName, EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression) {
-        return new AnonymousTreeCTEQuerySQLExpressionImpl(cteTableName,entitySQLExpressionMetadata,querySQLExpression);
+        return new AnonymousTreeCTEQuerySQLExpressionImpl(cteTableName, entitySQLExpressionMetadata, querySQLExpression);
     }
 }

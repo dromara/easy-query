@@ -1,5 +1,6 @@
 package com.easy.query.test.h2;
 
+import org.junit.Before;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 

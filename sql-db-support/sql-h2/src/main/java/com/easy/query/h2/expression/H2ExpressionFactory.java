@@ -40,7 +40,7 @@ public class H2ExpressionFactory implements ExpressionFactory {
 
     @Override
     public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new H2UpdateSQLExpression(entitySQLExpressionMetadata, entityTableSQLExpression);
+        return new H2UpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override

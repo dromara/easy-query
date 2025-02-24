@@ -40,7 +40,7 @@ public class DB2ExpressionFactory implements ExpressionFactory {
 
     @Override
     public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new DB2UpdateSQLExpression(entitySQLExpressionMetadata, entityTableSQLExpression);
+        return new DB2UpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override

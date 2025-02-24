@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.database;
 
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationContext;
@@ -15,16 +16,19 @@ import java.util.List;
  * @author xuejiaming
  */
 public class DefaultDatabaseCodeFirst implements DatabaseCodeFirst{
-    private final QueryRuntimeContext runtimeContext;
+    private final ServiceProvider serviceProvider;
 
-    public DefaultDatabaseCodeFirst(QueryRuntimeContext runtimeContext){
-        this.runtimeContext = runtimeContext;
+    public DefaultDatabaseCodeFirst(ServiceProvider serviceProvider){
+        this.serviceProvider = serviceProvider;
     }
 
+    protected QueryRuntimeContext getRuntimeContext(){
+        return serviceProvider.getService(QueryRuntimeContext.class);
+    }
 
     @Override
     public void createDatabaseIfNotExists() {
-        DatabaseMigrationProvider service = runtimeContext.getService(DatabaseMigrationProvider.class);
+        DatabaseMigrationProvider service = getRuntimeContext().getService(DatabaseMigrationProvider.class);
         service.createDatabaseIfNotExists();
     }
 
@@ -35,25 +39,30 @@ public class DefaultDatabaseCodeFirst implements DatabaseCodeFirst{
 
     @Override
     public CodeFirstCommand createTableCommand(List<Class<?>> entities) {
-        MigrationsSQLGenerator migrationsSQLGenerator = runtimeContext.getMigrationsSQLGenerator();
+        MigrationsSQLGenerator migrationsSQLGenerator = getRuntimeContext().getMigrationsSQLGenerator();
         MigrationContext migrationContext = new MigrationContext(entities);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateCreateTableMigrationSQL(migrationContext);
-        return new DefaultCodeFirstCommand(runtimeContext,migrationCommands);
+        return createCodeFirstCommand(migrationCommands);
     }
 
     @Override
     public CodeFirstCommand dropTableCommand(List<Class<?>> entities) {
-        MigrationsSQLGenerator migrationsSQLGenerator = runtimeContext.getMigrationsSQLGenerator();
+        MigrationsSQLGenerator migrationsSQLGenerator = getRuntimeContext().getMigrationsSQLGenerator();
         MigrationContext migrationContext = new MigrationContext(entities);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateDropTableMigrationSQL(migrationContext);
-        return new DefaultCodeFirstCommand(runtimeContext,migrationCommands);
+        return createCodeFirstCommand(migrationCommands);
     }
 
     @Override
     public CodeFirstCommand syncTableCommand(List<Class<?>> entities) {
-        MigrationsSQLGenerator migrationsSQLGenerator = runtimeContext.getMigrationsSQLGenerator();
+        MigrationsSQLGenerator migrationsSQLGenerator = getRuntimeContext().getMigrationsSQLGenerator();
         MigrationContext migrationContext = new MigrationContext(entities);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
-        return new DefaultCodeFirstCommand(runtimeContext,migrationCommands);
+        return createCodeFirstCommand(migrationCommands);
+    }
+
+    @Override
+    public CodeFirstCommand createCodeFirstCommand(List<MigrationCommand> migrationCommands) {
+        return new DefaultCodeFirstCommand(getRuntimeContext(),migrationCommands);
     }
 }

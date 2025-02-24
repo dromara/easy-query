@@ -145,15 +145,10 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         if (nullable != null) {
             return nullable;
         }
-        Field declaredField = entityMigrationMetadata.getFieldByName(columnMetadata);
-        Column annotation = declaredField.getAnnotation(Column.class);
-        if (annotation != null) {
-            return annotation.nullable();
-        }
         if (columnMetadata.getPropertyType().isPrimitive()) {
             return false;
         }
-        return true;
+        return columnMetadata.isNullable();
     }
 
     @Override

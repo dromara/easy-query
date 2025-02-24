@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.RelationTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -15,9 +16,13 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsPropertyPredicate;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
+import com.easy.query.core.expression.sql.expression.SQLExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
@@ -26,6 +31,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyColumnSegmentUtil;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -129,6 +135,36 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
         SQLExpression1<WherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
         if(logicDeleteQueryFilterExpression!=null){
             logicDeleteQueryFilterExpression.apply(sqlPredicate);
+        }
+    }
+
+
+    protected SQLExpression toTableExpressionSQL(EntityTableExpressionBuilder entityTableExpressionBuilder, boolean onlySingleAnonymousTable) {
+        if (entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
+
+            EntityQueryExpressionBuilder sqlEntityQueryExpression = ((AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder).getEntityQueryExpressionBuilder();
+            //如果只有单匿名表且未对齐select那么嵌套表需要被展开
+            //todo 如果对其进行order 或者 where了呢怎么办
+            return onlySingleAnonymousTable ? sqlEntityQueryExpression.toExpression() : entityTableExpressionBuilder.toExpression();
+        }
+        return entityTableExpressionBuilder.toExpression();
+    }
+
+    protected PredicateSegment getTableOnWithQueryFilter(EntityTableExpressionBuilder table) {
+        return sqlPredicateFilter(table, table.hasOn() ? table.getOn() : null);
+    }
+    protected void addRelationTables(EntitySQLExpression entitySQLExpression){
+
+        if(hasRelationTables()){
+            for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> relationTableKV : getRelationTables().entrySet()) {
+                EntityTableExpressionBuilder value = relationTableKV.getValue();
+                EntityTableSQLExpression tableExpression = (EntityTableSQLExpression) toTableExpressionSQL(value, false);
+                entitySQLExpression.getTables().add(tableExpression);
+                PredicateSegment on = getTableOnWithQueryFilter(value);
+                if (on != null && on.isNotEmpty()) {
+                    tableExpression.setOn(on);
+                }
+            }
         }
     }
 }

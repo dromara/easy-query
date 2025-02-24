@@ -4,6 +4,9 @@ import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.sql.GroupKeys;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.common.PageResult;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp14;
@@ -37,12 +40,25 @@ public class QueryTest21 extends BaseTest {
 
     @Test
     public void typeTest() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
                     t_blog.isNull();
+                    t_blog.isNotNull();
+                    t_blog.id().isNull();
                     t_blog.score().nullOrDefault(BigDecimal.ZERO).gt(BigDecimal.ZERO);
                     t_blog.score().subtract(t_blog.star()).gt(BigDecimal.valueOf(15));
                 }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` IS NULL AND `id` IS NOT NULL AND `id` IS NULL AND IFNULL(`score`,?) > ? AND (`score` - `star`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),0(BigDecimal),0(BigDecimal),15(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 
     @Test

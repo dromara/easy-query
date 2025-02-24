@@ -556,9 +556,4 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
         EntityDeleteExpressionBuilder entityDeleteExpressionBuilder = expressionBuilderFactory.createEntityDeleteExpressionBuilder(expressionContext, entityClass, true);
         return new EasyClientExpressionDeletable<>(entityClass, entityDeleteExpressionBuilder);
     }
-
-    @Override
-    public DatabaseCodeFirst createDatabaseCodeFirst(QueryRuntimeContext runtimeContext) {
-        return new DefaultDatabaseCodeFirst(runtimeContext);
-    }
 }

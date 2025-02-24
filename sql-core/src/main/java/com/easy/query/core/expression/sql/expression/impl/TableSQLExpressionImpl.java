@@ -24,7 +24,7 @@ import java.util.function.Function;
  */
 public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
-    protected final MultiTableTypeEnum multiTableType;
+    protected MultiTableTypeEnum multiTableType;
     protected final QueryRuntimeContext runtimeContext;
     protected final SQLKeyword SQLKeyWord;
     protected final TableAvailable entityTable;
@@ -44,6 +44,11 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     @Override
     public EntityMetadata getEntityMetadata() {
         return entityTable.getEntityMetadata();
+    }
+
+    @Override
+    public void setMultiTableType(MultiTableTypeEnum multiTableType) {
+        this.multiTableType = multiTableType;
     }
 
     @Override

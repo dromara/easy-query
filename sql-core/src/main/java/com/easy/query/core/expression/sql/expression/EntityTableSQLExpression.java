@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.expression;
 
+import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -16,6 +17,7 @@ import java.util.function.Function;
  */
 public interface EntityTableSQLExpression extends SQLExpression {
     EntityMetadata getEntityMetadata();
+    void setMultiTableType(MultiTableTypeEnum multiTableType);
     String getTableName();
     void setTableNameAs(Function<String, String> tableNameAs);
     void setSchemaAs(Function<String, String> schemaAs);

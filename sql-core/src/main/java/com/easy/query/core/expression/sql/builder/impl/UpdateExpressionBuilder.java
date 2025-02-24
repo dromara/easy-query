@@ -13,6 +13,7 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.builder.impl.OnlySelectorImpl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
@@ -34,14 +35,18 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnNullAsse
 import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
 import com.easy.query.core.expression.segment.impl.UpdateColumnSegmentImpl;
 import com.easy.query.core.expression.segment.index.SegmentIndex;
+import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.TableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.ignore.EntityUpdateSetProcessor;
 import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEntityExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
+import com.easy.query.core.expression.sql.expression.SQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -202,7 +207,10 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         PredicateSegment sqlWhere = sqlPredicateFilter(tableExpressionBuilder, where);
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
-        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, tableExpressionBuilder.toExpression());
+        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata,tableExpressionBuilder.toExpression());
+
+        addRelationTables(easyUpdateSQLExpression);
+
         updateSetSQLSegment.copyTo(easyUpdateSQLExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());
         return easyUpdateSQLExpression;
@@ -244,7 +252,6 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
     public EntityUpdateSQLExpression entityToExpression(@NotNull Object entity, EntityTableExpressionBuilder tableExpressionBuilder) {
 
-
         TrackManager trackManager = expressionContext.getRuntimeContext().getTrackManager();
         TrackContext trackContext = trackManager.getCurrentTrackContext();
         EntityUpdateSetProcessor entityUpdateSetProcessor = new EntityUpdateSetProcessor(entity, expressionContext);
@@ -259,7 +266,9 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
-        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, tableExpressionBuilder.toExpression());
+        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata,tableExpressionBuilder.toExpression());
+
+
         updateSet.copyTo(easyUpdateSQLExpression.getSetColumns());
         sqlWhere.copyTo(easyUpdateSQLExpression.getWhere());
         return easyUpdateSQLExpression;
@@ -514,6 +523,11 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         }
         for (EntityTableExpressionBuilder table : super.tables) {
             updateExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
+        }
+        if(hasRelationTables()){
+            for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> entry : relationTables.entrySet()) {
+                updateExpressionBuilder.getRelationTables().put(entry.getKey(), entry.getValue().copyEntityTableExpressionBuilder());
+            }
         }
         return updateExpressionBuilder;
     }

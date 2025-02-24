@@ -66,6 +66,7 @@ public abstract class DamengBaseTest {
                 .useDatabaseConfigure(new DamengDatabaseConfiguration())
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .replaceService(NameConversion.class, UpperUnderlinedNameConversion.class)
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);

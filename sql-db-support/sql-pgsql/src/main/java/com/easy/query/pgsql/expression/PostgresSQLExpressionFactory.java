@@ -40,7 +40,7 @@ public class PostgresSQLExpressionFactory implements ExpressionFactory {
 
     @Override
     public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new PostgresSQLUpdateSQLExpression(entitySQLExpressionMetadata, entityTableSQLExpression);
+        return new PostgresSQLUpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override

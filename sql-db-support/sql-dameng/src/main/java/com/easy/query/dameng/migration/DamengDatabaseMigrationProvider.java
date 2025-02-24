@@ -1,4 +1,4 @@
-package com.easy.query.oracle.config;
+package com.easy.query.dameng.migration;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.logging.Log;
@@ -13,18 +13,15 @@ import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.core.util.EasyToSQLUtil;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -33,9 +30,9 @@ import java.util.UUID;
  *
  * @author xuejiaming
  */
-public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
+public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
     private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
-    private static final Log log= LogFactory.getLog(OracleDatabaseMigrationProvider.class);
+    private static final Log log= LogFactory.getLog(DamengDatabaseMigrationProvider.class);
 
     static {
         columnTypeMap.put(boolean.class, new ColumnDbTypeResult("number(1)", false));
@@ -57,29 +54,52 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         columnTypeMap.put(String.class, new ColumnDbTypeResult("nvarchar2(255)", ""));
         columnTypeMap.put(UUID.class, new ColumnDbTypeResult("char(36)", null));
     }
-    public OracleDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
+    public DamengDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
         super(dataSource, sqlKeyword);
     }
+
+//    @Override
+//    public boolean databaseExists() {
+//        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, , Collections.singletonList(getDatabaseName()));
+//        return EasyCollectionUtil.isNotEmpty(maps);
+//    }
+//
+//    @Override
+//    public MigrationCommand createDatabaseCommand() {
+//        log.warn("dameng not support create database command.");
+//        return null;
+
+
+    @Override
+    public void createDatabaseIfNotExists() {
+
+    }
+
     @Override
     public String databaseExistSQL(String databaseName) {
-        return String.format("select 1 from sys.dba_users where username='%s'",databaseName);
+       return String.format("select 1 from sys.dba_users where username='%s'",databaseName);
     }
 
     @Override
     public String createDatabaseSQL(String databaseName) {
-        throw new UnsupportedOperationException("oracle not support create database command.");
+        throw new UnsupportedOperationException("dameng not support create database command.");
     }
+
+    ////        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
+////        return new DefaultMigrationCommand(null, databaseSQL);
+//    }
+
 
     @Override
     public boolean tableExists(String schema,String tableName) {
         ArrayList<Object> sqlParameters = new ArrayList<>();
         if(EasyStringUtil.isBlank(schema)){
-            sqlParameters.add("public");
+            sqlParameters.add("SYSDBA");
         }else{
             sqlParameters.add(schema);
         }
         sqlParameters.add(tableName);
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from all_tab_comments where owner=? and table_name=?", sqlParameters);
+        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select * from all_tab_comments where owner=? and table_name=?", sqlParameters);
         return EasyCollectionUtil.isNotEmpty(maps);
     }
 
@@ -95,8 +115,8 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        sql.append("BEGIN")
-                .append(newLine);
+//        sql.append("BEGIN")
+//                .append(newLine);
         StringBuilder columnCommentSQL = new StringBuilder();
 
 
@@ -135,7 +155,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
         if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
             sql.append(newLine)
-                    .append(" CONSTRAINT ").append(getQuoteSQLName(getDatabaseName()+"_"+entityMetadata.getTableName()+"_pk1")).append(" ").append(" PRIMARY KEY (");
+                    .append(" CONSTRAINT ").append(getQuoteSQLName(entityMetadata.getTableName()+"_primary_key")).append(" ").append(" PRIMARY KEY (");
             int i = keyProperties.size();
             for (String keyProperty : keyProperties) {
                 i--;
@@ -154,7 +174,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             sql.append(newLine).append(columnCommentSQL);
         }
 
-        sql.append(newLine).append("END;");
+//        sql.append(newLine).append("END;");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 
@@ -209,7 +229,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()) + ";");
+        return new DefaultMigrationCommand(entityMetadata, "execute immediate 'DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()) + "';");
     }
     @Override
     protected ColumnDbTypeResult getColumnDbType0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {

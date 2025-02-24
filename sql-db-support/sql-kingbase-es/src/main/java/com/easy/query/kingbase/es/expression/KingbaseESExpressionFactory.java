@@ -41,7 +41,7 @@ public class KingbaseESExpressionFactory implements ExpressionFactory {
 
     @Override
     public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new KingbaseESUpdateSQLExpression(entitySQLExpressionMetadata, entityTableSQLExpression);
+        return new KingbaseESUpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
     }
 
     @Override

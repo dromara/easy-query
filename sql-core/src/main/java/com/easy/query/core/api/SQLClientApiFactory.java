@@ -149,5 +149,4 @@ public interface SQLClientApiFactory {
     <T> ClientEntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext);
 
     <T> ClientExpressionDeletable<T> createExpressionDeletable(Class<T> entityClass, QueryRuntimeContext runtimeContext);
-    DatabaseCodeFirst createDatabaseCodeFirst(QueryRuntimeContext runtimeContext);
 }
