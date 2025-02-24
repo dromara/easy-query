@@ -154,6 +154,11 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
     }
     @Test
     public void query6() {
+        List<MsSQLMyTopic> list = easyQuery
+                .queryable(MsSQLMyTopic.class)
+                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
+                .orderByAsc(o -> o.column(MsSQLMyTopic::getStars))
+                .toList();
 
         EasyPageResult<MsSQLMyTopic> topicPageResult = easyQuery
                 .queryable(MsSQLMyTopic.class)
@@ -178,54 +183,60 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
                 .executeRows();
-        MsSQLRowNumberMyTopic blog = new MsSQLRowNumberMyTopic();
-        blog.setId(id);
-        blog.setCreateTime(LocalDateTime.of(2022, 1, 2, 3, 4, 5));
-        blog.setTitle("titlez" );
-        blog.setStars(1);
-        entityQuery.insertable(blog)
-                .executeRows();
-        Draft3<LocalDateTime, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
-                .whereById(id)
-                .select(o -> Select.DRAFT.of(
-                        o.createTime().plus(1, TimeUnitEnum.DAYS),
-                        o.createTime().plus(2, TimeUnitEnum.SECONDS),
-                        o.createTime().plus(3, TimeUnitEnum.MINUTES)
-                )).firstOrNull();
 
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
+        try {
 
+            MsSQLRowNumberMyTopic blog = new MsSQLRowNumberMyTopic();
+            blog.setId(id);
+            blog.setCreateTime(LocalDateTime.of(2022, 1, 2, 3, 4, 5));
+            blog.setTitle("titlez" );
+            blog.setStars(1);
+            entityQuery.insertable(blog)
+                    .executeRows();
+            Draft3<LocalDateTime, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
+                    .whereById(id)
+                    .select(o -> Select.DRAFT.of(
+                            o.createTime().plus(1, TimeUnitEnum.DAYS),
+                            o.createTime().plus(2, TimeUnitEnum.SECONDS),
+                            o.createTime().plus(3, TimeUnitEnum.MINUTES)
+                    )).firstOrNull();
 
-        Draft4<Long, Long, Long, Long> draft3 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
-                .whereById(id)
-                .select(o -> Select.DRAFT.of(
-                        o.createTime().plus(1,TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
-                        o.createTime().plus(2,TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
-                        o.createTime().plus(3,TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes(),
-                        o.createTime().plus(3,TimeUnitEnum.HOURS).duration(o.createTime()).toMinutes()
-                )).firstOrNull();
-        listenerContextManager.clear();
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN ? ELSE ? END) AS `title`,t.`id` AS `id` FROM `t_topic` t WHERE t.`title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("123(String),1(String),2(String),someTitle(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-
-        Assert.assertNotNull(draft3);
-        Long value1 = draft3.getValue1();
-        Assert.assertEquals(-1, (long) value1);
-        Long value2 = draft3.getValue2();
-        Assert.assertEquals(-2, (long) value2);
-        Long value3 = draft3.getValue3();
-        Assert.assertEquals(-3, (long) value3);
-        Long value4 = draft3.getValue4();
-        Assert.assertEquals(-180, (long) value4);
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
 
 
-        entityQuery.deletable(MsSQLRowNumberMyTopic.class)
-                .whereById(id)
-                .disableLogicDelete()
-                .allowDeleteStatement(true)
-                .executeRows();
+            Draft4<Long, Long, Long, Long> draft3 = entityQuery.queryable(MsSQLRowNumberMyTopic.class)
+                    .whereById(id)
+                    .select(o -> Select.DRAFT.of(
+                            o.createTime().plus(1,TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
+                            o.createTime().plus(2,TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
+                            o.createTime().plus(3,TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes(),
+                            o.createTime().plus(3,TimeUnitEnum.HOURS).duration(o.createTime()).toMinutes()
+                    )).singleOrNull();
+            listenerContextManager.clear();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT datediff(day, dateadd(day, ?, t.[CreateTime]), t.[CreateTime]) AS [Value1],datediff(second, dateadd(second, ?, t.[CreateTime]), t.[CreateTime]) AS [Value2],datediff(minute, dateadd(minute, ?, t.[CreateTime]), t.[CreateTime]) AS [Value3],datediff(minute, dateadd(hour, ?, t.[CreateTime]), t.[CreateTime]) AS [Value4] FROM [MyTopic] t WHERE t.[Id] = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Long),2(Long),3(Long),3(Long),123456zz9(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+            Assert.assertNotNull(draft3);
+            Long value1 = draft3.getValue1();
+            Assert.assertEquals(-1, (long) value1);
+            Long value2 = draft3.getValue2();
+            Assert.assertEquals(-2, (long) value2);
+            Long value3 = draft3.getValue3();
+            Assert.assertEquals(-3, (long) value3);
+            Long value4 = draft3.getValue4();
+            Assert.assertEquals(-180, (long) value4);
+
+        }finally {
+
+            entityQuery.deletable(MsSQLRowNumberMyTopic.class)
+                    .whereById(id)
+                    .disableLogicDelete()
+                    .allowDeleteStatement(true)
+                    .executeRows();
+        }
+
     }
 }
