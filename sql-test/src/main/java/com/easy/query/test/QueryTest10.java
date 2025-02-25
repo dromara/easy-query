@@ -67,7 +67,7 @@ public class QueryTest10 extends BaseTest{
                     o.createTime().format("yyyy-MM-dd").in(ids);
                     o.createTime().format("yyyy-MM-dd").notIn(ids);
                 })
-                .fetchBy(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
+                .select(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND 1 = 2 AND 1 = 1 AND (DATE_FORMAT(t.`create_time`,'%Y-%m-%d') >= ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') <= ?) AND (DATE_FORMAT(t.`create_time`,'%Y-%m-%d') > ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') < ?) AND (DATE_FORMAT(t.`create_time`,'%Y-%m-%d') > ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') <= ?) AND (DATE_FORMAT(t.`create_time`,'%Y-%m-%d') >= ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') < ?) AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') IS NULL AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') IS NOT NULL AND 1 = 2 AND 1 = 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -197,7 +197,7 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
-                        o.exists(() -> {
+                        o.expression().exists(() -> {
                             return easyEntityQuery.queryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()));
                         });
@@ -238,7 +238,7 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().in(tenantIds);
-                        o.exists(() -> {
+                        o.expression().exists(() -> {
                             return easyEntityQuery.queryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()))
                                     .where(x -> x.id().in(roleIds));
@@ -275,7 +275,7 @@ public class QueryTest10 extends BaseTest{
                         o.id().in(tenantIds);
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("123");
                         o.createTime().format("yyyy-MM-dd").likeMatchRight("123");
-                        o.exists(() -> {
+                        o.expression().exists(() -> {
                             return easyEntityQuery.queryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()))
                                     .where(x -> x.id().in(roleIds));

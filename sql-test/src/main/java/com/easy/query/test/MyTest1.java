@@ -487,7 +487,7 @@ public class MyTest1 extends BaseTest {
         List<Draft4<String, String, LocalDateTime, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().like("123");
-                    o.exists(() -> {
+                    o.expression().exists(() -> {
                         return easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> x.id().eq(o.id()));
                     });
@@ -498,7 +498,7 @@ public class MyTest1 extends BaseTest {
                         o.id(),
                         o.title(),
                         o.createTime(),
-                        o.subQuery(() -> {
+                        o.expression().subQuery(() -> {
                             return easyEntityQuery.queryable(BlogEntity.class)
                                     .where(x -> x.id().eq(o.id()))
                                     .select(x -> new StringProxy(x.title()));

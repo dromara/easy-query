@@ -66,7 +66,7 @@ public class QueryTest11 extends BaseTest {
                 .where(o -> o.id().eq("1"));
         List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
-                    o.exists(() -> where.where(q -> q.id().eq(o.id())));
+                    o.expression().exists(() -> where.where(q -> q.id().eq(o.id())));
                 }).toList();
 
         EntityQueryable<StringProxy, String> idQuery = easyEntityQuery.queryable(BlogEntity.class)
@@ -161,7 +161,7 @@ public class QueryTest11 extends BaseTest {
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
-                        o.exists(() -> {
+                        o.expression().exists(() -> {
                             return easyEntityQuery.queryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()));
                         });
@@ -363,7 +363,7 @@ public class QueryTest11 extends BaseTest {
                 .where(o -> o.id().eq("1"));
 
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.exists(() -> {
+                .where(o -> o.expression().exists(() -> {
                     return subQueryable.where(q -> q.id().eq(o.id()));
                 })).toList();
 
@@ -384,7 +384,7 @@ public class QueryTest11 extends BaseTest {
                 .where(o -> o.id().eq("1"));
 
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.notExists(() -> {
+                .where(o -> o.expression().notExists(() -> {
                     return subQueryable.where(q -> q.id().eq(o.id()));
                 })).toList();
 

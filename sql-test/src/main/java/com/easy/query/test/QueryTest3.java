@@ -1508,7 +1508,7 @@ public class QueryTest3 extends BaseTest {
     public void extendsUserTest() throws NoSuchFieldException, IllegalAccessException {
         easyEntityQuery.queryable(EqUser.class)
                 .where(e -> e._accc())
-                .fetchBy(e -> e.FETCHER._accc());
+                .select(e -> e.FETCHER._accc());
         EntityMetadataManager entityMetadataManager = easyQuery.getRuntimeContext().getEntityMetadataManager();
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(EqUser.class);
         DataReader dataReader = entityMetadata.getDataReader();

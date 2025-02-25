@@ -69,45 +69,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         }
     }
 
-    /**
-     * 支持where having order
-     * 请使用{@link #expression()}或者{@link Expression#sql(String)}
-     *
-     * @param sqlSegment
-     */
-    @Deprecated
-    public void executeSQL(String sqlSegment) {
-        executeSQL(sqlSegment, c -> {
-        });
-    }
-
-    /**
-     * 支持where having order
-     * 请使用{@link #expression()}或者{@link Expression#sql(String, SQLExpression1)}
-     *
-     * @param sqlSegment
-     * @param contextConsume
-     */
-    @Deprecated
-    public void executeSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        executeSQL(true, sqlSegment, contextConsume);
-    }
-
-    /**
-     * 支持where having order
-     * 请使用{@link #expression()}或者{@link Expression#sql(boolean, String, SQLExpression1)}
-     *
-     * @param condition
-     * @param sqlSegment
-     * @param contextConsume
-     */
-    @Deprecated
-    public void executeSQL(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        if (condition) {
-            getEntitySQLContext()._executeNativeSql(sqlSegment, contextConsume);
-        }
-    }
-
     protected <T, N> N __cast(T original) {
         return EasyObjectUtil.typeCastNullable(original);
     }
@@ -163,28 +124,28 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 //        });
 //    }
 
-    /**
-     * 返回子查询
-     * 请使用 {@link #expression()}或者{@link Expression#subQuery(SQLFuncExpression)}
-     * <blockquote><pre>
-     * {@code
-     *      o.subQuery(()->{
-     *          return easyEntityQuery.queryable(x.class).select(x->new StringProxy(x.id()));
-     *      })
-     *  }
-     * </pre></blockquote>
-     *
-     * @param subQueryableFunc 创建子查询方法
-     * @param <TSubQuery>
-     * @return
-     */
-    @Deprecated
-    public <TSubQuery> PropTypeColumn<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
-        Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
-        return new SQLDraftAsSelectImpl<>((alias, f) -> {
-            f.columnSubQueryAs(() -> subQueryQuery, alias);
-        }, subQueryQuery.queryClass());
-    }
+//    /**
+//     * 返回子查询
+//     * 请使用 {@link #expression()}或者{@link Expression#subQuery(SQLFuncExpression)}
+//     * <blockquote><pre>
+//     * {@code
+//     *      o.subQuery(()->{
+//     *          return easyEntityQuery.queryable(x.class).select(x->new StringProxy(x.id()));
+//     *      })
+//     *  }
+//     * </pre></blockquote>
+//     *
+//     * @param subQueryableFunc 创建子查询方法
+//     * @param <TSubQuery>
+//     * @return
+//     */
+//    @Deprecated
+//    public <TSubQuery> PropTypeColumn<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
+//        Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
+//        return new SQLDraftAsSelectImpl<>((alias, f) -> {
+//            f.columnSubQueryAs(() -> subQueryQuery, alias);
+//        }, subQueryQuery.queryClass());
+//    }
 
     /**
      * 所有主键列
@@ -349,57 +310,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     public TProxy adapter(Consumer<TProxy> selectExpression) {
         selectExpression.accept(castChain());
         return castChain();
-    }
-
-    /**
-     * {@link #expression()}或者{@link Expression#exists(Supplier)}
-     * where exists(....)
-     *
-     * @param subQueryFunc 子查询创建方法
-     */
-    @Deprecated
-    public void exists(Supplier<Query<?>> subQueryFunc) {
-        exists(true, subQueryFunc);
-    }
-
-    /**
-     * {@link #expression()}或者{@link Expression#exists(boolean, Supplier)}
-     * where exists(....)
-     *
-     * @param condition    为true是exists生效
-     * @param subQueryFunc 子查询创建方法
-     */
-    @Deprecated
-    public void exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(subQueryFunc.get())));
-        }
-    }
-
-    /**
-     * {@link #expression()}或者{@link Expression#notExists(Supplier)}
-     * where not exists(....)
-     *
-     * @param subQueryFunc 子查询创建方法
-     */
-    @Deprecated
-    public void notExists(Supplier<Query<?>> subQueryFunc) {
-        notExists(true, subQueryFunc);
-    }
-
-
-    /**
-     * {@link #expression()}或者{@link Expression#notExists(boolean, Supplier)}
-     * where exists(....)
-     *
-     * @param condition    为true是not exists生效
-     * @param subQueryFunc 子查询创建方法
-     */
-    @Deprecated
-    public void notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
-        if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
-        }
     }
 
     public Expression expression() {

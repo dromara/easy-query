@@ -192,7 +192,7 @@ public class DocTest extends BaseTest {
                                 o.name().nullOrDefault("unknown" ).like("123" );
                                 o.phone().isNotBank();
                             })
-                            .fetchBy(o -> o.FETCHER.id().name().phone().departName())
+                            .select(o -> o.FETCHER.id().name().phone().departName())
                             .toList();
                 } catch (Exception ex) {
                     return ex;
@@ -221,7 +221,7 @@ public class DocTest extends BaseTest {
                         o.createTime().format("yyyy-MM-dd" ).in(times);
                         o.createTime().format("yyyy-MM-dd" ).notIn(times);
                     })
-                    .fetchBy(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
+                    .select(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') IN (?,?) AND DATE_FORMAT(t.`create_time`,'%Y-%m-%d') NOT IN (?,?) AND 1 = 2 AND 1 = 1" , jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -314,7 +314,7 @@ public class DocTest extends BaseTest {
                         }
                     });
                 })
-                .fetchBy(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
+                .select(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND (DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? OR DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ? OR DATE_FORMAT(t.`create_time`,'%Y-%m-%d') LIKE ?)" , jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -331,13 +331,13 @@ public class DocTest extends BaseTest {
                 .where(o -> {
                     o.createTime().format("yyyy-MM-dd" ).likeMatchLeft("2023" );
                 })
-                .fetchBy(o -> {
-                    PropTypeColumn<BlogEntity> subQuery = o.subQuery(() -> {
+                .select(BlogEntity.class,o -> {
+                    PropTypeColumn<BlogEntity> subQuery = o.expression().subQuery(() -> {
                         return easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> {
                                     x.id().eq(o.id());
                                 })
-                                .fetchBy(x -> x.FETCHER.createTime());
+                                .select(x -> x.FETCHER.createTime());
                     });
 //                    SQLSelectAsExpression subQuery = Select.subQueryAs(() -> {
 //                        return easyEntityQuery.queryable(BlogEntity.class)
@@ -368,14 +368,14 @@ public class DocTest extends BaseTest {
                 .where(o -> {
                     o.createTime().format("yyyy-MM-dd" ).likeMatchLeft("2023" );
                 })
-                .fetchBy(o -> {
+                .select(BlogEntity.class,o -> {
 
-                    PropTypeColumn<BlogEntity> subQuery = o.subQuery(() -> {
+                    PropTypeColumn<Long> subQuery = o.expression().subQuery(() -> {
                         return easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> {
                                     x.id().eq(o.id());
                                 })
-                                .fetchBy(x -> x.id().count());
+                                .selectColumn(x -> x.id().count());
                     });
 //                    SQLSelectAsExpression subQuery = Select.subQueryAs(() -> {
 //                        return easyEntityQuery.queryable(BlogEntity.class)
@@ -532,7 +532,7 @@ public class DocTest extends BaseTest {
                         o.id().asc();
                         o.createTime().desc();
                     })
-                    .fetchBy(o -> o.FETCHER.id().title())
+                    .select(o -> o.FETCHER.id().title())
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -553,7 +553,7 @@ public class DocTest extends BaseTest {
                         o.id().asc();
                         o.createTime().desc();
                     })
-                    .fetchBy(o -> o.FETCHER.allFieldsExclude(o.id()))//返回所有字段除了id
+                    .select(o -> o.FETCHER.allFieldsExclude(o.id()))//返回所有字段除了id
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -601,7 +601,7 @@ public class DocTest extends BaseTest {
                         o.id().asc();
                         o.createTime().desc();
                     })
-                    .fetchBy(o -> o.FETCHER.id().title())
+                    .select(o -> o.FETCHER.id().title())
                     .toPageResult(1, 20);
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -622,7 +622,7 @@ public class DocTest extends BaseTest {
                         o.id().asc();
                         o.createTime().desc();
                     })
-                    .fetchBy(o -> {
+                    .select(o -> {
                         return o.FETCHER.id().title().stars().as(o.stars());
                     })
                     .toList();
