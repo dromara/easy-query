@@ -25,6 +25,7 @@ public class NavigateOption {
     private final List<NavigateOrderProp> orderProps;
     private final long offset;
     private final long limit;
+    private final String[] directMapping;
     private Class<?> mappingClass;
     private String[] selfMappingProperties;
     private String[] targetMappingProperties;
@@ -37,7 +38,7 @@ public class NavigateOption {
                           Class<?> navigatePropertyType,
                           RelationTypeEnum relationType,
                           String[] selfProperties,
-                          String[] targetProperties, List<NavigateOrderProp> orderProps,long offset,long limit){
+                          String[] targetProperties, List<NavigateOrderProp> orderProps,long offset,long limit,String[] directMapping){
 
         this.entityMetadata = entityMetadata;
         this.propertyName = propertyName;
@@ -50,6 +51,7 @@ public class NavigateOption {
         this.orderProps = orderProps;
         this.offset = offset;
         this.limit = limit;
+        this.directMapping = directMapping;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -134,5 +136,9 @@ public class NavigateOption {
 
     public long getLimit() {
         return limit;
+    }
+
+    public String[] getDirectMapping() {
+        return directMapping;
     }
 }

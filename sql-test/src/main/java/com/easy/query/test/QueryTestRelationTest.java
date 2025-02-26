@@ -70,6 +70,14 @@ public class QueryTestRelationTest extends BaseTest {
 
     @Test
     public void test1() {
+
+
+        List<MySignUp> list7 = easyEntityQuery.queryable(MySignUp.class)
+                .where(m -> {
+                    m.comUser().myCompany().name().like("123");
+                }).toList();
+
+
         List<MySignUp> list3 = easyEntityQuery.queryable(MyComUser.class)
                 .toList(o -> o.mySignUps().flatElement());
 
@@ -436,10 +444,10 @@ public class QueryTestRelationTest extends BaseTest {
                             m.id().isNotNull();
 //                            m.comUser().id().isNotNull();
                         }).orderBy(m -> m.content().asc())
-                        .toPageSelectResult(q->{
+                        .toPageSelectResult(q -> {
                             System.out.println(q);
                             return q.selectAutoInclude(MySignUpDTOy.class);
-                        },1,10);
+                        }, 1, 10);
 
                 {
 
@@ -466,10 +474,10 @@ public class QueryTestRelationTest extends BaseTest {
                             m.id().isNotNull();
 //                            m.comUser().id().isNotNull();
                         }).orderBy(m -> m.content().asc())
-                        .toPageSelectResult(q->{
+                        .toPageSelectResult(q -> {
                             System.out.println(q);
                             return q.selectAutoInclude(MySignUpDTOx.class);
-                        },1,10);
+                        }, 1, 10);
 
                 {
 
@@ -500,12 +508,12 @@ public class QueryTestRelationTest extends BaseTest {
                             m.id().isNotNull();
 //                            m.comUser().id().isNotNull();
                         }).orderBy(m -> m.content().asc())
-                        .toPageSelectResult(q->{
+                        .toPageSelectResult(q -> {
                             System.out.println(q);
-                            return q.selectAutoInclude(MySignUpDTO.class,x->Select.of(
+                            return q.selectAutoInclude(MySignUpDTO.class, x -> Select.of(
                                     x.comUser().gw().as(MySignUpDTO.Fields.comUserName)
                             ));
-                        },1,10);
+                        }, 1, 10);
 
                 {
 
@@ -1137,6 +1145,77 @@ public class QueryTestRelationTest extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT (SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `value1` FROM `school_class` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+
+    @Test
+    public void testDirectWhere() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String val="";
+
+        List<MySignUp> list8 = easyEntityQuery.queryable(MySignUp.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(m -> {
+                    m.comUserCompany().name().like(val);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testDirectWhere1() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<MySignUp> list7 = easyEntityQuery.queryable(MySignUp.class)
+                .where(m -> {
+                    m.comUser().myCompany().name().like("123");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t LEFT JOIN `my_com_user` t1 ON (t1.`com_id` = t.`com_id` AND t1.`user_id` = t.`user_id`) LEFT JOIN `my_company_info` t2 ON t2.`id` = t1.`com_id` WHERE t2.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testDirectWhere2() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<MySignUp> list8 = easyEntityQuery.queryable(MySignUp.class)
+                .where(m -> {
+                    m.comUserCompany().name().like("123");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t LEFT JOIN `my_com_user` t1 ON (t1.`com_id` = t.`com_id` AND t1.`user_id` = t.`user_id`) LEFT JOIN `my_company_info` t2 ON t2.`id` = t1.`com_id` WHERE t2.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testDirectWhere3() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<MySignUp> list8 = easyEntityQuery.queryable(MySignUp.class)
+                .where(m -> {
+                    m.comUserCompany().name().like("123");
+                    m.comUser().myCompany().name().like("123");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t LEFT JOIN `my_com_user` t1 ON (t1.`com_id` = t.`com_id` AND t1.`user_id` = t.`user_id`) LEFT JOIN `my_company_info` t2 ON t2.`id` = t1.`com_id` WHERE t2.`name` LIKE ? AND t2.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 }
