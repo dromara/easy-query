@@ -3,10 +3,13 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.configuration.dialect.AbstractSQLKeyword;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.common.PageResult;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp14;
@@ -21,6 +24,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -83,6 +87,13 @@ public class QueryTest21 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT (CASE WHEN t.`title` = ? THEN ? ELSE ? END) AS `title`,t.`id` AS `id` FROM `t_topic` t WHERE t.`title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),1(String),2(String),someTitle(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        ArrayList<Topic> topics = new ArrayList<>();
+        int partitionSize=10;
+        List<List<Topic>> partition = EasyCollectionUtil.partition(topics, partitionSize);
+        for (List<Topic> topicList : partition) {
+            easyEntityQuery.insertable(topicList).batch().executeRows();
+        }
 
     }
 
@@ -233,6 +244,20 @@ public class QueryTest21 extends BaseTest {
             }
         }
         listenerContextManager.clear();
+
+
+//        easyEntityQuery.deletable(Topic.class)
+//                .allowDeleteStatement(true)
+//                .disableLogicDelete()
+//                .where(t_topic -> {
+//                    t_topic.isNotNull();
+//                    t_topic.id().isNotNull();
+//                    t_topic.expression().sql("1=1");
+//                }).executeRows();
+//        EntityMetadata entityMetadata = easyEntityQuery.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(Topic.class);
+//        SQLKeyword sqlKeyword = easyEntityQuery.getRuntimeContext().getService(SQLKeyword.class);
+//        String quoteName = sqlKeyword.getQuoteName(entityMetadata.getTableName());
+//        easyEntityQuery.sqlExecute("truncate table "+quoteName);
     }
 
 }

@@ -162,11 +162,11 @@ public class EasyCollectionUtil {
 //        return result;
 //    }
     public static <T> List<List<T>> partition(List<T> list, int size) {
-        if (list == null || list.isEmpty()) {
+        if (list == null) {
             throw new IllegalArgumentException("List cannot be null or empty.");
         }
-        if (size <= 0) {
-            throw new IllegalArgumentException("Size must be positive.");
+        if (list.isEmpty()) {
+            return emptyList();
         }
         List<List<T>> partitions = new ArrayList<>();
         int numberOfPartitions = (int) Math.ceil((double) list.size() / size);
