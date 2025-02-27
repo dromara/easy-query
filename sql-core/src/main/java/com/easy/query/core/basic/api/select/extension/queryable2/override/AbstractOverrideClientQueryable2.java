@@ -94,7 +94,7 @@ public abstract class AbstractOverrideClientQueryable2<T1,T2> extends AbstractCl
 
 
     @Override
-    public <TProperty> ClientQueryable2<T1, T2> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
+    public <TProperty> ClientQueryable2<T1, T2> include(boolean condition, SQLFuncExpression1<NavigateInclude, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
         super.include(condition, navigateIncludeSQLExpression);
         return getClientQueryable2();
     }

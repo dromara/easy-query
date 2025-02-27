@@ -9,7 +9,7 @@ import com.easy.query.core.metadata.IncludeNavigateParams;
  *
  * @author xuejiaming
  */
-public interface NavigateInclude<T1> {
+public interface NavigateInclude {
     IncludeNavigateParams getIncludeNavigateParams();
     default <TREntity> ClientQueryable<TREntity> with(String property){
         return with(property,null);

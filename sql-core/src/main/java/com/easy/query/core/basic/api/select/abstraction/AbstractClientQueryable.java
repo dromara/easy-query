@@ -1444,7 +1444,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public <TProperty> ClientQueryable<T1> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
+    public <TProperty> ClientQueryable<T1> include(boolean condition, SQLFuncExpression1<NavigateInclude, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
         if (condition) {
             IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
             Integer groupSize = entityQueryExpressionBuilder.getExpressionContext().getGroupSize();
@@ -1452,7 +1452,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
             int relationGroupSize = groupSize != null ? groupSize : easyQueryOption.getRelationGroupSize();
             includeNavigateParams.setRelationGroupSize(relationGroupSize);
-            NavigateInclude<T1> navigateInclude = getSQLExpressionProvider1().getNavigateInclude(includeNavigateParams);
+            NavigateInclude navigateInclude = getSQLExpressionProvider1().getNavigateInclude(includeNavigateParams);
             ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
             boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
             includeNavigateParams.setLimit(hasLimit);

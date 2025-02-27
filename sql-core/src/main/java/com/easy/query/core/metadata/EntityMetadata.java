@@ -337,7 +337,11 @@ public class EntityMetadata {
     }
 
     private void createNavigateMetadata(boolean tableEntity, Navigate navigate, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
-        boolean hasDirectMapping = EasyArrayUtil.isNotEmpty(navigate.directMapping());
+
+        RelationTypeEnum relationType = navigate.value();
+        boolean toMany = relationType.equals(RelationTypeEnum.OneToMany) || relationType.equals(RelationTypeEnum.ManyToMany);
+        //toOne并且是table对象
+        boolean hasDirectMapping = !toMany && tableEntity && EasyArrayUtil.isNotEmpty(navigate.directMapping());
         if (hasDirectMapping) {
             if (navigate.directMapping().length < 2) {
                 throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + " navigate directMapping must have a length of at least 2, property:[" + property + "]");
@@ -346,8 +350,6 @@ public class EntityMetadata {
         String[] selfProperties = tableEntity && !hasDirectMapping ? navigate.selfProperty() : EasyArrayUtil.EMPTY;
         String[] targetProperties = tableEntity && !hasDirectMapping ? navigate.targetProperty() : EasyArrayUtil.EMPTY;
         EasyNavigateUtil.checkProperties(selfProperties, targetProperties);
-        RelationTypeEnum relationType = navigate.value();
-        boolean toMany = relationType.equals(RelationTypeEnum.OneToMany) || relationType.equals(RelationTypeEnum.ManyToMany);
         Class<?> navigateType = getNavigateType(toMany, field, fastBeanProperty);
         if (navigateType == null) {
             throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");

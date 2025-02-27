@@ -1302,6 +1302,8 @@ public class QueryTest12 extends BaseTest {
 //                    }))
 //                    .toList();
 
+
+
             List<RelationUser> users = easyEntityQuery.queryable(RelationUser.class)
                     .where(r -> r.historyBooks().any(book -> {
                         book.name().like("小学");

@@ -101,7 +101,7 @@ public abstract class AbstractOverrideClientQueryable3<T1, T2, T3> extends Abstr
 
 
     @Override
-    public <TProperty> ClientQueryable3<T1, T2, T3> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
+    public <TProperty> ClientQueryable3<T1, T2, T3> include(boolean condition, SQLFuncExpression1<NavigateInclude, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
         super.include(condition, navigateIncludeSQLExpression);
         return getClientQueryable3();
     }

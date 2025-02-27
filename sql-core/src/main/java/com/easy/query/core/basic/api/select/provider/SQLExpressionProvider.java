@@ -27,7 +27,7 @@ public interface SQLExpressionProvider<TEntity> {
     WherePredicate<TEntity> getWherePredicate(FilterContext filterContext);
     FilterContext getWhereFilterContext();
 
-   <TR> NavigateInclude<TEntity> getNavigateInclude(IncludeNavigateParams includeNavigateParams);
+   NavigateInclude getNavigateInclude(IncludeNavigateParams includeNavigateParams);
 
 
     WhereAggregatePredicate<TEntity> getAggregatePredicate();

@@ -31,12 +31,4 @@ public interface NavigateExtraFilterStrategy {
     */
    @Nullable
    SQLExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression(NavigateBuilder builder);
-
-   /**
-    * 如果extra一致则进行合并
-    * @return
-    */
-   default String getExtraFilterId(){
-      return UUID.randomUUID().toString();
-   }
 }

@@ -16,7 +16,7 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface SQLKtNavigateInclude<T1> {
-    NavigateInclude<T1> getNavigateInclude();
+    NavigateInclude getNavigateInclude();
    default  <TProperty> KtQueryable<TProperty> one(KProperty1<? super T1,TProperty> navigate){
        return one(navigate,null);
    }

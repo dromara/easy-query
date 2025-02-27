@@ -112,12 +112,12 @@ public interface ClientOverrideQueryable4<T1, T2, T3, T4> extends ClientQueryabl
     ClientQueryable4<T1, T2, T3,T4> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression);
 
     @Override
-    default <TREntity> ClientQueryable4<T1, T2, T3,T4> include(SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TREntity>> navigateIncludeSQLExpression) {
+    default <TREntity> ClientQueryable4<T1, T2, T3,T4> include(SQLFuncExpression1<NavigateInclude, ClientQueryable<TREntity>> navigateIncludeSQLExpression) {
         return include(true, navigateIncludeSQLExpression);
     }
 
     @Override
-    <TREntity> ClientQueryable4<T1, T2, T3,T4> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TREntity>> navigateIncludeSQLExpression);
+    <TREntity> ClientQueryable4<T1, T2, T3,T4> include(boolean condition, SQLFuncExpression1<NavigateInclude, ClientQueryable<TREntity>> navigateIncludeSQLExpression);
 
     @Override
     default ClientQueryable4<T1, T2, T3,T4> limit(long rows) {

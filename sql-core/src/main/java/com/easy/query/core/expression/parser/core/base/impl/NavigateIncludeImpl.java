@@ -19,7 +19,7 @@ import com.easy.query.core.util.EasyOptionUtil;
  *
  * @author xuejiaming
  */
-public class NavigateIncludeImpl<TEntity> implements NavigateInclude<TEntity> {
+public class NavigateIncludeImpl implements NavigateInclude {
     private final TableAvailable entityTable;
     private final QueryRuntimeContext runtimeContext;
     private final IncludeNavigateParams includeNavigateParams;
