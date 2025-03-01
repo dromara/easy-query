@@ -131,20 +131,20 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
 
     MapClientUpdatable<Map<String, Object>> mapUpdatable(Collection<Map<String, Object>> maps);
 
-    //
-    default <T> void loadInclude(T entity, String navigateProperty) {
-        loadInclude(Collections.singletonList(entity), navigateProperty);
-    }
-
-    default <T> void loadInclude(T entity, String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
-        loadInclude(Collections.singletonList(entity), navigateProperty, configure);
-    }
-
-    default <T> void loadInclude(List<T> entities, String navigateProperty) {
-        loadInclude(entities, navigateProperty, null);
-    }
-
-    <T> void loadInclude(List<T> entities, String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure);
+//    //
+//    default <T> void loadInclude(T entity, String navigateProperty) {
+//        loadInclude(Collections.singletonList(entity), navigateProperty);
+//    }
+//
+//    default <T> void loadInclude(T entity, String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
+//        loadInclude(Collections.singletonList(entity), navigateProperty, configure);
+//    }
+//
+//    default <T> void loadInclude(List<T> entities, String navigateProperty) {
+//        loadInclude(entities, navigateProperty, null);
+//    }
+//
+//    <T> void loadInclude(List<T> entities, String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure);
 
     DatabaseCodeFirst getDatabaseCodeFirst();
 

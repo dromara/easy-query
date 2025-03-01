@@ -78,6 +78,15 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         }
         return resultMap;
     }
+    protected Map<RelationValue, Object> getTargetDirectMap(List<RelationExtraEntity> includes) {
+        Map<RelationValue, Object> resultMap = new HashMap<>();
+        String[] directTargetPropertiesOrPrimary = includeParserResult.getNavigateMetadata().getDirectTargetPropertiesOrPrimary(runtimeContext);
+        for (RelationExtraEntity target : includes) {
+            RelationValue targetRelationId = target.getRelationExtraColumns(directTargetPropertiesOrPrimary);
+            resultMap.putIfAbsent(targetRelationId,target.getEntity());
+        }
+        return resultMap;
+    }
 
     protected Class<?> getCollectionType() {
         if (collectionType == null) {
@@ -91,17 +100,41 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         return EasyObjectUtil.typeCastNullable(EasyClassUtil.newInstance(collectionType));
     }
 
-    protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes, List<Map<String, Object>> mappingRows) {
+    protected Map<RelationValue, Object> getTargetDirectMap(List<RelationExtraEntity> includes, List<Object> mappingRows) {
+
+        Map<RelationValue, Object> resultMap = new HashMap<>();
+
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(includeParserResult.getNavigateMetadata().getDirectMappingClass(runtimeContext));
+        RelationValueColumnMetadata selfRelationColumn = relationValueColumnMetadataFactory.create(entityMetadata, includeParserResult.getNavigateMetadata().getDirectMappingSelfPropertiesOrPrimary(runtimeContext));
+        //优化多级RelationValueColumnMetadata
+        RelationValueColumnMetadata targetRelationColumn = relationValueColumnMetadataFactory.create(entityMetadata, includeParserResult.getNavigateMetadata().getDirectMappingTargetPropertiesOrPrimary(runtimeContext));
+
+
+        Map<RelationValue, Object> targetDirectMap = getTargetDirectMap(includes);
+        for (Object mappingRow : mappingRows) {
+            RelationValue selfRelationId = selfRelationColumn.getRelationValue(mappingRow);
+            RelationValue targetRelationId = targetRelationColumn.getRelationValue(mappingRow);
+            resultMap.putIfAbsent(selfRelationId, targetDirectMap.get(targetRelationId));
+//            Collection<TNavigateEntity> targetEntities = resultMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
+//            Collection<TNavigateEntity> targets = targetToManyMap.get(targetRelationId);
+//            if (EasyCollectionUtil.isNotEmpty(targets)) {
+//                targetEntities.addAll(targets);
+//            }
+        }
+        return resultMap;
+    }
+    protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes, List<Object> mappingRows) {
 
         Map<RelationValue, Collection<TNavigateEntity>> resultMap = new HashMap<>();
 
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(includeParserResult.getMappingClass());
         RelationValueColumnMetadata selfRelationColumn = relationValueColumnMetadataFactory.create(entityMetadata, includeParserResult.getSelfMappingProperties());
+        //优化多级RelationValueColumnMetadata
         RelationValueColumnMetadata targetRelationColumn = relationValueColumnMetadataFactory.create(entityMetadata, includeParserResult.getTargetMappingProperties());
 
 
         Map<RelationValue, Collection<TNavigateEntity>> targetToManyMap = getTargetToManyMap(includes);
-        for (Map<String, Object> mappingRow : mappingRows) {
+        for (Object mappingRow : mappingRows) {
             RelationValue selfRelationId = selfRelationColumn.getRelationValue(mappingRow);
             RelationValue targetRelationId = targetRelationColumn.getRelationValue(mappingRow);
             Collection<TNavigateEntity> targetEntities = resultMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
@@ -170,7 +203,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
 
     protected abstract void OneToManyProcess(List<RelationExtraEntity> includes);
 
-    protected abstract void ManyToManyProcess(List<RelationExtraEntity> includes, List<Map<String, Object>> mappingRows);
+    protected abstract void ManyToManyProcess(List<RelationExtraEntity> includes, List<Object> mappingRows);
 
 
     protected <T> void setEntityValue(T entity, Object value) {

@@ -5,6 +5,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateFlatMetadata;
+import com.easy.query.core.metadata.NavigateMetadata;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.Map;
  */
 public class DefaultIncludeParserResult implements IncludeParserResult{
     private final EntityMetadata entityMetadata;
+    private final NavigateMetadata navigateMetadata;
     private final List<RelationExtraEntity> relationExtraEntities;
     private final RelationTypeEnum relationType;
     private final String navigatePropertyName;
@@ -29,13 +31,15 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     private Class<?> mappingClass;
     private String[] selfMappingProperties;
     private String[] targetMappingProperties;
-    private List<Map<String, Object>> mappingRows;
+    private List<Object> mappingRows;
     private final PropertySetterCaller<Object> setter;
     private final Property<Object, ?> getter;
     private final List<NavigateFlatMetadata> navigateFlatMetadataList;
     private final EntityMetadata flatQueryEntityMetadata;
+    private final String[] directMapping;
 
     public DefaultIncludeParserResult(EntityMetadata entityMetadata,
+                                      NavigateMetadata navigateMetadata,
                                       List<RelationExtraEntity> relationExtraEntities,
                                       RelationTypeEnum relationType,
                                       String navigatePropertyName,
@@ -47,13 +51,15 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
                                       String[] selfMappingProperties,
                                       String[] targetMappingProperties,
                                       List<RelationExtraEntity> includeResult,
-                                      List<Map<String, Object>> mappingRows,
+                                      List<Object> mappingRows,
                                       PropertySetterCaller<Object> setter,
                                       Property<Object, ?> getter,
                                       List<NavigateFlatMetadata> navigateFlatMetadataList,
-                                      EntityMetadata flatQueryEntityMetadata){
+                                      EntityMetadata flatQueryEntityMetadata,
+                                      String[] directMapping){
 
         this.entityMetadata = entityMetadata;
+        this.navigateMetadata = navigateMetadata;
         this.relationExtraEntities = relationExtraEntities;
         this.relationType = relationType;
         this.navigatePropertyName = navigatePropertyName;
@@ -70,10 +76,16 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
         this.getter = getter;
         this.navigateFlatMetadataList = navigateFlatMetadataList;
         this.flatQueryEntityMetadata = flatQueryEntityMetadata;
+        this.directMapping = directMapping;
     }
     @Override
     public EntityMetadata getEntityMetadata() {
         return entityMetadata;
+    }
+
+    @Override
+    public NavigateMetadata getNavigateMetadata() {
+        return navigateMetadata;
     }
 
     @Override
@@ -122,12 +134,17 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     }
 
     @Override
+    public String[] getDirectMapping() {
+        return directMapping;
+    }
+
+    @Override
     public List<RelationExtraEntity> getIncludeResult() {
         return includeResult;
     }
 
     @Override
-    public List<Map<String, Object>> getMappingRows() {
+    public List<Object> getMappingRows() {
         return mappingRows;
     }
 

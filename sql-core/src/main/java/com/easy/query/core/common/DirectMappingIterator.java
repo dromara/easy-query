@@ -1,5 +1,6 @@
 package com.easy.query.core.common;
 
+import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 /**
@@ -14,8 +15,25 @@ public class DirectMappingIterator {
     private String propFullName;
 
     public DirectMappingIterator(String[] directMapping) {
-        this.directMapping = directMapping;
+        this(directMapping, 0);
+    }
+
+    /**
+     * @param directMapping
+     * @param beforeStep    提前多少步结束
+     */
+    public DirectMappingIterator(String[] directMapping, int beforeStep) {
+        if (directMapping.length <= beforeStep) {
+            throw new IllegalArgumentException("beforeStep must be less than the length of directMapping.");
+        }
         this.propFullName = EasyStringUtil.EMPTY;
+        if (beforeStep > 0) {
+            this.directMapping = new String[directMapping.length - beforeStep];
+            System.arraycopy(directMapping, 0, this.directMapping, 0, directMapping.length - beforeStep);
+
+        } else {
+            this.directMapping = directMapping;
+        }
     }
 
     public boolean hasNext() {

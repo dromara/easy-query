@@ -93,30 +93,30 @@ public interface EasyEntityQuery extends EasyBaseQuery{
      */
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> ExpressionDeletable<TProxy,T> deletable(Class<T> entityClass);
 
-    default  <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>>  void loadInclude(T entity, SQLFuncExpression1<TProxy, PropColumn> navigateProperty){
-        if(entity==null){
-            return;
-        }
-        loadInclude(Collections.singletonList(entity),navigateProperty);
-    }
-    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(T entity,SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
-        if(entity==null){
-            return;
-        }
-        loadInclude(Collections.singletonList(entity),navigateProperty,configure);
-    }
-    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(List<T> entities,SQLFuncExpression1<TProxy, PropColumn> navigateProperty){
-        loadInclude(entities,navigateProperty,null);
-    }
-    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(List<T> entities, SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
-        if(EasyCollectionUtil.isEmpty(entities)){
-            return;
-        }
-        Class<T> entityClass = EasyObjectUtil.typeCast(entities.get(0).getClass());
-        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
-        PropColumn propColumn = navigateProperty.apply(tProxy);
-        getEasyQueryClient().loadInclude(entities,propColumn.getValue(),configure);
-    }
+//    default  <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>>  void loadInclude(T entity, SQLFuncExpression1<TProxy, PropColumn> navigateProperty){
+//        if(entity==null){
+//            return;
+//        }
+//        loadInclude(Collections.singletonList(entity),navigateProperty);
+//    }
+//    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(T entity,SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+//        if(entity==null){
+//            return;
+//        }
+//        loadInclude(Collections.singletonList(entity),navigateProperty,configure);
+//    }
+//    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(List<T> entities,SQLFuncExpression1<TProxy, PropColumn> navigateProperty){
+//        loadInclude(entities,navigateProperty,null);
+//    }
+//    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(List<T> entities, SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+//        if(EasyCollectionUtil.isEmpty(entities)){
+//            return;
+//        }
+//        Class<T> entityClass = EasyObjectUtil.typeCast(entities.get(0).getClass());
+//        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
+//        PropColumn propColumn = navigateProperty.apply(tProxy);
+//        getEasyQueryClient().loadInclude(entities,propColumn.getValue(),configure);
+//    }
 
     default DatabaseCodeFirst getDatabaseCodeFirst(){
         return getEasyQueryClient().getDatabaseCodeFirst();

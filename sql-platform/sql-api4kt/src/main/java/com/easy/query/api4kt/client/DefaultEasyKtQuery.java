@@ -123,19 +123,19 @@ public class DefaultEasyKtQuery implements EasyKtQuery {
     }
 
 
-    <T> void loadInclude(T entity, KProperty1<T, ?> navigateProperty) {
-        loadInclude(Collections.singletonList(entity), navigateProperty);
-    }
-
-    <T> void loadInclude(T entity, KProperty1<T, ?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
-        loadInclude(Collections.singletonList(entity), navigateProperty, configure);
-    }
-
-    <T> void loadInclude(List<T> entities, KProperty1<T, ?> navigateProperty) {
-        loadInclude(entities, navigateProperty, null);
-    }
-
-    <T> void loadInclude(List<T> entities, KProperty1<T, ?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
-        getEasyQueryClient().loadInclude(entities, navigateProperty.getName(), configure);
-    }
+//    <T> void loadInclude(T entity, KProperty1<T, ?> navigateProperty) {
+//        loadInclude(Collections.singletonList(entity), navigateProperty);
+//    }
+//
+//    <T> void loadInclude(T entity, KProperty1<T, ?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
+//        loadInclude(Collections.singletonList(entity), navigateProperty, configure);
+//    }
+//
+//    <T> void loadInclude(List<T> entities, KProperty1<T, ?> navigateProperty) {
+//        loadInclude(entities, navigateProperty, null);
+//    }
+//
+//    <T> void loadInclude(List<T> entities, KProperty1<T, ?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
+//        getEasyQueryClient().loadInclude(entities, navigateProperty.getName(), configure);
+//    }
 }

@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.common.DirectMappingIterator;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
@@ -10,6 +11,7 @@ import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyOptionUtil;
 
@@ -33,6 +35,50 @@ public class NavigateIncludeImpl implements NavigateInclude {
         this.expressionContext = expressionContext;
     }
 
+    private void getDirectMappingQueryable(Boolean printSQL, ClientQueryable<?> queryable, DirectMappingIterator directMappingIterator, Integer groupSize, NavigateMetadata propNavigateMetadata) {
+
+        if (directMappingIterator != null) {
+            if (directMappingIterator.hasNext()) {
+                String prop = directMappingIterator.next();
+
+                queryable.include(navigateInclude -> {
+
+                    ClientQueryable<?> query = navigateInclude.with(prop, groupSize);
+                    NavigateMetadata navigateMetadata = navigateInclude.getIncludeNavigateParams().getNavigateMetadata();
+                    getDirectMappingQueryable(printSQL, query, directMappingIterator, groupSize, navigateMetadata);
+                    return getDirectMappingQueryable(printSQL, query, propNavigateMetadata);
+                });
+            }
+        }
+//        else {
+//
+//            queryable.include(navigateInclude -> {
+//
+//                ClientQueryable<?> query = navigateInclude.with(property, groupSize);
+//                NavigateMetadata navigateMetadata = navigateInclude.getIncludeNavigateParams().getNavigateMetadata();
+//                return getDirectMappingQueryable(printSQL, queryable, navigateMetadata);
+//            });
+//        }
+    }
+
+    private ClientQueryable<?> getDirectMappingQueryable(Boolean printSQL, ClientQueryable<?> query, NavigateMetadata navigateMetadata) {
+        QueryRuntimeContext runtimeContext = query.getRuntimeContext();
+        return query
+                .configure(s -> {
+                    s.setPrintSQL(printSQL);
+                    s.setPrintNavSQL(printSQL);
+                });
+//        .select(query.queryClass(), o -> {
+//                    for (String selfMappingProperty : navigateMetadata.getSelfPropertiesOrPrimary()) {
+//                        o.column(selfMappingProperty);
+//                    }
+//                    for (String targetMappingProperty : navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext)) {
+//                        o.column(targetMappingProperty);
+//                    }
+//                });
+    }
+
+
     private NavigateMetadata withBefore(String property, Integer groupSize) {
 
         if (groupSize != null && groupSize < 1) {
@@ -47,9 +93,32 @@ public class NavigateIncludeImpl implements NavigateInclude {
             includeNavigateParams.setRelationGroupSize(groupSize);
         }
         RelationTypeEnum relationType = navigateMetadata.getRelationType();
-        //添加多对多中间表
-        if (RelationTypeEnum.ManyToMany == relationType && navigateMetadata.getMappingClass() != null) {
-            SQLFuncExpression<ClientQueryable<?>> mappingQueryableFunction=()->{
+        if (EasyArrayUtil.isNotEmpty(navigateMetadata.getDirectMapping()) && (
+                relationType == RelationTypeEnum.ManyToOne
+                        ||
+                        relationType == RelationTypeEnum.OneToOne
+        )) {
+
+            SQLFuncExpression<ClientQueryable<?>> mappingQueryableFunction = () -> {
+                DirectMappingIterator directMappingIterator = new DirectMappingIterator(navigateMetadata.getDirectMapping(), 1);
+                String prop = directMappingIterator.next();
+                NavigateMetadata propNavigateMetadata = navigateMetadata.getEntityMetadata().getNavigateNotNull(prop);
+
+                ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(propNavigateMetadata.getNavigatePropertyType(), runtimeContext);
+                Boolean printSQL = EasyOptionUtil.isPrintNavSQL(expressionContext);
+                getDirectMappingQueryable(printSQL, mappingQuery, directMappingIterator, groupSize, propNavigateMetadata);
+                return mappingQuery
+                        .configure(s -> {
+                            s.setPrintSQL(printSQL);
+                            s.setPrintNavSQL(printSQL);
+                        }).where(t -> {
+                            t.relationIn(navigateMetadata.getDirectSelfPropertiesOrPrimary(runtimeContext), includeNavigateParams.getRelationIds());
+                            propNavigateMetadata.predicateFilterApply(t);
+                        });
+            };
+            includeNavigateParams.setMappingQueryableFunction(mappingQueryableFunction);
+        } else if (RelationTypeEnum.ManyToMany == relationType && navigateMetadata.getMappingClass() != null) {//添加多对多中间表
+            SQLFuncExpression<ClientQueryable<?>> mappingQueryableFunction = () -> {
 
                 ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
                 Boolean printSQL = EasyOptionUtil.isPrintNavSQL(expressionContext);

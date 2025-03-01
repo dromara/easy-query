@@ -474,7 +474,16 @@ public class QueryTestRelationTest extends BaseTest {
                 System.out.println("33");
                 ListenerContext listenerContext = new ListenerContext(true);
                 listenerContextManager.startListen(listenerContext);
-
+//                easyEntityQuery.queryable(MyComUser.class)
+//                        .where(m -> {
+//                            m.expression().constant().valueOf("123").eq(
+//                                    easyEntityQuery.queryable(MySignUp.class)
+//                                    .where(x -> {
+//
+//                                    }).selectColumn(x -> x.comId()).limit(1)
+//                            );
+//
+//                        })
                 List<MySignUp> list1 = easyEntityQuery.queryable(MySignUp.class)
                         .include(m -> m.comUserCompany())
                         .where(m -> {

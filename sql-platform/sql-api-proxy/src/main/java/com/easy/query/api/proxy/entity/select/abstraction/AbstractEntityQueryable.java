@@ -17,7 +17,6 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.common.DirectMappingIterator;
 import com.easy.query.core.common.OffsetLimitEntry;
 import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -28,8 +27,6 @@ import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -47,7 +44,6 @@ import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.fetcher.EntityFetcher;
 import com.easy.query.core.proxy.sql.Select;
-import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -102,7 +98,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public EntityQueryable<T1Proxy, T1> toCteAs(String tableName) {
-        return new EasyEntityQueryable<>(get1Proxy(), getClientQueryable().toCteAs(tableName));
+        return new EasyEntityQueryable<>(get1Proxy(),getClientQueryable().toCteAs(tableName));
     }
 
     @Override
@@ -385,7 +381,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             });
 
 //        getSQLEntityExpressionBuilder().removeRelationEntityTableExpression(new RelationTableKey(proxy.getEntityClass(),navigateColumn.getEntityClass()));
-            return include0(valueHolder.getValue().getNavValue(), includeAdapterExpression, groupSize, true);
+            return include0(valueHolder.getValue(), includeAdapterExpression, groupSize);
         }
         return this;
     }
@@ -401,105 +397,34 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
                 TPropertyProxy navigateColumn = navigateColumnQueryable.getQueryable().get1Proxy();
                 valueHolder.setValue(navigateColumn);
             });
-            return include0(valueHolder.getValue().getNavValue(), includeAdapterExpression, groupSize, true);
+            return include0(valueHolder.getValue(), includeAdapterExpression, groupSize);
         }
         return this;
     }
 
-    private <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include0(String navValue, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize, boolean includeAdapter) {
+    private <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include0(TPropertyProxy navigateColumn, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
 
-        Objects.requireNonNull(navValue, "include [navValue] is null");
+        Objects.requireNonNull(navigateColumn.getNavValue(), "include [navValue] is null");
 
-        ClientQueryable<T1> outClientQueryable = getClientQueryable();
         ConfigureArgument configureArgument = getQueryable().getSQLEntityExpressionBuilder().getExpressionContext().getConfigureArgument();
-
-        EntityMetadata entityMetadata = outClientQueryable.getSQLEntityExpressionBuilder().getTable(0).getEntityMetadata();
-        NavigateMetadata queryNavigateMetadata = entityMetadata.getNavigateNotNull(navValue);
-
-        String[] directMapping = queryNavigateMetadata.getDirectMapping();
-        if (EasyArrayUtil.isNotEmpty(directMapping)) {
-            DirectMappingIterator directMappingIterator = new DirectMappingIterator(directMapping);
-            if (directMappingIterator.hasNext()) {
-                innerInclude0(outClientQueryable, directMappingIterator, null, configureArgument, includeAdapterExpression, groupSize);
-            }
-        } else {
-            innerInclude0(outClientQueryable, null, navValue, configureArgument, includeAdapterExpression, groupSize);
-        }
-
-        return getQueryable();
-    }
-
-    private <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> void innerInclude0(ClientQueryable<?> outClientQueryable, DirectMappingIterator directMappingIterator, String property, ConfigureArgument configureArgument, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
-
-
-        if (directMappingIterator != null) {
-            if (directMappingIterator.hasNext()) {
-                String prop = directMappingIterator.next();
-
-                outClientQueryable.include(navigateInclude -> {
-
-                    ClientQueryable<TProperty> query = navigateInclude.with(prop, groupSize);
-                    NavigateMetadata navigateMetadata = navigateInclude.getIncludeNavigateParams().getNavigateMetadata();
-                    innerInclude0(query, directMappingIterator, null, configureArgument, null, groupSize);
-
-                    return innerDoInclude0(query,navigateMetadata, navigateInclude, configureArgument, includeAdapterExpression, groupSize);
-                });
-            }
-        } else {
-
-            outClientQueryable.include(navigateInclude -> {
-
-                ClientQueryable<TProperty> query = navigateInclude.with(property, groupSize);
-                NavigateMetadata navigateMetadata = navigateInclude.getIncludeNavigateParams().getNavigateMetadata();
-
-                return innerDoInclude0(query,navigateMetadata, navigateInclude, configureArgument, includeAdapterExpression, groupSize);
-            });
-        }
-
-    }
-
-    private <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> ClientQueryable<TProperty> innerDoInclude0(ClientQueryable<TProperty> query,NavigateMetadata navigateMetadata,NavigateInclude navigateInclude,ConfigureArgument configureArgument, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize){
-
-        ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
-                EasyObjectUtil.typeCastNullable(query),
-                new OffsetLimitEntry(navigateMetadata.getOffset(), navigateMetadata.getLimit()),
-                navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOrderProps(),
-                runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType()),
-                configureArgument,
-                runtimeContext);
-        if (includeAdapterExpression != null) {
+        getClientQueryable().include(navigateInclude -> {
+            ClientQueryable<TProperty> queryable = navigateInclude.with(navigateColumn.getNavValue(), groupSize);
+            NavigateMetadata navigateMetadata = navigateInclude.getIncludeNavigateParams().getNavigateMetadata();
+            ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
+                    queryable,
+                    new OffsetLimitEntry(navigateMetadata.getOffset(), navigateMetadata.getLimit()),
+                    navigateMetadata.getOrderProps(),
+                    runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType()),
+                    configureArgument,
+                    runtimeContext);
             TPropertyProxy tPropertyProxy = EntityQueryProxyManager.create(clientQueryable.queryClass());
             EasyEntityQueryable<TPropertyProxy, TProperty> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, clientQueryable);
             includeAdapterExpression.apply(entityQueryable);
             return entityQueryable.getClientQueryable();
-        }
-        return clientQueryable;
+        });
+
+        return getQueryable();
     }
-//
-//    private <TProperty, TE> ClientQueryable<TProperty> innerInclude(NavigateInclude<TE> navigateInclude, String property, Integer groupSize, ConfigureArgument configureArgument) {
-//        ClientQueryable<TProperty> query = navigateInclude.with(property, groupSize);
-//        NavigateMetadata navigateMetadata = navigateInclude.getIncludeNavigateParams().getNavigateMetadata();
-//
-//        String[] directMapping = navigateMetadata.getDirectMapping();
-//        if (EasyArrayUtil.isNotEmpty(directMapping)) {
-//            ClientQueryable<TProperty> clientQuery = null;
-//            DirectMappingIterator directMappingIterator = new DirectMappingIterator(directMapping);
-//            while (directMappingIterator.hasNext()) {
-//                String prop = directMappingIterator.next();
-//                clientQuery = innerInclude(navigateInclude, prop, groupSize, configureArgument);
-//            }
-//            return clientQuery;
-//        }
-//        ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
-//                query,
-//                new OffsetLimitEntry(navigateMetadata.getOffset(), navigateMetadata.getLimit()),
-//                navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOrderProps(),
-//                runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType()),
-//                configureArgument,
-//                runtimeContext);
-//
-//        return clientQueryable;
-//    }
 
     //    @Override
 //    public <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression) {

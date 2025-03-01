@@ -1,14 +1,20 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.common.DirectMappingIterator;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.util.EasyArrayUtil;
+import com.easy.query.core.util.EasyMapUtil;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * create time 2023/6/17 19:13
@@ -51,6 +57,9 @@ public class NavigateMetadata {
     private final String[] directMapping;
     private final SQLExpression1<WherePredicate<?>> predicateFilterExpression;
     private final SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
+
+    private final Map<String, NavigateMetadata> directMappingMetadataMap;
+
     private final long offset;
     private final long limit;
 
@@ -76,6 +85,11 @@ public class NavigateMetadata {
         this.directMapping = navigateOption.getDirectMapping();
         this.getter = getter;
         this.setter = setter;
+        if (EasyArrayUtil.isNotEmpty(directMapping)) {
+            this.directMappingMetadataMap = new ConcurrentHashMap<>(2);
+        } else {
+            this.directMappingMetadataMap = null;
+        }
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -107,6 +121,9 @@ public class NavigateMetadata {
         if (EasyArrayUtil.isNotEmpty(selfProperties)) {
             return selfProperties;
         }
+        if (EasyArrayUtil.isNotEmpty(directMapping)) {
+            return entityMetadata.getNavigateNotNull(directMapping[0]).getSelfPropertiesOrPrimary();
+        }
         return new String[]{entityMetadata.getSingleKeyProperty()};
     }
 
@@ -120,6 +137,78 @@ public class NavigateMetadata {
         }
         EntityMetadata targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigatePropertyType);
         return new String[]{targetEntityMetadata.getSingleKeyProperty()};
+    }
+
+    public String[] getDirectSelfPropertiesOrPrimary(QueryRuntimeContext runtimeContext) {
+        checkDirectMapping();
+        return getDirectFirstNavigateMetadata(runtimeContext).getSelfPropertiesOrPrimary();
+    }
+
+    public String[] getDirectMappingSelfPropertiesOrPrimary(QueryRuntimeContext runtimeContext) {
+        checkDirectMapping();
+        return getDirectFirstNavigateMetadata(runtimeContext).getTargetPropertiesOrPrimary(runtimeContext);
+    }
+
+    public String[] getDirectTargetPropertiesOrPrimary(QueryRuntimeContext runtimeContext) {
+        checkDirectMapping();
+        return getDirectEndNavigateMetadata(runtimeContext).getTargetPropertiesOrPrimary(runtimeContext);
+    }
+
+    public String[] getDirectMappingTargetPropertiesOrPrimary(QueryRuntimeContext runtimeContext) {
+        checkDirectMapping();
+        return getDirectEndNavigateMetadata(runtimeContext).getSelfPropertiesOrPrimary();
+    }
+
+
+    private NavigateMetadata getDirectFirstNavigateMetadata(QueryRuntimeContext runtimeContext) {
+        return EasyMapUtil.computeIfAbsent(directMappingMetadataMap,"DIRECT_FIRST_NAVIGATE", key -> {
+            return getDirectMappingFirstNavigateMetadata(new DirectMappingIterator(directMapping), runtimeContext, entityMetadata, null);
+        });
+    }
+
+    private NavigateMetadata getDirectEndNavigateMetadata(QueryRuntimeContext runtimeContext) {
+        return EasyMapUtil.computeIfAbsent(directMappingMetadataMap,"DIRECT_END_NAVIGATE", key -> {
+            return getDirectMappingEndNavigateMetadata(new DirectMappingIterator(directMapping), runtimeContext, entityMetadata, null);
+        });
+    }
+
+    private NavigateMetadata getDirectMappingFirstNavigateMetadata(DirectMappingIterator directMappingIterator, QueryRuntimeContext runtimeContext, EntityMetadata entityMetadata, NavigateMetadata navigateMetadata) {
+        if (directMappingIterator.hasNext()) {
+            String prop = directMappingIterator.next();
+            NavigateMetadata propNavigateMetadata = entityMetadata.getNavigateNotNull(prop);
+            if (EasyArrayUtil.isEmpty(propNavigateMetadata.getDirectMapping())) {
+                return propNavigateMetadata;
+            }
+            EntityMetadata targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(propNavigateMetadata.getNavigatePropertyType());
+            return getDirectMappingFirstNavigateMetadata(directMappingIterator, runtimeContext, targetEntityMetadata, propNavigateMetadata);
+        }
+        return Objects.requireNonNull(navigateMetadata, "cant getDirectMappingFirstNavigateMetadata");
+    }
+
+    private NavigateMetadata getDirectMappingEndNavigateMetadata(DirectMappingIterator directMappingIterator, QueryRuntimeContext runtimeContext, EntityMetadata entityMetadata, NavigateMetadata navigateMetadata) {
+        if (directMappingIterator.hasNext()) {
+            String prop = directMappingIterator.next();
+            NavigateMetadata propNavigateMetadata = entityMetadata.getNavigateNotNull(prop);
+            EntityMetadata targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(propNavigateMetadata.getNavigatePropertyType());
+            return getDirectMappingEndNavigateMetadata(directMappingIterator, runtimeContext, targetEntityMetadata, propNavigateMetadata);
+        }
+        if (EasyArrayUtil.isNotEmpty(navigateMetadata.getDirectMapping())) {
+            DirectMappingIterator endDirectMappingIterator = new DirectMappingIterator(navigateMetadata.getDirectMapping());
+            EntityMetadata targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+            return getDirectMappingEndNavigateMetadata(endDirectMappingIterator, runtimeContext, targetEntityMetadata, navigateMetadata);
+        }
+        return Objects.requireNonNull(navigateMetadata, "cant getDirectMappingEndNavigateMetadata");
+    }
+
+    public Class<?> getDirectMappingClass(QueryRuntimeContext runtimeContext) {
+        checkDirectMapping();
+        return getDirectFirstNavigateMetadata(runtimeContext).getNavigatePropertyType();
+    }
+
+    private void checkDirectMapping() {
+        if (EasyArrayUtil.isEmpty(directMapping)) {
+            throw new EasyQueryInvalidOperationException("directMapping is empty");
+        }
     }
 
     public Class<?> getMappingClass() {
@@ -200,6 +289,7 @@ public class NavigateMetadata {
     public long getLimit() {
         return limit;
     }
+
     public String[] getDirectMapping() {
         return directMapping;
     }

@@ -5,6 +5,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.expression.sql.include.RelationValue;
+import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -51,19 +52,33 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
 
     @Override
     protected void ManyToOneProcess(List<RelationExtraEntity> includes) {
-        //因为是多对一所以获取关联数据key为主键的map
-        Map<RelationValue, ?> includeMap = EasyCollectionUtil.collectionToMap(includes, x -> x.getRelationExtraColumns(targetColumnMetadataPropertyNames), o -> o.getEntity(), (key, old) -> {
-            if (old != null) {
-                //应该使用ManyToOne而不是OneToOne所以请用户自行确认数据表示的是One-To-One还是Many-To-One
-                throw new EasyQueryInvalidOperationException("The relationship value ‘" + key + "’ appears to have duplicates: [" + EasyClassUtil.getInstanceSimpleName(old) + "]. Please confirm whether the data represents a Many-To-One or Many-To-Many relationship.");
-            }
-        });
         String[] selfRelationColumn = getSelfRelationColumn();
-        for (RelationExtraEntity entity : entities) {
-            RelationValue relationId = entity.getRelationExtraColumns(selfRelationColumn);
-            Object entityInclude = includeMap.get(relationId);
-            if (entityInclude != null) {
-                setEntityValue(entity.getEntity(), entityInclude);
+
+        if(EasyArrayUtil.isNotEmpty(includeParserResult.getDirectMapping())){
+            Map<RelationValue, Object> targetToManyMap = getTargetDirectMap(includes,includeParserResult.getMappingRows());
+            String[] directSelfPropertiesOrPrimary = includeParserResult.getNavigateMetadata().getDirectSelfPropertiesOrPrimary(runtimeContext);
+            for (RelationExtraEntity entity : entities) {
+                RelationValue selfRelationId = entity.getRelationExtraColumns(directSelfPropertiesOrPrimary);
+                Object targetEntity = targetToManyMap.get(selfRelationId);
+               if(targetEntity!=null){
+                   setEntityValue(entity.getEntity(), targetEntity);
+               }
+            }
+        }else{
+
+            //因为是多对一所以获取关联数据key为主键的map
+            Map<RelationValue, ?> includeMap = EasyCollectionUtil.collectionToMap(includes, x -> x.getRelationExtraColumns(targetColumnMetadataPropertyNames), o -> o.getEntity(), (key, old) -> {
+                if (old != null) {
+                    //应该使用ManyToOne而不是OneToOne所以请用户自行确认数据表示的是One-To-One还是Many-To-One
+                    throw new EasyQueryInvalidOperationException("The relationship value ‘" + key + "’ appears to have duplicates: [" + EasyClassUtil.getInstanceSimpleName(old) + "]. Please confirm whether the data represents a Many-To-One or Many-To-Many relationship.");
+                }
+            });
+            for (RelationExtraEntity entity : entities) {
+                RelationValue relationId = entity.getRelationExtraColumns(selfRelationColumn);
+                Object entityInclude = includeMap.get(relationId);
+                if (entityInclude != null) {
+                    setEntityValue(entity.getEntity(), entityInclude);
+                }
             }
         }
     }
@@ -84,7 +99,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
 
 
     @Override
-    protected void ManyToManyProcess(List<RelationExtraEntity> includes, List<Map<String, Object>> mappingRows) {
+    protected void ManyToManyProcess(List<RelationExtraEntity> includes, List<Object> mappingRows) {
 
         if (includeParserResult.getMappingClass() == null) {
 
