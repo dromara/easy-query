@@ -31,6 +31,7 @@ import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
+import com.easy.query.core.expression.sql.include.IncludeProvider;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
 import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
 import com.easy.query.core.func.SQLFunc;
@@ -263,6 +264,11 @@ public class EmptyQueryRuntimeContext implements QueryRuntimeContext{
 
     @Override
     public DatabaseCodeFirst getDatabaseCodeFirst() {
+        return null;
+    }
+
+    @Override
+    public IncludeProvider getIncludeProvider() {
         return null;
     }
 }

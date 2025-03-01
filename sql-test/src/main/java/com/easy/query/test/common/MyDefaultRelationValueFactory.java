@@ -16,7 +16,7 @@ import java.util.List;
 public class MyDefaultRelationValueFactory implements RelationValueFactory {
 
     @Override
-    public RelationValue createRelationValue(List<Object> values) {
+    public RelationValue createCollectionRelationValue(List<Object> values) {
         if (values.size() == 1) {
             return new MySingleRelationValue(values.get(0));
         }

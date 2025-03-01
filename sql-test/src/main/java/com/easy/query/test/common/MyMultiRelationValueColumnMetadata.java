@@ -38,9 +38,9 @@ public class MyMultiRelationValueColumnMetadata implements RelationValueColumnMe
         return new MyMultiRelationValue(values);
     }
 
-    @Override
-    public RelationValue getRelationValue(Map<String, Object> mappingRow) {
-        List<Object> values = EasyCollectionUtil.select(columnMetadataList, (columnMetadata, index) -> mappingRow.get(columnMetadata.getName()));
-        return new MyMultiRelationValue(values);
-    }
+//    @Override
+//    public RelationValue getRelationValue(Map<String, Object> mappingRow) {
+//        List<Object> values = EasyCollectionUtil.select(columnMetadataList, (columnMetadata, index) -> mappingRow.get(columnMetadata.getName()));
+//        return new MyMultiRelationValue(values);
+//    }
 }

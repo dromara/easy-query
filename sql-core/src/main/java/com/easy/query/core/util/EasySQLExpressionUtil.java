@@ -568,7 +568,7 @@ public class EasySQLExpressionUtil {
     }
 
 
-    public static void appendSelfExtraTargetProperty(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLNative<?> sqlNative, TableAvailable table) {
+    public static void appendSelfExtraTargetProperty(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLNative<?> sqlNative, TableAvailable table, boolean extra) {
         ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
         if (expressionContext.hasIncludes()) {
             RelationExtraMetadata relationExtraMetadata = expressionContext.getRelationExtraMetadata();
@@ -576,14 +576,15 @@ public class EasySQLExpressionUtil {
             SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
             for (Map.Entry<NavigateMetadata, IncludeNavigateExpression> navigateKV : includes.entrySet()) {
                 NavigateMetadata navigateMetadata = navigateKV.getKey();
-                String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
-                appSelfRelationColumn(projects, sqlNative, table, navigateMetadata, relationExtraMetadata, selfPropertiesOrPrimary);
+                boolean direct = EasyArrayUtil.isNotEmpty(navigateMetadata.getDirectMapping());
+                String[] selfPropertiesOrPrimary =direct?navigateMetadata.getDirectSelfPropertiesOrPrimary(expressionContext.getRuntimeContext()): navigateMetadata.getSelfPropertiesOrPrimary();
+                appSelfRelationColumn(projects, sqlNative, table, navigateMetadata, relationExtraMetadata, selfPropertiesOrPrimary, extra);
 
             }
         }
     }
 
-    private static void appSelfRelationColumn(SQLBuilderSegment projects, SQLNative<?> sqlNative, TableAvailable table, NavigateMetadata navigateMetadata, RelationExtraMetadata relationExtraMetadata, String[] selfPropertiesOrPrimary) {
+    private static void appSelfRelationColumn(SQLBuilderSegment projects, SQLNative<?> sqlNative, TableAvailable table, NavigateMetadata navigateMetadata, RelationExtraMetadata relationExtraMetadata, String[] selfPropertiesOrPrimary, boolean extra) {
         List<RelationColumnResult> relationColumnResults = EasyCollectionUtil.select(selfPropertiesOrPrimary, (selfPropertyOrPrimary, index) -> new RelationColumnResult(selfPropertyOrPrimary));
 
         if (EasySQLSegmentUtil.isNotEmpty(projects)) {
@@ -600,8 +601,8 @@ public class EasySQLExpressionUtil {
             }
         }
         for (RelationColumnResult relationColumnResult : relationColumnResults) {
-            String alias = "__relation__" + relationColumnResult.getProperty();
             ColumnMetadata columnMetadata = navigateMetadata.getEntityMetadata().getColumnNotNull(relationColumnResult.getProperty());
+            String alias = extra ? ("__relation__" + relationColumnResult.getProperty()) : columnMetadata.getName();
             RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(relationColumnResult.getProperty(), alias, columnMetadata, !relationColumnResult.isExists()));
             if (relationExtraColumn == null) {
                 if (!relationColumnResult.isExists()) {
@@ -615,16 +616,17 @@ public class EasySQLExpressionUtil {
     }
 
 
-    public static void appendTargetExtraTargetProperty(NavigateMetadata selfNavigateMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLNative<?> sqlNative, TableAvailable table) {
+    public static void appendTargetExtraTargetProperty(NavigateMetadata selfNavigateMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLNative<?> sqlNative, TableAvailable table, boolean extra) {
         ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
         QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         RelationExtraMetadata relationExtraMetadata = expressionContext.getRelationExtraMetadata();
-        String[] targetPropertiesOrPrimary = selfNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+        boolean direct = EasyArrayUtil.isNotEmpty(selfNavigateMetadata.getDirectMapping());
+        String[] targetPropertiesOrPrimary = direct?selfNavigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext): selfNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
         SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
-        appTargetRelationColumn(projects, sqlNative, table, selfNavigateMetadata, relationExtraMetadata, targetPropertiesOrPrimary);
+        appTargetRelationColumn(projects, sqlNative, table, selfNavigateMetadata, relationExtraMetadata, targetPropertiesOrPrimary, extra);
     }
 
-    private static void appTargetRelationColumn(SQLBuilderSegment projects, SQLNative<?> sqlNative, TableAvailable table, NavigateMetadata navigateMetadata, RelationExtraMetadata relationExtraMetadata, String[] targetPropertiesOrPrimary) {
+    private static void appTargetRelationColumn(SQLBuilderSegment projects, SQLNative<?> sqlNative, TableAvailable table, NavigateMetadata navigateMetadata, RelationExtraMetadata relationExtraMetadata, String[] targetPropertiesOrPrimary, boolean extra) {
         List<RelationColumnResult> relationColumnResults = EasyCollectionUtil.select(targetPropertiesOrPrimary, (targetPropertyOrPrimary, index) -> new RelationColumnResult(targetPropertyOrPrimary));
         if (EasySQLSegmentUtil.isNotEmpty(projects)) {
             for (SQLSegment sqlSegment : projects.getSQLSegments()) {
@@ -642,8 +644,8 @@ public class EasySQLExpressionUtil {
         }
 
         for (RelationColumnResult relationColumnResult : relationColumnResults) {
-            String alias = "__relation__" + relationColumnResult.getProperty();
             ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(relationColumnResult.getProperty());
+            String alias = extra ? ("__relation__" + relationColumnResult.getProperty()) : columnMetadata.getName();
             RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(relationColumnResult.getProperty(), alias, columnMetadata, !relationColumnResult.isExists()));
             if (relationExtraColumn == null) {
                 if (!relationColumnResult.isExists()) {
@@ -674,7 +676,7 @@ public class EasySQLExpressionUtil {
     }
 
 
-    public static void pgSQLUpdateDeleteJoinAndWhere(StringBuilder sql, List<EntityTableSQLExpression> tables, ToSQLContext toSQLContext, PredicateSegment where,MultiTableTypeEnum multiTableType) {
+    public static void pgSQLUpdateDeleteJoinAndWhere(StringBuilder sql, List<EntityTableSQLExpression> tables, ToSQLContext toSQLContext, PredicateSegment where, MultiTableTypeEnum multiTableType) {
 
         if (EasyCollectionUtil.isSingle(tables)) {
             EntityTableSQLExpression entityTableSQLExpression = tables.get(0);
@@ -684,13 +686,13 @@ public class EasySQLExpressionUtil {
             sql.append(" WHERE ");
 
             sql.append(entityTableSQLExpression.getOn().toSQL(toSQLContext));
-            if(EasySQLSegmentUtil.isNotEmpty(where)){
+            if (EasySQLSegmentUtil.isNotEmpty(where)) {
                 sql.append(" AND ");
                 sql.append(where.toSQL(toSQLContext));
             }
 
         } else {
-            StringBuilder whereSQL=new StringBuilder();
+            StringBuilder whereSQL = new StringBuilder();
             Iterator<EntityTableSQLExpression> iterator = tables.iterator();
             EntityTableSQLExpression firstTable = iterator.next();
             firstTable.setMultiTableType(multiTableType);
@@ -713,7 +715,7 @@ public class EasySQLExpressionUtil {
 
             sql.append(whereSQL);
 
-            if(EasySQLSegmentUtil.isNotEmpty(where)){
+            if (EasySQLSegmentUtil.isNotEmpty(where)) {
                 sql.append(" AND ");
                 sql.append(where.toSQL(toSQLContext));
             }

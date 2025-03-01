@@ -8,7 +8,6 @@ import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * create time 2024/10/17 08:44
@@ -36,12 +35,12 @@ public class DefaultRelationValueColumnMetadata implements RelationValueColumnMe
             throw new EasyQueryInvalidOperationException("current entity can not be null");
         }
         List<Object> values = EasyCollectionUtil.select(columnMetadataList, (columnMetadata, index) -> columnMetadata.getGetterCaller().apply(entity));
-        return relationValueFactory.createRelationValue(values);
+        return relationValueFactory.createCollectionRelationValue(values);
     }
 
-    @Override
-    public RelationValue getRelationValue(Map<String, Object> mappingRow) {
-        List<Object> values = EasyCollectionUtil.select(columnMetadataList, (columnMetadata, index) -> mappingRow.get(columnMetadata.getName()));
-        return relationValueFactory.createRelationValue(values);
-    }
+//    @Override
+//    public RelationValue getRelationValue(Map<String, Object> mappingRow) {
+//        List<Object> values = EasyCollectionUtil.select(columnMetadataList, (columnMetadata, index) -> mappingRow.get(columnMetadata.getName()));
+//        return relationValueFactory.createRelationValue(values);
+//    }
 }

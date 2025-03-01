@@ -218,16 +218,16 @@ public interface EasyQuery {
         return getEasyQueryClient().mapUpdatable(maps);
     }
 
-//    default <T> void loadInclude(T entity,Property<T,?> navigateProperty){
-//        loadInclude(Collections.singletonList(entity),navigateProperty);
-//    }
-//    default <T> void loadInclude(T entity,Property<T,?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
-//        loadInclude(Collections.singletonList(entity),navigateProperty,configure);
-//    }
-//    default <T> void loadInclude(List<T> entities,Property<T,?> navigateProperty){
-//        loadInclude(entities,navigateProperty,null);
-//    }
-//   default <T> void loadInclude(List<T> entities, Property<T,?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
-//       getEasyQueryClient().loadInclude(entities, EasyLambdaUtil.getPropertyName(navigateProperty),configure);
-//   }
+    default <T> void loadInclude(T entity,Property<T,?> navigateProperty){
+        loadInclude(Collections.singletonList(entity),navigateProperty);
+    }
+    default <T> void loadInclude(T entity,Property<T,?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+        loadInclude(Collections.singletonList(entity),navigateProperty,configure);
+    }
+    default <T> void loadInclude(List<T> entities,Property<T,?> navigateProperty){
+        loadInclude(entities,navigateProperty,null);
+    }
+   default <T> void loadInclude(List<T> entities, Property<T,?> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+       getEasyQueryClient().loadInclude(entities, EasyLambdaUtil.getPropertyName(navigateProperty),configure);
+   }
 }

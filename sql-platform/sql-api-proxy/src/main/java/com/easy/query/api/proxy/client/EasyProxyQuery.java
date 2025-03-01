@@ -43,17 +43,17 @@ public interface EasyProxyQuery extends EasyBaseQuery{
     <TProxy extends ProxyEntity<TProxy, T>, T> ExpressionDeletable<TProxy,T> deletable(TProxy table);
 
 
-//    default  <TProxy extends ProxyEntity<TProxy, T>, T>  void loadInclude(T entity,TProxy table, SQLFuncExpression1<TProxy, PropColumn> navigateProperty){
-//        loadInclude(Collections.singletonList(entity),table,navigateProperty);
-//    }
-//    default <TProxy extends ProxyEntity<TProxy, T>, T> void loadInclude(T entity,TProxy table,SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
-//        loadInclude(Collections.singletonList(entity),table,navigateProperty,configure);
-//    }
-//    default <TProxy extends ProxyEntity<TProxy, T>, T> void loadInclude(List<T> entities,TProxy table,SQLFuncExpression1<TProxy, PropColumn> navigateProperty){
-//        loadInclude(entities,table,navigateProperty,null);
-//    }
-//    default <TProxy extends ProxyEntity<TProxy, T>, T> void loadInclude(List<T> entities,TProxy table, SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
-//        PropColumn propColumn = navigateProperty.apply(table);
-//        getEasyQueryClient().loadInclude(entities,propColumn.getValue(),configure);
-//    }
+    default  <TProxy extends ProxyEntity<TProxy, T>, T>  void loadInclude(T entity,TProxy table, SQLFuncExpression1<TProxy, PropColumn> navigateProperty){
+        loadInclude(Collections.singletonList(entity),table,navigateProperty);
+    }
+    default <TProxy extends ProxyEntity<TProxy, T>, T> void loadInclude(T entity,TProxy table,SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+        loadInclude(Collections.singletonList(entity),table,navigateProperty,configure);
+    }
+    default <TProxy extends ProxyEntity<TProxy, T>, T> void loadInclude(List<T> entities,TProxy table,SQLFuncExpression1<TProxy, PropColumn> navigateProperty){
+        loadInclude(entities,table,navigateProperty,null);
+    }
+    default <TProxy extends ProxyEntity<TProxy, T>, T> void loadInclude(List<T> entities,TProxy table, SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+        PropColumn propColumn = navigateProperty.apply(table);
+        getEasyQueryClient().loadInclude(entities,propColumn.getValue(),configure);
+    }
 }

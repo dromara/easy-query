@@ -35,6 +35,7 @@ import com.easy.query.test.doc.dto.MyComUserDTO8;
 import com.easy.query.test.doc.dto.MyComUserDTO9;
 import com.easy.query.test.doc.dto.MySignUpDTO1;
 import com.easy.query.test.doc.dto.MySignUpDTO2;
+import com.easy.query.test.doc.dto.MySignUpDTO3;
 import com.easy.query.test.doc.proxy.MySignUpProxy;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp14;
 import com.easy.query.test.entity.SysUser;
@@ -50,6 +51,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -491,7 +493,14 @@ public class QueryTestRelationTest extends BaseTest {
 //                            m.comUser().id().isNotNull();
                         })
                         .toList();
-
+                for (MySignUp mySignUp : list1) {
+                    if(Objects.equals(mySignUp.getComId(),"c1")){
+                        Assert.assertNotNull(mySignUp.getComUserCompany());
+                        Assert.assertEquals("c1", mySignUp.getComUserCompany().getId());
+                    }else{
+                        Assert.assertNull(mySignUp.getComUserCompany());
+                    }
+                }
                 {
 
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
@@ -500,7 +509,7 @@ public class QueryTestRelationTest extends BaseTest {
                 }
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`gw` FROM `my_com_user` t WHERE ((t.`com_id` =? AND t.`user_id` =?) OR (t.`com_id` =? AND t.`user_id` =?) OR (t.`com_id` =? AND t.`user_id` =?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("SELECT `com_id` AS `com_id`,`user_id` AS `user_id` FROM `my_com_user` WHERE ((`com_id` =? AND `user_id` =?) OR (`com_id` =? AND `user_id` =?) OR (`com_id` =? AND `user_id` =?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
                     Assert.assertEquals("c1(String),u1(String),c1(String),u3(String),c2(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 }
                 {
@@ -533,12 +542,43 @@ public class QueryTestRelationTest extends BaseTest {
                 }
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`gw` FROM `my_com_user` t WHERE ((t.`com_id` =? AND t.`user_id` =?) OR (t.`com_id` =? AND t.`user_id` =?) OR (t.`com_id` =? AND t.`user_id` =?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("SELECT `com_id` AS `com_id`,`user_id` AS `user_id` FROM `my_com_user` WHERE ((`com_id` =? AND `user_id` =?) OR (`com_id` =? AND `user_id` =?) OR (`com_id` =? AND `user_id` =?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
                     Assert.assertEquals("c1(String),u1(String),c1(String),u3(String),c2(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 }
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
                     Assert.assertEquals("SELECT t.`id`,t.`name` FROM `my_company_info` t WHERE t.`id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("c1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+
+                System.out.println("33");
+            }
+            {
+                System.out.println("44x");
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+
+                List<MySignUpDTO3> list1 = easyEntityQuery.queryable(MySignUp.class)
+                        .where(m -> {
+                            m.id().isNotNull();
+//                            m.comUser().id().isNotNull();
+                        }).selectAutoInclude(MySignUpDTO3.class)
+                        .toList();
+
+                {
+
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                    Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t WHERE t.`id` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                    Assert.assertEquals("SELECT `com_id` AS `com_id`,`user_id` AS `user_id` FROM `my_com_user` WHERE ((`com_id` =? AND `user_id` =?) OR (`com_id` =? AND `user_id` =?) OR (`com_id` =? AND `user_id` =?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("c1(String),u1(String),c1(String),u3(String),c2(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `my_company_info` t WHERE t.`id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
                     Assert.assertEquals("c1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 }
 

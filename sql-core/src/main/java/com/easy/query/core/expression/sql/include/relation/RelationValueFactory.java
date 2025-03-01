@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.sql.include.relation;
 
 import com.easy.query.core.expression.sql.include.RelationValue;
-import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,9 +12,9 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface RelationValueFactory {
-    default RelationValue createRelationValue(Object[] values) {
-        return createRelationValue(Arrays.asList(values));
+    default RelationValue createArrayRelationValue(Object[] values) {
+        return createCollectionRelationValue(Arrays.asList(values));
     }
 
-    RelationValue createRelationValue(List<Object> values);
+    RelationValue createCollectionRelationValue(List<Object> values);
 }

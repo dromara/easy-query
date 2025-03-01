@@ -73,11 +73,6 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
     }
 
     @Override
-    public NavigateInclude getNavigateInclude(IncludeNavigateParams includeNavigateParams) {
-        return new NavigateIncludeImpl(table, entityQueryExpressionBuilder.getRuntimeContext(), includeNavigateParams, entityQueryExpressionBuilder.getExpressionContext());
-    }
-
-    @Override
     public WhereAggregatePredicate<TEntity> getAggregatePredicate() {
         return new WhereAggregatePredicateImpl<>(table, new AggregateFilterImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getHaving()));
     }

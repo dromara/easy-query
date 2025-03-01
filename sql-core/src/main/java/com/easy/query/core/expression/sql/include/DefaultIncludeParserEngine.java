@@ -142,10 +142,8 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         else if (EasyArrayUtil.isNotEmpty(navigateMetadata.getDirectMapping())) {
 
             confirmMappingRows(queryRelationGroupSize, includeParseContext, relationIds);
-            Class<?> directMappingClass = navigateMetadata.getDirectMappingClass(runtimeContext);
-            EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(directMappingClass);
 
-            RelationValueColumnMetadata relationValueColumnMetadata = runtimeContext.getRelationValueColumnMetadataFactory().create(mappingEntityMetadata, navigateMetadata.getDirectMappingTargetPropertiesOrPrimary(runtimeContext));
+            RelationValueColumnMetadata relationValueColumnMetadata = runtimeContext.getRelationValueColumnMetadataFactory().createDirect(navigateMetadata, navigateMetadata.getDirectMappingTargetPropertiesOrPrimary(runtimeContext));
 
 
 //            ColumnMetadata mappingTargetColumnMetadata = mappingEntityMetadata.getColumnNotNull(navigateMetadata.getTargetMappingProperties());
@@ -315,7 +313,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                             Class<?> aliasClassType = includeParseContext.getIncludeNavigateParams().getFlatClassType() == null ? aliasNavigateMetadata.getNavigatePropertyType() : includeParseContext.getIncludeNavigateParams().getFlatClassType();
                             includeQueryable.select(aliasClassType, t -> {
                                 t.columnAll();
-                                EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
+                                EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable(),true);
                             });
                             return includeQueryable;
                         });
@@ -331,8 +329,8 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
                             return includeQueryable.select(aliasClassType, t -> {
                                 columnIncludeExpression.getIncludeSelectorExpression().apply(t.getAsSelector());
-                                EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
-                                EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
+                                EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable(),true);
+                                EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable(),true);
                             });
                         });
                     }
@@ -350,17 +348,17 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                     if (aliasClassType != null) {
                         return includeQueryable.select(aliasClassType, t -> {
                             t.columnAll();
-                            EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
+                            EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable(),true);
                         });
                     } else {
                         return includeQueryable.select(t -> {
                             t.columnAll();
-                            EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
+                            EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable(),true);
                         });
                     }
                 } else {
                     ColumnSelector<?> columnSelector = includeQueryable.getSQLExpressionProvider1().getColumnSelector(sqlEntityExpressionBuilder.getProjects());
-                    EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, columnSelector.getSQLNative(), columnSelector.getTable());
+                    EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, columnSelector.getSQLNative(), columnSelector.getTable(),true);
                     return includeQueryable;
                 }
             });

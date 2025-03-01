@@ -78,12 +78,13 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         }
         return resultMap;
     }
+
     protected Map<RelationValue, Object> getTargetDirectMap(List<RelationExtraEntity> includes) {
         Map<RelationValue, Object> resultMap = new HashMap<>();
         String[] directTargetPropertiesOrPrimary = includeParserResult.getNavigateMetadata().getDirectTargetPropertiesOrPrimary(runtimeContext);
         for (RelationExtraEntity target : includes) {
             RelationValue targetRelationId = target.getRelationExtraColumns(directTargetPropertiesOrPrimary);
-            resultMap.putIfAbsent(targetRelationId,target.getEntity());
+            resultMap.putIfAbsent(targetRelationId, target.getEntity());
         }
         return resultMap;
     }
@@ -107,14 +108,18 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(includeParserResult.getNavigateMetadata().getDirectMappingClass(runtimeContext));
         RelationValueColumnMetadata selfRelationColumn = relationValueColumnMetadataFactory.create(entityMetadata, includeParserResult.getNavigateMetadata().getDirectMappingSelfPropertiesOrPrimary(runtimeContext));
         //优化多级RelationValueColumnMetadata
-        RelationValueColumnMetadata targetRelationColumn = relationValueColumnMetadataFactory.create(entityMetadata, includeParserResult.getNavigateMetadata().getDirectMappingTargetPropertiesOrPrimary(runtimeContext));
+        RelationValueColumnMetadata targetRelationColumn = relationValueColumnMetadataFactory.createDirect(includeParserResult.getNavigateMetadata(), includeParserResult.getNavigateMetadata().getDirectMappingTargetPropertiesOrPrimary(runtimeContext));
 
 
         Map<RelationValue, Object> targetDirectMap = getTargetDirectMap(includes);
         for (Object mappingRow : mappingRows) {
             RelationValue selfRelationId = selfRelationColumn.getRelationValue(mappingRow);
             RelationValue targetRelationId = targetRelationColumn.getRelationValue(mappingRow);
-            resultMap.putIfAbsent(selfRelationId, targetDirectMap.get(targetRelationId));
+            Object value = targetDirectMap.get(targetRelationId);
+            Object oldVal = resultMap.put(selfRelationId, value);
+            if(oldVal!=null){
+                throw new EasyQueryInvalidOperationException("The relationship value ‘" + selfRelationId + "’ appears to have duplicates: [" + EasyClassUtil.getInstanceSimpleName(oldVal) + "]. Please confirm whether the data represents a One or Many relationship.");
+            }
 //            Collection<TNavigateEntity> targetEntities = resultMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
 //            Collection<TNavigateEntity> targets = targetToManyMap.get(targetRelationId);
 //            if (EasyCollectionUtil.isNotEmpty(targets)) {
@@ -123,6 +128,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         }
         return resultMap;
     }
+
     protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes, List<Object> mappingRows) {
 
         Map<RelationValue, Collection<TNavigateEntity>> resultMap = new HashMap<>();
@@ -182,13 +188,21 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     public void process() {
         switch (includeParserResult.getRelationType()) {
             case OneToOne:
-                OneToOneProcess(includeParserResult.getIncludeResult());
+                if (EasyArrayUtil.isNotEmpty(includeParserResult.getDirectMapping())) {
+                    DirectToOneProcess(includeParserResult.getIncludeResult());
+                } else {
+                    OneToOneProcess(includeParserResult.getIncludeResult());
+                }
                 return;
             case OneToMany:
                 OneToManyProcess(includeParserResult.getIncludeResult());
                 return;
             case ManyToOne:
-                ManyToOneProcess(includeParserResult.getIncludeResult());
+                if (EasyArrayUtil.isNotEmpty(includeParserResult.getDirectMapping())) {
+                    DirectToOneProcess(includeParserResult.getIncludeResult());
+                } else {
+                    ManyToOneProcess(includeParserResult.getIncludeResult());
+                }
                 return;
             case ManyToMany:
                 ManyToManyProcess(includeParserResult.getIncludeResult(), includeParserResult.getMappingRows());
@@ -198,6 +212,8 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     }
 
     protected abstract void OneToOneProcess(List<RelationExtraEntity> includes);
+
+    protected abstract void DirectToOneProcess(List<RelationExtraEntity> includes);
 
     protected abstract void ManyToOneProcess(List<RelationExtraEntity> includes);
 

@@ -8,12 +8,15 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyOptionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * create time 2023/6/18 10:48
@@ -23,13 +26,15 @@ import com.easy.query.core.util.EasyOptionUtil;
  */
 public class NavigateIncludeImpl implements NavigateInclude {
     private final TableAvailable entityTable;
+    private final EntityMetadata entityMetadata;
     private final QueryRuntimeContext runtimeContext;
     private final IncludeNavigateParams includeNavigateParams;
     private final ExpressionContext expressionContext;
 
-    public NavigateIncludeImpl(TableAvailable table, QueryRuntimeContext runtimeContext, IncludeNavigateParams includeNavigateParams, ExpressionContext expressionContext) {
+    public NavigateIncludeImpl(TableAvailable table, EntityMetadata entityMetadata, QueryRuntimeContext runtimeContext, IncludeNavigateParams includeNavigateParams, ExpressionContext expressionContext) {
 
         this.entityTable = table;
+        this.entityMetadata = entityMetadata;
         this.runtimeContext = runtimeContext;
         this.includeNavigateParams = includeNavigateParams;
         this.expressionContext = expressionContext;
@@ -46,7 +51,7 @@ public class NavigateIncludeImpl implements NavigateInclude {
                     ClientQueryable<?> query = navigateInclude.with(prop, groupSize);
                     NavigateMetadata navigateMetadata = navigateInclude.getIncludeNavigateParams().getNavigateMetadata();
                     getDirectMappingQueryable(printSQL, query, directMappingIterator, groupSize, navigateMetadata);
-                    return getDirectMappingQueryable(printSQL, query, propNavigateMetadata);
+                    return getDirectMappingQueryable(printSQL, query, navigateMetadata);
                 });
             }
         }
@@ -63,11 +68,21 @@ public class NavigateIncludeImpl implements NavigateInclude {
 
     private ClientQueryable<?> getDirectMappingQueryable(Boolean printSQL, ClientQueryable<?> query, NavigateMetadata navigateMetadata) {
         QueryRuntimeContext runtimeContext = query.getRuntimeContext();
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = query.getSQLEntityExpressionBuilder();
         return query
                 .configure(s -> {
                     s.setPrintSQL(printSQL);
                     s.setPrintNavSQL(printSQL);
                 });
+//        .select(z -> {
+//                    String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+//                    for (String targetProperty : targetPropertiesOrPrimary) {
+//                        z.column(targetProperty);
+//                    }
+////                                        z.column(entityNavigateMetadata.getSelfPropertyOrPrimary());
+//                    EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable(), false);
+//                    EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable(), false);
+//                });
 //        .select(query.queryClass(), o -> {
 //                    for (String selfMappingProperty : navigateMetadata.getSelfPropertiesOrPrimary()) {
 //                        o.column(selfMappingProperty);
@@ -84,7 +99,7 @@ public class NavigateIncludeImpl implements NavigateInclude {
         if (groupSize != null && groupSize < 1) {
             throw new IllegalArgumentException("include group size < 1");
         }
-        NavigateMetadata navigateMetadata = entityTable.getEntityMetadata().getNavigateNotNull(property);
+        NavigateMetadata navigateMetadata = entityMetadata.getNavigateNotNull(property);
         includeNavigateParams.setNavigateMetadata(navigateMetadata);
         includeNavigateParams.setTable(this.entityTable);
         if (groupSize == null) {
@@ -107,14 +122,21 @@ public class NavigateIncludeImpl implements NavigateInclude {
                 ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(propNavigateMetadata.getNavigatePropertyType(), runtimeContext);
                 Boolean printSQL = EasyOptionUtil.isPrintNavSQL(expressionContext);
                 getDirectMappingQueryable(printSQL, mappingQuery, directMappingIterator, groupSize, propNavigateMetadata);
+
+                EntityQueryExpressionBuilder sqlEntityExpressionBuilder = mappingQuery.getSQLEntityExpressionBuilder();
                 return mappingQuery
                         .configure(s -> {
                             s.setPrintSQL(printSQL);
                             s.setPrintNavSQL(printSQL);
                         }).where(t -> {
-                            t.relationIn(navigateMetadata.getDirectSelfPropertiesOrPrimary(runtimeContext), includeNavigateParams.getRelationIds());
+                            t.relationIn(navigateMetadata.getDirectMappingSelfPropertiesOrPrimary(runtimeContext), includeNavigateParams.getRelationIds());
                             propNavigateMetadata.predicateFilterApply(t);
                         });
+//                .select(z -> {
+////                                        z.column(entityNavigateMetadata.getSelfPropertyOrPrimary());
+//                            EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable(), false);
+//                            EasySQLExpressionUtil.appendTargetExtraTargetProperty(propNavigateMetadata, sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable(), false);
+//                        });
             };
             includeNavigateParams.setMappingQueryableFunction(mappingQueryableFunction);
         } else if (RelationTypeEnum.ManyToMany == relationType && navigateMetadata.getMappingClass() != null) {//添加多对多中间表
