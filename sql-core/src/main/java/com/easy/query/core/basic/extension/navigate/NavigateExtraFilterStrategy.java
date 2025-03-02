@@ -4,6 +4,8 @@ import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
+import java.util.UUID;
+
 /**
  * create time 2024/3/1 15:44
  * 导航属性额外过滤器用于筛选固定数据

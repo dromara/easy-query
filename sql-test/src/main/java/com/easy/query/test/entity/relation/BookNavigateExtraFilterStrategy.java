@@ -1,10 +1,15 @@
 package com.easy.query.test.entity.relation;
 
+import com.easy.query.api.proxy.client.EasyEntityQuery;
+import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.metadata.EntityMetadata;
+import org.springframework.context.ApplicationContext;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -18,6 +23,7 @@ import java.util.Objects;
 public class BookNavigateExtraFilterStrategy implements NavigateExtraFilterStrategy {
     @Override
     public SQLExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder) {
+
         //parentType
         EntityMetadata entityMetadata = builder.getNavigateOption().getEntityMetadata();
         //导航属性类型
@@ -36,7 +42,9 @@ public class BookNavigateExtraFilterStrategy implements NavigateExtraFilterStrat
                     }
                 };
             }
-            return o -> o.eq("bookType", 1);
+            return o -> {
+                o.eq("bookType", 1);
+            };
         }
         return o -> o.eq("bookType", 2);
     }

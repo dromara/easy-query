@@ -5,6 +5,7 @@ import com.easy.query.core.expression.builder.core.SelectorColumn;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.func.SQLFunction;
 
 /**
@@ -15,6 +16,7 @@ import com.easy.query.core.func.SQLFunction;
  */
 public interface Selector extends SelectorColumn<Selector>,SQLNative<Selector>, RuntimeContextAvailable {
 
+    EntityQueryExpressionBuilder getEntityQueryExpressionBuilder();
     /**
      * 快速选择之前group的列,不需要重新再写一遍
      *

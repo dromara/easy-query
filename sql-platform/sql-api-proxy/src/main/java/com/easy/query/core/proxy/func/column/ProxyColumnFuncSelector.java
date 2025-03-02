@@ -40,13 +40,13 @@ public interface ProxyColumnFuncSelector {
        return this;
    }
    default <TProxy,T> ProxyColumnFuncSelector column(SQLColumn<TProxy, T> sqlColumn){
-       getColumnFuncSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
+       getColumnFuncSelector().column(sqlColumn.getTable(),sqlColumn.getValue());
        return this;
    }
    default ProxyColumnFuncSelector columns(SQLColumn<?, ?>... sqlColumns){
        if(EasyArrayUtil.isNotEmpty(sqlColumns)){
            for (SQLColumn<?, ?> sqlColumn : sqlColumns) {
-               getColumnFuncSelector().column(new SimpleSQLTableOwner(sqlColumn.getTable()),sqlColumn.getValue());
+               getColumnFuncSelector().column(sqlColumn.getTable(),sqlColumn.getValue());
            }
        }
        return this;

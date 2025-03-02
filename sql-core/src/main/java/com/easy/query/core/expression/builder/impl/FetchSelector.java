@@ -9,6 +9,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -28,6 +29,12 @@ public class FetchSelector implements Selector {
 
         this.properties = properties;
     }
+
+    @Override
+    public EntityQueryExpressionBuilder getEntityQueryExpressionBuilder() {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public Selector groupKeys(int index) {
        throw new UnsupportedOperationException();

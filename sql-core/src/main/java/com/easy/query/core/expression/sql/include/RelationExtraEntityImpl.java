@@ -40,7 +40,7 @@ public class RelationExtraEntityImpl implements RelationExtraEntity {
         for (int i = 0; i < propertyNames.length; i++) {
             values[i] = getRelationExtraColumn(propertyNames[i]);
         }
-        return relationValueFactory.createRelationValue(values);
+        return relationValueFactory.createArrayRelationValue(values);
     }
 
     private Object getRelationExtraColumn(String propertyName) {

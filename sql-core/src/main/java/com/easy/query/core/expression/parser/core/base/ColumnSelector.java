@@ -8,6 +8,7 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.SQLFxAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 
 /**
  * @author xuejiaming
@@ -15,6 +16,9 @@ import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
  * @Date: 2023/2/6 23:20
  */
 public interface ColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<ColumnSelector<T1>>, SQLFxAvailable {
+    default EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(){
+        return getSelector().getEntityQueryExpressionBuilder();
+    }
     Selector getSelector();
     default QueryRuntimeContext getRuntimeContext(){
         return getSelector().getRuntimeContext();

@@ -80,7 +80,9 @@ import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFacto
 import com.easy.query.core.expression.sql.expression.factory.DefaultEasyExpressionFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.DefaultIncludeParserEngine;
+import com.easy.query.core.expression.sql.include.DefaultIncludeProvider;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
+import com.easy.query.core.expression.sql.include.IncludeProvider;
 import com.easy.query.core.expression.sql.include.relation.DefaultRelationValueColumnMetadataFactory;
 import com.easy.query.core.expression.sql.include.relation.DefaultRelationValueFactory;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
@@ -216,6 +218,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(CteTableNamedProvider.class, DefaultCteTableNamedProvider.class)
                 .replaceService(MapKeyNameConversion.class, DefaultMapKeyNameConversion.class)
                 .replaceService(DatabaseCodeFirst.class, DefaultDatabaseCodeFirst.class)
+                .replaceService(IncludeProvider.class, DefaultIncludeProvider.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

@@ -108,6 +108,7 @@ import com.easy.query.core.metadata.NavigateFlatMetadata;
 import com.easy.query.core.metadata.NavigateJoinMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
+import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyColumnSegmentUtil;
@@ -1444,102 +1445,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public <TProperty> ClientQueryable<T1> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
+    public <TProperty> ClientQueryable<T1> include(boolean condition, SQLFuncExpression1<NavigateInclude, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
         if (condition) {
-            IncludeNavigateParams includeNavigateParams = new IncludeNavigateParams();
-            Integer groupSize = entityQueryExpressionBuilder.getExpressionContext().getGroupSize();
-            Boolean printNavSQL = EasyOptionUtil.isPrintNavSQL(entityQueryExpressionBuilder.getExpressionContext());
-            EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
-            int relationGroupSize = groupSize != null ? groupSize : easyQueryOption.getRelationGroupSize();
-            includeNavigateParams.setRelationGroupSize(relationGroupSize);
-            NavigateInclude<T1> navigateInclude = getSQLExpressionProvider1().getNavigateInclude(includeNavigateParams);
-            ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
-            boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
-            includeNavigateParams.setLimit(hasLimit);
-            NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
-            if (!Objects.equals(navigateMetadata.getNavigatePropertyType(), clientQueryable.queryClass())) {
-                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(queryClass()) + " include query navigate error return type should:[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] actual:[" + EasyClassUtil.getSimpleName(clientQueryable.queryClass()) + "]");
-            }
-
-            SQLFuncExpression<ClientQueryable<?>> queryableExpression = () -> {
-                List<List<Object>> relationIds = includeNavigateParams.getRelationIds();
-                if (hasLimit) {
-                    if (EasyCollectionUtil.isNotEmpty(relationIds) && EasyCollectionUtil.isNotSingle(relationIds)) {
-                        Iterator<List<Object>> iterator = relationIds.iterator();
-                        List<Object> firstRelationId = iterator.next();
-                        ClientQueryable<TProperty> firstQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, firstRelationId);
-                        ArrayList<ClientQueryable<TProperty>> otherQueryable = new ArrayList<>();
-                        while (iterator.hasNext()) {
-                            List<Object> nextRelationId = iterator.next();
-                            ClientQueryable<TProperty> nextQueryable = getRelationLimitQueryable(clientQueryable, navigateMetadata, nextRelationId);
-                            otherQueryable.add(nextQueryable);
-                        }
-                        return firstQueryable.configure(s -> {
-                            s.setPrintSQL(printNavSQL);
-                            s.setPrintNavSQL(printNavSQL);
-                        }).unionAll(otherQueryable);
-                    }
-                }
-                return clientQueryable.cloneQueryable().configure(s -> {
-                    s.setPrintSQL(printNavSQL);
-                    s.setPrintNavSQL(printNavSQL);
-                }).where(o -> {
-                    o.and(() -> {
-                        o.relationIn(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds);
-//                        if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
-//                            navigateMetadata.predicateFilterApply(o);
-//                        }
-                        navigateMetadata.predicateFilterApply(o);
-//                        navigateMetadata.predicateFilterApply(o);
-                    });
-                });
-//                return appendNavigateTargetProperty(navigateQueryable,navigateMetadata);
-            };
-            boolean replace = navigateInclude.getIncludeNavigateParams().isReplace();
-            if (replace) {
-                entityQueryExpressionBuilder.getExpressionContext().getIncludes().put(includeNavigateParams.getNavigateMetadata(), new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
-            } else {
-                entityQueryExpressionBuilder.getExpressionContext().getIncludes().putIfAbsent(includeNavigateParams.getNavigateMetadata(), new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
-            }
+            EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
+//            ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
+            runtimeContext.getIncludeProvider().include(table.getEntityTable(), table.getEntityMetadata(), expressionContext, navigateIncludeSQLExpression);
         }
         return this;
     }
 
-    private <TProperty> ClientQueryable<TProperty> getRelationLimitQueryable(ClientQueryable<TProperty> clientQueryable, NavigateMetadata navigateMetadata, List<Object> relationId) {
-
-        ClientQueryable<TProperty> firstQueryable = clientQueryable.cloneQueryable();
-        firstQueryable.where(o -> {
-            o.and(() -> {
-                o.multiEq(true, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationId);
-//                if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
-//                    navigateMetadata.predicateFilterApply(o);
-//                }
-                navigateMetadata.predicateFilterApply(o);
-//               navigateMetadata.predicateFilterApply(o);
-            });
-        });
-        return firstQueryable;
-    }
-
-    private <T> ClientQueryable<T> appendNavigateTargetProperty(ClientQueryable<T> queryable, NavigateMetadata navigateMetadata) {
-        return queryable;
-//        ExpressionContext expressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
-//        return queryable.select(t -> {
-//            t.columnAll();
-//            Map<String, RelationExtraColumn> relationExtraColumnMap=new HashMap<>();
-//            String targetPropertyOrPrimary = navigateMetadata.getTargetPropertyOrPrimary(runtimeContext);
-//            String alias = "__relation__" + targetPropertyOrPrimary;
-//            ColumnMetadata columnMetadata = t.getTable().getEntityMetadata().getColumnNotNull(targetPropertyOrPrimary);
-//            RelationExtraColumn relationExtraColumn = relationExtraColumnMap.putIfAbsent(alias, new RelationExtraColumn(targetPropertyOrPrimary,alias, columnMetadata));
-//            if(relationExtraColumn==null){
-//                t.sqlNativeSegment("{0}", c -> {
-//                    c.expression(navigateMetadata.getTargetProperty());
-//                    c.setAlias(alias);
-//                });
-//            }
-//            expressionContext.setRelationExtraMetadata(new RelationExtraMetadata(relationExtraColumnMap));
-//        });
-    }
 
     private MergeTuple2<NavigateMetadata, String> getTreeNavigateMetadata(EntityMetadata cteEntityMetadata) {
         Collection<NavigateMetadata> navigateMetadatas = cteEntityMetadata.getNavigateMetadatas();

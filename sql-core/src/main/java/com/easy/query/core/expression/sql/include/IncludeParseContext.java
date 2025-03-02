@@ -19,6 +19,7 @@ public class IncludeParseContext {
     private final IncludeNavigateParams includeNavigateParams;
     private String[] selfProperties;
     private String[] targetProperties;
+    private String[] directMapping;
     private String navigatePropertyName;
     private Class<?> navigateOriginalPropertyType;
     private Class<?> navigatePropertyType;
@@ -27,9 +28,9 @@ public class IncludeParseContext {
 
     private ClientQueryable<?> includeQueryable;
     private SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression;
-    private SQLFuncExpression<ClientQueryable<?>> includeMappingQueryableFunction;
+//    private SQLFuncExpression<ClientQueryable<?>> includeMappingQueryableFunction;
 
-    private List<Map<String, Object>> mappingRows;
+    private List<Object> mappingRows;
     public IncludeParseContext(IncludeNavigateParams includeNavigateParams){
 
         this.includeNavigateParams = includeNavigateParams;
@@ -58,20 +59,20 @@ public class IncludeParseContext {
     public void setIncludeQueryable(ClientQueryable<?> includeQueryable) {
         this.includeQueryable = includeQueryable;
     }
+//
+//    public SQLFuncExpression<ClientQueryable<?>> getIncludeMappingQueryableFunction() {
+//        return includeMappingQueryableFunction;
+//    }
+//
+//    public void setIncludeMappingQueryableFunction(SQLFuncExpression<ClientQueryable<?>> includeMappingQueryableFunction) {
+//        this.includeMappingQueryableFunction = includeMappingQueryableFunction;
+//    }
 
-    public SQLFuncExpression<ClientQueryable<?>> getIncludeMappingQueryableFunction() {
-        return includeMappingQueryableFunction;
-    }
-
-    public void setIncludeMappingQueryableFunction(SQLFuncExpression<ClientQueryable<?>> includeMappingQueryableFunction) {
-        this.includeMappingQueryableFunction = includeMappingQueryableFunction;
-    }
-
-    public List<Map<String, Object>> getMappingRows() {
+    public List<Object> getMappingRows() {
         return mappingRows;
     }
 
-    public void setMappingRows(List<Map<String, Object>> mappingRows) {
+    public void setMappingRows(List<Object> mappingRows) {
         this.mappingRows = mappingRows;
     }
 
@@ -125,5 +126,13 @@ public class IncludeParseContext {
 
     public void setIncludeQueryableExpression(SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression) {
         this.includeQueryableExpression = includeQueryableExpression;
+    }
+
+    public String[] getDirectMapping() {
+        return directMapping;
+    }
+
+    public void setDirectMapping(String[] directMapping) {
+        this.directMapping = directMapping;
     }
 }

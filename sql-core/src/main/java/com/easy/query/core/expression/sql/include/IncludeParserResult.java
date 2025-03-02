@@ -6,6 +6,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateFlatMetadata;
+import com.easy.query.core.metadata.NavigateMetadata;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Map;
  */
 public interface IncludeParserResult {
     EntityMetadata getEntityMetadata();
+    NavigateMetadata getNavigateMetadata();
 
     RelationTypeEnum getRelationType();
 
@@ -46,9 +48,10 @@ public interface IncludeParserResult {
     String[] getSelfMappingProperties();
 
     String[] getTargetMappingProperties();
+    String[] getDirectMapping();
 
     List<RelationExtraEntity> getIncludeResult();
-    List<Map<String, Object>> getMappingRows();
+    List<Object> getMappingRows();
 
     PropertySetterCaller<Object> getSetter();
     Property<Object,?> getGetter();

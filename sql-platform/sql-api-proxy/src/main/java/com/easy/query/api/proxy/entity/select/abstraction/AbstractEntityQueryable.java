@@ -32,6 +32,7 @@ import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.NavigateOrderProp;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -406,13 +407,14 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         Objects.requireNonNull(navigateColumn.getNavValue(), "include [navValue] is null");
 
         ConfigureArgument configureArgument = getQueryable().getSQLEntityExpressionBuilder().getExpressionContext().getConfigureArgument();
-        getClientQueryable().<TProperty>include(navigateInclude -> {
-
+        getClientQueryable().include(navigateInclude -> {
+            ClientQueryable<TProperty> queryable = navigateInclude.with(navigateColumn.getNavValue(), groupSize);
+            NavigateMetadata navigateMetadata = navigateInclude.getIncludeNavigateParams().getNavigateMetadata();
             ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
-                    navigateInclude.with(navigateColumn.getNavValue(), groupSize),
-                    new OffsetLimitEntry(navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOffset(), navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getLimit()),
-                    navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getOrderProps(),
-                    runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateInclude.getIncludeNavigateParams().getNavigateMetadata().getNavigatePropertyType()),
+                    queryable,
+                    new OffsetLimitEntry(navigateMetadata.getOffset(), navigateMetadata.getLimit()),
+                    navigateMetadata.getOrderProps(),
+                    runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType()),
                     configureArgument,
                     runtimeContext);
             TPropertyProxy tPropertyProxy = EntityQueryProxyManager.create(clientQueryable.queryClass());

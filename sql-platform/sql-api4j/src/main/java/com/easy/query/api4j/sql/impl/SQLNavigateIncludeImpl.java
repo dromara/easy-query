@@ -10,14 +10,14 @@ import com.easy.query.core.expression.parser.core.base.NavigateInclude;
  * @author xuejiaming
  */
 public class SQLNavigateIncludeImpl<T1> implements SQLNavigateInclude<T1> {
-    private final NavigateInclude<T1> navigateInclude;
+    private final NavigateInclude navigateInclude;
 
-    public SQLNavigateIncludeImpl(NavigateInclude<T1> navigateInclude){
+    public SQLNavigateIncludeImpl(NavigateInclude navigateInclude){
 
         this.navigateInclude = navigateInclude;
     }
     @Override
-    public NavigateInclude<T1> getNavigateInclude() {
+    public NavigateInclude getNavigateInclude() {
         return navigateInclude;
     }
 }

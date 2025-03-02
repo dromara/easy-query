@@ -30,9 +30,9 @@ public class MySingleRelationValueColumnMetadata implements RelationValueColumnM
         return new MySingleRelationValue(value);
     }
 
-    @Override
-    public RelationValue getRelationValue(Map<String, Object> mappingRow) {
-        Object value = mappingRow.get(columnMetadata.getName());
-        return new MySingleRelationValue(value);
-    }
+//    @Override
+//    public RelationValue getRelationValue(Map<String, Object> mappingRow) {
+//        Object value = mappingRow.get(columnMetadata.getName());
+//        return new MySingleRelationValue(value);
+//    }
 }

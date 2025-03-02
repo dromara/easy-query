@@ -338,18 +338,27 @@ public class EntityMetadata {
 
     private void createNavigateMetadata(boolean tableEntity, Navigate navigate, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
 
-        String[] selfProperties = tableEntity ? navigate.selfProperty() : EasyArrayUtil.EMPTY;
-        String[] targetProperties = tableEntity ? navigate.targetProperty() : EasyArrayUtil.EMPTY;
-        EasyNavigateUtil.checkProperties(selfProperties, targetProperties);
         RelationTypeEnum relationType = navigate.value();
         boolean toMany = relationType.equals(RelationTypeEnum.OneToMany) || relationType.equals(RelationTypeEnum.ManyToMany);
+        //toOne并且是table对象
+        boolean hasDirectMapping = !toMany && tableEntity && EasyArrayUtil.isNotEmpty(navigate.directMapping());
+        if (hasDirectMapping) {
+            if (navigate.directMapping().length < 2) {
+                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + " navigate directMapping must have a length of at least 2, property:[" + property + "]");
+            }
+        }
+        String[] selfProperties = tableEntity && !hasDirectMapping ? navigate.selfProperty() : EasyArrayUtil.EMPTY;
+        String[] targetProperties = tableEntity && !hasDirectMapping ? navigate.targetProperty() : EasyArrayUtil.EMPTY;
+        EasyNavigateUtil.checkProperties(selfProperties, targetProperties);
         Class<?> navigateType = getNavigateType(toMany, field, fastBeanProperty);
         if (navigateType == null) {
             throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");
         }
-        List<NavigateOrderProp> orderProps = toMany ? Arrays.stream(navigate.orderByProps()).map(orderByProperty -> new NavigateOrderProp(orderByProperty.property(), orderByProperty.asc(), getOrderByMode(orderByProperty.mode()))).collect(Collectors.toList()) : EasyCollectionUtil.emptyList();
+        List<NavigateOrderProp> orderProps = toMany
+                ? Arrays.stream(navigate.orderByProps()).map(orderByProperty -> new NavigateOrderProp(orderByProperty.property(), orderByProperty.asc(), getOrderByMode(orderByProperty.mode()))).collect(Collectors.toList())
+                : EasyCollectionUtil.emptyList();
 
-        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties, orderProps, navigate.offset(), navigate.limit());
+        NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties, orderProps, navigate.offset(), navigate.limit(), navigate.directMapping());
 
         if (tableEntity) {
             NavigateExtraFilterStrategy navigateExtraFilterStrategy = getNavigateExtraFilterStrategy(configuration, navigate);
@@ -430,6 +439,8 @@ public class EntityMetadata {
                         return mappingPathValue.split("\\.");
                     }
                 }
+            } else if (mapping.contains(".")) {
+                return mapping.split("\\.");
             }
         }
         return def;

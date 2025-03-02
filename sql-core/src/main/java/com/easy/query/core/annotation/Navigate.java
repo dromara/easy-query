@@ -94,4 +94,10 @@ public @interface Navigate {
      */
 
     Class<? extends NavigateExtraFilterStrategy> extraFilter() default DefaultNavigateExtraFilterStrategy.class;
+
+    /**
+     * xToOne中间表
+     * @return
+     */
+    String[] directMapping() default {};
 }

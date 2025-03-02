@@ -16,7 +16,7 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface SQLNavigateInclude<T1> {
-    NavigateInclude<T1> getNavigateInclude();
+    NavigateInclude getNavigateInclude();
    default  <TProperty> Queryable<TProperty> one(Property<T1,TProperty> navigate){
        return one(navigate,null);
    }

@@ -13,5 +13,5 @@ import java.util.Map;
 public interface RelationValueColumnMetadata {
     RelationValue getRelationValue(Object entity);
 
-    RelationValue getRelationValue(Map<String, Object> mappingRow);
+//    RelationValue getRelationValue(Map<String, Object> mappingRow);
 }

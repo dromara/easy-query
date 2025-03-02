@@ -128,7 +128,7 @@ public abstract class AbstractOverrideClientQueryable7<T1, T2, T3, T4, T5, T6, T
 
 
     @Override
-    public <TProperty> ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> include(boolean condition, SQLFuncExpression1<NavigateInclude<T1>, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
+    public <TProperty> ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> include(boolean condition, SQLFuncExpression1<NavigateInclude, ClientQueryable<TProperty>> navigateIncludeSQLExpression) {
         super.include(condition, navigateIncludeSQLExpression);
         return getClientQueryable7();
     }

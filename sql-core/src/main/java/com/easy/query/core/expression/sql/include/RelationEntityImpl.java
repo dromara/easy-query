@@ -34,6 +34,6 @@ public class RelationEntityImpl implements RelationExtraEntity {
         for (int i = 0; i < propertyNames.length; i++) {
             values[i] = entityMetadata.getColumnNotNull(propertyNames[i]).getGetterCaller().apply(entity);
         }
-        return relationValueFactory.createRelationValue(values);
+        return relationValueFactory.createArrayRelationValue(values);
     }
 }
